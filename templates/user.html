@@ -1,26 +1,14 @@
 {% extends "base.html" %}
-{% block content %}
-  <div class="card">
-    <h2>Foydalanuvchi bo'limi</h2>
-    <form method="post">
-      <label>Ismingiz</label>
-      <input type="text" name="name" required placeholder="Ism...">
-      <button class="btn" type="submit">Navbat olish</button>
-    </form>
-    <p class="muted">Sizga tartib raqami (ticket) beriladi va taxminiy tayyor bo'lish vaqti ko'rsatiladi.</p>
-  </div>
-{% endblock %}
-{% extends "base.html" %}
 
 {% block content %}
 <div class="card center">
   <h2>Buyurtma Berish</h2>
   <p>Ismingizni kiriting va buyurtma raqamingizni oling</p>
-  
+
   <form method="post">
     <label for="name">Ismingiz:</label>
     <input type="text" id="name" name="name" placeholder="Ismingizni kiriting" required>
-    
+
     <div class="actions">
       <button type="submit" class="btn big">Buyurtma berish</button>
     </div>

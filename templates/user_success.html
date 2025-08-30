@@ -1,51 +1,24 @@
 {% extends "base.html" %}
-{% block content %}
-  <div class="card center">
-    <h2>Rahmat, {{ order['customer_name'] }}!</h2>
-    <p>Sizning tartib raqamingiz:</p>
-    <div class="ticket-no">#{{ order['ticket_no'] }}</div>
-    <p>Buyurtmangiz taxminan <strong>{{ eta_hhmm }}</strong> da tayyor bo'ladi.</p>
-    <p>Holat: <span id="order-status">{{ 'Foydalanuvchiga berildi' if order['status']=='given' else 'Foydalanuvchi kutmoqda' }}</span></p>
-    <a class="btn" href="{{ url_for('index') }}">Bosh sahifa</a>
-  </div>
-{% endblock %}
-{% block scripts %}
-<script>
-  // har 10 sekundda holatni tekshirish
-  setInterval(async () => {
-    try {
-      const res = await fetch("{{ url_for('user_status', ticket_no=order['ticket_no']) }}");
-      if (!res.ok) return;
-      const data = await res.json();
-      if (data.ok) {
-        const s = document.getElementById('order-status');
-        s.textContent = data.status === 'given' ? 'Foydalanuvchiga berildi' : 'Foydalanuvchi kutmoqda';
-      }
-    } catch(e){}
-  }, 10000);
-</script>
-{% endblock %}
-{% extends "base.html" %}
 
 {% block content %}
 <div class="card center">
   <h2>✅ Buyurtma Qabul Qilindi!</h2>
-  
+
   <div style="margin: 20px 0; padding: 20px; background: #e8f5e8; border-radius: 10px;">
     <h3>Sizning buyurtma raqamingiz:</h3>
-    <div style="font-size: 32px; font-weight: bold; color: #0b57d0;">
+    <div style="font-size: 32px; font-weight: bold; color: #0b5d0;">
       #{{ order['ticket_no'] }}
     </div>
   </div>
-  
+
   <p><strong>Mijoz:</strong> {{ order['customer_name'] }}</p>
   <p><strong>Taxminiy tayyor bo'lish vaqti:</strong> {{ eta_hhmm }}</p>
-  
+
   <div class="actions">
     <button onclick="checkStatus()" class="btn">Holatni tekshirish</button>
     <a href="{{ url_for('user_page') }}" class="btn">Yana buyurtma berish</a>
   </div>
-  
+
   <div id="status-info" style="margin-top: 20px;"></div>
 </div>
 
