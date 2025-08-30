@@ -592,6 +592,22 @@ def staff_orders_json():
     data = [dict(row) for row in rows]
     return jsonify(data)
 
+@app.route("/staff/employees")
+@login_required
+def staff_employees():
+    """Xodimlar ro'yxatini ko'rish"""
+    employees_file = 'employees.json'
+    employees = []
+    
+    if os.path.exists(employees_file):
+        try:
+            with open(employees_file, 'r', encoding='utf-8') as f:
+                employees = json.load(f)
+        except (json.JSONDecodeError, FileNotFoundError):
+            employees = []
+    
+    return render_template("staff_employees.html", employees=employees, staff_name=session.get("staff_name"))
+
 with app.app_context():
     db.create_all()
 
