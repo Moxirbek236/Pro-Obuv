@@ -218,6 +218,36 @@ def save_user_to_json(name, ticket_no, order_time, order_items):
     with open(users_file, 'w', encoding='utf-8') as f:
         json.dump(users_list, f, ensure_ascii=False, indent=2)
 
+def save_staff_to_json(first_name, last_name, birth_date, phone, staff_id, register_time):
+    """Xodim ma'lumotlarini employees.json fayliga saqlash"""
+    employees_file = 'employees.json'
+    
+    # Yangi xodim ma'lumotlari
+    employee_data = {
+        'id': staff_id,
+        'ism': first_name,
+        'familiya': last_name,
+        'tugulgan_sana': birth_date,
+        'telefon': phone,
+        'royxatdan_otgan_vaqti': register_time.strftime("%Y-%m-%d %H:%M:%S")
+    }
+    
+    # Mavjud ma'lumotlarni o'qish
+    employees_list = []
+    if os.path.exists(employees_file):
+        try:
+            with open(employees_file, 'r', encoding='utf-8') as f:
+                employees_list = json.load(f)
+        except (json.JSONDecodeError, FileNotFoundError):
+            employees_list = []
+    
+    # Yangi ma'lumotni qo'shish
+    employees_list.append(employee_data)
+    
+    # Faylga saqlash
+    with open(employees_file, 'w', encoding='utf-8') as f:
+        json.dump(employees_list, f, ensure_ascii=False, indent=2)
+
 # ---------- Routes ----------
 
 @app.route("/")
@@ -447,14 +477,18 @@ def staff_register():
         conn = get_db()
         cur = conn.cursor()
         password_hash = generate_password_hash(password)
-        now = get_current_time().isoformat()
+        now = get_current_time()
         cur.execute("""
             INSERT INTO staff (first_name, last_name, birth_date, phone, password_hash, created_at)
             VALUES (?, ?, ?, ?, ?, ?);
-        """, (first_name, last_name, birth_date, phone, password_hash, now))
+        """, (first_name, last_name, birth_date, phone, password_hash, now.isoformat()))
         conn.commit()
         new_id = cur.lastrowid
         conn.close()
+        
+        # Xodim ma'lumotlarini employees.json fayliga saqlash
+        save_staff_to_json(first_name, last_name, birth_date, phone, new_id, now)
+        
         flash(f"Ro'yxatdan o'tdingiz. Sizning ID raqamingiz: {new_id}", "success")
         return redirect(url_for("staff_login"))
 
