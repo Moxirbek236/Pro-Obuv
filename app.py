@@ -190,7 +190,7 @@ def clear_cart(conn, session_id):
     cur.execute("DELETE FROM cart_items WHERE session_id = ?", (session_id,))
     conn.commit()
 
-def save_user_to_json(name, ticket_no, order_time):
+def save_user_to_json(name, ticket_no, order_time, order_items):
     """Foydalanuvchi ma'lumotlarini users.json fayliga saqlash"""
     users_file = 'users.json'
     
@@ -198,7 +198,8 @@ def save_user_to_json(name, ticket_no, order_time):
     user_data = {
         'ism': name,
         'buyurtma_raqami': ticket_no,
-        'buyurtma_vaqti': order_time.strftime("%Y-%m-%d %H:%M:%S")
+        'buyurtma_vaqti': order_time.strftime("%Y-%m-%d %H:%M:%S"),
+        'buyurtma_mahsulotlari': order_items
     }
     
     # Mavjud ma'lumotlarni o'qish
@@ -324,7 +325,8 @@ def user_page():
             
             order_id = cur.lastrowid
             
-            # Savatchadagi mahsulotlarni order_details ga ko'chirish
+            # Savatchadagi mahsulotlarni order_details ga ko'chirish va JSON uchun to'plash
+            order_items_for_json = []
             for item in cart_items:
                 cur.execute("""
                     INSERT INTO order_details (order_id, menu_item_id, quantity, price)
@@ -333,6 +335,14 @@ def user_page():
                     JOIN menu_items mi ON ci.menu_item_id = mi.id
                     WHERE ci.id = ?
                 """, (order_id, item['id']))
+                
+                # JSON uchun mahsulot ma'lumotlarini to'plash
+                order_items_for_json.append({
+                    'nomi': item['name'],
+                    'miqdori': item['quantity'],
+                    'narxi': item['price'],
+                    'jami': item['total']
+                })
             
             # Savatchani tozalash
             clear_cart(conn, session_id)
@@ -340,7 +350,7 @@ def user_page():
             conn.commit()
             
             # Foydalanuvchini JSON fayliga saqlash
-            save_user_to_json(name, tno, now)
+            save_user_to_json(name, tno, now, order_items_for_json)
             
         finally:
             conn.close()
