@@ -30,30 +30,29 @@ function checkStatus() {
     .then(data => {
       const statusDiv = document.getElementById('status-info');
       const queueDiv = document.getElementById('queue-info');
-      
+
       if (data.ok) {
         if (data.status === 'waiting') {
           const statusText = 'Kutilmoqda...';
           const statusColor = '#ff9800';
           statusDiv.innerHTML = `<div style="padding: 10px; background: ${statusColor}; color: white; border-radius: 5px;">${statusText}</div>`;
-          queueDiv.innerHTML = `<strong>Navbatdagi o'rningiz: ${data.queue_position}</strong>`;
-        } else {
-          const statusText = 'Tayyor! Olib keting.';
-          const statusColor = '#4caf50';
-          statusDiv.innerHTML = `<div style="padding: 10px; background: ${statusColor}; color: white; border-radius: 5px;">${statusText}</div>`;
-          queueDiv.innerHTML = '<strong>Buyurtmangiz tayyor!</strong>';
+
+          if (data.queue_position > 0) {
+            queueDiv.innerHTML = `<strong>Navbatdagi o'rningiz: ${data.queue_position}</strong>`;
+          } else {
+            queueDiv.innerHTML = '';
+          }
+        } else if (data.status === 'given') {
+          statusDiv.innerHTML = '<div style="padding: 10px; background: #4caf50; color: white; border-radius: 5px;">✅ Buyurtmangiz tayyor! Olib ketishingiz mumkin.</div>';
+          queueDiv.innerHTML = '';
         }
       } else {
         statusDiv.innerHTML = '<div style="padding: 10px; background: #f44336; color: white; border-radius: 5px;">Xatolik yuz berdi</div>';
-        queueDiv.innerHTML = '';
       }
-    })
-    .catch(error => {
-      console.error('Error:', error);
     });
 }
 
-// Har 5 sekundda avtomatik yangilash
+// Har 5 soniyada avtomatik tekshirish
 setInterval(checkStatus, 5000);
 
 // Sahifa yuklanganda darhol tekshirish

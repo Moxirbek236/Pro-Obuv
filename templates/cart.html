@@ -1,0 +1,100 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+  <h2>🛒 Savatcha</h2>
+  
+  {% if cart_items %}
+    <div class="cart-items">
+      {% for item in cart_items %}
+      <div class="cart-item">
+        <div class="item-info">
+          <h4>{{ item.name }}</h4>
+          <p>{{ "{:,.0f}".format(item.price) }} so'm x {{ item.quantity }} = {{ "{:,.0f}".format(item.total) }} so'm</p>
+        </div>
+        <form method="post" action="{{ url_for('remove_from_cart', cart_item_id=item.id) }}" style="margin-left: auto;">
+          <button type="submit" class="btn small danger" onclick="return confirm('Rostdan ham olib tashlamoqchimisiz?')">
+            🗑️ O'chirish
+          </button>
+        </form>
+      </div>
+      {% endfor %}
+    </div>
+    
+    <div class="cart-total">
+      <h3>Jami: {{ "{:,.0f}".format(total) }} so'm</h3>
+    </div>
+    
+    <div class="cart-actions">
+      <form method="post" action="{{ url_for('user_page') }}">
+        <label for="name">Ismingiz:</label>
+        <input type="text" id="name" name="name" placeholder="Ismingizni kiriting" required 
+               style="margin: 10px 0; padding: 10px; width: 100%; border: 1px solid #ddd; border-radius: 5px;">
+        
+        <div style="display: flex; gap: 10px;">
+          <a href="{{ url_for('menu') }}" class="btn">⬅️ Menuga qaytish</a>
+          <button type="submit" class="btn big" style="background: #4CAF50;">✅ Buyurtma berish</button>
+        </div>
+      </form>
+    </div>
+  {% else %}
+    <div class="empty-cart">
+      <p>Savatchangiz bo'sh</p>
+      <a href="{{ url_for('menu') }}" class="btn big">🍽️ Taom tanlash</a>
+    </div>
+  {% endif %}
+</div>
+
+<style>
+.cart-item {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  background: #f9f9f9;
+}
+
+.item-info h4 {
+  margin: 0 0 5px 0;
+  color: #333;
+}
+
+.item-info p {
+  margin: 0;
+  color: #666;
+}
+
+.cart-total {
+  text-align: center;
+  margin: 20px 0;
+  padding: 15px;
+  background: #e3f2fd;
+  border-radius: 10px;
+}
+
+.cart-total h3 {
+  margin: 0;
+  color: #1976d2;
+}
+
+.cart-actions {
+  margin-top: 20px;
+}
+
+.empty-cart {
+  text-align: center;
+  padding: 40px;
+}
+
+.btn.danger {
+  background: #f44336;
+}
+
+.btn.danger:hover {
+  background: #d32f2f;
+}
+</style>
+{% endblock %}

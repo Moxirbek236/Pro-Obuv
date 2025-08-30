@@ -3,16 +3,27 @@
   <div class="card">
     <h2>Xodim paneli</h2>
     <p class="muted">Bu sahifa avtomatik yangilanadi (10s).</p>
+    <div style="margin-bottom: 20px;">
+      <a href="{{ url_for('staff_menu') }}" class="btn">📋 Menyu boshqaruvi</a>
+    </div>
+    
     <div class="orders">
       <h3>Kutilayotgan buyurtmalar</h3>
       <table>
-        <thead><tr><th>ID</th><th>Ticket</th><th>Mijoz</th><th>Yaratilgan</th><th>ETA</th><th>Holat</th><th></th></tr></thead>
+        <thead><tr><th>ID</th><th>Ticket</th><th>Mijoz</th><th>Buyurtma tafsiloti</th><th>Yaratilgan</th><th>ETA</th><th>Holat</th><th></th></tr></thead>
         <tbody id="waiting-body">
           {% for o in orders if o['status']=='waiting' %}
           <tr>
             <td>{{ o['id'] }}</td>
             <td>#{{ o['ticket_no'] }}</td>
             <td>{{ o['customer_name'] }}</td>
+            <td>
+              {% if o['order_items'] %}
+                {{ o['order_items'] }}
+              {% else %}
+                <em>Eski buyurtma</em>
+              {% endif %}
+            </td>
             <td>{{ o['created_at'][:16].replace('T',' ') }}</td>
             <td>{{ o['eta_time'][:16].replace('T',' ') }}</td>
             <td>Foydalanuvchi kutmoqda</td>
@@ -28,13 +39,20 @@
 
       <h3>Berilgan buyurtmalar</h3>
       <table>
-        <thead><tr><th>ID</th><th>Ticket</th><th>Mijoz</th><th>Yaratilgan</th><th>ETA</th><th>Holat</th></tr></thead>
+        <thead><tr><th>ID</th><th>Ticket</th><th>Mijoz</th><th>Buyurtma tafsiloti</th><th>Yaratilgan</th><th>ETA</th><th>Holat</th></tr></thead>
         <tbody id="given-body">
           {% for o in orders if o['status']=='given' %}
           <tr class="given">
             <td>{{ o['id'] }}</td>
             <td>#{{ o['ticket_no'] }}</td>
             <td>{{ o['customer_name'] }}</td>
+            <td>
+              {% if o['order_items'] %}
+                {{ o['order_items'] }}
+              {% else %}
+                <em>Eski buyurtma</em>
+              {% endif %}
+            </td>
             <td>{{ o['created_at'][:16].replace('T',' ') }}</td>
             <td>{{ o['eta_time'][:16].replace('T',' ') }}</td>
             <td>Foydalanuvchiga berildi</td>
@@ -63,6 +81,7 @@ async function refreshOrders(){
         <td>${o.id}</td>
         <td>#${o.ticket_no}</td>
         <td>${o.customer_name}</td>
+        <td>${o.order_items || '<em>Eski buyurtma</em>'}</td>
         <td>${o.created_at.slice(0,16).replace('T',' ')}</td>
         <td>${o.eta_time.slice(0,16).replace('T',' ')}</td>
         <td>${o.status === 'given' ? 'Foydalanuvchiga berildi' : 'Foydalanuvchi kutmoqda'}</td>
