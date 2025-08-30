@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
-import sqlite3, os, datetime
+import sqlite3, os, datetime, json
 from flask_sqlalchemy import SQLAlchemy
 import pytz
 
@@ -99,6 +99,33 @@ def get_user_queue_position(conn, ticket_no):
 def fmt_time(dt):
     return dt.strftime("%H:%M")
 
+def save_user_to_json(name, ticket_no, order_time):
+    """Foydalanuvchi ma'lumotlarini users.json fayliga saqlash"""
+    users_file = 'users.json'
+    
+    # Yangi foydalanuvchi ma'lumotlari
+    user_data = {
+        'ism': name,
+        'buyurtma_raqami': ticket_no,
+        'buyurtma_vaqti': order_time.strftime("%Y-%m-%d %H:%M:%S")
+    }
+    
+    # Mavjud ma'lumotlarni o'qish
+    users_list = []
+    if os.path.exists(users_file):
+        try:
+            with open(users_file, 'r', encoding='utf-8') as f:
+                users_list = json.load(f)
+        except (json.JSONDecodeError, FileNotFoundError):
+            users_list = []
+    
+    # Yangi ma'lumotni qo'shish
+    users_list.append(user_data)
+    
+    # Faylga saqlash
+    with open(users_file, 'w', encoding='utf-8') as f:
+        json.dump(users_list, f, ensure_ascii=False, indent=2)
+
 # ---------- Routes ----------
 
 @app.route("/")
@@ -125,6 +152,10 @@ def user_page():
                 VALUES (?, ?, 'waiting', ?, ?);
             """, (name, tno, now.isoformat(), eta_time.isoformat()))
             conn.commit()
+            
+            # Foydalanuvchini JSON fayliga saqlash
+            save_user_to_json(name, tno, now)
+            
         finally:
             conn.close()
         return redirect(url_for("user_success", ticket_no=tno))
