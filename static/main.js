@@ -31,3 +31,18 @@ document.addEventListener('click', function(e) {
         setTimeout(updateCartCount, 100);
     }
 });
+
+// Miqdor o'zgartirish funksiyalari
+function decreaseQuantity(button) {
+    const input = button.nextElementSibling;
+    if (input.value > 1) {
+        input.value = parseInt(input.value) - 1;
+    }
+}
+
+function increaseQuantity(button) {
+    const input = button.previousElementSibling;
+    if (input.value < 10) {
+        input.value = parseInt(input.value) + 1;
+    }
+}

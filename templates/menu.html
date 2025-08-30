@@ -1,11 +1,10 @@
-
 {% extends "base.html" %}
 
 {% block content %}
 <div class="card">
   <h2>🍽️ Menyu</h2>
   <p>Taomlarni tanlang va savatchaga qo'shing</p>
-  
+
   <div style="text-align: right; margin-bottom: 20px;">
     <a href="{{ url_for('cart') }}" class="cart-btn">
       🛒 Savatcha
@@ -23,8 +22,11 @@
         <form method="post" action="{{ url_for('add_to_cart') }}" style="margin-top: 10px;">
           <input type="hidden" name="menu_item_id" value="{{ food.id }}">
           <div style="display: flex; align-items: center; gap: 10px;">
-            <input type="number" name="quantity" value="1" min="1" max="10" 
-                   style="width: 60px; padding: 5px; border: 1px solid #ddd; border-radius: 5px;">
+            <div class="quantity-selector">
+              <button type="button" class="quantity-btn minus" onclick="decreaseQuantity(this)">−</button>
+              <input type="number" name="quantity" value="1" min="1" max="10" readonly>
+              <button type="button" class="quantity-btn plus" onclick="increaseQuantity(this)">+</button>
+            </div>
             <button type="submit" class="btn small">Qo'shish</button>
           </div>
         </form>
@@ -43,8 +45,11 @@
         <form method="post" action="{{ url_for('add_to_cart') }}" style="margin-top: 10px;">
           <input type="hidden" name="menu_item_id" value="{{ drink.id }}">
           <div style="display: flex; align-items: center; gap: 10px;">
-            <input type="number" name="quantity" value="1" min="1" max="10" 
-                   style="width: 60px; padding: 5px; border: 1px solid #ddd; border-radius: 5px;">
+            <div class="quantity-selector">
+              <button type="button" class="quantity-btn minus" onclick="decreaseQuantity(this)">−</button>
+              <input type="number" name="quantity" value="1" min="1" max="10" readonly>
+              <button type="button" class="quantity-btn plus" onclick="increaseQuantity(this)">+</button>
+            </div>
             <button type="submit" class="btn small">Qo'shish</button>
           </div>
         </form>
@@ -89,5 +94,58 @@
 .menu-item form div:hover {
   background: #edf2f7;
 }
+
+.quantity-selector {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.quantity-btn {
+  background-color: #f8fafc;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #333;
+}
+
+.quantity-btn:hover {
+  background-color: #e2e8f0;
+}
+
+.quantity-selector input[type="number"] {
+  width: 50px;
+  text-align: center;
+  border: none;
+  padding: 5px;
+  font-size: 16px;
+  background-color: #fff;
+}
+
+.quantity-selector input[type="number"]:focus {
+  outline: none;
+}
 </style>
+
+<script>
+function increaseQuantity(button) {
+  const input = button.previousElementSibling;
+  let value = parseInt(input.value, 10);
+  if (value < 10) {
+    input.value = value + 1;
+  }
+}
+
+function decreaseQuantity(button) {
+  const input = button.nextElementSibling;
+  let value = parseInt(input.value, 10);
+  if (value > 1) {
+    input.value = value - 1;
+  }
+}
+</script>
+
 {% endblock %}

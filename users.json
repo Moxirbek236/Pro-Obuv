@@ -18,5 +18,44 @@
     "ism": "Moxirbek",
     "buyurtma_raqami": 7,
     "buyurtma_vaqti": "2025-08-30 22:37:47"
+  },
+  {
+    "ism": "Moxirbek",
+    "buyurtma_raqami": 8,
+    "buyurtma_vaqti": "2025-08-30 22:57:33",
+    "buyurtma_mahsulotlari": [
+      {
+        "nomi": "Osh",
+        "miqdori": 3,
+        "narxi": 25000.0,
+        "jami": 75000.0
+      }
+    ]
+  },
+  {
+    "ism": "Moxirbek",
+    "buyurtma_raqami": 9,
+    "buyurtma_vaqti": "2025-08-30 22:58:22",
+    "buyurtma_mahsulotlari": [
+      {
+        "nomi": "Patir Non",
+        "miqdori": 10,
+        "narxi": 10000.0,
+        "jami": 100000.0
+      }
+    ]
+  },
+  {
+    "ism": "Islombek",
+    "buyurtma_raqami": 10,
+    "buyurtma_vaqti": "2025-08-30 23:01:56",
+    "buyurtma_mahsulotlari": [
+      {
+        "nomi": "Lagmon",
+        "miqdori": 4,
+        "narxi": 22000.0,
+        "jami": 88000.0
+      }
+    ]
   }
 ]
