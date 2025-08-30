@@ -7,11 +7,9 @@
   <p>Taomlarni tanlang va savatchaga qo'shing</p>
   
   <div style="text-align: right; margin-bottom: 20px;">
-    <a href="{{ url_for('cart') }}" class="btn">
+    <a href="{{ url_for('cart') }}" class="cart-btn">
       🛒 Savatcha
-      <span style="background: #ff6b6b; color: white; padding: 2px 6px; border-radius: 50%; font-size: 12px; margin-left: 5px;">
-        <span id="cart-count">0</span>
-      </span>
+      <span class="cart-badge" id="cart-count">0</span>
     </a>
   </div>
 
@@ -59,32 +57,37 @@
 <style>
 .menu-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 20px;
-  margin-top: 15px;
-}
-
-.menu-item {
-  border: 1px solid #eee;
-  padding: 15px;
-  border-radius: 10px;
-  background: #f9f9f9;
-}
-
-.menu-item h4 {
-  margin: 0 0 10px 0;
-  color: #333;
-}
-
-.price {
-  font-size: 18px;
-  font-weight: bold;
-  color: #2196F3;
-  margin: 0;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 25px;
+  margin-top: 20px;
 }
 
 .menu-section {
-  margin-bottom: 30px;
+  margin-bottom: 40px;
+  padding: 20px;
+  background: linear-gradient(145deg, #f7fafc 0%, #edf2f7 100%);
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+}
+
+.menu-section h3 {
+  margin: 0 0 20px 0;
+  color: #2d3748;
+  font-size: 24px;
+  text-align: center;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #cbd5e0;
+}
+
+.menu-item form div {
+  background: #f7fafc;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.menu-item form div:hover {
+  background: #edf2f7;
 }
 </style>
 {% endblock %}
