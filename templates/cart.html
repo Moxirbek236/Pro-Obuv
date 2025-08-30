@@ -50,51 +50,104 @@
 .cart-item {
   display: flex;
   align-items: center;
-  padding: 15px;
-  border: 1px solid #eee;
-  border-radius: 10px;
-  margin-bottom: 10px;
-  background: #f9f9f9;
+  padding: 20px;
+  border: 1px solid #e2e8f0;
+  border-radius: 15px;
+  margin-bottom: 15px;
+  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+}
+
+.cart-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
 }
 
 .item-info h4 {
-  margin: 0 0 5px 0;
-  color: #333;
+  margin: 0 0 8px 0;
+  color: #2d3748;
+  font-size: 18px;
+  font-weight: 600;
 }
 
 .item-info p {
   margin: 0;
-  color: #666;
+  color: #4a5568;
+  font-weight: 500;
 }
 
 .cart-total {
   text-align: center;
-  margin: 20px 0;
-  padding: 15px;
-  background: #e3f2fd;
-  border-radius: 10px;
+  margin: 25px 0;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 15px;
+  color: white;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
 }
 
 .cart-total h3 {
   margin: 0;
-  color: #1976d2;
+  font-size: 24px;
+  font-weight: 700;
 }
 
 .cart-actions {
-  margin-top: 20px;
+  margin-top: 25px;
+}
+
+.cart-actions input[type="text"] {
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 15px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+.cart-actions input[type="text"]:focus {
+  border-color: #4299e1;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
 }
 
 .empty-cart {
   text-align: center;
-  padding: 40px;
+  padding: 60px;
+  color: #718096;
+}
+
+.empty-cart p {
+  font-size: 18px;
+  margin-bottom: 20px;
 }
 
 .btn.danger {
-  background: #f44336;
+  background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+  color: white;
+  border: none;
+  transition: all 0.3s ease;
 }
 
 .btn.danger:hover {
-  background: #d32f2f;
+  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+  transform: translateY(-1px);
+}
+
+.cart-actions div {
+  gap: 15px;
+}
+
+.cart-actions .btn.big {
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+  font-size: 18px;
+  padding: 15px 25px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.cart-actions .btn.big:hover {
+  background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+  transform: translateY(-2px);
 }
 </style>
 {% endblock %}

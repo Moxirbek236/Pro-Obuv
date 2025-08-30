@@ -290,6 +290,17 @@ def remove_from_cart(cart_item_id):
     flash("Mahsulot savatchadan olib tashlandi.", "success")
     return redirect(url_for("cart"))
 
+@app.route("/get_cart_count")
+def get_cart_count():
+    session_id = get_session_id()
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT SUM(quantity) FROM cart_items WHERE session_id = ?", (session_id,))
+    result = cur.fetchone()[0]
+    count = result if result else 0
+    conn.close()
+    return jsonify({"count": count})
+
 # ---- USER ----
 @app.route("/user", methods=["GET", "POST"])
 def user_page():
