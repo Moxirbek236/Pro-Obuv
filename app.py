@@ -9,6 +9,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///restaurant.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = os.environ.get("SECRET_KEY", "dev_secret_change_me")
 
+# Database fayl yo'lini to'g'rilash
 DB_PATH = os.path.join(os.path.dirname(__file__), "database.sqlite3")
 
 AVG_PREP_MINUTES = int(os.environ.get("AVG_PREP_MINUTES", "7"))
@@ -55,9 +56,8 @@ def init_db():
     conn.commit()
     conn.close()
 
-# @app.before_first_request
-# def setup():
-#     init_db()
+# Flask 2.2+ da before_first_request deprecated
+# O'rniga buni app context ichida chaqiramiz
 
 # ---------- Helpers ----------
 
