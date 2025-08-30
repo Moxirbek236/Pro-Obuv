@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
-from keep_alive import keep_alive
 import sqlite3, os, datetime
 from flask_sqlalchemy import SQLAlchemy
 
@@ -245,6 +244,4 @@ with app.app_context():
 if __name__ == "__main__":
     with app.app_context():
         init_db()
-    keep_alive()
-    # app.run(host="0.0.0.0", port=5000)
     app.run(host="0.0.0.0", port=5000, debug=True)
