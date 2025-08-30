@@ -1,11 +1,23 @@
+
 {% extends "base.html" %}
+
 {% block content %}
-  <div class="card center">
-    <h1>Restoran tizimi</h1>
-    <p>Davom etish uchun bo'limni tanlang:</p>
-    <div class="actions">
-      <a class="btn big" href="{{ url_for('user_page') }}">👤 Foydalanuvchi</a>
-      <a class="btn big" href="{{ url_for('staff_login') }}">👨‍🍳 Xodim</a>
+<div class="card center">
+  <h1>🍽️ Restoran Tizimi</h1>
+  <p>Buyurtma berish va boshqarish tizimi</p>
+  
+  <div class="grid-2" style="margin-top: 30px;">
+    <div class="card">
+      <h3>👤 Foydalanuvchi</h3>
+      <p>Buyurtma bering va raqamingizni oling</p>
+      <a href="{{ url_for('user_page') }}" class="btn big">Buyurtma berish</a>
+    </div>
+    
+    <div class="card">
+      <h3>👨‍💼 Xodim</h3>
+      <p>Buyurtmalarni boshqaring</p>
+      <a href="{{ url_for('staff_login') }}" class="btn big">Xodim kirish</a>
     </div>
   </div>
+</div>
 {% endblock %}
