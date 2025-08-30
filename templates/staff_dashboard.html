@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="card">
+    <h2>Xodim paneli</h2>
+    <p class="muted">Bu sahifa avtomatik yangilanadi (10s).</p>
+    <div class="orders">
+      <h3>Kutilayotgan buyurtmalar</h3>
+      <table>
+        <thead><tr><th>ID</th><th>Ticket</th><th>Mijoz</th><th>Yaratilgan</th><th>ETA</th><th>Holat</th><th></th></tr></thead>
+        <tbody id="waiting-body">
+          {% for o in orders if o['status']=='waiting' %}
+          <tr>
+            <td>{{ o['id'] }}</td>
+            <td>#{{ o['ticket_no'] }}</td>
+            <td>{{ o['customer_name'] }}</td>
+            <td>{{ o['created_at'][:16].replace('T',' ') }}</td>
+            <td>{{ o['eta_time'][:16].replace('T',' ') }}</td>
+            <td>Foydalanuvchi kutmoqda</td>
+            <td>
+              <form method="post" action="{{ url_for('staff_mark_given', order_id=o['id']) }}">
+                <button class="btn small" type="submit">Foydalanuvchiga berildi</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <h3>Berilgan buyurtmalar</h3>
+      <table>
+        <thead><tr><th>ID</th><th>Ticket</th><th>Mijoz</th><th>Yaratilgan</th><th>ETA</th><th>Holat</th></tr></thead>
+        <tbody id="given-body">
+          {% for o in orders if o['status']=='given' %}
+          <tr class="given">
+            <td>{{ o['id'] }}</td>
+            <td>#{{ o['ticket_no'] }}</td>
+            <td>{{ o['customer_name'] }}</td>
+            <td>{{ o['created_at'][:16].replace('T',' ') }}</td>
+            <td>{{ o['eta_time'][:16].replace('T',' ') }}</td>
+            <td>Foydalanuvchiga berildi</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
+{% block scripts %}
+<script>
+// 10 sekundda bir marta jadvalni yangilash
+async function refreshOrders(){
+  try {
+    const res = await fetch("{{ url_for('staff_orders_json') }}");
+    const rows = await res.json();
+    const waitingTbody = document.getElementById('waiting-body');
+    const givenTbody = document.getElementById('given-body');
+    waitingTbody.innerHTML = "";
+    givenTbody.innerHTML = "";
+    rows.forEach(o => {
+      const tr = document.createElement('tr');
+      if (o.status === 'given') tr.classList.add('given');
+      tr.innerHTML = `
+        <td>${o.id}</td>
+        <td>#${o.ticket_no}</td>
+        <td>${o.customer_name}</td>
+        <td>${o.created_at.slice(0,16).replace('T',' ')}</td>
+        <td>${o.eta_time.slice(0,16).replace('T',' ')}</td>
+        <td>${o.status === 'given' ? 'Foydalanuvchiga berildi' : 'Foydalanuvchi kutmoqda'}</td>
+        ${o.status === 'waiting' ?
+          `<td>
+            <form method="post" action="/staff/order/${o.id}/given">
+              <button class="btn small" type="submit">Foydalanuvchiga berildi</button>
+            </form>
+          </td>` : `<td></td>`
+        }
+      `;
+      if (o.status === 'given') {
+        givenTbody.appendChild(tr);
+      } else {
+        waitingTbody.appendChild(tr);
+      }
+    });
+  } catch(e){ /* ignore */ }
+}
+setInterval(refreshOrders, 10000);
+</script>
+{% endblock %}

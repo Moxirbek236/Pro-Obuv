@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Restoran tizimi</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="header">
+    <a href="{{ url_for('index') }}" class="brand">🍽️ Restoran</a>
+    <nav>
+      <a href="{{ url_for('user_page') }}">Foydalanuvchi</a>
+      <a href="{{ url_for('staff_login') }}">Xodim</a>
+      {% if session.get('staff_id') %}
+        <span class="welcome">Salom, {{ session.get('staff_name') }}!</span>
+        <a class="btn" href="{{ url_for('staff_logout') }}">Chiqish</a>
+      {% endif %}
+    </nav>
+  </header>
+  <main class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash">
+          {% for category, message in messages %}
+            <div class="flash-item {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="footer">© {{ 2025 }} Restoran tizimi</footer>
+  <script src="{{ url_for('static', filename='main.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

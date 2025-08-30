@@ -1,13 +1,19 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
+from keep_alive import keep_alive
 import sqlite3, os, datetime
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///restaurant.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = os.environ.get("SECRET_KEY", "dev_secret_change_me")
 
 DB_PATH = os.path.join(os.path.dirname(__file__), "database.sqlite3")
 
-AVG_PREP_MINUTES = int(os.environ.get("AVG_PREP_MINUTES", "7"))  # o'rtacha tayyorlanish vaqti (daqiqalarda)
+AVG_PREP_MINUTES = int(os.environ.get("AVG_PREP_MINUTES", "7"))
+db = SQLAlchemy(app)
+# o'rtacha tayyorlanish vaqti (daqiqalarda)
 
 def get_db():
     conn = sqlite3.connect(DB_PATH)
@@ -49,9 +55,9 @@ def init_db():
     conn.commit()
     conn.close()
 
-@app.before_first_request
-def setup():
-    init_db()
+# @app.before_first_request
+# def setup():
+#     init_db()
 
 # ---------- Helpers ----------
 
@@ -233,6 +239,12 @@ def staff_orders_json():
     data = [dict(row) for row in rows]
     return jsonify(data)
 
+with app.app_context():
+    db.create_all()
+
 if __name__ == "__main__":
-    init_db()
+    with app.app_context():
+        init_db()
+    keep_alive()
+    # app.run(host="0.0.0.0", port=5000)
     app.run(host="0.0.0.0", port=5000, debug=True)

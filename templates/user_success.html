@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="card center">
+    <h2>Rahmat, {{ order['customer_name'] }}!</h2>
+    <p>Sizning tartib raqamingiz:</p>
+    <div class="ticket-no">#{{ order['ticket_no'] }}</div>
+    <p>Buyurtmangiz taxminan <strong>{{ eta_hhmm }}</strong> da tayyor bo'ladi.</p>
+    <p>Holat: <span id="order-status">{{ 'Foydalanuvchiga berildi' if order['status']=='given' else 'Foydalanuvchi kutmoqda' }}</span></p>
+    <a class="btn" href="{{ url_for('index') }}">Bosh sahifa</a>
+  </div>
+{% endblock %}
+{% block scripts %}
+<script>
+  // har 10 sekundda holatni tekshirish
+  setInterval(async () => {
+    try {
+      const res = await fetch("{{ url_for('user_status', ticket_no=order['ticket_no']) }}");
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data.ok) {
+        const s = document.getElementById('order-status');
+        s.textContent = data.status === 'given' ? 'Foydalanuvchiga berildi' : 'Foydalanuvchi kutmoqda';
+      }
+    } catch(e){}
+  }, 10000);
+</script>
+{% endblock %}

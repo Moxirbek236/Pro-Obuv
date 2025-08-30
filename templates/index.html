@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="card center">
+    <h1>Restoran tizimi</h1>
+    <p>Davom etish uchun bo'limni tanlang:</p>
+    <div class="actions">
+      <a class="btn big" href="{{ url_for('user_page') }}">👤 Foydalanuvchi</a>
+      <a class="btn big" href="{{ url_for('staff_login') }}">👨‍🍳 Xodim</a>
+    </div>
+  </div>
+{% endblock %}

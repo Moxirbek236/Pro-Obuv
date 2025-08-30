@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="card">
+    <h2>Xodim registratsiyasi</h2>
+    <form method="post">
+      <label>Ism</label>
+      <input type="text" name="first_name" required>
+      <label>Familiya</label>
+      <input type="text" name="last_name" required>
+      <label>Tug'ilgan sana</label>
+      <input type="date" name="birth_date" required>
+      <label>Telefon raqami</label>
+      <input type="tel" name="phone" required placeholder="+998901234567">
+      <label>Parol</label>
+      <input type="password" name="password" required>
+      <button class="btn" type="submit">Saqlash</button>
+    </form>
+  </div>
+{% endblock %}
