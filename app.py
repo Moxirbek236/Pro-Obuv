@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
-import sqlite3, os, datetime
+import sqlite3, os, datetime, json
 from flask_sqlalchemy import SQLAlchemy
+import pytz
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///restaurant.db'
@@ -14,6 +15,12 @@ DB_PATH = os.path.join(os.path.dirname(__file__), "database.sqlite3")
 AVG_PREP_MINUTES = int(os.environ.get("AVG_PREP_MINUTES", "7"))
 db = SQLAlchemy(app)
 # o'rtacha tayyorlanish vaqti (daqiqalarda)
+
+# O'zbekiston vaqt zonasi
+TASHKENT_TZ = pytz.timezone('Asia/Tashkent')
+
+def get_current_time():
+    return datetime.datetime.now(TASHKENT_TZ)
 
 def get_db():
     conn = sqlite3.connect(DB_PATH)
@@ -77,8 +84,47 @@ def calc_eta_minutes(conn):
     eta_minutes = (position + 1) * AVG_PREP_MINUTES
     return eta_minutes
 
+def get_user_queue_position(conn, ticket_no):
+    # Foydalanuvchining navbatdagi o'rni
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT COUNT(*) FROM orders 
+        WHERE status='waiting' AND created_at < (
+            SELECT created_at FROM orders WHERE ticket_no=? AND status='waiting'
+        )
+    """, (ticket_no,))
+    result = cur.fetchone()
+    return result[0] + 1 if result else 0
+
 def fmt_time(dt):
     return dt.strftime("%H:%M")
+
+def save_user_to_json(name, ticket_no, order_time):
+    """Foydalanuvchi ma'lumotlarini users.json fayliga saqlash"""
+    users_file = 'users.json'
+    
+    # Yangi foydalanuvchi ma'lumotlari
+    user_data = {
+        'ism': name,
+        'buyurtma_raqami': ticket_no,
+        'buyurtma_vaqti': order_time.strftime("%Y-%m-%d %H:%M:%S")
+    }
+    
+    # Mavjud ma'lumotlarni o'qish
+    users_list = []
+    if os.path.exists(users_file):
+        try:
+            with open(users_file, 'r', encoding='utf-8') as f:
+                users_list = json.load(f)
+        except (json.JSONDecodeError, FileNotFoundError):
+            users_list = []
+    
+    # Yangi ma'lumotni qo'shish
+    users_list.append(user_data)
+    
+    # Faylga saqlash
+    with open(users_file, 'w', encoding='utf-8') as f:
+        json.dump(users_list, f, ensure_ascii=False, indent=2)
 
 # ---------- Routes ----------
 
@@ -98,7 +144,7 @@ def user_page():
         try:
             tno = next_ticket_no(conn)
             eta_minutes = calc_eta_minutes(conn)
-            now = datetime.datetime.now()
+            now = get_current_time()
             eta_time = now + datetime.timedelta(minutes=eta_minutes)
             cur = conn.cursor()
             cur.execute("""
@@ -106,6 +152,10 @@ def user_page():
                 VALUES (?, ?, 'waiting', ?, ?);
             """, (name, tno, now.isoformat(), eta_time.isoformat()))
             conn.commit()
+            
+            # Foydalanuvchini JSON fayliga saqlash
+            save_user_to_json(name, tno, now)
+            
         finally:
             conn.close()
         return redirect(url_for("user_success", ticket_no=tno))
@@ -131,13 +181,20 @@ def user_status(ticket_no):
     cur = conn.cursor()
     cur.execute("SELECT * FROM orders WHERE ticket_no=? ORDER BY id DESC LIMIT 1;", (ticket_no,))
     order = cur.fetchone()
-    conn.close()
     if not order:
+        conn.close()
         return jsonify({"ok": False, "error": "not_found"}), 404
+    
+    queue_position = 0
+    if order["status"] == "waiting":
+        queue_position = get_user_queue_position(conn, ticket_no)
+    
+    conn.close()
     return jsonify({
         "ok": True,
         "status": order["status"],
-        "ticket_no": order["ticket_no"]
+        "ticket_no": order["ticket_no"],
+        "queue_position": queue_position
     })
 
 # ---- STAFF AUTH ----
@@ -183,7 +240,7 @@ def staff_register():
         conn = get_db()
         cur = conn.cursor()
         password_hash = generate_password_hash(password)
-        now = datetime.datetime.now().isoformat()
+        now = get_current_time().isoformat()
         cur.execute("""
             INSERT INTO staff (first_name, last_name, birth_date, phone, password_hash, created_at)
             VALUES (?, ?, ?, ?, ?, ?);

@@ -20,6 +20,7 @@
   </div>
 
   <div id="status-info" style="margin-top: 20px;"></div>
+  <div id="queue-info" style="margin-top: 10px; font-size: 18px; color: #333;"></div>
 </div>
 
 <script>
@@ -28,17 +29,34 @@ function checkStatus() {
     .then(response => response.json())
     .then(data => {
       const statusDiv = document.getElementById('status-info');
+      const queueDiv = document.getElementById('queue-info');
+      
       if (data.ok) {
-        const statusText = data.status === 'waiting' ? 'Kutilmoqda...' : 'Tayyor! Olib keting.';
-        const statusColor = data.status === 'waiting' ? '#ff9800' : '#4caf50';
-        statusDiv.innerHTML = `<div style="padding: 10px; background: ${statusColor}; color: white; border-radius: 5px;">${statusText}</div>`;
+        if (data.status === 'waiting') {
+          const statusText = 'Kutilmoqda...';
+          const statusColor = '#ff9800';
+          statusDiv.innerHTML = `<div style="padding: 10px; background: ${statusColor}; color: white; border-radius: 5px;">${statusText}</div>`;
+          queueDiv.innerHTML = `<strong>Navbatdagi o'rningiz: ${data.queue_position}</strong>`;
+        } else {
+          const statusText = 'Tayyor! Olib keting.';
+          const statusColor = '#4caf50';
+          statusDiv.innerHTML = `<div style="padding: 10px; background: ${statusColor}; color: white; border-radius: 5px;">${statusText}</div>`;
+          queueDiv.innerHTML = '<strong>Buyurtmangiz tayyor!</strong>';
+        }
       } else {
         statusDiv.innerHTML = '<div style="padding: 10px; background: #f44336; color: white; border-radius: 5px;">Xatolik yuz berdi</div>';
+        queueDiv.innerHTML = '';
       }
+    })
+    .catch(error => {
+      console.error('Error:', error);
     });
 }
 
-// Har 10 soniyada avtomatik tekshirish
-setInterval(checkStatus, 10000);
+// Har 5 sekundda avtomatik yangilash
+setInterval(checkStatus, 5000);
+
+// Sahifa yuklanganda darhol tekshirish
+checkStatus();
 </script>
 {% endblock %}
