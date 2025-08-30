@@ -59,6 +59,60 @@ def init_db():
         );
     """)
     cur.execute("INSERT OR IGNORE INTO counters (name, value) VALUES ('ticket', 0);")
+    
+    # Menyu jadval
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS menu_items (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            price REAL NOT NULL,
+            category TEXT NOT NULL, -- 'food' yoki 'drink'
+            available BOOLEAN DEFAULT 1,
+            created_at TEXT NOT NULL
+        );
+    """)
+    
+    # Savatcha jadval
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS cart_items (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            session_id TEXT NOT NULL,
+            menu_item_id INTEGER NOT NULL,
+            quantity INTEGER NOT NULL DEFAULT 1,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY (menu_item_id) REFERENCES menu_items (id)
+        );
+    """)
+    
+    # Buyurtma tafsilotlari jadval
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS order_details (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            order_id INTEGER NOT NULL,
+            menu_item_id INTEGER NOT NULL,
+            quantity INTEGER NOT NULL,
+            price REAL NOT NULL,
+            FOREIGN KEY (order_id) REFERENCES orders (id),
+            FOREIGN KEY (menu_item_id) REFERENCES menu_items (id)
+        );
+    """)
+    
+    # Boshlang'ich taomlar qo'shish
+    cur.execute("SELECT COUNT(*) FROM menu_items")
+    if cur.fetchone()[0] == 0:
+        now = get_current_time().isoformat()
+        sample_items = [
+            ('Osh', 25000, 'food', now),
+            ('Manti', 20000, 'food', now),
+            ('Shashlik', 30000, 'food', now),
+            ('Lagmon', 22000, 'food', now),
+            ('Choy', 5000, 'drink', now),
+            ('Qora choy', 6000, 'drink', now),
+            ('Kompot', 8000, 'drink', now),
+            ('Coca Cola', 10000, 'drink', now),
+        ]
+        cur.executemany("INSERT INTO menu_items (name, price, category, created_at) VALUES (?, ?, ?, ?)", sample_items)
+    
     conn.commit()
     conn.close()
 
@@ -99,6 +153,43 @@ def get_user_queue_position(conn, ticket_no):
 def fmt_time(dt):
     return dt.strftime("%H:%M")
 
+def get_session_id():
+    """Session ID yaratish yoki olish"""
+    if 'session_id' not in session:
+        import uuid
+        session['session_id'] = str(uuid.uuid4())
+    return session['session_id']
+
+def get_cart_items(conn, session_id):
+    """Savatchadagi mahsulotlarni olish"""
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT ci.id, mi.name, mi.price, ci.quantity, (mi.price * ci.quantity) as total
+        FROM cart_items ci
+        JOIN menu_items mi ON ci.menu_item_id = mi.id
+        WHERE ci.session_id = ?
+        ORDER BY ci.created_at DESC
+    """, (session_id,))
+    return cur.fetchall()
+
+def get_cart_total(conn, session_id):
+    """Savatchaning umumiy summasini hisoblash"""
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT SUM(mi.price * ci.quantity)
+        FROM cart_items ci
+        JOIN menu_items mi ON ci.menu_item_id = mi.id
+        WHERE ci.session_id = ?
+    """, (session_id,))
+    result = cur.fetchone()[0]
+    return result if result else 0
+
+def clear_cart(conn, session_id):
+    """Savatchani tozalash"""
+    cur = conn.cursor()
+    cur.execute("DELETE FROM cart_items WHERE session_id = ?", (session_id,))
+    conn.commit()
+
 def save_user_to_json(name, ticket_no, order_time):
     """Foydalanuvchi ma'lumotlarini users.json fayliga saqlash"""
     users_file = 'users.json'
@@ -132,6 +223,72 @@ def save_user_to_json(name, ticket_no, order_time):
 def index():
     return render_template("index.html")
 
+# ---- MENU ----
+@app.route("/menu")
+def menu():
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM menu_items WHERE available = 1 ORDER BY category, name")
+    menu_items = cur.fetchall()
+    conn.close()
+    
+    foods = [item for item in menu_items if item['category'] == 'food']
+    drinks = [item for item in menu_items if item['category'] == 'drink']
+    
+    return render_template("menu.html", foods=foods, drinks=drinks)
+
+@app.route("/add_to_cart", methods=["POST"])
+def add_to_cart():
+    menu_item_id = request.form.get("menu_item_id")
+    quantity = int(request.form.get("quantity", 1))
+    
+    if not menu_item_id:
+        flash("Mahsulot tanlanmadi.", "error")
+        return redirect(url_for("menu"))
+    
+    session_id = get_session_id()
+    conn = get_db()
+    cur = conn.cursor()
+    
+    # Mavjudligini tekshirish
+    cur.execute("SELECT * FROM cart_items WHERE session_id = ? AND menu_item_id = ?", (session_id, menu_item_id))
+    existing = cur.fetchone()
+    
+    now = get_current_time().isoformat()
+    
+    if existing:
+        # Mavjud bo'lsa miqdorni oshirish
+        cur.execute("UPDATE cart_items SET quantity = quantity + ? WHERE id = ?", (quantity, existing['id']))
+    else:
+        # Yangi qo'shish
+        cur.execute("INSERT INTO cart_items (session_id, menu_item_id, quantity, created_at) VALUES (?, ?, ?, ?)", 
+                   (session_id, menu_item_id, quantity, now))
+    
+    conn.commit()
+    conn.close()
+    flash("Mahsulot savatchaga qo'shildi!", "success")
+    return redirect(url_for("menu"))
+
+@app.route("/cart")
+def cart():
+    session_id = get_session_id()
+    conn = get_db()
+    cart_items = get_cart_items(conn, session_id)
+    total = get_cart_total(conn, session_id)
+    conn.close()
+    return render_template("cart.html", cart_items=cart_items, total=total)
+
+@app.route("/remove_from_cart/<int:cart_item_id>", methods=["POST"])
+def remove_from_cart(cart_item_id):
+    session_id = get_session_id()
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("DELETE FROM cart_items WHERE id = ? AND session_id = ?", (cart_item_id, session_id))
+    conn.commit()
+    conn.close()
+    flash("Mahsulot savatchadan olib tashlandi.", "success")
+    return redirect(url_for("cart"))
+
 # ---- USER ----
 @app.route("/user", methods=["GET", "POST"])
 def user_page():
@@ -139,18 +296,47 @@ def user_page():
         name = request.form.get("name", "").strip()
         if not name:
             flash("Ismni kiriting.", "error")
-            return redirect(url_for("user_page"))
+            return redirect(url_for("cart"))
+            
+        session_id = get_session_id()
         conn = get_db()
+        
+        # Savatchani tekshirish
+        cart_items = get_cart_items(conn, session_id)
+        if not cart_items:
+            flash("Savatchangiz bo'sh. Avval taom tanlang.", "error")
+            conn.close()
+            return redirect(url_for("menu"))
+            
         try:
             tno = next_ticket_no(conn)
             eta_minutes = calc_eta_minutes(conn)
             now = get_current_time()
             eta_time = now + datetime.timedelta(minutes=eta_minutes)
+            total = get_cart_total(conn, session_id)
+            
             cur = conn.cursor()
+            # Buyurtma yaratish
             cur.execute("""
                 INSERT INTO orders (customer_name, ticket_no, status, created_at, eta_time)
                 VALUES (?, ?, 'waiting', ?, ?);
             """, (name, tno, now.isoformat(), eta_time.isoformat()))
+            
+            order_id = cur.lastrowid
+            
+            # Savatchadagi mahsulotlarni order_details ga ko'chirish
+            for item in cart_items:
+                cur.execute("""
+                    INSERT INTO order_details (order_id, menu_item_id, quantity, price)
+                    SELECT ?, ci.menu_item_id, ci.quantity, mi.price
+                    FROM cart_items ci
+                    JOIN menu_items mi ON ci.menu_item_id = mi.id
+                    WHERE ci.id = ?
+                """, (order_id, item['id']))
+            
+            # Savatchani tozalash
+            clear_cart(conn, session_id)
+            
             conn.commit()
             
             # Foydalanuvchini JSON fayliga saqlash
@@ -159,7 +345,7 @@ def user_page():
         finally:
             conn.close()
         return redirect(url_for("user_success", ticket_no=tno))
-    return render_template("user.html")
+    return redirect(url_for("menu"))
 
 @app.route("/user/success/<int:ticket_no>")
 def user_success(ticket_no):
@@ -268,10 +454,66 @@ def login_required(f):
 def staff_dashboard():
     conn = get_db()
     cur = conn.cursor()
-    cur.execute("SELECT * FROM orders ORDER BY created_at ASC;")
+    cur.execute("""
+        SELECT o.*, 
+               GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
+        FROM orders o
+        LEFT JOIN order_details od ON o.id = od.order_id
+        LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
+        GROUP BY o.id
+        ORDER BY o.created_at ASC
+    """)
     orders = cur.fetchall()
     conn.close()
     return render_template("staff_dashboard.html", orders=orders, staff_name=session.get("staff_name"))
+
+@app.route("/staff/menu")
+@login_required
+def staff_menu():
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM menu_items ORDER BY category, name")
+    menu_items = cur.fetchall()
+    conn.close()
+    return render_template("staff_menu.html", menu_items=menu_items, staff_name=session.get("staff_name"))
+
+@app.route("/staff/add_menu_item", methods=["POST"])
+@login_required
+def add_menu_item():
+    name = request.form.get("name", "").strip()
+    price = request.form.get("price", "")
+    category = request.form.get("category", "")
+    
+    if not all([name, price, category]):
+        flash("Barcha maydonlarni to'ldiring.", "error")
+        return redirect(url_for("staff_menu"))
+    
+    try:
+        price = float(price)
+    except ValueError:
+        flash("Narx raqam bo'lishi kerak.", "error")
+        return redirect(url_for("staff_menu"))
+    
+    conn = get_db()
+    cur = conn.cursor()
+    now = get_current_time().isoformat()
+    cur.execute("INSERT INTO menu_items (name, price, category, created_at) VALUES (?, ?, ?, ?)",
+               (name, price, category, now))
+    conn.commit()
+    conn.close()
+    flash("Yangi mahsulot qo'shildi!", "success")
+    return redirect(url_for("staff_menu"))
+
+@app.route("/staff/toggle_menu_item/<int:item_id>", methods=["POST"])
+@login_required
+def toggle_menu_item(item_id):
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("UPDATE menu_items SET available = NOT available WHERE id = ?", (item_id,))
+    conn.commit()
+    conn.close()
+    flash("Mahsulot holati o'zgartirildi.", "success")
+    return redirect(url_for("staff_menu"))
 
 @app.route("/staff/order/<int:order_id>/given", methods=["POST"])
 @login_required

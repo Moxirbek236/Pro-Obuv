@@ -10,7 +10,7 @@
   <header class="header">
     <a href="{{ url_for('index') }}" class="brand">🍽️ Restoran</a>
     <nav>
-      <a href="{{ url_for('user_page') }}">Foydalanuvchi</a>
+      <a href="{{ url_for('menu') }}">Menyu</a>
       <a href="{{ url_for('staff_login') }}">Xodim</a>
       {% if session.get('staff_id') %}
         <span class="welcome">Salom, {{ session.get('staff_name') }}!</span>
