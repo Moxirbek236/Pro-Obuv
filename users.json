@@ -57,5 +57,37 @@
         "jami": 88000.0
       }
     ]
+  },
+  {
+    "ism": "Moxirbek Solijonov",
+    "buyurtma_raqami": 11,
+    "buyurtma_vaqti": "2025-08-30 23:16:45",
+    "buyurtma_mahsulotlari": [
+      {
+        "nomi": "Manti",
+        "miqdori": 10,
+        "narxi": 20000.0,
+        "jami": 200000.0
+      }
+    ]
+  },
+  {
+    "ism": "Moxirbek",
+    "buyurtma_raqami": 12,
+    "buyurtma_vaqti": "2025-08-30 23:20:39",
+    "buyurtma_mahsulotlari": [
+      {
+        "nomi": "Kompot",
+        "miqdori": 2,
+        "narxi": 8000.0,
+        "jami": 16000.0
+      },
+      {
+        "nomi": "Coca Cola",
+        "miqdori": 3,
+        "narxi": 10000.0,
+        "jami": 30000.0
+      }
+    ]
   }
 ]
