@@ -18,9 +18,7 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('menu') }}">Menyu</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('monitor') }}">Monitor</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('staff_login') }}">Xodim</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('menu') }}">Taomlar</a></li>
       </ul>
       {% if session.get('staff_id') %}
         <span class="navbar-text text-white me-3">Salom, {{ session.get('staff_name') }}!</span>
