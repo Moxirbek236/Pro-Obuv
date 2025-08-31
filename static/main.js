@@ -106,37 +106,59 @@ function checkOrderStatus(ticketNo) {
 function updateOrderStatus(data) {
     const statusElement = document.querySelector('.order-status');
     const queueElement = document.querySelector('.queue-position');
+    const statusCard = document.querySelector('.order-status-card');
 
     if (statusElement) {
         let statusText = '';
         let statusClass = '';
+        let cardColor = '';
 
         switch(data.status) {
             case 'waiting':
                 statusText = '⏳ Buyurtmangiz tayyorlanmoqda...';
                 statusClass = 'status-waiting';
+                cardColor = 'linear-gradient(135deg, #ff9500 0%, #ff7b00 100%)';
                 break;
             case 'ready':
                 statusText = '✅ Buyurtmangiz tayyor! Olib ketishingiz mumkin.';
                 statusClass = 'status-ready';
+                cardColor = 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)';
+                // Notification ko'rsatish
+                if (Notification.permission === 'granted') {
+                    new Notification('Buyurtmangiz tayyor!', {
+                        body: 'Olib ketishingiz mumkin!',
+                        icon: '/static/icon.png'
+                    });
+                }
                 break;
             case 'served':
-                statusText = '🎉 Buyurtmangiz berildi!';
+                statusText = '🎉 Buyurtmangiz berildi! Yoqimli ishtaha!';
                 statusClass = 'status-served';
+                cardColor = 'linear-gradient(135deg, #4299e1 0%, #3182ce 100%)';
                 break;
             case 'cancelled':
                 statusText = '❌ Buyurtmangiz bekor qilindi.';
                 statusClass = 'status-cancelled';
+                cardColor = 'linear-gradient(135deg, #e53e3e 0%, #c53030 100%)';
                 break;
             default:
                 statusText = '❓ Noma\'lum holat';
+                statusClass = 'status-waiting';
+                cardColor = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
         }
 
         statusElement.innerHTML = `<span class="${statusClass}">${statusText}</span>`;
+        
+        // Status card rangini o'zgartirish
+        if (statusCard) {
+            statusCard.parentElement.style.background = cardColor;
+        }
     }
 
-    if (queueElement && data.queue_position) {
-        queueElement.textContent = `Navbatdagi o'rningiz: ${data.queue_position}`;
+    if (queueElement && data.queue_position && data.status === 'waiting') {
+        queueElement.innerHTML = `<span style="color: rgba(255,255,255,0.8);">Sizdan oldin: ${data.queue_position - 1} ta buyurtma</span>`;
+    } else if (queueElement && data.status !== 'waiting') {
+        queueElement.innerHTML = '';
     }
 }
 

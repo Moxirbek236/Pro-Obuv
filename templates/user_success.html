@@ -2,26 +2,33 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="card center">
-  <div class="order-info">
-    <h2>🎉 Buyurtma muvaffaqiyatli qabul qilindi!</h2>
-    
-    <div class="ticket-no">{{ order.ticket_no }}</div>
-    <p class="muted">Sizning buyurtma raqamingiz</p>
-    
-    <div class="mt-4 mb-4">
-      <h4>📋 Buyurtma ma'lumotlari:</h4>
-      <p><strong>👤 Mijoz:</strong> {{ order.customer_name }}</p>
-      <p><strong>⏰ Buyurtma vaqti:</strong> {{ order.created_at[:19].replace('T', ' ') }}</p>
-      <p><strong>🕐 Taxminiy tayyor bo'lish vaqti:</strong> {{ eta_hhmm }}</p>
-    </div>
+<!-- Buyurtma holati card -->
+<div class="card center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; margin-bottom: 30px;">
+  <div class="order-status-card">
+    <h3 style="margin-bottom: 20px;">📊 Buyurtma holati</h3>
     
     <div class="order-status mb-4">
       <span class="status-waiting">⏳ Buyurtmangiz tayyorlanmoqda...</span>
     </div>
     
     <div class="queue-position mb-4">
-      <span class="muted">Navbat holati yuklanmoqda...</span>
+      <span class="muted" style="color: rgba(255,255,255,0.8);">Navbat holati yuklanmoqda...</span>
+    </div>
+    
+    <div class="ticket-no" style="color: #ffd700; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">{{ order.ticket_no }}</div>
+    <p style="color: rgba(255,255,255,0.9); margin-top: 10px;">Sizning buyurtma raqamingiz</p>
+  </div>
+</div>
+
+<div class="card center">
+  <div class="order-info">
+    <h2>🎉 Buyurtma muvaffaqiyatli qabul qilindi!</h2>
+    
+    <div class="mt-4 mb-4">
+      <h4>📋 Buyurtma ma'lumotlari:</h4>
+      <p><strong>👤 Mijoz:</strong> {{ order.customer_name }}</p>
+      <p><strong>⏰ Buyurtma vaqti:</strong> {{ order.created_at[:19].replace('T', ' ') }}</p>
+      <p><strong>🕐 Taxminiy tayyor bo'lish vaqti:</strong> {{ eta_hhmm }}</p>
     </div>
     
     <div class="mt-4">
