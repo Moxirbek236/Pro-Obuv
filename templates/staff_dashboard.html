@@ -1,10 +1,11 @@
+
 {% extends "base.html" %}
 {% block content %}
 <div class="container py-4">
   <div class="card shadow-sm">
     <div class="card-body">
-      <h2 class="card-title">Xodim paneli</h2>
-      <p class="text-muted">Bu sahifa avtomatik yangilanadi (10s).</p>
+      <h2 class="card-title">🔧 Xodim paneli</h2>
+      <p class="text-muted">Bu sahifa avtomatik yangilanadi (10 soniya).</p>
       <div class="mb-3">
         <a href="{{ url_for('staff_menu') }}" class="btn btn-primary">📋 Menyu boshqaruvi</a>
         <a href="{{ url_for('staff_employees') }}" class="btn btn-secondary">👥 Xodimlar ro'yxati</a>
@@ -42,8 +43,8 @@
                 <td>{{ o['created_at'][:16].replace('T',' ') }}</td>
                 <td><strong>{{ o['eta_time'][:16].replace('T',' ') }}</strong></td>
                 <td>
-                  <span class="badge {% if o['status']=='ready' %}bg-success{% else %}bg-warning{% endif %}">
-                    {{ o['status'] }}
+                  <span class="badge {% if o['status']=='ready' %}bg-success{% elif o['status']=='waiting' %}bg-warning{% endif %}">
+                    {% if o['status'] == 'ready' %}Tayyor{% elif o['status'] == 'waiting' %}Kutish{% else %}{{ o['status'] }}{% endif %}
                   </span>
                 </td>
                 <td>
@@ -98,7 +99,7 @@
                 <td>{{ o['created_at'][:16].replace('T',' ') }}</td>
                 <td>
                   <span class="badge {% if o['status']=='served' %}bg-success{% else %}bg-secondary{% endif %}">
-                    {{ o['status'] }}
+                    {% if o['status'] == 'served' %}Berildi{% elif o['status'] == 'cancelled' %}Bekor qilindi{% else %}{{ o['status'] }}{% endif %}
                   </span>
                 </td>
               </tr>
@@ -108,37 +109,13 @@
           </table>
         </div>
       </div>
-              <td>
-                <div class="btn-group" role="group">
-                  {% if o['status'] != 'ready' and o['status'] != 'served' and o['status'] != 'cancelled' %}
-                  <form method="post" action="{{ url_for('staff_mark_ready', order_id=o['id']) }}" style="display:inline">
-                    <button class="btn btn-sm btn-success" type="submit">Ready</button>
-                  </form>
-                  {% endif %}
-                  {% if o['status'] != 'served' and o['status'] != 'cancelled' %}
-                  <form method="post" action="{{ url_for('staff_mark_served', order_id=o['id']) }}" style="display:inline">
-                    <button class="btn btn-sm btn-primary" type="submit">Served</button>
-                  </form>
-                  {% endif %}
-                  {% if o['status'] != 'cancelled' and o['status'] != 'served' %}
-                  <form method="post" action="{{ url_for('staff_mark_cancel', order_id=o['id']) }}" style="display:inline" onsubmit="return confirm('Bekor qilinsinmi?')">
-                    <button class="btn btn-sm btn-danger" type="submit">Cancel</button>
-                  </form>
-                  {% endif %}
-                </div>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
 
     </div>
   </div>
 </div>
 
 <script>
-  // Auto refresh every 10 seconds
+  // Har 10 soniyada sahifani avtomatik yangilash
   setInterval(function(){ location.reload(); }, 10000);
 </script>
 {% endblock %}
