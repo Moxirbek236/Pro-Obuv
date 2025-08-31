@@ -249,8 +249,24 @@
         <!-- Foydalanuvchilar ma'lumotlari -->
         <div class="section-card">
             <h3 class="section-title">👥 Barcha foydalanuvchilar</h3>
+            
+            <!-- Foydalanuvchi o'chirish forması -->
+            <div class="add-staff-form">
+                <h5>🗑️ Foydalanuvchini o'chirish</h5>
+                <form method="POST" action="{{ url_for('super_admin_delete_user') }}">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <input type="number" class="form-control" name="ticket_no" placeholder="Buyurtma raqami" required>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-danger-custom" onclick="return confirm('Rostdan ham bu foydalanuvchini o\'chirmoqchimisiz?')">🗑️ O'chirish</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
             {% if users_json %}
-            <div class="table-responsive">
+            <div class="table-responsive mt-3">
                 <table class="table table-hover">
                     <thead>
                         <tr>
@@ -258,6 +274,7 @@
                             <th>Buyurtma raqami</th>
                             <th>Buyurtma vaqti</th>
                             <th>Buyurtma mahsulotlari</th>
+                            <th>Amallar</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -267,9 +284,20 @@
                             <td>#{{ user.buyurtma_raqami }}</td>
                             <td>{{ user.buyurtma_vaqti }}</td>
                             <td>
-                                {% for item in user.buyurtma_mahsulotlari %}
-                                    <span class="badge bg-secondary me-1">{{ item.nomi }} x{{ item.miqdori }}</span>
-                                {% endfor %}
+                                {% if user.buyurtma_mahsulotlari %}
+                                    {% for item in user.buyurtma_mahsulotlari %}
+                                        <span class="badge bg-secondary me-1">{{ item.nomi }} x{{ item.miqdori }}</span>
+                                    {% endfor %}
+                                {% else %}
+                                    <span class="text-muted">Ma'lumot yo'q</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <form method="POST" action="{{ url_for('super_admin_delete_user') }}" 
+                                      style="display: inline;" onsubmit="return confirm('Rostdan ham bu foydalanuvchini o\'chirmoqchimisiz?')">
+                                    <input type="hidden" name="ticket_no" value="{{ user.buyurtma_raqami }}">
+                                    <button type="submit" class="btn btn-danger-custom">🗑️ O'chirish</button>
+                                </form>
                             </td>
                         </tr>
                         {% endfor %}
