@@ -128,5 +128,18 @@
         "jami": 66000.0
       }
     ]
+  },
+  {
+    "ism": "Moxirbek",
+    "buyurtma_raqami": 16,
+    "buyurtma_vaqti": "2025-08-31 23:22:08",
+    "buyurtma_mahsulotlari": [
+      {
+        "nomi": "Manti",
+        "miqdori": 7,
+        "narxi": 20000.0,
+        "jami": 140000.0
+      }
+    ]
   }
 ]
