@@ -392,12 +392,40 @@ tr.given {
 }
 
 /* Footer */
-.footer { 
-  text-align: center; 
-  padding: 20px; 
-  color: rgba(255, 255, 255, 0.8);
-  background: rgba(0, 0, 0, 0.1);
-  margin-top: 40px;
+.footer {
+    background: #2c2c2c;
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 50px;
+}
+
+.footer .muted {
+    color: #888;
+    font-size: 0.9em;
+}
+
+/* Exit icon */
+.exit-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 50%;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.exit-icon:hover {
+    background: rgba(0, 0, 0, 0.9);
+    transform: scale(1.1);
+}
+
+.exit-icon svg {
+    fill: white;
 }
 
 /* Monitor (TV) stillar */
@@ -534,11 +562,11 @@ tr.given {
     font-size: 1.4rem; 
     padding: 18px 12px; 
   }
-  
+
   .monitor-section h4 {
     font-size: 2.2rem;
   }
-  
+
   .ticket-number {
     font-size: 1.8rem;
   }
@@ -549,11 +577,11 @@ tr.given {
     font-size: 0.9rem;
     padding: 10px 5px;
   }
-  
+
   .monitor-section {
     padding: 15px;
   }
-  
+
   .monitor-section h4 {
     font-size: 1.4rem;
   }
