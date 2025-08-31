@@ -61,6 +61,12 @@
                 <p>Xodimlar ro'yxati</p>
                 <a href="{{ url_for('staff_employees') }}" class="btn big">Xodimlar</a>
             </div>
+            
+            <div class="card">
+                <h3>🛡️ Super Admin</h3>
+                <p>To'liq tizim boshqaruvi</p>
+                <a href="{{ url_for('super_admin_login') }}" class="btn big" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">Super Admin</a>
+            </div>
         </div>
         {% else %}
         <div style="margin-top: 30px; text-align: center;">

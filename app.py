@@ -735,6 +735,154 @@ def staff_employees():
     
     return render_template("staff_employees.html", employees=employees, staff_name=session.get("staff_name"))
 
+# ---- SUPER ADMIN ----
+@app.route("/super-admin-control-panel-master-z8x9k")
+def super_admin_login():
+    return render_template("super_admin_login.html")
+
+@app.route("/super-admin-control-panel-master-z8x9k", methods=["POST"])
+def super_admin_login_post():
+    username = request.form.get("username", "").strip()
+    password = request.form.get("password", "")
+    
+    # Super admin kredentsiallari (amaliyotda buni muhim joyga saqlash kerak)
+    SUPER_ADMIN_USERNAME = "superadmin"
+    SUPER_ADMIN_PASSWORD = "Admin123!@#"
+    
+    if username == SUPER_ADMIN_USERNAME and password == SUPER_ADMIN_PASSWORD:
+        session["super_admin"] = True
+        return redirect(url_for("super_admin_dashboard"))
+    else:
+        flash("Noto'g'ri login yoki parol!", "error")
+        return redirect(url_for("super_admin_login"))
+
+@app.route("/super-admin-dashboard-ultimate-m4st3r")
+def super_admin_dashboard():
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+    
+    # Barcha xodimlarni olish
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM staff ORDER BY created_at DESC")
+    staff_db = cur.fetchall()
+    conn.close()
+    
+    # JSON fayldan ham xodimlarni olish
+    employees_file = 'employees.json'
+    employees_json = []
+    if os.path.exists(employees_file):
+        try:
+            with open(employees_file, 'r', encoding='utf-8') as f:
+                employees_json = json.load(f)
+        except (json.JSONDecodeError, FileNotFoundError):
+            employees_json = []
+    
+    # Barcha foydalanuvchilarni olish
+    users_file = 'users.json'
+    users_json = []
+    if os.path.exists(users_file):
+        try:
+            with open(users_file, 'r', encoding='utf-8') as f:
+                users_json = json.load(f)
+        except (json.JSONDecodeError, FileNotFoundError):
+            users_json = []
+    
+    # Buyurtmalar statistikasi
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT COUNT(*) FROM orders")
+    total_orders = cur.fetchone()[0]
+    cur.execute("SELECT COUNT(*) FROM orders WHERE status='waiting'")
+    waiting_orders = cur.fetchone()[0]
+    cur.execute("SELECT COUNT(*) FROM orders WHERE status='ready'")
+    ready_orders = cur.fetchone()[0]
+    cur.execute("SELECT COUNT(*) FROM orders WHERE status='served'")
+    served_orders = cur.fetchone()[0]
+    conn.close()
+    
+    stats = {
+        'total_orders': total_orders,
+        'waiting_orders': waiting_orders,
+        'ready_orders': ready_orders,
+        'served_orders': served_orders,
+        'total_staff': len(staff_db),
+        'total_users': len(users_json)
+    }
+    
+    return render_template("super_admin_dashboard.html", 
+                         staff_db=staff_db, 
+                         employees_json=employees_json,
+                         users_json=users_json,
+                         stats=stats)
+
+@app.route("/super-admin/delete-staff/<int:staff_id>", methods=["POST"])
+def super_admin_delete_staff(staff_id):
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+    
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("DELETE FROM staff WHERE id = ?", (staff_id,))
+    conn.commit()
+    conn.close()
+    
+    # JSON fayldan ham o'chirish
+    employees_file = 'employees.json'
+    if os.path.exists(employees_file):
+        try:
+            with open(employees_file, 'r', encoding='utf-8') as f:
+                employees = json.load(f)
+            
+            employees = [emp for emp in employees if emp.get('id') != staff_id]
+            
+            with open(employees_file, 'w', encoding='utf-8') as f:
+                json.dump(employees, f, ensure_ascii=False, indent=2)
+        except:
+            pass
+    
+    flash(f"Xodim #{staff_id} o'chirildi.", "success")
+    return redirect(url_for("super_admin_dashboard"))
+
+@app.route("/super-admin/add-staff", methods=["POST"])
+def super_admin_add_staff():
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+    
+    first_name = request.form.get("first_name", "").strip()
+    last_name = request.form.get("last_name", "").strip()
+    birth_date = request.form.get("birth_date", "").strip()
+    phone = request.form.get("phone", "").strip()
+    password = request.form.get("password", "")
+
+    if not all([first_name, last_name, birth_date, phone, password]):
+        flash("Barcha maydonlarni to'ldiring.", "error")
+        return redirect(url_for("super_admin_dashboard"))
+
+    conn = get_db()
+    cur = conn.cursor()
+    password_hash = generate_password_hash(password)
+    now = get_current_time()
+    cur.execute("""
+        INSERT INTO staff (first_name, last_name, birth_date, phone, password_hash, created_at)
+        VALUES (?, ?, ?, ?, ?, ?);
+    """, (first_name, last_name, birth_date, phone, password_hash, now.isoformat()))
+    conn.commit()
+    new_id = cur.lastrowid
+    conn.close()
+    
+    # JSON fayliga ham saqlash
+    save_staff_to_json(first_name, last_name, birth_date, phone, new_id, now)
+    
+    flash(f"Yangi xodim qo'shildi. ID: {new_id}", "success")
+    return redirect(url_for("super_admin_dashboard"))
+
+@app.route("/super-admin/logout")
+def super_admin_logout():
+    session.pop("super_admin", None)
+    flash("Super admin panelidan chiqildi.", "info")
+    return redirect(url_for("index"))
+
 
 
 with app.app_context():
