@@ -877,6 +877,65 @@ def super_admin_add_staff():
     flash(f"Yangi xodim qo'shildi. ID: {new_id}", "success")
     return redirect(url_for("super_admin_dashboard"))
 
+@app.route("/super-admin/delete-user", methods=["POST"])
+def super_admin_delete_user():
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+    
+    ticket_no = request.form.get("ticket_no")
+    
+    if not ticket_no:
+        flash("Buyurtma raqamini kiriting.", "error")
+        return redirect(url_for("super_admin_dashboard"))
+    
+    try:
+        ticket_no = int(ticket_no)
+    except ValueError:
+        flash("Buyurtma raqami raqam bo'lishi kerak.", "error")
+        return redirect(url_for("super_admin_dashboard"))
+    
+    # JSON fayldan o'chirish
+    users_file = 'users.json'
+    deleted = False
+    
+    if os.path.exists(users_file):
+        try:
+            with open(users_file, 'r', encoding='utf-8') as f:
+                users = json.load(f)
+            
+            original_count = len(users)
+            users = [user for user in users if user.get('buyurtma_raqami') != ticket_no]
+            
+            if len(users) < original_count:
+                deleted = True
+                with open(users_file, 'w', encoding='utf-8') as f:
+                    json.dump(users, f, ensure_ascii=False, indent=2)
+        except:
+            pass
+    
+    # Ma'lumotlar bazasidan ham o'chirish
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM orders WHERE ticket_no = ?", (ticket_no,))
+    order = cur.fetchone()
+    
+    if order:
+        # Order details ni ham o'chirish
+        cur.execute("DELETE FROM order_details WHERE order_id = ?", (order['id'],))
+        # Buyurtmani o'chirish
+        cur.execute("DELETE FROM orders WHERE ticket_no = ?", (ticket_no,))
+        conn.commit()
+        deleted = True
+    
+    conn.close()
+    
+    if deleted:
+        flash(f"Buyurtma #{ticket_no} va unga tegishli barcha ma'lumotlar o'chirildi.", "success")
+    else:
+        flash(f"Buyurtma #{ticket_no} topilmadi.", "error")
+    
+    return redirect(url_for("super_admin_dashboard"))
+
 @app.route("/super-admin/logout")
 def super_admin_logout():
     session.pop("super_admin", None)
