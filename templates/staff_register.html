@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card center">
+  <h2>Xodim Ro'yxatdan O'tish</h2>
+  <form method="post">
+    <label for="first_name">Ism:</label>
+    <input type="text" id="first_name" name="first_name" required>
+
+    <label for="last_name">Familiya:</label>
+    <input type="text" id="last_name" name="last_name" required>
+
+    <label for="birth_date">Tug'ilgan sana:</label>
+    <input type="date" id="birth_date" name="birth_date" required>
+
+    <label for="phone">Telefon:</label>
+    <input type="tel" id="phone" name="phone" required>
+
+    <label for="password">Parol:</label>
+    <input type="password" id="password" name="password" required>
+
+    <div class="actions">
+      <button type="submit" class="btn big">Ro'yxatdan o'tish</button>
+      <a href="{{ url_for('staff_login') }}" class="btn">Kirish</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

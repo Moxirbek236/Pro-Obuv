@@ -1,0 +1,131 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+  <h2>📋 Menyu boshqaruvi</h2>
+  <p class="muted">Taom va ichimliklarni boshqaring</p>
+  
+  <div style="margin-bottom: 30px;">
+    <h3>Yangi mahsulot qo'shish</h3>
+    <form method="post" action="{{ url_for('add_menu_item') }}" class="add-item-form">
+      <div class="form-grid">
+        <div>
+          <label>Nomi:</label>
+          <input type="text" name="name" required placeholder="Mahsulot nomi">
+        </div>
+        <div>
+          <label>Narxi (so'm):</label>
+          <input type="number" name="price" required placeholder="25000">
+        </div>
+        <div>
+          <label>Kategoriya:</label>
+          <select name="category" required>
+            <option value="">Tanlang</option>
+            <option value="food">Taom</option>
+            <option value="drink">Ichimlik</option>
+          </select>
+        </div>
+        <div style="display: flex; align-items: end;">
+          <button type="submit" class="btn">➕ Qo'shish</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="menu-items">
+    <h3>Mavjud mahsulotlar</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nomi</th>
+          <th>Narxi</th>
+          <th>Kategoriya</th>
+          <th>Holati</th>
+          <th>Amal</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in menu_items %}
+        <tr class="{% if not item.available %}unavailable{% endif %}">
+          <td>{{ item.id }}</td>
+          <td>{{ item.name }}</td>
+          <td>{{ "{:,.0f}".format(item.price) }} so'm</td>
+          <td>
+            {% if item.category == 'food' %}
+              🍲 Taom
+            {% else %}
+              🥤 Ichimlik
+            {% endif %}
+          </td>
+          <td>
+            {% if item.available %}
+              <span class="status available">✅ Mavjud</span>
+            {% else %}
+              <span class="status unavailable">❌ Mavjud emas</span>
+            {% endif %}
+          </td>
+          <td>
+            <form method="post" action="{{ url_for('toggle_menu_item', item_id=item.id) }}" style="display: inline;">
+              <button type="submit" class="btn small">
+                {% if item.available %}
+                  Yashirish
+                {% else %}
+                  Ko'rsatish
+                {% endif %}
+              </button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  
+  <div style="margin-top: 20px;">
+    <a href="{{ url_for('staff_dashboard') }}" class="btn">⬅️ Bosh sahifaga qaytish</a>
+  </div>
+</div>
+
+<style>
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  gap: 15px;
+  align-items: end;
+}
+
+.form-grid label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-grid input, .form-grid select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.status.available {
+  color: #4caf50;
+  font-weight: bold;
+}
+
+.status.unavailable {
+  color: #f44336;
+  font-weight: bold;
+}
+
+tr.unavailable {
+  opacity: 0.6;
+  background: #f5f5f5;
+}
+
+.menu-items {
+  margin-top: 30px;
+}
+</style>
+{% endblock %}

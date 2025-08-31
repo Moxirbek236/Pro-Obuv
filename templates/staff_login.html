@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card center">
+  <h2>Xodim Kirish</h2>
+  <form method="post">
+    <label for="staff_id">Xodim ID:</label>
+    <input type="text" id="staff_id" name="staff_id" required>
+
+    <label for="password">Parol:</label>
+    <input type="password" id="password" name="password" required>
+
+    <div class="actions">
+      <button type="submit" class="btn big">Kirish</button>
+      <a href="{{ url_for('staff_register') }}" class="btn">Ro'yxatdan o'tish</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

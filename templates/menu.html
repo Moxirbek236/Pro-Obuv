@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+  <h2>🍽️ Menyu</h2>
+  <p>Taomlarni tanlang va savatchaga qo'shing</p>
+
+  <div style="text-align: right; margin-bottom: 20px;">
+    <a href="{{ url_for('cart') }}" class="cart-btn">
+      🛒 Savatcha
+      <span class="cart-badge" id="cart-count">0</span>
+    </a>
+  </div>
+
+  <div class="menu-section">
+    <h3>🍲 Taomlar</h3>
+    <div class="menu-grid">
+      {% for food in foods %}
+      <div class="menu-item">
+        <h4>{{ food.name }}</h4>
+        <p class="price">{{ "{:,.0f}".format(food.price) }} so'm</p>
+        <form method="post" action="{{ url_for('add_to_cart') }}" style="margin-top: 10px;">
+          <input type="hidden" name="menu_item_id" value="{{ food.id }}">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div class="quantity-selector">
+              <button type="button" class="quantity-btn minus" onclick="decreaseQuantity(this)">−</button>
+              <input type="number" name="quantity" value="1" min="1" max="10" readonly>
+              <button type="button" class="quantity-btn plus" onclick="increaseQuantity(this)">+</button>
+            </div>
+            <button type="submit" class="btn small">Qo'shish</button>
+          </div>
+        </form>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="menu-section">
+    <h3>🥤 Ichimliklar</h3>
+    <div class="menu-grid">
+      {% for drink in drinks %}
+      <div class="menu-item">
+        <h4>{{ drink.name }}</h4>
+        <p class="price">{{ "{:,.0f}".format(drink.price) }} so'm</p>
+        <form method="post" action="{{ url_for('add_to_cart') }}" style="margin-top: 10px;">
+          <input type="hidden" name="menu_item_id" value="{{ drink.id }}">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div class="quantity-selector">
+              <button type="button" class="quantity-btn minus" onclick="decreaseQuantity(this)">−</button>
+              <input type="number" name="quantity" value="1" min="1" max="10" readonly>
+              <button type="button" class="quantity-btn plus" onclick="increaseQuantity(this)">+</button>
+            </div>
+            <button type="submit" class="btn small">Qo'shish</button>
+          </div>
+        </form>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<style>
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 25px;
+  margin-top: 20px;
+}
+
+.menu-section {
+  margin-bottom: 40px;
+  padding: 20px;
+  background: linear-gradient(145deg, #f7fafc 0%, #edf2f7 100%);
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+}
+
+.menu-section h3 {
+  margin: 0 0 20px 0;
+  color: #2d3748;
+  font-size: 24px;
+  text-align: center;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #cbd5e0;
+}
+
+.menu-item form div {
+  background: #f7fafc;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.menu-item form div:hover {
+  background: #edf2f7;
+}
+
+.quantity-selector {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.quantity-btn {
+  background-color: #f8fafc;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #333;
+}
+
+.quantity-btn:hover {
+  background-color: #e2e8f0;
+}
+
+.quantity-selector input[type="number"] {
+  width: 50px;
+  text-align: center;
+  border: none;
+  padding: 5px;
+  font-size: 16px;
+  background-color: #fff;
+}
+
+.quantity-selector input[type="number"]:focus {
+  outline: none;
+}
+</style>
+
+<script>
+function increaseQuantity(button) {
+  const input = button.previousElementSibling;
+  let value = parseInt(input.value, 10);
+  if (value < 10) {
+    input.value = value + 1;
+  }
+}
+
+function decreaseQuantity(button) {
+  const input = button.nextElementSibling;
+  let value = parseInt(input.value, 10);
+  if (value > 1) {
+    input.value = value - 1;
+  }
+}
+</script>
+
+{% endblock %}

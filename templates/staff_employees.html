@@ -1,0 +1,49 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>📋 Ro'yxatdan o'tgan xodimlar</h2>
+    <p class="muted">Barcha xodimlar ro'yxati va ma'lumotlari</p>
+    
+    <div style="margin-bottom: 20px;">
+        <a href="{{ url_for('staff_dashboard') }}" class="btn">⬅️ Asosiy panel</a>
+    </div>
+    
+    {% if employees %}
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Ism</th>
+                <th>Familiya</th>
+                <th>Tug'ilgan sana</th>
+                <th>Telefon</th>
+                <th>Ro'yxatdan o'tgan vaqti</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for employee in employees %}
+            <tr>
+                <td>{{ employee.id }}</td>
+                <td>{{ employee.ism }}</td>
+                <td>{{ employee.familiya }}</td>
+                <td>{{ employee.tugulgan_sana }}</td>
+                <td>{{ employee.telefon }}</td>
+                <td>{{ employee.royxatdan_otgan_vaqti }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="card center">
+        <p>Hali hech qanday xodim ro'yxatdan o'tmagan.</p>
+    </div>
+    {% endif %}
+    
+    <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+        <h4>Statistika:</h4>
+        <p><strong>Jami xodimlar soni:</strong> {{ employees|length if employees else 0 }}</p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,153 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+  <h2>🛒 Savatcha</h2>
+  
+  {% if cart_items %}
+    <div class="cart-items">
+      {% for item in cart_items %}
+      <div class="cart-item">
+        <div class="item-info">
+          <h4>{{ item.name }}</h4>
+          <p>{{ "{:,.0f}".format(item.price) }} so'm x {{ item.quantity }} = {{ "{:,.0f}".format(item.total) }} so'm</p>
+        </div>
+        <form method="post" action="{{ url_for('remove_from_cart', cart_item_id=item.id) }}" style="margin-left: auto;">
+          <button type="submit" class="btn small danger" onclick="return confirm('Rostdan ham olib tashlamoqchimisiz?')">
+            🗑️ O'chirish
+          </button>
+        </form>
+      </div>
+      {% endfor %}
+    </div>
+    
+    <div class="cart-total">
+      <h3>Jami: {{ "{:,.0f}".format(total) }} so'm</h3>
+    </div>
+    
+    <div class="cart-actions">
+      <form method="post" action="{{ url_for('user_page') }}">
+        <label for="name">Ismingiz:</label>
+        <input type="text" id="name" name="name" placeholder="Ismingizni kiriting" required 
+               style="margin: 10px 0; padding: 10px; width: 100%; border: 1px solid #ddd; border-radius: 5px;">
+        
+        <div style="display: flex; gap: 10px;">
+          <a href="{{ url_for('menu') }}" class="btn">⬅️ Menuga qaytish</a>
+          <button type="submit" class="btn big" style="background: #4CAF50;">✅ Buyurtma berish</button>
+        </div>
+      </form>
+    </div>
+  {% else %}
+    <div class="empty-cart">
+      <p>Savatchangiz bo'sh</p>
+      <a href="{{ url_for('menu') }}" class="btn big">🍽️ Taom tanlash</a>
+    </div>
+  {% endif %}
+</div>
+
+<style>
+.cart-item {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  border: 1px solid #e2e8f0;
+  border-radius: 15px;
+  margin-bottom: 15px;
+  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+}
+
+.cart-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+
+.item-info h4 {
+  margin: 0 0 8px 0;
+  color: #2d3748;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.item-info p {
+  margin: 0;
+  color: #4a5568;
+  font-weight: 500;
+}
+
+.cart-total {
+  text-align: center;
+  margin: 25px 0;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 15px;
+  color: white;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+}
+
+.cart-total h3 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.cart-actions {
+  margin-top: 25px;
+}
+
+.cart-actions input[type="text"] {
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 15px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+.cart-actions input[type="text"]:focus {
+  border-color: #4299e1;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+}
+
+.empty-cart {
+  text-align: center;
+  padding: 60px;
+  color: #718096;
+}
+
+.empty-cart p {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.btn.danger {
+  background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+  color: white;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.btn.danger:hover {
+  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+  transform: translateY(-1px);
+}
+
+.cart-actions div {
+  gap: 15px;
+}
+
+.cart-actions .btn.big {
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+  font-size: 18px;
+  padding: 15px 25px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.cart-actions .btn.big:hover {
+  background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+  transform: translateY(-2px);
+}
+</style>
+{% endblock %}

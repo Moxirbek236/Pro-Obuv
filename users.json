@@ -1,0 +1,119 @@
+[
+  {
+    "ism": "Islombek",
+    "buyurtma_raqami": 4,
+    "buyurtma_vaqti": "2025-08-30 22:26:01"
+  },
+  {
+    "ism": "Islombek",
+    "buyurtma_raqami": 5,
+    "buyurtma_vaqti": "2025-08-30 22:26:27"
+  },
+  {
+    "ism": "Moxirbek",
+    "buyurtma_raqami": 6,
+    "buyurtma_vaqti": "2025-08-30 22:30:19"
+  },
+  {
+    "ism": "Moxirbek",
+    "buyurtma_raqami": 7,
+    "buyurtma_vaqti": "2025-08-30 22:37:47"
+  },
+  {
+    "ism": "Moxirbek",
+    "buyurtma_raqami": 8,
+    "buyurtma_vaqti": "2025-08-30 22:57:33",
+    "buyurtma_mahsulotlari": [
+      {
+        "nomi": "Osh",
+        "miqdori": 3,
+        "narxi": 25000.0,
+        "jami": 75000.0
+      }
+    ]
+  },
+  {
+    "ism": "Moxirbek",
+    "buyurtma_raqami": 9,
+    "buyurtma_vaqti": "2025-08-30 22:58:22",
+    "buyurtma_mahsulotlari": [
+      {
+        "nomi": "Patir Non",
+        "miqdori": 10,
+        "narxi": 10000.0,
+        "jami": 100000.0
+      }
+    ]
+  },
+  {
+    "ism": "Islombek",
+    "buyurtma_raqami": 10,
+    "buyurtma_vaqti": "2025-08-30 23:01:56",
+    "buyurtma_mahsulotlari": [
+      {
+        "nomi": "Lagmon",
+        "miqdori": 4,
+        "narxi": 22000.0,
+        "jami": 88000.0
+      }
+    ]
+  },
+  {
+    "ism": "Moxirbek Solijonov",
+    "buyurtma_raqami": 11,
+    "buyurtma_vaqti": "2025-08-30 23:16:45",
+    "buyurtma_mahsulotlari": [
+      {
+        "nomi": "Manti",
+        "miqdori": 10,
+        "narxi": 20000.0,
+        "jami": 200000.0
+      }
+    ]
+  },
+  {
+    "ism": "Moxirbek",
+    "buyurtma_raqami": 12,
+    "buyurtma_vaqti": "2025-08-30 23:20:39",
+    "buyurtma_mahsulotlari": [
+      {
+        "nomi": "Kompot",
+        "miqdori": 2,
+        "narxi": 8000.0,
+        "jami": 16000.0
+      },
+      {
+        "nomi": "Coca Cola",
+        "miqdori": 3,
+        "narxi": 10000.0,
+        "jami": 30000.0
+      }
+    ]
+  },
+  {
+    "ism": "admokl",
+    "buyurtma_raqami": 13,
+    "buyurtma_vaqti": "2025-08-31 22:44:31",
+    "buyurtma_mahsulotlari": [
+      {
+        "nomi": "Lagmon",
+        "miqdori": 4,
+        "narxi": 22000.0,
+        "jami": 88000.0
+      }
+    ]
+  },
+  {
+    "ism": "Islombek",
+    "buyurtma_raqami": 14,
+    "buyurtma_vaqti": "2025-08-31 22:45:29",
+    "buyurtma_mahsulotlari": [
+      {
+        "nomi": "Patir Non",
+        "miqdori": 4,
+        "narxi": 10000.0,
+        "jami": 40000.0
+      }
+    ]
+  }
+]
