@@ -307,12 +307,72 @@ label {
     grid-template-columns: repeat(6, 1fr); /* 6 ta mahsulot (oldingi 8 o'rniga) */
     gap: 35px;
   }
+  
+  .quantity-btn {
+    min-width: 70px;
+    height: 70px;
+    font-size: 26px;
+    font-weight: 700;
+  }
+  
+  .quantity-selector input {
+    width: 90px;
+    height: 70px;
+    font-size: 22px;
+    font-weight: 600;
+  }
+  
+  .menu-item {
+    min-height: 280px;
+    padding: 35px;
+  }
+  
+  .menu-item h4 {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+  
+  .price {
+    font-size: 24px;
+    padding: 16px 22px;
+    margin-bottom: 28px;
+  }
 }
 
 @media (min-width: 1400px) and (max-width: 1599px) {
   .menu-grid {
     grid-template-columns: repeat(5, 1fr); /* 5 ta mahsulot (oldingi 6 o'rniga) */
     gap: 30px;
+  }
+  
+  .quantity-btn {
+    min-width: 68px;
+    height: 68px;
+    font-size: 25px;
+    font-weight: 700;
+  }
+  
+  .quantity-selector input {
+    width: 88px;
+    height: 68px;
+    font-size: 21px;
+    font-weight: 600;
+  }
+  
+  .menu-item {
+    min-height: 270px;
+    padding: 32px;
+  }
+  
+  .menu-item h4 {
+    font-size: 21px;
+    margin-bottom: 19px;
+  }
+  
+  .price {
+    font-size: 23px;
+    padding: 15px 21px;
+    margin-bottom: 26px;
   }
 }
 
