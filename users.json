@@ -154,5 +154,24 @@
         "jami": 40000.0
       }
     ]
+  },
+  {
+    "ism": "Munira Raximberiyeva",
+    "buyurtma_raqami": 18,
+    "buyurtma_vaqti": "2025-08-31 23:34:22",
+    "buyurtma_mahsulotlari": [
+      {
+        "nomi": "Osh",
+        "miqdori": 4,
+        "narxi": 25000.0,
+        "jami": 100000.0
+      },
+      {
+        "nomi": "Manti",
+        "miqdori": 4,
+        "narxi": 20000.0,
+        "jami": 80000.0
+      }
+    ]
   }
 ]
