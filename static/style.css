@@ -294,18 +294,18 @@ label {
 /* Menyu grid va elementlar */
 .menu-grid {
   display: grid;
-  gap: 25px;
+  gap: 15px;
   margin-top: 25px;
   
-  /* TV va juda katta ekranlar (1400px+) - 6-10 mahsulot */
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  /* Asosiy responsive grid */
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
 }
 
 /* Responsive grid tizimi */
 @media (min-width: 1600px) {
   .menu-grid {
-    grid-template-columns: repeat(6, 1fr); /* 6 ta mahsulot (oldingi 8 o'rniga) */
-    gap: 35px;
+    grid-template-columns: repeat(4, 1fr); /* 4 ta katta mahsulot */
+    gap: 20px;
   }
   
   .quantity-btn {
@@ -323,26 +323,27 @@ label {
   }
   
   .menu-item {
-    min-height: 280px;
-    padding: 35px;
+    min-height: 320px;
+    padding: 40px;
+    max-width: none;
   }
   
   .menu-item h4 {
-    font-size: 22px;
-    margin-bottom: 20px;
+    font-size: 24px;
+    margin-bottom: 22px;
   }
   
   .price {
-    font-size: 24px;
-    padding: 16px 22px;
-    margin-bottom: 28px;
+    font-size: 26px;
+    padding: 18px 24px;
+    margin-bottom: 30px;
   }
 }
 
 @media (min-width: 1400px) and (max-width: 1599px) {
   .menu-grid {
-    grid-template-columns: repeat(5, 1fr); /* 5 ta mahsulot (oldingi 6 o'rniga) */
-    gap: 30px;
+    grid-template-columns: repeat(4, 1fr); /* 4 ta mahsulot */
+    gap: 18px;
   }
   
   .quantity-btn {
@@ -360,8 +361,32 @@ label {
   }
   
   .menu-item {
-    min-height: 270px;
-    padding: 32px;
+    min-height: 300px;
+    padding: 35px;
+  }
+  
+  .menu-item h4 {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+  
+  .price {
+    font-size: 24px;
+    padding: 16px 22px;
+    margin-bottom: 28px;
+  }
+}
+
+/* Noutbook (1200px - 1399px) - 3 ta katta mahsulot */
+@media (min-width: 1200px) and (max-width: 1399px) {
+  .menu-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  
+  .menu-item {
+    min-height: 280px;
+    padding: 35px;
   }
   
   .menu-item h4 {
@@ -371,32 +396,8 @@ label {
   
   .price {
     font-size: 23px;
-    padding: 15px 21px;
+    padding: 16px 21px;
     margin-bottom: 26px;
-  }
-}
-
-/* Noutbook (1200px - 1399px) - 4 ta mahsulot (kengaytilgan) */
-@media (min-width: 1200px) and (max-width: 1399px) {
-  .menu-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 30px;
-  }
-  
-  .menu-item {
-    min-height: 250px;
-    padding: 30px;
-  }
-  
-  .menu-item h4 {
-    font-size: 20px;
-    margin-bottom: 18px;
-  }
-  
-  .price {
-    font-size: 22px;
-    padding: 15px 20px;
-    margin-bottom: 25px;
   }
   
   .quantity-btn {
@@ -414,27 +415,27 @@ label {
   }
 }
 
-/* Kichik noutbook (992px - 1199px) - 3 ta mahsulot (kengaytilgan) */
+/* Kichik noutbook (992px - 1199px) - 3 ta mahsulot */
 @media (min-width: 992px) and (max-width: 1199px) {
   .menu-grid {
     grid-template-columns: repeat(3, 1fr);
-    gap: 25px;
+    gap: 18px;
   }
   
   .menu-item {
-    min-height: 230px;
-    padding: 28px;
+    min-height: 260px;
+    padding: 30px;
   }
   
   .menu-item h4 {
     font-size: 19px;
-    margin-bottom: 16px;
+    margin-bottom: 17px;
   }
   
   .price {
     font-size: 21px;
-    padding: 14px 18px;
-    margin-bottom: 22px;
+    padding: 15px 19px;
+    margin-bottom: 24px;
   }
   
   .quantity-btn {
