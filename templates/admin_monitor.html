@@ -8,45 +8,106 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<body class="monitor-container">
+<nav class="navbar navbar-expand-lg navbar-dark" style="background: rgba(0,0,0,0.8);">
   <div class="container-fluid">
-    <a class="navbar-brand" href="{{ url_for('admin_index') }}">🔧 Admin Panel</a>
+    <a class="navbar-brand" href="{{ url_for('admin_index') }}">📺 Monitor TV</a>
     <div class="navbar-nav ms-auto">
-      <span class="navbar-text text-white me-3">Monitor Rejimi</span>
-      <a class="btn btn-outline-light" href="{{ url_for('admin_index') }}">Admin Panel</a>
+      <span class="navbar-text text-white me-3">🔄 Avtomatik yangilanadi</span>
+      <a class="btn btn-outline-light" href="{{ url_for('admin_index') }}">🏠 Panel</a>
     </div>
   </div>
 </nav>
 
 <div class="container-fluid py-3">
-  <div class="card bg-dark text-white mb-3">
-    <div class="card-body">
-      <h2 class="card-title display-6">Monitor — Navbat (TV)</h2>
-      <p class="muted">Sahifa avtomatik yangilanadi. Kutmoqda → Tayyor → Berildi (oxirgi 5 daqiqa).</p>
+  <div class="monitor-card">
+    <div class="card-body text-center">
+      <h1 class="display-4 text-white mb-0">🍽️ RESTORAN MONITOR</h1>
+      <p class="text-white-50">Buyurtmalar navbati | Avtomatik yangilanadi har 30 soniyada</p>
     </div>
   </div>
 
-  <div class="row g-3">
-    <div class="col-12 col-lg-6">
-      <h4 class="mb-2">Kutmoqda</h4>
-      <div class="table-responsive">
-        <table class="table table-bordered table-hover monitor-table">
-          <thead class="table-light"><tr><th>#</th><th>Ticket</th><th>Mijoz</th><th>Buyurtma vaqti</th><th>ETA</th><th>Holat</th></tr></thead>
-          <tbody>
-            {% for o in waiting %}
-            <tr>
-              <td>{{ loop.index }}</td>
-              <td>#{{ o['ticket_no'] }}</td>
-              <td>{{ o['customer_name'] }}</td>
-              <td>{{ o['created_at'][:16].replace('T',' ') }}</td>
-              <td>{{ o['eta_time'][:16].replace('T',' ') }}</td>
-              <td>{{ o['status'] }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+  <div class="row g-4">
+    <!-- Kutayotgan buyurtmalar -->
+    <div class="col-12 col-xl-4">
+      <div class="monitor-section">
+        <h4>⏳ KUTMOQDA</h4>
+        <div class="table-responsive">
+          <table class="table monitor-table">
+            <thead>
+              <tr>
+                <th>Ticket</th>
+                <th>Mijoz</th>
+                <th>Tayyor bo'lish vaqti</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for o in waiting %}
+              <tr class="waiting-row">
+                <td class="ticket-number">#{{ o['ticket_no'] }}</td>
+                <td class="customer-name">{{ o['customer_name'] }}</td>
+                <td><strong>{{ o['eta_time'][11:16] }}</strong></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
       </div>
+    </div>
+
+    <!-- Tayyor buyurtmalar -->
+    <div class="col-12 col-xl-4">
+      <div class="monitor-section">
+        <h4>✅ TAYYOR</h4>
+        <div class="table-responsive">
+          <table class="table monitor-table">
+            <thead>
+              <tr>
+                <th>Ticket</th>
+                <th>Mijoz</th>
+                <th>Tayyor bo'ldi</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for o in ready %}
+              <tr class="ready-row">
+                <td class="ticket-number">#{{ o['ticket_no'] }}</td>
+                <td class="customer-name">{{ o['customer_name'] }}</td>
+                <td><span class="status-badge status-ready">TAYYOR!</span></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Berilgan buyurtmalar -->
+    <div class="col-12 col-xl-4">
+      <div class="monitor-section">
+        <h4>🎯 BERILDI</h4>
+        <div class="table-responsive">
+          <table class="table monitor-table">
+            <thead>
+              <tr>
+                <th>Ticket</th>
+                <th>Mijoz</th>
+                <th>Berilgan vaqt</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for o in served_recent %}
+              <tr class="served-row">
+                <td class="ticket-number">#{{ o['ticket_no'] }}</td>
+                <td class="customer-name">{{ o['customer_name'] }}</td>
+                <td>{{ o['created_at'][11:16] }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
     </div>
 
     <div class="col-12 col-lg-6">
