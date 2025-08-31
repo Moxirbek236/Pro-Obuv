@@ -314,17 +314,49 @@ label {
   }
 }
 
-/* Noutbook (1200px - 1399px) - 5 ta mahsulot */
+/* Noutbook (1200px - 1399px) - 4 ta mahsulot (kengaytilgan) */
 @media (min-width: 1200px) and (max-width: 1399px) {
   .menu-grid {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+  }
+  
+  .menu-item {
+    min-height: 200px;
+    padding: 25px;
+  }
+  
+  .menu-item h4 {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+  
+  .price {
+    font-size: 20px;
+    padding: 10px 15px;
   }
 }
 
-/* Kichik noutbook (992px - 1199px) - 4 ta mahsulot */
+/* Kichik noutbook (992px - 1199px) - 3 ta mahsulot (kengaytilgan) */
 @media (min-width: 992px) and (max-width: 1199px) {
   .menu-grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+  }
+  
+  .menu-item {
+    min-height: 190px;
+    padding: 22px;
+  }
+  
+  .menu-item h4 {
+    font-size: 17px;
+    margin-bottom: 12px;
+  }
+  
+  .price {
+    font-size: 19px;
+    padding: 10px 14px;
   }
 }
 
