@@ -284,6 +284,52 @@ def save_staff_to_json(first_name, last_name, birth_date, phone, staff_id, regis
 def index():
     return render_template("index.html")
 
+@app.route("/admin")
+def admin_index():
+    return render_template("admin_index.html")
+
+@app.route("/admin/monitor")
+def admin_monitor():
+    cleanup_expired_orders()
+    conn = get_db()
+    cur = conn.cursor()
+    # Waiting ordered by eta_time (earliest first)
+    cur.execute("""SELECT o.*, 
+               GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
+        FROM orders o
+        LEFT JOIN order_details od ON o.id = od.order_id
+        LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
+        WHERE o.status='waiting'
+        GROUP BY o.id
+        ORDER BY o.eta_time ASC
+    """)
+    waiting = cur.fetchall()
+    # Ready orders
+    cur.execute("""SELECT o.*, 
+               GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
+        FROM orders o
+        LEFT JOIN order_details od ON o.id = od.order_id
+        LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
+        WHERE o.status='ready'
+        GROUP BY o.id
+        ORDER BY o.eta_time ASC
+    """)
+    ready = cur.fetchall()
+    # Served orders in last 5 minutes
+    five_min_ago = (get_current_time() - datetime.timedelta(minutes=5)).isoformat()
+    cur.execute("""SELECT o.*, 
+               GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
+        FROM orders o
+        LEFT JOIN order_details od ON o.id = od.order_id
+        LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
+        WHERE o.status='served' AND o.created_at >= ?
+        GROUP BY o.id
+        ORDER BY o.created_at ASC
+    """, (five_min_ago,))
+    served_recent = cur.fetchall()
+    conn.close()
+    return render_template('admin_monitor.html', waiting=waiting, ready=ready, served_recent=served_recent)
+
 # ---- MENU ----
 @app.route("/menu")
 def menu():
@@ -465,7 +511,7 @@ def user_status(ticket_no):
     })
 
 # ---- STAFF AUTH ----
-@app.route("/staff/login", methods=["GET", "POST"])
+@app.route("/admin/login", methods=["GET", "POST"])
 def staff_login():
     if request.method == "POST":
         staff_id = request.form.get("staff_id", "").strip()
@@ -486,12 +532,12 @@ def staff_login():
         return redirect(url_for("staff_dashboard"))
     return render_template("staff_login.html")
 
-@app.route("/staff/logout")
+@app.route("/admin/logout")
 def staff_logout():
     session.clear()
-    return redirect(url_for("index"))
+    return redirect(url_for("admin_index"))
 
-@app.route("/staff/register", methods=["GET", "POST"])
+@app.route("/admin/register", methods=["GET", "POST"])
 def staff_register():
     if request.method == "POST":
         first_name = request.form.get("first_name", "").strip()
@@ -534,7 +580,7 @@ def login_required(f):
         return f(*args, **kwargs)
     return wrapper
 
-@app.route("/staff")
+@app.route("/admin/dashboard")
 @login_required
 def staff_dashboard():
     cleanup_expired_orders()
@@ -553,7 +599,7 @@ def staff_dashboard():
     conn.close()
     return render_template("staff_dashboard.html", orders=orders, staff_name=session.get("staff_name"))
 
-@app.route("/staff/menu")
+@app.route("/admin/menu")
 @login_required
 def staff_menu():
     conn = get_db()
@@ -563,7 +609,7 @@ def staff_menu():
     conn.close()
     return render_template("staff_menu.html", menu_items=menu_items, staff_name=session.get("staff_name"))
 
-@app.route("/staff/add_menu_item", methods=["POST"])
+@app.route("/admin/add_menu_item", methods=["POST"])
 @login_required
 def add_menu_item():
     name = request.form.get("name", "").strip()
@@ -590,7 +636,7 @@ def add_menu_item():
     flash("Yangi mahsulot qo'shildi!", "success")
     return redirect(url_for("staff_menu"))
 
-@app.route("/staff/toggle_menu_item/<int:item_id>", methods=["POST"])
+@app.route("/admin/toggle_menu_item/<int:item_id>", methods=["POST"])
 @login_required
 def toggle_menu_item(item_id):
     conn = get_db()
@@ -601,7 +647,7 @@ def toggle_menu_item(item_id):
     flash("Mahsulot holati o'zgartirildi.", "success")
     return redirect(url_for("staff_menu"))
 
-@app.route("/staff/order/<int:order_id>/served", methods=["POST"])
+@app.route("/admin/order/<int:order_id>/served", methods=["POST"])
 @login_required
 def staff_mark_served(order_id):
     conn = get_db()
@@ -612,7 +658,7 @@ def staff_mark_served(order_id):
     flash("Buyurtma foydalanuvchiga berildi sifatida belgilandi.", "success")
     return redirect(url_for("staff_dashboard"))
 
-@app.route("/staff/order/<int:order_id>/ready", methods=["POST"])
+@app.route("/admin/order/<int:order_id>/ready", methods=["POST"])
 @login_required
 def staff_mark_ready(order_id):
     conn = get_db()
@@ -623,7 +669,7 @@ def staff_mark_ready(order_id):
     flash("Buyurtma 'tayyor' deb belgilandi.", "success")
     return redirect(url_for("staff_dashboard"))
 
-@app.route("/staff/order/<int:order_id>/cancel", methods=["POST"])
+@app.route("/admin/order/<int:order_id>/cancel", methods=["POST"])
 @login_required
 def staff_mark_cancel(order_id):
     conn = get_db()
@@ -652,7 +698,7 @@ def user_cancel(ticket_no):
     conn.commit()
     conn.close()
     return jsonify({"ok": True, "msg": "Buyurtma bekor qilindi"})
-@app.route("/staff/orders.json")
+@app.route("/admin/orders.json")
 @login_required
 def staff_orders_json():
     cleanup_expired_orders()
@@ -664,7 +710,7 @@ def staff_orders_json():
     data = [dict(row) for row in rows]
     return jsonify(data)
 
-@app.route("/staff/employees")
+@app.route("/admin/employees")
 @login_required
 def staff_employees():
     """Xodimlar ro'yxatini ko'rish"""
@@ -681,47 +727,7 @@ def staff_employees():
     return render_template("staff_employees.html", employees=employees, staff_name=session.get("staff_name"))
 
 
-@app.route("/monitor")
-def monitor():
-    cleanup_expired_orders()
-    conn = get_db()
-    cur = conn.cursor()
-    # Waiting ordered by eta_time (earliest first)
-    cur.execute("""SELECT o.*, 
-               GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
-        FROM orders o
-        LEFT JOIN order_details od ON o.id = od.order_id
-        LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
-        WHERE o.status='waiting'
-        GROUP BY o.id
-        ORDER BY o.eta_time ASC
-    """)
-    waiting = cur.fetchall()
-    # Ready orders
-    cur.execute("""SELECT o.*, 
-               GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
-        FROM orders o
-        LEFT JOIN order_details od ON o.id = od.order_id
-        LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
-        WHERE o.status='ready'
-        GROUP BY o.id
-        ORDER BY o.eta_time ASC
-    """)
-    ready = cur.fetchall()
-    # Served orders in last 5 minutes
-    five_min_ago = (get_current_time() - datetime.timedelta(minutes=5)).isoformat()
-    cur.execute("""SELECT o.*, 
-               GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
-        FROM orders o
-        LEFT JOIN order_details od ON o.id = od.order_id
-        LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
-        WHERE o.status='served' AND o.created_at >= ?
-        GROUP BY o.id
-        ORDER BY o.created_at ASC
-    """, (five_min_ago,))
-    served_recent = cur.fetchall()
-    conn.close()
-    return render_template('monitor.html', waiting=waiting, ready=ready, served_recent=served_recent)
+
 with app.app_context():
     db.create_all()
 
