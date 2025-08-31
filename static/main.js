@@ -151,7 +151,16 @@ function updateOrderStatus(data) {
         
         // Status card rangini o'zgartirish
         if (statusCard) {
-            statusCard.parentElement.style.background = cardColor;
+            const statusCardElement = statusCard.parentElement;
+            statusCardElement.style.background = cardColor;
+            
+            // Status card ichidagi barcha yozuvlarni oq qilish
+            const statusSpan = statusElement.querySelector('span');
+            if (statusSpan) {
+                statusSpan.style.color = 'white';
+                statusSpan.style.background = 'rgba(255, 255, 255, 0.2)';
+                statusSpan.style.borderColor = 'rgba(255, 255, 255, 0.4)';
+            }
         }
     }
 

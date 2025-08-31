@@ -824,6 +824,16 @@ tr.given {
   text-align: center;
 }
 
+/* Status card ichidagi barcha matnlar oq bo'lsin */
+.order-status-card .status-waiting,
+.order-status-card .status-ready,
+.order-status-card .status-served,
+.order-status-card .status-cancelled {
+  color: white !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+}
+
 /* Pulse animatsiya tayyor holat uchun */
 @keyframes pulse-green {
   0% { 
