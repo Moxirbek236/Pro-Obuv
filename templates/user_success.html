@@ -1,65 +1,119 @@
+
 {% extends "base.html" %}
 
 {% block content %}
 <div class="card center">
-  <h2>✅ Buyurtma Qabul Qilindi!</h2>
-
-  <div style="margin: 20px 0; padding: 20px; background: #e8f5e8; border-radius: 10px;">
-    <h3>Sizning buyurtma raqamingiz:</h3>
-    <div style="font-size: 32px; font-weight: bold; color: #0b5d0;">
-      #{{ order['ticket_no'] }}
+  <div class="order-info">
+    <h2>🎉 Buyurtma muvaffaqiyatli qabul qilindi!</h2>
+    
+    <div class="ticket-no">{{ order.ticket_no }}</div>
+    <p class="muted">Sizning buyurtma raqamingiz</p>
+    
+    <div class="mt-4 mb-4">
+      <h4>📋 Buyurtma ma'lumotlari:</h4>
+      <p><strong>👤 Mijoz:</strong> {{ order.customer_name }}</p>
+      <p><strong>⏰ Buyurtma vaqti:</strong> {{ order.created_at[:19].replace('T', ' ') }}</p>
+      <p><strong>🕐 Taxminiy tayyor bo'lish vaqti:</strong> {{ eta_hhmm }}</p>
+    </div>
+    
+    <div class="order-status mb-4">
+      <span class="status-waiting">⏳ Buyurtmangiz tayyorlanmoqda...</span>
+    </div>
+    
+    <div class="queue-position mb-4">
+      <span class="muted">Navbat holati yuklanmoqda...</span>
+    </div>
+    
+    <div class="mt-4">
+      <h5>📱 Buyurtma holatini kuzatish:</h5>
+      <p class="muted">Bu sahifani ochiq qoldiring yoki raqamingizni eslab qoling. Buyurtmangiz tayyor bo'lganda xabar beramiz.</p>
+    </div>
+    
+    <div class="mt-4">
+      <a href="{{ url_for('menu') }}" class="btn">🍽️ Menyu</a>
+      <a href="{{ url_for('monitor') }}" class="btn">📺 Monitor</a>
     </div>
   </div>
-
-  <p><strong>Mijoz:</strong> {{ order['customer_name'] }}</p>
-  <div id="status-area" class="my-2"></div>
-  <form id="cancel-form" method="post" action="{{ url_for('user_cancel', ticket_no=order['ticket_no']) }}">
-    <button type="button" id="cancel-btn" class="btn btn-danger">🛑 Buyurtmani bekor qilish</button>
-  </form>
-  <p><strong>Taxminiy tayyor bo'lish vaqti:</strong> {{ eta_hhmm }}</p>
-
-  <div class="actions">
-    <button onclick="checkStatus()" class="btn">Holatni tekshirish</button>
-    <a href="{{ url_for('user_page') }}" class="btn">Yana buyurtma berish</a>
-  </div>
-
-  <div id="status-info" style="margin-top: 20px;"></div>
-  <div id="queue-info" style="margin-top: 10px; font-size: 18px; color: #333;"></div>
 </div>
 
+<div class="card">
+  <h4>💡 Foydali ma'lumotlar:</h4>
+  <ul style="text-align: left; margin: 20px 0;">
+    <li>Buyurtmangiz tayyor bo'lganda bu sahifada ko'rasiz</li>
+    <li>Monitor sahifasida barcha buyurtmalarni kuzatishingiz mumkin</li>
+    <li>Savollar bo'lsa, xodimlarimizga murojaat qiling</li>
+    <li>Buyurtma raqamingizni unutmang: <strong>{{ order.ticket_no }}</strong></li>
+  </ul>
+</div>
+{% endblock %}
+
+{% block scripts %}
 <script>
-function checkStatus() {
-  fetch('/user/status/{{ order["ticket_no"] }}')
-    .then(response => response.json())
-    .then(data => {
-      const statusDiv = document.getElementById('status-info');
-      const queueDiv = document.getElementById('queue-info');
+// User success sahifasi uchun maxsus JavaScript
+const ticketNo = {{ order.ticket_no }};
 
-      if (data.ok) {
-        if (data.status === 'waiting') {
-          const statusText = 'Kutilmoqda...';
-          const statusColor = '#ff9800';
-          statusDiv.innerHTML = `<div style="padding: 10px; background: ${statusColor}; color: white; border-radius: 5px;">${statusText}</div>`;
-
-          if (data.queue_position > 0) {
-            queueDiv.innerHTML = `<strong>Navbatdagi o'rningiz: ${data.queue_position}</strong>`;
-          } else {
-            queueDiv.innerHTML = '';
-          }
-        } else if (data.status === 'served') {
-          statusDiv.innerHTML = '<div style="padding: 10px; background: #4caf50; color: white; border-radius: 5px;">✅ Buyurtmangiz tayyor! Olib ketishingiz mumkin.</div>';
-          queueDiv.innerHTML = '';
+function updateOrderDisplay(data) {
+    const statusElement = document.querySelector('.order-status');
+    const queueElement = document.querySelector('.queue-position');
+    
+    if (statusElement && data.ok) {
+        let statusText = '';
+        let statusClass = '';
+        
+        switch(data.status) {
+            case 'waiting':
+                statusText = '⏳ Buyurtmangiz tayyorlanmoqda...';
+                statusClass = 'status-waiting';
+                break;
+            case 'ready':
+                statusText = '✅ Buyurtmangiz tayyor! Olib ketishingiz mumkin.';
+                statusClass = 'status-ready';
+                // Notification ko'rsatish
+                if (Notification.permission === 'granted') {
+                    new Notification('Buyurtmangiz tayyor!', {
+                        body: `Raqam: ${ticketNo}. Olib ketishingiz mumkin.`,
+                        icon: '/static/icon.png'
+                    });
+                }
+                break;
+            case 'served':
+                statusText = '🎉 Buyurtmangiz berildi! Yoqimli ishtaha!';
+                statusClass = 'status-served';
+                break;
+            case 'cancelled':
+                statusText = '❌ Buyurtmangiz bekor qilindi.';
+                statusClass = 'status-cancelled';
+                break;
         }
-      } else {
-        statusDiv.innerHTML = '<div style="padding: 10px; background: #f44336; color: white; border-radius: 5px;">Xatolik yuz berdi</div>';
-      }
-    });
+        
+        statusElement.innerHTML = `<span class="${statusClass}">${statusText}</span>`;
+    }
+    
+    if (queueElement && data.queue_position && data.status === 'waiting') {
+        queueElement.innerHTML = `<span class="muted">Sizdan oldin: ${data.queue_position - 1} ta buyurtma</span>`;
+    } else if (queueElement && data.status !== 'waiting') {
+        queueElement.innerHTML = '';
+    }
 }
 
-// Har 5 soniyada avtomatik tekshirish
-setInterval(checkStatus, 5000);\n\n// Cancel button handler\ndocument.getElementById('cancel-btn')?.addEventListener('click', function(){\n  if(!confirm('Siz haqiqatan buyurtmani bekor qilmoqchimisiz?')) return;\n  fetch('{{ url_for('user_cancel', ticket_no=order['ticket_no']) }}', {method: 'POST'})\n    .then(r=>r.json()).then(j=>{\n      if(j.ok){ alert('Buyurtma bekor qilindi'); var statusDiv = document.getElementById('status-area'); if(statusDiv) statusDiv.innerHTML = '<div class="alert alert-warning">Buyurtma bekor qilindi</div>'; } else { alert(j.msg || 'Xatolik'); }\n    }).catch(()=>alert('Tarmoq xatosi'));\n});
-
-// Sahifa yuklanganda darhol tekshirish
-checkStatus();
+document.addEventListener('DOMContentLoaded', function() {
+    // Notification ruxsatini so'rash
+    if (Notification.permission === 'default') {
+        Notification.requestPermission();
+    }
+    
+    // Dastlabki holat tekshiruvi
+    checkOrderStatus(ticketNo);
+    
+    // Har 3 soniyada tekshirish
+    setInterval(() => {
+        if (!document.hidden) {
+            fetch(`/user/status/${ticketNo}`)
+                .then(response => response.json())
+                .then(data => updateOrderDisplay(data))
+                .catch(error => console.error('Holat tekshirishda xato:', error));
+        }
+    }, 3000);
+});
 </script>
 {% endblock %}
