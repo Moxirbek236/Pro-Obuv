@@ -284,11 +284,11 @@ def save_staff_to_json(first_name, last_name, birth_date, phone, staff_id, regis
 def index():
     return render_template("index.html")
 
-@app.route("/admin")
+@app.route("/system-management-panel-x8k2m")
 def admin_index():
     return render_template("admin_index.html")
 
-@app.route("/admin/monitor")
+@app.route("/display-monitor-tv-screen-z9p4n")
 def admin_monitor():
     cleanup_expired_orders()
     conn = get_db()
@@ -511,7 +511,7 @@ def user_status(ticket_no):
     })
 
 # ---- STAFF AUTH ----
-@app.route("/admin/login", methods=["GET", "POST"])
+@app.route("/staff-secure-login-w7m2k", methods=["GET", "POST"])
 def staff_login():
     if request.method == "POST":
         staff_id = request.form.get("staff_id", "").strip()
@@ -535,9 +535,9 @@ def staff_login():
 @app.route("/admin/logout")
 def staff_logout():
     session.clear()
-    return redirect(url_for("admin_index"))
+    return redirect(url_for("index"))
 
-@app.route("/admin/register", methods=["GET", "POST"])
+@app.route("/staff-register-secure-k3x8p", methods=["GET", "POST"])
 def staff_register():
     if request.method == "POST":
         first_name = request.form.get("first_name", "").strip()
