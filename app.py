@@ -593,7 +593,16 @@ def staff_dashboard():
         LEFT JOIN order_details od ON o.id = od.order_id
         LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
         GROUP BY o.id
-        ORDER BY o.created_at ASC
+        ORDER BY 
+            CASE 
+                WHEN o.status = 'ready' THEN 1
+                WHEN o.status = 'waiting' THEN 2
+                WHEN o.status = 'served' THEN 3
+                WHEN o.status = 'cancelled' THEN 4
+                ELSE 5
+            END,
+            o.eta_time ASC,
+            o.created_at ASC
     """)
     orders = cur.fetchall()
     conn.close()

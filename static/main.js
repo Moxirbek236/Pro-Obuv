@@ -308,5 +308,4 @@ document.addEventListener('DOMContentLoaded', function() {
 // Error handling uchun global function
 window.addEventListener('error', function(e) {
     console.error('JavaScript xatosi:', e.error);
-});ge }) });
 });

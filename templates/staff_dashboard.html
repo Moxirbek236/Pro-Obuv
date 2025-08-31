@@ -10,19 +10,104 @@
         <a href="{{ url_for('staff_employees') }}" class="btn btn-secondary">👥 Xodimlar ro'yxati</a>
       </div>
 
-      <div class="table-responsive">
-        <table class="table table-striped table-hover align-middle">
-          <thead class="table-dark"><tr><th>ID</th><th>Ticket</th><th>Mijoz</th><th>Buyurtma</th><th>Buyurtma vaqti</th><th>ETA</th><th>Holat</th><th>Amallar</th></tr></thead>
-          <tbody>
-            {% for o in orders %}
-            <tr class="{% if o['status']=='cancelled' %}table-light{% elif o['status']=='ready' %}table-success{% elif o['status']=='served' %}table-secondary{% else %}{% endif %}">
-              <td>{{ o['id'] }}</td>
-              <td>#{{ o['ticket_no'] }}</td>
-              <td>{{ o['customer_name'] }}</td>
-              <td>{% if o['order_items'] %}{{ o['order_items'] }}{% else %}<em>—</em>{% endif %}</td>
-              <td>{{ o['created_at'][:16].replace('T',' ') }}</td>
-              <td>{{ o['eta_time'][:16].replace('T',' ') }}</td>
-              <td>{{ o['status'] }}</td>
+      <!-- Faol buyurtmalar -->
+      <div class="mb-4">
+        <h4 class="text-primary">📋 Faol Buyurtmalar</h4>
+        <div class="table-responsive">
+          <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+              <tr>
+                <th>Ticket</th>
+                <th>Mijoz</th>
+                <th>Buyurtma</th>
+                <th>Buyurtma vaqti</th>
+                <th>Tayyor bo'lish vaqti</th>
+                <th>Holat</th>
+                <th>Amallar</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for o in orders %}
+              {% if o['status'] in ['waiting', 'ready'] %}
+              <tr class="{% if o['status']=='ready' %}table-success{% else %}table-warning{% endif %}">
+                <td><strong>#{{ o['ticket_no'] }}</strong></td>
+                <td>{{ o['customer_name'] }}</td>
+                <td>
+                  {% if o['order_items'] %}
+                    <small>{{ o['order_items'] }}</small>
+                  {% else %}
+                    <em class="text-muted">—</em>
+                  {% endif %}
+                </td>
+                <td>{{ o['created_at'][:16].replace('T',' ') }}</td>
+                <td><strong>{{ o['eta_time'][:16].replace('T',' ') }}</strong></td>
+                <td>
+                  <span class="badge {% if o['status']=='ready' %}bg-success{% else %}bg-warning{% endif %}">
+                    {{ o['status'] }}
+                  </span>
+                </td>
+                <td>
+                  {% if o['status'] == 'waiting' %}
+                    <form method="post" action="{{ url_for('staff_mark_ready', order_id=o['id']) }}" style="display:inline;">
+                      <button class="btn btn-sm btn-success" type="submit">✅ Tayyor</button>
+                    </form>
+                  {% elif o['status'] == 'ready' %}
+                    <form method="post" action="{{ url_for('staff_mark_served', order_id=o['id']) }}" style="display:inline;">
+                      <button class="btn btn-sm btn-primary" type="submit">🎯 Berildi</button>
+                    </form>
+                  {% endif %}
+                  <form method="post" action="{{ url_for('staff_mark_cancel', order_id=o['id']) }}" style="display:inline;">
+                    <button class="btn btn-sm btn-danger" type="submit" onclick="return confirm('Rostdan ham bekor qilmoqchimisiz?')">❌ Bekor qilish</button>
+                  </form>
+                </td>
+              </tr>
+              {% endif %}
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tugallangan buyurtmalar -->
+      <div class="mb-4">
+        <h4 class="text-success">✅ Tugallangan Buyurtmalar (Oxirgi 50 ta)</h4>
+        <div class="table-responsive">
+          <table class="table table-sm table-hover align-middle">
+            <thead class="table-secondary">
+              <tr>
+                <th>Ticket</th>
+                <th>Mijoz</th>
+                <th>Buyurtma</th>
+                <th>Buyurtma vaqti</th>
+                <th>Holat</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for o in orders %}
+              {% if o['status'] in ['served', 'cancelled'] %}
+              <tr class="{% if o['status']=='served' %}table-light{% else %}table-secondary{% endif %}">
+                <td>#{{ o['ticket_no'] }}</td>
+                <td>{{ o['customer_name'] }}</td>
+                <td>
+                  {% if o['order_items'] %}
+                    <small>{{ o['order_items'] }}</small>
+                  {% else %}
+                    <em class="text-muted">—</em>
+                  {% endif %}
+                </td>
+                <td>{{ o['created_at'][:16].replace('T',' ') }}</td>
+                <td>
+                  <span class="badge {% if o['status']=='served' %}bg-success{% else %}bg-secondary{% endif %}">
+                    {{ o['status'] }}
+                  </span>
+                </td>
+              </tr>
+              {% endif %}
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
               <td>
                 <div class="btn-group" role="group">
                   {% if o['status'] != 'ready' and o['status'] != 'served' and o['status'] != 'cancelled' %}
