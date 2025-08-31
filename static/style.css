@@ -340,15 +340,17 @@ label {
   }
   
   .quantity-btn {
-    min-width: 50px;
-    height: 50px;
-    font-size: 20px;
+    min-width: 65px;
+    height: 65px;
+    font-size: 24px;
+    font-weight: 700;
   }
   
   .quantity-selector input {
-    width: 70px;
-    height: 50px;
-    font-size: 18px;
+    width: 85px;
+    height: 65px;
+    font-size: 20px;
+    font-weight: 600;
   }
 }
 
@@ -376,15 +378,17 @@ label {
   }
   
   .quantity-btn {
-    min-width: 48px;
-    height: 48px;
-    font-size: 19px;
+    min-width: 60px;
+    height: 60px;
+    font-size: 22px;
+    font-weight: 700;
   }
   
   .quantity-selector input {
-    width: 65px;
-    height: 48px;
-    font-size: 17px;
+    width: 80px;
+    height: 60px;
+    font-size: 19px;
+    font-weight: 600;
   }
 }
 
