@@ -192,5 +192,24 @@
         "jami": 50000.0
       }
     ]
+  },
+  {
+    "ism": "...........",
+    "buyurtma_raqami": 20,
+    "buyurtma_vaqti": "2025-08-31 23:55:42",
+    "buyurtma_mahsulotlari": [
+      {
+        "nomi": "Manti",
+        "miqdori": 2,
+        "narxi": 20000.0,
+        "jami": 40000.0
+      },
+      {
+        "nomi": "Lagmon",
+        "miqdori": 3,
+        "narxi": 22000.0,
+        "jami": 66000.0
+      }
+    ]
   }
 ]
