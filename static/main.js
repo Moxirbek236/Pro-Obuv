@@ -1,4 +1,3 @@
-
 // Savatcha sonini yangilash funksiyasi
 function updateCartCount() {
     fetch('/get_cart_count')
@@ -58,7 +57,7 @@ function showLoading(element) {
         const originalText = element.innerHTML;
         element.innerHTML = '<span class="loading"></span> Yuklanmoqda...';
         element.disabled = true;
-        
+
         // Ma'lum vaqtdan keyin qaytarish
         setTimeout(() => {
             element.innerHTML = originalText;
@@ -78,7 +77,7 @@ function handleFormSubmit(form) {
 // Buyurtma holatini tekshirish
 function checkOrderStatus(ticketNo) {
     if (!ticketNo) return;
-    
+
     fetch(`/user/status/${ticketNo}`)
         .then(response => {
             if (!response.ok) {
@@ -100,11 +99,11 @@ function checkOrderStatus(ticketNo) {
 function updateOrderStatus(data) {
     const statusElement = document.querySelector('.order-status');
     const queueElement = document.querySelector('.queue-position');
-    
+
     if (statusElement) {
         let statusText = '';
         let statusClass = '';
-        
+
         switch(data.status) {
             case 'waiting':
                 statusText = '⏳ Buyurtmangiz tayyorlanmoqda...';
@@ -125,10 +124,10 @@ function updateOrderStatus(data) {
             default:
                 statusText = '❓ Noma\'lum holat';
         }
-        
+
         statusElement.innerHTML = `<span class="${statusClass}">${statusText}</span>`;
     }
-    
+
     if (queueElement && data.queue_position) {
         queueElement.textContent = `Navbatdagi o'rningiz: ${data.queue_position}`;
     }
@@ -139,7 +138,7 @@ function cancelOrder(ticketNo) {
     if (!confirm('Buyurtmani bekor qilishni xohlaysizmi?')) {
         return;
     }
-    
+
     fetch(`/user/cancel/${ticketNo}`, {
         method: 'POST',
         headers: {
@@ -165,10 +164,10 @@ function cancelOrder(ticketNo) {
 document.addEventListener('DOMContentLoaded', function() {
     // Savatcha sonini dastlabki yuklanish
     updateCartCount();
-    
+
     // Har 5 soniyada savatcha sonini yangilash
     setInterval(updateCartCount, 5000);
-    
+
     // Form submit eventlarini tinglash
     const forms = document.querySelectorAll('form');
     forms.forEach(form => {
@@ -176,7 +175,7 @@ document.addEventListener('DOMContentLoaded', function() {
             handleFormSubmit(this);
         });
     });
-    
+
     // Miqdor inputlariga event listener qo'shish
     const quantityInputs = document.querySelectorAll('input[name="quantity"]');
     quantityInputs.forEach(input => {
@@ -187,23 +186,23 @@ document.addEventListener('DOMContentLoaded', function() {
             } else if (value > 99) {
                 this.value = 99;
             }
-            
+
             // Savatcha sonini yangilash
             setTimeout(updateCartCount, 500);
         });
     });
-    
+
     // Buyurtma holati sahifasi uchun
     const currentPath = window.location.pathname;
     if (currentPath.includes('/user/success/')) {
         const ticketNo = currentPath.split('/').pop();
-        
+
         // Dastlabki holat tekshiruvi
         checkOrderStatus(ticketNo);
-        
+
         // Har 5 soniyada holat tekshiruvi
         setInterval(() => checkOrderStatus(ticketNo), 5000);
-        
+
         // Bekor qilish tugmasini qo'shish
         const orderInfo = document.querySelector('.order-info');
         if (orderInfo) {
@@ -224,7 +223,7 @@ if (window.location.pathname === '/staff') {
             location.reload();
         }
     }, 10000); // 10 soniyada bir marta
-    
+
     // Sahifa yashirilganda intervallarni to'xtatish
     document.addEventListener('visibilitychange', function() {
         if (document.hidden) {
@@ -300,7 +299,7 @@ function updateCartCount() {
 // Sahifa yuklanganda savatcha sonini yangilash
 document.addEventListener('DOMContentLoaded', function() {
     updateCartCount();
-    
+
     // Har 5 soniyada savatcha sonini yangilash
     setInterval(updateCartCount, 5000);
 });
