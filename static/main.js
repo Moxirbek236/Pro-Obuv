@@ -9,11 +9,18 @@ function updateCartCount() {
         })
         .then(data => {
             const cartBadge = document.querySelector('.cart-badge');
+            const cartCountElements = document.querySelectorAll('.cart-count');
+            
             if (cartBadge) {
                 cartBadge.textContent = data.count || 0;
                 // Agar savatcha bo'sh bo'lsa, badge ni yashirish
                 cartBadge.style.display = data.count > 0 ? 'flex' : 'none';
             }
+            
+            // Barcha cart-count elementlarini yangilash
+            cartCountElements.forEach(element => {
+                element.textContent = data.count || 0;
+            });
         })
         .catch(error => {
             console.error('Savatcha sonini olishda xato:', error);
@@ -258,7 +265,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-// Utility // Foydali funksiyalar
+// Utility funksiyalar
 function formatPrice(price) {
     return new Intl.NumberFormat('uz-UZ').format(price) + ' so\'m';
 }
@@ -270,39 +277,6 @@ function formatTime(dateString) {
         minute: '2-digit' 
     });
 }
-
-// Buyurtma holatini tekshirish funksiyasi
-function checkOrderStatus(ticketNo) {
-    fetch(`/user/status/${ticketNo}`)
-        .then(response => response.json())
-        .then(data => {
-            if (typeof updateOrderDisplay === 'function') {
-                updateOrderDisplay(data);
-            }
-        })
-        .catch(error => console.error('Holat tekshirishda xato:', error));
-}
-
-// Savatcha sonini yangilash
-function updateCartCount() {
-    fetch('/get_cart_count')
-        .then(response => response.json())
-        .then(data => {
-            const cartCountElements = document.querySelectorAll('.cart-count');
-            cartCountElements.forEach(element => {
-                element.textContent = data.count || 0;
-            });
-        })
-        .catch(error => console.error('Savatcha soni xatosi:', error));
-}
-
-// Sahifa yuklanganda savatcha sonini yangilash
-document.addEventListener('DOMContentLoaded', function() {
-    updateCartCount();
-
-    // Har 5 soniyada savatcha sonini yangilash
-    setInterval(updateCartCount, 5000);
-});
 
 // Error handling uchun global function
 window.addEventListener('error', function(e) {
