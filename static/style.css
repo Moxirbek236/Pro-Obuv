@@ -776,19 +776,66 @@ tr.given {
 .status-waiting {
   color: #ed8936;
   font-weight: 600;
+  font-size: 18px;
+  padding: 10px 20px;
+  background: rgba(237, 137, 54, 0.1);
+  border-radius: 25px;
+  border: 2px solid rgba(237, 137, 54, 0.3);
+  display: inline-block;
 }
 
 .status-ready {
   color: #48bb78;
   font-weight: 600;
+  font-size: 18px;
+  padding: 10px 20px;
+  background: rgba(72, 187, 120, 0.1);
+  border-radius: 25px;
+  border: 2px solid rgba(72, 187, 120, 0.3);
+  display: inline-block;
+  animation: pulse-green 2s infinite;
 }
 
 .status-served {
   color: #4299e1;
   font-weight: 600;
+  font-size: 18px;
+  padding: 10px 20px;
+  background: rgba(66, 153, 225, 0.1);
+  border-radius: 25px;
+  border: 2px solid rgba(66, 153, 225, 0.3);
+  display: inline-block;
 }
 
 .status-cancelled {
   color: #e53e3e;
   font-weight: 600;
+  font-size: 18px;
+  padding: 10px 20px;
+  background: rgba(229, 62, 62, 0.1);
+  border-radius: 25px;
+  border: 2px solid rgba(229, 62, 62, 0.3);
+  display: inline-block;
+}
+
+/* Buyurtma holati card */
+.order-status-card {
+  padding: 20px;
+  text-align: center;
+}
+
+/* Pulse animatsiya tayyor holat uchun */
+@keyframes pulse-green {
+  0% { 
+    box-shadow: 0 0 0 0 rgba(72, 187, 120, 0.7);
+    background: rgba(72, 187, 120, 0.1);
+  }
+  70% { 
+    box-shadow: 0 0 0 10px rgba(72, 187, 120, 0);
+    background: rgba(72, 187, 120, 0.2);
+  }
+  100% { 
+    box-shadow: 0 0 0 0 rgba(72, 187, 120, 0);
+    background: rgba(72, 187, 120, 0.1);
+  }
 }
