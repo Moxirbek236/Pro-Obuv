@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card center">
+  <h2>✅ Buyurtma Qabul Qilindi!</h2>
+
+  <div style="margin: 20px 0; padding: 20px; background: #e8f5e8; border-radius: 10px;">
+    <h3>Sizning buyurtma raqamingiz:</h3>
+    <div style="font-size: 32px; font-weight: bold; color: #0b5d0;">
+      #{{ order['ticket_no'] }}
+    </div>
+  </div>
+
+  <p><strong>Mijoz:</strong> {{ order['customer_name'] }}</p>
+  <div id="status-area" class="my-2"></div>
+  <form id="cancel-form" method="post" action="{{ url_for('user_cancel', ticket_no=order['ticket_no']) }}">
+    <button type="button" id="cancel-btn" class="btn btn-danger">🛑 Buyurtmani bekor qilish</button>
+  </form>
+  <p><strong>Taxminiy tayyor bo'lish vaqti:</strong> {{ eta_hhmm }}</p>
+
+  <div class="actions">
+    <button onclick="checkStatus()" class="btn">Holatni tekshirish</button>
+    <a href="{{ url_for('user_page') }}" class="btn">Yana buyurtma berish</a>
+  </div>
+
+  <div id="status-info" style="margin-top: 20px;"></div>
+  <div id="queue-info" style="margin-top: 10px; font-size: 18px; color: #333;"></div>
+</div>
+
+<script>
+function checkStatus() {
+  fetch('/user/status/{{ order["ticket_no"] }}')
+    .then(response => response.json())
+    .then(data => {
+      const statusDiv = document.getElementById('status-info');
+      const queueDiv = document.getElementById('queue-info');
+
+      if (data.ok) {
+        if (data.status === 'waiting') {
+          const statusText = 'Kutilmoqda...';
+          const statusColor = '#ff9800';
+          statusDiv.innerHTML = `<div style="padding: 10px; background: ${statusColor}; color: white; border-radius: 5px;">${statusText}</div>`;
+
+          if (data.queue_position > 0) {
+            queueDiv.innerHTML = `<strong>Navbatdagi o'rningiz: ${data.queue_position}</strong>`;
+          } else {
+            queueDiv.innerHTML = '';
+          }
+        } else if (data.status === 'served') {
+          statusDiv.innerHTML = '<div style="padding: 10px; background: #4caf50; color: white; border-radius: 5px;">✅ Buyurtmangiz tayyor! Olib ketishingiz mumkin.</div>';
+          queueDiv.innerHTML = '';
+        }
+      } else {
+        statusDiv.innerHTML = '<div style="padding: 10px; background: #f44336; color: white; border-radius: 5px;">Xatolik yuz berdi</div>';
+      }
+    });
+}
+
+// Har 5 soniyada avtomatik tekshirish
+setInterval(checkStatus, 5000);\n\n// Cancel button handler\ndocument.getElementById('cancel-btn')?.addEventListener('click', function(){\n  if(!confirm('Siz haqiqatan buyurtmani bekor qilmoqchimisiz?')) return;\n  fetch('{{ url_for('user_cancel', ticket_no=order['ticket_no']) }}', {method: 'POST'})\n    .then(r=>r.json()).then(j=>{\n      if(j.ok){ alert('Buyurtma bekor qilindi'); var statusDiv = document.getElementById('status-area'); if(statusDiv) statusDiv.innerHTML = '<div class="alert alert-warning">Buyurtma bekor qilindi</div>'; } else { alert(j.msg || 'Xatolik'); }\n    }).catch(()=>alert('Tarmoq xatosi'));\n});
+
+// Sahifa yuklanganda darhol tekshirish
+checkStatus();
+</script>
+{% endblock %}

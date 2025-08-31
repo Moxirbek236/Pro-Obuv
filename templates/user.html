@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card center">
+  <h2>Buyurtma Berish</h2>
+  <p>Ismingizni kiriting va buyurtma raqamingizni oling</p>
+
+  <form method="post">
+    <label for="name">Ismingiz:</label>
+    <input type="text" id="name" name="name" placeholder="Ismingizni kiriting" required>
+
+    <div class="actions">
+      <button type="submit" class="btn big">Buyurtma berish</button>
+    </div>
+  </form>
+</div>
+{% endblock %}
