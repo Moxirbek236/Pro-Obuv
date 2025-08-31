@@ -250,5 +250,18 @@
         "jami": 22000.0
       }
     ]
+  },
+  {
+    "ism": ",,,,,,",
+    "buyurtma_raqami": 24,
+    "buyurtma_vaqti": "2025-09-01 00:09:52",
+    "buyurtma_mahsulotlari": [
+      {
+        "nomi": "Lagmon",
+        "miqdori": 3,
+        "narxi": 22000.0,
+        "jami": 66000.0
+      }
+    ]
   }
 ]
