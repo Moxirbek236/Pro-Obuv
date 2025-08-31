@@ -1,107 +1,59 @@
 {% extends "base.html" %}
 {% block content %}
-  <div class="card">
-    <h2>Xodim paneli</h2>
-    <p class="muted">Bu sahifa avtomatik yangilanadi (10s).</p>
-    <div style="margin-bottom: 20px;">
-      <a href="{{ url_for('staff_menu') }}" class="btn">📋 Menyu boshqaruvi</a>
-      <a href="{{ url_for('staff_employees') }}" class="btn">👥 Xodimlar ro'yxati</a>
-    </div>
-    
-    <div class="orders">
-      <h3>Kutilayotgan buyurtmalar</h3>
-      <table>
-        <thead><tr><th>ID</th><th>Ticket</th><th>Mijoz</th><th>Buyurtma tafsiloti</th><th>Yaratilgan</th><th>ETA</th><th>Holat</th><th></th></tr></thead>
-        <tbody id="waiting-body">
-          {% for o in orders if o['status']=='waiting' %}
-          <tr>
-            <td>{{ o['id'] }}</td>
-            <td>#{{ o['ticket_no'] }}</td>
-            <td>{{ o['customer_name'] }}</td>
-            <td>
-              {% if o['order_items'] %}
-                {{ o['order_items'] }}
-              {% else %}
-                <em>Eski buyurtma</em>
-              {% endif %}
-            </td>
-            <td>{{ o['created_at'][:16].replace('T',' ') }}</td>
-            <td>{{ o['eta_time'][:16].replace('T',' ') }}</td>
-            <td>Foydalanuvchi kutmoqda</td>
-            <td>
-              <form method="post" action="{{ url_for('staff_mark_given', order_id=o['id']) }}">
-                <button class="btn small" type="submit">Foydalanuvchiga berildi</button>
-              </form>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+<div class="container py-4">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h2 class="card-title">Xodim paneli</h2>
+      <p class="text-muted">Bu sahifa avtomatik yangilanadi (10s).</p>
+      <div class="mb-3">
+        <a href="{{ url_for('staff_menu') }}" class="btn btn-primary">📋 Menyu boshqaruvi</a>
+        <a href="{{ url_for('staff_employees') }}" class="btn btn-secondary">👥 Xodimlar ro'yxati</a>
+      </div>
 
-      <h3>Berilgan buyurtmalar</h3>
-      <table>
-        <thead><tr><th>ID</th><th>Ticket</th><th>Mijoz</th><th>Buyurtma tafsiloti</th><th>Yaratilgan</th><th>ETA</th><th>Holat</th></tr></thead>
-        <tbody id="given-body">
-          {% for o in orders if o['status']=='given' %}
-          <tr class="given">
-            <td>{{ o['id'] }}</td>
-            <td>#{{ o['ticket_no'] }}</td>
-            <td>{{ o['customer_name'] }}</td>
-            <td>
-              {% if o['order_items'] %}
-                {{ o['order_items'] }}
-              {% else %}
-                <em>Eski buyurtma</em>
-              {% endif %}
-            </td>
-            <td>{{ o['created_at'][:16].replace('T',' ') }}</td>
-            <td>{{ o['eta_time'][:16].replace('T',' ') }}</td>
-            <td>Foydalanuvchiga berildi</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+      <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+          <thead class="table-dark"><tr><th>ID</th><th>Ticket</th><th>Mijoz</th><th>Buyurtma</th><th>Buyurtma vaqti</th><th>ETA</th><th>Holat</th><th>Amallar</th></tr></thead>
+          <tbody>
+            {% for o in orders %}
+            <tr class="{% if o['status']=='cancelled' %}table-light{% elif o['status']=='ready' %}table-success{% elif o['status']=='served' %}table-secondary{% else %}{% endif %}">
+              <td>{{ o['id'] }}</td>
+              <td>#{{ o['ticket_no'] }}</td>
+              <td>{{ o['customer_name'] }}</td>
+              <td>{% if o['order_items'] %}{{ o['order_items'] }}{% else %}<em>—</em>{% endif %}</td>
+              <td>{{ o['created_at'][:16].replace('T',' ') }}</td>
+              <td>{{ o['eta_time'][:16].replace('T',' ') }}</td>
+              <td>{{ o['status'] }}</td>
+              <td>
+                <div class="btn-group" role="group">
+                  {% if o['status'] != 'ready' and o['status'] != 'served' and o['status'] != 'cancelled' %}
+                  <form method="post" action="{{ url_for('staff_mark_ready', order_id=o['id']) }}" style="display:inline">
+                    <button class="btn btn-sm btn-success" type="submit">Ready</button>
+                  </form>
+                  {% endif %}
+                  {% if o['status'] != 'served' and o['status'] != 'cancelled' %}
+                  <form method="post" action="{{ url_for('staff_mark_served', order_id=o['id']) }}" style="display:inline">
+                    <button class="btn btn-sm btn-primary" type="submit">Served</button>
+                  </form>
+                  {% endif %}
+                  {% if o['status'] != 'cancelled' and o['status'] != 'served' %}
+                  <form method="post" action="{{ url_for('staff_mark_cancel', order_id=o['id']) }}" style="display:inline" onsubmit="return confirm('Bekor qilinsinmi?')">
+                    <button class="btn btn-sm btn-danger" type="submit">Cancel</button>
+                  </form>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
     </div>
   </div>
-{% endblock %}
-{% block scripts %}
+</div>
+
 <script>
-// 10 sekundda bir marta jadvalni yangilash
-async function refreshOrders(){
-  try {
-    const res = await fetch("{{ url_for('staff_orders_json') }}");
-    const rows = await res.json();
-    const waitingTbody = document.getElementById('waiting-body');
-    const givenTbody = document.getElementById('given-body');
-    waitingTbody.innerHTML = "";
-    givenTbody.innerHTML = "";
-    rows.forEach(o => {
-      const tr = document.createElement('tr');
-      if (o.status === 'given') tr.classList.add('given');
-      tr.innerHTML = `
-        <td>${o.id}</td>
-        <td>#${o.ticket_no}</td>
-        <td>${o.customer_name}</td>
-        <td>${o.order_items || '<em>Eski buyurtma</em>'}</td>
-        <td>${o.created_at.slice(0,16).replace('T',' ')}</td>
-        <td>${o.eta_time.slice(0,16).replace('T',' ')}</td>
-        <td>${o.status === 'given' ? 'Foydalanuvchiga berildi' : 'Foydalanuvchi kutmoqda'}</td>
-        ${o.status === 'waiting' ?
-          `<td>
-            <form method="post" action="/staff/order/${o.id}/given">
-              <button class="btn small" type="submit">Foydalanuvchiga berildi</button>
-            </form>
-          </td>` : `<td></td>`
-        }
-      `;
-      if (o.status === 'given') {
-        givenTbody.appendChild(tr);
-      } else {
-        waitingTbody.appendChild(tr);
-      }
-    });
-  } catch(e){ /* ignore */ }
-}
-setInterval(refreshOrders, 10000);
+  // Auto refresh every 10 seconds
+  setInterval(function(){ location.reload(); }, 10000);
 </script>
 {% endblock %}

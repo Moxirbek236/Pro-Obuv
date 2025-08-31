@@ -235,3 +235,17 @@ tr.given { opacity:.7; }
 .quantity-selector input:focus {
   background: #f7fafc;
 }
+
+/* Added monitor and UI tweaks */
+
+/* Monitor (TV) specific styles */
+.monitor-table td, .monitor-table th { font-size: 1.4rem; padding: 0.8rem; }
+@media (min-width: 1200px) {
+  .monitor-table td, .monitor-table th { font-size: 2rem; padding: 1rem; }
+}
+/* Buttons and cards */
+.btn { border-radius: 10px; }
+.card { border-radius: 12px; }
+/* Improve visibility */
+.table-success { background-color: #d4edda !important; }
+.table-secondary { background-color: #e2e3e5 !important; }

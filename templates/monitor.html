@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid py-3">
+  <div class="card bg-dark text-white mb-3">
+    <div class="card-body">
+      <h2 class="card-title display-6">Monitor — Navbat (TV)</h2>
+      <p class="muted">Sahifa avtomatik yangilanadi. Kutmoqda → Tayyor → Berildi (oxirgi 5 daqiqa).</p>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-12 col-lg-6">
+      <h4 class="mb-2">Kutmoqda</h4>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover monitor-table">
+          <thead class="table-light"><tr><th>#</th><th>Ticket</th><th>Mijoz</th><th>Buyurtma vaqti</th><th>ETA</th><th>Holat</th></tr></thead>
+          <tbody>
+            {% for o in waiting %}
+            <tr>
+              <td>{{ loop.index }}</td>
+              <td>#{{ o['ticket_no'] }}</td>
+              <td>{{ o['customer_name'] }}</td>
+              <td>{{ o['created_at'][:16].replace('T',' ') }}</td>
+              <td>{{ o['eta_time'][:16].replace('T',' ') }}</td>
+              <td>{{ o['status'] }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+      <h4 class="mb-2">Tayyor</h4>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover monitor-table">
+          <thead class="table-success"><tr><th>#</th><th>Ticket</th><th>Mijoz</th><th>ETA</th><th>Holat</th></tr></thead>
+          <tbody>
+            {% for o in ready %}
+            <tr class="table-success">
+              <td>{{ loop.index }}</td>
+              <td>#{{ o['ticket_no'] }}</td>
+              <td>{{ o['customer_name'] }}</td>
+              <td>{{ o['eta_time'][:16].replace('T',' ') }}</td>
+              <td>{{ o['status'] }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <h4 class="mt-4 mb-2">Berildi (oxirgi 5 daqiqa)</h4>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover monitor-table">
+          <thead class="table-secondary"><tr><th>#</th><th>Ticket</th><th>Mijoz</th><th>Qabul qilingan vaqti</th><th>Holat</th></tr></thead>
+          <tbody>
+            {% for o in served_recent %}
+            <tr class="table-secondary">
+              <td>{{ loop.index }}</td>
+              <td>#{{ o['ticket_no'] }}</td>
+              <td>{{ o['customer_name'] }}</td>
+              <td>{{ o['created_at'][:16].replace('T',' ') }}</td>
+              <td>{{ o['status'] }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Auto refresh every 30s (TV)
+setInterval(function(){ location.reload(); }, 30000);
+</script>
+{% endblock %}

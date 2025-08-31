@@ -117,6 +117,36 @@ def init_db():
     conn.close()
 
 # Flask 2.2+ da before_first_request deprecated
+def ensure_orders_status_column():
+    """Agar orders jadvalida status ustuni bo'lmasa, qo'shadi (migration)."""
+    conn = get_db()
+    cur = conn.cursor()
+    try:
+        cur.execute("PRAGMA table_info(orders);")
+        cols = [r[1] for r in cur.fetchall()]
+        if 'status' not in cols:
+            cur.execute("ALTER TABLE orders ADD COLUMN status TEXT NOT NULL DEFAULT 'waiting';")
+            conn.commit()
+    except Exception as e:
+        pass
+    conn.close()
+
+def cleanup_expired_orders():
+    """Waiting holatidagi, 30 daqiqadan oshgan buyurtmalarni cancelled ga o'tkazadi."""
+    conn = get_db()
+    cur = conn.cursor()
+    cutoff = (get_current_time() - datetime.timedelta(minutes=30)).isoformat()
+    try:
+        cur.execute("UPDATE orders SET status='cancelled' WHERE status='waiting' AND created_at < ?", (cutoff,))
+        conn.commit()
+    except Exception as e:
+        pass
+    conn.close()
+
+# Ensure column exists on startup
+ensure_orders_status_column()
+
+
 # O'rniga buni app context ichida chaqiramiz
 
 # ---------- Helpers ----------
@@ -507,6 +537,7 @@ def login_required(f):
 @app.route("/staff")
 @login_required
 def staff_dashboard():
+    cleanup_expired_orders()
     conn = get_db()
     cur = conn.cursor()
     cur.execute("""
@@ -570,20 +601,61 @@ def toggle_menu_item(item_id):
     flash("Mahsulot holati o'zgartirildi.", "success")
     return redirect(url_for("staff_menu"))
 
-@app.route("/staff/order/<int:order_id>/given", methods=["POST"])
+@app.route("/staff/order/<int:order_id>/served", methods=["POST"])
 @login_required
-def staff_mark_given(order_id):
+def staff_mark_served(order_id):
     conn = get_db()
     cur = conn.cursor()
-    cur.execute("UPDATE orders SET status='given' WHERE id=?;", (order_id,))
+    cur.execute("UPDATE orders SET status='served' WHERE id=?;", (order_id,))
     conn.commit()
     conn.close()
     flash("Buyurtma foydalanuvchiga berildi sifatida belgilandi.", "success")
     return redirect(url_for("staff_dashboard"))
 
+@app.route("/staff/order/<int:order_id>/ready", methods=["POST"])
+@login_required
+def staff_mark_ready(order_id):
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("UPDATE orders SET status='ready' WHERE id=?;", (order_id,))
+    conn.commit()
+    conn.close()
+    flash("Buyurtma 'tayyor' deb belgilandi.", "success")
+    return redirect(url_for("staff_dashboard"))
+
+@app.route("/staff/order/<int:order_id>/cancel", methods=["POST"])
+@login_required
+def staff_mark_cancel(order_id):
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("UPDATE orders SET status='cancelled' WHERE id=?;", (order_id,))
+    conn.commit()
+    conn.close()
+    flash("Buyurtma bekor qilindi.", "warning")
+    return redirect(url_for("staff_dashboard"))
+
+
+
+@app.route("/user/cancel/<int:ticket_no>", methods=["POST"])
+def user_cancel(ticket_no):
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM orders WHERE ticket_no=? ORDER BY id DESC LIMIT 1", (ticket_no,))
+    order = cur.fetchone()
+    if not order:
+        conn.close()
+        return jsonify({"ok": False, "msg": "Buyurtma topilmadi"}), 404
+    if order['status'] in ('served', 'ready'):
+        conn.close()
+        return jsonify({"ok": False, "msg": "Buyurtma allaqachon tayyor yoki berilgan, bekor qilib bo'lmaydi"}), 400
+    cur.execute("UPDATE orders SET status='cancelled' WHERE id=?", (order['id'],))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True, "msg": "Buyurtma bekor qilindi"})
 @app.route("/staff/orders.json")
 @login_required
 def staff_orders_json():
+    cleanup_expired_orders()
     conn = get_db()
     cur = conn.cursor()
     cur.execute("SELECT * FROM orders ORDER BY created_at ASC;")
@@ -608,6 +680,48 @@ def staff_employees():
     
     return render_template("staff_employees.html", employees=employees, staff_name=session.get("staff_name"))
 
+
+@app.route("/monitor")
+def monitor():
+    cleanup_expired_orders()
+    conn = get_db()
+    cur = conn.cursor()
+    # Waiting ordered by eta_time (earliest first)
+    cur.execute("""SELECT o.*, 
+               GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
+        FROM orders o
+        LEFT JOIN order_details od ON o.id = od.order_id
+        LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
+        WHERE o.status='waiting'
+        GROUP BY o.id
+        ORDER BY o.eta_time ASC
+    """)
+    waiting = cur.fetchall()
+    # Ready orders
+    cur.execute("""SELECT o.*, 
+               GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
+        FROM orders o
+        LEFT JOIN order_details od ON o.id = od.order_id
+        LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
+        WHERE o.status='ready'
+        GROUP BY o.id
+        ORDER BY o.eta_time ASC
+    """)
+    ready = cur.fetchall()
+    # Served orders in last 5 minutes
+    five_min_ago = (get_current_time() - datetime.timedelta(minutes=5)).isoformat()
+    cur.execute("""SELECT o.*, 
+               GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
+        FROM orders o
+        LEFT JOIN order_details od ON o.id = od.order_id
+        LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
+        WHERE o.status='served' AND o.created_at >= ?
+        GROUP BY o.id
+        ORDER BY o.created_at ASC
+    """, (five_min_ago,))
+    served_recent = cur.fetchall()
+    conn.close()
+    return render_template('monitor.html', waiting=waiting, ready=ready, served_recent=served_recent)
 with app.app_context():
     db.create_all()
 

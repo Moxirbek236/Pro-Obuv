@@ -1,3 +1,4 @@
+
 // Savatcha sonini yangilash funksiyasi - API orqali
 function updateCartCount() {
     fetch('/get_cart_count')
@@ -17,6 +18,21 @@ function updateCartCount() {
         .catch(error => {
             console.error('Savatcha sonini olishda xato:', error);
         });
+}
+
+// Miqdor o'zgartirish funksiyasi
+function changeQuantity(button, change) {
+    const input = button.parentElement.querySelector('input[name="quantity"]');
+    let currentValue = parseInt(input.value) || 1;
+    let newValue = currentValue + change;
+
+    if (newValue < 1) newValue = 1;
+    if (newValue > 99) newValue = 99;
+
+    input.value = newValue;
+
+    // Savatcha sonini yangilash
+    setTimeout(updateCartCount, 100);
 }
 
 // Sahifa yuklanganda savatcha sonini yangilash
@@ -42,21 +58,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
-
-// Miqdor boshqarish funksiyalari
-function changeQuantity(button, change) {
-    const input = button.parentElement.querySelector('input[name="quantity"]');
-    let currentValue = parseInt(input.value) || 1;
-    let newValue = currentValue + change;
-
-    if (newValue < 1) newValue = 1;
-    if (newValue > 99) newValue = 99;
-
-    input.value = newValue;
-
-    // Savatcha sonini yangilash
-    setTimeout(updateCartCount, 100);
-}
 
 // Xodim dashboard uchun avtomatik yangilanish
 if (window.location.pathname === '/staff') {
