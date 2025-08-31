@@ -14,22 +14,27 @@ body {
   flex-direction: column;
 }
 
-/* Navigation */
+/* Navigation - Responsive */
 .navbar {
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%) !important;
+  padding: 8px 0;
 }
 
 .navbar-brand {
   font-size: 1.5rem;
   font-weight: 700;
   color: #fff !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .navbar-nav .nav-link {
   color: rgba(255, 255, 255, 0.9) !important;
   font-weight: 500;
   transition: color 0.3s ease;
+  padding: 8px 16px !important;
 }
 
 .navbar-nav .nav-link:hover {
@@ -39,10 +44,54 @@ body {
 .navbar-toggler {
   border: none;
   padding: 4px 8px;
+  font-size: 1.2rem;
 }
 
 .navbar-toggler:focus {
   box-shadow: none;
+}
+
+.navbar-collapse {
+  flex-grow: 0;
+}
+
+/* Navbar responsive qoidalar */
+@media (max-width: 991px) {
+  .navbar-brand {
+    font-size: 1.3rem;
+  }
+  
+  .navbar-nav .nav-link {
+    padding: 10px 20px !important;
+    text-align: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .navbar {
+    padding: 6px 0;
+  }
+  
+  .navbar-brand {
+    font-size: 1.1rem;
+  }
+  
+  .navbar-toggler {
+    padding: 2px 6px;
+    font-size: 1rem;
+  }
+  
+  .navbar-nav .nav-link {
+    padding: 8px 16px !important;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 320px) {
+  .navbar-brand {
+    font-size: 1rem;
+    max-width: 60%;
+  }
 }
 
 /* Container */
@@ -560,89 +609,335 @@ tr.given {
   51%, 100% { opacity: 0.5; }
 }
 
-@media (min-width: 1200px) {
+/* Monitor sahifasi uchun responsive dizayn */
+
+/* TV va juda katta ekranlar uchun (1400px+) */
+@media (min-width: 1400px) {
   .monitor-table td, .monitor-table th { 
-    font-size: 1.4rem; 
-    padding: 18px 12px; 
+    font-size: 2rem; 
+    padding: 25px 20px; 
   }
 
   .monitor-section h4 {
-    font-size: 2.2rem;
+    font-size: 3rem;
+    margin-bottom: 25px;
   }
 
   .ticket-number {
+    font-size: 2.2rem;
+  }
+  
+  .status-badge {
+    font-size: 1.4rem;
+    padding: 12px 24px;
+  }
+  
+  .current-time {
     font-size: 1.8rem;
+    padding: 15px 30px;
+  }
+  
+  .order-items {
+    font-size: 1.2rem;
+    padding: 8px 12px;
   }
 }
 
-@media (max-width: 768px) {
-  .monitor-table td, .monitor-table th {
-    font-size: 0.9rem;
-    padding: 10px 5px;
-  }
-
-  .monitor-section {
-    padding: 15px;
+/* Katta ekranlar (1200px - 1399px) */
+@media (min-width: 1200px) and (max-width: 1399px) {
+  .monitor-table td, .monitor-table th { 
+    font-size: 1.6rem; 
+    padding: 20px 15px; 
   }
 
   .monitor-section h4 {
+    font-size: 2.4rem;
+  }
+
+  .ticket-number {
+    font-size: 2rem;
+  }
+  
+  .status-badge {
+    font-size: 1.2rem;
+    padding: 10px 20px;
+  }
+  
+  .current-time {
+    font-size: 1.5rem;
+    padding: 12px 24px;
+  }
+}
+
+/* O'rta ekranlar (992px - 1199px) */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .monitor-table td, .monitor-table th { 
+    font-size: 1.3rem; 
+    padding: 16px 12px; 
+  }
+
+  .monitor-section h4 {
+    font-size: 2rem;
+  }
+
+  .ticket-number {
+    font-size: 1.6rem;
+  }
+}
+
+/* Planshet (768px - 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+  .monitor-table td, .monitor-table th {
+    font-size: 1.1rem;
+    padding: 12px 8px;
+  }
+
+  .monitor-section {
+    padding: 18px;
+    margin-bottom: 20px;
+  }
+
+  .monitor-section h4 {
+    font-size: 1.8rem;
+  }
+  
+  .ticket-number {
     font-size: 1.4rem;
   }
 }
 
-/* Responsive dizayn */
-@media (max-width: 768px) { 
+/* Telefon (max-width: 767px) */
+@media (max-width: 767px) {
+  .monitor-table td, .monitor-table th {
+    font-size: 0.9rem;
+    padding: 8px 4px;
+  }
+
+  .monitor-section {
+    padding: 12px;
+    margin-bottom: 15px;
+  }
+
+  .monitor-section h4 {
+    font-size: 1.4rem;
+    margin-bottom: 12px;
+  }
+  
+  .ticket-number {
+    font-size: 1.2rem;
+  }
+  
+  .status-badge {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+  }
+  
+  .current-time {
+    font-size: 1rem;
+    padding: 8px 16px;
+    top: 10px;
+    right: 10px;
+  }
+  
+  .order-items {
+    font-size: 0.8rem;
+    padding: 4px 6px;
+  }
+}
+
+/* Juda kichik telefon (max-width: 480px) */
+@media (max-width: 480px) {
+  .monitor-container {
+    padding: 5px;
+  }
+  
+  .monitor-table td, .monitor-table th {
+    font-size: 0.8rem;
+    padding: 6px 3px;
+  }
+
+  .monitor-section {
+    padding: 8px;
+    margin-bottom: 10px;
+  }
+
+  .monitor-section h4 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+  
+  .ticket-number {
+    font-size: 1rem;
+  }
+  
+  .status-badge {
+    font-size: 0.7rem;
+    padding: 4px 8px;
+  }
+}
+
+/* Responsive dizayn - Barcha qurilmalar uchun */
+
+/* Katta ekranlar (TV, Desktop - 1200px+) */
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1400px;
+  }
+  
+  .card {
+    padding: 40px;
+    font-size: 18px;
+  }
+  
+  .btn.big {
+    font-size: 22px;
+    padding: 20px 40px;
+  }
+  
+  .btn {
+    font-size: 18px;
+    padding: 16px 32px;
+  }
+  
+  .ticket-no {
+    font-size: 64px;
+  }
+  
+  .navbar-brand {
+    font-size: 2rem;
+  }
+  
+  .menu-item h4 {
+    font-size: 24px;
+  }
+  
+  .price {
+    font-size: 28px;
+  }
+  
+  .menu-grid {
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  }
+  
+  table th, table td {
+    font-size: 18px;
+    padding: 20px;
+  }
+}
+
+/* O'rta ekranlar (Planshet landscape - 992px - 1199px) */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .container {
+    max-width: 1000px;
+  }
+  
+  .card {
+    padding: 30px;
+    font-size: 16px;
+  }
+  
+  .btn.big {
+    font-size: 18px;
+    padding: 16px 32px;
+  }
+  
+  .menu-grid {
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  }
+  
+  .ticket-no {
+    font-size: 48px;
+  }
+}
+
+/* Planshet portrait (768px - 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+  .container {
+    padding: 0 15px;
+  }
+  
+  .grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  
+  .menu-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  
+  .card {
+    padding: 25px;
+  }
+  
+  .btn.big {
+    font-size: 16px;
+    padding: 14px 28px;
+  }
+  
+  .ticket-no {
+    font-size: 42px;
+  }
+  
+  table th, table td {
+    font-size: 14px;
+    padding: 12px;
+  }
+}
+
+/* Kichik planshet va katta telefon (481px - 767px) */
+@media (min-width: 481px) and (max-width: 767px) {
   .grid-2 { 
     grid-template-columns: 1fr; 
   }
 
   .container {
-    padding: 0 10px;
-    margin: 10px auto;
+    padding: 0 15px;
+    margin: 15px auto;
   }
 
   .card {
-    padding: 15px;
-    margin-bottom: 15px;
-    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 18px;
   }
 
   .menu-grid {
     grid-template-columns: 1fr;
-    gap: 15px;
+    gap: 18px;
   }
 
   .menu-item {
-    padding: 15px;
+    padding: 20px;
   }
 
   .btn.big {
-    font-size: 14px;
-    padding: 12px 24px;
+    font-size: 16px;
+    padding: 14px 28px;
     display: block;
     width: 100%;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
   }
 
   .btn {
-    padding: 10px 20px;
-    font-size: 14px;
+    padding: 12px 24px;
+    font-size: 15px;
   }
 
   .ticket-no {
-    font-size: 28px;
+    font-size: 36px;
   }
 
   .navbar-brand {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
   }
 
   table {
-    font-size: 12px;
+    font-size: 14px;
   }
 
   table th, table td {
-    padding: 8px;
+    padding: 10px;
   }
 
   .quantity-selector {
@@ -652,39 +947,88 @@ tr.given {
 
   input, select, textarea {
     font-size: 16px; /* iOS da zoom oldinini olish uchun */
+    padding: 14px 18px;
+  }
+  
+  .price {
+    font-size: 20px;
+    padding: 10px 16px;
   }
 }
 
+/* Telefon (320px - 480px) */
 @media (max-width: 480px) {
-  .menu-section {
-    padding: 10px;
-    margin-bottom: 20px;
-  }
-
-  .menu-item {
-    padding: 12px;
-  }
-
-  .cart-btn {
-    padding: 8px 16px;
-    font-size: 13px;
-  }
-
-  .price {
-    font-size: 18px;
-    padding: 8px 12px;
-  }
-
-  .menu-item h4 {
-    font-size: 16px;
-  }
-
-  .card {
-    padding: 12px;
+  .grid-2 { 
+    grid-template-columns: 1fr; 
   }
 
   .container {
-    padding: 0 8px;
+    padding: 0 12px;
+    margin: 12px auto;
+  }
+
+  .card {
+    padding: 16px;
+    margin-bottom: 16px;
+    border-radius: 15px;
+  }
+
+  .menu-section {
+    padding: 12px;
+    margin-bottom: 18px;
+  }
+
+  .menu-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .menu-item {
+    padding: 16px;
+  }
+
+  .menu-item h4 {
+    font-size: 18px;
+  }
+
+  .cart-btn {
+    padding: 10px 18px;
+    font-size: 14px;
+  }
+
+  .price {
+    font-size: 19px;
+    padding: 10px 14px;
+  }
+
+  .btn.big {
+    font-size: 15px;
+    padding: 12px 24px;
+    display: block;
+    width: 100%;
+    margin-bottom: 12px;
+  }
+
+  .btn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+
+  .ticket-no {
+    font-size: 32px;
+  }
+
+  .navbar-brand {
+    font-size: 1.2rem;
+  }
+
+  table {
+    font-size: 13px;
+  }
+
+  table th, table td {
+    padding: 8px;
+    text-align: center;
   }
 
   body {
@@ -692,27 +1036,269 @@ tr.given {
   }
 
   .flash-item {
-    padding: 10px 15px;
-    font-size: 13px;
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+
+  input, select, textarea {
+    font-size: 16px;
+    padding: 12px 16px;
+  }
+  
+  .quantity-btn {
+    min-width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+  
+  .quantity-selector input {
+    width: 50px;
+    height: 40px;
   }
 }
 
+/* Juda kichik telefon (240px - 375px) */
 @media (max-width: 375px) {
+  .container {
+    padding: 0 8px;
+    margin: 8px auto;
+  }
+
+  .card {
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  .navbar-brand {
+    font-size: 1.1rem;
+  }
+
+  .btn.big {
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+
+  .btn {
+    font-size: 13px;
+    padding: 8px 16px;
+  }
+
+  .ticket-no {
+    font-size: 28px;
+  }
+
+  .menu-grid {
+    gap: 12px;
+  }
+
+  .menu-item {
+    padding: 12px;
+  }
+
+  .menu-item h4 {
+    font-size: 16px;
+  }
+
+  .price {
+    font-size: 17px;
+    padding: 8px 12px;
+  }
+  
+  .cart-btn {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+  
+  table th, table td {
+    padding: 6px;
+    font-size: 12px;
+  }
+  
+  .quantity-btn {
+    min-width: 35px;
+    height: 35px;
+    font-size: 14px;
+  }
+  
+  .quantity-selector input {
+    width: 45px;
+    height: 35px;
+    font-size: 14px;
+  }
+}
+
+/* Tugmali telefon va juda kichik ekranlar (max 320px) */
+@media (max-width: 320px) {
+  .container {
+    padding: 0 6px;
+    margin: 6px auto;
+  }
+
+  .card {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 12px;
+  }
+
   .navbar-brand {
     font-size: 1rem;
   }
 
   .btn.big {
     font-size: 13px;
-    padding: 10px 20px;
+    padding: 8px 16px;
+  }
+
+  .btn {
+    font-size: 12px;
+    padding: 6px 12px;
   }
 
   .ticket-no {
     font-size: 24px;
   }
 
+  .menu-item {
+    padding: 10px;
+  }
+
+  .menu-item h4 {
+    font-size: 15px;
+  }
+
+  .price {
+    font-size: 16px;
+    padding: 6px 10px;
+  }
+  
+  .cart-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  
+  body {
+    font-size: 13px;
+  }
+  
+  .flash-item {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+  
+  input, select, textarea {
+    font-size: 16px;
+    padding: 10px 12px;
+  }
+  
+  table th, table td {
+    padding: 4px;
+    font-size: 11px;
+  }
+  
+  .quantity-btn {
+    min-width: 30px;
+    height: 30px;
+    font-size: 12px;
+  }
+  
+  .quantity-selector input {
+    width: 40px;
+    height: 30px;
+    font-size: 12px;
+  }
+}
+
+/* Landscape orientatsiya uchun maxsus qoidalar */
+@media (orientation: landscape) and (max-height: 500px) {
+  .navbar {
+    padding: 8px 0;
+  }
+  
+  .container {
+    margin: 10px auto;
+  }
+  
+  .card {
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+  
   .menu-grid {
-    gap: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+  }
+  
+  .ticket-no {
+    font-size: 24px;
+  }
+}
+
+/* TV va juda katta ekranlar uchun (1400px+) */
+@media (min-width: 1400px) {
+  .container {
+    max-width: 1600px;
+  }
+  
+  .card {
+    padding: 50px;
+    font-size: 20px;
+  }
+  
+  .btn.big {
+    font-size: 24px;
+    padding: 24px 48px;
+  }
+  
+  .btn {
+    font-size: 20px;
+    padding: 18px 36px;
+  }
+  
+  .ticket-no {
+    font-size: 72px;
+  }
+  
+  .navbar-brand {
+    font-size: 2.2rem;
+  }
+  
+  .menu-item h4 {
+    font-size: 26px;
+  }
+  
+  .price {
+    font-size: 30px;
+  }
+  
+  .menu-grid {
+    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+  }
+  
+  table th, table td {
+    font-size: 20px;
+    padding: 25px;
+  }
+  
+  .flash-item {
+    padding: 20px 30px;
+    font-size: 18px;
+  }
+}
+
+/* Print media uchun */
+@media print {
+  .navbar, .btn, .flash {
+    display: none !important;
+  }
+  
+  .card {
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
   }
 }
 
