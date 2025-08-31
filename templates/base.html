@@ -10,23 +10,36 @@
 </head>
 <body>
   
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="{{ url_for('index') }}">🍽️ Restoran</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('menu') }}">Taomlar</a></li>
-      </ul>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="display: flex;">
+  <div class="container-fluid" style="display: flex; justify-content: space-between; align-items: center;">
+    <div style="display: flex; align-items: center; gap: 20px;">
+      <a class="navbar-brand" href="{{ url_for('index') }}">🍽️ Restoran</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('menu') }}">Menyu</a></li>
+        </ul>
+      </div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 15px;">
       {% if session.get('staff_id') %}
-        <span class="navbar-text text-white me-3">Salom, {{ session.get('staff_name') }}!</span>
+        <span class="navbar-text text-white">Salom, {{ session.get('staff_name') }}!</span>
         <a class="btn btn-outline-light" href="{{ url_for('staff_logout') }}">Chiqish</a>
       {% endif %}
     </div>
   </div>
 </nav>
+
+<!-- Exit icon chap tepa burchakda -->
+<div style="position: fixed; top: 70px; left: 10px; z-index: 1000;">
+  <a href="{{ url_for('index') }}" class="exit-icon" title="Bosh sahifaga qaytish">
+    <svg width="24" height="24" fill="white" viewBox="0 0 24 24">
+      <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+    </svg>
+  </a>
+</div>
 
   <main class="container">
     {% with messages = get_flashed_messages(with_categories=true) %}
