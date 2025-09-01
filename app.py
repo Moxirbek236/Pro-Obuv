@@ -939,6 +939,21 @@ def cart():
     session_id = get_session_id()
     user_id = session.get("user_id")
     conn = get_db()
+    
+    # Foydalanuvchi ma'lumotlarini olish va session ga yuklash
+    if user_id:
+        cur = conn.cursor()
+        cur.execute("SELECT phone, address, address_latitude, address_longitude, first_name, last_name FROM users WHERE id = ?", (user_id,))
+        user_profile = cur.fetchone()
+        
+        if user_profile:
+            session['user_phone'] = user_profile['phone'] or ''
+            session['user_address'] = user_profile['address'] or ''
+            session['user_address_latitude'] = user_profile['address_latitude'] or ''
+            session['user_address_longitude'] = user_profile['address_longitude'] or ''
+            session['user_first_name'] = user_profile['first_name'] or ''
+            session['user_last_name'] = user_profile['last_name'] or ''
+    
     cart_items = get_cart_items(conn, session_id, user_id)
     total = get_cart_total(conn, session_id, user_id)
     conn.close()
