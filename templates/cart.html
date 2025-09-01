@@ -470,42 +470,101 @@ function updateTotal() {
 }
 
 function validateOrderForm(form) {
-    console.log('Form validation boshlandi');
+    console.log('validateOrderForm chaqirildi');
 
-    // Savatcha bo'sh emasligini tekshirish
-    const cartItems = document.querySelectorAll('.cart-item');
-    if (cartItems.length === 0) {
-        alert('Savatchangiz bo\'sh! Avval mahsulot qo\'shing.');
+    // Buyurtma turi tekshirish
+    const orderType = document.querySelector('input[name="order_type"]:checked');
+    if (!orderType) {
+        alert('Buyurtma turini tanlang!');
+        return false;
+    }
+
+    // Agar delivery tanlangan bo'lsa, manzil tekshirish
+    if (orderType.value === 'delivery') {
+        const deliveryAddress = document.querySelector('input[name="delivery_address"]');
+        if (!deliveryAddress || !deliveryAddress.value.trim()) {
+            alert('Yetkazib berish manzilini kiriting!');
+            if (deliveryAddress) deliveryAddress.focus();
+            return false;
+        }
+    }
+
+    // Telefon raqami tekshirish
+    const customerPhone = document.querySelector('input[name="customer_phone"]');
+    if (!customerPhone || !customerPhone.value.trim()) {
+        alert('Telefon raqamingizni kiriting!');
+        if (customerPhone) customerPhone.focus();
         return false;
     }
 
     // Loading animatsiyasini ko'rsatish
-    const submitBtn = form.querySelector('#placeOrderBtn');
+    const submitBtn = form.querySelector('#checkout-button'); // Changed from #placeOrderBtn to #checkout-button
     if (submitBtn) {
-        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Buyurtma berilmoqda...';
+        submitBtn.innerHTML = '<span class="loading-spinner"></span>Buyurtma berilmoqda...';
         submitBtn.disabled = true;
+
+        // 10 soniyadan keyin tugmani qayta faollashtirish (agar sahifa reload bo'lmasa)
+        setTimeout(() => {
+            if (submitBtn) {
+                submitBtn.innerHTML = '🛒 Buyurtma berish';
+                submitBtn.disabled = false;
+            }
+        }, 10000);
     }
 
+    console.log('Form validatsiyadan o\'tdi, submit qilinmoqda...');
     return true;
 }
 
 // Sahifa yuklanganda xaritani ishga tushirish va boshqa funksiyalarni chaqirish
-document.addEventListener('DOMContentLoaded', (event) => {
+document.addEventListener('DOMContentLoaded', function() {
     console.log("Sahifa yuklandi, JavaScript ishga tushmoqda...");
 
     // Form submit event listener qo'shish
     const checkoutForm = document.querySelector('.checkout-form');
     if (checkoutForm) {
+        console.log("Checkout form topildi, event listener qo'shilmoqda...");
+
         checkoutForm.addEventListener('submit', function(e) {
             console.log('Form submit hodisasi ishga tushdi');
-            const isValid = validateOrderForm(this); // Pass the form to the validation function
+
+            // Validatsiyani chaqirish
+            const isValid = validateOrderForm(this);
             if (!isValid) {
                 e.preventDefault();
+                e.stopPropagation();
                 console.log('Form validation o\'tmadi, submit to\'xtatildi');
                 return false;
             }
+
             console.log('Form yuborilmoqda...');
+            // Form yuborilishiga ruxsat berish
+            return true;
         });
+
+        // Tugma bosilganda ham tekshirish
+        const submitButton = checkoutForm.querySelector('#checkout-button'); // Changed from #placeOrderBtn to #checkout-button
+        if (submitButton) {
+            submitButton.addEventListener('click', function(e) {
+                console.log('Submit tugma bosildi');
+
+                // Form mavjudligini tekshirish
+                const form = this.closest('form');
+                if (!form) {
+                    console.error('Form topilmadi!');
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Manual submit (agar form avtomatik submit bo'lmasa)
+                if (!validateOrderForm(form)) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        }
+    } else {
+        console.error("Checkout form topilmadi!");
     }
 
     // Radio buttonlar uchun change event qo'shish
@@ -514,14 +573,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
         radio.addEventListener('change', toggleDeliveryFields);
     });
 
-    // Agar delivery allaqachon tanlangan bo'lsa
-    const deliveryRadio = document.querySelector('input[name="order_type"][value="delivery"]');
-    if (deliveryRadio && deliveryRadio.checked) {
-        console.log("Delivery allaqachon tanlangan, fieldlarni ko'rsatish...");
-        toggleDeliveryFields();
-    }
-
-    // Manzil inputiga yo'naltirish
     // Agar delivery allaqachon tanlangan bo'lsa
     const deliveryRadio = document.querySelector('input[name="order_type"][value="delivery"]');
     if (deliveryRadio && deliveryRadio.checked) {
@@ -605,7 +656,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         });
     }
 
-    console.log("JavaScript to'liq yuklandi va sozlandi");
+    console.log("JavaScript muvaffaqiyatli yuklandi va sozlandi");
 });
 
         </script>
@@ -968,6 +1019,25 @@ document.addEventListener('DOMContentLoaded', (event) => {
 }
 .text-warning {
     color: #ffc107 !important;
+}
+
+/* Spinner styles */
+.loading-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 </style>
