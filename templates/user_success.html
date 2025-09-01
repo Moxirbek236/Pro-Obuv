@@ -37,7 +37,12 @@
     </div>
     
     <div class="mt-4">
-      <a href="{{ url_for('menu') }}" class="btn">🍽️ Yana buyurtma berish</a>
+      <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+        {% if receipt %}
+        <a href="{{ url_for('view_receipt', ticket_no=order.ticket_no) }}" class="btn" style="background: #10b981;">🧾 Chekni ko'rish</a>
+        {% endif %}
+        <a href="{{ url_for('menu') }}" class="btn">🍽️ Yana buyurtma berish</a>
+      </div>
     </div>
   </div>
 </div>
