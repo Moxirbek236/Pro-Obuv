@@ -329,7 +329,7 @@ def ensure_orders_columns():
     conn.close()
 
 def ensure_users_columns():
-    """Users jadvaliga latitude va longitude ustunlarini qo'shadi (migration)."""
+    """Users jadvaliga kerakli ustunlarni qo'shadi (migration)."""
     conn = get_db()
     cur = conn.cursor()
     try:
@@ -342,6 +342,18 @@ def ensure_users_columns():
 
         if 'address_longitude' not in cols:
             cur.execute("ALTER TABLE users ADD COLUMN address_longitude REAL;")
+            conn.commit()
+
+        if 'interface_language' not in cols:
+            cur.execute("ALTER TABLE users ADD COLUMN interface_language TEXT DEFAULT 'uz';")
+            conn.commit()
+
+        if 'font_size' not in cols:
+            cur.execute("ALTER TABLE users ADD COLUMN font_size TEXT DEFAULT 'medium';")
+            conn.commit()
+
+        if 'dark_theme' not in cols:
+            cur.execute("ALTER TABLE users ADD COLUMN dark_theme BOOLEAN DEFAULT 0;")
             conn.commit()
 
     except Exception as e:
@@ -1014,9 +1026,9 @@ def login():
             session["user_name"] = f"{user['first_name']} {user['last_name']}"
             session["user_email"] = user["email"]
             # Tillar va mavzu sozlamalarini session ga yuklash
-            session['interface_language'] = user.get('interface_language', 'uz')
-            session['font_size'] = user.get('font_size', 'medium')
-            session['dark_theme'] = user.get('dark_theme', False)
+            session['interface_language'] = user.get('interface_language') or 'uz'
+            session['font_size'] = user.get('font_size') or 'medium'
+            session['dark_theme'] = bool(user.get('dark_theme', 0))
             flash(f"Xush kelibsiz, {user['first_name']}!", "success")
             return redirect(url_for("index"))
         else:
@@ -1075,9 +1087,9 @@ def register():
         session["user_id"] = user_id
         session["user_name"] = f"{first_name} {last_name}"
         session["user_email"] = email
-        session['interface_language'] = 'uz' # Default til
-        session['font_size'] = 'medium'     # Default font size
-        session['dark_theme'] = False       # Default theme
+        session['interface_language'] = 'uz'  # Default til
+        session['font_size'] = 'medium'       # Default font size
+        session['dark_theme'] = False         # Default theme
 
         flash(f"Muvaffaqiyatli ro'yxatdan o'tdingiz! Xush kelibsiz, {first_name}!", "success")
         return redirect(url_for("index"))
@@ -2723,14 +2735,18 @@ def api_set_language():
 
         # Agar foydalanuvchi tizimda bo'lsa, ma'lumotlar bazasiga ham saqlash
         if 'user_id' in session:
-            conn = get_db()
-            cur = conn.cursor()
-            cur.execute(
-                'UPDATE users SET interface_language = ?, font_size = ? WHERE id = ?',
-                (language, font_size, session['user_id'])
-            )
-            conn.commit()
-            conn.close()
+            try:
+                conn = get_db()
+                cur = conn.cursor()
+                cur.execute(
+                    'UPDATE users SET interface_language = ?, font_size = ? WHERE id = ?',
+                    (language, font_size, session['user_id'])
+                )
+                conn.commit()
+                conn.close()
+            except Exception as db_error:
+                logging.error(f"Ma'lumotlar bazasiga til sozlamasini saqlashda xatolik: {str(db_error)}")
+                # Session da saqlashni davom ettirish
 
         # Til o'zgarishi bo'yicha message
         if language == 'ru':
@@ -2763,14 +2779,18 @@ def api_save_settings():
 
         # Agar foydalanuvchi tizimda bo'lsa, ma'lumotlar bazasiga ham saqlash
         if 'user_id' in session:
-            conn = get_db()
-            cur = conn.cursor()
-            cur.execute(
-                'UPDATE users SET interface_language = ?, font_size = ?, dark_theme = ? WHERE id = ?',
-                (session['interface_language'], session['font_size'], session['dark_theme'], session['user_id'])
-            )
-            conn.commit()
-            conn.close()
+            try:
+                conn = get_db()
+                cur = conn.cursor()
+                cur.execute(
+                    'UPDATE users SET interface_language = ?, font_size = ?, dark_theme = ? WHERE id = ?',
+                    (session['interface_language'], session['font_size'], session['dark_theme'], session['user_id'])
+                )
+                conn.commit()
+                conn.close()
+            except Exception as db_error:
+                logging.error(f"Ma'lumotlar bazasiga sozlamalarni saqlashda xatolik: {str(db_error)}")
+                # Session da saqlashni davom ettirish
 
         # Success message til bo'yicha
         language = session.get('interface_language', 'uz')
@@ -2806,14 +2826,18 @@ def api_set_theme():
 
         # Agar foydalanuvchi tizimda bo'lsa, ma'lumotlar bazasiga ham saqlash
         if 'user_id' in session:
-            conn = get_db()
-            cur = conn.cursor()
-            cur.execute(
-                'UPDATE users SET dark_theme = ? WHERE id = ?',
-                (dark_mode, session['user_id'])
-            )
-            conn.commit()
-            conn.close()
+            try:
+                conn = get_db()
+                cur = conn.cursor()
+                cur.execute(
+                    'UPDATE users SET dark_theme = ? WHERE id = ?',
+                    (dark_mode, session['user_id'])
+                )
+                conn.commit()
+                conn.close()
+            except Exception as db_error:
+                logging.error(f"Ma'lumotlar bazasiga mavzu sozlamasini saqlashda xatolik: {str(db_error)}")
+                # Session da saqlashni davom ettirish
 
         return jsonify({"success": True, "message": "Mavzu o'zgartirildi"})
     except Exception as e:
