@@ -45,7 +45,7 @@
                          onchange="toggleCardNumber()"></textarea>
                 <small class="text-muted">Bo'sh qoldirgang takdirda restoranda yeyish uchun buyurtma beriladi.</small>
             </div>
-            
+
             <div class="mb-3" id="card-number-field" style="display: none;">
                 <label for="card_number" class="form-label">💳 Karta raqami:</label>
                 <input type="text" class="form-control" id="card_number" name="card_number" 
@@ -53,7 +53,7 @@
                        pattern="[0-9\s]+" onkeyup="formatCardNumber(this)">
                 <small class="text-muted">Dostavka uchun to'lov kartasi raqamini kiriting.</small>
             </div>
-            
+
             <button type="submit" class="btn btn-success btn-lg w-100">
                 🛒 Buyurtma berish ({{ "{:,}".format(total) }} so'm)
             </button>
@@ -66,7 +66,7 @@ function toggleCardNumber() {
     const deliveryAddress = document.getElementById('delivery_address').value.trim();
     const cardField = document.getElementById('card-number-field');
     const cardInput = document.getElementById('card_number');
-    
+
     if (deliveryAddress) {
         cardField.style.display = 'block';
         cardInput.required = true;

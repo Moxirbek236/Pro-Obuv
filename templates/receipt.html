@@ -146,3 +146,122 @@
     </div>
 </body>
 </html>
+{% extends "base.html" %}
+
+{% block title %}Chek #{{ receipt.ticket_no }} - Restoran{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card receipt-card">
+                <div class="card-body">
+                    <div class="receipt-header text-center mb-4">
+                        <h2>🧾 CHE K</h2>
+                        <h4>Buyurtma #{{ receipt.ticket_no }}</h4>
+                        <p class="text-muted">{{ receipt.created_at[:16].replace('T', ' ') }}</p>
+                    </div>
+                    
+                    <div class="receipt-info mb-4">
+                        <div class="row">
+                            <div class="col-6">
+                                <strong>Mijoz:</strong>
+                            </div>
+                            <div class="col-6 text-end">
+                                {{ receipt.customer_name }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="receipt-items mb-4">
+                        <h5>Buyurtma tarkibi:</h5>
+                        <div class="order-items">
+                            {{ receipt.order_items }}
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="receipt-total mb-3">
+                        <div class="row">
+                            <div class="col-6">
+                                <strong>Jami summa:</strong>
+                            </div>
+                            <div class="col-6 text-end">
+                                <strong>{{ "{:,.0f}".format(receipt.total_amount) }} so'm</strong>
+                            </div>
+                        </div>
+                        <div class="row text-success">
+                            <div class="col-6">
+                                <strong>Keshbek (1%):</strong>
+                            </div>
+                            <div class="col-6 text-end">
+                                <strong>{{ "{:,.0f}".format(receipt.cashback_amount) }} so'm</strong>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="alert alert-success">
+                            <h5>🎉 Tabriklaymiz!</h5>
+                            <p class="mb-0">Sizga {{ "{:,.0f}".format(receipt.cashback_amount) }} so'm keshbek berildi!</p>
+                        </div>
+                        
+                        <button onclick="window.print()" class="btn btn-primary me-2">
+                            🖨️ Chop etish
+                        </button>
+                        <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                            🏠 Bosh sahifa
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.receipt-card {
+    border: 2px dashed #6c757d;
+    border-radius: 15px;
+    background: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.receipt-header {
+    border-bottom: 2px dashed #dee2e6;
+    padding-bottom: 20px;
+}
+
+.receipt-header h2 {
+    color: #495057;
+    font-weight: 700;
+}
+
+.order-items {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    font-family: monospace;
+    font-size: 14px;
+    white-space: pre-line;
+}
+
+.receipt-total {
+    background: #e9ecef;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+@media print {
+    .btn, .navbar, .footer {
+        display: none !important;
+    }
+    
+    .receipt-card {
+        border: 1px solid #000;
+        box-shadow: none;
+    }
+}
+</style>
+{% endblock %}
