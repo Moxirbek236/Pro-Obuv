@@ -109,6 +109,32 @@
         .font-medium body { font-size: 1rem; }
         .font-large body { font-size: 1.125rem; }
         .font-xlarge body { font-size: 1.25rem; }
+
+        /* Notification styles */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1060;
+            max-width: 350px;
+            padding: 15px 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            backdrop-filter: blur(10px);
+            animation: slideIn 0.3s ease-out;
+        }
+        .notification.alert-success { background-color: #d4edda; color: #155724; border-color: #c3e6cb; }
+        .notification.alert-error { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+        .notification.alert-info { background-color: #d1ecf1; color: #0c5460; border-color: #bee5eb; }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
     </style>
 </head>
 <body>
@@ -137,7 +163,7 @@
                     <div class="setting-label">Interface tili</div>
                     <small class="text-muted">Tizim tilini tanlang</small>
                 </div>
-                <select class="form-select" id="languageSelect" style="width: auto;">
+                <select class="form-select" id="languageSelect" name="language" style="width: auto;">
                     <option value="uz">🇺🇿 O'zbek tili</option>
                     <option value="ru">🇷🇺 Русский язык</option>
                     <option value="en">🇺🇸 English</option>
@@ -169,7 +195,7 @@
                     <div class="setting-label">Shrift kattaligi</div>
                     <small class="text-muted">Matn o'lchamini sozlang</small>
                 </div>
-                <select class="form-select" id="fontSizeSelect" style="width: auto;">
+                <select class="form-select" id="fontSizeSelect" name="font_size" style="width: auto;">
                     <option value="small">Kichik</option>
                     <option value="medium" selected>O'rtacha</option>
                     <option value="large">Katta</option>
@@ -187,7 +213,7 @@
                     <small class="text-muted">Sozlamalarni avtomatik saqlash</small>
                 </div>
                 <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="autoSave" checked>
+                    <input class="form-check-input" type="checkbox" id="autoSave" name="auto_save" checked>
                     <label class="form-check-label" for="autoSave"></label>
                 </div>
             </div>
@@ -197,7 +223,7 @@
                     <small class="text-muted">Sahifa animatsiyalarini yoqish</small>
                 </div>
                 <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="animationsSwitch" checked>
+                    <input class="form-check-input" type="checkbox" id="animationsSwitch" name="animations" checked>
                     <label class="form-check-label" for="animationsSwitch"></label>
                 </div>
             </div>
@@ -224,101 +250,205 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-    function saveSettings() {
-        // Sozlamalarni olish
-        const language = document.getElementById('languageSelect').value;
-        const themeMode = document.querySelector('input[name="theme_mode"]:checked').value;
-        const darkMode = themeMode === 'dark';
-        const fontSize = document.getElementById('fontSizeSelect').value;
-        const autoSave = document.getElementById('autoSave').checked;
-        const animations = document.getElementById('animationsSwitch').checked;
+    // Notification funksiyasi
+    function showNotification(message, type = 'info') {
+        const existingNotifications = document.querySelectorAll('.notification');
+        existingNotifications.forEach(notif => notif.remove());
 
-        // LocalStorage ga saqlash
-        localStorage.setItem('language', language);
-        localStorage.setItem('darkMode', darkMode);
-        localStorage.setItem('fontSize', fontSize);
-        localStorage.setItem('autoSave', autoSave);
-        localStorage.setItem('animations', animations);
-
-        // Server ga til va mavzu sozlamalarini yuborish
-        fetch('/api/set-language', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ language: language })
-        });
-
-        fetch('/api/set-theme', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ dark_mode: darkMode })
-        });
-
-        // Sozlamalarni darhol qo'llash
-        applySettings(language, darkMode, fontSize);
-
-        // Muvaffaqiyatli xabarni ko'rsatish
-        const alertDiv = document.createElement('div');
-        alertDiv.className = 'alert alert-success alert-dismissible fade show';
-        alertDiv.innerHTML = `
-            Sozlamalar muvaffaqiyatli saqlandi! ✅
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        const notification = document.createElement('div');
+        notification.className = `notification alert alert-${type}`;
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1060;
+            max-width: 350px;
+            padding: 15px 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            backdrop-filter: blur(10px);
+            animation: slideIn 0.3s ease-out;
         `;
 
-        // Sahifaning yuqorisiga qo'shish
-        const container = document.querySelector('.settings-card');
-        container.insertBefore(alertDiv, container.firstChild);
+        notification.innerHTML = `
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                <span style="flex: 1;">${message}</span>
+                <button onclick="this.parentElement.parentElement.remove()" 
+                        style="background: none; border: none; color: inherit; font-size: 1.5rem; cursor: pointer; padding: 0; opacity: 0.7; transition: opacity 0.2s;">&times;</button>
+            </div>
+        `;
 
-        // 3 soniyadan keyin xabarni o'chirish
+        document.body.appendChild(notification);
+
         setTimeout(() => {
-            if (alertDiv && alertDiv.parentNode) {
-                alertDiv.remove();
+            if (notification.parentElement) {
+                notification.style.animation = 'fadeOut 0.3s ease-out forwards';
+                setTimeout(() => notification.remove(), 300);
             }
-        }, 3000);
+        }, 5000);
     }
 
-    function applySettings(language, darkMode, fontSize) {
-        // Tungi rejimni qo'llash
-        if (darkMode) {
-            document.body.classList.add('dark-theme');
-        } else {
-            document.body.classList.remove('dark-theme');
+    // Sozlamalarni darhol qo'llash funksiyasi
+    function applySettings(settings) {
+        // Tilni o'zgartirish
+        if (settings.language) {
+            document.documentElement.lang = settings.language;
+            updateInterfaceLanguage(settings.language);
         }
 
-        // Shrift o'lchamini qo'llash
-        document.body.classList.remove('font-small', 'font-medium', 'font-large', 'font-xlarge');
-        document.body.classList.add('font-' + fontSize);
+        // Shrift o'lchamini o'zgartirish
+        if (settings.font_size) {
+            document.body.className = document.body.className.replace(/font-(small|medium|large|xlarge)/g, '');
+            document.body.classList.add(`font-${settings.font_size}`);
+        }
 
-        // Tilni qo'llash (sahifani qayta yuklash kerak)
-        if (language !== (localStorage.getItem('currentLanguage') || 'uz')) {
-            localStorage.setItem('currentLanguage', language);
-            setTimeout(() => {
-                location.reload();
-            }, 1000);
+        // Mavzuni o'zgartirish
+        if (settings.dark_theme !== undefined) {
+            if (settings.dark_theme) {
+                document.body.classList.add('dark-theme');
+            } else {
+                document.body.classList.remove('dark-theme');
+            }
         }
     }
 
-    // Sahifa yuklanganda oldingi sozlamalarni yuklash
+    // Interface tilini yangilash
+    function updateInterfaceLanguage(language) {
+        const translations = {
+            'uz': {
+                'menu': 'Menyu',
+                'cart': 'Savatcha',
+                'profile': 'Profil',
+                'downloads': 'Yuklamalar',
+                'logout': 'Chiqish'
+            },
+            'ru': {
+                'menu': 'Меню',
+                'cart': 'Корзина', 
+                'profile': 'Профиль',
+                'downloads': 'Загрузки',
+                'logout': 'Выход'
+            },
+            'en': {
+                'menu': 'Menu',
+                'cart': 'Cart',
+                'profile': 'Profile', 
+                'downloads': 'Downloads',
+                'logout': 'Logout'
+            }
+        };
+
+        const lang = translations[language] || translations['uz'];
+
+        // Navbar linkalarini yangilash
+        document.querySelectorAll('[data-translate]').forEach(element => {
+            const key = element.getAttribute('data-translate');
+            if (lang[key]) {
+                element.textContent = lang[key];
+            }
+        });
+    }
+
+    function saveSettings() {
+        const form = document.createElement('form');
+        form.innerHTML = `
+            <select name="language">${document.getElementById('languageSelect').innerHTML}</select>
+            <input type="radio" name="theme_mode" value="light" ${document.querySelector('input[name="theme_mode"][value="light"]').checked ? 'checked' : ''}>
+            <input type="radio" name="theme_mode" value="dark" ${document.querySelector('input[name="theme_mode"][value="dark"]').checked ? 'checked' : ''}>
+            <select name="font_size">${document.getElementById('fontSizeSelect').innerHTML}</select>
+            <input type="checkbox" name="auto_save" ${document.getElementById('autoSave').checked ? 'checked' : ''}>
+            <input type="checkbox" name="animations" ${document.getElementById('animationsSwitch').checked ? 'checked' : ''}>
+        `;
+
+        const formData = new FormData(form);
+        const settings = {
+            language: formData.get('language'),
+            font_size: formData.get('font_size'),
+            dark_theme: formData.get('theme_mode') === 'dark',
+            auto_save: formData.get('auto_save') === 'on',
+            animations: formData.get('animations') === 'on'
+        };
+
+        // Darhol UI ni yangilash
+        applySettings(settings);
+
+        // Serverga saqlash
+        fetch('/api/save-settings', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(settings)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification(data.message, 'success');
+
+                // Sozlamalarni localStorage ga ham saqlash
+                localStorage.setItem('userSettings', JSON.stringify(settings));
+
+                // Sahifani 2 soniyadan keyin qayta yuklash
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
+            } else {
+                showNotification('Xatolik: ' + data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Sozlamalarni saqlashda xatolik:', error);
+            showNotification('Server bilan bog\'lanishda xatolik!', 'error');
+        });
+    }
+
+    // Sahifa yuklanganda sozlamalarni yuklash
     document.addEventListener('DOMContentLoaded', function() {
-        // Oldingi sozlamalarni yuklash
-        const language = localStorage.getItem('language') || 'uz';
-        const darkModeStored = localStorage.getItem('darkMode');
-        const darkMode = darkModeStored ? darkModeStored === 'true' : {{ 'true' if session.get('dark_theme') else 'false' }}; // Default to session's dark_theme if not in localStorage
-        const fontSize = localStorage.getItem('fontSize') || 'medium';
-        const autoSave = localStorage.getItem('autoSave') !== 'false'; // default true
-        const animations = localStorage.getItem('animations') !== 'false'; // default true
+        // localStorage dan sozlamalarni yuklash
+        const savedSettings = localStorage.getItem('userSettings');
+        if (savedSettings) {
+            try {
+                const settings = JSON.parse(savedSettings);
+                applySettings(settings);
 
-        document.getElementById('languageSelect').value = language;
-        document.querySelector('input[name="theme_mode"][value="' + (darkMode ? 'dark' : 'light') + '"]').checked = true;
-        document.getElementById('fontSizeSelect').value = fontSize;
-        document.getElementById('autoSave').checked = autoSave;
-        document.getElementById('animationsSwitch').checked = animations;
+                // Form elementlarini yangilash
+                if (settings.language) {
+                    const languageSelect = document.getElementById('languageSelect');
+                    if (languageSelect) languageSelect.value = settings.language;
+                }
 
-        // Sozlamalarni qo'llash
-        applySettings(language, darkMode, fontSize);
+                if (settings.font_size) {
+                    const fontSizeSelect = document.getElementById('fontSizeSelect');
+                    if (fontSizeSelect) fontSizeSelect.value = settings.font_size;
+                }
+
+                if (settings.dark_theme !== undefined) {
+                    const themeRadio = document.querySelector(`input[name="theme_mode"][value="${settings.dark_theme ? 'dark' : 'light'}"]`);
+                    if (themeRadio) themeRadio.checked = true;
+                }
+                
+                if (document.getElementById('autoSave')) {
+                    document.getElementById('autoSave').checked = settings.auto_save !== undefined ? settings.auto_save : true;
+                }
+                if (document.getElementById('animationsSwitch')) {
+                    document.getElementById('animationsSwitch').checked = settings.animations !== undefined ? settings.animations : true;
+                }
+
+            } catch (e) {
+                console.error('Sozlamalarni yuklashda xatolik:', e);
+            }
+        } else {
+            // Agar localStorage da sozlamalar bo'lmasa, serverdan olingan sozlamalarni qo'llash
+            const initialLanguage = document.getElementById('languageSelect').value;
+            const initialDarkMode = document.querySelector('input[name="theme_mode"]:checked')?.value === 'dark';
+            const initialFontSize = document.getElementById('fontSizeSelect').value;
+            
+            applySettings({
+                language: initialLanguage,
+                dark_theme: initialDarkMode,
+                font_size: initialFontSize
+            });
+        }
     });
     </script>
 </body>
