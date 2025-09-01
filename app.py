@@ -1235,24 +1235,22 @@ def super_admin_dashboard():
     conn = get_db()
     cur = conn.cursor()
 
-    # Barcha xodimlarni olish (to'liq ma'lumotlar bilan)
+    # Xodimlar ma'lumotlari (soatlar va buyurtmalar bilan)
     cur.execute("""
         SELECT s.*, 
-               COALESCE(s.total_hours, 0) as hours,
-               COALESCE(s.orders_handled, 0) as handled_orders,
-               COALESCE(s.last_activity, s.created_at) as activity
-        FROM staff s 
+               COALESCE(0, 0) as hours,
+               COALESCE(0, 0) as handled_orders
+        FROM staff s
         ORDER BY s.created_at DESC
     """)
     staff_db = cur.fetchall()
 
-    # Barcha kuryerlarni olish
+    # Kuryerlar ma'lumotlari
     cur.execute("""
         SELECT c.*, 
-               COALESCE(c.total_hours, 0) as hours,
-               COALESCE(c.deliveries_completed, 0) as deliveries,
-               COALESCE(c.last_activity, c.created_at) as activity
-        FROM couriers c 
+               COALESCE(0, 0) as hours,
+               COALESCE(0, 0) as deliveries
+        FROM couriers c
         ORDER BY c.created_at DESC
     """)
     couriers_db = cur.fetchall()
