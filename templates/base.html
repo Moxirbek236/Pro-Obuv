@@ -47,7 +47,7 @@
             <span class="navbar-text text-white me-3">👤 {{ session.get('user_first_name') }} {{ session.get('user_last_name') }}</span>
           </li>
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
               👤 {{ session.get('user_name', 'Profil') }}
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
