@@ -3,7 +3,7 @@
 {% block title %}Savatcha - Restoran{% endblock %}
 
 {% block head %}
-<script src="https://api-maps.yandex.ru/2.1/?apikey=YOUR_YANDEX_API_KEY&lang=uz_UZ" type="text/javascript"></script>
+<script src="https://api-maps.yandex.ru/2.1/?apikey=036467b2-54b9-44c8-bc32-9e85e02183c4&lang=uz_UZ" type="text/javascript"></script>
 {% endblock %}
 
 {% block content %}
@@ -175,6 +175,7 @@
                     </div>
                 </div>
                 <button type="submit" class="btn checkout-btn" id="checkout-button">🛒 Buyurtma berish</button>
+            </div>
         </form>
         <script>
 let map;
@@ -479,7 +480,7 @@ function validateOrderForm(form) {
         return false;
     }
 
-    // Agar delivery tanlangan bo'lsa, manzil tekshirish
+    // Agar delivery tanlangan bo'lsa, manzil va telefon tekshirish
     if (orderType.value === 'delivery') {
         const deliveryAddress = document.querySelector('input[name="delivery_address"]');
         if (!deliveryAddress || !deliveryAddress.value.trim()) {
@@ -487,29 +488,22 @@ function validateOrderForm(form) {
             if (deliveryAddress) deliveryAddress.focus();
             return false;
         }
-    }
 
-    // Telefon raqami tekshirish
-    const customerPhone = document.querySelector('input[name="customer_phone"]');
-    if (!customerPhone || !customerPhone.value.trim()) {
-        alert('Telefon raqamingizni kiriting!');
-        if (customerPhone) customerPhone.focus();
-        return false;
-    }
-
-    // Loading animatsiyasini ko'rsatish
-    const submitBtn = form.querySelector('#checkout-button'); // Changed from #placeOrderBtn to #checkout-button
-    if (submitBtn) {
-        submitBtn.innerHTML = '<span class="loading-spinner"></span>Buyurtma berilmoqda...';
-        submitBtn.disabled = true;
-
-        // 10 soniyadan keyin tugmani qayta faollashtirish (agar sahifa reload bo'lmasa)
-        setTimeout(() => {
-            if (submitBtn) {
-                submitBtn.innerHTML = '🛒 Buyurtma berish';
-                submitBtn.disabled = false;
-            }
-        }, 10000);
+        // Profilda telefon yo'q bo'lsa, formdan tekshirish
+        const customerPhone = document.querySelector('input[name="customer_phone"]');
+        if (customerPhone && !customerPhone.value.trim()) {
+            alert('Telefon raqamingizni kiriting!');
+            customerPhone.focus();
+            return false;
+        }
+    } else {
+        // Dine-in uchun telefon tekshirish (agar form mavjud bo'lsa)
+        const customerPhone = document.querySelector('input[name="customer_phone"]');
+        if (customerPhone && !customerPhone.value.trim()) {
+            alert('Telefon raqamingizni kiriting!');
+            customerPhone.focus();
+            return false;
+        }
     }
 
     console.log('Form validatsiyadan o\'tdi, submit qilinmoqda...');
@@ -529,40 +523,22 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Form submit hodisasi ishga tushdi');
 
             // Validatsiyani chaqirish
-            const isValid = validateOrderForm(this);
-            if (!isValid) {
+            if (!validateOrderForm(this)) {
                 e.preventDefault();
-                e.stopPropagation();
                 console.log('Form validation o\'tmadi, submit to\'xtatildi');
                 return false;
             }
 
+            // Loading animatsiyasini ko'rsatish
+            const submitBtn = this.querySelector('#checkout-button');
+            if (submitBtn) {
+                submitBtn.innerHTML = '<span class="loading-spinner"></span>Buyurtma berilmoqda...';
+                submitBtn.disabled = true;
+            }
+
             console.log('Form yuborilmoqda...');
-            // Form yuborilishiga ruxsat berish
             return true;
         });
-
-        // Tugma bosilganda ham tekshirish
-        const submitButton = checkoutForm.querySelector('#checkout-button'); // Changed from #placeOrderBtn to #checkout-button
-        if (submitButton) {
-            submitButton.addEventListener('click', function(e) {
-                console.log('Submit tugma bosildi');
-
-                // Form mavjudligini tekshirish
-                const form = this.closest('form');
-                if (!form) {
-                    console.error('Form topilmadi!');
-                    e.preventDefault();
-                    return false;
-                }
-
-                // Manual submit (agar form avtomatik submit bo'lmasa)
-                if (!validateOrderForm(form)) {
-                    e.preventDefault();
-                    return false;
-                }
-            });
-        }
     } else {
         console.error("Checkout form topilmadi!");
     }
