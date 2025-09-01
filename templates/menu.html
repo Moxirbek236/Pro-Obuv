@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 
 {% block title %}Menyu - Restoran{% endblock %}
@@ -32,7 +31,7 @@
                 <div class="item-content">
                     <h3 class="item-name">{{ food.name }}</h3>
                     <p class="item-description">{{ food.description or 'Mazali taom' }}</p>
-                    
+
                     <!-- Baholar -->
                     <div class="rating-section">
                         <div class="stars">
@@ -56,7 +55,7 @@
                             <span class="item-price">{{ "{:,.0f}".format(food.price) }} so'm</span>
                             {% endif %}
                         </div>
-                        
+
                         <!-- Miqdor va savatcha -->
                         <div class="add-to-cart-section">
                             <form method="POST" action="{{ url_for('add_to_cart') }}" onclick="event.stopPropagation()">
@@ -94,7 +93,7 @@
                 <div class="item-content">
                     <h3 class="item-name">{{ drink.name }}</h3>
                     <p class="item-description">{{ drink.description or 'Mazali ichimlik' }}</p>
-                    
+
                     <!-- Baholar -->
                     <div class="rating-section">
                         <div class="stars">
@@ -118,7 +117,7 @@
                             <span class="item-price">{{ "{:,.0f}".format(drink.price) }} so'm</span>
                             {% endif %}
                         </div>
-                        
+
                         <!-- Miqdor va savatcha -->
                         <div class="add-to-cart-section">
                             <form method="POST" action="{{ url_for('add_to_cart') }}" onclick="event.stopPropagation()">
@@ -168,7 +167,7 @@
                         <button type="submit" class="btn-add-cart">🛒 Savatchaga qo'shish</button>
                     </form>
                 </div>
-                
+
                 <!-- Sharhlar bo'limi -->
                 <div class="comments-section">
                     <h3>Mijozlar sharhlari</h3>
@@ -646,6 +645,120 @@
     font-size: 0.9rem;
 }
 
+/* Baho berish modal stillari */
+.rating-modal {
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001; /* Ensure it's above the item modal */
+}
+
+.rating-modal-content {
+    background: white;
+    border-radius: 15px;
+    width: 450px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+.rating-modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8f9fa;
+    border-radius: 15px 15px 0 0;
+}
+
+.rating-modal-header h3 {
+    margin: 0;
+    color: #2d3748;
+    font-size: 1.2rem;
+}
+
+.rating-modal-body {
+    padding: 20px;
+    text-align: center;
+}
+
+.rating-item-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+    justify-content: center;
+}
+
+.rating-item-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.rating-item-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.rating-form h4 {
+    margin-bottom: 15px;
+    color: #4a5568;
+    font-size: 1.1rem;
+}
+
+.stars-rating {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin-bottom: 20px;
+}
+
+.rating-star {
+    font-size: 30px;
+    color: #ddd;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.rating-star:hover {
+    color: #ffd700;
+    transform: scale(1.2);
+}
+
+.rating-form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    resize: vertical;
+    box-sizing: border-box; /* Ensure padding is included in width */
+    margin-bottom: 20px;
+}
+
+.btn-submit-rating {
+    background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.btn-submit-rating:hover {
+    background: linear-gradient(135deg, #2f855a 0%, #276749 100%);
+    transform: translateY(-2px);
+}
+
 @media (max-width: 768px) {
     .menu-grid {
         grid-template-columns: 1fr;
@@ -655,9 +768,13 @@
         width: 95vw;
         margin: 20px;
     }
-    
+
     .quantity-cart-controls {
         justify-content: center;
+    }
+
+    .rating-modal-content {
+        width: 95vw;
     }
 }
 </style>
@@ -791,6 +908,8 @@ function decreaseQuantity(button) {
 }
 
 function loadComments(itemId) {
+    // Bu yerda haqiqiy serverdan sharhlarni yuklash logikasi bo'lishi kerak.
+    // Hozircha statik ma'lumotlar ko'rsatilgan.
     const commentsContainer = document.getElementById('modalComments');
     commentsContainer.innerHTML = `
         <div class="comment-item">
@@ -808,16 +927,148 @@ function loadComments(itemId) {
     `;
 }
 
-// ESC tugmasi bilan modalni yopish
+/* ESC tugmasi bilan modalni yopish */
 document.addEventListener('keydown', function(event) {
     if (event.key === 'Escape') {
         closeItemModal();
+        closeRatingModal();
     }
 });
 
-// Sahifa yuklanganda barcha mahsulotlarni ko'rsatish
+/* Sahifa yuklanganda barcha mahsulotlarni ko'rsatish */
 document.addEventListener('DOMContentLoaded', function() {
     showCategory('all');
 });
+
+// Baho berish modal
+let currentRatingItemId = null;
+let selectedMenuRating = 0;
+
+function openRatingModal(itemId, event) {
+    event.stopPropagation();
+    currentRatingItemId = itemId;
+
+    const item = menuData[itemId];
+    if (!item) return;
+
+    // Rating modal yaratish
+    const ratingModal = document.createElement('div');
+    ratingModal.id = 'ratingModal';
+    ratingModal.className = 'modal-overlay rating-modal';
+    ratingModal.innerHTML = `
+        <div class="rating-modal-content" onclick="event.stopPropagation()">
+            <div class="rating-modal-header">
+                <h3>${item.name} uchun baho bering</h3>
+                <button class="modal-close" onclick="closeRatingModal()">✕</button>
+            </div>
+            <div class="rating-modal-body">
+                <div class="rating-item-info">
+                    <img src="${item.image}" alt="${item.name}" class="rating-item-image">
+                    <p class="rating-item-name">${item.name}</p>
+                </div>
+
+                <div class="rating-form">
+                    <h4>Bahongizni bering:</h4>
+                    <div class="stars-rating">
+                        <span class="rating-star" data-rating="1">⭐</span>
+                        <span class="rating-star" data-rating="2">⭐</span>
+                        <span class="rating-star" data-rating="3">⭐</span>
+                        <span class="rating-star" data-rating="4">⭐</span>
+                        <span class="rating-star" data-rating="5">⭐</span>
+                    </div>
+                    <textarea id="ratingComment" placeholder="Mahsulot haqida fikringizni yozing..." rows="4"></textarea>
+                    <button onclick="submitRating()" class="btn-submit-rating" id="submit-rating" style="display: none;">
+                        📝 Baho berish
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(ratingModal);
+    ratingModal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+
+    // Stars event listeners
+    selectedMenuRating = 0;
+    document.querySelectorAll('.rating-star').forEach(star => {
+        star.addEventListener('click', function() {
+            selectedMenuRating = parseInt(this.dataset.rating);
+            updateRatingStars(selectedMenuRating);
+            document.getElementById('submit-rating').style.display = 'block';
+        });
+
+        star.addEventListener('mouseover', function() {
+            const rating = parseInt(this.dataset.rating);
+            highlightRatingStars(rating);
+        });
+    });
+
+    document.querySelector('.rating-form').addEventListener('mouseleave', function() {
+        updateRatingStars(selectedMenuRating);
+    });
+}
+
+function closeRatingModal() {
+    const modal = document.getElementById('ratingModal');
+    if (modal) {
+        modal.remove();
+        document.body.style.overflow = 'auto';
+    }
+    currentRatingItemId = null;
+    selectedMenuRating = 0;
+}
+
+function highlightRatingStars(rating) {
+    document.querySelectorAll('.rating-star').forEach((star, index) => {
+        if (index < rating) {
+            star.style.color = '#ffd700';
+            star.style.transform = 'scale(1.2)';
+        } else {
+            star.style.color = '#ddd';
+            star.style.transform = 'scale(1)';
+        }
+    });
+}
+
+function updateRatingStars(rating) {
+    highlightRatingStars(rating);
+}
+
+function submitRating() {
+    if (selectedMenuRating === 0) {
+        alert('Iltimos, baho tanlang!');
+        return;
+    }
+
+    const comment = document.getElementById('ratingComment').value.trim();
+
+    fetch('/api/submit-menu-rating', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            menu_item_id: currentRatingItemId,
+            rating: selectedMenuRating,
+            comment: comment
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Baho muvaffaqiyatli saqlandi! Rahmat!');
+            closeRatingModal();
+            // Sahifani yangilash
+            window.location.reload();
+        } else {
+            alert('Xatolik: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Baho berishda xatolik yuz berdi');
+    });
+}
 </script>
 {% endblock %}
