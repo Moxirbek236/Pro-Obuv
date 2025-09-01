@@ -841,7 +841,7 @@ def get_cart_items(conn, session_id, user_id=None):
     cur = conn.cursor()
     if user_id:
         cur.execute("""
-            SELECT ci.id, mi.name, mi.price, ci.quantity, (mi.price * ci.quantity) as total
+            SELECT ci.id, ci.menu_item_id, mi.name, mi.price, ci.quantity, (mi.price * ci.quantity) as total
             FROM cart_items ci
             JOIN menu_items mi ON ci.menu_item_id = mi.id
             WHERE ci.user_id = ?
@@ -849,7 +849,7 @@ def get_cart_items(conn, session_id, user_id=None):
         """, (user_id,))
     else:
         cur.execute("""
-            SELECT ci.id, mi.name, mi.price, ci.quantity, (mi.price * ci.quantity) as total
+            SELECT ci.id, ci.menu_item_id, mi.name, mi.price, ci.quantity, (mi.price * ci.quantity) as total
             FROM cart_items ci
             JOIN menu_items mi ON ci.menu_item_id = mi.id
             WHERE ci.session_id = ?
@@ -1532,12 +1532,19 @@ def user_page():
                 courier_delivery_time = 30
                 eta_time = now + datetime.timedelta(minutes=eta_minutes + courier_delivery_time)
 
+            # Branch ID ni olish delivery uchun
+            branch_id = request.form.get("branch_id", 1)
+            try:
+                branch_id = int(branch_id) if branch_id else 1
+            except ValueError:
+                branch_id = 1
+
             # Buyurtma yaratish
             cur = conn.cursor()
             cur.execute("""
-                INSERT INTO orders (user_id, customer_name, ticket_no, order_type, status, delivery_address, delivery_distance, delivery_latitude, delivery_longitude, delivery_map_url, customer_note, customer_phone, card_number, created_at, eta_time)
-                VALUES (?, ?, ?, ?, 'waiting', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-            """, (user_id, name, tno, order_type, delivery_address, delivery_distance, delivery_latitude, delivery_longitude, delivery_map_url, customer_note, customer_phone, card_number, now.isoformat(), eta_time.isoformat()))
+                INSERT INTO orders (user_id, customer_name, ticket_no, order_type, status, delivery_address, delivery_distance, delivery_latitude, delivery_longitude, delivery_map_url, customer_note, customer_phone, card_number, branch_id, created_at, eta_time)
+                VALUES (?, ?, ?, ?, 'waiting', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+            """, (user_id, name, tno, order_type, delivery_address, delivery_distance, delivery_latitude, delivery_longitude, delivery_map_url, customer_note, customer_phone, card_number, branch_id, now.isoformat(), eta_time.isoformat()))
 
             order_id = cur.lastrowid
 
@@ -1547,7 +1554,7 @@ def user_page():
                 cur.execute("""
                     INSERT INTO order_details (order_id, menu_item_id, quantity, price)
                     VALUES (?, ?, ?, ?)
-                """, (order_id, item['id'], item['quantity'], item['price']))
+                """, (order_id, item['menu_item_id'], item['quantity'], item['price']))
 
                 # JSON uchun mahsulot ma'lumotlarini to'plash
                 order_items_for_json.append({
@@ -1594,15 +1601,34 @@ def user_page():
 def user_success(ticket_no):
     conn = get_db()
     cur = conn.cursor()
+    
+    # Buyurtma ma'lumotlarini olish
     cur.execute("SELECT * FROM orders WHERE ticket_no=? ORDER BY id DESC LIMIT 1;", (ticket_no,))
     order = cur.fetchone()
-    conn.close()
+    
     if not order:
+        conn.close()
         flash("Buyurtma topilmadi.", "error")
-        return redirect(url_for("user_page"))
-    # valmis bo'lish vaqti
+        return redirect(url_for("menu"))
+    
+    # Buyurtma tafsilotlarini olish
+    cur.execute("""
+        SELECT od.*, mi.name 
+        FROM order_details od
+        JOIN menu_items mi ON od.menu_item_id = mi.id
+        WHERE od.order_id = ?
+    """, (order['id'],))
+    order_items = cur.fetchall()
+    
+    conn.close()
+    
+    # ETA vaqtini formatlash
     eta_time = datetime.datetime.fromisoformat(order["eta_time"])
-    return render_template("user_success.html", order=order, eta_hhmm=eta_time.strftime("%H:%M"))
+    
+    return render_template("user_success.html", 
+                         order=order, 
+                         order_items=order_items,
+                         eta_hhmm=eta_time.strftime("%H:%M"))
 
 @app.route("/user/status/<int:ticket_no>")
 def user_status(ticket_no):
