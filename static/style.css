@@ -1,3 +1,4 @@
+
 /* Asosiy stillar */
 * {
   box-sizing: border-box;
@@ -12,284 +13,289 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  font-size: 16px;
+  line-height: 1.5;
 }
 
 /* Tungi rejim uchun global CSS */
-    body.dark-theme {
-        background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%) !important;
-        color: #e2e8f0 !important;
-    }
+body.dark-theme {
+    background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%) !important;
+    color: #e2e8f0 !important;
+}
 
-    /* Navbar */
-    body.dark-theme .navbar-dark {
-        background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%) !important;
-    }
-    body.dark-theme .navbar-brand {
-        color: #e2e8f0 !important;
-    }
-    body.dark-theme .navbar-nav .nav-link {
-        color: rgba(226, 232, 240, 0.9) !important;
-    }
-    body.dark-theme .navbar-nav .nav-link:hover {
-        color: #e2e8f0 !important;
-    }
-    body.dark-theme .navbar-text {
-        color: #e2e8f0 !important;
-    }
-    body.dark-theme .dropdown-menu {
-        background-color: #2d3748 !important;
-        border-color: #4a5568 !important;
-    }
-    body.dark-theme .dropdown-item {
-        color: #e2e8f0 !important;
-    }
-    body.dark-theme .dropdown-item:hover {
-        background-color: #4a5568 !important;
-        color: #fff !important;
-    }
+/* Navbar */
+body.dark-theme .navbar-dark {
+    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%) !important;
+}
+body.dark-theme .navbar-brand {
+    color: #e2e8f0 !important;
+}
+body.dark-theme .navbar-nav .nav-link {
+    color: rgba(226, 232, 240, 0.9) !important;
+}
+body.dark-theme .navbar-nav .nav-link:hover {
+    color: #e2e8f0 !important;
+}
+body.dark-theme .navbar-text {
+    color: #e2e8f0 !important;
+}
+body.dark-theme .dropdown-menu {
+    background-color: #2d3748 !important;
+    border-color: #4a5568 !important;
+}
+body.dark-theme .dropdown-item {
+    color: #e2e8f0 !important;
+}
+body.dark-theme .dropdown-item:hover {
+    background-color: #4a5568 !important;
+    color: #fff !important;
+}
 
-    /* Kartalar */
-    body.dark-theme .card, body.dark-theme .modal-content {
-        background: rgba(45, 55, 72, 0.95) !important;
-        color: #e2e8f0 !important;
-        border-color: #4a5568 !important;
-    }
+/* Kartalar */
+body.dark-theme .card, body.dark-theme .modal-content {
+    background: rgba(45, 55, 72, 0.95) !important;
+    color: #e2e8f0 !important;
+    border-color: #4a5568 !important;
+}
 
-    /* Tugmalar */
-    body.dark-theme .btn {
-        color: #e2e8f0 !important;
-    }
-    body.dark-theme .btn-primary {
-        background-color: #4299e1 !important;
-        border-color: #4299e1 !important;
-    }
-    body.dark-theme .checkout-btn {
-        background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%) !important;
-        color: #fff !important;
-    }
-    body.dark-theme .btn-add-cart {
-        background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%) !important;
-        color: #fff !important;
-    }
+/* Tugmalar */
+body.dark-theme .btn {
+    color: #e2e8f0 !important;
+}
+body.dark-theme .btn-primary {
+    background-color: #4299e1 !important;
+    border-color: #4299e1 !important;
+}
+body.dark-theme .checkout-btn {
+    background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%) !important;
+    color: #fff !important;
+}
+body.dark-theme .btn-add-cart {
+    background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%) !important;
+    color: #fff !important;
+}
 
-    /* Formalar */
-    body.dark-theme input,
-    body.dark-theme select,
-    body.dark-theme textarea {
-        background-color: #4a5568 !important;
-        color: #e2e8f0 !important;
-        border-color: #718096 !important;
-    }
-    body.dark-theme input:focus,
-    body.dark-theme select:focus,
-    body.dark-theme textarea:focus {
-        background-color: #4a5568 !important;
-        color: #e2e8f0 !important;
-        border-color: #4299e1 !important;
-        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.3) !important;
-    }
-    body.dark-theme .form-control {
-        background-color: #4a5568 !important;
-        color: #e2e8f0 !important;
-        border-color: #718096 !important;
-    }
-    body.dark-theme .form-control:focus {
-        background-color: #4a5568 !important;
-        color: #e2e8f0 !important;
-        border-color: #4299e1 !important;
-        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.3) !important;
-    }
-    body.dark-theme label {
-        color: #cbd5e0 !important;
-    }
+/* Formalar */
+body.dark-theme input,
+body.dark-theme select,
+body.dark-theme textarea {
+    background-color: #4a5568 !important;
+    color: #e2e8f0 !important;
+    border-color: #718096 !important;
+}
+body.dark-theme input:focus,
+body.dark-theme select:focus,
+body.dark-theme textarea:focus {
+    background-color: #4a5568 !important;
+    color: #e2e8f0 !important;
+    border-color: #4299e1 !important;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.3) !important;
+}
+body.dark-theme .form-control {
+    background-color: #4a5568 !important;
+    color: #e2e8f0 !important;
+    border-color: #718096 !important;
+}
+body.dark-theme .form-control:focus {
+    background-color: #4a5568 !important;
+    color: #e2e8f0 !important;
+    border-color: #4299e1 !important;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.3) !important;
+}
+body.dark-theme label {
+    color: #cbd5e0 !important;
+}
 
-    /* Menyu elementlari */
-    body.dark-theme .menu-section {
-        background: rgba(26, 32, 44, 0.3) !important;
-        border-color: rgba(226, 232, 240, 0.2) !important;
-    }
-    body.dark-theme .menu-section h3 {
-        color: #e2e8f0 !important;
-        border-bottom-color: #4a5568 !important;
-    }
-    body.dark-theme .menu-item {
-        background: rgba(45, 55, 72, 0.98) !important;
-        color: #e2e8f0 !important;
-        border-color: rgba(226, 232, 240, 0.2) !important;
-    }
-    body.dark-theme .menu-item h4 {
-        color: #e2e8f0 !important;
-    }
-    body.dark-theme .price {
-        background-color: rgba(66, 153, 225, 0.2) !important;
-        border-color: rgba(66, 153, 225, 0.3) !important;
-        color: #63b3ed !important;
-    }
-    body.dark-theme .quantity-selector {
-        background: #4a5568 !important;
-        border-color: #718096 !important;
-    }
-    body.dark-theme .quantity-btn {
-        background: #2d3748 !important;
-        color: #e2e8f0 !important;
-    }
-    body.dark-theme .quantity-btn:hover {
-        background: #4299e1 !important;
-        color: #fff !important;
-    }
-    body.dark-theme .quantity-selector input {
-        background: #4a5568 !important;
-        color: #e2e8f0 !important;
-    }
+/* Menyu elementlari */
+body.dark-theme .menu-section {
+    background: rgba(26, 32, 44, 0.3) !important;
+    border-color: rgba(226, 232, 240, 0.2) !important;
+}
+body.dark-theme .menu-section h3 {
+    color: #e2e8f0 !important;
+    border-bottom-color: #4a5568 !important;
+}
+body.dark-theme .menu-item {
+    background: rgba(45, 55, 72, 0.98) !important;
+    color: #e2e8f0 !important;
+    border-color: rgba(226, 232, 240, 0.2) !important;
+}
+body.dark-theme .menu-item h4 {
+    color: #e2e8f0 !important;
+}
+body.dark-theme .price {
+    background-color: rgba(66, 153, 225, 0.2) !important;
+    border-color: rgba(66, 153, 225, 0.3) !important;
+    color: #63b3ed !important;
+}
+body.dark-theme .quantity-selector {
+    background: #4a5568 !important;
+    border-color: #718096 !important;
+}
+body.dark-theme .quantity-btn {
+    background: #2d3748 !important;
+    color: #e2e8f0 !important;
+}
+body.dark-theme .quantity-btn:hover {
+    background: #4299e1 !important;
+    color: #fff !important;
+}
+body.dark-theme .quantity-selector input {
+    background: #4a5568 !important;
+    color: #e2e8f0 !important;
+}
 
-    /* Jadvallar */
-    body.dark-theme table {
-        background: rgba(45, 55, 72, 0.95) !important;
-    }
-    body.dark-theme table th {
-        background: #2d3748 !important;
-        color: #e2e8f0 !important;
-        border-bottom-color: #4a5568 !important;
-    }
-    body.dark-theme table td {
-        color: #e2e8f0 !important;
-        border-bottom-color: #4a5568 !important;
-    }
+/* Jadvallar */
+body.dark-theme table {
+    background: rgba(45, 55, 72, 0.95) !important;
+}
+body.dark-theme table th {
+    background: #2d3748 !important;
+    color: #e2e8f0 !important;
+    border-bottom-color: #4a5568 !important;
+}
+body.dark-theme table td {
+    color: #e2e8f0 !important;
+    border-bottom-color: #4a5568 !important;
+}
 
-    /* Alert xabarlar */
-    body.dark-theme .alert {
-        background-color: #2d3748 !important;
-        color: #e2e8f0 !important;
-        border-color: #4a5568 !important;
-    }
-    body.dark-theme .alert-success {
-        background-color: rgba(72, 187, 120, 0.2) !important;
-        color: #c6f6d5 !important;
-        border-color: #48bb78 !important;
-    }
-    body.dark-theme .alert-danger {
-        background-color: rgba(229, 62, 62, 0.2) !important;
-        color: #fed7d7 !important;
-        border-color: #e53e3e !important;
-    }
-    body.dark-theme .alert-warning {
-        background-color: rgba(237, 137, 54, 0.2) !important;
-        color: #feebc8 !important;
-        border-color: #ed8936 !important;
-    }
+/* Alert xabarlar */
+body.dark-theme .alert {
+    background-color: #2d3748 !important;
+    color: #e2e8f0 !important;
+    border-color: #4a5568 !important;
+}
+body.dark-theme .alert-success {
+    background-color: rgba(72, 187, 120, 0.2) !important;
+    color: #c6f6d5 !important;
+    border-color: #48bb78 !important;
+}
+body.dark-theme .alert-danger {
+    background-color: rgba(229, 62, 62, 0.2) !important;
+    color: #fed7d7 !important;
+    border-color: #e53e3e !important;
+}
+body.dark-theme .alert-warning {
+    background-color: rgba(237, 137, 54, 0.2) !important;
+    color: #feebc8 !important;
+    border-color: #ed8936 !important;
+}
 
-    /* Footer */
-    body.dark-theme .footer {
-        background: #1a202c !important;
-        color: #e2e8f0 !important;
-    }
-    body.dark-theme .footer .muted {
-        color: #a0aec0 !important;
-    }
+/* Footer */
+body.dark-theme .footer {
+    background: #1a202c !important;
+    color: #e2e8f0 !important;
+}
+body.dark-theme .footer .muted {
+    color: #a0aec0 !important;
+}
 
-    /* Flash xabarlar */
-    body.dark-theme .flash-item {
-        background-color: #2d3748 !important;
-        color: #e2e8f0 !important;
-    }
-    body.dark-theme .flash-item.error {
-        background: rgba(229, 62, 62, 0.3) !important;
-        color: #fed7d7 !important;
-        border-left-color: #e53e3e !important;
-    }
-    body.dark-theme .flash-item.success {
-        background: rgba(72, 187, 120, 0.3) !important;
-        color: #c6f6d5 !important;
-        border-left-color: #48bb78 !important;
-    }
-    body.dark-theme .flash-item.warning {
-        background: rgba(237, 137, 54, 0.3) !important;
-        color: #feebc8 !important;
-        border-left-color: #ed8936 !important;
-    }
+/* Flash xabarlar */
+body.dark-theme .flash-item {
+    background-color: #2d3748 !important;
+    color: #e2e8f0 !important;
+}
+body.dark-theme .flash-item.error {
+    background: rgba(229, 62, 62, 0.3) !important;
+    color: #fed7d7 !important;
+    border-left-color: #e53e3e !important;
+}
+body.dark-theme .flash-item.success {
+    background: rgba(72, 187, 120, 0.3) !important;
+    color: #c6f6d5 !important;
+    border-left-color: #48bb78 !important;
+}
+body.dark-theme .flash-item.warning {
+    background: rgba(237, 137, 54, 0.3) !important;
+    color: #feebc8 !important;
+    border-left-color: #ed8936 !important;
+}
 
-    /* Savatcha */
-    body.dark-theme .cart-btn {
-        background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%) !important;
-        color: #fff !important;
-    }
-    body.dark-theme .cart-item {
-        background: rgba(45, 55, 72, 0.95) !important;
-        color: #e2e8f0 !important;
-        border-color: #4a5568 !important;
-    }
-    body.dark-theme .cart-total {
-        background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%) !important;
-        color: #fff !important;
-    }
-    body.dark-theme .empty-cart {
-        color: #a0aec0 !important;
-    }
+/* Savatcha */
+body.dark-theme .cart-btn {
+    background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%) !important;
+    color: #fff !important;
+}
+body.dark-theme .cart-item {
+    background: rgba(45, 55, 72, 0.95) !important;
+    color: #e2e8f0 !important;
+    border-color: #4a5568 !important;
+}
+body.dark-theme .cart-total {
+    background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%) !important;
+    color: #fff !important;
+}
+body.dark-theme .empty-cart {
+    color: #a0aec0 !important;
+}
 
-    /* Profil ma'lumotlari */
-    body.dark-theme .profile-info {
-        background: rgba(72, 187, 120, 0.2) !important;
-        border-left-color: #48bb78 !important;
-    }
-    body.dark-theme .info-value {
-        color: #68d391 !important;
-    }
-    body.dark-theme .info-label {
-        color: #cbd5e0 !important;
-    }
+/* Profil ma'lumotlari */
+body.dark-theme .profile-info {
+    background: rgba(72, 187, 120, 0.2) !important;
+    border-left-color: #48bb78 !important;
+}
+body.dark-theme .info-value {
+    color: #68d391 !important;
+}
+body.dark-theme .info-label {
+    color: #cbd5e0 !important;
+}
 
-    /* Delivery section */
-    body.dark-theme .delivery-section {
-        background: rgba(26, 32, 44, 0.5) !important;
-        border-left-color: #4299e1 !important;
-    }
-    body.dark-theme .delivery-info {
-        background: rgba(66, 153, 225, 0.2) !important;
-    }
-    body.dark-theme .info-text {
-        color: #cbd5e0 !important;
-    }
+/* Delivery section */
+body.dark-theme .delivery-section {
+    background: rgba(26, 32, 44, 0.5) !important;
+    border-left-color: #4299e1 !important;
+}
+body.dark-theme .delivery-info {
+    background: rgba(66, 153, 225, 0.2) !important;
+}
+body.dark-theme .info-text {
+    color: #cbd5e0 !important;
+}
 
-    /* Order type selection */
-    body.dark-theme .radio-option {
-        color: #e2e8f0 !important;
-    }
-    body.dark-theme .radio-text {
-        color: #e2e8f0 !important;
-    }
+/* Order type selection */
+body.dark-theme .radio-option {
+    color: #e2e8f0 !important;
+}
+body.dark-theme .radio-text {
+    color: #e2e8f0 !important;
+}
 
-    /* Map selection */
-    body.dark-theme .selected-location {
-        background: #2d3748 !important;
-        border-color: #4a5568 !important;
-    }
-    body.dark-theme #selected-address {
-        color: #63b3ed !important;
-    }
+/* Map selection */
+body.dark-theme .selected-location {
+    background: #2d3748 !important;
+    border-color: #4a5568 !important;
+}
+body.dark-theme #selected-address {
+    color: #63b3ed !important;
+}
 
-    /* Total section */
-    body.dark-theme .total-breakdown {
-        background: #2d3748 !important;
-    }
-    body.dark-theme .total-item {
-        color: #e2e8f0 !important;
-    }
-    body.dark-theme .delivery-cost {
-        color: #68d391 !important;
-    }
-    body.dark-theme .total-final {
-        border-top-color: #4a5568 !important;
-        color: #e2e8f0 !important;
-    }
-    body.dark-theme .total-amount {
-        color: #e2e8f0 !important;
-    }
+/* Total section */
+body.dark-theme .total-breakdown {
+    background: #2d3748 !important;
+}
+body.dark-theme .total-item {
+    color: #e2e8f0 !important;
+}
+body.dark-theme .delivery-cost {
+    color: #68d391 !important;
+}
+body.dark-theme .total-final {
+    border-top-color: #4a5568 !important;
+    color: #e2e8f0 !important;
+}
+body.dark-theme .total-amount {
+    color: #e2e8f0 !important;
+}
 
-/* Navigation - Responsive */
+/* Navigation */
 .navbar {
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%) !important;
-  padding: 8px 0;
+  padding: 12px 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 .navbar-brand {
@@ -324,45 +330,6 @@ body {
 
 .navbar-collapse {
   flex-grow: 0;
-}
-
-/*Navbar responsive qoidalar */
-@media (max-width: 991px) {
-  .navbar-brand {
-    font-size: 1.3rem;
-  }
-
-  .navbar-nav .nav-link {
-    padding: 10px 20px !important;
-    text-align: center;
-  }
-}
-
-@media (max-width: 576px) {
-  .navbar {
-    padding: 6px 0;
-  }
-
-  .navbar-brand {
-    font-size: 1.1rem;
-  }
-
-  .navbar-toggler {
-    padding: 2px 6px;
-    font-size: 1rem;
-  }
-
-  .navbar-nav .nav-link {
-    padding: 8px 16px !important;
-    font-size: 14px;
-  }
-}
-
-@media (max-width: 320px) {
-  .navbar-brand {
-    font-size: 1rem;
-    max-width: 60%;
-  }
 }
 
 /* Container */
@@ -407,6 +374,9 @@ body {
   font-weight: 600;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  font-size: 14px;
+  text-align: center;
+  min-height: 48px;
 }
 
 .btn:hover {
@@ -414,16 +384,19 @@ body {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
   color: #fff;
+  text-decoration: none;
 }
 
 .btn.big {
-  font-size: 18px;
+  font-size: 16px;
   padding: 16px 32px;
+  min-height: 56px;
 }
 
 .btn.small {
-  font-size: 14px;
-  padding: 10px 20px;
+  font-size: 12px;
+  padding: 8px 16px;
+  min-height: 40px;
 }
 
 .btn:disabled {
@@ -442,6 +415,7 @@ input, select, textarea {
   font-size: 16px;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
   background: rgba(255, 255, 255, 0.9);
+  min-height: 48px;
 }
 
 input:focus, select:focus, textarea:focus {
@@ -510,6 +484,7 @@ label {
   transition: all 0.3s ease;
   position: relative;
   margin-left: 10px;
+  min-height: 44px;
 }
 
 .cart-btn:hover {
@@ -539,13 +514,7 @@ label {
     display: none;
 }
 
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
-}
-
-/* Menyu */
+/* Menyu bo'limlari */
 .menu-section {
   margin-bottom: 40px;
   padding: 25px;
@@ -565,217 +534,20 @@ label {
   font-weight: 700;
 }
 
-/* Menyu grid va elementlar */
+/* Menyu grid - Asosiy responsive grid */
 .menu-grid {
   display: grid;
-  gap: 15px;
+  gap: 20px;
   margin-top: 25px;
-
-  /* Asosiy responsive grid */
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-}
-
-/* Responsive grid tizimi */
-@media (min-width: 1600px) {
-  .menu-grid {
-    grid-template-columns: repeat(4, 1fr); /* 4 ta katta mahsulot */
-    gap: 20px;
-  }
-
-  .quantity-btn {
-    min-width: 70px;
-    height: 70px;
-    font-size: 26px;
-    font-weight: 700;
-  }
-
-  .quantity-selector input {
-    width: 90px;
-    height: 70px;
-    font-size: 22px;
-    font-weight: 600;
-  }
-
-  .menu-item {
-    min-height: 320px;
-    padding: 40px;
-    max-width: none;
-  }
-
-  .menu-item h4 {
-    font-size: 24px;
-    margin-bottom: 22px;
-  }
-
-  .price {
-    font-size: 26px;
-    padding: 18px 24px;
-    margin-bottom: 30px;
-  }
-}
-
-@media (min-width: 1400px) and (max-width: 1599px) {
-  .menu-grid {
-    grid-template-columns: repeat(4, 1fr); /* 4 ta mahsulot */
-    gap: 18px;
-  }
-
-  .quantity-btn {
-    min-width: 68px;
-    height: 68px;
-    font-size: 25px;
-    font-weight: 700;
-  }
-
-  .quantity-selector input {
-    width: 88px;
-    height: 68px;
-    font-size: 21px;
-    font-weight: 600;
-  }
-
-  .menu-item {
-    min-height: 300px;
-    padding: 35px;
-  }
-
-  .menu-item h4 {
-    font-size: 22px;
-    margin-bottom: 20px;
-  }
-
-  .price {
-    font-size: 24px;
-    padding: 16px 22px;
-    margin-bottom: 28px;
-  }
-}
-
-/* Noutbook (1200px - 1399px) - 3 ta katta mahsulot */
-@media (min-width: 1200px) and (max-width: 1399px) {
-  .menu-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-  }
-
-  .menu-item {
-    min-height: 280px;
-    padding: 35px;
-  }
-
-  .menu-item h4 {
-    font-size: 21px;
-    margin-bottom: 19px;
-  }
-
-  .price {
-    font-size: 23px;
-    padding: 16px 21px;
-    margin-bottom: 26px;
-  }
-
-  .quantity-btn {
-    min-width: 65px;
-    height: 65px;
-    font-size: 24px;
-    font-weight: 700;
-  }
-
-  .quantity-selector input {
-    width: 85px;
-    height: 65px;
-    font-size: 20px;
-    font-weight: 600;
-  }
-}
-
-/* Kichik noutbook (992px - 1199px) - 3 ta mahsulot */
-@media (min-width: 992px) and (max-width: 1199px) {
-  .menu-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
-  }
-
-  .menu-item {
-    min-height: 260px;
-    padding: 30px;
-  }
-
-  .menu-item h4 {
-    font-size: 19px;
-    margin-bottom: 17px;
-  }
-
-  .price {
-    font-size: 21px;
-    padding: 15px 19px;
-    margin-bottom: 24px;
-  }
-
-  .quantity-btn {
-    min-width: 60px;
-    height: 60px;
-    font-size: 22px;
-    font-weight: 700;
-  }
-
-  .quantity-selector input {
-    width: 80px;
-    height: 60px;
-    font-size: 19px;
-    font-weight: 600;
-  }
-}
-
-/* Planshet (768px - 991px) - 3 ta mahsulot */
-@media (min-width: 768px) and (max-width: 991px) {
-  .menu-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-  }
-}
-
-/* Telefon (481px - 767px) - 2 ta mahsulot */
-@media (min-width: 481px) and (max-width: 767px) {
-  .menu-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-  }
-}
-
-/* Loading spinner stili */
-.loading-spinner {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 2px solid #f3f3f3;
-  border-top: 2px solid #3498db;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-right: 8px;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Kichik telefon (max-width: 480px) - 1 ta mahsulot */
-@media (max-width: 480px) {
-  .menu-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 }
 
 .menu-item {
   background: rgba(255, 255, 255, 0.98);
   border: 1px solid rgba(255, 255, 255, 0.5);
-  padding: 35px;
+  padding: 20px;
   border-radius: 18px;
-  box-shadow:
-    0 8px 20px rgba(0,0,0,0.08),
-    inset 0 1px 0 rgba(255,255,255,0.6);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
   position: relative;
@@ -806,15 +578,13 @@ label {
 
 .menu-item:hover {
   transform: translateY(-8px) scale(1.03);
-  box-shadow:
-    0 20px 45px rgba(0,0,0,0.15),
-    inset 0 1px 0 rgba(255,255,255,0.8);
+  box-shadow: 0 20px 45px rgba(0,0,0,0.15);
 }
 
 .menu-item h4 {
-  margin: 0 0 20px 0;
+  margin: 0 0 15px 0;
   color: #2d3748;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   letter-spacing: -0.2px;
   line-height: 1.4;
@@ -823,14 +593,14 @@ label {
 }
 
 .price {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 800;
   background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 50%, #ff6b9d 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  margin: 0 0 25px 0;
-  padding: 15px 20px;
+  margin: 0 0 20px 0;
+  padding: 12px 18px;
   background-color: rgba(255, 107, 107, 0.1);
   border-radius: 15px;
   display: block;
@@ -858,13 +628,13 @@ label {
   background: #f7fafc;
   border: none;
   padding: 12px 16px;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   color: #4a5568;
   cursor: pointer;
   transition: all 0.2s ease;
-  min-width: 55px;
-  height: 55px;
+  min-width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -882,13 +652,14 @@ label {
 .quantity-selector input {
   border: none;
   text-align: center;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   color: #2d3748;
-  width: 75px;
-  height: 55px;
+  width: 60px;
+  height: 48px;
   background: white;
   outline: none;
+  margin: 0;
 }
 
 /* Jadvallar */
@@ -903,9 +674,10 @@ table {
 
 table th, table td {
   border-bottom: 1px solid #e2e8f0;
-  padding: 15px;
+  padding: 12px;
   text-align: left;
   font-size: 14px;
+  vertical-align: middle;
 }
 
 table th {
@@ -933,7 +705,7 @@ tr.given {
     color: white;
     text-align: center;
     padding: 20px 0;
-    margin-top: 50px;
+    margin-top: auto;
 }
 
 .footer .muted {
@@ -964,7 +736,179 @@ tr.given {
     fill: white;
 }
 
-/* Monitor (TV) stillar */
+/* Loading animatsiyasi */
+.loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255,255,255,.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Status ranglari */
+.status-waiting {
+  color: #ed8936;
+  font-weight: 600;
+  font-size: 16px;
+  padding: 8px 16px;
+  background: rgba(237, 137, 54, 0.1);
+  border-radius: 25px;
+  border: 2px solid rgba(237, 137, 54, 0.3);
+  display: inline-block;
+}
+
+.status-ready {
+  color: #48bb78;
+  font-weight: 600;
+  font-size: 16px;
+  padding: 8px 16px;
+  background: rgba(72, 187, 120, 0.1);
+  border-radius: 25px;
+  border: 2px solid rgba(72, 187, 120, 0.3);
+  display: inline-block;
+  animation: pulse-green 2s infinite;
+}
+
+.status-served {
+  color: #4299e1;
+  font-weight: 600;
+  font-size: 16px;
+  padding: 8px 16px;
+  background: rgba(66, 153, 225, 0.1);
+  border-radius: 25px;
+  border: 2px solid rgba(66, 153, 225, 0.3);
+  display: inline-block;
+}
+
+.status-cancelled {
+  color: #e53e3e;
+  font-weight: 600;
+  font-size: 16px;
+  padding: 8px 16px;
+  background: rgba(229, 62, 62, 0.1);
+  border-radius: 25px;
+  border: 2px solid rgba(229, 62, 62, 0.3);
+  display: inline-block;
+}
+
+/* Theme selector */
+.theme-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.radio-option:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.radio-option input[type="radio"] {
+    margin-right: 10px;
+    transform: scale(1.2);
+}
+
+.radio-text {
+    font-weight: 500;
+}
+
+/* Tungi rejim uchun theme selector */
+body.dark-theme .radio-option {
+    background: rgba(45, 55, 72, 0.5) !important;
+    color: #e2e8f0 !important;
+}
+
+body.dark-theme .radio-option:hover {
+    background: rgba(74, 85, 104, 0.7) !important;
+}
+
+body.dark-theme .radio-text {
+    color: #e2e8f0 !important;
+}
+
+/* Pulse animatsiya tayyor holat uchun */
+@keyframes pulse-green {
+  0% {
+    box-shadow: 0 0 0 0 rgba(72, 187, 120, 0.7);
+    background: rgba(72, 187, 120, 0.1);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(72, 187, 120, 0);
+    background: rgba(72, 187, 120, 0.2);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(72, 187, 120, 0);
+    background: rgba(72, 187, 120, 0.1);
+  }
+}
+
+/* Buyurtma holati card */
+.order-status-card {
+  padding: 20px;
+  text-align: center;
+}
+
+/* Status card ichidagi barcha matnlar oq bo'lsin */
+.order-status-card .status-waiting,
+.order-status-card .status-ready,
+.order-status-card .status-served,
+.order-status-card .status-cancelled {
+  color: white !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* Utility klasslar */
+.muted {
+  color: #718096;
+  font-size: 14px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.mt-3 {
+  margin-top: 1rem;
+}
+
+.mb-3 {
+  margin-bottom: 1rem;
+}
+
+.p-3 {
+  padding: 1rem;
+}
+
+/* Font o'lchami klasslar */
+.font-small {
+  font-size: 14px;
+}
+
+.font-medium {
+  font-size: 16px;
+}
+
+.font-large {
+  font-size: 18px;
+}
+
+/* Monitor stillar */
 .monitor-container {
   background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
   min-height: 100vh;
@@ -1006,8 +950,8 @@ tr.given {
 }
 
 .monitor-table td, .monitor-table th {
-  font-size: 0.9rem;
-  padding: 10px 8px;
+  font-size: 1rem;
+  padding: 12px 10px;
   border: none;
   text-align: center;
   vertical-align: middle;
@@ -1064,11 +1008,11 @@ tr.given {
 }
 
 .status-badge {
-  padding: 8px 16px;
+  padding: 6px 12px;
   border-radius: 20px;
   font-weight: 600;
   text-transform: uppercase;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   letter-spacing: 0.5px;
 }
 
@@ -1093,86 +1037,465 @@ tr.given {
   51%, 100% { opacity: 0.5; }
 }
 
-/* Monitor sahifasi uchun responsive dizayn */
-
-/* TV va juda katta ekranlar uchun (1400px+) */
+/* ======================================= */
+/* DESKTOP VA KATTA EKRANLAR (1400px+) */
+/* ======================================= */
 @media (min-width: 1400px) {
+  .container {
+    max-width: 1600px;
+    padding: 0 30px;
+  }
+
+  body {
+    font-size: 18px;
+  }
+
+  /* Navbar */
+  .navbar {
+    padding: 15px 0;
+  }
+
+  .navbar-brand {
+    font-size: 2rem;
+  }
+
+  .navbar-nav .nav-link {
+    padding: 10px 20px !important;
+    font-size: 16px;
+  }
+
+  /* Kartalar */
+  .card {
+    padding: 35px;
+    border-radius: 20px;
+    margin-bottom: 30px;
+  }
+
+  /* Tugmalar */
+  .btn {
+    font-size: 16px;
+    padding: 14px 28px;
+    min-height: 52px;
+  }
+
+  .btn.big {
+    font-size: 20px;
+    padding: 20px 40px;
+    min-height: 64px;
+  }
+
+  .btn.small {
+    font-size: 14px;
+    padding: 10px 20px;
+    min-height: 44px;
+  }
+
+  /* Menyu */
+  .menu-section {
+    padding: 35px;
+    margin-bottom: 50px;
+  }
+
+  .menu-section h3 {
+    font-size: 28px;
+    margin-bottom: 30px;
+  }
+
+  .menu-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+  }
+
+  .menu-item {
+    padding: 30px;
+    min-height: 350px;
+  }
+
+  .menu-item h4 {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+
+  .price {
+    font-size: 24px;
+    padding: 16px 24px;
+    margin-bottom: 25px;
+  }
+
+  .quantity-btn {
+    min-width: 56px;
+    height: 56px;
+    font-size: 20px;
+  }
+
+  .quantity-selector input {
+    width: 80px;
+    height: 56px;
+    font-size: 18px;
+  }
+
+  /* Form elementlari */
+  input, select, textarea {
+    font-size: 18px;
+    padding: 16px 20px;
+    min-height: 56px;
+  }
+
+  label {
+    font-size: 16px;
+  }
+
+  /* Monitor */
   .monitor-table td, .monitor-table th {
-    font-size: 1.3rem;
-    padding: 18px 15px;
+    font-size: 1.4rem;
+    padding: 20px 15px;
+  }
+
+  .monitor-section h4 {
+    font-size: 2.5rem;
+  }
+
+  .ticket-no {
+    font-size: 60px;
+  }
+}
+
+/* ======================================= */
+/* NOUTBOOK (1200px - 1399px) */
+/* ======================================= */
+@media (min-width: 1200px) and (max-width: 1399px) {
+  .container {
+    max-width: 1300px;
+    padding: 0 25px;
+  }
+
+  body {
+    font-size: 17px;
+  }
+
+  /* Navbar */
+  .navbar {
+    padding: 12px 0;
+  }
+
+  .navbar-brand {
+    font-size: 1.8rem;
+  }
+
+  .navbar-nav .nav-link {
+    padding: 10px 18px !important;
+    font-size: 15px;
+  }
+
+  /* Kartalar */
+  .card {
+    padding: 30px;
+    margin-bottom: 25px;
+  }
+
+  /* Tugmalar */
+  .btn {
+    font-size: 15px;
+    padding: 12px 24px;
+    min-height: 50px;
+  }
+
+  .btn.big {
+    font-size: 18px;
+    padding: 18px 36px;
+    min-height: 60px;
+  }
+
+  /* Menyu */
+  .menu-section {
+    padding: 30px;
+    margin-bottom: 45px;
+  }
+
+  .menu-section h3 {
+    font-size: 26px;
+    margin-bottom: 28px;
+  }
+
+  .menu-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+  }
+
+  .menu-item {
+    padding: 25px;
+    min-height: 320px;
+  }
+
+  .menu-item h4 {
+    font-size: 20px;
+    margin-bottom: 18px;
+  }
+
+  .price {
+    font-size: 22px;
+    padding: 14px 20px;
+    margin-bottom: 22px;
+  }
+
+  .quantity-btn {
+    min-width: 52px;
+    height: 52px;
+    font-size: 18px;
+  }
+
+  .quantity-selector input {
+    width: 70px;
+    height: 52px;
+    font-size: 17px;
+  }
+
+  /* Form elementlari */
+  input, select, textarea {
+    font-size: 17px;
+    padding: 14px 18px;
+    min-height: 52px;
+  }
+
+  /* Monitor */
+  .monitor-table td, .monitor-table th {
+    font-size: 1.2rem;
+    padding: 16px 12px;
   }
 
   .monitor-section h4 {
     font-size: 2.2rem;
+  }
+
+  .ticket-no {
+    font-size: 54px;
+  }
+}
+
+/* ======================================= */
+/* KICHIK NOUTBOOK (992px - 1199px) */
+/* ======================================= */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .container {
+    max-width: 1000px;
+    padding: 0 20px;
+  }
+
+  body {
+    font-size: 16px;
+  }
+
+  /* Navbar */
+  .navbar {
+    padding: 10px 0;
+  }
+
+  .navbar-brand {
+    font-size: 1.6rem;
+  }
+
+  .navbar-nav .nav-link {
+    padding: 8px 16px !important;
+    font-size: 14px;
+  }
+
+  /* Kartalar */
+  .card {
+    padding: 25px;
     margin-bottom: 20px;
   }
 
-  .ticket-number {
-    font-size: 1.8rem;
+  /* Tugmalar */
+  .btn {
+    font-size: 14px;
+    padding: 12px 20px;
+    min-height: 48px;
   }
 
-  .status-badge {
-    font-size: 1.1rem;
-    padding: 10px 20px;
+  .btn.big {
+    font-size: 16px;
+    padding: 16px 32px;
+    min-height: 56px;
   }
 
-  .current-time {
-    font-size: 1.4rem;
-    padding: 12px 24px;
+  /* Menyu */
+  .menu-section {
+    padding: 25px;
+    margin-bottom: 35px;
   }
 
-  .order-items {
-    font-size: 1rem;
-    padding: 6px 10px;
+  .menu-section h3 {
+    font-size: 24px;
+    margin-bottom: 25px;
   }
-}
 
-/* Katta ekranlar (1200px - 1399px) */
-@media (min-width: 1200px) and (max-width: 1399px) {
+  .menu-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .menu-item {
+    padding: 20px;
+    min-height: 280px;
+  }
+
+  .menu-item h4 {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+
+  .price {
+    font-size: 20px;
+    padding: 12px 18px;
+    margin-bottom: 20px;
+  }
+
+  .quantity-btn {
+    min-width: 48px;
+    height: 48px;
+    font-size: 16px;
+  }
+
+  .quantity-selector input {
+    width: 60px;
+    height: 48px;
+    font-size: 16px;
+  }
+
+  /* Form elementlari */
+  input, select, textarea {
+    font-size: 16px;
+    padding: 12px 16px;
+    min-height: 48px;
+  }
+
+  /* Monitor */
   .monitor-table td, .monitor-table th {
     font-size: 1.1rem;
-    padding: 15px 12px;
-  }
-
-  .monitor-section h4 {
-    font-size: 1.8rem;
-  }
-
-  .ticket-number {
-    font-size: 1.5rem;
-  }
-
-  .status-badge {
-    font-size: 1rem;
-    padding: 8px 16px;
-  }
-
-  .current-time {
-    font-size: 1.2rem;
-    padding: 10px 20px;
-  }
-}
-
-/* O'rta ekranlar (992px - 1199px) */
-@media (min-width: 992px) and (max-width: 1199px) {
-  .monitor-table td, .monitor-table th {
-    font-size: 1.3rem;
-    padding: 16px 12px;
+    padding: 14px 10px;
   }
 
   .monitor-section h4 {
     font-size: 2rem;
   }
 
-  .ticket-number {
-    font-size: 1.6rem;
+  .ticket-no {
+    font-size: 48px;
   }
 }
 
-/* Planshet (768px - 991px) */
+/* ======================================= */
+/* PLANSHET LANDSCAPE (768px - 991px) */
+/* ======================================= */
 @media (min-width: 768px) and (max-width: 991px) {
+  .container {
+    max-width: 900px;
+    padding: 0 20px;
+  }
+
+  body {
+    font-size: 15px;
+  }
+
+  /* Navbar */
+  .navbar {
+    padding: 10px 0;
+  }
+
+  .navbar-brand {
+    font-size: 1.4rem;
+  }
+
+  .navbar-nav .nav-link {
+    padding: 8px 14px !important;
+    font-size: 14px;
+  }
+
+  /* Kartalar */
+  .card {
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  /* Tugmalar */
+  .btn {
+    font-size: 14px;
+    padding: 10px 18px;
+    min-height: 44px;
+  }
+
+  .btn.big {
+    font-size: 16px;
+    padding: 14px 28px;
+    min-height: 52px;
+  }
+
+  /* Menyu */
+  .menu-section {
+    padding: 20px;
+    margin-bottom: 30px;
+  }
+
+  .menu-section h3 {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+
+  .menu-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+
+  .menu-item {
+    padding: 18px;
+    min-height: 260px;
+  }
+
+  .menu-item h4 {
+    font-size: 17px;
+    margin-bottom: 15px;
+  }
+
+  .price {
+    font-size: 19px;
+    padding: 11px 16px;
+    margin-bottom: 18px;
+  }
+
+  .quantity-btn {
+    min-width: 44px;
+    height: 44px;
+    font-size: 16px;
+  }
+
+  .quantity-selector input {
+    width: 56px;
+    height: 44px;
+    font-size: 15px;
+  }
+
+  /* Form elementlari */
+  input, select, textarea {
+    font-size: 15px;
+    padding: 12px 15px;
+    min-height: 44px;
+  }
+
+  /* Grid */
+  .grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+
+  /* Jadvallar */
+  table th, table td {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  /* Monitor */
   .monitor-table td, .monitor-table th {
-    font-size: 1.1rem;
+    font-size: 1rem;
     padding: 12px 8px;
   }
 
@@ -1185,15 +1508,286 @@ tr.given {
     font-size: 1.8rem;
   }
 
-  .ticket-number {
-    font-size: 1.4rem;
+  .ticket-no {
+    font-size: 42px;
   }
 }
 
-/* Telefon (max-width: 767px) */
-@media (max-width: 767px) {
+/* ======================================= */
+/* PLANSHET PORTRAIT (576px - 767px) */
+/* ======================================= */
+@media (min-width: 576px) and (max-width: 767px) {
+  .container {
+    max-width: 100%;
+    padding: 0 15px;
+    margin: 15px auto;
+  }
+
+  body {
+    font-size: 15px;
+  }
+
+  /* Navbar */
+  .navbar {
+    padding: 8px 0;
+  }
+
+  .navbar-brand {
+    font-size: 1.3rem;
+  }
+
+  .navbar-nav .nav-link {
+    padding: 10px 15px !important;
+    font-size: 14px;
+    text-align: center;
+  }
+
+  /* Kartalar */
+  .card {
+    padding: 18px;
+    margin-bottom: 18px;
+    border-radius: 15px;
+  }
+
+  /* Tugmalar */
+  .btn {
+    font-size: 14px;
+    padding: 10px 20px;
+    min-height: 44px;
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .btn.big {
+    font-size: 16px;
+    padding: 14px 28px;
+    min-height: 52px;
+  }
+
+  .btn.small {
+    font-size: 12px;
+    padding: 8px 16px;
+    min-height: 40px;
+    display: inline-block;
+    width: auto;
+  }
+
+  /* Menyu */
+  .menu-section {
+    padding: 18px;
+    margin-bottom: 25px;
+  }
+
+  .menu-section h3 {
+    font-size: 20px;
+    margin-bottom: 18px;
+  }
+
+  .menu-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+
+  .menu-item {
+    padding: 16px;
+    min-height: 240px;
+  }
+
+  .menu-item h4 {
+    font-size: 16px;
+    margin-bottom: 14px;
+  }
+
+  .price {
+    font-size: 18px;
+    padding: 10px 14px;
+    margin-bottom: 16px;
+  }
+
+  .quantity-btn {
+    min-width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+
+  .quantity-selector input {
+    width: 50px;
+    height: 40px;
+    font-size: 14px;
+  }
+
+  /* Form elementlari */
+  input, select, textarea {
+    font-size: 15px;
+    padding: 12px 15px;
+    min-height: 44px;
+  }
+
+  /* Grid */
+  .grid-2 {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  /* Jadvallar */
+  table th, table td {
+    font-size: 13px;
+    padding: 8px;
+  }
+
+  /* Monitor */
   .monitor-table td, .monitor-table th {
     font-size: 0.9rem;
+    padding: 10px 6px;
+  }
+
+  .monitor-section {
+    padding: 15px;
+    margin-bottom: 18px;
+  }
+
+  .monitor-section h4 {
+    font-size: 1.6rem;
+  }
+
+  .ticket-no {
+    font-size: 36px;
+  }
+
+  /* Savatcha */
+  .cart-btn {
+    padding: 8px 16px;
+    font-size: 14px;
+    min-height: 40px;
+  }
+}
+
+/* ======================================= */
+/* TELEFON KATTA (481px - 575px) */
+/* ======================================= */
+@media (min-width: 481px) and (max-width: 575px) {
+  .container {
+    padding: 0 12px;
+    margin: 12px auto;
+  }
+
+  body {
+    font-size: 14px;
+  }
+
+  /* Navbar */
+  .navbar {
+    padding: 8px 0;
+  }
+
+  .navbar-brand {
+    font-size: 1.2rem;
+  }
+
+  .navbar-nav .nav-link {
+    padding: 8px 12px !important;
+    font-size: 13px;
+    text-align: center;
+  }
+
+  /* Kartalar */
+  .card {
+    padding: 16px;
+    margin-bottom: 16px;
+    border-radius: 12px;
+  }
+
+  /* Tugmalar */
+  .btn {
+    font-size: 13px;
+    padding: 10px 18px;
+    min-height: 42px;
+    display: block;
+    width: 100%;
+    margin-bottom: 8px;
+  }
+
+  .btn.big {
+    font-size: 15px;
+    padding: 12px 24px;
+    min-height: 48px;
+  }
+
+  .btn.small {
+    font-size: 11px;
+    padding: 6px 12px;
+    min-height: 36px;
+    display: inline-block;
+    width: auto;
+  }
+
+  /* Menyu */
+  .menu-section {
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+
+  .menu-section h3 {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+
+  .menu-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .menu-item {
+    padding: 14px;
+    min-height: 200px;
+  }
+
+  .menu-item h4 {
+    font-size: 15px;
+    margin-bottom: 12px;
+  }
+
+  .price {
+    font-size: 17px;
+    padding: 8px 12px;
+    margin-bottom: 14px;
+  }
+
+  .quantity-btn {
+    min-width: 38px;
+    height: 38px;
+    font-size: 14px;
+  }
+
+  .quantity-selector input {
+    width: 46px;
+    height: 38px;
+    font-size: 13px;
+  }
+
+  /* Form elementlari */
+  input, select, textarea {
+    font-size: 16px; /* iOS zoom oldini olish uchun */
+    padding: 10px 14px;
+    min-height: 42px;
+  }
+
+  /* Grid */
+  .grid-2 {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* Jadvallar */
+  table th, table td {
+    font-size: 12px;
+    padding: 6px;
+  }
+
+  /* Monitor */
+  .monitor-table td, .monitor-table th {
+    font-size: 0.8rem;
     padding: 8px 4px;
   }
 
@@ -1204,40 +1798,302 @@ tr.given {
 
   .monitor-section h4 {
     font-size: 1.4rem;
-    margin-bottom: 12px;
   }
 
-  .ticket-number {
-    font-size: 1.2rem;
+  .ticket-no {
+    font-size: 32px;
   }
 
-  .status-badge {
-    font-size: 0.8rem;
+  /* Savatcha */
+  .cart-btn {
     padding: 6px 12px;
-  }
-
-  .current-time {
-    font-size: 1rem;
-    padding: 8px 16px;
-    top: 10px;
-    right: 10px;
-  }
-
-  .order-items {
-    font-size: 0.8rem;
-    padding: 4px 6px;
+    font-size: 12px;
+    min-height: 36px;
   }
 }
 
-/* Juda kichik telefon (max-width: 480px) */
-@media (max-width: 480px) {
-  .monitor-container {
+/* ======================================= */
+/* TELEFON O'RTA (376px - 480px) */
+/* ======================================= */
+@media (min-width: 376px) and (max-width: 480px) {
+  .container {
+    padding: 0 10px;
+    margin: 10px auto;
+  }
+
+  body {
+    font-size: 14px;
+  }
+
+  /* Navbar */
+  .navbar {
+    padding: 6px 0;
+  }
+
+  .navbar-brand {
+    font-size: 1.1rem;
+  }
+
+  .navbar-nav .nav-link {
+    padding: 8px 10px !important;
+    font-size: 12px;
+    text-align: center;
+  }
+
+  /* Kartalar */
+  .card {
+    padding: 14px;
+    margin-bottom: 14px;
+    border-radius: 10px;
+  }
+
+  /* Tugmalar */
+  .btn {
+    font-size: 12px;
+    padding: 8px 16px;
+    min-height: 40px;
+    display: block;
+    width: 100%;
+    margin-bottom: 6px;
+  }
+
+  .btn.big {
+    font-size: 14px;
+    padding: 10px 20px;
+    min-height: 44px;
+  }
+
+  .btn.small {
+    font-size: 10px;
+    padding: 6px 10px;
+    min-height: 32px;
+    display: inline-block;
+    width: auto;
+  }
+
+  /* Menyu */
+  .menu-section {
+    padding: 14px;
+    margin-bottom: 18px;
+  }
+
+  .menu-section h3 {
+    font-size: 17px;
+    margin-bottom: 14px;
+  }
+
+  .menu-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .menu-item {
+    padding: 12px;
+    min-height: 180px;
+  }
+
+  .menu-item h4 {
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+
+  .price {
+    font-size: 16px;
+    padding: 8px 10px;
+    margin-bottom: 12px;
+  }
+
+  .quantity-btn {
+    min-width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+
+  .quantity-selector input {
+    width: 42px;
+    height: 36px;
+    font-size: 12px;
+  }
+
+  /* Form elementlari */
+  input, select, textarea {
+    font-size: 16px; /* iOS zoom oldini olish uchun */
+    padding: 10px 12px;
+    min-height: 40px;
+  }
+
+  /* Grid */
+  .grid-2 {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  /* Jadvallar */
+  table th, table td {
+    font-size: 11px;
     padding: 5px;
   }
 
+  /* Monitor */
   .monitor-table td, .monitor-table th {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     padding: 6px 3px;
+  }
+
+  .monitor-section {
+    padding: 10px;
+    margin-bottom: 12px;
+  }
+
+  .monitor-section h4 {
+    font-size: 1.2rem;
+  }
+
+  .ticket-no {
+    font-size: 28px;
+  }
+
+  /* Savatcha */
+  .cart-btn {
+    padding: 6px 10px;
+    font-size: 11px;
+    min-height: 34px;
+  }
+
+  /* Flash xabarlar */
+  .flash-item {
+    padding: 10px 15px;
+    font-size: 12px;
+  }
+}
+
+/* ======================================= */
+/* TELEFON KICHIK (321px - 375px) */
+/* ======================================= */
+@media (min-width: 321px) and (max-width: 375px) {
+  .container {
+    padding: 0 8px;
+    margin: 8px auto;
+  }
+
+  body {
+    font-size: 13px;
+  }
+
+  /* Navbar */
+  .navbar {
+    padding: 6px 0;
+  }
+
+  .navbar-brand {
+    font-size: 1rem;
+    max-width: 60%;
+  }
+
+  .navbar-nav .nav-link {
+    padding: 6px 8px !important;
+    font-size: 11px;
+    text-align: center;
+  }
+
+  /* Kartalar */
+  .card {
+    padding: 12px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+  }
+
+  /* Tugmalar */
+  .btn {
+    font-size: 12px;
+    padding: 8px 14px;
+    min-height: 38px;
+    display: block;
+    width: 100%;
+    margin-bottom: 6px;
+  }
+
+  .btn.big {
+    font-size: 13px;
+    padding: 10px 18px;
+    min-height: 42px;
+  }
+
+  .btn.small {
+    font-size: 10px;
+    padding: 5px 8px;
+    min-height: 30px;
+    display: inline-block;
+    width: auto;
+  }
+
+  /* Menyu */
+  .menu-section {
+    padding: 12px;
+    margin-bottom: 15px;
+  }
+
+  .menu-section h3 {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  .menu-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .menu-item {
+    padding: 10px;
+    min-height: 160px;
+  }
+
+  .menu-item h4 {
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+
+  .price {
+    font-size: 15px;
+    padding: 6px 8px;
+    margin-bottom: 10px;
+  }
+
+  .quantity-btn {
+    min-width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+
+  .quantity-selector input {
+    width: 38px;
+    height: 32px;
+    font-size: 11px;
+  }
+
+  /* Form elementlari */
+  input, select, textarea {
+    font-size: 16px; /* iOS zoom oldini olish uchun */
+    padding: 8px 10px;
+    min-height: 38px;
+  }
+
+  /* Grid */
+  .grid-2 {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  /* Jadvallar */
+  table th, table td {
+    font-size: 10px;
+    padding: 4px;
+  }
+
+  /* Monitor */
+  .monitor-table td, .monitor-table th {
+    font-size: 0.6rem;
+    padding: 4px 2px;
   }
 
   .monitor-section {
@@ -1246,302 +2102,223 @@ tr.given {
   }
 
   .monitor-section h4 {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-  }
-
-  .ticket-number {
     font-size: 1rem;
   }
 
-  .status-badge {
-    font-size: 0.7rem;
-    padding: 4px 8px;
-  }
-}
-
-/* Responsive dizayn - Barcha qurilmalar uchun */
-
-/* Katta ekranlar (TV, Desktop - 1200px+) */
-@media (min-width: 1200px) {
-  .container {
-    max-width: 1400px;
-  }
-
-  .card {
-    padding: 25px;
-    font-size: 16px;
-  }
-
-  .btn.big {
-    font-size: 18px;
-    padding: 16px 32px;
-  }
-
-  .btn {
-    font-size: 16px;
-    padding: 12px 24px;
-  }
-
   .ticket-no {
-    font-size: 48px;
+    font-size: 24px;
   }
 
-  .navbar-brand {
-    font-size: 1.6rem;
-  }
-
-  .menu-item h4 {
-    font-size: 18px;
-  }
-
-  .price {
-    font-size: 20px;
-  }
-
-  table th, table td {
-    font-size: 14px;
-    padding: 15px;
-  }
-}
-
-/* O'rta ekranlar (Planshet landscape - 992px - 1199px) */
-@media (min-width: 992px) and (max-width: 1199px) {
-  .container {
-    max-width: 1000px;
-  }
-
-  .card {
-    padding: 30px;
-    font-size: 16px;
-  }
-
-  .btn.big {
-    font-size: 18px;
-    padding: 16px 32px;
-  }
-
-  .menu-grid {
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  }
-
-  .ticket-no {
-    font-size: 48px;
-  }
-}
-
-/* Planshet portrait (768px - 991px) */
-@media (min-width: 768px) and (max-width: 991px) {
-  .container {
-    padding: 0 15px;
-  }
-
-  .grid-2 {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-  }
-
-  .menu-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-  }
-
-  .card {
-    padding: 25px;
-  }
-
-  .btn.big {
-    font-size: 16px;
-    padding: 14px 28px;
-  }
-
-  .ticket-no {
-    font-size: 42px;
-  }
-
-  table th, table td {
-    font-size: 14px;
-    padding: 12px;
-  }
-}
-
-/* Kichik planshet va katta telefon (481px - 767px) */
-@media (min-width: 481px) and (max-width: 767px) {
-  .grid-2 {
-    grid-template-columns: 1fr;
-  }
-
-  .container {
-    padding: 0 15px;
-    margin: 15px auto;
-  }
-
-  .card {
-    padding: 20px;
-    margin-bottom: 20px;
-    border-radius: 18px;
-  }
-
-  .menu-grid {
-    grid-template-columns: 1fr;
-    gap: 18px;
-  }
-
-  .menu-item {
-    padding: 20px;
-  }
-
-  .btn.big {
-    font-size: 16px;
-    padding: 14px 28px;
-    display: block;
-    width: 100%;
-    margin-bottom: 12px;
-  }
-
-  .btn {
-    padding: 12px 24px;
-    font-size: 15px;
-  }
-
-  .ticket-no {
-    font-size: 36px;
-  }
-
-  .navbar-brand {
-    font-size: 1.4rem;
-  }
-
-  table {
-    font-size: 14px;
-  }
-
-  table th, table td {
-    padding: 10px;
-  }
-
-  .quantity-selector {
-    width: 100%;
-    justify-content: center;
-  }
-
-  input, select, textarea {
-    font-size: 16px; /* iOS da zoom oldinini olish uchun */
-    padding: 14px 18px;
-  }
-
-  .price {
-    font-size: 20px;
-    padding: 10px 16px;
-  }
-}
-
-/* Telefon (320px - 480px) */
-@media (max-width: 480px) {
-  .grid-2 {
-    grid-template-columns: 1fr;
-  }
-
-  .container {
-    padding: 0 10px;
-    margin: 10px auto;
-  }
-
-  .card {
-    padding: 15px;
-    margin-bottom: 15px;
-    border-radius: 12px;
-  }
-
-  .menu-section {
-    padding: 15px;
-    margin-bottom: 15px;
-  }
-
-  .menu-item {
-    padding: 15px;
-    min-height: 160px;
-  }
-
-  .menu-item h4 {
-    font-size: 15px;
-  }
-
+  /* Savatcha */
   .cart-btn {
-    padding: 8px 15px;
-    font-size: 13px;
+    padding: 5px 8px;
+    font-size: 10px;
+    min-height: 30px;
   }
 
-  .price {
-    font-size: 16px;
+  /* Flash xabarlar */
+  .flash-item {
     padding: 8px 12px;
+    font-size: 11px;
   }
 
-  .btn.big {
-    font-size: 14px;
-    padding: 10px 20px;
-    display: block;
-    width: 100%;
-    margin-bottom: 10px;
+  /* Cart badge */
+  .cart-badge {
+    font-size: 10px;
+    min-width: 16px;
+    height: 16px;
+    line-height: 12px;
   }
+}
 
-  .btn {
-    padding: 8px 16px;
-    font-size: 13px;
-  }
-
-  .btn.small {
-    padding: 6px 12px;
-    font-size: 12px;
-  }
-
-  .ticket-no {
-    font-size: 28px;
-  }
-
-  .navbar-brand {
-    font-size: 1.1rem;
-  }
-
-  table {
-    font-size: 12px;
-  }
-
-  table th, table td {
-    padding: 6px;
-    text-align: center;
+/* ======================================= */
+/* TELEFON JUDA KICHIK (240px - 320px) */
+/* ======================================= */
+@media (max-width: 320px) {
+  .container {
+    padding: 0 6px;
+    margin: 6px auto;
   }
 
   body {
-    font-size: 13px;
+    font-size: 12px;
   }
 
-  .flash-item {
-    padding: 10px 15px;
-    font-size: 13px;
+  /* Navbar */
+  .navbar {
+    padding: 4px 0;
   }
 
-  input, select, textarea {
-    font-size: 16px;
-    padding: 10px 14px;
+  .navbar-brand {
+    font-size: 0.9rem;
+    max-width: 50%;
+  }
+
+  .navbar-nav .nav-link {
+    padding: 5px 6px !important;
+    font-size: 10px;
+    text-align: center;
+  }
+
+  .navbar-toggler {
+    padding: 2px 4px;
+    font-size: 0.9rem;
+  }
+
+  /* Kartalar */
+  .card {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+  }
+
+  /* Tugmalar */
+  .btn {
+    font-size: 11px;
+    padding: 6px 12px;
+    min-height: 36px;
+    display: block;
+    width: 100%;
+    margin-bottom: 5px;
+  }
+
+  .btn.big {
+    font-size: 12px;
+    padding: 8px 16px;
+    min-height: 40px;
+  }
+
+  .btn.small {
+    font-size: 9px;
+    padding: 4px 8px;
+    min-height: 28px;
+    display: inline-block;
+    width: auto;
+  }
+
+  /* Menyu */
+  .menu-section {
+    padding: 10px;
+    margin-bottom: 12px;
+  }
+
+  .menu-section h3 {
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+
+  .menu-grid {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .menu-item {
+    padding: 8px;
+    min-height: 140px;
+  }
+
+  .menu-item h4 {
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+
+  .price {
+    font-size: 14px;
+    padding: 5px 6px;
+    margin-bottom: 8px;
   }
 
   .quantity-btn {
-    min-width: 35px;
-    height: 35px;
-    font-size: 14px;
+    min-width: 28px;
+    height: 28px;
+    font-size: 11px;
   }
 
   .quantity-selector input {
-    width: 45px;
-    height: 35px;
+    width: 32px;
+    height: 28px;
+    font-size: 10px;
+  }
+
+  /* Form elementlari */
+  input, select, textarea {
+    font-size: 16px; /* iOS zoom oldini olish uchun */
+    padding: 6px 8px;
+    min-height: 36px;
+  }
+
+  /* Grid */
+  .grid-2 {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  /* Jadvallar */
+  table th, table td {
+    font-size: 9px;
+    padding: 3px;
+  }
+
+  /* Monitor */
+  .monitor-table td, .monitor-table th {
+    font-size: 0.5rem;
+    padding: 3px 1px;
+  }
+
+  .monitor-section {
+    padding: 6px;
+    margin-bottom: 8px;
+  }
+
+  .monitor-section h4 {
+    font-size: 0.9rem;
+  }
+
+  .ticket-no {
+    font-size: 20px;
+  }
+
+  /* Savatcha */
+  .cart-btn {
+    padding: 4px 6px;
+    font-size: 9px;
+    min-height: 28px;
+  }
+
+  /* Flash xabarlar */
+  .flash-item {
+    padding: 6px 8px;
+    font-size: 10px;
+  }
+
+  /* Cart badge */
+  .cart-badge {
+    font-size: 8px;
+    min-width: 14px;
+    height: 14px;
+    line-height: 10px;
+    padding: 1px 4px;
+  }
+
+  /* Label va matnlar */
+  label {
+    font-size: 11px;
+  }
+
+  .muted {
+    font-size: 10px;
   }
 }
 
-/* Juda kichik telefon (240px - 375px) */
-@media (max-width: 375px) {
+/* ======================================= */
+/* LANDSCAPE ORIENTATSIYA */
+/* ======================================= */
+@media (orientation: landscape) and (max-height: 500px) {
+  .navbar {
+    padding: 4px 0;
+  }
+
   .container {
-    padding: 0 8px;
     margin: 8px auto;
   }
 
@@ -1550,236 +2327,30 @@ tr.given {
     margin-bottom: 12px;
   }
 
-  .navbar-brand {
-    font-size: 1.1rem;
-  }
-
-  .btn.big {
-    font-size: 14px;
-    padding: 10px 20px;
-  }
-
-  .btn {
-    font-size: 13px;
-    padding: 8px 16px;
-  }
-
-  .ticket-no {
-    font-size: 28px;
-  }
-
   .menu-grid {
-    gap: 12px;
-  }
-
-  .menu-item {
-    padding: 12px;
-  }
-
-  .menu-item h4 {
-    font-size: 16px;
-  }
-
-  .price {
-    font-size: 17px;
-    padding: 8px 12px;
-  }
-
-  .cart-btn {
-    padding: 8px 14px;
-    font-size: 13px;
-  }
-
-  table th, table td {
-    padding: 6px;
-    font-size: 12px;
-  }
-
-  .quantity-btn {
-    min-width: 35px;
-    height: 35px;
-    font-size: 14px;
-  }
-
-  .quantity-selector input {
-    width: 45px;
-    height: 35px;
-    font-size: 14px;
-  }
-}
-
-/* Tugmali telefon va juda kichik ekranlar (max 320px) */
-@media (max-width: 320px) {
-  .container {
-    padding: 0 6px;
-    margin: 6px auto;
-  }
-
-  .card {
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 12px;
-  }
-
-  .navbar-brand {
-    font-size: 1rem;
-  }
-
-  .btn.big {
-    font-size: 13px;
-    padding: 8px 16px;
-  }
-
-  .btn {
-    font-size: 12px;
-    padding: 6px 12px;
-  }
-
-  .ticket-no {
-    font-size: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
   }
 
   .menu-item {
     padding: 10px;
-  }
-
-  .menu-item h4 {
-    font-size: 15px;
-  }
-
-  .price {
-    font-size: 16px;
-    padding: 6px 10px;
-  }
-
-  .cart-btn {
-    padding: 6px 12px;
-    font-size: 12px;
-  }
-
-  body {
-    font-size: 13px;
-  }
-
-  .flash-item {
-    padding: 8px 12px;
-    font-size: 13px;
-  }
-
-  input, select, textarea {
-    font-size: 16px;
-    padding: 10px 12px;
-  }
-
-  table th, table td {
-    padding: 4px;
-    font-size: 11px;
-  }
-
-  .quantity-btn {
-    min-width: 30px;
-    height: 30px;
-    font-size: 12px;
-  }
-
-  .quantity-selector input {
-    width: 40px;
-    height: 30px;
-    font-size: 12px;
-  }
-}
-
-/* Landscape orientatsiya uchun maxsus qoidalar */
-@media (orientation: landscape) and (max-height: 500px) {
-  .navbar {
-    padding: 8px 0;
-  }
-
-  .container {
-    margin: 10px auto;
-  }
-
-  .card {
-    padding: 15px;
-    margin-bottom: 15px;
-  }
-
-  .menu-grid {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 15px;
+    min-height: 140px;
   }
 
   .ticket-no {
-    font-size: 24px;
-  }
-}
-
-/* TV va juda katta ekranlar uchun (1400px+) */
-@media (min-width: 1400px) {
-  .container {
-    max-width: 1600px;
-  }
-
-  .card {
-    padding: 30px;
-    font-size: 16px;
-  }
-
-  .btn.big {
-    font-size: 18px;
-    padding: 16px 32px;
-  }
-
-  .btn {
-    font-size: 16px;
-    padding: 12px 24px;
-  }
-
-  .ticket-no {
-    font-size: 52px;
-  }
-
-  .navbar-brand {
-    font-size: 1.8rem;
-  }
-
-  .menu-item h4 {
-    font-size: 18px;
-  }
-
-  .price {
     font-size: 20px;
   }
 
-  table th, table td {
-    font-size: 14px;
-    padding: 15px;
-  }
-
-  .flash-item {
-    padding: 15px 20px;
-    font-size: 16px;
+  .btn {
+    padding: 6px 12px;
+    font-size: 12px;
+    min-height: 32px;
   }
 }
 
-/* Print media uchun */
-@media print {
-  .navbar, .btn, .flash {
-    display: none !important;
-  }
-
-  .card {
-    box-shadow: none;
-    border: 1px solid #000;
-  }
-
-  body {
-    background: white !important;
-    color: black !important;
-  }
-}
-
-/* Animatsiyalar */
+/* ======================================= */
+/* ANIMATSIYALAR */
+/* ======================================= */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
@@ -1798,161 +2369,144 @@ tr.given {
   animation: slideIn 0.4s ease-out;
 }
 
-/* Utility klasslar */
-.muted {
-  color: #718096;
-  font-size: 14px;
-}
+/* ======================================= */
+/* PRINT MEDIA */
+/* ======================================= */
+@media print {
+  .navbar, .btn, .flash {
+    display: none !important;
+  }
 
-.text-center {
-  text-align: center;
-}
+  .card {
+    box-shadow: none;
+    border: 1px solid #000;
+  }
 
-.mt-3 {
-  margin-top: 1rem;
-}
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 12px;
+  }
 
-.mb-3 {
-  margin-bottom: 1rem;
-}
-
-.p-3 {
-  padding: 1rem;
-}
-
-/* Theme selector */
-.theme-selector {
-    display: flex;
-    flex-direction: column;
+  .menu-grid {
+    grid-template-columns: repeat(2, 1fr);
     gap: 10px;
+  }
 }
 
-.radio-option {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-}
-
-.radio-option:hover {
-    background: rgba(255, 255, 255, 0.2);
-}
-
-.radio-option input[type="radio"] {
-    margin-right: 10px;
-    transform: scale(1.2);
-}
-
-.radio-text {
-    font-weight: 500;
-}
-
-/* Tungi rejim uchun theme selector */
-body.dark-theme .radio-option {
-    background: rgba(45, 55, 72, 0.5) !important;
-    color: #e2e8f0 !important;
-}
-
-body.dark-theme .radio-option:hover {
-    background: rgba(74, 85, 104, 0.7) !important;
-}
-
-body.dark-theme .radio-text {
-    color: #e2e8f0 !important;
-}
-
-/* Loading animatsiyasi */
-.loading {
+/* ======================================= */
+/* LOADING VA ANIMATSIYALAR */
+/* ======================================= */
+.loading-spinner {
   display: inline-block;
-  width: 20px;
-  height: 20px;
-  border: 3px solid rgba(255,255,255,.3);
+  width: 16px;
+  height: 16px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #3498db;
   border-radius: 50%;
-  border-top-color: #fff;
-  animation: spin 1s ease-in-out infinite;
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
-/* Status ranglari */
-.status-waiting {
-  color: #ed8936;
-  font-weight: 600;
-  font-size: 18px;
-  padding: 10px 20px;
-  background: rgba(237, 137, 54, 0.1);
-  border-radius: 25px;
-  border: 2px solid rgba(237, 137, 54, 0.3);
-  display: inline-block;
-}
-
-.status-ready {
-  color: #48bb78;
-  font-weight: 600;
-  font-size: 18px;
-  padding: 10px 20px;
-  background: rgba(72, 187, 120, 0.1);
-  border-radius: 25px;
-  border: 2px solid rgba(72, 187, 120, 0.3);
-  display: inline-block;
-  animation: pulse-green 2s infinite;
-}
-
-.status-served {
-  color: #4299e1;
-  font-weight: 600;
-  font-size: 18px;
-  padding: 10px 20px;
-  background: rgba(66, 153, 225, 0.1);
-  border-radius: 25px;
-  border: 2px solid rgba(66, 153, 225, 0.3);
-  display: inline-block;
-}
-
-.status-cancelled {
-  color: #e53e3e;
-  font-weight: 600;
-  font-size: 18px;
-  padding: 10px 20px;
-  background: rgba(229, 62, 62, 0.1);
-  border-radius: 25px;
-  border: 2px solid rgba(229, 62, 62, 0.3);
-  display: inline-block;
-}
-
-/* Buyurtma holati card */
-.order-status-card {
-  padding: 20px;
-  text-align: center;
-}
-
-/* Status card ichidagi barcha matnlar oq bo'lsin */
-.order-status-card .status-waiting,
-.order-status-card .status-ready,
-.order-status-card .status-served,
-.order-status-card .status-cancelled {
-  color: white !important;
-  background: rgba(255, 255, 255, 0.2) !important;
-  border-color: rgba(255, 255, 255, 0.4) !important;
-}
-
-/* Pulse animatsiya tayyor holat uchun */
-@keyframes pulse-green {
-  0% {
-    box-shadow: 0 0 0 0 rgba(72, 187, 120, 0.7);
-    background: rgba(72, 187, 120, 0.1);
+/* ======================================= */
+/* TOUCH QURILMALAR UCHUN */
+/* ======================================= */
+@media (hover: none) and (pointer: coarse) {
+  .btn:hover {
+    transform: none;
   }
-  70% {
-    box-shadow: 0 0 0 10px rgba(72, 187, 120, 0);
-    background: rgba(72, 187, 120, 0.2);
+  
+  .menu-item:hover {
+    transform: none;
   }
-  100% {
-    box-shadow: 0 0 0 0 rgba(72, 187, 120, 0);
-    background: rgba(72, 187, 120, 0.1);
+  
+  .card:hover {
+    transform: none;
   }
+  
+  /* Touch qurilmalarda kattaroq tugmalar */
+  .btn {
+    min-height: 48px;
+    padding: 12px 20px;
+  }
+  
+  .quantity-btn {
+    min-width: 44px;
+    height: 44px;
+  }
+  
+  input, select, textarea {
+    min-height: 48px;
+  }
+}
+
+/* ======================================= */
+/* MAXSUS SHRIFT O'LCHAMLARI */
+/* ======================================= */
+body.font-small {
+  font-size: 0.85em;
+}
+
+body.font-small .btn {
+  font-size: 0.75em;
+}
+
+body.font-small .menu-item h4 {
+  font-size: 0.85em;
+}
+
+body.font-small .price {
+  font-size: 0.9em;
+}
+
+body.font-medium {
+  font-size: 1em;
+}
+
+body.font-large {
+  font-size: 1.15em;
+}
+
+body.font-large .btn {
+  font-size: 1.1em;
+}
+
+body.font-large .menu-item h4 {
+  font-size: 1.2em;
+}
+
+body.font-large .price {
+  font-size: 1.3em;
+}
+
+/* ======================================= */
+/* ACCESSIBILITY YAXSHILASHLARI */
+/* ======================================= */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  body:not(.light-theme) {
+    background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+    color: #e2e8f0;
+  }
+}
+
+/* Focus indikatorlari */
+.btn:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
 }
