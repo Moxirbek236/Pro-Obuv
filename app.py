@@ -1760,6 +1760,191 @@ def super_admin_logout():
     flash("Super admin panelidan chiqildi.", "info")
     return redirect(url_for("index"))
 
+@app.route("/super-admin/delete-courier/<int:courier_id>", methods=["POST"])
+def super_admin_delete_courier(courier_id):
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("DELETE FROM couriers WHERE id = ?", (courier_id,))
+    conn.commit()
+    conn.close()
+
+    flash(f"Kuryer #{courier_id} o'chirildi.", "success")
+    return redirect(url_for("super_admin_dashboard"))
+
+@app.route("/super-admin/delete-user-db/<int:user_id>", methods=["POST"])
+def super_admin_delete_user_db(user_id):
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("DELETE FROM users WHERE id = ?", (user_id,))
+    conn.commit()
+    conn.close()
+
+    flash(f"Foydalanuvchi #{user_id} o'chirildi.", "success")
+    return redirect(url_for("super_admin_dashboard"))
+
+@app.route("/super-admin/reset-staff-password", methods=["POST"])
+def super_admin_reset_staff_password():
+    if not session.get("super_admin"):
+        return jsonify({"success": False, "message": "Unauthorized"}), 401
+
+    data = request.json
+    staff_id = data.get("staff_id")
+    new_password = data.get("new_password")
+
+    if not staff_id or not new_password:
+        return jsonify({"success": False, "message": "Noto'g'ri ma'lumotlar"})
+
+    conn = get_db()
+    cur = conn.cursor()
+    password_hash = generate_password_hash(new_password)
+    cur.execute("UPDATE staff SET password_hash = ? WHERE id = ?", (password_hash, staff_id))
+    conn.commit()
+    conn.close()
+
+    return jsonify({"success": True, "message": "Parol yangilandi"})
+
+@app.route("/super-admin/reset-courier-password", methods=["POST"])
+def super_admin_reset_courier_password():
+    if not session.get("super_admin"):
+        return jsonify({"success": False, "message": "Unauthorized"}), 401
+
+    data = request.json
+    courier_id = data.get("courier_id")
+    new_password = data.get("new_password")
+
+    if not courier_id or not new_password:
+        return jsonify({"success": False, "message": "Noto'g'ri ma'lumotlar"})
+
+    conn = get_db()
+    cur = conn.cursor()
+    password_hash = generate_password_hash(new_password)
+    cur.execute("UPDATE couriers SET password_hash = ? WHERE id = ?", (password_hash, courier_id))
+    conn.commit()
+    conn.close()
+
+    return jsonify({"success": True, "message": "Parol yangilandi"})
+
+@app.route("/super-admin/reset-user-password", methods=["POST"])
+def super_admin_reset_user_password():
+    if not session.get("super_admin"):
+        return jsonify({"success": False, "message": "Unauthorized"}), 401
+
+    data = request.json
+    user_id = data.get("user_id")
+    new_password = data.get("new_password")
+
+    if not user_id or not new_password:
+        return jsonify({"success": False, "message": "Noto'g'ri ma'lumotlar"})
+
+    conn = get_db()
+    cur = conn.cursor()
+    password_hash = generate_password_hash(new_password)
+    cur.execute("UPDATE users SET password_hash = ? WHERE id = ?", (password_hash, user_id))
+    conn.commit()
+    conn.close()
+
+    return jsonify({"success": True, "message": "Parol yangilandi"})
+
+@app.route("/super-admin/get-orders")
+def super_admin_get_orders():
+    if not session.get("super_admin"):
+        return jsonify({"error": "Unauthorized"}), 401
+
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM orders ORDER BY created_at DESC")
+    orders = cur.fetchall()
+    conn.close()
+
+    return jsonify([dict(order) for order in orders])
+
+@app.route("/super-admin/get-menu")
+def super_admin_get_menu():
+    if not session.get("super_admin"):
+        return jsonify({"error": "Unauthorized"}), 401
+
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM menu_items ORDER BY category, name")
+    items = cur.fetchall()
+    conn.close()
+
+    return jsonify([dict(item) for item in items])
+
+@app.route("/super-admin/get-receipts")
+def super_admin_get_receipts():
+    if not session.get("super_admin"):
+        return jsonify({"error": "Unauthorized"}), 401
+
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM receipts ORDER BY created_at DESC LIMIT 100")
+    receipts = cur.fetchall()
+    conn.close()
+
+    return jsonify([dict(receipt) for receipt in receipts])
+
+@app.route("/super-admin/add-menu-item", methods=["POST"])
+def super_admin_add_menu_item():
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+
+    name = request.form.get("name", "").strip()
+    price = request.form.get("price", "")
+    category = request.form.get("category", "")
+    description = request.form.get("description", "").strip()
+
+    if not all([name, price, category]):
+        flash("Barcha majburiy maydonlarni to'ldiring.", "error")
+        return redirect(url_for("super_admin_dashboard"))
+
+    try:
+        price = float(price)
+    except ValueError:
+        flash("Narx raqam bo'lishi kerak.", "error")
+        return redirect(url_for("super_admin_dashboard"))
+
+    # Rasm yuklash
+    image_url = None
+    if 'image' in request.files:
+        file = request.files['image']
+        if file and file.filename != '':
+            import uuid
+            from werkzeug.utils import secure_filename
+
+            images_dir = os.path.join('static', 'images')
+            if not os.path.exists(images_dir):
+                os.makedirs(images_dir)
+
+            filename = secure_filename(file.filename)
+            unique_filename = f"{uuid.uuid4().hex}_{filename}"
+            file_path = os.path.join(images_dir, unique_filename)
+
+            try:
+                file.save(file_path)
+                image_url = f"/static/images/{unique_filename}"
+            except Exception as e:
+                flash("Rasmni yuklashda xatolik yuz berdi.", "error")
+                return redirect(url_for("super_admin_dashboard"))
+
+    conn = get_db()
+    cur = conn.cursor()
+    now = get_current_time().isoformat()
+    
+    cur.execute("INSERT INTO menu_items (name, price, category, description, image_url, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+               (name, price, category, description, image_url, now))
+    
+    conn.commit()
+    conn.close()
+    flash("Yangi mahsulot qo'shildi!", "success")
+    return redirect(url_for("super_admin_dashboard"))
+
 # ---- YANGI SAHIFALAR ----
 @app.route("/add_to_favorites/<int:menu_item_id>", methods=["POST"])
 def add_to_favorites(menu_item_id):
