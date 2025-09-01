@@ -795,7 +795,7 @@ def user_page():
             delivery_address = request.form.get("delivery_address", "").strip()
             card_number = request.form.get("card_number", "").strip()
             order_type = "delivery" if delivery_address else "dine_in"
-            
+
             cur.execute("""
                 INSERT INTO orders (user_id, customer_name, ticket_no, order_type, status, delivery_address, card_number, created_at, eta_time)
                 VALUES (?, ?, ?, ?, 'waiting', ?, ?, ?, ?);
@@ -826,7 +826,7 @@ def user_page():
             receipt_number = f"R{tno}{now.strftime('%H%M%S')}"
             cashback_percentage = 1.0
             cashback_amount = total * (cashback_percentage / 100)
-            
+
             cur.execute("""
                 INSERT INTO receipts (order_id, receipt_number, total_amount, cashback_amount, cashback_percentage, created_at)
                 VALUES (?, ?, ?, ?, ?, ?);
@@ -851,20 +851,13 @@ def user_success(ticket_no):
     cur = conn.cursor()
     cur.execute("SELECT * FROM orders WHERE ticket_no=? ORDER BY id DESC LIMIT 1;", (ticket_no,))
     order = cur.fetchone()
-    
-    # Chek ma'lumotlarini olish
-    receipt = None
-    if order:
-        cur.execute("SELECT * FROM receipts WHERE order_id=?", (order['id'],))
-        receipt = cur.fetchone()
-    
     conn.close()
     if not order:
         flash("Buyurtma topilmadi.", "error")
         return redirect(url_for("user_page"))
     # valmis bo'lish vaqti
     eta_time = datetime.datetime.fromisoformat(order["eta_time"])
-    return render_template("user_success.html", order=order, receipt=receipt, eta_hhmm=eta_time.strftime("%H:%M"))
+    return render_template("user_success.html", order=order, eta_hhmm=eta_time.strftime("%H:%M"))
 
 @app.route("/user/status/<int:ticket_no>")
 def user_status(ticket_no):
@@ -994,6 +987,7 @@ def courier_dashboard():
 
     conn = get_db()
     cur = conn.cursor()
+    courier_id = session.get("courier_id")
 
     # Barcha ready delivery buyurtmalar va kuryerga tegishli buyurtmalarni olish
     cur.execute("""
@@ -1708,7 +1702,7 @@ def view_receipt(ticket_no):
     """Chekni ko'rish sahifasi"""
     conn = get_db()
     cur = conn.cursor()
-    
+
     # Buyurtma va chek ma'lumotlarini olish
     cur.execute("""
         SELECT o.*, r.receipt_number, r.total_amount, r.cashback_amount, r.cashback_percentage,
@@ -1720,14 +1714,14 @@ def view_receipt(ticket_no):
         WHERE o.ticket_no = ?
         GROUP BY o.id
     """, (ticket_no,))
-    
+
     order_with_receipt = cur.fetchone()
     conn.close()
-    
+
     if not order_with_receipt:
         flash("Chek topilmadi.", "error")
         return redirect(url_for("index"))
-    
+
     return render_template("receipt.html", order=order_with_receipt)
 
 
