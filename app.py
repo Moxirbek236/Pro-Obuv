@@ -30,6 +30,24 @@ def get_db():
 def init_db():
     conn = get_db()
     cur = conn.cursor()
+    
+    # Foydalanuvchilar jadvali
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            first_name TEXT NOT NULL,
+            last_name TEXT NOT NULL,
+            email TEXT UNIQUE NOT NULL,
+            phone TEXT,
+            password_hash TEXT NOT NULL,
+            address TEXT,
+            card_number TEXT,
+            card_expiry TEXT,
+            created_at TEXT NOT NULL
+        );
+    """)
+    
+    # Xodimlar jadvali
     cur.execute("""
         CREATE TABLE IF NOT EXISTS staff (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -41,50 +59,92 @@ def init_db():
             created_at TEXT NOT NULL
         );
     """)
+    
+    # Kuryerlar jadvali
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS couriers (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            first_name TEXT NOT NULL,
+            last_name TEXT NOT NULL,
+            phone TEXT NOT NULL,
+            password_hash TEXT NOT NULL,
+            created_at TEXT NOT NULL
+        );
+    """)
+    
+    # Buyurtmalar jadvali (yangilangan)
     cur.execute("""
         CREATE TABLE IF NOT EXISTS orders (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
             customer_name TEXT NOT NULL,
             ticket_no INTEGER NOT NULL,
-            status TEXT NOT NULL, -- 'waiting' yoki 'given'
+            order_type TEXT NOT NULL, -- 'dine_in' yoki 'delivery'
+            status TEXT NOT NULL,
+            delivery_address TEXT,
+            card_number TEXT,
+            courier_id INTEGER,
             created_at TEXT NOT NULL,
-            eta_time TEXT NOT NULL
+            eta_time TEXT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users (id),
+            FOREIGN KEY (courier_id) REFERENCES couriers (id)
         );
     """)
-    # ticketlar ketma-ketligi uchun alohida jadval
+    
+    # Tikketlar hisoblagich
     cur.execute("""
         CREATE TABLE IF NOT EXISTS counters (
             name TEXT PRIMARY KEY,
             value INTEGER NOT NULL
         );
     """)
-    cur.execute("INSERT OR IGNORE INTO counters (name, value) VALUES ('ticket', 0);")
+    cur.execute("INSERT OR IGNORE INTO counters (name, value) VALUES ('ticket', 10000);")
     
-    # Menyu jadval
+    # Menyu mahsulotlari (yangilangan)
     cur.execute("""
         CREATE TABLE IF NOT EXISTS menu_items (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
             price REAL NOT NULL,
-            category TEXT NOT NULL, -- 'food' yoki 'drink'
+            category TEXT NOT NULL,
+            description TEXT,
+            image_url TEXT,
             available BOOLEAN DEFAULT 1,
+            stock_quantity INTEGER DEFAULT 0,
+            orders_count INTEGER DEFAULT 0,
+            rating REAL DEFAULT 0.0,
             created_at TEXT NOT NULL
         );
     """)
     
-    # Savatcha jadval
+    # Sevimlilar jadvali
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS favorites (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            menu_item_id INTEGER NOT NULL,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users (id),
+            FOREIGN KEY (menu_item_id) REFERENCES menu_items (id),
+            UNIQUE(user_id, menu_item_id)
+        );
+    """)
+    
+    # Savatcha jadvali (yangilangan)
     cur.execute("""
         CREATE TABLE IF NOT EXISTS cart_items (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            session_id TEXT NOT NULL,
+            user_id INTEGER,
+            session_id TEXT,
             menu_item_id INTEGER NOT NULL,
             quantity INTEGER NOT NULL DEFAULT 1,
             created_at TEXT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users (id),
             FOREIGN KEY (menu_item_id) REFERENCES menu_items (id)
         );
     """)
     
-    # Buyurtma tafsilotlari jadval
+    # Buyurtma tafsilotlari jadvali
     cur.execute("""
         CREATE TABLE IF NOT EXISTS order_details (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -97,21 +157,36 @@ def init_db():
         );
     """)
     
+    # Baholar jadvali
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS ratings (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            menu_item_id INTEGER NOT NULL,
+            rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+            comment TEXT,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users (id),
+            FOREIGN KEY (menu_item_id) REFERENCES menu_items (id),
+            UNIQUE(user_id, menu_item_id)
+        );
+    """)
+    
     # Boshlang'ich taomlar qo'shish
     cur.execute("SELECT COUNT(*) FROM menu_items")
     if cur.fetchone()[0] == 0:
         now = get_current_time().isoformat()
         sample_items = [
-            ('Osh', 25000, 'food', now),
-            ('Manti', 20000, 'food', now),
-            ('Shashlik', 30000, 'food', now),
-            ('Lagmon', 22000, 'food', now),
-            ('Choy', 5000, 'drink', now),
-            ('Qora choy', 6000, 'drink', now),
-            ('Kompot', 8000, 'drink', now),
-            ('Coca Cola', 10000, 'drink', now),
+            ('Osh', 25000, 'food', 'An\'anaviy o\'zbek taomi, guruch va go\'sht bilan', '/static/images/osh.jpg', 1, 50, 0, 4.5, now),
+            ('Manti', 20000, 'food', 'Bug\'da pishirilgan go\'shtli manti', '/static/images/manti.jpg', 1, 30, 0, 4.8, now),
+            ('Shashlik', 30000, 'food', 'Mangalda pishirilgan mazali shashlik', '/static/images/shashlik.jpg', 1, 25, 0, 4.7, now),
+            ('Lagmon', 22000, 'food', 'Qo\'l tortmasi bilan tayyorlangan lagmon', '/static/images/lagmon.jpg', 1, 40, 0, 4.6, now),
+            ('Choy', 5000, 'drink', 'Issiq qora choy', '/static/images/tea.jpg', 1, 100, 0, 4.2, now),
+            ('Qora choy', 6000, 'drink', 'O\'zbek an\'anaviy choy', '/static/images/black_tea.jpg', 1, 80, 0, 4.3, now),
+            ('Kompot', 8000, 'drink', 'Mevali kompot', '/static/images/kompot.jpg', 1, 60, 0, 4.1, now),
+            ('Coca Cola', 10000, 'drink', 'Sovuq ichimlik', '/static/images/cola.jpg', 1, 70, 0, 4.0, now),
         ]
-        cur.executemany("INSERT INTO menu_items (name, price, category, created_at) VALUES (?, ?, ?, ?)", sample_items)
+        cur.executemany("INSERT INTO menu_items (name, price, category, description, image_url, available, stock_quantity, orders_count, rating, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", sample_items)
     
     conn.commit()
     conn.close()
