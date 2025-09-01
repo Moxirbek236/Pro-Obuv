@@ -2,6 +2,10 @@
 
 {% block title %}Savatcha - Restoran{% endblock %}
 
+{% block head %}
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBOti4mM-6x9WDnZIjIeyEU21OpxXqWBgw&libraries=geometry&callback=initMap"></script>
+{% endblock %}
+
 {% block content %}
 <div class="card">
   <h2>🛒 Savatcha</h2>
@@ -48,27 +52,61 @@
 
             <div id="delivery-fields" class="delivery-section" style="display: none;">
                 <h4>📍 Yetkazib berish ma'lumotlari:</h4>
-                <div class="form-group">
-                    <label for="delivery_address">Manzil:</label>
-                    <textarea id="delivery_address" name="delivery_address" placeholder="To'liq manzilni kiriting (Ko'cha, uy raqami, orientir)..." rows="3"></textarea>
+                
+                <!-- Profil ma'lumotlari ko'rsatish -->
+                <div class="profile-info">
+                    <div class="info-row">
+                        <span class="info-label">📱 Telefon:</span>
+                        <span class="info-value">{{ session.get('user_phone', 'Kiritilmagan') }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">🏠 Manzil:</span>
+                        <span class="info-value">{{ session.get('user_address', 'Kiritilmagan') }}</span>
+                    </div>
+                </div>
+
+                <!-- Xaritada joylashuvni tanlash -->
+                <div class="map-selection">
+                    <label for="location-map">📍 Xaritada joylashuvni belgilang:</label>
+                    <div id="map-container" style="height: 300px; border: 2px solid #ddd; border-radius: 8px; margin: 10px 0;">
+                        <div id="location-map" style="height: 100%; width: 100%;"></div>
+                    </div>
+                    <div class="selected-location">
+                        <p><strong>Tanlangan joylashuv:</strong></p>
+                        <p id="selected-address">Xaritada joyni belgilang</p>
+                        <input type="hidden" id="delivery_address" name="delivery_address">
+                        <input type="hidden" id="delivery_latitude" name="delivery_latitude">
+                        <input type="hidden" id="delivery_longitude" name="delivery_longitude">
+                    </div>
+                </div>
+
+                <!-- Karta ma'lumotlari -->
+                <div class="card-info">
+                    {% if session.get('user_card_number') %}
+                        <div class="info-row">
+                            <span class="info-label">💳 Karta:</span>
+                            <span class="info-value">**** **** **** {{ session.get('user_card_number')[-4:] if session.get('user_card_number') else '' }}</span>
+                        </div>
+                    {% else %}
+                        <div class="form-group">
+                            <label for="card_number">💳 Karta raqami:</label>
+                            <input type="text" id="card_number" name="card_number" placeholder="1234 5678 9012 3456" 
+                                   pattern="[0-9\s]{13,19}" maxlength="19" required>
+                            <small class="text-muted">To'lov uchun karta raqamini kiriting</small>
+                        </div>
+                    {% endif %}
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="customer_phone">Telefon raqamingiz:</label>
-                        <input type="tel" id="customer_phone" name="customer_phone" placeholder="+998 90 123 45 67" 
-                               value="{{ session.get('user_phone', '') }}">
+                        <label for="delivery_distance">Masofa (km):</label>
+                        <input type="number" id="delivery_distance" name="delivery_distance" step="0.1" min="0" placeholder="Avtomatik hisoblanadi" readonly>
                     </div>
                     <div class="form-group">
-                        <label for="delivery_distance">Masofa (km):</label>
-                        <input type="number" id="delivery_distance" name="delivery_distance" step="0.1" min="0" placeholder="5.2">
+                        <label for="courier_delivery_time">Kuryer taxminiy yetkazish vaqti (daqiqa):</label>
+                        <input type="number" id="courier_delivery_time" name="courier_delivery_time" min="10" max="120" placeholder="30" required>
+                        <small class="text-muted">Kuryer qancha vaqtda yetkazishini kiriting</small>
                     </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="delivery_price">Yetkazish narxi (so'm):</label>
-                    <input type="number" id="delivery_price" name="delivery_price" min="0" placeholder="15000" onchange="updateTotal()">
-                    <small class="text-muted">Yetkazib berish xizmati uchun to'lov (ixtiyoriy)</small>
                 </div>
 
                 <div class="delivery-info">
@@ -99,21 +137,109 @@
             </div>
         </form>
         <script>
+let map;
+let marker;
+let selectedLocation = null;
+
+function initMap() {
+    // Toshkent markazi
+    const tashkent = { lat: 41.2995, lng: 69.2401 };
+    
+    map = new google.maps.Map(document.getElementById("location-map"), {
+        zoom: 12,
+        center: tashkent,
+    });
+
+    // Foydalanuvchi joylashuvini olishga harakat qilish
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            const userLocation = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            };
+            map.setCenter(userLocation);
+            map.setZoom(15);
+        });
+    }
+
+    // Xaritaga bosish hodisasi
+    map.addListener("click", function(event) {
+        setDeliveryLocation(event.latLng);
+    });
+}
+
+function setDeliveryLocation(location) {
+    selectedLocation = location;
+    
+    // Avvalgi markerni o'chirish
+    if (marker) {
+        marker.setMap(null);
+    }
+    
+    // Yangi marker qo'yish
+    marker = new google.maps.Marker({
+        position: location,
+        map: map,
+        title: "Yetkazib berish manzili"
+    });
+
+    // Manzilni olish (Reverse Geocoding)
+    const geocoder = new google.maps.Geocoder();
+    geocoder.geocode({ location: location }, function(results, status) {
+        if (status === "OK" && results[0]) {
+            const address = results[0].formatted_address;
+            document.getElementById('selected-address').textContent = address;
+            document.getElementById('delivery_address').value = address;
+            document.getElementById('delivery_latitude').value = location.lat();
+            document.getElementById('delivery_longitude').value = location.lng();
+            
+            // Masofani hisoblash (Toshkent markazidan)
+            calculateDistance(location);
+        } else {
+            document.getElementById('selected-address').textContent = `Lat: ${location.lat().toFixed(6)}, Lng: ${location.lng().toFixed(6)}`;
+            document.getElementById('delivery_address').value = `${location.lat()},${location.lng()}`;
+            document.getElementById('delivery_latitude').value = location.lat();
+            document.getElementById('delivery_longitude').value = location.lng();
+        }
+    });
+}
+
+function calculateDistance(destination) {
+    // Restoran joylashuvi (Toshkent markazi)
+    const restaurant = { lat: 41.2995, lng: 69.2401 };
+    
+    const service = new google.maps.DistanceMatrixService();
+    service.getDistanceMatrix({
+        origins: [restaurant],
+        destinations: [destination],
+        travelMode: google.maps.TravelMode.DRIVING,
+        unitSystem: google.maps.UnitSystem.METRIC,
+    }, function(response, status) {
+        if (status === "OK") {
+            const distance = response.rows[0].elements[0].distance;
+            if (distance) {
+                const distanceKm = distance.value / 1000;
+                document.getElementById('delivery_distance').value = distanceKm.toFixed(1);
+            }
+        }
+    });
+}
+
 function toggleDeliveryFields() {
     const deliveryRadio = document.querySelector('input[name="order_type"][value="delivery"]');
     const deliveryFields = document.getElementById('delivery-fields');
     const deliveryAddress = document.getElementById('delivery_address');
-    const customerPhone = document.getElementById('customer_phone');
 
     if (deliveryRadio.checked) {
         deliveryFields.style.display = 'block';
         deliveryAddress.required = true;
-        customerPhone.required = true;
+        
+        // Xaritani yuklash
+        setTimeout(initMap, 100);
     } else {
         deliveryFields.style.display = 'none';
         deliveryAddress.required = false;
-        customerPhone.required = false;
-        updateTotal(); // Delivery narxini olib tashlash
+        updateTotal();
     }
 }
 
@@ -367,6 +493,60 @@ function updateTotal() {
     padding-top: 10px;
     margin-top: 10px;
     font-size: 16px;
+}
+
+.profile-info {
+    background: #e8f5e8;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 4px solid #28a745;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.info-label {
+    font-weight: 500;
+    color: #495057;
+}
+
+.info-value {
+    color: #28a745;
+    font-weight: 600;
+}
+
+.card-info {
+    background: #fff3cd;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+    border-left: 4px solid #ffc107;
+}
+
+.map-selection {
+    margin: 20px 0;
+}
+
+.selected-location {
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+    border: 1px solid #dee2e6;
+}
+
+.selected-location p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+#selected-address {
+    color: #007bff;
+    font-weight: 500;
 }
 
 /* Mobile uchun */
