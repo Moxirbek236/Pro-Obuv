@@ -341,6 +341,42 @@ def ensure_courier_columns():
         pass
     conn.close()
 
+def ensure_menu_items_columns():
+    """Menu_items jadvaliga kerakli ustunlarni qo'shadi (migration)."""
+    conn = get_db()
+    cur = conn.cursor()
+    try:
+        cur.execute("PRAGMA table_info(menu_items);")
+        cols = [r[1] for r in cur.fetchall()]
+
+        if 'description' not in cols:
+            cur.execute("ALTER TABLE menu_items ADD COLUMN description TEXT;")
+            conn.commit()
+
+        if 'image_url' not in cols:
+            cur.execute("ALTER TABLE menu_items ADD COLUMN image_url TEXT;")
+            conn.commit()
+
+        if 'available' not in cols:
+            cur.execute("ALTER TABLE menu_items ADD COLUMN available BOOLEAN DEFAULT 1;")
+            conn.commit()
+
+        if 'stock_quantity' not in cols:
+            cur.execute("ALTER TABLE menu_items ADD COLUMN stock_quantity INTEGER DEFAULT 0;")
+            conn.commit()
+
+        if 'orders_count' not in cols:
+            cur.execute("ALTER TABLE menu_items ADD COLUMN orders_count INTEGER DEFAULT 0;")
+            conn.commit()
+
+        if 'rating' not in cols:
+            cur.execute("ALTER TABLE menu_items ADD COLUMN rating REAL DEFAULT 0.0;")
+            conn.commit()
+
+    except Exception as e:
+        pass
+    conn.close()
+
 def cleanup_expired_orders():
     """Waiting holatidagi, 30 daqiqadan oshgan buyurtmalarni cancelled ga o'tkazadi."""
     conn = get_db()
@@ -358,6 +394,7 @@ ensure_orders_columns()
 ensure_cart_items_columns()
 ensure_staff_columns()
 ensure_courier_columns()
+ensure_menu_items_columns()
 
 
 # O'rniga buni app context ichida chaqiramiz
@@ -1248,14 +1285,21 @@ def add_menu_item():
     conn = get_db()
     cur = conn.cursor()
     now = get_current_time().isoformat()
-    try:
-        cur.execute("INSERT INTO menu_items (name, price, category, description, image_url, created_at) VALUES (?, ?, ?, ?, ?, ?)",
-                   (name, price, category, description, image_url, now))
-    except sqlite3.OperationalError:
-        # Agar description ustuni mavjud bo'lmasa, uni qo'shish
+    
+    # Jadval tuzilishini tekshirish va kerakli ustunlarni qo'shish
+    cur.execute("PRAGMA table_info(menu_items);")
+    columns = [col[1] for col in cur.fetchall()]
+    
+    if 'description' not in columns:
         cur.execute("ALTER TABLE menu_items ADD COLUMN description TEXT;")
-        cur.execute("INSERT INTO menu_items (name, price, category, description, image_url, created_at) VALUES (?, ?, ?, ?, ?, ?)",
-                   (name, price, category, description, image_url, now))
+    
+    if 'image_url' not in columns:
+        cur.execute("ALTER TABLE menu_items ADD COLUMN image_url TEXT;")
+    
+    # Ma'lumotni kiritish
+    cur.execute("INSERT INTO menu_items (name, price, category, description, image_url, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+               (name, price, category, description, image_url, now))
+    
     conn.commit()
     conn.close()
     flash("Yangi mahsulot qo'shildi!", "success")
