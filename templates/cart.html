@@ -163,36 +163,46 @@ function initMap() {
     // Toshkent markazi
     const tashkent = { lat: 41.2995, lng: 69.2401 };
 
-    map = new google.maps.Map(document.getElementById("location-map"), {
+    // Xarita elementini topish
+    const mapElement = document.getElementById("map");
+    if (!mapElement) {
+        console.error("Xarita elementi topilmadi!");
+        return;
+    }
+
+    map = new google.maps.Map(mapElement, {
         zoom: 12,
         center: tashkent,
+        mapTypeControl: true,
+        fullscreenControl: true,
+        streetViewControl: true,
     });
 
     geocoder = new google.maps.Geocoder();
 
     // Autocomplete
     const input = document.getElementById("address-search");
-    const options = {
-        componentRestrictions: { country: "uz" },
-        fields: ["formatted_address", "geometry", "name"],
-        strictBounds: false,
-    };
-    autocomplete = new google.maps.places.Autocomplete(input, options);
-    autocomplete.bindTo("bounds", map);
+    if (input) {
+        const options = {
+            componentRestrictions: { country: "uz" },
+            fields: ["formatted_address", "geometry", "name"],
+            strictBounds: false,
+        };
+        autocomplete = new google.maps.places.Autocomplete(input, options);
+        autocomplete.bindTo("bounds", map);
 
-    autocomplete.addListener("place_changed", () => {
-        const place = autocomplete.getPlace();
-        if (!place.geometry) {
-            // Browser support doesn't support the function.
-            window.alert("No details available for input: '" + place.name + "'");
-            return;
-        }
-        // Agar joy tanlangan bo'lsa, uni xaritaga qo'yish
-        setDeliveryLocation(place.geometry.location);
-        map.setCenter(place.geometry.location);
-        map.setZoom(15);
-    });
-
+        autocomplete.addListener("place_changed", () => {
+            const place = autocomplete.getPlace();
+            if (!place.geometry) {
+                alert("Joy haqida ma'lumot topilmadi: " + place.name);
+                return;
+            }
+            // Agar joy tanlangan bo'lsa, uni xaritaga qo'yish
+            setDeliveryLocation(place.geometry.location);
+            map.setCenter(place.geometry.location);
+            map.setZoom(15);
+        });
+    }
 
     // Foydalanuvchi joylashuvini olishga harakat qilish
     if (navigator.geolocation) {
@@ -203,6 +213,11 @@ function initMap() {
             };
             map.setCenter(userLocation);
             map.setZoom(15);
+            
+            // Foydalanuvchi joylashuvini belgilash
+            setDeliveryLocation(new google.maps.LatLng(userLocation.lat, userLocation.lng));
+        }, function(error) {
+            console.log("Joylashuvni olishda xatolik:", error);
         });
     }
 
@@ -234,16 +249,23 @@ function searchAddressOnMap() {
 function setDeliveryLocation(location) {
     selectedLocation = location;
 
-    // Avvalgi marker
+    // Avvalgi marker olib tashlash
     if (marker) {
         marker.setMap(null);
     }
 
-    // Yangi marker
+    // Yangi marker qo'yish
     marker = new google.maps.Marker({
         position: location,
         map: map,
-        title: "Yetkazib berish manzili"
+        title: "Yetkazib berish manzili",
+        draggable: true,
+        animation: google.maps.Animation.DROP
+    });
+
+    // Marker siqilganda yangi joylashuvni olish
+    marker.addListener('dragend', function() {
+        setDeliveryLocation(marker.getPosition());
     });
 
     // Manzilni olish (Reverse Geocoding)
@@ -251,20 +273,42 @@ function setDeliveryLocation(location) {
         if (status === "OK" && results[0]) {
             const address = results[0].formatted_address;
             document.getElementById('selected-address').textContent = address;
-            document.getElementById('delivery_address').value = address;
-            document.getElementById('delivery_latitude').value = location.lat();
-            document.getElementById('delivery_longitude').value = location.lng();
+            
+            const deliveryAddressInput = document.getElementById('delivery_address');
+            if (deliveryAddressInput) {
+                deliveryAddressInput.value = address;
+            }
+            
+            const latInput = document.getElementById('delivery_latitude');
+            if (latInput) {
+                latInput.value = location.lat();
+            }
+            
+            const lngInput = document.getElementById('delivery_longitude');
+            if (lngInput) {
+                lngInput.value = location.lng();
+            }
 
-            document.getElementById('selected-location-info').style.display = 'block';
-
-            // Masofani hisoblash (Toshkent markazidan)
+            // Masofani hisoblash
             calculateDistance(location);
         } else {
-            document.getElementById('selected-address').textContent = `Lat: ${location.lat().toFixed(6)}, Lng: ${location.lng().toFixed(6)}`;
-            document.getElementById('delivery_address').value = `${location.lat()},${location.lng()}`;
-            document.getElementById('delivery_latitude').value = location.lat();
-            document.getElementById('delivery_longitude').value = location.lng();
-            document.getElementById('selected-location-info').style.display = 'block';
+            const coords = `Lat: ${location.lat().toFixed(6)}, Lng: ${location.lng().toFixed(6)}`;
+            document.getElementById('selected-address').textContent = coords;
+            
+            const deliveryAddressInput = document.getElementById('delivery_address');
+            if (deliveryAddressInput) {
+                deliveryAddressInput.value = `${location.lat()},${location.lng()}`;
+            }
+            
+            const latInput = document.getElementById('delivery_latitude');
+            if (latInput) {
+                latInput.value = location.lat();
+            }
+            
+            const lngInput = document.getElementById('delivery_longitude');
+            if (lngInput) {
+                lngInput.value = location.lng();
+            }
         }
     });
 }
@@ -294,25 +338,47 @@ function calculateDistance(destination) {
 function toggleDeliveryFields() {
     const deliveryRadio = document.querySelector('input[name="order_type"][value="delivery"]');
     const deliveryFields = document.getElementById('delivery-fields');
-    const deliveryAddressInput = document.getElementById('delivery_address');
-    const deliveryLatitudeInput = document.getElementById('delivery_latitude');
-    const deliveryLongitudeInput = document.getElementById('delivery_longitude');
+    
+    if (!deliveryRadio || !deliveryFields) {
+        console.error("Delivery elements topilmadi!");
+        return;
+    }
 
     if (deliveryRadio.checked) {
         deliveryFields.style.display = 'block';
-        deliveryAddressInput.required = true;
-        deliveryLatitudeInput.required = true;
-        deliveryLongitudeInput.required = true;
+        
+        // Required fieldlarni sozlash
+        const requiredFields = ['delivery_address', 'delivery_latitude', 'delivery_longitude'];
+        requiredFields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.required = true;
+            }
+        });
 
-        // Xaritani yuklash agar hali yuklanmagan bo'lsa
-        if (!map) {
-            setTimeout(initMap, 100);
-        }
+        // Xaritani yuklash yoki qayta ishga tushirish
+        setTimeout(() => {
+            if (!map) {
+                console.log("Xaritani ishga tushirish...");
+                initMap();
+            } else {
+                // Xaritani yangilash
+                google.maps.event.trigger(map, 'resize');
+                map.setCenter({ lat: 41.2995, lng: 69.2401 });
+            }
+        }, 100);
     } else {
         deliveryFields.style.display = 'none';
-        deliveryAddressInput.required = false;
-        deliveryLatitudeInput.required = false;
-        deliveryLongitudeInput.required = false;
+        
+        // Required fieldlarni olib tashlash
+        const requiredFields = ['delivery_address', 'delivery_latitude', 'delivery_longitude'];
+        requiredFields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.required = false;
+            }
+        });
+        
         updateTotal();
     }
 }
@@ -384,22 +450,32 @@ function updateTotal() {
 
 // Sahifa yuklanganda xaritani ishga tushirish va boshqa funksiyalarni chaqirish
 document.addEventListener('DOMContentLoaded', (event) => {
+    console.log("Sahifa yuklandi, JavaScript ishga tushmoqda...");
+    
+    // Radio buttonlar uchun change event qo'shish
+    const radioButtons = document.querySelectorAll('input[name="order_type"]');
+    radioButtons.forEach(radio => {
+        radio.addEventListener('change', toggleDeliveryFields);
+    });
+    
+    // Agar delivery allaqachon tanlangan bo'lsa
     const deliveryRadio = document.querySelector('input[name="order_type"][value="delivery"]');
     if (deliveryRadio && deliveryRadio.checked) {
+        console.log("Delivery allaqachon tanlangan, fieldlarni ko'rsatish...");
         toggleDeliveryFields();
-    }
-    // Agar sahifa ochilganda allaqachon delivery tanlangan bo'lsa, xaritani yuklash
-    if (deliveryRadio && deliveryRadio.checked && !map) {
-        initMap();
     }
 
     // Manzil kiritilganda masofa hisoblash
-        document.getElementById('delivery_address').addEventListener('input', async function() {
+    const deliveryAddressInput = document.getElementById('delivery_address');
+    if (deliveryAddressInput) {
+        deliveryAddressInput.addEventListener('input', async function() {
             const address = this.value.trim();
             const addressStatus = document.getElementById('address_status');
 
             if (address.length > 10) {
-                addressStatus.innerHTML = '<small class="text-info">🔍 Manzil tekshirilmoqda...</small>';
+                if (addressStatus) {
+                    addressStatus.innerHTML = '<small class="text-info">🔍 Manzil tekshirilmoqda...</small>';
+                }
 
                 try {
                     const response = await fetch('/api/validate-address', {
@@ -413,24 +489,44 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     const result = await response.json();
 
                     if (result.valid) {
-                        document.getElementById('delivery_distance').value = result.distance;
-                        addressStatus.innerHTML = `<small class="text-success">✅ ${result.message} (${result.distance} km)</small>`;
+                        const distanceInput = document.getElementById('delivery_distance');
+                        if (distanceInput) {
+                            distanceInput.value = result.distance;
+                        }
+                        if (addressStatus) {
+                            addressStatus.innerHTML = `<small class="text-success">✅ ${result.message} (${result.distance} km)</small>`;
+                        }
                         updateDeliveryPrice();
                     } else {
-                        addressStatus.innerHTML = `<small class="text-danger">❌ ${result.message}</small>`;
-                        document.getElementById('delivery_distance').value = 0;
+                        if (addressStatus) {
+                            addressStatus.innerHTML = `<small class="text-danger">❌ ${result.message}</small>`;
+                        }
+                        const distanceInput = document.getElementById('delivery_distance');
+                        if (distanceInput) {
+                            distanceInput.value = 0;
+                        }
                         updateDeliveryPrice();
                     }
                 } catch (error) {
                     console.error('Manzil tekshirishda xatolik:', error);
-                    addressStatus.innerHTML = '<small class="text-warning">⚠️ Manzil tekshirib bo\'lmadi</small>';
+                    if (addressStatus) {
+                        addressStatus.innerHTML = '<small class="text-warning">⚠️ Manzil tekshirib bo\'lmadi</small>';
+                    }
                 }
             } else {
-                addressStatus.innerHTML = '';
-                document.getElementById('delivery_distance').value = 0;
+                if (addressStatus) {
+                    addressStatus.innerHTML = '';
+                }
+                const distanceInput = document.getElementById('delivery_distance');
+                if (distanceInput) {
+                    distanceInput.value = 0;
+                }
                 updateDeliveryPrice();
             }
         });
+    }
+    
+    console.log("JavaScript to'liq yuklandi va sozlandi");
 });
 
         </script>
