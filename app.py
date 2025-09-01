@@ -3149,58 +3149,87 @@ def api_set_theme():
 def api_submit_rating():
     """Buyurtma va filial uchun baho berish"""
     try:
+        # Foydalanuvchi tizimga kirganligini tekshirish
+        user_id = session.get('user_id')
+        if not user_id:
+            return jsonify({"success": False, "message": "Tizimga kirishingiz kerak"})
+
         data = request.get_json()
+        if not data:
+            return jsonify({"success": False, "message": "Ma'lumot topilmadi"})
+
         order_id = data.get("order_id")
         rating = data.get("rating")
-        comment = data.get("comment", "")
+        comment = data.get("comment", "").strip()
 
         if not order_id or not rating:
             return jsonify({"success": False, "message": "Buyurtma ID va baho majburiy"})
 
+        # Baho formatini tekshirish
         try:
+            order_id = int(order_id)
             rating = int(rating)
             if rating < 1 or rating > 5:
                 return jsonify({"success": False, "message": "Baho 1 dan 5 gacha bo'lishi kerak"})
-        except ValueError:
-            return jsonify({"success": False, "message": "Baho raqam bo'lishi kerak"})
+        except (ValueError, TypeError):
+            return jsonify({"success": False, "message": "Noto'g'ri ma'lumot formati"})
 
         conn = get_db()
         cur = conn.cursor()
 
-        # Buyurtma ma'lumotlarini olish
-        cur.execute("SELECT * FROM orders WHERE id = ?", (order_id,))
-        order = cur.fetchone()
-
-        if not order:
-            conn.close()
-            return jsonify({"success": False, "message": "Buyurtma topilmadi"})
-
-        # Eng yaqin filialni topish (agar branch_id mavjud bo'lmasa)
-        branch_id = order.get('branch_id', 1)  # Default birinchi filial
-
-        user_id = session.get('user_id')
-        now = get_current_time().isoformat()
-
-        # Filial bahosini saqlash
         try:
-            cur.execute("""
-                INSERT OR REPLACE INTO ratings (user_id, menu_item_id, rating, comment, created_at)
-                VALUES (?, ?, ?, ?, ?)
-            """, (user_id, -branch_id, rating, comment, now))  # menu_item_id ga manfiy branch_id
-        except Exception as e:
-            logging.error(f"Filial bahosini saqlashda xatolik: {str(e)}")
+            # Buyurtma ma'lumotlarini olish
+            cur.execute("SELECT * FROM orders WHERE id = ? AND user_id = ?", (order_id, user_id))
+            order = cur.fetchone()
 
-        # Buyurtma statusini 'rated' ga o'zgartirish
-        cur.execute("UPDATE orders SET status = 'rated' WHERE id = ?", (order_id,))
+            if not order:
+                conn.close()
+                return jsonify({"success": False, "message": "Buyurtma topilmadi yoki sizga tegishli emas"})
 
-        conn.commit()
-        conn.close()
+            # Branch ID ni olish (sqlite3.Row obyektiga to'g'ri murojaat)
+            try:
+                branch_id = order['branch_id'] if order['branch_id'] else 1
+            except (KeyError, TypeError):
+                branch_id = 1  # Default birinchi filial
 
-        return jsonify({"success": True, "message": "Baho muvaffaqiyatli saqlandi"})
+            now = get_current_time().isoformat()
+
+            # Avval bu foydalanuvchi ushbu filialga baho berganligini tekshirish
+            cur.execute("SELECT id FROM ratings WHERE user_id = ? AND menu_item_id = ?", 
+                       (user_id, -branch_id))
+            existing_rating = cur.fetchone()
+
+            if existing_rating:
+                # Mavjud bahoni yangilash
+                cur.execute("""
+                    UPDATE ratings 
+                    SET rating = ?, comment = ?, created_at = ?
+                    WHERE user_id = ? AND menu_item_id = ?
+                """, (rating, comment, now, user_id, -branch_id))
+            else:
+                # Yangi baho qo'shish
+                cur.execute("""
+                    INSERT INTO ratings (user_id, menu_item_id, rating, comment, created_at)
+                    VALUES (?, ?, ?, ?, ?)
+                """, (user_id, -branch_id, rating, comment, now))
+
+            # Buyurtma statusini 'rated' ga o'zgartirish
+            cur.execute("UPDATE orders SET status = 'rated' WHERE id = ?", (order_id,))
+
+            conn.commit()
+            conn.close()
+
+            return jsonify({"success": True, "message": "Baho muvaffaqiyatli saqlandi"})
+
+        except sqlite3.Error as db_error:
+            conn.rollback()
+            conn.close()
+            logging.error(f"Ma'lumotlar bazasida xatolik: {str(db_error)}")
+            return jsonify({"success": False, "message": "Ma'lumotlar bazasida xatolik"}), 500
 
     except Exception as e:
-        logging.error(f"Baho berishda xatolik: {str(e)}")
-        return jsonify({"success": False, "message": "Server xatoligi"}), 500
+        logging.error(f"Baho berishda umumiy xatolik: {str(e)}")
+        return jsonify({"success": False, "message": f"Server xatoligi: {str(e)}"}), 500
 
 @app.route("/receipt/<int:ticket_no>")
 def view_receipt(ticket_no):
