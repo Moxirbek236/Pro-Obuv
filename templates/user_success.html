@@ -52,6 +52,101 @@
     <li>Buyurtma raqamingizni unutmang: <strong>{{ order.ticket_no }}</strong></li>
   </ul>
 </div>
+
+        <!-- Baholash formasi (faqat yetkazib berilgan buyurtmalar uchun) -->
+        {% if order.status == 'delivered' and order.order_type == 'delivery' %}
+        <div class="rating-section">
+            <h3>⭐ Xizmat sifatini baholang</h3>
+            <p>Buyurtmangiz sifati bilan qanchalik rozi edingiz?</p>
+
+            <div class="rating-form">
+                <div class="stars-container">
+                    <span class="star" data-rating="1">⭐</span>
+                    <span class="star" data-rating="2">⭐</span>
+                    <span class="star" data-rating="3">⭐</span>
+                    <span class="star" data-rating="4">⭐</span>
+                    <span class="star" data-rating="5">⭐</span>
+                </div>
+
+                <textarea id="rating-comment" placeholder="Izoh qoldiring (ixtiyoriy)..." rows="3"></textarea>
+
+                <button onclick="submitRating()" class="btn rating-btn" id="submit-rating" style="display: none;">
+                    📝 Baho berish
+                </button>
+            </div>
+        </div>
+
+        <script>
+        let selectedRating = 0;
+
+        document.querySelectorAll('.star').forEach(star => {
+            star.addEventListener('click', function() {
+                selectedRating = parseInt(this.dataset.rating);
+                updateStars();
+                document.getElementById('submit-rating').style.display = 'block';
+            });
+
+            star.addEventListener('mouseover', function() {
+                const rating = parseInt(this.dataset.rating);
+                highlightStars(rating);
+            });
+        });
+
+        document.querySelector('.rating-form').addEventListener('mouseleave', function() {
+            updateStars();
+        });
+
+        function highlightStars(rating) {
+            document.querySelectorAll('.star').forEach((star, index) => {
+                if (index < rating) {
+                    star.style.color = '#ffd700';
+                    star.style.transform = 'scale(1.2)';
+                } else {
+                    star.style.color = '#ddd';
+                    star.style.transform = 'scale(1)';
+                }
+            });
+        }
+
+        function updateStars() {
+            highlightStars(selectedRating);
+        }
+
+        function submitRating() {
+            if (selectedRating === 0) {
+                alert('Iltimos, baho tanlang!');
+                return;
+            }
+
+            const comment = document.getElementById('rating-comment').value;
+
+            fetch('/api/rate-order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    order_id: {{ order.id }},
+                    rating: selectedRating,
+                    comment: comment
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Rahmat! Bahoyingiz qabul qilindi.');
+                    document.querySelector('.rating-section').style.display = 'none';
+                } else {
+                    alert('Xatolik: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Baho berishda xatolik yuz berdi!');
+            });
+        }
+        </script>
+        {% endif %}
 {% endblock %}
 
 {% block scripts %}
@@ -123,4 +218,73 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 3000);
 });
 </script>
+
+<style>
+    .order-items ul li:last-child {
+        border-bottom: none;
+    }
+
+    .rating-section {
+        background: #f8f9fa;
+        padding: 25px;
+        border-radius: 15px;
+        margin: 30px 0;
+        border-left: 4px solid #ffd700;
+        text-align: center;
+    }
+
+    .rating-section h3 {
+        color: #2d3748;
+        margin-bottom: 10px;
+        font-size: 20px;
+    }
+
+    .rating-section p {
+        color: #4a5568;
+        margin-bottom: 20px;
+    }
+
+    .stars-container {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin: 20px 0;
+    }
+
+    .star {
+        font-size: 32px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: #ddd;
+    }
+
+    .star:hover {
+        transform: scale(1.2);
+    }
+
+    #rating-comment {
+        width: 100%;
+        max-width: 400px;
+        padding: 12px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 14px;
+        margin: 15px 0;
+        resize: vertical;
+    }
+
+    .rating-btn {
+        background: linear-gradient(135deg, #ffd700 0%, #ffb347 100%);
+        color: #2d3748;
+        font-weight: 600;
+        padding: 12px 25px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .rating-btn:hover {
+        background: linear-gradient(135deg, #ffb347 0%, #ff8c00 100%);
+        transform: translateY(-2px);
+    }
+</style>
 {% endblock %}

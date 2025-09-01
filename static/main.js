@@ -705,7 +705,7 @@ window.changeLanguage = function(language) {
     document.body.classList.add('lang-' + language);
 
     localStorage.setItem('language', language);
-    
+
     // Darhol tarjima qilish
     translatePage(language);
 
@@ -748,7 +748,7 @@ function updateNavbarTheme(isDark) {
     const navbar = document.querySelector('.navbar');
     const dropdowns = document.querySelectorAll('.dropdown-menu');
     const cards = document.querySelectorAll('.card');
-    
+
     if (navbar) {
         if (isDark) {
             navbar.classList.add('navbar-dark');
@@ -758,7 +758,7 @@ function updateNavbarTheme(isDark) {
             navbar.classList.remove('navbar-dark');
         }
     }
-    
+
     // Dropdown menu klasslarini yangilash
     dropdowns.forEach(dropdown => {
         if (isDark) {
@@ -767,7 +767,7 @@ function updateNavbarTheme(isDark) {
             dropdown.style.background = 'rgba(255, 255, 255, 0.98) !important';
         }
     });
-    
+
     // Kartalar uchun klasslar
     cards.forEach(card => {
         if (isDark) {
@@ -783,11 +783,11 @@ function updateNavbarTheme(isDark) {
 // Global mavzu o'zgartirish funksiyasi
 window.toggleDarkMode = function(isDark) {
     console.log('toggleDarkMode chaqirildi:', isDark);
-    
+
     // Body klassini o'zgartirish
     if (isDark) {
         document.body.classList.add('dark-theme');
-        
+
         // Navbar klasslarini o'zgartirish
         const navbar = document.querySelector('.navbar');
         if (navbar) {
@@ -796,7 +796,7 @@ window.toggleDarkMode = function(isDark) {
         }
     } else {
         document.body.classList.remove('dark-theme');
-        
+
         // Navbar klasslarini o'zgartirish
         const navbar = document.querySelector('.navbar');
         if (navbar) {
@@ -824,7 +824,7 @@ window.toggleDarkMode = function(isDark) {
         return response.json();
     }).then(data => {
         console.log('Server javob ma\'lumotlari:', data);
-        
+
         // 0.5 soniya kutib sahifani yangilash
         setTimeout(() => {
             location.reload();
@@ -841,7 +841,7 @@ window.toggleDarkMode = function(isDark) {
 // Global font o'lcham o'zgartirish funksiyasi
 window.changeFontSize = function(size) {
     console.log('changeFontSize chaqirildi:', size);
-    
+
     // Eski klasslarni olib tashlash
     document.body.classList.remove('font-small', 'font-medium', 'font-large', 'font-xlarge');
 
@@ -904,7 +904,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (darkMode) {
         document.body.classList.add('dark-theme');
         console.log('Dark theme qo\'shildi');
-        
+
         // Navbar klasslarini ham o'zgartirish
         const navbar = document.querySelector('.navbar');
         if (navbar) {
@@ -914,7 +914,7 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         document.body.classList.remove('dark-theme');
         console.log('Light theme qo\'shildi');
-        
+
         // Navbar klasslarini ham o'zgartirish
         const navbar = document.querySelector('.navbar');
         if (navbar) {
@@ -1078,3 +1078,140 @@ function formatTime(dateString) {
 window.addEventListener('error', function(e) {
     console.error('JavaScript xatosi:', e.error);
 });
+
+// Baholash funksiyalari
+function showRatingForm(orderId) {
+    // Baholash formasini bir marta ko'rsatish
+    if (document.getElementById('rating-form-shown')) {
+        return;
+    }
+
+    const ratingHtml = `
+        <div class="rating-modal" id="rating-form-shown">
+            <div class="rating-content">
+                <h3>⭐ Xizmat sifatini baholang</h3>
+                <p>Buyurtmangiz sifati bilan qanchalik rozi edingiz?</p>
+
+                <div class="stars-rating">
+                    <span class="rating-star" data-rating="1">⭐</span>
+                    <span class="rating-star" data-rating="2">⭐</span>
+                    <span class="rating-star" data-rating="3">⭐</span>
+                    <span class="rating-star" data-rating="4">⭐</span>
+                    <span class="rating-star" data-rating="5">⭐</span>
+                </div>
+
+                <textarea id="rating-comment-modal" placeholder="Izoh qoldiring (ixtiyoriy)..." rows="3"></textarea>
+
+                <div class="rating-actions">
+                    <button onclick="submitOrderRating(${orderId})" class="btn rating-submit-btn" id="submit-rating-modal" style="display: none;">
+                        📝 Baho berish
+                    </button>
+                    <button onclick="closeRatingForm()" class="btn rating-close-btn">
+                        ❌ Yopish
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', ratingHtml);
+
+    // Stars event listeners
+    let selectedRating = 0;
+
+    document.querySelectorAll('.rating-star').forEach(star => {
+        star.addEventListener('click', function() {
+            selectedRating = parseInt(this.dataset.rating);
+            updateModalStars(selectedRating);
+            document.getElementById('submit-rating-modal').style.display = 'block';
+        });
+
+        star.addEventListener('mouseover', function() {
+            const rating = parseInt(this.dataset.rating);
+            highlightModalStars(rating);
+        });
+    });
+
+    document.querySelector('.stars-rating').addEventListener('mouseleave', function() {
+        updateModalStars(selectedRating);
+    });
+
+    function highlightModalStars(rating) {
+        document.querySelectorAll('.rating-star').forEach((star, index) => {
+            if (index < rating) {
+                star.style.color = '#ffd700';
+                star.style.transform = 'scale(1.2)';
+            } else {
+                star.style.color = '#ddd';
+                star.style.transform = 'scale(1)';
+            }
+        });
+    }
+
+    function updateModalStars(rating) {
+        highlightModalStars(rating);
+    }
+
+    // Global funksiya
+    window.submitOrderRating = function(orderId) {
+        if (selectedRating === 0) {
+            alert('Iltimos, baho tanlang!');
+            return;
+        }
+
+        const comment = document.getElementById('rating-comment-modal').value;
+
+        fetch('/api/rate-order', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                order_id: orderId,
+                rating: selectedRating,
+                comment: comment
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Rahmat! Bahoyingiz qabul qilindi.');
+                closeRatingForm();
+            } else {
+                alert('Xatolik: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Baho berishda xatolik yuz berdi!');
+        });
+    };
+
+    window.closeRatingForm = function() {
+        const modal = document.getElementById('rating-form-shown');
+        if (modal) {
+            modal.remove();
+        }
+    };
+}
+
+// User status check
+if (currentPath.includes('/user/success/')) {
+    const ticketNo = currentPath.split('/').pop();
+    
+    // Dastlabki holat tekshiruvi
+    checkOrderStatus(ticketNo);
+
+    // Har 5 soniyada holat tekshiruvi
+    setInterval(() => checkOrderStatus(ticketNo), 5000);
+
+    // Bekor qilish tugmasini qo'shish
+    const orderInfo = document.querySelector('.order-info');
+    if (orderInfo) {
+        const cancelBtn = document.createElement('button');
+        cancelBtn.className = 'btn btn-danger mt-3';
+        cancelBtn.innerHTML = '❌ Buyurtmani bekor qilish';
+        cancelBtn.onclick = () => cancelOrder(ticketNo);
+        orderInfo.appendChild(cancelBtn);
+    }
+}

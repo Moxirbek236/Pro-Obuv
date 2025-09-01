@@ -714,38 +714,38 @@ def calculate_delivery_distance(address):
 def find_nearest_branch(user_latitude, user_longitude):
     """Foydalanuvchiga eng yaqin filialni topish"""
     import math
-    
+
     conn = get_db()
     cur = conn.cursor()
     cur.execute("SELECT * FROM branches WHERE is_active = 1")
     branches = cur.fetchall()
     conn.close()
-    
+
     if not branches:
         return None
-    
+
     nearest_branch = None
     min_distance = float('inf')
-    
+
     for branch in branches:
         # Haversine formula bilan masofa hisoblash
         lat1, lng1 = math.radians(user_latitude), math.radians(user_longitude)
         lat2, lng2 = math.radians(branch['latitude']), math.radians(branch['longitude'])
-        
+
         dlat = lat2 - lat1
         dlng = lng2 - lng1
-        
+
         a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlng/2)**2
         c = 2 * math.asin(math.sqrt(a))
         distance = 6371 * c  # Yer radiusi 6371 km
-        
+
         if distance < min_distance and distance <= branch['delivery_radius']:
             min_distance = distance
             nearest_branch = {
                 'branch': dict(branch),
                 'distance': round(distance, 2)
             }
-    
+
     return nearest_branch
 
 def calculate_delivery_cost_and_time(distance_km):
@@ -753,10 +753,10 @@ def calculate_delivery_cost_and_time(distance_km):
     # 1 km uchun 10000 so'm, 2 km uchun 20000 so'm
     base_price = 10000
     price = distance_km * base_price
-    
+
     # 1 km taxminan 10 daqiqada
     delivery_time_minutes = max(10, int(distance_km * 10))
-    
+
     return round(price), delivery_time_minutes
 
 def generate_qr_code(receipt_data):
@@ -931,11 +931,11 @@ def admin_monitor():
     if not session.get("super_admin") and not session.get("staff_id"):
         flash("Bu sahifaga kirish uchun admin huquqi kerak.", "error")
         return redirect(url_for("index"))
-    
+
     cleanup_expired_orders()
     conn = get_db()
     cur = conn.cursor()
-    
+
     try:
         # Waiting orders - kutayotgan buyurtmalar
         cur.execute("""SELECT o.*, 
@@ -948,7 +948,7 @@ def admin_monitor():
             ORDER BY o.eta_time ASC
         """)
         waiting = cur.fetchall()
-        
+
         # Ready orders - tayyor buyurtmalar
         cur.execute("""SELECT o.*, 
                    GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
@@ -960,7 +960,7 @@ def admin_monitor():
             ORDER BY o.eta_time ASC
         """)
         ready = cur.fetchall()
-        
+
         # Served orders in last 5 minutes - so'nggi 5 daqiqada berilgan buyurtmalar
         five_min_ago = (get_current_time() - datetime.timedelta(minutes=5)).isoformat()
         cur.execute("""SELECT o.*, 
@@ -973,16 +973,16 @@ def admin_monitor():
             ORDER BY o.created_at DESC
         """, (five_min_ago,))
         served_recent = cur.fetchall()
-        
+
         # Debug ma'lumotlari
         logging.info(f"Monitor: Waiting={len(waiting) if waiting else 0}, Ready={len(ready) if ready else 0}, Served={len(served_recent) if served_recent else 0}")
-        
+
         conn.close()
         return render_template('admin_monitor.html', 
                              waiting=waiting or [], 
                              ready=ready or [], 
                              served_recent=served_recent or [])
-    
+
     except Exception as e:
         logging.error(f"Monitor sahifasida xatolik: {str(e)}")
         conn.close()
@@ -1449,7 +1449,7 @@ def user_page():
                 if not delivery_address:
                     flash("Yetkazib berish manzilini kiriting!", "error")
                     return redirect(url_for("cart"))
-                
+
                 # Agar profilda telefon yo'q bo'lsa, formdan olish
                 if not session.get('user_phone') and not customer_phone_new:
                     flash("Telefon raqamingizni kiriting!", "error")
@@ -1553,7 +1553,7 @@ def user_page():
             return redirect(url_for("cart"))
         finally:
             conn.close()
-        
+
         return redirect(url_for("user_success", ticket_no=tno))
     return redirect(url_for("menu"))
 
@@ -1582,15 +1582,45 @@ def user_status(ticket_no):
         return jsonify({"ok": False, "error": "not_found"}), 404
 
     queue_position = 0
+    status_text = ""
+    show_rating = False
+
+    # Status ga qarab holat matnini belgilash
     if order["status"] == "waiting":
         queue_position = get_user_queue_position(conn, ticket_no)
+        status_text = "🍳 Tayyorlanmoqda..."
+    elif order["status"] == "ready":
+        if order["order_type"] == "delivery":
+            # Agar delivery va kuryer olmagan bo'lsa
+            if not order.get("courier_id"):
+                status_text = "📦 Qadoqlanmoqda..."
+            else:
+                status_text = "🚚 Yo'lda..."
+        else:
+            status_text = "✅ Tayyor! Olib ketishingiz mumkin"
+    elif order["status"] == "on_way":
+        status_text = "🚚 Yo'lda..."
+    elif order["status"] == "delivered":
+        status_text = "✅ Yetkazib berildi! Baholang"
+        show_rating = True
+    elif order["status"] == "served":
+        status_text = "😋 Yoqimli ishtaha!"
+    elif order["status"] == "rated":
+        status_text = "⭐ Baholangan. Rahmat!"
+    elif order["status"] == "cancelled":
+        status_text = "❌ Bekor qilingan"
 
     conn.close()
     return jsonify({
         "ok": True,
         "status": order["status"],
+        "status_text": status_text,
         "ticket_no": order["ticket_no"],
-        "queue_position": queue_position
+        "queue_position": queue_position,
+        "order_type": order.get("order_type", "dine_in"),
+        "courier_assigned": bool(order.get("courier_id")),
+        "show_rating": show_rating,
+        "order_id": order["id"]
     })
 
 # ---- COURIER AUTH ----
@@ -2916,16 +2946,16 @@ def api_find_nearest_branch():
         data = request.get_json()
         user_lat = float(data.get("latitude", 0))
         user_lng = float(data.get("longitude", 0))
-        
+
         if not user_lat or not user_lng:
             return jsonify({"success": False, "message": "Koordinatalar kiritilmagan"})
-        
+
         nearest = find_nearest_branch(user_lat, user_lng)
-        
+
         if nearest:
             # Yetkazib berish narxi va vaqtini hisoblash
             delivery_cost, delivery_time = calculate_delivery_cost_and_time(nearest['distance'])
-            
+
             return jsonify({
                 "success": True,
                 "branch": nearest['branch'],
@@ -2938,7 +2968,7 @@ def api_find_nearest_branch():
                 "success": False, 
                 "message": "Yaqin atrofda faol filial topilmadi"
             })
-            
+
     except Exception as e:
         logging.error(f"Eng yaqin filial topishda xatolik: {str(e)}")
         return jsonify({"success": False, "message": "Server xatoligi"}), 500
@@ -2949,12 +2979,12 @@ def api_set_language():
     try:
         data = request.get_json()
         language = data.get("language", "uz")
-        
+
         print(f"API: Til o'zgartirilmoqda: {language}")
 
         # Til sozlamalarini session ga saqlash
         session['interface_language'] = language
-        
+
         # Agar foydalanuvchi tizimda bo'lsa, ma'lumotlar bazasiga ham saqlash
         if 'user_id' in session:
             try:

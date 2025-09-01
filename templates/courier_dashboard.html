@@ -111,13 +111,6 @@
                         <td>
                             {% if order.status == 'ready' %}
                                 <div class="courier-actions">
-                                    <div class="pricing-form">
-                                        <div class="price-inputs">
-                                            <input type="number" id="price-{{ order.id }}" placeholder="Narx (so'm)" min="0" class="form-control-sm">
-                                            <input type="number" id="time-{{ order.id }}" placeholder="Vaqt (daq)" min="5" max="180" class="form-control-sm">
-                                        </div>
-                                        <button type="button" class="btn btn-sm btn-warning" onclick="setCourierPrice({{ order.id }})">💰 Narx belgilash</button>
-                                    </div>
                                     <form method="POST" action="{{ url_for('courier_take_order', order_id=order.id) }}" style="display: inline;">
                                         <button type="submit" class="btn btn-sm btn-primary">🚚 Olish va jo'nab ketish</button>
                                     </form>
@@ -215,51 +208,7 @@ function openMap(address) {
     window.open(mapUrl, '_blank');
 }
 
-// Kuryer narx va vaqt belgilash
-function setCourierPrice(orderId) {
-    const priceInput = document.getElementById(`price-${orderId}`);
-    const timeInput = document.getElementById(`time-${orderId}`);
-    
-    const price = priceInput.value;
-    const time = timeInput.value;
-    
-    if (!price || price <= 0) {
-        alert('Narxni kiriting!');
-        return;
-    }
-    
-    if (!time || time <= 0) {
-        alert('Yetkazish vaqtini kiriting!');
-        return;
-    }
-    
-    // AJAX orqali narx va vaqtni yuborish
-    fetch('/courier/set-price-time', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            order_id: orderId,
-            price: parseFloat(price),
-            delivery_time: parseInt(time)
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Narx va vaqt belgilandi!');
-            // Sahifani yangilash
-            location.reload();
-        } else {
-            alert('Xatolik: ' + data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Xatolik yuz berdi!');
-    });
-}
+// Sahifa avtomatik yangilanishi
 </script>
 
 <style>
