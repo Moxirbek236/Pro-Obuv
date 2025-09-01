@@ -165,38 +165,66 @@ let userMarker;
 let branchMarker;
 let routeLine;
 let nearestBranch = null;
+let mapInitialized = false;
 
 function initMap() {
+    // Agar xarita allaqachon yaratilgan bo'lsa, qayta yaratmaymiz
+    if (mapInitialized || map) {
+        console.log("Xarita allaqachon yaratilgan");
+        return;
+    }
+
     ymaps.ready(function() {
-        // Foydalanuvchi joylashuvi (profil yoki default)
-        const userLat = parseFloat('{{ session.get("user_address_latitude", "") }}') || 41.2995;
-        const userLng = parseFloat('{{ session.get("user_address_longitude", "") }}') || 69.2401;
-
-        // Xarita yaratish
-        map = new ymaps.Map('map', {
-            center: [userLat, userLng],
-            zoom: 12,
-            controls: ['zoomControl', 'fullscreenControl']
-        });
-
-        // Foydalanuvchi joylashuvini belgilash
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                const userLocation = [position.coords.latitude, position.coords.longitude];
-                setUserLocation(userLocation);
-            }, function(error) {
-                console.log("Joylashuv olishda xatolik:", error);
-                setUserLocation([userLat, userLng]);
-            });
-        } else {
-            setUserLocation([userLat, userLng]);
+        // Xarita containerini tekshirish
+        const mapContainer = document.getElementById('map');
+        if (!mapContainer) {
+            console.log("Xarita container topilmadi");
+            return;
         }
 
-        // Xarita bosilganda yangi joylashuv tanlash
-        map.events.add('click', function(e) {
-            const coords = e.get('coords');
-            setUserLocation(coords);
-        });
+        // Agar container ichida allaqachon xarita bo'lsa, tozalash
+        if (mapContainer.innerHTML.trim() !== '') {
+            mapContainer.innerHTML = '';
+        }
+
+        try {
+            // Foydalanuvchi joylashuvi (profil yoki default)
+            const userLat = parseFloat('{{ session.get("user_address_latitude", "") }}') || 41.2995;
+            const userLng = parseFloat('{{ session.get("user_address_longitude", "") }}') || 69.2401;
+
+            // Xarita yaratish
+            map = new ymaps.Map('map', {
+                center: [userLat, userLng],
+                zoom: 12,
+                controls: ['zoomControl', 'fullscreenControl']
+            });
+
+            mapInitialized = true;
+            console.log("Xarita muvaffaqiyatli yaratildi");
+
+            // Foydalanuvchi joylashuvini belgilash
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const userLocation = [position.coords.latitude, position.coords.longitude];
+                    setUserLocation(userLocation);
+                }, function(error) {
+                    console.log("Joylashuv olishda xatolik:", error);
+                    setUserLocation([userLat, userLng]);
+                });
+            } else {
+                setUserLocation([userLat, userLng]);
+            }
+
+            // Xarita bosilganda yangi joylashuv tanlash
+            map.events.add('click', function(e) {
+                const coords = e.get('coords');
+                setUserLocation(coords);
+            });
+
+        } catch (error) {
+            console.error("Xarita yaratishda xatolik:", error);
+            mapInitialized = false;
+        }
     });
 }
 
@@ -366,14 +394,21 @@ function toggleDeliveryFields() {
     if (deliveryRadio.checked) {
         deliveryFields.style.display = 'block';
 
-        // Xaritani yuklash
+        // Xaritani yuklash - faqat bir marta
         setTimeout(() => {
-            if (!map) {
+            if (!mapInitialized && !map) {
+                console.log("Xaritani yuklamoqda...");
                 initMap();
-            } else {
-                map.container.fitToViewport();
+            } else if (map) {
+                // Mavjud xaritani qayta o'lchamlash
+                try {
+                    map.container.fitToViewport();
+                    console.log("Xarita qayta o'lchanglandi");
+                } catch (error) {
+                    console.log("Xaritani qayta o'lchanglashda xatolik:", error);
+                }
             }
-        }, 100);
+        }, 200);
     } else {
         deliveryFields.style.display = 'none';
         updateTotalAmount();
@@ -437,6 +472,16 @@ document.addEventListener('DOMContentLoaded', function() {
     radioButtons.forEach(radio => {
         radio.addEventListener('change', toggleDeliveryFields);
     });
+
+    // Barcha mavjud xarita class elementlarini tekshirish va duplikatni olib tashlash
+    const mapElements = document.querySelectorAll('.ymaps-2-1-79-map');
+    if (mapElements.length > 1) {
+        console.log("Ko'p xarita elementi topildi, duplikatlarni olib tashlamoqda...");
+        // Birinchisidan tashqari barchasini olib tashlash
+        for (let i = 1; i < mapElements.length; i++) {
+            mapElements[i].remove();
+        }
+    }
 });
         </script>
       {% else %}
