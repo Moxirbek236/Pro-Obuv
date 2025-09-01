@@ -1,0 +1,148 @@
+
+{% extends "base.html" %}
+
+{% block title %}Joylashuvni topish - Restoran{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3>📍 Joylashuvni Topish</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="search-input" class="form-label">Manzil yoki joy nomi:</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="search-input" placeholder="Masalan: Amir Temur ko'chasi, Tashkent">
+                            <button class="btn btn-primary" onclick="searchLocation()">🔍 Qidirish</button>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <button class="btn btn-success me-2" onclick="getCurrentLocation()">📱 Joriy joylashuv</button>
+                        <button class="btn btn-info" onclick="searchNearbyPlaces()">🏪 Yaqin restoranlar</button>
+                    </div>
+                    
+                    <div id="results" class="mt-4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function searchLocation() {
+    const query = document.getElementById('search-input').value.trim();
+    if (!query) {
+        alert('Manzil yoki joy nomini kiriting');
+        return;
+    }
+    
+    fetch('/api/search-location', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ query: query })
+    })
+    .then(response => response.json())
+    .then(data => {
+        displayResults(data);
+    })
+    .catch(error => {
+        console.error('Xatolik:', error);
+        document.getElementById('results').innerHTML = '<div class="alert alert-danger">Qidirishda xatolik yuz berdi</div>';
+    });
+}
+
+function getCurrentLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            
+            document.getElementById('results').innerHTML = `
+                <div class="alert alert-success">
+                    <h5>📍 Sizning joylashuvingiz:</h5>
+                    <p><strong>Koordinatalar:</strong> ${lat.toFixed(6)}, ${lng.toFixed(6)}</p>
+                    <a href="https://maps.google.com/?q=${lat},${lng}" target="_blank" class="btn btn-sm btn-primary">
+                        Xaritada ko'rish
+                    </a>
+                </div>
+            `;
+        }, function(error) {
+            alert('Joylashuvni aniqlab bo\'lmadi: ' + error.message);
+        });
+    } else {
+        alert('Brauzeringiz joylashuvni qo\'llab-quvvatlamaydi');
+    }
+}
+
+function searchNearbyPlaces() {
+    fetch('/api/nearby-places?query=restoran&location=Tashkent')
+    .then(response => response.json())
+    .then(data => {
+        displayResults(data);
+    })
+    .catch(error => {
+        console.error('Xatolik:', error);
+        document.getElementById('results').innerHTML = '<div class="alert alert-danger">Qidirishda xatolik yuz berdi</div>';
+    });
+}
+
+function displayResults(data) {
+    const resultsDiv = document.getElementById('results');
+    
+    if (data.error) {
+        resultsDiv.innerHTML = `<div class="alert alert-danger">Xatolik: ${data.error}</div>`;
+        return;
+    }
+    
+    if (data.places && data.places.length > 0) {
+        let html = '<div class="row">';
+        
+        data.places.forEach((place, index) => {
+            const gps = place.gps_coordinates || {};
+            const lat = gps.latitude || 0;
+            const lng = gps.longitude || 0;
+            
+            html += `
+                <div class="col-md-6 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">${place.title || 'Noma\'lum'}</h6>
+                            <p class="card-text small">${place.address || 'Manzil ko\'rsatilmagan'}</p>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    Turi: ${place.type || 'Noma\'lum'}<br>
+                                    Reyting: ${place.rating || 'Yo\'q'} ⭐
+                                </small>
+                            </p>
+                            ${lat && lng ? `
+                                <a href="https://maps.google.com/?q=${lat},${lng}" target="_blank" class="btn btn-sm btn-primary">
+                                    Xaritada ko'rish
+                                </a>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        html += '</div>';
+        resultsDiv.innerHTML = html;
+    } else {
+        resultsDiv.innerHTML = '<div class="alert alert-warning">Hech narsa topilmadi</div>';
+    }
+}
+
+// Enter tugmasi bosilganda qidirish
+document.getElementById('search-input').addEventListener('keypress', function(event) {
+    if (event.key === 'Enter') {
+        searchLocation();
+    }
+});
+</script>
+{% endblock %}
