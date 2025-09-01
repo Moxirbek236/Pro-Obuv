@@ -1088,32 +1088,40 @@ def profile():
     conn = get_db()
     cur = conn.cursor()
     
-    # Foydalanuvchi ma'lumotlarini olish
-    cur.execute("SELECT * FROM users WHERE id = ?", (user_id,))
-    user = cur.fetchone()
-    
-    # Foydalanuvchi buyurtmalar tarixi va umumiy summa
-    cur.execute("""
-        SELECT o.*, r.total_amount, 
-               GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
-        FROM orders o
-        LEFT JOIN receipts r ON o.id = r.order_id
-        LEFT JOIN order_details od ON o.id = od.order_id
-        LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
-        WHERE o.user_id = ?
-        GROUP BY o.id
-        ORDER BY o.created_at DESC
-        LIMIT 10
-    """, (user_id,))
-    orders = cur.fetchall()
-    
-    conn.close()
-    
-    if not user:
-        flash("Foydalanuvchi ma'lumotlari topilmadi.", "error")
-        return redirect(url_for("logout"))
-    
-    return render_template("profile.html", user=user, orders=orders)
+    try:
+        # Foydalanuvchi ma'lumotlarini olish
+        cur.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+        user = cur.fetchone()
+        
+        if not user:
+            conn.close()
+            flash("Foydalanuvchi ma'lumotlari topilmadi.", "error")
+            return redirect(url_for("logout"))
+        
+        # Foydalanuvchi buyurtmalar tarixi va umumiy summa
+        cur.execute("""
+            SELECT o.*, COALESCE(r.total_amount, 0) as total_amount, 
+                   GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
+            FROM orders o
+            LEFT JOIN receipts r ON o.id = r.order_id
+            LEFT JOIN order_details od ON o.id = od.order_id
+            LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
+            WHERE o.user_id = ?
+            GROUP BY o.id
+            ORDER BY o.created_at DESC
+            LIMIT 10
+        """, (user_id,))
+        orders = cur.fetchall()
+        
+        conn.close()
+        
+        return render_template("profile.html", user=user, orders=orders)
+        
+    except Exception as e:
+        conn.close()
+        logging.error(f"Profile sahifasida xatolik: {str(e)}")
+        flash("Profilni yuklashda xatolik yuz berdi.", "error")
+        return redirect(url_for("index"))
 
 @app.route("/update_profile", methods=["POST"])
 def update_profile():
@@ -1237,14 +1245,20 @@ def change_password():
 
 @app.route("/profile/settings")
 def profile_settings():
-    if not session.get("user_id"):
+    # Har qanday turdagi foydalanuvchi (user, staff, courier, super_admin) kirishi mumkin
+    if not (session.get("user_id") or session.get("staff_id") or session.get("courier_id") or session.get("super_admin")):
         flash("Profil sozlamalarini ko'rish uchun tizimga kiring.", "error")
-        return redirect(url_for("login"))
+        return redirect(url_for("index"))
     
     return render_template("profile_settings.html")
 
 @app.route("/settings")
 def general_settings():
+    # Har qanday turdagi foydalanuvchi (user, staff, courier, super_admin) kirishi mumkin
+    if not (session.get("user_id") or session.get("staff_id") or session.get("courier_id") or session.get("super_admin")):
+        flash("Umumi sozlamalarni ko'rish uchun tizimga kiring.", "error")
+        return redirect(url_for("index"))
+    
     return render_template("general_settings.html")
 
 @app.route("/logout")
@@ -2668,6 +2682,36 @@ def api_search_places():
     
     return jsonify({"places": []})
 
+@app.route("/api/set-language", methods=["POST"])
+def api_set_language():
+    """Til sozlamasini saqlash"""
+    try:
+        data = request.get_json()
+        language = data.get("language", "uz")
+        
+        # Session ga til sozlamasini saqlash
+        session['interface_language'] = language
+        
+        return jsonify({"success": True, "message": "Til o'zgartirildi"})
+    except Exception as e:
+        logging.error(f"Til sozlamasida xatolik: {str(e)}")
+        return jsonify({"success": False, "message": "Server xatoligi"}), 500
+
+@app.route("/api/set-theme", methods=["POST"])
+def api_set_theme():
+    """Mavzu sozlamasini saqlash"""
+    try:
+        data = request.get_json()
+        dark_mode = data.get("dark_mode", False)
+        
+        # Session ga mavzu sozlamasini saqlash
+        session['dark_theme'] = dark_mode
+        
+        return jsonify({"success": True, "message": "Mavzu o'zgartirildi"})
+    except Exception as e:
+        logging.error(f"Mavzu sozlamasida xatolik: {str(e)}")
+        return jsonify({"success": False, "message": "Server xatoligi"}), 500
+
 @app.route("/receipt/<int:ticket_no>")
 def view_receipt(ticket_no):
     """Chekni ko'rish sahifasi"""
@@ -2703,6 +2747,16 @@ def view_receipt(ticket_no):
 
 with app.app_context():
     db.create_all()
+
+@app.route("/debug")
+def debug():
+    """Debug ma'lumotlari"""
+    return {
+        "session": dict(session),
+        "user_id": session.get("user_id"),
+        "user_name": session.get("user_name"),
+        "logged_in": "user_id" in session
+    }
 
 if __name__ == "__main__":
     with app.app_context():
