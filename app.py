@@ -55,7 +55,12 @@ def init_db():
             last_name TEXT NOT NULL,
             birth_date TEXT NOT NULL,
             phone TEXT NOT NULL,
+            passport_series TEXT NOT NULL,
+            passport_number TEXT NOT NULL,
             password_hash TEXT NOT NULL,
+            total_hours INTEGER DEFAULT 0,
+            orders_handled INTEGER DEFAULT 0,
+            last_activity TEXT,
             created_at TEXT NOT NULL
         );
     """)
@@ -66,8 +71,14 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             first_name TEXT NOT NULL,
             last_name TEXT NOT NULL,
+            birth_date TEXT NOT NULL,
             phone TEXT NOT NULL,
+            passport_series TEXT NOT NULL,
+            passport_number TEXT NOT NULL,
             password_hash TEXT NOT NULL,
+            total_hours INTEGER DEFAULT 0,
+            deliveries_completed INTEGER DEFAULT 0,
+            last_activity TEXT,
             created_at TEXT NOT NULL
         );
     """)
@@ -585,6 +596,97 @@ def user_status(ticket_no):
         "queue_position": queue_position
     })
 
+# ---- COURIER AUTH ----
+@app.route("/courier-secure-login-k4m7p", methods=["GET", "POST"])
+def courier_login():
+    if request.method == "POST":
+        courier_id = request.form.get("courier_id", "").strip()
+        password = request.form.get("password", "")
+        if not courier_id or not password:
+            flash("ID va parolni kiriting.", "error")
+            return redirect(url_for("courier_login"))
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM couriers WHERE id=?;", (courier_id,))
+        row = cur.fetchone()
+        
+        if row:
+            # Faollik vaqtini yangilash
+            now = get_current_time().isoformat()
+            cur.execute("UPDATE couriers SET last_activity=? WHERE id=?", (now, courier_id))
+            conn.commit()
+        
+        conn.close()
+        if not row or not check_password_hash(row["password_hash"], password):
+            flash("Noto'g'ri ID yoki parol.", "error")
+            return redirect(url_for("courier_login"))
+        session["courier_id"] = row["id"]
+        session["courier_name"] = f"{row['first_name']} {row['last_name']}"
+        return redirect(url_for("courier_dashboard"))
+    return render_template("courier_login.html")
+
+@app.route("/courier-register-secure-p8x3m", methods=["GET", "POST"])
+def courier_register():
+    if request.method == "POST":
+        first_name = request.form.get("first_name", "").strip()
+        last_name = request.form.get("last_name", "").strip()
+        birth_date = request.form.get("birth_date", "").strip()
+        phone = request.form.get("phone", "").strip()
+        passport_series = request.form.get("passport_series", "").strip()
+        passport_number = request.form.get("passport_number", "").strip()
+        password = request.form.get("password", "")
+
+        if not all([first_name, last_name, birth_date, phone, passport_series, passport_number, password]):
+            flash("Barcha maydonlarni to'ldiring.", "error")
+            return redirect(url_for("courier_register"))
+
+        conn = get_db()
+        cur = conn.cursor()
+        password_hash = generate_password_hash(password)
+        now = get_current_time()
+        cur.execute("""
+            INSERT INTO couriers (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+        """, (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, now.isoformat()))
+        conn.commit()
+        new_id = cur.lastrowid
+        conn.close()
+        
+        flash(f"Kuryer sifatida ro'yxatdan o'tdingiz. Sizning ID raqamingiz: {new_id}", "success")
+        return redirect(url_for("courier_login"))
+
+    return render_template("courier_register.html")
+
+@app.route("/courier/dashboard")
+def courier_dashboard():
+    if "courier_id" not in session:
+        return redirect(url_for("courier_login"))
+    
+    conn = get_db()
+    cur = conn.cursor()
+    
+    # Kuryerga tegishli delivery buyurtmalarni olish
+    cur.execute("""
+        SELECT o.*, 
+               GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
+        FROM orders o
+        LEFT JOIN order_details od ON o.id = od.order_id
+        LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
+        WHERE o.order_type = 'delivery' AND o.status IN ('ready', 'on_way', 'delivered')
+        GROUP BY o.id
+        ORDER BY o.created_at DESC
+    """)
+    delivery_orders = cur.fetchall()
+    
+    conn.close()
+    return render_template("courier_dashboard.html", orders=delivery_orders)
+
+@app.route("/courier/logout")
+def courier_logout():
+    session.pop("courier_id", None)
+    session.pop("courier_name", None)
+    return redirect(url_for("index"))
+
 # ---- STAFF AUTH ----
 @app.route("/staff-secure-login-w7m2k", methods=["GET", "POST"])
 def staff_login():
@@ -598,6 +700,13 @@ def staff_login():
         cur = conn.cursor()
         cur.execute("SELECT * FROM staff WHERE id=?;", (staff_id,))
         row = cur.fetchone()
+        conn.close()
+        if row:
+            # Faollik vaqtini yangilash
+            now = get_current_time().isoformat()
+            cur.execute("UPDATE staff SET last_activity=? WHERE id=?", (now, staff_id))
+            conn.commit()
+        
         conn.close()
         if not row or not check_password_hash(row["password_hash"], password):
             flash("Noto'g'ri ID yoki parol.", "error")
@@ -619,9 +728,11 @@ def staff_register():
         last_name = request.form.get("last_name", "").strip()
         birth_date = request.form.get("birth_date", "").strip()
         phone = request.form.get("phone", "").strip()
+        passport_series = request.form.get("passport_series", "").strip()
+        passport_number = request.form.get("passport_number", "").strip()
         password = request.form.get("password", "")
 
-        if not all([first_name, last_name, birth_date, phone, password]):
+        if not all([first_name, last_name, birth_date, phone, passport_series, passport_number, password]):
             flash("Barcha maydonlarni to'ldiring.", "error")
             return redirect(url_for("staff_register"))
 
@@ -630,9 +741,9 @@ def staff_register():
         password_hash = generate_password_hash(password)
         now = get_current_time()
         cur.execute("""
-            INSERT INTO staff (first_name, last_name, birth_date, phone, password_hash, created_at)
-            VALUES (?, ?, ?, ?, ?, ?);
-        """, (first_name, last_name, birth_date, phone, password_hash, now.isoformat()))
+            INSERT INTO staff (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+        """, (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, now.isoformat()))
         conn.commit()
         new_id = cur.lastrowid
         conn.close()
@@ -836,24 +947,22 @@ def super_admin_dashboard():
     if not session.get("super_admin"):
         return redirect(url_for("super_admin_login"))
     
-    # Barcha xodimlarni olish
     conn = get_db()
     cur = conn.cursor()
+    
+    # Barcha xodimlarni olish (to'liq ma'lumotlar bilan)
     cur.execute("SELECT * FROM staff ORDER BY created_at DESC")
     staff_db = cur.fetchall()
-    conn.close()
     
-    # JSON fayldan ham xodimlarni olish
-    employees_file = 'employees.json'
-    employees_json = []
-    if os.path.exists(employees_file):
-        try:
-            with open(employees_file, 'r', encoding='utf-8') as f:
-                employees_json = json.load(f)
-        except (json.JSONDecodeError, FileNotFoundError):
-            employees_json = []
+    # Barcha kuryerlarni olish
+    cur.execute("SELECT * FROM couriers ORDER BY created_at DESC")
+    couriers_db = cur.fetchall()
     
-    # Barcha foydalanuvchilarni olish
+    # Foydalanuvchilarni olish
+    cur.execute("SELECT * FROM users ORDER BY created_at DESC")
+    users_db = cur.fetchall()
+    
+    # JSON fayldan ham foydalanuvchilarni olish
     users_file = 'users.json'
     users_json = []
     if os.path.exists(users_file):
@@ -864,8 +973,6 @@ def super_admin_dashboard():
             users_json = []
     
     # Buyurtmalar statistikasi
-    conn = get_db()
-    cur = conn.cursor()
     cur.execute("SELECT COUNT(*) FROM orders")
     total_orders = cur.fetchone()[0]
     cur.execute("SELECT COUNT(*) FROM orders WHERE status='waiting'")
@@ -874,6 +981,12 @@ def super_admin_dashboard():
     ready_orders = cur.fetchone()[0]
     cur.execute("SELECT COUNT(*) FROM orders WHERE status='served'")
     served_orders = cur.fetchone()[0]
+    
+    # Bu oylik statistika
+    current_month = get_current_time().strftime("%Y-%m")
+    cur.execute("SELECT COUNT(*) FROM orders WHERE created_at LIKE ?", (f"{current_month}%",))
+    month_orders = cur.fetchone()[0]
+    
     conn.close()
     
     stats = {
@@ -881,13 +994,17 @@ def super_admin_dashboard():
         'waiting_orders': waiting_orders,
         'ready_orders': ready_orders,
         'served_orders': served_orders,
+        'month_orders': month_orders,
         'total_staff': len(staff_db),
-        'total_users': len(users_json)
+        'total_couriers': len(couriers_db),
+        'total_users': len(users_db),
+        'total_users_json': len(users_json)
     }
     
     return render_template("super_admin_dashboard.html", 
-                         staff_db=staff_db, 
-                         employees_json=employees_json,
+                         staff_db=staff_db,
+                         couriers_db=couriers_db,
+                         users_db=users_db,
                          users_json=users_json,
                          stats=stats)
 
@@ -928,9 +1045,11 @@ def super_admin_add_staff():
     last_name = request.form.get("last_name", "").strip()
     birth_date = request.form.get("birth_date", "").strip()
     phone = request.form.get("phone", "").strip()
+    passport_series = request.form.get("passport_series", "").strip()
+    passport_number = request.form.get("passport_number", "").strip()
     password = request.form.get("password", "")
 
-    if not all([first_name, last_name, birth_date, phone, password]):
+    if not all([first_name, last_name, birth_date, phone, passport_series, passport_number, password]):
         flash("Barcha maydonlarni to'ldiring.", "error")
         return redirect(url_for("super_admin_dashboard"))
 
@@ -939,9 +1058,9 @@ def super_admin_add_staff():
     password_hash = generate_password_hash(password)
     now = get_current_time()
     cur.execute("""
-        INSERT INTO staff (first_name, last_name, birth_date, phone, password_hash, created_at)
-        VALUES (?, ?, ?, ?, ?, ?);
-    """, (first_name, last_name, birth_date, phone, password_hash, now.isoformat()))
+        INSERT INTO staff (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+    """, (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, now.isoformat()))
     conn.commit()
     new_id = cur.lastrowid
     conn.close()
@@ -950,6 +1069,38 @@ def super_admin_add_staff():
     save_staff_to_json(first_name, last_name, birth_date, phone, new_id, now)
     
     flash(f"Yangi xodim qo'shildi. ID: {new_id}", "success")
+    return redirect(url_for("super_admin_dashboard"))
+
+@app.route("/super-admin/add-courier", methods=["POST"])
+def super_admin_add_courier():
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+    
+    first_name = request.form.get("first_name", "").strip()
+    last_name = request.form.get("last_name", "").strip()
+    birth_date = request.form.get("birth_date", "").strip()
+    phone = request.form.get("phone", "").strip()
+    passport_series = request.form.get("passport_series", "").strip()
+    passport_number = request.form.get("passport_number", "").strip()
+    password = request.form.get("password", "")
+
+    if not all([first_name, last_name, birth_date, phone, passport_series, passport_number, password]):
+        flash("Barcha maydonlarni to'ldiring.", "error")
+        return redirect(url_for("super_admin_dashboard"))
+
+    conn = get_db()
+    cur = conn.cursor()
+    password_hash = generate_password_hash(password)
+    now = get_current_time()
+    cur.execute("""
+        INSERT INTO couriers (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+    """, (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, now.isoformat()))
+    conn.commit()
+    new_id = cur.lastrowid
+    conn.close()
+    
+    flash(f"Yangi kuryer qo'shildi. ID: {new_id}", "success")
     return redirect(url_for("super_admin_dashboard"))
 
 @app.route("/super-admin/delete-user", methods=["POST"])

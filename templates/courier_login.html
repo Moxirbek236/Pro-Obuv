@@ -1,0 +1,20 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card center">
+  <h2>Kuryer Kirish</h2>
+  <form method="post">
+    <label for="courier_id">Kuryer ID:</label>
+    <input type="text" id="courier_id" name="courier_id" required>
+
+    <label for="password">Parol:</label>
+    <input type="password" id="password" name="password" required>
+
+    <div class="actions">
+      <button type="submit" class="btn big">Kirish</button>
+      <a href="{{ url_for('courier_register') }}" class="btn">Ro'yxatdan o'tish</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

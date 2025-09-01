@@ -1,8 +1,9 @@
+
 {% extends "base.html" %}
 
 {% block content %}
 <div class="card center">
-  <h2>Xodim Ro'yxatdan O'tish</h2>
+  <h2>Kuryer Ro'yxatdan O'tish</h2>
   <form method="post">
     <label for="first_name">Ism:</label>
     <input type="text" id="first_name" name="first_name" required>
@@ -27,7 +28,7 @@
 
     <div class="actions">
       <button type="submit" class="btn big">Ro'yxatdan o'tish</button>
-      <a href="{{ url_for('staff_login') }}" class="btn">Kirish</a>
+      <a href="{{ url_for('courier_login') }}" class="btn">Kirish</a>
     </div>
   </form>
 </div>
