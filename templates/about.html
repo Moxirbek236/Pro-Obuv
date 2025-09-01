@@ -1,0 +1,64 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+  <h2>❓ Ko'p so'raladigan savollar</h2>
+  
+  <div class="faq-section">
+    <div class="faq-item">
+      <h4>🍽️ Buyurtma qanday beriladi?</h4>
+      <p>Saytdan ro'yxatdan o'tib, menyudan taomlarni tanlab savatchangizga qo'shing. Keyin buyurtma bering.</p>
+    </div>
+    
+    <div class="faq-item">
+      <h4>🚚 Dostavka xizmati bormi?</h4>
+      <p>Ha, bizda dostavka xizmati mavjud. Menyudan buyurtma berishda dostavka manzilini ko'rsatishingiz mumkin.</p>
+    </div>
+    
+    <div class="faq-item">
+      <h4>💳 To'lov usullari qanday?</h4>
+      <p>Naqd pul, plastik karta va onlayn to'lov usullari mavjud.</p>
+    </div>
+    
+    <div class="faq-item">
+      <h4>⏰ Ish vaqti qanaqa?</h4>
+      <p>Biz har kuni 09:00 dan 23:00 gacha ishlaymiz.</p>
+    </div>
+    
+    <div class="faq-item">
+      <h4>📞 Qanday bog'lanishim mumkin?</h4>
+      <p>Telefon: +998 99 145 96 86<br>
+         Email: nasimjonnasimjon46@gmail.com<br>
+         Telegram: @Rakhimberdiyev_1970</p>
+    </div>
+  </div>
+  
+  <div class="mt-4">
+    <h4>❓ Boshqa savolingiz bormi?</h4>
+    <p>Agar yuqoridagi javoblar sizni qoniqtirmasa, bizga savol yuboring:</p>
+    <a href="{{ url_for('contact') }}" class="btn big">📨 Savol yuborish</a>
+  </div>
+</div>
+
+<style>
+.faq-section {
+  margin: 20px 0;
+}
+.faq-item {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  border-left: 4px solid #4CAF50;
+}
+.faq-item h4 {
+  color: #2d3748;
+  margin-bottom: 10px;
+}
+.faq-item p {
+  margin: 0;
+  color: #6b7280;
+}
+</style>
+{% endblock %}

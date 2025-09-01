@@ -1,0 +1,57 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+  <h2>❤️ Sevimli taomlarim</h2>
+  
+  {% if favorites %}
+    <div class="menu-grid">
+      {% for item in favorites %}
+      <div class="menu-item">
+        <h4>{{ item.name }}</h4>
+        <p class="description">{{ item.description or "" }}</p>
+        <p class="price">{{ "{:,.0f}".format(item.price) }} so'm</p>
+        <form method="post" action="{{ url_for('add_to_cart') }}">
+          <input type="hidden" name="menu_item_id" value="{{ item.id }}">
+          <div style="display: flex; align-items: center; gap: 15px; justify-content: center;">
+            <div class="quantity-selector">
+              <button type="button" class="quantity-btn minus" onclick="decreaseQuantity(this)">−</button>
+              <input type="number" name="quantity" value="1" min="1" max="99" readonly>
+              <button type="button" class="quantity-btn plus" onclick="increaseQuantity(this)">+</button>
+            </div>
+            <button type="submit" class="btn small">
+              <span>🛒 Qo'shish</span>
+            </button>
+          </div>
+        </form>
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="text-center" style="padding: 50px;">
+      <h4>Sevimli taomlaringiz yo'q</h4>
+      <p>Taomlarni sevimlilar ro'yxatiga qo'shish uchun menyuga o'ting</p>
+      <a href="{{ url_for('menu') }}" class="btn big">📋 Menyuga o'tish</a>
+    </div>
+  {% endif %}
+</div>
+
+<script>
+function increaseQuantity(btn) {
+    const input = btn.previousElementSibling;
+    let value = parseInt(input.value);
+    if (value < 99) {
+        input.value = value + 1;
+    }
+}
+
+function decreaseQuantity(btn) {
+    const input = btn.nextElementSibling;
+    let value = parseInt(input.value);
+    if (value > 1) {
+        input.value = value - 1;
+    }
+}
+</script>
+{% endblock %}

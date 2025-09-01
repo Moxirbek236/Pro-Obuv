@@ -1,0 +1,61 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+  <h2>📞 Biz bilan bog'lanish</h2>
+  
+  <div class="row">
+    <div class="col-md-6">
+      <h4>📋 Savol yuborish</h4>
+      <form method="post">
+        <div class="mb-3">
+          <label class="form-label">Ismingiz:</label>
+          <input type="text" class="form-control" name="name" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Email (ixtiyoriy):</label>
+          <input type="email" class="form-control" name="email">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Telefon (ixtiyoriy):</label>
+          <input type="text" class="form-control" name="phone">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Mavzu:</label>
+          <input type="text" class="form-control" name="subject" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Xabar:</label>
+          <textarea class="form-control" name="message" rows="4" required></textarea>
+        </div>
+        <button type="submit" class="btn big">📨 Yuborish</button>
+      </form>
+    </div>
+    
+    <div class="col-md-6">
+      <h4>📍 Aloqa ma'lumotlari</h4>
+      <div class="contact-info">
+        <p><strong>👤 Ism:</strong> Moxirbek</p>
+        <p><strong>📞 Telefon:</strong> +998 99 145 96 86</p>
+        <p><strong>📧 Email:</strong> nasimjonnasimjon46@gmail.com</p>
+        <p><strong>📱 Telegram:</strong> @Rakhimberdiyev_1970</p>
+        <p><strong>📍 Manzil:</strong> Toshkent, Sergeli, Yuqori Darxon MFY, Do'stlik 1-tor ko'cha 12 uy</p>
+        <p><strong>🕒 Ish vaqti:</strong> 09:00 - 23:00</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.contact-info {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 20px;
+}
+.contact-info p {
+  margin-bottom: 10px;
+}
+</style>
+{% endblock %}
