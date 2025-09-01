@@ -81,13 +81,59 @@ function handleFormSubmit(form) {
         console.log('Submit tugma topildi:', submitButton);
         showLoading(submitButton);
         
+        // Form validation
+        const requiredInputs = form.querySelectorAll('input[required], select[required], textarea[required]');
+        let isValid = true;
+        
+        requiredInputs.forEach(input => {
+            if (!input.value.trim()) {
+                isValid = false;
+                input.style.borderColor = '#e53e3e';
+                input.classList.add('is-invalid');
+            } else {
+                input.style.borderColor = '#48bb78';
+                input.classList.add('is-valid');
+            }
+        });
+        
+        if (!isValid) {
+            submitButton.disabled = false;
+            submitButton.innerHTML = submitButton.getAttribute('data-original-text') || 'Yuborish';
+            showNotification('Barcha majburiy maydonlarni to\'ldiring!', 'error');
+            return false;
+        }
+        
         // Form ni submit qilish
         setTimeout(() => {
             form.submit();
         }, 100);
+        
+        return true;
     } else {
         console.log('Submit tugma topilmadi');
+        return false;
     }
+}
+
+// Notification ko'rsatish funksiyasi
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification alert alert-${type}`;
+    notification.innerHTML = `
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <span>${message}</span>
+            <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; color: inherit; font-size: 1.2rem; cursor: pointer; padding: 0; margin-left: 10px;">&times;</button>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // 5 soniyadan keyin avtomatik o'chirish
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.remove();
+        }
+    }, 5000);
 }
 
 // Buyurtma holatini tekshirish

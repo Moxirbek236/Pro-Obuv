@@ -2692,23 +2692,61 @@ def api_set_language():
     try:
         data = request.get_json()
         language = data.get("language", "uz")
+        font_size = data.get("font_size", "medium")
 
-        # Session ga til sozlamasini saqlash
+        # Til sozlamalarini session ga saqlash
         session['interface_language'] = language
-        session['font_size'] = data.get('font_size', 'medium') # Font size ham qabul qilib olamiz
+        session['font_size'] = font_size
 
-        # Tungi rejim sozlamasi
-        theme_mode = data.get('theme_mode', 'light')
-        dark_theme = (theme_mode == 'dark')
+        # Til o'zgarishi bo'yicha message
+        if language == 'ru':
+            message = "Язык изменен на русский"
+        elif language == 'en':
+            message = "Language changed to English"
+        else:
+            message = "Til o'zgartirildi"
 
-        # Sozlamalarni session ga saqlash
-        session['interface_language'] = language
-        session['font_size'] = data.get('font_size', 'medium') # Font size ham saqlaymiz
-        session['dark_theme'] = dark_theme
-
-        return jsonify({"success": True, "message": "Til o'zgartirildi"})
+        return jsonify({
+            "success": True, 
+            "message": message,
+            "language": language,
+            "font_size": font_size
+        })
     except Exception as e:
         logging.error(f"Til sozlamasida xatolik: {str(e)}")
+        return jsonify({"success": False, "message": "Server xatoligi"}), 500
+
+@app.route("/api/save-settings", methods=["POST"])
+def api_save_settings():
+    """Barcha sozlamalarni saqlash"""
+    try:
+        data = request.get_json()
+        
+        # Sozlamalarni session ga saqlash
+        session['interface_language'] = data.get("language", "uz")
+        session['font_size'] = data.get("font_size", "medium")
+        session['dark_theme'] = data.get("dark_theme", False)
+
+        # Success message til bo'yicha
+        language = session.get('interface_language', 'uz')
+        if language == 'ru':
+            message = "Настройки сохранены успешно!"
+        elif language == 'en':
+            message = "Settings saved successfully!"
+        else:
+            message = "Sozlamalar muvaffaqiyatli saqlandi!"
+
+        return jsonify({
+            "success": True, 
+            "message": message,
+            "settings": {
+                "language": session.get('interface_language'),
+                "font_size": session.get('font_size'),
+                "dark_theme": session.get('dark_theme')
+            }
+        })
+    except Exception as e:
+        logging.error(f"Sozlamalarni saqlashda xatolik: {str(e)}")
         return jsonify({"success": False, "message": "Server xatoligi"}), 500
 
 @app.route("/api/set-theme", methods=["POST"])
