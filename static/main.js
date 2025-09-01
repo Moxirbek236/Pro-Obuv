@@ -10,13 +10,13 @@ function updateCartCount() {
         .then(data => {
             const cartBadge = document.querySelector('.cart-badge');
             const cartCountElements = document.querySelectorAll('.cart-count');
-            
+
             if (cartBadge) {
                 cartBadge.textContent = data.count || 0;
                 // Agar savatcha bo'sh bo'lsa, badge ni yashirish
                 cartBadge.style.display = data.count > 0 ? 'flex' : 'none';
             }
-            
+
             // Barcha cart-count elementlarini yangilash
             cartCountElements.forEach(element => {
                 element.textContent = data.count || 0;
@@ -148,12 +148,12 @@ function updateOrderStatus(data) {
         }
 
         statusElement.innerHTML = `<span class="${statusClass}">${statusText}</span>`;
-        
+
         // Status card rangini o'zgartirish
         if (statusCard) {
             const statusCardElement = statusCard.parentElement;
             statusCardElement.style.background = cardColor;
-            
+
             // Status card ichidagi barcha yozuvlarni oq qilish
             const statusSpan = statusElement.querySelector('span');
             if (statusSpan) {
