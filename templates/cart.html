@@ -27,16 +27,23 @@
     </div>
     
     <div class="cart-actions">
-      <form method="post" action="{{ url_for('user_page') }}">
-        <label for="name">Ismingiz:</label>
-        <input type="text" id="name" name="name" placeholder="Ismingizni kiriting" required 
-               style="margin: 10px 0; padding: 10px; width: 100%; border: 1px solid #ddd; border-radius: 5px;">
-        
-        <div style="display: flex; gap: 10px;">
-          <a href="{{ url_for('menu') }}" class="btn">⬅️ Menuga qaytish</a>
-          <button type="submit" class="btn big" style="background: #4CAF50;">✅ Buyurtma berish</button>
+      {% if session.get('user_id') %}
+        <form method="post" action="{{ url_for('user_page') }}">
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <a href="{{ url_for('menu') }}" class="btn">⬅️ Menuga qaytish</a>
+            <button type="submit" class="btn big" style="background: #4CAF50;">✅ Buyurtma berish</button>
+          </div>
+        </form>
+      {% else %}
+        <div class="alert alert-warning">
+          <p>Buyurtma berish uchun avval tizimga kiring</p>
+          <div style="display: flex; gap: 10px;">
+            <a href="{{ url_for('menu') }}" class="btn">⬅️ Menuga qaytish</a>
+            <a href="{{ url_for('login') }}" class="btn big" style="background: #4CAF50;">🔐 Kirish</a>
+            <a href="{{ url_for('register') }}" class="btn big" style="background: #2196F3;">📝 Ro'yxatdan o'tish</a>
+          </div>
         </div>
-      </form>
+      {% endif %}
     </div>
   {% else %}
     <div class="empty-cart">

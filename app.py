@@ -276,34 +276,54 @@ def get_session_id():
         session['session_id'] = str(uuid.uuid4())
     return session['session_id']
 
-def get_cart_items(conn, session_id):
+def get_cart_items(conn, session_id, user_id=None):
     """Savatchadagi mahsulotlarni olish"""
     cur = conn.cursor()
-    cur.execute("""
-        SELECT ci.id, mi.name, mi.price, ci.quantity, (mi.price * ci.quantity) as total
-        FROM cart_items ci
-        JOIN menu_items mi ON ci.menu_item_id = mi.id
-        WHERE ci.session_id = ?
-        ORDER BY ci.created_at DESC
-    """, (session_id,))
+    if user_id:
+        cur.execute("""
+            SELECT ci.id, mi.name, mi.price, ci.quantity, (mi.price * ci.quantity) as total
+            FROM cart_items ci
+            JOIN menu_items mi ON ci.menu_item_id = mi.id
+            WHERE ci.user_id = ?
+            ORDER BY ci.created_at DESC
+        """, (user_id,))
+    else:
+        cur.execute("""
+            SELECT ci.id, mi.name, mi.price, ci.quantity, (mi.price * ci.quantity) as total
+            FROM cart_items ci
+            JOIN menu_items mi ON ci.menu_item_id = mi.id
+            WHERE ci.session_id = ?
+            ORDER BY ci.created_at DESC
+        """, (session_id,))
     return cur.fetchall()
 
-def get_cart_total(conn, session_id):
+def get_cart_total(conn, session_id, user_id=None):
     """Savatchaning umumiy summasini hisoblash"""
     cur = conn.cursor()
-    cur.execute("""
-        SELECT SUM(mi.price * ci.quantity)
-        FROM cart_items ci
-        JOIN menu_items mi ON ci.menu_item_id = mi.id
-        WHERE ci.session_id = ?
-    """, (session_id,))
+    if user_id:
+        cur.execute("""
+            SELECT SUM(mi.price * ci.quantity)
+            FROM cart_items ci
+            JOIN menu_items mi ON ci.menu_item_id = mi.id
+            WHERE ci.user_id = ?
+        """, (user_id,))
+    else:
+        cur.execute("""
+            SELECT SUM(mi.price * ci.quantity)
+            FROM cart_items ci
+            JOIN menu_items mi ON ci.menu_item_id = mi.id
+            WHERE ci.session_id = ?
+        """, (session_id,))
     result = cur.fetchone()[0]
     return result if result else 0
 
-def clear_cart(conn, session_id):
+def clear_cart(conn, session_id, user_id=None):
     """Savatchani tozalash"""
     cur = conn.cursor()
-    cur.execute("DELETE FROM cart_items WHERE session_id = ?", (session_id,))
+    if user_id:
+        cur.execute("DELETE FROM cart_items WHERE user_id = ?", (user_id,))
+    else:
+        cur.execute("DELETE FROM cart_items WHERE session_id = ?", (session_id,))
     conn.commit()
 
 def save_user_to_json(name, ticket_no, order_time, order_items):
@@ -440,13 +460,17 @@ def add_to_cart():
         return redirect(url_for("menu"))
     
     session_id = get_session_id()
+    user_id = session.get("user_id")
     conn = get_db()
     cur = conn.cursor()
     
     # Mavjudligini tekshirish
-    cur.execute("SELECT * FROM cart_items WHERE session_id = ? AND menu_item_id = ?", (session_id, menu_item_id))
-    existing = cur.fetchone()
+    if user_id:
+        cur.execute("SELECT * FROM cart_items WHERE user_id = ? AND menu_item_id = ?", (user_id, menu_item_id))
+    else:
+        cur.execute("SELECT * FROM cart_items WHERE session_id = ? AND menu_item_id = ?", (session_id, menu_item_id))
     
+    existing = cur.fetchone()
     now = get_current_time().isoformat()
     
     if existing:
@@ -454,8 +478,12 @@ def add_to_cart():
         cur.execute("UPDATE cart_items SET quantity = quantity + ? WHERE id = ?", (quantity, existing['id']))
     else:
         # Yangi qo'shish
-        cur.execute("INSERT INTO cart_items (session_id, menu_item_id, quantity, created_at) VALUES (?, ?, ?, ?)", 
-                   (session_id, menu_item_id, quantity, now))
+        if user_id:
+            cur.execute("INSERT INTO cart_items (user_id, menu_item_id, quantity, created_at) VALUES (?, ?, ?, ?)", 
+                       (user_id, menu_item_id, quantity, now))
+        else:
+            cur.execute("INSERT INTO cart_items (session_id, menu_item_id, quantity, created_at) VALUES (?, ?, ?, ?)", 
+                       (session_id, menu_item_id, quantity, now))
     
     conn.commit()
     conn.close()
@@ -465,18 +493,25 @@ def add_to_cart():
 @app.route("/cart")
 def cart():
     session_id = get_session_id()
+    user_id = session.get("user_id")
     conn = get_db()
-    cart_items = get_cart_items(conn, session_id)
-    total = get_cart_total(conn, session_id)
+    cart_items = get_cart_items(conn, session_id, user_id)
+    total = get_cart_total(conn, session_id, user_id)
     conn.close()
     return render_template("cart.html", cart_items=cart_items, total=total)
 
 @app.route("/remove_from_cart/<int:cart_item_id>", methods=["POST"])
 def remove_from_cart(cart_item_id):
     session_id = get_session_id()
+    user_id = session.get("user_id")
     conn = get_db()
     cur = conn.cursor()
-    cur.execute("DELETE FROM cart_items WHERE id = ? AND session_id = ?", (cart_item_id, session_id))
+    
+    if user_id:
+        cur.execute("DELETE FROM cart_items WHERE id = ? AND user_id = ?", (cart_item_id, user_id))
+    else:
+        cur.execute("DELETE FROM cart_items WHERE id = ? AND session_id = ?", (cart_item_id, session_id))
+    
     conn.commit()
     conn.close()
     flash("Mahsulot savatchadan olib tashlandi.", "success")
@@ -485,28 +520,129 @@ def remove_from_cart(cart_item_id):
 @app.route("/get_cart_count")
 def get_cart_count():
     session_id = get_session_id()
+    user_id = session.get("user_id")
     conn = get_db()
     cur = conn.cursor()
-    cur.execute("SELECT SUM(quantity) FROM cart_items WHERE session_id = ?", (session_id,))
+    
+    if user_id:
+        cur.execute("SELECT SUM(quantity) FROM cart_items WHERE user_id = ?", (user_id,))
+    else:
+        cur.execute("SELECT SUM(quantity) FROM cart_items WHERE session_id = ?", (session_id,))
+    
     result = cur.fetchone()[0]
     count = result if result else 0
     conn.close()
     return jsonify({"count": count})
 
+# ---- USER LOGIN & REGISTER ----
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        email = request.form.get("email", "").strip()
+        password = request.form.get("password", "")
+        
+        if not email or not password:
+            flash("Email va parolni kiriting.", "error")
+            return redirect(url_for("login"))
+        
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM users WHERE email = ?", (email,))
+        user = cur.fetchone()
+        conn.close()
+        
+        if user and check_password_hash(user["password_hash"], password):
+            session["user_id"] = user["id"]
+            session["user_name"] = f"{user['first_name']} {user['last_name']}"
+            session["user_email"] = user["email"]
+            flash(f"Xush kelibsiz, {user['first_name']}!", "success")
+            return redirect(url_for("index"))
+        else:
+            flash("Noto'g'ri email yoki parol.", "error")
+            return redirect(url_for("login"))
+    
+    return render_template("login.html")
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        first_name = request.form.get("first_name", "").strip()
+        last_name = request.form.get("last_name", "").strip()
+        email = request.form.get("email", "").strip()
+        phone = request.form.get("phone", "").strip()
+        address = request.form.get("address", "").strip()
+        password = request.form.get("password", "")
+        confirm_password = request.form.get("confirm_password", "")
+        
+        if not all([first_name, last_name, email, password, confirm_password]):
+            flash("Majburiy maydonlarni to'ldiring.", "error")
+            return redirect(url_for("register"))
+        
+        if password != confirm_password:
+            flash("Parollar mos kelmaydi.", "error")
+            return redirect(url_for("register"))
+        
+        conn = get_db()
+        cur = conn.cursor()
+        
+        # Email mavjudligini tekshirish
+        cur.execute("SELECT id FROM users WHERE email = ?", (email,))
+        if cur.fetchone():
+            flash("Bu email allaqachon ro'yxatdan o'tgan.", "error")
+            conn.close()
+            return redirect(url_for("register"))
+        
+        # Yangi foydalanuvchi yaratish
+        password_hash = generate_password_hash(password)
+        now = get_current_time().isoformat()
+        
+        cur.execute("""
+            INSERT INTO users (first_name, last_name, email, phone, address, password_hash, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (first_name, last_name, email, phone, address, password_hash, now))
+        
+        conn.commit()
+        user_id = cur.lastrowid
+        conn.close()
+        
+        # Avtomatik tizimga kiritish
+        session["user_id"] = user_id
+        session["user_name"] = f"{first_name} {last_name}"
+        session["user_email"] = email
+        
+        flash(f"Muvaffaqiyatli ro'yxatdan o'tdingiz! Xush kelibsiz, {first_name}!", "success")
+        return redirect(url_for("index"))
+    
+    return render_template("register.html")
+
+@app.route("/logout")
+def logout():
+    user_name = session.get("user_name", "")
+    session.clear()
+    flash(f"Tizimdan chiqdingiz. Xayr, {user_name}!", "info")
+    return redirect(url_for("index"))
+
 # ---- USER ----
 @app.route("/user", methods=["GET", "POST"])
 def user_page():
     if request.method == "POST":
-        name = request.form.get("name", "").strip()
+        # Foydalanuvchi session'dan ismni olish
+        if not session.get("user_id"):
+            flash("Buyurtma berish uchun avval tizimga kiring.", "error")
+            return redirect(url_for("login"))
+        
+        name = session.get("user_name", "")
+        user_id = session.get("user_id")
+        
         if not name:
-            flash("Ismni kiriting.", "error")
-            return redirect(url_for("cart"))
+            flash("Foydalanuvchi ma'lumotlari topilmadi.", "error")
+            return redirect(url_for("login"))
             
         session_id = get_session_id()
         conn = get_db()
         
         # Savatchani tekshirish
-        cart_items = get_cart_items(conn, session_id)
+        cart_items = get_cart_items(conn, session_id, user_id)
         if not cart_items:
             flash("Savatchangiz bo'sh. Avval taom tanlang.", "error")
             conn.close()
@@ -517,14 +653,14 @@ def user_page():
             eta_minutes = calc_eta_minutes(conn)
             now = get_current_time()
             eta_time = now + datetime.timedelta(minutes=eta_minutes)
-            total = get_cart_total(conn, session_id)
+            total = get_cart_total(conn, session_id, user_id)
             
             cur = conn.cursor()
-            # Buyurtma yaratish
+            # Buyurtma yaratish (user_id bilan)
             cur.execute("""
-                INSERT INTO orders (customer_name, ticket_no, status, created_at, eta_time)
-                VALUES (?, ?, 'waiting', ?, ?);
-            """, (name, tno, now.isoformat(), eta_time.isoformat()))
+                INSERT INTO orders (user_id, customer_name, ticket_no, order_type, status, created_at, eta_time)
+                VALUES (?, ?, ?, 'dine_in', 'waiting', ?, ?);
+            """, (user_id, name, tno, now.isoformat(), eta_time.isoformat()))
             
             order_id = cur.lastrowid
             
@@ -548,7 +684,7 @@ def user_page():
                 })
             
             # Savatchani tozalash
-            clear_cart(conn, session_id)
+            clear_cart(conn, session_id, user_id)
             
             conn.commit()
             
