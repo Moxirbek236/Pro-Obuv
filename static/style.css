@@ -60,7 +60,7 @@ body {
   .navbar-brand {
     font-size: 1.3rem;
   }
-  
+
   .navbar-nav .nav-link {
     padding: 10px 20px !important;
     text-align: center;
@@ -71,16 +71,16 @@ body {
   .navbar {
     padding: 6px 0;
   }
-  
+
   .navbar-brand {
     font-size: 1.1rem;
   }
-  
+
   .navbar-toggler {
     padding: 2px 6px;
     font-size: 1rem;
   }
-  
+
   .navbar-nav .nav-link {
     padding: 8px 16px !important;
     font-size: 14px;
@@ -249,20 +249,22 @@ label {
 }
 
 .cart-badge {
-  background: #e53e3e;
+  background: #ff4757;
   color: white;
   border-radius: 50%;
-  padding: 4px 8px;
+  padding: 2px 6px;
   font-size: 12px;
-  font-weight: 700;
-  margin-left: 10px;
-  min-width: 22px;
-  height: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: pulse 2s infinite;
-  border: 2px solid white;
+  margin-left: 5px;
+  display: inline-block;
+  min-width: 18px;
+  height: 18px;
+  line-height: 14px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.cart-badge.hidden {
+    display: none;
 }
 
 @keyframes pulse {
@@ -296,7 +298,7 @@ label {
   display: grid;
   gap: 15px;
   margin-top: 25px;
-  
+
   /* Asosiy responsive grid */
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
 }
@@ -307,32 +309,32 @@ label {
     grid-template-columns: repeat(4, 1fr); /* 4 ta katta mahsulot */
     gap: 20px;
   }
-  
+
   .quantity-btn {
     min-width: 70px;
     height: 70px;
     font-size: 26px;
     font-weight: 700;
   }
-  
+
   .quantity-selector input {
     width: 90px;
     height: 70px;
     font-size: 22px;
     font-weight: 600;
   }
-  
+
   .menu-item {
     min-height: 320px;
     padding: 40px;
     max-width: none;
   }
-  
+
   .menu-item h4 {
     font-size: 24px;
     margin-bottom: 22px;
   }
-  
+
   .price {
     font-size: 26px;
     padding: 18px 24px;
@@ -345,31 +347,31 @@ label {
     grid-template-columns: repeat(4, 1fr); /* 4 ta mahsulot */
     gap: 18px;
   }
-  
+
   .quantity-btn {
     min-width: 68px;
     height: 68px;
     font-size: 25px;
     font-weight: 700;
   }
-  
+
   .quantity-selector input {
     width: 88px;
     height: 68px;
     font-size: 21px;
     font-weight: 600;
   }
-  
+
   .menu-item {
     min-height: 300px;
     padding: 35px;
   }
-  
+
   .menu-item h4 {
     font-size: 22px;
     margin-bottom: 20px;
   }
-  
+
   .price {
     font-size: 24px;
     padding: 16px 22px;
@@ -383,30 +385,30 @@ label {
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
   }
-  
+
   .menu-item {
     min-height: 280px;
     padding: 35px;
   }
-  
+
   .menu-item h4 {
     font-size: 21px;
     margin-bottom: 19px;
   }
-  
+
   .price {
     font-size: 23px;
     padding: 16px 21px;
     margin-bottom: 26px;
   }
-  
+
   .quantity-btn {
     min-width: 65px;
     height: 65px;
     font-size: 24px;
     font-weight: 700;
   }
-  
+
   .quantity-selector input {
     width: 85px;
     height: 65px;
@@ -421,30 +423,30 @@ label {
     grid-template-columns: repeat(3, 1fr);
     gap: 18px;
   }
-  
+
   .menu-item {
     min-height: 260px;
     padding: 30px;
   }
-  
+
   .menu-item h4 {
     font-size: 19px;
     margin-bottom: 17px;
   }
-  
+
   .price {
     font-size: 21px;
     padding: 15px 19px;
     margin-bottom: 24px;
   }
-  
+
   .quantity-btn {
     min-width: 60px;
     height: 60px;
     font-size: 22px;
     font-weight: 700;
   }
-  
+
   .quantity-selector input {
     width: 80px;
     height: 60px;
@@ -819,17 +821,17 @@ tr.given {
   .ticket-number {
     font-size: 1.8rem;
   }
-  
+
   .status-badge {
     font-size: 1.1rem;
     padding: 10px 20px;
   }
-  
+
   .current-time {
     font-size: 1.4rem;
     padding: 12px 24px;
   }
-  
+
   .order-items {
     font-size: 1rem;
     padding: 6px 10px;
@@ -850,12 +852,12 @@ tr.given {
   .ticket-number {
     font-size: 1.5rem;
   }
-  
+
   .status-badge {
     font-size: 1rem;
     padding: 8px 16px;
   }
-  
+
   .current-time {
     font-size: 1.2rem;
     padding: 10px 20px;
@@ -893,7 +895,7 @@ tr.given {
   .monitor-section h4 {
     font-size: 1.8rem;
   }
-  
+
   .ticket-number {
     font-size: 1.4rem;
   }
@@ -915,23 +917,23 @@ tr.given {
     font-size: 1.4rem;
     margin-bottom: 12px;
   }
-  
+
   .ticket-number {
     font-size: 1.2rem;
   }
-  
+
   .status-badge {
     font-size: 0.8rem;
     padding: 6px 12px;
   }
-  
+
   .current-time {
     font-size: 1rem;
     padding: 8px 16px;
     top: 10px;
     right: 10px;
   }
-  
+
   .order-items {
     font-size: 0.8rem;
     padding: 4px 6px;
@@ -943,7 +945,7 @@ tr.given {
   .monitor-container {
     padding: 5px;
   }
-  
+
   .monitor-table td, .monitor-table th {
     font-size: 0.8rem;
     padding: 6px 3px;
@@ -958,11 +960,11 @@ tr.given {
     font-size: 1.2rem;
     margin-bottom: 10px;
   }
-  
+
   .ticket-number {
     font-size: 1rem;
   }
-  
+
   .status-badge {
     font-size: 0.7rem;
     padding: 4px 8px;
@@ -976,38 +978,38 @@ tr.given {
   .container {
     max-width: 1400px;
   }
-  
+
   .card {
     padding: 25px;
     font-size: 16px;
   }
-  
+
   .btn.big {
     font-size: 18px;
     padding: 16px 32px;
   }
-  
+
   .btn {
     font-size: 16px;
     padding: 12px 24px;
   }
-  
+
   .ticket-no {
     font-size: 48px;
   }
-  
+
   .navbar-brand {
     font-size: 1.6rem;
   }
-  
+
   .menu-item h4 {
     font-size: 18px;
   }
-  
+
   .price {
     font-size: 20px;
   }
-  
+
   table th, table td {
     font-size: 14px;
     padding: 15px;
@@ -1019,21 +1021,21 @@ tr.given {
   .container {
     max-width: 1000px;
   }
-  
+
   .card {
     padding: 30px;
     font-size: 16px;
   }
-  
+
   .btn.big {
     font-size: 18px;
     padding: 16px 32px;
   }
-  
+
   .menu-grid {
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   }
-  
+
   .ticket-no {
     font-size: 48px;
   }
@@ -1044,30 +1046,30 @@ tr.given {
   .container {
     padding: 0 15px;
   }
-  
+
   .grid-2 {
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
   }
-  
+
   .menu-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
   }
-  
+
   .card {
     padding: 25px;
   }
-  
+
   .btn.big {
     font-size: 16px;
     padding: 14px 28px;
   }
-  
+
   .ticket-no {
     font-size: 42px;
   }
-  
+
   table th, table td {
     font-size: 14px;
     padding: 12px;
@@ -1138,7 +1140,7 @@ tr.given {
     font-size: 16px; /* iOS da zoom oldinini olish uchun */
     padding: 14px 18px;
   }
-  
+
   .price {
     font-size: 20px;
     padding: 10px 16px;
@@ -1234,13 +1236,13 @@ tr.given {
     font-size: 16px;
     padding: 10px 14px;
   }
-  
+
   .quantity-btn {
     min-width: 35px;
     height: 35px;
     font-size: 14px;
   }
-  
+
   .quantity-selector input {
     width: 45px;
     height: 35px;
@@ -1293,23 +1295,23 @@ tr.given {
     font-size: 17px;
     padding: 8px 12px;
   }
-  
+
   .cart-btn {
     padding: 8px 14px;
     font-size: 13px;
   }
-  
+
   table th, table td {
     padding: 6px;
     font-size: 12px;
   }
-  
+
   .quantity-btn {
     min-width: 35px;
     height: 35px;
     font-size: 14px;
   }
-  
+
   .quantity-selector input {
     width: 45px;
     height: 35px;
@@ -1360,37 +1362,37 @@ tr.given {
     font-size: 16px;
     padding: 6px 10px;
   }
-  
+
   .cart-btn {
     padding: 6px 12px;
     font-size: 12px;
   }
-  
+
   body {
     font-size: 13px;
   }
-  
+
   .flash-item {
     padding: 8px 12px;
     font-size: 13px;
   }
-  
+
   input, select, textarea {
     font-size: 16px;
     padding: 10px 12px;
   }
-  
+
   table th, table td {
     padding: 4px;
     font-size: 11px;
   }
-  
+
   .quantity-btn {
     min-width: 30px;
     height: 30px;
     font-size: 12px;
   }
-  
+
   .quantity-selector input {
     width: 40px;
     height: 30px;
@@ -1403,21 +1405,21 @@ tr.given {
   .navbar {
     padding: 8px 0;
   }
-  
+
   .container {
     margin: 10px auto;
   }
-  
+
   .card {
     padding: 15px;
     margin-bottom: 15px;
   }
-  
+
   .menu-grid {
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 15px;
   }
-  
+
   .ticket-no {
     font-size: 24px;
   }
@@ -1428,43 +1430,43 @@ tr.given {
   .container {
     max-width: 1600px;
   }
-  
+
   .card {
     padding: 30px;
     font-size: 16px;
   }
-  
+
   .btn.big {
     font-size: 18px;
     padding: 16px 32px;
   }
-  
+
   .btn {
     font-size: 16px;
     padding: 12px 24px;
   }
-  
+
   .ticket-no {
     font-size: 52px;
   }
-  
+
   .navbar-brand {
     font-size: 1.8rem;
   }
-  
+
   .menu-item h4 {
     font-size: 18px;
   }
-  
+
   .price {
     font-size: 20px;
   }
-  
+
   table th, table td {
     font-size: 14px;
     padding: 15px;
   }
-  
+
   .flash-item {
     padding: 15px 20px;
     font-size: 16px;
@@ -1476,12 +1478,12 @@ tr.given {
   .navbar, .btn, .flash {
     display: none !important;
   }
-  
+
   .card {
     box-shadow: none;
     border: 1px solid #000;
   }
-  
+
   body {
     background: white !important;
     color: black !important;

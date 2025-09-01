@@ -832,8 +832,14 @@ def courier_register():
             INSERT INTO couriers (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, created_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?);
         """, (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, now.isoformat()))
-        conn.commit()
+        
         new_id = cur.lastrowid
+        # ID kamida 5 ta raqamdan iborat bo'lishi uchun
+        if new_id < 10000:
+            cur.execute("UPDATE couriers SET id = ? WHERE id = ?", (10000 + new_id, new_id))
+            new_id = 10000 + new_id
+            
+        conn.commit()
         conn.close()
 
         flash(f"Kuryer sifatida ro'yxatdan o'tdingiz. Sizning ID raqamingiz: {new_id}", "success")
@@ -916,12 +922,23 @@ def staff_login():
         if not staff_id or not password:
             flash("ID va parolni kiriting.", "error")
             return redirect(url_for("staff_login"))
+        
+        # ID raqam ekanligini va kamida 5 ta raqamdan iborat ekanligini tekshirish
+        try:
+            staff_id_int = int(staff_id)
+            if staff_id_int < 10000:
+                flash("ID kamida 5 ta raqamdan iborat bo'lishi kerak.", "error")
+                return redirect(url_for("staff_login"))
+        except ValueError:
+            flash("ID raqam bo'lishi kerak.", "error")
+            return redirect(url_for("staff_login"))
+            
         conn = get_db()
         cur = conn.cursor()
-        cur.execute("SELECT * FROM staff WHERE id=?;", (staff_id,))
+        cur.execute("SELECT * FROM staff WHERE id=?;", (staff_id_int,))
         row = cur.fetchone()
         conn.close()
-        if row:
+        if row and check_password_hash(row["password_hash"], password):
             # Faollik vaqtini yangilash va ishchi soatlarini hisoblash
             now = get_current_time().isoformat()
 
@@ -932,27 +949,28 @@ def staff_login():
                     current_time = get_current_time()
                     time_diff = current_time - last_activity
 
-                    # Agar 8 soatdan kam bo'lsa, ishchi vaqtga qo'shish (dakiqalarda)
+                    # Agar 8 soatdan kam bo'lsa, ishchi vaqtga qo'shish
                     if time_diff.total_seconds() < 28800:  # 8 soat
                         additional_hours = time_diff.total_seconds() / 3600
                         cur.execute("UPDATE staff SET total_hours = COALESCE(total_hours, 0) + ?, last_activity = ? WHERE id = ?", 
-                                   (additional_hours, now, staff_id))
+                                   (additional_hours, now, staff_id_int))
                     else:
-                        cur.execute("UPDATE staff SET last_activity = ? WHERE id = ?", (now, staff_id))
+                        cur.execute("UPDATE staff SET last_activity = ? WHERE id = ?", (now, staff_id_int))
                 except:
-                    cur.execute("UPDATE staff SET last_activity = ? WHERE id = ?", (now, staff_id))
+                    cur.execute("UPDATE staff SET last_activity = ? WHERE id = ?", (now, staff_id_int))
             else:
-                cur.execute("UPDATE staff SET last_activity = ? WHERE id = ?", (now, staff_id))
+                cur.execute("UPDATE staff SET last_activity = ? WHERE id = ?", (now, staff_id_int))
 
             conn.commit()
-
-        conn.close()
-        if not row or not check_password_hash(row["password_hash"], password):
+            conn.close()
+            
+            session["staff_id"] = row["id"]
+            session["staff_name"] = f"{row['first_name']} {row['last_name']}"
+            return redirect(url_for("staff_dashboard"))
+        else:
+            conn.close()
             flash("Noto'g'ri ID yoki parol.", "error")
             return redirect(url_for("staff_login"))
-        session["staff_id"] = row["id"]
-        session["staff_name"] = f"{row['first_name']} {row['last_name']}"
-        return redirect(url_for("staff_dashboard"))
     return render_template("staff_login.html")
 
 @app.route("/admin/logout")
@@ -1238,8 +1256,9 @@ def super_admin_dashboard():
     # Xodimlar ma'lumotlari (soatlar va buyurtmalar bilan)
     cur.execute("""
         SELECT s.*, 
-               COALESCE(0, 0) as hours,
-               COALESCE(0, 0) as handled_orders
+               COALESCE(s.total_hours, 0) as hours,
+               COALESCE(s.orders_handled, 0) as handled_orders,
+               s.last_activity as activity
         FROM staff s
         ORDER BY s.created_at DESC
     """)
@@ -1248,8 +1267,9 @@ def super_admin_dashboard():
     # Kuryerlar ma'lumotlari
     cur.execute("""
         SELECT c.*, 
-               COALESCE(0, 0) as hours,
-               COALESCE(0, 0) as deliveries
+               COALESCE(c.total_hours, 0) as hours,
+               COALESCE(c.deliveries_completed, 0) as deliveries,
+               c.last_activity as activity
         FROM couriers c
         ORDER BY c.created_at DESC
     """)
