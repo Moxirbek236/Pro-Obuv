@@ -2630,7 +2630,11 @@ def contact():
 
 @app.route("/about")
 def about():
-    return render_template("about.html")
+    return render_template('about.html')
+
+@app.route('/downloads')
+def downloads():
+    return render_template('downloads.html')
 
 @app.route("/api/validate-address", methods=["POST"])
 def api_validate_address():
