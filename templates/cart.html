@@ -67,10 +67,16 @@
 
                 <!-- Xaritada joylashuvni tanlash -->
                 <div class="map-selection">
-                    <label for="location-map">📍 Xaritada joylashuvni belgilang:</label>
-                    <div id="location-map-container" style="height: 300px; border: 2px solid #ddd; border-radius: 8px; margin: 10px 0;">
-                        <div id="location-map" style="height: 100%; width: 100%;"></div>
-                    </div>
+                    <label for="delivery_address" class="form-label">Yetkazib berish manzili:</label>
+                    <input type="text" 
+                           class="form-control" 
+                           id="delivery_address" 
+                           name="delivery_address" 
+                           placeholder="Manzilni kiriting" 
+                           required>
+                    <div id="address_status" class="mt-1"></div>
+                    <div id="map" style="height: 300px; margin-top: 10px;"></div>
+                    
                     <div class="selected-location">
                         <p><strong>Tanlangan joylashuv:</strong></p>
                         <p id="selected-address">Xaritada joyni belgilang</p>
@@ -311,6 +317,39 @@ function toggleDeliveryFields() {
     }
 }
 
+function updateDeliveryPrice() {
+    const baseTotal = {{ total }};
+    let deliveryCost = 0;
+
+    const deliveryDistanceInput = document.getElementById('delivery_distance');
+    if (deliveryDistanceInput && deliveryDistanceInput.value) {
+        const distance = parseFloat(deliveryDistanceInput.value);
+        // Oddiy narxlashuv: har bir km uchun 5000 so'm
+        if (distance > 0) {
+            deliveryCost = distance * 5000; // Masalan, har km uchun 5000 so'm
+        }
+    }
+
+    const finalTotal = baseTotal + deliveryCost;
+    const totalElement = document.getElementById('total-amount');
+    if (totalElement) {
+        totalElement.textContent = finalTotal.toLocaleString() + " so'm";
+    }
+
+    // Delivery cost info yangilash
+    const deliveryCostInfoSpan = document.querySelector('.delivery-cost-info .delivery-cost');
+    if (deliveryCostInfoSpan) {
+        if (deliveryCost > 0) {
+            deliveryCostInfoSpan.textContent = `+ ${deliveryCost.toLocaleString()} so'm (yetkazib berish)`;
+            deliveryCostInfoSpan.style.color = '#dc3545'; // Qizil rang
+        } else {
+            deliveryCostInfoSpan.textContent = 'Yetkazib berish: Bepul';
+            deliveryCostInfoSpan.style.color = '#28a745'; // Yashil rang
+        }
+    }
+}
+
+
 function updateTotal() {
     const baseTotal = {{ total }};
     let deliveryCost = 0;
@@ -353,6 +392,45 @@ document.addEventListener('DOMContentLoaded', (event) => {
     if (deliveryRadio && deliveryRadio.checked && !map) {
         initMap();
     }
+
+    // Manzil kiritilganda masofa hisoblash
+        document.getElementById('delivery_address').addEventListener('input', async function() {
+            const address = this.value.trim();
+            const addressStatus = document.getElementById('address_status');
+
+            if (address.length > 10) {
+                addressStatus.innerHTML = '<small class="text-info">🔍 Manzil tekshirilmoqda...</small>';
+
+                try {
+                    const response = await fetch('/api/validate-address', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ address: address })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.valid) {
+                        document.getElementById('delivery_distance').value = result.distance;
+                        addressStatus.innerHTML = `<small class="text-success">✅ ${result.message} (${result.distance} km)</small>`;
+                        updateDeliveryPrice();
+                    } else {
+                        addressStatus.innerHTML = `<small class="text-danger">❌ ${result.message}</small>`;
+                        document.getElementById('delivery_distance').value = 0;
+                        updateDeliveryPrice();
+                    }
+                } catch (error) {
+                    console.error('Manzil tekshirishda xatolik:', error);
+                    addressStatus.innerHTML = '<small class="text-warning">⚠️ Manzil tekshirib bo\'lmadi</small>';
+                }
+            } else {
+                addressStatus.innerHTML = '';
+                document.getElementById('delivery_distance').value = 0;
+                updateDeliveryPrice();
+            }
+        });
 });
 
         </script>
@@ -698,6 +776,23 @@ document.addEventListener('DOMContentLoaded', (event) => {
 }
 .input-group > .form-control:focus {
     z-index: 3;
+}
+
+/* Added styles for address status */
+.mt-1 {
+    margin-top: 0.25rem !important;
+}
+.text-info {
+    color: #17a2b8 !important;
+}
+.text-success {
+    color: #28a745 !important;
+}
+.text-danger {
+    color: #dc3545 !important;
+}
+.text-warning {
+    color: #ffc107 !important;
 }
 
 </style>
