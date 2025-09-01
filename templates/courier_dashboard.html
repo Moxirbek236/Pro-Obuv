@@ -50,10 +50,22 @@
                             {% if order.delivery_address %}
                                 <div class="address-info">
                                     <span class="address-text">{{ order.delivery_address }}</span>
-                                    <a href="https://yandex.uz/maps/?text={{ order.delivery_address | urlencode }}"
-                                       target="_blank" class="map-link">
-                                        🗺️ Xaritada ko'rish
-                                    </a>
+                                    {% if order.delivery_map_url %}
+                                        <a href="{{ order.delivery_map_url }}"
+                                           target="_blank" class="map-link">
+                                            🗺️ Aniq joylashuv
+                                        </a>
+                                    {% else %}
+                                        <a href="https://yandex.uz/maps/?text={{ order.delivery_address | urlencode }}"
+                                           target="_blank" class="map-link">
+                                            🗺️ Qidirib ko'rish
+                                        </a>
+                                    {% endif %}
+                                    {% if order.customer_note %}
+                                        <div class="customer-note">
+                                            <small>💬 {{ order.customer_note }}</small>
+                                        </div>
+                                    {% endif %}
                                 </div>
                             {% else %}
                                 N/A
@@ -98,11 +110,28 @@
                         </td>
                         <td>
                             {% if order.status == 'ready' %}
-                                <form method="POST" action="{{ url_for('courier_take_order', order_id=order.id) }}" style="display: inline;">
-                                    <button type="submit" class="btn btn-sm btn-primary">🚚 Olish va jo'nab ketish</button>
-                                </form>
+                                <div class="courier-actions">
+                                    <div class="pricing-form">
+                                        <div class="price-inputs">
+                                            <input type="number" id="price-{{ order.id }}" placeholder="Narx (so'm)" min="0" class="form-control-sm">
+                                            <input type="number" id="time-{{ order.id }}" placeholder="Vaqt (daq)" min="5" max="180" class="form-control-sm">
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-warning" onclick="setCourierPrice({{ order.id }})">💰 Narx belgilash</button>
+                                    </div>
+                                    <form method="POST" action="{{ url_for('courier_take_order', order_id=order.id) }}" style="display: inline;">
+                                        <button type="submit" class="btn btn-sm btn-primary">🚚 Olish va jo'nab ketish</button>
+                                    </form>
+                                </div>
                             {% elif order.status == 'on_way' %}
                                 <div class="delivery-actions">
+                                    {% if order.courier_price and order.courier_price > 0 %}
+                                        <div class="courier-info">
+                                            <small class="text-success">💰 {{ order.courier_price }} so'm</small>
+                                            {% if order.courier_delivery_minutes and order.courier_delivery_minutes > 0 %}
+                                                <small class="text-info">⏱️ {{ order.courier_delivery_minutes }} daq</small>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
                                     <form method="POST" action="{{ url_for('courier_mark_delivered', order_id=order.id) }}" style="display: inline;">
                                         <button type="submit" class="btn btn-sm btn-success">✅ Yetkazib berdim</button>
                                     </form>
@@ -184,6 +213,52 @@ function callCustomer(phone) {
 function openMap(address) {
     const mapUrl = `https://yandex.uz/maps/?text=${encodeURIComponent(address)}`;
     window.open(mapUrl, '_blank');
+}
+
+// Kuryer narx va vaqt belgilash
+function setCourierPrice(orderId) {
+    const priceInput = document.getElementById(`price-${orderId}`);
+    const timeInput = document.getElementById(`time-${orderId}`);
+    
+    const price = priceInput.value;
+    const time = timeInput.value;
+    
+    if (!price || price <= 0) {
+        alert('Narxni kiriting!');
+        return;
+    }
+    
+    if (!time || time <= 0) {
+        alert('Yetkazish vaqtini kiriting!');
+        return;
+    }
+    
+    // AJAX orqali narx va vaqtni yuborish
+    fetch('/courier/set-price-time', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            order_id: orderId,
+            price: parseFloat(price),
+            delivery_time: parseInt(time)
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Narx va vaqt belgilandi!');
+            // Sahifani yangilash
+            location.reload();
+        } else {
+            alert('Xatolik: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Xatolik yuz berdi!');
+    });
 }
 </script>
 
@@ -349,6 +424,48 @@ function openMap(address) {
     display: flex;
     flex-direction: column;
     gap: 5px;
+}
+
+.courier-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.pricing-form {
+    background: #f8f9fa;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
+}
+
+.price-inputs {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 5px;
+}
+
+.form-control-sm {
+    padding: 4px 6px;
+    font-size: 11px;
+    border: 1px solid #ced4da;
+    border-radius: 3px;
+    width: 80px;
+}
+
+.courier-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 5px;
+}
+
+.customer-note {
+    margin-top: 5px;
+    padding: 3px 6px;
+    background: #e7f3ff;
+    border-radius: 3px;
+    font-style: italic;
 }
 
 .eta-time {

@@ -309,6 +309,22 @@ def ensure_orders_columns():
             cur.execute("ALTER TABLE orders ADD COLUMN courier_delivery_time INTEGER DEFAULT 30;")
             conn.commit()
 
+        if 'delivery_map_url' not in cols:
+            cur.execute("ALTER TABLE orders ADD COLUMN delivery_map_url TEXT;")
+            conn.commit()
+
+        if 'customer_note' not in cols:
+            cur.execute("ALTER TABLE orders ADD COLUMN customer_note TEXT;")
+            conn.commit()
+
+        if 'courier_price' not in cols:
+            cur.execute("ALTER TABLE orders ADD COLUMN courier_price REAL DEFAULT 0;")
+            conn.commit()
+
+        if 'courier_delivery_minutes' not in cols:
+            cur.execute("ALTER TABLE orders ADD COLUMN courier_delivery_minutes INTEGER DEFAULT 0;")
+            conn.commit()
+
     except Exception as e:
         pass
     conn.close()
@@ -1082,7 +1098,8 @@ def user_page():
             delivery_latitude = request.form.get("delivery_latitude", "")
             delivery_longitude = request.form.get("delivery_longitude", "")
             delivery_distance = request.form.get("delivery_distance", 0)
-            courier_delivery_time = request.form.get("courier_delivery_time", 30)
+            delivery_map_url = request.form.get("delivery_map_url", "")
+            customer_note = request.form.get("customer_note", "")
             
             # Profil ma'lumotlaridan olish
             customer_phone = session.get('user_phone', '')
@@ -1101,9 +1118,9 @@ def user_page():
                 eta_time = now + datetime.timedelta(minutes=eta_minutes + courier_delivery_time)
 
             cur.execute("""
-                INSERT INTO orders (user_id, customer_name, ticket_no, order_type, status, delivery_address, delivery_distance, delivery_latitude, delivery_longitude, courier_delivery_time, customer_phone, card_number, created_at, eta_time)
-                VALUES (?, ?, ?, ?, 'waiting', ?, ?, ?, ?, ?, ?, ?, ?, ?);
-            """, (user_id, name, tno, order_type, delivery_address, delivery_distance, delivery_latitude, delivery_longitude, courier_delivery_time, customer_phone, card_number, now.isoformat(), eta_time.isoformat()))
+                INSERT INTO orders (user_id, customer_name, ticket_no, order_type, status, delivery_address, delivery_distance, delivery_latitude, delivery_longitude, delivery_map_url, customer_note, customer_phone, card_number, created_at, eta_time)
+                VALUES (?, ?, ?, ?, 'waiting', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+            """, (user_id, name, tno, order_type, delivery_address, delivery_distance, delivery_latitude, delivery_longitude, delivery_map_url, customer_note, customer_phone, card_number, now.isoformat(), eta_time.isoformat()))
 
             order_id = cur.lastrowid
 
@@ -1366,6 +1383,53 @@ def courier_mark_delivered(order_id):
 
     flash("Buyurtma yetkazib berildi!", "success")
     return redirect(url_for("courier_dashboard"))
+
+@app.route("/courier/set-price-time", methods=["POST"])
+def courier_set_price_time():
+    if "courier_id" not in session:
+        return jsonify({"success": False, "message": "Kuryer tizimga kirmagan"}), 401
+
+    data = request.get_json()
+    order_id = data.get("order_id")
+    price = data.get("price")
+    delivery_time = data.get("delivery_time")
+
+    if not all([order_id, price, delivery_time]):
+        return jsonify({"success": False, "message": "Barcha maydonlarni to'ldiring"})
+
+    try:
+        price = float(price)
+        delivery_time = int(delivery_time)
+        
+        if price <= 0 or delivery_time <= 0:
+            return jsonify({"success": False, "message": "Narx va vaqt musbat bo'lishi kerak"})
+
+        conn = get_db()
+        cur = conn.cursor()
+        
+        # Buyurtma mavjudligini va statusini tekshirish
+        cur.execute("SELECT * FROM orders WHERE id = ? AND status = 'ready'", (order_id,))
+        order = cur.fetchone()
+        
+        if not order:
+            conn.close()
+            return jsonify({"success": False, "message": "Buyurtma topilmadi yoki tayyor emas"})
+
+        # Narx va vaqtni yangilash
+        cur.execute("""
+            UPDATE orders 
+            SET courier_price = ?, courier_delivery_minutes = ?, delivery_price = ?
+            WHERE id = ?
+        """, (price, delivery_time, price, order_id))
+        
+        conn.commit()
+        conn.close()
+        
+        return jsonify({"success": True, "message": "Narx va vaqt belgilandi"})
+        
+    except Exception as e:
+        logging.error(f"Kuryer narx belgilashda xatolik: {str(e)}")
+        return jsonify({"success": False, "message": "Server xatoligi"}), 500
 
 @app.route("/courier/logout")
 def courier_logout():

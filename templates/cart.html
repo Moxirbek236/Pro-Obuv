@@ -76,13 +76,14 @@
                            required>
                     <div id="address_status" class="mt-1"></div>
                     <div id="map" style="height: 300px; margin-top: 10px;"></div>
-                    
+
                     <div class="selected-location">
                         <p><strong>Tanlangan joylashuv:</strong></p>
                         <p id="selected-address">Xaritada joyni belgilang</p>
                         <input type="hidden" id="delivery_address" name="delivery_address">
                         <input type="hidden" id="delivery_latitude" name="delivery_latitude">
                         <input type="hidden" id="delivery_longitude" name="delivery_longitude">
+                        <input type="hidden" id="delivery_map_url" name="delivery_map_url">
                     </div>
                 </div>
 
@@ -181,7 +182,7 @@ function initMap() {
                 maxWidth: [30, 64, 150]
             }
         });
-        
+
         map.controls.add(searchControl);
 
         // Foydalanuvchi joylashuvini olishga harakat qilish
@@ -190,7 +191,7 @@ function initMap() {
                 const userLocation = [position.coords.latitude, position.coords.longitude];
                 map.setCenter(userLocation);
                 map.setZoom(15);
-                
+
                 // Foydalanuvchi joylashuvini belgilash
                 setDeliveryLocation(userLocation);
             }, function(error) {
@@ -220,7 +221,7 @@ function searchAddressOnMap() {
         if (res.geoObjects.getLength() > 0) {
             const firstGeoObject = res.geoObjects.get(0);
             const coords = firstGeoObject.geometry.getCoordinates();
-            
+
             setDeliveryLocation(coords);
             map.setCenter(coords);
             map.setZoom(15);
@@ -259,28 +260,35 @@ function setDeliveryLocation(coords) {
     ymaps.geocode(coords).then(function(res) {
         const firstGeoObject = res.geoObjects.get(0);
         let address = '';
-        
+
         if (firstGeoObject) {
             address = firstGeoObject.getAddressLine();
         } else {
             address = `Lat: ${coords[0].toFixed(6)}, Lng: ${coords[1].toFixed(6)}`;
         }
-        
+
         document.getElementById('selected-address').textContent = address;
-        
+
         const deliveryAddressInput = document.getElementById('delivery_address');
         if (deliveryAddressInput) {
             deliveryAddressInput.value = address;
         }
-        
+
         const latInput = document.getElementById('delivery_latitude');
         if (latInput) {
             latInput.value = coords[0];
         }
-        
+
         const lngInput = document.getElementById('delivery_longitude');
         if (lngInput) {
             lngInput.value = coords[1];
+        }
+
+        // Xaritani linkini olish
+        const mapUrl = `https://yandex.com/maps/?ll=${coords[1]},${coords[0]}&z=15&pt=${coords[1]},${coords[0]},pm2blm`;
+        const deliveryMapUrlInput = document.getElementById('delivery_map_url');
+        if (deliveryMapUrlInput) {
+            deliveryMapUrlInput.value = mapUrl;
         }
 
         // Masofani hisoblash
@@ -317,7 +325,7 @@ function calculateDistance(destination) {
 function toggleDeliveryFields() {
     const deliveryRadio = document.querySelector('input[name="order_type"][value="delivery"]');
     const deliveryFields = document.getElementById('delivery-fields');
-    
+
     if (!deliveryRadio || !deliveryFields) {
         console.error("Delivery elements topilmadi!");
         return;
@@ -325,7 +333,7 @@ function toggleDeliveryFields() {
 
     if (deliveryRadio.checked) {
         deliveryFields.style.display = 'block';
-        
+
         // Required fieldlarni sozlash
         const requiredFields = ['delivery_address', 'delivery_latitude', 'delivery_longitude'];
         requiredFields.forEach(fieldId => {
@@ -348,7 +356,7 @@ function toggleDeliveryFields() {
         }, 100);
     } else {
         deliveryFields.style.display = 'none';
-        
+
         // Required fieldlarni olib tashlash
         const requiredFields = ['delivery_address', 'delivery_latitude', 'delivery_longitude'];
         requiredFields.forEach(fieldId => {
@@ -357,7 +365,7 @@ function toggleDeliveryFields() {
                 field.required = false;
             }
         });
-        
+
         updateTotal();
     }
 }
@@ -430,13 +438,13 @@ function updateTotal() {
 // Sahifa yuklanganda xaritani ishga tushirish va boshqa funksiyalarni chaqirish
 document.addEventListener('DOMContentLoaded', (event) => {
     console.log("Sahifa yuklandi, JavaScript ishga tushmoqda...");
-    
+
     // Radio buttonlar uchun change event qo'shish
     const radioButtons = document.querySelectorAll('input[name="order_type"]');
     radioButtons.forEach(radio => {
         radio.addEventListener('change', toggleDeliveryFields);
     });
-    
+
     // Agar delivery allaqachon tanlangan bo'lsa
     const deliveryRadio = document.querySelector('input[name="order_type"][value="delivery"]');
     if (deliveryRadio && deliveryRadio.checked) {
@@ -504,7 +512,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             }
         });
     }
-    
+
     console.log("JavaScript to'liq yuklandi va sozlandi");
 });
 
