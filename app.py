@@ -268,6 +268,7 @@ def init_db():
     # Boshlang'ich filiallarni qo'shish
     cur.execute("SELECT COUNT(*) FROM branches")
     if cur.fetchone()[0] == 0:
+        now = get_current_time().isoformat()
         sample_branches = [
             ('Markaziy filial', 'Amir Temur ko\'chasi 1, Toshkent', 41.2995, 69.2401, '+998712345678', '09:00-23:00', 1, 20.0, now),
             ('Chilonzor filiali', 'Chilonzor tumani, Bunyodkor ko\'chasi 10', 41.2753, 69.2056, '+998712345679', '09:00-22:00', 1, 15.0, now),
