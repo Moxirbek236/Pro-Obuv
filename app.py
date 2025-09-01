@@ -1966,12 +1966,33 @@ def staff_login():
         row = cur.fetchone()
 
         if row and check_password_hash(row["password_hash"], password):
-            # Faollik vaqtini yangilash
-            now = get_current_time().isoformat()
+            # Faollik vaqtini yangilash va ishchi soatlarini hisoblash
+            now = get_current_time()
+            now_iso = now.isoformat()
+            
             try:
-                cur.execute("UPDATE staff SET last_activity = ? WHERE id = ?", (now, staff_id_int))
+                # Agar avvalgi faollik vaqti mavjud bo'lsa, ishchi soatlarni yangilash
+                if row["last_activity"]:
+                    try:
+                        last_activity = datetime.datetime.fromisoformat(row["last_activity"])
+                        time_diff = now - last_activity
+                        
+                        # Agar 8 soatdan kam bo'lsa, ishchi vaqtga qo'shish
+                        if time_diff.total_seconds() < 28800:  # 8 soat
+                            additional_hours = time_diff.total_seconds() / 3600
+                            cur.execute("UPDATE staff SET total_hours = COALESCE(total_hours, 0) + ?, last_activity = ? WHERE id = ?", 
+                                       (additional_hours, now_iso, staff_id_int))
+                        else:
+                            cur.execute("UPDATE staff SET last_activity = ? WHERE id = ?", (now_iso, staff_id_int))
+                    except Exception as time_error:
+                        print(f"Vaqt hisoblashda xatolik: {time_error}")
+                        cur.execute("UPDATE staff SET last_activity = ? WHERE id = ?", (now_iso, staff_id_int))
+                else:
+                    cur.execute("UPDATE staff SET last_activity = ? WHERE id = ?", (now_iso, staff_id_int))
+                
                 conn.commit()
             except Exception as e:
+                print(f"Staff faollik yangilashda xatolik: {e}")
                 pass
 
             session["staff_id"] = row["id"]

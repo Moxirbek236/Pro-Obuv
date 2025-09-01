@@ -137,25 +137,53 @@
                         <strong>Jami summa: <span id="total-amount">{{ "{:,.0f}".format(total) }} so'm</span></strong>
                     </div>
                 </div>
-                <button type="submit" class="btn checkout-btn" onclick="return validateOrder()">🛒 Buyurtma berish</button>
+                <button type="submit" class="btn checkout-btn" onclick="return handleFormSubmit(this.form) && validateOrder()">🛒 Buyurtma berish</button>
             </div>
         </form>
 
         <script>
 function handleFormSubmit(form) {
+    console.log("Form submit boshlandi");
+    
+    // Order type ni tekshirish
+    const orderTypeElement = document.querySelector('input[name="order_type"]:checked');
+    if (!orderTypeElement) {
+        alert('Iltimos, buyurtma turini tanlang!');
+        return false;
+    }
+    
+    const orderType = orderTypeElement.value;
+    console.log("Order type:", orderType);
+    
     // Agar yetkazib berish tanlangan bo'lsa, manzilni tekshiramiz
-    if (document.querySelector('input[name="order_type"]:checked').value === 'delivery') {
+    if (orderType === 'delivery') {
         const deliveryAddress = document.getElementById('delivery_address').value;
         const deliveryLatitude = document.getElementById('delivery_latitude').value;
         const deliveryLongitude = document.getElementById('delivery_longitude').value;
+        
+        console.log("Delivery ma'lumotlari:", {
+            address: deliveryAddress,
+            lat: deliveryLatitude,
+            lng: deliveryLongitude
+        });
 
         if (!deliveryAddress || !deliveryLatitude || !deliveryLongitude) {
-            alert('Iltimos, xaritadan manzilni tanlang!');
-            return false; // Formani yuborishni to'xtatish
+            alert('Iltimos, xaritadan manzilni tanlang va yetkazib berish ma\'lumotlarini to\'ldiring!');
+            return false;
         }
     }
 
-    // Agar hamma narsa joyida bo'lsa, formani yuborishga ruxsat berish
+    // Form elementlarini tekshirish
+    const requiredFields = ['order_type'];
+    for (let field of requiredFields) {
+        const element = form.querySelector(`[name="${field}"]`);
+        if (!element || (element.type === 'radio' && !form.querySelector(`[name="${field}"]:checked`))) {
+            alert(`${field} maydoni to'ldirilmagan!`);
+            return false;
+        }
+    }
+
+    console.log("Barcha tekshiruvlar muvaffaqiyatli o'tdi");
     return true;
 }
 
@@ -441,6 +469,8 @@ function updateTotalAmount() {
 }
 
 function validateOrder() {
+    console.log("validateOrder funksiyasi ishga tushdi");
+    
     const orderType = document.querySelector('input[name="order_type"]:checked');
 
     if (!orderType) {
@@ -448,9 +478,18 @@ function validateOrder() {
         return false;
     }
 
+    console.log("Tanlangan buyurtma turi:", orderType.value);
+
     if (orderType.value === 'delivery') {
         const deliveryAddress = document.getElementById('delivery_address').value;
         const deliveryDistance = document.getElementById('delivery_distance').value;
+        const branchId = document.getElementById('branch_id').value;
+
+        console.log("Delivery validation:", {
+            address: deliveryAddress,
+            distance: deliveryDistance,
+            branchId: branchId
+        });
 
         if (!deliveryAddress) {
             alert('Yetkazib berish manzilini xaritadan tanlang!');
@@ -461,9 +500,16 @@ function validateOrder() {
             alert('Iltimos, xaritadan manzilni tanlang va masofa hisoblanishini kuting!');
             return false;
         }
+        
+        if (!branchId) {
+            alert('Filial tanlanmadi. Iltimos, manzilni qaytadan tanlang!');
+            return false;
+        }
     }
 
-    return confirm('Buyurtma berishni tasdiqlaysizmi?');
+    const confirmed = confirm('Buyurtma berishni tasdiqlaysizmi?');
+    console.log("Tasdiqlash natijasi:", confirmed);
+    return confirmed;
 }
 
 // Sahifa yuklanganda
