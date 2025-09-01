@@ -96,6 +96,29 @@
                     </div>
                 </div>
 
+                <!-- Shaxsiy ma'lumotlar -->
+                <div class="customer-info">
+                    {% if session.get('user_phone') %}
+                        <div class="info-row">
+                            <span class="info-label">📱 Telefon:</span>
+                            <span class="info-value">{{ session.get('user_phone') }}</span>
+                        </div>
+                    {% else %}
+                        <div class="form-group">
+                            <label for="customer_phone">📱 Telefon raqami:</label>
+                            <input type="tel" id="customer_phone" name="customer_phone" placeholder="+998901234567" required>
+                        </div>
+                    {% endif %}
+
+                    <!-- Uy manzili profilda bo'lmasa so'ralsin -->
+                    {% if not session.get('user_address') %}
+                        <div class="form-group">
+                            <label for="home_address">🏠 Uy manzili:</label>
+                            <input type="text" id="home_address" name="home_address" placeholder="Uy manzilingizni kiriting" required>
+                            <small class="text-muted">Bu manzil profilingizga saqlanadi</small>
+                        </div>
+                    {% endif %}
+                </div>
 
                 <!-- Karta ma'lumotlari -->
                 <div class="card-info">
