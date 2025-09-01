@@ -22,13 +22,12 @@
             <div class="menu-item" data-category="food" onclick="openItemModal({{ food.id }})">
                 <div class="item-image">
                     <img src="{{ food.image_url or '/static/images/default-food.jpg' }}" alt="{{ food.name }}" onerror="this.src='/static/images/default-food.jpg'">
-                    <div class="quick-actions">
-                        <form method="POST" action="{{ url_for('add_to_cart') }}" onclick="event.stopPropagation()">
-                            <input type="hidden" name="menu_item_id" value="{{ food.id }}">
-                            <input type="number" name="quantity" value="1" min="1" max="99" class="quantity-input">
-                            <button type="submit" class="btn-quick-add">🛒</button>
-                        </form>
-                    </div>
+                    <!-- Sevimli icon chap tepa burchakda -->
+                    {% if session.user_id %}
+                    <form method="post" action="{{ url_for('add_to_favorites', menu_item_id=food.id) }}" class="favorite-form" onclick="event.stopPropagation()">
+                        <button type="submit" class="btn-favorite-top">❤️</button>
+                    </form>
+                    {% endif %}
                 </div>
                 <div class="item-content">
                     <h3 class="item-name">{{ food.name }}</h3>
@@ -45,23 +44,30 @@
                     </div>
 
                     <div class="item-footer">
-                        {% if food.discount_percentage and food.discount_percentage > 0 %}
-                        <div class="price-with-discount">
-                            <span class="original-price">{{ "{:,.0f}".format(food.price) }} so'm</span>
-                            <span class="discount-price">{{ "{:,.0f}".format(food.price * (100 - food.discount_percentage) / 100) }} so'm</span>
-                            <span class="discount-badge">-{{ food.discount_percentage }}%</span>
-                        </div>
-                        {% else %}
-                        <span class="item-price">{{ "{:,.0f}".format(food.price) }} so'm</span>
-                        {% endif %}
-                        
-                        <div class="item-actions">
-                            <button class="btn-view-details" onclick="event.stopPropagation(); openItemModal({{ food.id }})">📋 Batafsil</button>
-                            {% if session.user_id %}
-                            <form method="post" action="{{ url_for('add_to_favorites', menu_item_id=food.id) }}" style="display: inline;" onclick="event.stopPropagation()">
-                              <button type="submit" class="btn-favorite">❤️</button>
-                            </form>
+                        <!-- Narx -->
+                        <div class="price-section">
+                            {% if food.discount_percentage and food.discount_percentage > 0 %}
+                            <div class="price-with-discount">
+                                <span class="original-price">{{ "{:,.0f}".format(food.price) }} so'm</span>
+                                <span class="discount-price">{{ "{:,.0f}".format(food.price * (100 - food.discount_percentage) / 100) }} so'm</span>
+                                <span class="discount-badge">-{{ food.discount_percentage }}%</span>
+                            </div>
+                            {% else %}
+                            <span class="item-price">{{ "{:,.0f}".format(food.price) }} so'm</span>
                             {% endif %}
+                        </div>
+                        
+                        <!-- Miqdor va savatcha -->
+                        <div class="add-to-cart-section">
+                            <form method="POST" action="{{ url_for('add_to_cart') }}" onclick="event.stopPropagation()">
+                                <input type="hidden" name="menu_item_id" value="{{ food.id }}">
+                                <div class="quantity-cart-controls">
+                                    <button type="button" class="quantity-btn minus" onclick="decreaseQuantity(this)">−</button>
+                                    <input type="number" name="quantity" value="1" min="1" max="99" class="quantity-input">
+                                    <button type="button" class="quantity-btn plus" onclick="increaseQuantity(this)">+</button>
+                                    <button type="submit" class="btn-cart">🛒</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -78,13 +84,12 @@
             <div class="menu-item" data-category="drink" onclick="openItemModal({{ drink.id }})">
                 <div class="item-image">
                     <img src="{{ drink.image_url or '/static/images/default-drink.jpg' }}" alt="{{ drink.name }}" onerror="this.src='/static/images/default-drink.jpg'">
-                    <div class="quick-actions">
-                        <form method="POST" action="{{ url_for('add_to_cart') }}" onclick="event.stopPropagation()">
-                            <input type="hidden" name="menu_item_id" value="{{ drink.id }}">
-                            <input type="number" name="quantity" value="1" min="1" max="99" class="quantity-input">
-                            <button type="submit" class="btn-quick-add">🛒</button>
-                        </form>
-                    </div>
+                    <!-- Sevimli icon chap tepa burchakda -->
+                    {% if session.user_id %}
+                    <form method="post" action="{{ url_for('add_to_favorites', menu_item_id=drink.id) }}" class="favorite-form" onclick="event.stopPropagation()">
+                        <button type="submit" class="btn-favorite-top">❤️</button>
+                    </form>
+                    {% endif %}
                 </div>
                 <div class="item-content">
                     <h3 class="item-name">{{ drink.name }}</h3>
@@ -101,23 +106,30 @@
                     </div>
 
                     <div class="item-footer">
-                        {% if drink.discount_percentage and drink.discount_percentage > 0 %}
-                        <div class="price-with-discount">
-                            <span class="original-price">{{ "{:,.0f}".format(drink.price) }} so'm</span>
-                            <span class="discount-price">{{ "{:,.0f}".format(drink.price * (100 - drink.discount_percentage) / 100) }} so'm</span>
-                            <span class="discount-badge">-{{ drink.discount_percentage }}%</span>
-                        </div>
-                        {% else %}
-                        <span class="item-price">{{ "{:,.0f}".format(drink.price) }} so'm</span>
-                        {% endif %}
-                        
-                        <div class="item-actions">
-                            <button class="btn-view-details" onclick="event.stopPropagation(); openItemModal({{ drink.id }})">📋 Batafsil</button>
-                            {% if session.user_id %}
-                            <form method="post" action="{{ url_for('add_to_favorites', menu_item_id=drink.id) }}" style="display: inline;" onclick="event.stopPropagation()">
-                              <button type="submit" class="btn-favorite">❤️</button>
-                            </form>
+                        <!-- Narx -->
+                        <div class="price-section">
+                            {% if drink.discount_percentage and drink.discount_percentage > 0 %}
+                            <div class="price-with-discount">
+                                <span class="original-price">{{ "{:,.0f}".format(drink.price) }} so'm</span>
+                                <span class="discount-price">{{ "{:,.0f}".format(drink.price * (100 - drink.discount_percentage) / 100) }} so'm</span>
+                                <span class="discount-badge">-{{ drink.discount_percentage }}%</span>
+                            </div>
+                            {% else %}
+                            <span class="item-price">{{ "{:,.0f}".format(drink.price) }} so'm</span>
                             {% endif %}
+                        </div>
+                        
+                        <!-- Miqdor va savatcha -->
+                        <div class="add-to-cart-section">
+                            <form method="POST" action="{{ url_for('add_to_cart') }}" onclick="event.stopPropagation()">
+                                <input type="hidden" name="menu_item_id" value="{{ drink.id }}">
+                                <div class="quantity-cart-controls">
+                                    <button type="button" class="quantity-btn minus" onclick="decreaseQuantity(this)">−</button>
+                                    <input type="number" name="quantity" value="1" min="1" max="99" class="quantity-input">
+                                    <button type="button" class="quantity-btn plus" onclick="increaseQuantity(this)">+</button>
+                                    <button type="submit" class="btn-cart">🛒</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -260,42 +272,29 @@
     transform: scale(1.05);
 }
 
-.quick-actions {
+/* Sevimli button chap tepa burchakda */
+.favorite-form {
     position: absolute;
     top: 10px;
-    right: 10px;
-    display: flex;
-    gap: 5px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    left: 10px;
+    z-index: 10;
 }
 
-.menu-item:hover .quick-actions {
-    opacity: 1;
-}
-
-.quantity-input {
-    width: 50px;
-    padding: 2px 5px;
-    border: 1px solid #ddd;
-    border-radius: 3px;
-    text-align: center;
-    font-size: 12px;
-}
-
-.btn-quick-add {
-    background: #4299e1;
-    color: white;
+.btn-favorite-top {
+    background: rgba(255, 255, 255, 0.9);
+    color: #e91e63;
     border: none;
-    padding: 5px 8px;
+    padding: 8px;
     border-radius: 50%;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 16px;
     transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.btn-quick-add:hover {
-    background: #3182ce;
+.btn-favorite-top:hover {
+    background: #e91e63;
+    color: white;
     transform: scale(1.1);
 }
 
@@ -346,15 +345,19 @@
 
 .item-footer {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.price-section {
+    display: flex;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 10px;
+    justify-content: center;
 }
 
 .item-price {
     color: #38a169;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     font-weight: 700;
 }
 
@@ -363,6 +366,7 @@
     align-items: center;
     gap: 8px;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .original-price {
@@ -374,7 +378,7 @@
 .discount-price {
     color: #28a745;
     font-weight: bold;
-    font-size: 1.2em;
+    font-size: 1.3em;
 }
 
 .discount-badge {
@@ -386,42 +390,68 @@
     font-weight: bold;
 }
 
-.item-actions {
+/* Miqdor va savatcha controls */
+.add-to-cart-section {
+    display: flex;
+    justify-content: center;
+}
+
+.quantity-cart-controls {
     display: flex;
     align-items: center;
     gap: 5px;
+    background: #f8f9fa;
+    border-radius: 25px;
+    padding: 5px;
+    border: 2px solid #e2e8f0;
 }
 
-.btn-view-details {
-    background: #6366f1;
+.quantity-btn {
+    background: #4299e1;
     color: white;
     border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.8rem;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-.btn-view-details:hover {
-    background: #4f46e5;
-}
-
-.btn-favorite {
-    background: #e91e63;
-    color: white;
-    border: none;
-    padding: 5px 8px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     cursor: pointer;
-    font-size: 0.8rem;
+    font-size: 16px;
+    font-weight: bold;
     transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.btn-favorite:hover {
-    background: #c2185b;
+.quantity-btn:hover {
+    background: #3182ce;
     transform: scale(1.1);
+}
+
+.quantity-input {
+    border: none;
+    background: transparent;
+    text-align: center;
+    font-weight: bold;
+    width: 40px;
+    font-size: 16px;
+    color: #2d3748;
+}
+
+.btn-cart {
+    background: #38a169;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    margin-left: 5px;
+}
+
+.btn-cart:hover {
+    background: #2f855a;
+    transform: scale(1.05);
 }
 
 /* Modal stillari */
@@ -521,6 +551,7 @@
     font-weight: bold;
     color: #38a169;
     margin-bottom: 20px;
+    text-align: center;
 }
 
 .modal-actions {
@@ -620,23 +651,13 @@
         grid-template-columns: 1fr;
     }
 
-    .item-footer {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .item-actions {
-        justify-content: center;
-        margin-top: 10px;
-    }
-
     .modal-content {
         width: 95vw;
         margin: 20px;
     }
     
-    .quantity-selector {
-        flex-direction: row;
+    .quantity-cart-controls {
+        justify-content: center;
     }
 }
 </style>
@@ -749,9 +770,27 @@ function decreaseModalQuantity() {
     }
 }
 
+function increaseQuantity(button) {
+    const input = button.parentElement.querySelector('input[name="quantity"]');
+    if (input) {
+        let currentValue = parseInt(input.value) || 1;
+        if (currentValue < 99) {
+            input.value = currentValue + 1;
+        }
+    }
+}
+
+function decreaseQuantity(button) {
+    const input = button.parentElement.querySelector('input[name="quantity"]');
+    if (input) {
+        let currentValue = parseInt(input.value) || 1;
+        if (currentValue > 1) {
+            input.value = currentValue - 1;
+        }
+    }
+}
+
 function loadComments(itemId) {
-    // Bu yerda API orqali sharhlarni yuklash mumkin
-    // Hozircha statik ma'lumot ko'rsatamiz
     const commentsContainer = document.getElementById('modalComments');
     commentsContainer.innerHTML = `
         <div class="comment-item">
