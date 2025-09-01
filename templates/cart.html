@@ -53,16 +53,30 @@
             <div id="delivery-fields" class="delivery-section" style="display: none;">
                 <h4>📍 Yetkazib berish ma'lumotlari:</h4>
 
+                <!-- Ko'rsatma -->
+                <div class="delivery-instructions">
+                    <div class="instruction-card">
+                        <h5>📍 Qanday foydalanish kerak:</h5>
+                        <ul class="instruction-list">
+                            <li>🗺️ Xaritada o'zingizning joylashuvingizni tanlang</li>
+                            <li>🔍 Yoki quyidagi qidiruv orqali manzilni kiriting</li>
+                            <li>✅ Tanlangan joylashuv asosida eng yaqin filial aniqlanadi</li>
+                            <li>🚚 Yetkazib berish narxi va vaqti avtomatik hisoblanadi</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Manzil qidirish -->
+                <div class="address-search">
+                    <input type="text" id="address-search" placeholder="Manzilni kiriting (masalan: Toshkent, Chilonzor)" class="form-control">
+                    <button type="button" onclick="searchAddressOnMap()" class="btn btn-search">🔍 Qidirish</button>
+                </div>
+
                 <!-- Xarita -->
                 <div class="map-container">
                     <h5>🗺️ Joylashuvingizni xaritadan tanlang:</h5>
-                    <div id="map" style="height: 400px; border-radius: 12px; border: 2px solid #e2e8f0;"></div>
-
-                    <!-- Manzil qidirish -->
-                    <div class="address-search">
-                        <input type="text" id="address-search" placeholder="Manzilni qidiring..." class="form-control">
-                        <button type="button" onclick="searchAddressOnMap()" class="btn btn-search">🔍 Qidirish</button>
-                    </div>
+                    <div id="map" style="height: 350px; border-radius: 12px; border: 2px solid #e2e8f0; margin-top: 10px;"></div>
+                    <p class="map-hint">💡 <em>Xaritaga bosib o'zingizning aniq joylashuvingizni belgilang</em></p>
                 </div>
 
                 <!-- Yetkazib berish ma'lumotlari -->
@@ -493,10 +507,56 @@ document.addEventListener('DOMContentLoaded', function() {
 
 .delivery-section {
   background: #f8f9fa;
-  padding: 20px;
+  padding: 25px;
   border-radius: 15px;
   margin: 20px 0;
   border-left: 4px solid #007bff;
+}
+
+.delivery-instructions {
+  margin-bottom: 20px;
+}
+
+.instruction-card {
+  background: linear-gradient(145deg, #ffffff 0%, #f0f7ff 100%);
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #e3f2fd;
+  box-shadow: 0 2px 8px rgba(0,123,255,0.1);
+}
+
+.instruction-card h5 {
+  color: #1565c0;
+  margin: 0 0 15px 0;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.instruction-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.instruction-list li {
+  padding: 8px 0;
+  color: #424242;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.instruction-list li:not(:last-child) {
+  border-bottom: 1px solid rgba(0,123,255,0.1);
+}
+
+.map-hint {
+  text-align: center;
+  color: #6c757d;
+  font-size: 13px;
+  margin: 8px 0 0 0;
+  font-style: italic;
 }
 
 .map-container {
@@ -511,16 +571,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
 .address-search {
   display: flex;
-  gap: 10px;
-  margin-top: 15px;
+  gap: 12px;
+  margin: 0 0 20px 0;
+  padding: 15px;
+  background: white;
+  border-radius: 10px;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .address-search input {
   flex: 1;
-  padding: 12px;
+  padding: 12px 15px;
   border: 2px solid #e2e8f0;
   border-radius: 8px;
-  font-size: 16px;
+  font-size: 15px;
+  transition: border-color 0.3s ease;
+}
+
+.address-search input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
 }
 
 .btn-search {
