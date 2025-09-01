@@ -98,7 +98,7 @@ def init_db():
             created_at TEXT NOT NULL,
             eta_time TEXT NOT NULL,
             FOREIGN KEY (user_id) REFERENCES users (id),
-            FOREIGNKEY (courier_id) REFERENCES couriers (id)
+            FOREIGN KEY (courier_id) REFERENCES couriers (id)
         );
     """)
 
@@ -920,10 +920,18 @@ def courier_register():
         cur = conn.cursor()
         password_hash = generate_password_hash(password)
         now = get_current_time()
-        cur.execute("""
-            INSERT INTO couriers (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?);
-        """, (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, now.isoformat()))
+        try:
+            cur.execute("""
+                INSERT INTO couriers (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+            """, (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, now.isoformat()))
+        except sqlite3.OperationalError:
+            # Agar birth_date ustuni mavjud bo'lmasa, uni qo'shish
+            cur.execute("ALTER TABLE couriers ADD COLUMN birth_date TEXT;")
+            cur.execute("""
+                INSERT INTO couriers (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+            """, (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, now.isoformat()))
 
         new_id = cur.lastrowid
         # ID kamida 5 ta raqamdan iborat bo'lishi uchun
