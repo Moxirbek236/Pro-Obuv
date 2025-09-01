@@ -544,7 +544,7 @@ def validate_delivery_address(address):
         # Yandex Geocoding API orqali manzilni tekshirish
         geocoding_url = "https://geocode-maps.yandex.ru/1.x/"
         params = {
-            'apikey': 'YOUR_YANDEX_GEOCODING_API_KEY',  # Bu yerga Yandex API kalitini qo'ying
+            'apikey': '036467b2-54b9-44c8-bc32-9e85e02183c4',
             'geocode': f"{address}, Toshkent, O'zbekiston",
             'format': 'json',
             'results': 1
@@ -585,7 +585,7 @@ def calculate_delivery_distance(address):
         # Yandex Geocoding API orqali manzilni koordinatalarga o'tkazish
         geocoding_url = "https://geocode-maps.yandex.ru/1.x/"
         params = {
-            'apikey': 'YOUR_YANDEX_GEOCODING_API_KEY',
+            'apikey': '036467b2-54b9-44c8-bc32-9e85e02183c4',
             'geocode': f"{address}, Toshkent, O'zbekiston",
             'format': 'json',
             'results': 1
