@@ -334,6 +334,14 @@ body.dark-theme .card {
   transition: left 0.5s;
 }
 
+.weather-widget{
+  height: 50px;
+}
+
+.row{
+  margin-top: 500px;
+}
+
 .btn:hover {
   background: linear-gradient(135deg, var(--primary-dark) 0%, #6b46c1 100%);
   transform: translateY(-1px);
