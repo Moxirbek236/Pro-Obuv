@@ -27,6 +27,11 @@
             </button>
           </div>
         </form>
+        <form method="post" action="{{ url_for('remove_from_favorites', menu_item_id=item.id) }}" style="margin-top: 10px;">
+          <button type="submit" class="btn small" style="background: #dc3545;" onclick="return confirm('Sevimlilardan olib tashlaysizmi?')">
+            <span>🗑️ Olib tashlash</span>
+          </button>
+        </form>
       </div>
       {% endfor %}
     </div>
