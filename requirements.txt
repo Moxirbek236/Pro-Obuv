@@ -4,3 +4,5 @@ werkzeug
 bcrypt
 pytz
 qrcode[pil]
+requests
+requests

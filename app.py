@@ -6,6 +6,8 @@ import pytz
 import qrcode
 from io import BytesIO
 import base64
+import requests
+import json
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///restaurant.db'
@@ -14,6 +16,20 @@ app.secret_key = os.environ.get("SECRET_KEY", "dev_secret_change_me")
 
 # Database fayl yo'lini to'g'rilash
 DB_PATH = os.path.join(os.path.dirname(__file__), "database.sqlite3")
+
+import logging
+
+# Log faylini sozlash
+logging.basicConfig(
+    level=logging.ERROR,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('error.log'),
+        logging.StreamHandler()
+    ]
+)
+
+
 
 AVG_PREP_MINUTES = int(os.environ.get("AVG_PREP_MINUTES", "7"))
 db = SQLAlchemy(app)
@@ -470,6 +486,93 @@ def get_user_queue_position(conn, ticket_no):
 
 def fmt_time(dt):
     return dt.strftime("%H:%M")
+
+def search_location_with_serper(query, gl="uz", hl="uz"):
+    """Serper API orqali joylashuvlarni qidirish"""
+    try:
+        url = "https://google.serper.dev/search"
+        headers = {
+            'X-API-KEY': '1b077296f67499a12ee28ce232bb48221d29be14',
+            'Content-Type': 'application/json'
+        }
+        data = {
+            "q": query,
+            "gl": gl,
+            "hl": hl
+        }
+        
+        response = requests.post(url, headers=headers, json=data)
+        
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return None
+    except Exception as e:
+        print(f"Serper API xatoligi: {e}")
+        return None
+
+def get_places_with_serper(query, gl="uz", hl="uz"):
+    """Serper API orqali Google Places ma'lumotlarini olish"""
+    try:
+        url = "https://google.serper.dev/places"
+        headers = {
+            'X-API-KEY': '1b077296f67499a12ee28ce232bb48221d29be14',
+            'Content-Type': 'application/json'
+        }
+        data = {
+            "q": query,
+            "gl": gl,
+            "hl": hl
+        }
+        
+        response = requests.post(url, headers=headers, json=data)
+        
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return None
+    except Exception as e:
+        print(f"Serper Places API xatoligi: {e}")
+        return None
+
+def validate_delivery_address(address):
+    """Yetkazib berish manzilini tekshirish"""
+    if not address:
+        return False, "Manzil kiritilmagan"
+    
+    # Serper API orqali manzilni tekshirish
+    search_result = search_location_with_serper(f"{address} Toshkent Uzbekistan")
+    
+    if search_result and search_result.get('organic'):
+        return True, "Manzil topildi"
+    else:
+        return False, "Manzil topilmadi yoki noto'g'ri"
+
+def calculate_delivery_distance(address):
+    """Yetkazib berish masofasini hisoblash"""
+    try:
+        # Restoran manzili (misol)
+        restaurant_location = "Amir Temur shoh ko'chasi, Toshkent"
+        
+        # Manzillarni qidirish
+        places_result = get_places_with_serper(f"{address} Toshkent")
+        
+        if places_result and places_result.get('places'):
+            # Birinchi topilgan joyning koordinatalarini olish
+            place = places_result['places'][0]
+            if 'position' in place:
+                lat = place['position'].get('lat', 0)
+                lng = place['position'].get('lng', 0)
+                
+                # Oddiy masofa hisoblash (km)
+                # Bu yerda real GPS koordinatalar orqali masofa hisoblash qilish mumkin
+                # Hozircha statik masofa qaytaramiz
+                return min(50, max(1, abs(lat) + abs(lng)) * 0.1)
+        
+        # Agar API orqali aniqlab bo'lmasa, default masofa
+        return 5.0
+    except:
+        return 5.0
 
 def generate_qr_code(receipt_data):
     """Chek uchun QR kod yaratish"""
@@ -2150,6 +2253,56 @@ def contact():
 @app.route("/about")
 def about():
     return render_template("about.html")
+
+@app.route("/api/validate-address", methods=["POST"])
+def api_validate_address():
+    """Manzilni tekshirish API"""
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"valid": False, "message": "Ma'lumot yuborilmagan"})
+            
+        address = data.get("address", "").strip()
+        
+        if not address:
+            return jsonify({"valid": False, "message": "Manzil kiritilmagan"})
+        
+        is_valid, message = validate_delivery_address(address)
+        distance = calculate_delivery_distance(address) if is_valid else 0
+        
+        return jsonify({
+            "valid": is_valid,
+            "message": message,
+            "distance": round(distance, 1),
+            "delivery_price": round(distance * 2000, 0)  # Har km uchun 2000 so'm
+        })
+    except Exception as e:
+        logging.error(f"Manzil tekshirishda xatolik: {str(e)}")
+        return jsonify({"valid": False, "message": "Server xatoligi"}), 500
+
+@app.route("/api/search-places", methods=["POST"])
+def api_search_places():
+    """Joylarni qidirish API"""
+    data = request.get_json()
+    query = data.get("query", "").strip()
+    
+    if not query:
+        return jsonify({"places": []})
+    
+    places_result = get_places_with_serper(f"{query} Toshkent")
+    
+    if places_result and places_result.get('places'):
+        places = []
+        for place in places_result['places'][:5]:  # Faqat birinchi 5 ta natija
+            places.append({
+                "title": place.get("title", ""),
+                "address": place.get("address", ""),
+                "position": place.get("position", {}),
+                "rating": place.get("rating", 0)
+            })
+        return jsonify({"places": places})
+    
+    return jsonify({"places": []})
 
 @app.route("/receipt/<int:ticket_no>")
 def view_receipt(ticket_no):
