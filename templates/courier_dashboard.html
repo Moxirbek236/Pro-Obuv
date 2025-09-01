@@ -1,14 +1,19 @@
-
 {% extends "base.html" %}
+
+{% block title %}Kuryer Dashboard{% endblock %}
+
+{% block head %}
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBOti4mM-6x9WDnZIjIeyEU21OpxXqWBgw&libraries=geometry"></script>
+{% endblock %}
 
 {% block content %}
 <div class="dashboard-container">
     <h2>🚚 Kuryer Dashboard</h2>
     <p>Salom, {{ session.get('courier_name') }}!</p>
-    
+
     <div class="section-card">
         <h3>📦 Yetkazib berish uchun buyurtmalar</h3>
-        
+
         {% if orders %}
         <div class="table-responsive">
             <table class="table table-hover">
@@ -45,7 +50,7 @@
                             {% if order.delivery_address %}
                                 <div class="address-info">
                                     <span class="address-text">{{ order.delivery_address }}</span>
-                                    <a href="https://maps.google.com/?q={{ order.delivery_address | urlencode }}" 
+                                    <a href="https://maps.google.com/?q={{ order.delivery_address | urlencode }}"
                                        target="_blank" class="map-link">
                                         🗺️ Xaritada ko'rish
                                     </a>
@@ -84,11 +89,12 @@
                         </td>
                         <td>{{ order.created_at[:16].replace('T', ' ') }}</td>
                         <td>
-                            {% if order.eta_time %}
-                                <span class="eta-time">{{ order.eta_time[11:16] }}</span>
-                            {% else %}
-                                N/A
+                            <td class="eta-time">
+                            <div>Tayyor: {{ order.eta_time[:16].replace('T', ' ') }}</div>
+                            {% if order.courier_delivery_time %}
+                                <div class="delivery-time">Yetkazish: {{ order.courier_delivery_time }} daq</div>
                             {% endif %}
+                        </td>
                         </td>
                         <td>
                             {% if order.status == 'ready' %}
@@ -351,6 +357,12 @@ function openMap(address) {
     font-size: 13px;
 }
 
+.delivery-time {
+    font-size: 11px;
+    color: #6c757d;
+    margin-top: 3px;
+}
+
 .courier-stats {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -407,25 +419,25 @@ function openMap(address) {
     .dashboard-container {
         padding: 10px;
     }
-    
+
     .table th,
     .table td {
         padding: 8px 4px;
         font-size: 11px;
     }
-    
+
     .address-info {
         max-width: 120px;
     }
-    
+
     .order-items {
         max-width: 100px;
     }
-    
+
     .delivery-actions {
         flex-direction: column;
     }
-    
+
     .courier-stats {
         grid-template-columns: 1fr;
     }
