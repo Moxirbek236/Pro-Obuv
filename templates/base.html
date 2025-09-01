@@ -66,6 +66,12 @@
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('about') }}">❓ Savollar</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link cart-btn" href="{{ url_for('cart') }}">
+            🛒 Savatcha
+            <span class="cart-badge" id="cart-count" style="display: none;">0</span>
+          </a>
+        </li>
       </ul>
 
       <ul class="navbar-nav">
@@ -264,11 +270,13 @@ function updateCartCount() {
         .then(response => response.json())
         .then(data => {
             const cartCountElement = document.getElementById('cart-count');
-            if (cartCountElement && data.count > 0) {
-                cartCountElement.textContent = data.count;
-                cartCountElement.style.display = 'inline';
-            } else if (cartCountElement) {
-                cartCountElement.style.display = 'none';
+            if (cartCountElement) {
+                if (data.count > 0) {
+                    cartCountElement.textContent = data.count;
+                    cartCountElement.style.display = 'inline-block';
+                } else {
+                    cartCountElement.style.display = 'none';
+                }
             }
         })
         .catch(error => console.log('Savatcha sonini olishda xato:', error));

@@ -209,6 +209,10 @@ body {
     }
 
     /* Savatcha */
+    body.dark-theme .cart-btn {
+        background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%) !important;
+        color: #fff !important;
+    }
     body.dark-theme .cart-item {
         background: rgba(45, 55, 72, 0.95) !important;
         color: #e2e8f0 !important;
@@ -497,14 +501,15 @@ label {
   display: inline-flex;
   align-items: center;
   background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-  color: white;
-  padding: 12px 24px;
-  border-radius: 25px;
+  color: white !important;
+  padding: 8px 16px;
+  border-radius: 20px;
   text-decoration: none;
   font-weight: 600;
   box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4);
   transition: all 0.3s ease;
   position: relative;
+  margin-left: 10px;
 }
 
 .cart-btn:hover {
@@ -1813,6 +1818,50 @@ tr.given {
 
 .p-3 {
   padding: 1rem;
+}
+
+/* Theme selector */
+.theme-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.radio-option:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.radio-option input[type="radio"] {
+    margin-right: 10px;
+    transform: scale(1.2);
+}
+
+.radio-text {
+    font-weight: 500;
+}
+
+/* Tungi rejim uchun theme selector */
+body.dark-theme .radio-option {
+    background: rgba(45, 55, 72, 0.5) !important;
+    color: #e2e8f0 !important;
+}
+
+body.dark-theme .radio-option:hover {
+    background: rgba(74, 85, 104, 0.7) !important;
+}
+
+body.dark-theme .radio-text {
+    color: #e2e8f0 !important;
 }
 
 /* Loading animatsiyasi */
