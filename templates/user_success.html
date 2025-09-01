@@ -31,11 +31,6 @@
     </div>
 
     <div class="mt-4">
-      <h5>📱 Buyurtma holatini kuzatish:</h5>
-      <p class="muted">Bu sahifani ochiq qoldiring yoki raqamingizni eslab qoling. Buyurtmangiz tayyor bo'lganda xabar beramiz.</p>
-    </div>
-
-    <div class="mt-4">
       <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
         <a href="{{ url_for('view_receipt', ticket_no=order.ticket_no) }}" class="btn" style="background: #10b981;">🧾 Chek va QR kod</a>
         <a href="{{ url_for('menu') }}" class="btn">🍽️ Yana buyurtma berish</a>
@@ -292,6 +287,59 @@ document.addEventListener('DOMContentLoaded', function() {
     .rating-btn:hover {
         background: linear-gradient(135deg, #ffb347 0%, #ff8c00 100%);
         transform: translateY(-2px);
+    }
+
+    /* Buyurtma qilingan mahsulotlar uchun uslublar */
+    .order-items {
+        margin-top: 30px;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .order-items h3 {
+        color: #333;
+        margin-bottom: 15px;
+        font-size: 18px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+    }
+
+    .items-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .order-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .order-item:last-child {
+        border-bottom: none;
+    }
+
+    .item-name {
+        font-weight: 500;
+        color: #4a5568;
+        flex-grow: 1;
+        margin-right: 10px;
+    }
+
+    .item-quantity {
+        font-size: 0.9em;
+        color: #718096;
+        margin: 0 8px;
+    }
+
+    .item-price {
+        font-weight: 600;
+        color: #2d3748;
     }
 </style>
 {% endblock %}
