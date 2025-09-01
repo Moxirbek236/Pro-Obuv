@@ -98,7 +98,7 @@ def init_db():
             created_at TEXT NOT NULL,
             eta_time TEXT NOT NULL,
             FOREIGN KEY (user_id) REFERENCES users (id),
-            FOREIGN KEY (courier_id) REFERENCES couriers (id)
+            FOREIGNKEY (courier_id) REFERENCES couriers (id)
         );
     """)
 
@@ -224,31 +224,31 @@ def ensure_orders_columns():
     try:
         cur.execute("PRAGMA table_info(orders);")
         cols = [r[1] for r in cur.fetchall()]
-        
+
         if 'status' not in cols:
             cur.execute("ALTER TABLE orders ADD COLUMN status TEXT NOT NULL DEFAULT 'waiting';")
             conn.commit()
-            
+
         if 'user_id' not in cols:
             cur.execute("ALTER TABLE orders ADD COLUMN user_id INTEGER;")
             conn.commit()
-            
+
         if 'delivery_address' not in cols:
             cur.execute("ALTER TABLE orders ADD COLUMN delivery_address TEXT;")
             conn.commit()
-            
+
         if 'card_number' not in cols:
             cur.execute("ALTER TABLE orders ADD COLUMN card_number TEXT;")
             conn.commit()
-            
+
         if 'courier_id' not in cols:
             cur.execute("ALTER TABLE orders ADD COLUMN courier_id INTEGER;")
             conn.commit()
-            
+
         if 'order_type' not in cols:
             cur.execute("ALTER TABLE orders ADD COLUMN order_type TEXT NOT NULL DEFAULT 'dine_in';")
             conn.commit()
-            
+
     except Exception as e:
         pass
     conn.close()
@@ -263,7 +263,7 @@ def ensure_cart_items_columns():
         if 'user_id' not in cols:
             cur.execute("ALTER TABLE cart_items ADD COLUMN user_id INTEGER;")
             conn.commit()
-        
+
         # Eski jadval strukturasini yangilash - session_id ni NULL qilib qo'yish
         cur.execute("UPDATE cart_items SET session_id = 'temp_session' WHERE session_id IS NULL OR session_id = ''")
         conn.commit()
@@ -278,23 +278,23 @@ def ensure_staff_columns():
     try:
         cur.execute("PRAGMA table_info(staff);")
         cols = [r[1] for r in cur.fetchall()]
-        
+
         if 'passport_series' not in cols:
             cur.execute("ALTER TABLE staff ADD COLUMN passport_series TEXT;")
             conn.commit()
-            
+
         if 'passport_number' not in cols:
             cur.execute("ALTER TABLE staff ADD COLUMN passport_number TEXT;")
             conn.commit()
-            
+
         if 'orders_handled' not in cols:
             cur.execute("ALTER TABLE staff ADD COLUMN orders_handled INTEGER DEFAULT 0;")
             conn.commit()
-            
+
         if 'last_activity' not in cols:
             cur.execute("ALTER TABLE staff ADD COLUMN last_activity TEXT;")
             conn.commit()
-            
+
     except Exception as e:
         pass
     conn.close()
@@ -306,23 +306,23 @@ def ensure_courier_columns():
     try:
         cur.execute("PRAGMA table_info(couriers);")
         cols = [r[1] for r in cur.fetchall()]
-        
+
         if 'passport_series' not in cols:
             cur.execute("ALTER TABLE couriers ADD COLUMN passport_series TEXT;")
             conn.commit()
-            
+
         if 'passport_number' not in cols:
             cur.execute("ALTER TABLE couriers ADD COLUMN passport_number TEXT;")
             conn.commit()
-            
+
         if 'deliveries_completed' not in cols:
             cur.execute("ALTER TABLE couriers ADD COLUMN deliveries_completed INTEGER DEFAULT 0;")
             conn.commit()
-            
+
         if 'last_activity' not in cols:
             cur.execute("ALTER TABLE couriers ADD COLUMN last_activity TEXT;")
             conn.commit()
-            
+
     except Exception as e:
         pass
     conn.close()
@@ -924,13 +924,13 @@ def courier_register():
             INSERT INTO couriers (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, created_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?);
         """, (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, now.isoformat()))
-        
+
         new_id = cur.lastrowid
         # ID kamida 5 ta raqamdan iborat bo'lishi uchun
         if new_id < 10000:
             cur.execute("UPDATE couriers SET id = ? WHERE id = ?", (10000 + new_id, new_id))
             new_id = 10000 + new_id
-            
+
         conn.commit()
         conn.close()
 
@@ -1014,7 +1014,7 @@ def staff_login():
         if not staff_id or not password:
             flash("ID va parolni kiriting.", "error")
             return redirect(url_for("staff_login"))
-        
+
         # ID raqam ekanligini va kamida 5 ta raqamdan iborat ekanligini tekshirish
         try:
             staff_id_int = int(staff_id)
@@ -1024,40 +1024,25 @@ def staff_login():
         except ValueError:
             flash("ID raqam bo'lishi kerak.", "error")
             return redirect(url_for("staff_login"))
-            
+
         conn = get_db()
         cur = conn.cursor()
         cur.execute("SELECT * FROM staff WHERE id=?;", (staff_id_int,))
         row = cur.fetchone()
-        conn.close()
+
         if row and check_password_hash(row["password_hash"], password):
-            # Faollik vaqtini yangilash va ishchi soatlarini hisoblash
+            # Faollik vaqtini yangilash
             now = get_current_time().isoformat()
-
-            # Agar avvalgi faollik vaqti mavjud bo'lsa, ishchi soatlarni yangilash
-            if row["last_activity"]:
-                try:
-                    last_activity = datetime.datetime.fromisoformat(row["last_activity"])
-                    current_time = get_current_time()
-                    time_diff = current_time - last_activity
-
-                    # Agar 8 soatdan kam bo'lsa, ishchi vaqtga qo'shish
-                    if time_diff.total_seconds() < 28800:  # 8 soat
-                        additional_hours = time_diff.total_seconds() / 3600
-                        cur.execute("UPDATE staff SET total_hours = COALESCE(total_hours, 0) + ?, last_activity = ? WHERE id = ?", 
-                                   (additional_hours, now, staff_id_int))
-                    else:
-                        cur.execute("UPDATE staff SET last_activity = ? WHERE id = ?", (now, staff_id_int))
-                except:
-                    cur.execute("UPDATE staff SET last_activity = ? WHERE id = ?", (now, staff_id_int))
-            else:
+            try:
                 cur.execute("UPDATE staff SET last_activity = ? WHERE id = ?", (now, staff_id_int))
+                conn.commit()
+            except Exception as e:
+                pass
 
-            conn.commit()
-            conn.close()
-            
             session["staff_id"] = row["id"]
             session["staff_name"] = f"{row['first_name']} {row['last_name']}"
+            flash(f"Xush kelibsiz, {row['first_name']}!", "success")
+            conn.close()
             return redirect(url_for("staff_dashboard"))
         else:
             conn.close()
@@ -1323,25 +1308,26 @@ def staff_employees():
     return render_template("staff_employees.html", employees=employees, staff_name=session.get("staff_name"))
 
 # ---- SUPER ADMIN ----
-@app.route("/super-admin-control-panel-master-z8x9k")
-def super_admin_login():
-    return render_template("super_admin_login.html")
+# Super admin kredentsiallari
+SUPER_ADMIN_USERNAME = "superadmin"
+SUPER_ADMIN_PASSWORD = "Admin123!@#"
 
-@app.route("/super-admin-control-panel-master-z8x9k", methods=["POST"])
-def super_admin_login_post():
+@app.route("/super-admin-control-panel-master-z8x9k", methods=["GET", "POST"])
+def super_admin_login():
+    if request.method == "GET":
+        return render_template("super_admin_login.html")
+
+    # POST method
     username = request.form.get("username", "").strip()
     password = request.form.get("password", "")
 
-    # Super admin kredentsiallari (amaliyotda buni muhim joyga saqlash kerak)
-    SUPER_ADMIN_USERNAME = "superadmin"
-    SUPER_ADMIN_PASSWORD = "Admin123!@#"
-
     if username == SUPER_ADMIN_USERNAME and password == SUPER_ADMIN_PASSWORD:
         session["super_admin"] = True
+        flash("Super admin paneliga kirish muvaffaqiyatli!", "success")
         return redirect(url_for("super_admin_dashboard"))
     else:
         flash("Noto'g'ri login yoki parol!", "error")
-        return redirect(url_for("super_admin_login"))
+        return render_template("super_admin_login.html")
 
 @app.route("/super-admin-dashboard-ultimate-m4st3r")
 def super_admin_dashboard():
