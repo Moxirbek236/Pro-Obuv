@@ -1237,14 +1237,20 @@ def change_password():
 
 @app.route("/profile/settings")
 def profile_settings():
-    if not session.get("user_id"):
+    # Har qanday turdagi foydalanuvchi (user, staff, courier, super_admin) kirishi mumkin
+    if not (session.get("user_id") or session.get("staff_id") or session.get("courier_id") or session.get("super_admin")):
         flash("Profil sozlamalarini ko'rish uchun tizimga kiring.", "error")
-        return redirect(url_for("login"))
+        return redirect(url_for("index"))
     
     return render_template("profile_settings.html")
 
 @app.route("/settings")
 def general_settings():
+    # Har qanday turdagi foydalanuvchi (user, staff, courier, super_admin) kirishi mumkin
+    if not (session.get("user_id") or session.get("staff_id") or session.get("courier_id") or session.get("super_admin")):
+        flash("Umumi sozlamalarni ko'rish uchun tizimga kiring.", "error")
+        return redirect(url_for("index"))
+    
     return render_template("general_settings.html")
 
 @app.route("/logout")
