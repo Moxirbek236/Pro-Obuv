@@ -776,9 +776,28 @@ def courier_login():
         row = cur.fetchone()
         conn.close()
         if row:
-            # Faollik vaqtini yangilash
+            # Faollik vaqtini yangilash va ishchi soatlarini hisoblash
             now = get_current_time().isoformat()
-            cur.execute("UPDATE couriers SET last_activity=? WHERE id=?", (now, courier_id))
+            
+            # Agar avvalgi faollik vaqti mavjud bo'lsa, ishchi soatlarni yangilash
+            if row["last_activity"]:
+                try:
+                    last_activity = datetime.datetime.fromisoformat(row["last_activity"])
+                    current_time = get_current_time()
+                    time_diff = current_time - last_activity
+                    
+                    # Agar 8 soatdan kam bo'lsa, ishchi vaqtga qo'shish
+                    if time_diff.total_seconds() < 28800:  # 8 soat
+                        additional_hours = time_diff.total_seconds() / 3600
+                        cur.execute("UPDATE couriers SET total_hours = COALESCE(total_hours, 0) + ?, last_activity = ? WHERE id = ?", 
+                                   (additional_hours, now, courier_id))
+                    else:
+                        cur.execute("UPDATE couriers SET last_activity = ? WHERE id = ?", (now, courier_id))
+                except:
+                    cur.execute("UPDATE couriers SET last_activity = ? WHERE id = ?", (now, courier_id))
+            else:
+                cur.execute("UPDATE couriers SET last_activity = ? WHERE id = ?", (now, courier_id))
+            
             conn.commit()
 
         conn.close()
@@ -846,6 +865,42 @@ def courier_dashboard():
     conn.close()
     return render_template("courier_dashboard.html", orders=delivery_orders)
 
+@app.route("/courier/order/<int:order_id>/take", methods=["POST"])
+def courier_take_order(order_id):
+    if "courier_id" not in session:
+        return redirect(url_for("courier_login"))
+    
+    courier_id = session.get("courier_id")
+    conn = get_db()
+    cur = conn.cursor()
+    
+    cur.execute("UPDATE orders SET status='on_way', courier_id=? WHERE id=? AND status='ready'", (courier_id, order_id))
+    conn.commit()
+    conn.close()
+    
+    flash("Buyurtma olib ketildi!", "success")
+    return redirect(url_for("courier_dashboard"))
+
+@app.route("/courier/order/<int:order_id>/delivered", methods=["POST"])
+def courier_mark_delivered(order_id):
+    if "courier_id" not in session:
+        return redirect(url_for("courier_login"))
+    
+    courier_id = session.get("courier_id")
+    conn = get_db()
+    cur = conn.cursor()
+    
+    cur.execute("UPDATE orders SET status='delivered' WHERE id=? AND courier_id=?", (order_id, courier_id))
+    
+    # Kuryerning yetkazib bergan buyurtmalar sonini oshirish
+    cur.execute("UPDATE couriers SET deliveries_completed = COALESCE(deliveries_completed, 0) + 1 WHERE id = ?", (courier_id,))
+    
+    conn.commit()
+    conn.close()
+    
+    flash("Buyurtma yetkazib berildi!", "success")
+    return redirect(url_for("courier_dashboard"))
+
 @app.route("/courier/logout")
 def courier_logout():
     session.pop("courier_id", None)
@@ -867,9 +922,28 @@ def staff_login():
         row = cur.fetchone()
         conn.close()
         if row:
-            # Faollik vaqtini yangilash
+            # Faollik vaqtini yangilash va ishchi soatlarini hisoblash
             now = get_current_time().isoformat()
-            cur.execute("UPDATE staff SET last_activity=? WHERE id=?", (now, staff_id))
+            
+            # Agar avvalgi faollik vaqti mavjud bo'lsa, ishchi soatlarni yangilash
+            if row["last_activity"]:
+                try:
+                    last_activity = datetime.datetime.fromisoformat(row["last_activity"])
+                    current_time = get_current_time()
+                    time_diff = current_time - last_activity
+                    
+                    # Agar 8 soatdan kam bo'lsa, ishchi vaqtga qo'shish (dakiqalarda)
+                    if time_diff.total_seconds() < 28800:  # 8 soat
+                        additional_hours = time_diff.total_seconds() / 3600
+                        cur.execute("UPDATE staff SET total_hours = COALESCE(total_hours, 0) + ?, last_activity = ? WHERE id = ?", 
+                                   (additional_hours, now, staff_id))
+                    else:
+                        cur.execute("UPDATE staff SET last_activity = ? WHERE id = ?", (now, staff_id))
+                except:
+                    cur.execute("UPDATE staff SET last_activity = ? WHERE id = ?", (now, staff_id))
+            else:
+                cur.execute("UPDATE staff SET last_activity = ? WHERE id = ?", (now, staff_id))
+            
             conn.commit()
 
         conn.close()
@@ -1041,6 +1115,12 @@ def staff_mark_served(order_id):
     conn = get_db()
     cur = conn.cursor()
     cur.execute("UPDATE orders SET status='served' WHERE id=?;", (order_id,))
+    
+    # Xodimning bajargan buyurtmalar sonini oshirish
+    staff_id = session.get("staff_id")
+    if staff_id:
+        cur.execute("UPDATE staff SET orders_handled = COALESCE(orders_handled, 0) + 1 WHERE id = ?", (staff_id,))
+    
     conn.commit()
     conn.close()
     flash("Buyurtma foydalanuvchiga berildi sifatida belgilandi.", "success")
@@ -1052,6 +1132,12 @@ def staff_mark_ready(order_id):
     conn = get_db()
     cur = conn.cursor()
     cur.execute("UPDATE orders SET status='ready' WHERE id=?;", (order_id,))
+    
+    # Xodimning bajargan buyurtmalar sonini oshirish
+    staff_id = session.get("staff_id")
+    if staff_id:
+        cur.execute("UPDATE staff SET orders_handled = COALESCE(orders_handled, 0) + 1 WHERE id = ?", (staff_id,))
+    
     conn.commit()
     conn.close()
     flash("Buyurtma 'tayyor' deb belgilandi.", "success")
@@ -1144,11 +1230,25 @@ def super_admin_dashboard():
     cur = conn.cursor()
 
     # Barcha xodimlarni olish (to'liq ma'lumotlar bilan)
-    cur.execute("SELECT * FROM staff ORDER BY created_at DESC")
+    cur.execute("""
+        SELECT s.*, 
+               COALESCE(s.total_hours, 0) as hours,
+               COALESCE(s.orders_handled, 0) as handled_orders,
+               COALESCE(s.last_activity, s.created_at) as activity
+        FROM staff s 
+        ORDER BY s.created_at DESC
+    """)
     staff_db = cur.fetchall()
 
     # Barcha kuryerlarni olish
-    cur.execute("SELECT * FROM couriers ORDER BY created_at DESC")
+    cur.execute("""
+        SELECT c.*, 
+               COALESCE(c.total_hours, 0) as hours,
+               COALESCE(c.deliveries_completed, 0) as deliveries,
+               COALESCE(c.last_activity, c.created_at) as activity
+        FROM couriers c 
+        ORDER BY c.created_at DESC
+    """)
     couriers_db = cur.fetchall()
 
     # Foydalanuvchilarni olish

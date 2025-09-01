@@ -264,18 +264,18 @@
                             <tbody>
                                 {% for staff in staff_db %}
                                 <tr>
-                                    <td><strong>{{ staff[0] if staff[0] else staff.id }}</strong></td>
-                                    <td>{{ staff[1] if staff[1] else staff.first_name }}</td>
-                                    <td>{{ staff[2] if staff[2] else staff.last_name }}</td>
-                                    <td>{{ staff[3] if staff[3] else staff.birth_date }}</td>
-                                    <td>{{ staff[4] if staff[4] else staff.phone }}</td>
-                                    <td>{{ (staff[5] if staff[5] else staff.passport_series or 'N/A') }} {{ (staff[6] if staff[6] else staff.passport_number or '') }}</td>
-                                    <td>{{ ((staff[9] if staff[9] else staff.last_activity or '')[:16].replace('T', ' ')) if (staff[9] if staff[9] else staff.last_activity) else 'Hech qachon' }}</td>
-                                    <td>{{ staff[8] if staff[8] else staff.total_hours or 0 }}</td>
-                                    <td>{{ staff[9] if staff[9] else staff.orders_handled or 0 }}</td>
-                                    <td>{{ ((staff[11] if staff[11] else staff.created_at)[:16].replace('T', ' ')) if (staff[11] if staff[11] else staff.created_at) else 'N/A' }}</td>
+                                    <td><strong>{{ staff.id }}</strong></td>
+                                    <td>{{ staff.first_name }}</td>
+                                    <td>{{ staff.last_name }}</td>
+                                    <td>{{ staff.birth_date }}</td>
+                                    <td>{{ staff.phone }}</td>
+                                    <td>{{ staff.passport_series or 'N/A' }} {{ staff.passport_number or '' }}</td>
+                                    <td>{{ staff.activity[:16].replace('T', ' ') if staff.activity else 'Hech qachon' }}</td>
+                                    <td>{{ "%.1f"|format(staff.hours or 0) }} soat</td>
+                                    <td>{{ staff.handled_orders or 0 }}</td>
+                                    <td>{{ staff.created_at[:16].replace('T', ' ') if staff.created_at else 'N/A' }}</td>
                                     <td>
-                                        <form method="POST" action="{{ url_for('super_admin_delete_staff', staff_id=(staff[0] if staff[0] else staff.id)) }}" 
+                                        <form method="POST" action="{{ url_for('super_admin_delete_staff', staff_id=staff.id) }}" 
                                               style="display: inline;" onsubmit="return confirm('Rostdan ham bu xodimni o\'chirmoqchimisiz?')">
                                             <button type="submit" class="btn btn-danger-custom">🗑️</button>
                                         </form>
@@ -356,9 +356,9 @@
                                     <td>{{ courier.birth_date }}</td>
                                     <td>{{ courier.phone }}</td>
                                     <td>{{ courier.passport_series or 'N/A' }} {{ courier.passport_number or '' }}</td>
-                                    <td>{{ courier.last_activity[:16].replace('T', ' ') if courier.last_activity else 'Hech qachon' }}</td>
-                                    <td>{{ courier.total_hours or 0 }}</td>
-                                    <td>{{ courier.deliveries_completed or 0 }}</td>
+                                    <td>{{ courier.activity[:16].replace('T', ' ') if courier.activity else 'Hech qachon' }}</td>
+                                    <td>{{ "%.1f"|format(courier.hours or 0) }} soat</td>
+                                    <td>{{ courier.deliveries or 0 }}</td>
                                     <td>{{ courier.created_at[:16].replace('T', ' ') }}</td>
                                 </tr>
                                 {% endfor %}

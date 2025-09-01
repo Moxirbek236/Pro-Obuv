@@ -20,6 +20,7 @@
                         <th>Mahsulotlar</th>
                         <th>Status</th>
                         <th>Vaqt</th>
+                        <th>Amallar</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -39,6 +40,17 @@
                             {% endif %}
                         </td>
                         <td>{{ order.created_at[:16].replace('T', ' ') }}</td>
+                        <td>
+                            {% if order.status == 'ready' %}
+                                <form method="POST" action="{{ url_for('courier_take_order', order_id=order.id) }}" style="display: inline;">
+                                    <button type="submit" class="btn btn-sm btn-primary">🚚 Olish</button>
+                                </form>
+                            {% elif order.status == 'on_way' %}
+                                <form method="POST" action="{{ url_for('courier_mark_delivered', order_id=order.id) }}" style="display: inline;">
+                                    <button type="submit" class="btn btn-sm btn-success">✅ Yetkazildi</button>
+                                </form>
+                            {% endif %}
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
