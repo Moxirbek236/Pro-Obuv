@@ -851,45 +851,65 @@ def admin_monitor():
     if not session.get("super_admin") and not session.get("staff_id"):
         flash("Bu sahifaga kirish uchun admin huquqi kerak.", "error")
         return redirect(url_for("index"))
+    
     cleanup_expired_orders()
     conn = get_db()
     cur = conn.cursor()
-    # Waiting ordered by eta_time (earliest first)
-    cur.execute("""SELECT o.*, 
-               GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
-        FROM orders o
-        LEFT JOIN order_details od ON o.id = od.order_id
-        LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
-        WHERE o.status='waiting'
-        GROUP BY o.id
-        ORDER BY o.eta_time ASC
-    """)
-    waiting = cur.fetchall()
-    # Ready orders
-    cur.execute("""SELECT o.*, 
-               GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
-        FROM orders o
-        LEFT JOIN order_details od ON o.id = od.order_id
-        LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
-        WHERE o.status='ready'
-        GROUP BY o.id
-        ORDER BY o.eta_time ASC
-    """)
-    ready = cur.fetchall()
-    # Served orders in last 5 minutes
-    five_min_ago = (get_current_time() - datetime.timedelta(minutes=5)).isoformat()
-    cur.execute("""SELECT o.*, 
-               GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
-        FROM orders o
-        LEFT JOIN order_details od ON o.id = od.order_id
-        LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
-        WHERE o.status='served' AND o.created_at >= ?
-        GROUP BY o.id
-        ORDER BY o.created_at ASC
-    """, (five_min_ago,))
-    served_recent = cur.fetchall()
-    conn.close()
-    return render_template('admin_monitor.html', waiting=waiting, ready=ready, served_recent=served_recent)
+    
+    try:
+        # Waiting orders - kutayotgan buyurtmalar
+        cur.execute("""SELECT o.*, 
+                   GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
+            FROM orders o
+            LEFT JOIN order_details od ON o.id = od.order_id
+            LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
+            WHERE o.status='waiting'
+            GROUP BY o.id
+            ORDER BY o.eta_time ASC
+        """)
+        waiting = cur.fetchall()
+        
+        # Ready orders - tayyor buyurtmalar
+        cur.execute("""SELECT o.*, 
+                   GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
+            FROM orders o
+            LEFT JOIN order_details od ON o.id = od.order_id
+            LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
+            WHERE o.status='ready'
+            GROUP BY o.id
+            ORDER BY o.eta_time ASC
+        """)
+        ready = cur.fetchall()
+        
+        # Served orders in last 5 minutes - so'nggi 5 daqiqada berilgan buyurtmalar
+        five_min_ago = (get_current_time() - datetime.timedelta(minutes=5)).isoformat()
+        cur.execute("""SELECT o.*, 
+                   GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
+            FROM orders o
+            LEFT JOIN order_details od ON o.id = od.order_id
+            LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
+            WHERE o.status='served' AND o.created_at >= ?
+            GROUP BY o.id
+            ORDER BY o.created_at DESC
+        """, (five_min_ago,))
+        served_recent = cur.fetchall()
+        
+        # Debug ma'lumotlari
+        logging.info(f"Monitor: Waiting={len(waiting) if waiting else 0}, Ready={len(ready) if ready else 0}, Served={len(served_recent) if served_recent else 0}")
+        
+        conn.close()
+        return render_template('admin_monitor.html', 
+                             waiting=waiting or [], 
+                             ready=ready or [], 
+                             served_recent=served_recent or [])
+    
+    except Exception as e:
+        logging.error(f"Monitor sahifasida xatolik: {str(e)}")
+        conn.close()
+        return render_template('admin_monitor.html', 
+                             waiting=[], 
+                             ready=[], 
+                             served_recent=[])
 
 # ---- MENU ----
 @app.route("/menu")
