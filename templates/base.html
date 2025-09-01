@@ -143,11 +143,19 @@
             </ul>
           </li>
         {% else %}
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('login') }}">🔐 Kirish</a>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              🔐 Kirish
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="/login?role=user">👤 Foydalanuvchi</a></li>
+              <li><a class="dropdown-item" href="/login?role=staff">👨‍💼 Xodim</a></li>
+              <li><a class="dropdown-item" href="/login?role=courier">🚚 Kuryer</a></li>
+              <li><a class="dropdown-item" href="/login?role=admin">🔧 Admin</a></li>
+            </ul>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('register') }}">📝 Ro'yxatdan o'tish</a>
+            <a class="nav-link" href="{{ url_for('register') }}">📝 Ro'yxat</a>
           </li>
         {% endif %}
       </ul>

@@ -1695,6 +1695,23 @@ def courier_logout():
     return redirect(url_for("index"))
 
 # ---- STAFF AUTH ----
+@app.route("/login")
+@app.route("/login/<role>")
+def login_page(role=None):
+    # URL dan role parametrini tekshirish
+    role_param = request.args.get('role')
+    if role_param:
+        role = role_param
+    
+    if role == 'staff':
+        return render_template("staff_login.html")
+    elif role == 'courier':
+        return render_template("courier_login.html") 
+    elif role == 'admin':
+        return render_template("super_admin_login.html")
+    else:
+        return render_template("login.html")
+
 @app.route("/staff-secure-login-w7m2k", methods=["GET", "POST"])
 def staff_login():
     if request.method == "POST":
