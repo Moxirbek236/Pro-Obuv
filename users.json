@@ -284,5 +284,18 @@
         "jami": 60000.0
       }
     ]
+  },
+  {
+    "ism": "..",
+    "buyurtma_raqami": 27,
+    "buyurtma_vaqti": "2025-09-01 14:58:52",
+    "buyurtma_mahsulotlari": [
+      {
+        "nomi": "Coca Cola",
+        "miqdori": 4,
+        "narxi": 10000.0,
+        "jami": 40000.0
+      }
+    ]
   }
 ]
