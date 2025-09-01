@@ -93,6 +93,9 @@ def init_db():
             order_type TEXT NOT NULL, -- 'dine_in' yoki 'delivery'
             status TEXT NOT NULL,
             delivery_address TEXT,
+            delivery_distance REAL DEFAULT 0, -- masofa km da
+            delivery_price REAL DEFAULT 0, -- yetkazish narxi
+            customer_phone TEXT,
             card_number TEXT,
             courier_id INTEGER,
             created_at TEXT NOT NULL,
@@ -249,6 +252,18 @@ def ensure_orders_columns():
 
         if 'delivery_address' not in cols:
             cur.execute("ALTER TABLE orders ADD COLUMN delivery_address TEXT;")
+            conn.commit()
+
+        if 'delivery_distance' not in cols:
+            cur.execute("ALTER TABLE orders ADD COLUMN delivery_distance REAL DEFAULT 0;")
+            conn.commit()
+
+        if 'delivery_price' not in cols:
+            cur.execute("ALTER TABLE orders ADD COLUMN delivery_price REAL DEFAULT 0;")
+            conn.commit()
+
+        if 'customer_phone' not in cols:
+            cur.execute("ALTER TABLE orders ADD COLUMN customer_phone TEXT;")
             conn.commit()
 
         if 'card_number' not in cols:
@@ -834,13 +849,24 @@ def user_page():
             cur = conn.cursor()
             # Buyurtma yaratish - dostavka manzili bor bo'lsa delivery, yo'q bo'lsa dine_in
             delivery_address = request.form.get("delivery_address", "").strip()
+            delivery_distance = request.form.get("delivery_distance", 0)
+            delivery_price = request.form.get("delivery_price", 0)
+            customer_phone = request.form.get("customer_phone", "").strip()
             card_number = request.form.get("card_number", "").strip()
             order_type = "delivery" if delivery_address else "dine_in"
 
+            # Masofa va narxni float ga aylantirish
+            try:
+                delivery_distance = float(delivery_distance) if delivery_distance else 0
+                delivery_price = float(delivery_price) if delivery_price else 0
+            except ValueError:
+                delivery_distance = 0
+                delivery_price = 0
+
             cur.execute("""
-                INSERT INTO orders (user_id, customer_name, ticket_no, order_type, status, delivery_address, card_number, created_at, eta_time)
-                VALUES (?, ?, ?, ?, 'waiting', ?, ?, ?, ?);
-            """, (user_id, name, tno, order_type, delivery_address, card_number, now.isoformat(), eta_time.isoformat()))
+                INSERT INTO orders (user_id, customer_name, ticket_no, order_type, status, delivery_address, delivery_distance, delivery_price, customer_phone, card_number, created_at, eta_time)
+                VALUES (?, ?, ?, ?, 'waiting', ?, ?, ?, ?, ?, ?, ?);
+            """, (user_id, name, tno, order_type, delivery_address, delivery_distance, delivery_price, customer_phone, card_number, now.isoformat(), eta_time.isoformat()))
 
             order_id = cur.lastrowid
 
@@ -1050,6 +1076,20 @@ def courier_dashboard():
             o.created_at ASC
     """, (courier_id,))
     delivery_orders = cur.fetchall()
+
+    # Kuryer statistikasini olish
+    cur.execute("SELECT deliveries_completed, total_hours FROM couriers WHERE id = ?", (courier_id,))
+    courier_stats = cur.fetchone()
+    
+    # Faol buyurtmalar sonini olish
+    cur.execute("SELECT COUNT(*) FROM orders WHERE courier_id = ? AND status = 'on_way'", (courier_id,))
+    active_orders = cur.fetchone()[0]
+
+    # Session ga statistikani saqlash
+    if courier_stats:
+        session['courier_deliveries'] = courier_stats[0] or 0
+        session['courier_hours'] = round(courier_stats[1] or 0, 1)
+    session['courier_active_orders'] = active_orders
 
     conn.close()
     return render_template("courier_dashboard.html", orders=delivery_orders)
