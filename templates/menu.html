@@ -68,6 +68,13 @@
                                 </div>
                             </form>
                         </div>
+
+                        <!-- Baholash tugmasi -->
+                        {% if session.user_id %}
+                        <div class="rating-button-section">
+                            <button type="button" class="btn-rate" onclick="openRatingModal({{ food.id }}, event)">⭐ Baholash</button>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -130,6 +137,13 @@
                                 </div>
                             </form>
                         </div>
+
+                        <!-- Baholash tugmasi -->
+                        {% if session.user_id %}
+                        <div class="rating-button-section">
+                            <button type="button" class="btn-rate" onclick="openRatingModal({{ drink.id }}, event)">⭐ Baholash</button>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -451,6 +465,32 @@
 .btn-cart:hover {
     background: #2f855a;
     transform: scale(1.05);
+}
+
+/* Baholash tugmasi stillari */
+.rating-button-section {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.btn-rate {
+    background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+    color: #333;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(255, 215, 0, 0.3);
+}
+
+.btn-rate:hover {
+    background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 165, 0, 0.4);
 }
 
 /* Modal stillari */
@@ -908,23 +948,45 @@ function decreaseQuantity(button) {
 }
 
 function loadComments(itemId) {
-    // Bu yerda haqiqiy serverdan sharhlarni yuklash logikasi bo'lishi kerak.
-    // Hozircha statik ma'lumotlar ko'rsatilgan.
-    const commentsContainer = document.getElementById('modalComments');
-    commentsContainer.innerHTML = `
-        <div class="comment-item">
-            <div class="comment-author">Aziz M.</div>
-            <div class="comment-text">Juda mazali! Tavsiya qilaman.</div>
-        </div>
-        <div class="comment-item">
-            <div class="comment-author">Madina K.</div>
-            <div class="comment-text">A'lo sifat, tez yetkazib berishdi.</div>
-        </div>
-        <div class="comment-item">
-            <div class="comment-author">Sardor T.</div>
-            <div class="comment-text">Narxi ham mos, ta'mi ham zo'r!</div>
-        </div>
-    `;
+    // Serverdan haqiqiy sharhlarni yuklash
+    fetch(`/api/get-menu-ratings/${itemId}`)
+        .then(response => response.json())
+        .then(data => {
+            const commentsContainer = document.getElementById('modalComments');
+            
+            if (data.success && data.ratings && data.ratings.length > 0) {
+                let commentsHtml = '';
+                data.ratings.forEach(rating => {
+                    commentsHtml += `
+                        <div class="comment-item">
+                            <div class="comment-author">${rating.user_name} - ${'⭐'.repeat(rating.rating)}</div>
+                            <div class="comment-text">${rating.comment || 'Sharh qoldirilmagan'}</div>
+                            <div class="comment-date">${rating.created_at}</div>
+                        </div>
+                    `;
+                });
+                commentsContainer.innerHTML = commentsHtml;
+            } else {
+                commentsContainer.innerHTML = `
+                    <div class="no-comments">
+                        <p style="text-align: center; color: #888; font-style: italic;">
+                            Hali hech kim sharh qoldirmagan. Birinchi bo'lib baholang! ⭐
+                        </p>
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('Sharhlarni yuklashda xatolik:', error);
+            const commentsContainer = document.getElementById('modalComments');
+            commentsContainer.innerHTML = `
+                <div class="error-message">
+                    <p style="text-align: center; color: #e53e3e;">
+                        Sharhlarni yuklashda xatolik yuz berdi.
+                    </p>
+                </div>
+            `;
+        });
 }
 
 /* ESC tugmasi bilan modalni yopish */
