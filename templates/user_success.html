@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 
 {% block content %}
@@ -6,15 +5,15 @@
 <div class="card center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; margin-bottom: 30px;">
   <div class="order-status-card">
     <h3 style="margin-bottom: 20px;">📊 Buyurtma holati</h3>
-    
+
     <div class="order-status mb-4">
       <span class="status-waiting">⏳ Buyurtmangiz tayyorlanmoqda...</span>
     </div>
-    
+
     <div class="queue-position mb-4">
       <span class="muted" style="color: rgba(255,255,255,0.8);">Navbat holati yuklanmoqda...</span>
     </div>
-    
+
     <div class="ticket-no" style="color: #ffd700; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">{{ order.ticket_no }}</div>
     <p style="color: rgba(255,255,255,0.9); margin-top: 10px;">Sizning buyurtma raqamingiz</p>
   </div>
@@ -23,19 +22,19 @@
 <div class="card center">
   <div class="order-info">
     <h2>🎉 Buyurtma muvaffaqiyatli qabul qilindi!</h2>
-    
+
     <div class="mt-4 mb-4">
       <h4>📋 Buyurtma ma'lumotlari:</h4>
       <p><strong>👤 Mijoz:</strong> {{ order.customer_name }}</p>
       <p><strong>⏰ Buyurtma vaqti:</strong> {{ order.created_at[:19].replace('T', ' ') }}</p>
       <p><strong>🕐 Taxminiy tayyor bo'lish vaqti:</strong> {{ eta_hhmm }}</p>
     </div>
-    
+
     <div class="mt-4">
       <h5>📱 Buyurtma holatini kuzatish:</h5>
       <p class="muted">Bu sahifani ochiq qoldiring yoki raqamingizni eslab qoling. Buyurtmangiz tayyor bo'lganda xabar beramiz.</p>
     </div>
-    
+
     <div class="mt-4">
       <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
         {% if receipt %}
@@ -65,11 +64,11 @@ const ticketNo = {{ order.ticket_no }};
 function updateOrderDisplay(data) {
     const statusElement = document.querySelector('.order-status');
     const queueElement = document.querySelector('.queue-position');
-    
+
     if (statusElement && data.ok) {
         let statusText = '';
         let statusClass = '';
-        
+
         switch(data.status) {
             case 'waiting':
                 statusText = '⏳ Buyurtmangiz tayyorlanmoqda...';
@@ -95,10 +94,10 @@ function updateOrderDisplay(data) {
                 statusClass = 'status-cancelled';
                 break;
         }
-        
+
         statusElement.innerHTML = `<span class="${statusClass}">${statusText}</span>`;
     }
-    
+
     if (queueElement && data.queue_position && data.status === 'waiting') {
         queueElement.innerHTML = `<span class="muted">Sizdan oldin: ${data.queue_position - 1} ta buyurtma</span>`;
     } else if (queueElement && data.status !== 'waiting') {
@@ -111,10 +110,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (Notification.permission === 'default') {
         Notification.requestPermission();
     }
-    
+
     // Dastlabki holat tekshiruvi
     checkOrderStatus(ticketNo);
-    
+
     // Har 3 soniyada tekshirish
     setInterval(() => {
         if (!document.hidden) {
