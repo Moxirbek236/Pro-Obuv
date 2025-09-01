@@ -50,7 +50,7 @@
             <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               👤 {{ session.get('user_name', 'Profil') }}
             </a>
-            <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
               <li><a class="dropdown-item" href="{{ url_for('profile') }}">👤 Profil ma'lumotlari</a></li>
               <li><a class="dropdown-item" href="{{ url_for('profile_settings') }}">⚙️ Profil sozlamalari</a></li>
               <li><a class="dropdown-item" href="{{ url_for('general_settings') }}">🔧 Sozlamalar</a></li>
