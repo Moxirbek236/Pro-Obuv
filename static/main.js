@@ -497,19 +497,19 @@ function translatePage(language) {
     // Mavzu sozlamalarini yuklash va qo'llash
     const darkMode = localStorage.getItem('darkMode') === 'true';
     const fontSize = localStorage.getItem('fontSize') || 'medium';
-    
+
     // Body klasslarini yangilash
     document.body.classList.remove('dark-theme', 'font-small', 'font-medium', 'font-large', 'font-xlarge');
     document.body.classList.remove('lang-uz', 'lang-ru', 'lang-en');
-    
+
     // Mavzu klassini qo'shish
     if (darkMode) {
         document.body.classList.add('dark-theme');
     }
-    
+
     // Font o'lcham klassini qo'shish
     document.body.classList.add('font-' + fontSize);
-    
+
     // Til klassini qo'shish
     document.body.classList.add('lang-' + language);
 
@@ -694,26 +694,48 @@ function translatePage(language) {
         const downloadTitle = document.querySelector('h1');
         if (downloadTitle) downloadTitle.innerHTML = `📱 ${lang.mobile_apps || 'Mobil Ilovalar'}`;
     }
+}
 
-    // Local storage ga tilni saqlash
+// Til o'zgartirishni global qilish
+window.changeLanguage = function(language) {
+    console.log('Til o\'zgartirilmoqda:', language);
+
+    // Darhol til klassini va tarjimani qo'llash
+    document.body.classList.remove('lang-uz', 'lang-ru', 'lang-en');
+    document.body.classList.add('lang-' + language);
+
     localStorage.setItem('language', language);
-    
-    // Server ga til ma'lumotini yuborish
+    translatePage(language);
+
+    // Server ga yuborish
     fetch('/api/set-language', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ language: language })
-    }).catch(error => console.log('Til sozlamasini saqlashda xato:', error));
-}
+    }).then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('Til muvaffaqiyatli saqlandi:', language);
+
+            // 1 soniya kutib, sahifani qayta yuklash
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        }
+    }).catch(error => {
+        console.log('Til sozlamasini saqlashda xato:', error);
+        location.reload();
+    });
+};
 
 function translateToRussian() {
-    translatePage('ru');
+    changeLanguage('ru');
 }
 
 function translateToEnglish() {
-    translatePage('en');
+    changeLanguage('en');
 }
 
 // Global mavzu o'zgartirish funksiyasi
@@ -724,10 +746,10 @@ window.toggleDarkMode = function(isDark) {
     } else {
         document.body.classList.remove('dark-theme');
     }
-    
+
     // LocalStorage ga saqlash
     localStorage.setItem('darkMode', isDark.toString());
-    
+
     // Server ga yuborish
     fetch('/api/set-theme', {
         method: 'POST',
@@ -742,17 +764,17 @@ window.toggleDarkMode = function(isDark) {
 window.changeFontSize = function(size) {
     // Eski klasslarni olib tashlash
     document.body.classList.remove('font-small', 'font-medium', 'font-large', 'font-xlarge');
-    
+
     // Yangi klassni qo'shish
     document.body.classList.add('font-' + size);
-    
+
     // LocalStorage ga saqlash
     localStorage.setItem('fontSize', size);
-    
+
     // Server ga yuborish
     const language = localStorage.getItem('language') || 'uz';
     const darkMode = localStorage.getItem('darkMode') === 'true';
-    
+
     fetch('/api/save-settings', {
         method: 'POST',
         headers: {
@@ -775,22 +797,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const darkMode = localStorage.getItem('darkMode') === 'true';
     const fontSize = localStorage.getItem('fontSize') || 'medium';
     const language = localStorage.getItem('language') || 'uz';
-    
+
     // Body klasslarini tozalash
     document.body.classList.remove('dark-theme', 'font-small', 'font-medium', 'font-large', 'font-xlarge');
     document.body.classList.remove('lang-uz', 'lang-ru', 'lang-en');
-    
+
     // Mavzu klassini qo'shish
     if (darkMode) {
         document.body.classList.add('dark-theme');
     }
-    
+
     // Font o'lcham klassini qo'shish
     document.body.classList.add('font-' + fontSize);
-    
+
     // Til klassini qo'shish
     document.body.classList.add('lang-' + language);
-    
+
     // Tilni tarjima qilish
     translatePage(language);
 
