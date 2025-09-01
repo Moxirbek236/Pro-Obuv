@@ -78,6 +78,19 @@
             </span>
           </div>
 
+          <!-- Baho ko'rsatish -->
+          <div class="rating-info">
+            <div class="rating-display">
+              <span class="rating-stars">
+                {% for i in range(1, 6) %}
+                  {% if i <= (item.rating or 0) %}⭐{% else %}☆{% endif %}
+                {% endfor %}
+              </span>
+              <span class="rating-text">{{ "%.1f"|format(item.rating or 0) }} ({{ item.orders_count or 0 }} buyurtma)</span>
+            </div>
+            <button class="btn small" onclick="showItemRatings({{ item.id }})">📊 Baholarni ko'rish</button>
+          </div>
+
           <!-- Tahrirlash forması -->
           <div class="edit-form" id="edit-form-{{ item.id }}" style="display: none;">
             <form method="post" action="{{ url_for('edit_menu_item', item_id=item.id) }}" enctype="multipart/form-data">
@@ -301,6 +314,136 @@
   background: #218838;
 }
 
+.rating-info {
+  margin: 10px 0;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #ffd700;
+}
+
+.rating-display {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.rating-stars {
+  font-size: 16px;
+}
+
+.rating-text {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Baholar modali */
+.ratings-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ratings-modal-content {
+  background: white;
+  border-radius: 15px;
+  max-width: 600px;
+  width: 90vw;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.ratings-header {
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8f9fa;
+  border-radius: 15px 15px 0 0;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.ratings-summary {
+  padding: 15px 20px;
+  background: #fff3cd;
+  border-left: 4px solid #ffd700;
+  margin: 0;
+}
+
+.ratings-list {
+  padding: 20px;
+}
+
+.rating-item {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  background: #f8f9fa;
+}
+
+.rating-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.rating-user {
+  font-weight: bold;
+  color: #4299e1;
+}
+
+.rating-date {
+  font-size: 0.8rem;
+  color: #999;
+}
+
+.rating-comment {
+  color: #555;
+  line-height: 1.5;
+  margin-top: 10px;
+  padding: 10px;
+  background: white;
+  border-radius: 5px;
+}
+
+.no-ratings {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  padding: 20px;
+}
+
 @media (max-width: 768px) {
   .menu-items-grid {
     grid-template-columns: 1fr;
@@ -317,6 +460,12 @@
   .item-actions {
     justify-content: center;
   }
+  
+  .rating-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
 }
 </style>
 
@@ -328,6 +477,65 @@ function toggleEdit(itemId) {
   } else {
     editForm.style.display = 'none';
   }
+}
+
+function showItemRatings(itemId) {
+    fetch(`/api/get-menu-ratings/${itemId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                let ratingsHtml = `
+                    <div class="ratings-modal">
+                        <div class="ratings-modal-content">
+                            <div class="ratings-header">
+                                <h3>Mahsulot baholari</h3>
+                                <button onclick="closeRatingsModal()" class="close-btn">✕</button>
+                            </div>
+                            <div class="ratings-summary">
+                                <p><strong>O'rtacha baho:</strong> ${data.average_rating}/5 (${data.total_ratings} baho)</p>
+                            </div>
+                            <div class="ratings-list">
+                `;
+                
+                if (data.ratings.length > 0) {
+                    data.ratings.forEach(rating => {
+                        ratingsHtml += `
+                            <div class="rating-item">
+                                <div class="rating-header">
+                                    <span class="rating-user">${rating.user_name}</span>
+                                    <span class="rating-stars">${'⭐'.repeat(rating.rating)}${'☆'.repeat(5 - rating.rating)}</span>
+                                    <span class="rating-date">${rating.created_at}</span>
+                                </div>
+                                ${rating.comment ? `<div class="rating-comment">${rating.comment}</div>` : ''}
+                            </div>
+                        `;
+                    });
+                } else {
+                    ratingsHtml += '<p class="no-ratings">Hali baholar yo\'q</p>';
+                }
+                
+                ratingsHtml += `
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.insertAdjacentHTML('beforeend', ratingsHtml);
+            } else {
+                alert('Baholarni yuklashda xatolik: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Baholarni yuklashda xatolik');
+        });
+}
+
+function closeRatingsModal() {
+    const modal = document.querySelector('.ratings-modal');
+    if (modal) {
+        modal.remove();
+    }
 }
 </script>
 {% endblock %}
