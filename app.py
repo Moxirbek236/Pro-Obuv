@@ -871,6 +871,10 @@ def courier_login():
             # Faollik vaqtini yangilash va ishchi soatlarini hisoblash
             now = get_current_time().isoformat()
 
+            # Yangi connection yaratish
+            conn_update = get_db()
+            cur_update = conn_update.cursor()
+
             # Agar avvalgi faollik vaqti mavjud bo'lsa, ishchi soatlarni yangilash
             if row["last_activity"]:
                 try:
@@ -881,16 +885,17 @@ def courier_login():
                     # Agar 8 soatdan kam bo'lsa, ishchi vaqtga qo'shish
                     if time_diff.total_seconds() < 28800:  # 8 soat
                         additional_hours = time_diff.total_seconds() / 3600
-                        cur.execute("UPDATE couriers SET total_hours = COALESCE(total_hours, 0) + ?, last_activity = ? WHERE id = ?", 
+                        cur_update.execute("UPDATE couriers SET total_hours = COALESCE(total_hours, 0) + ?, last_activity = ? WHERE id = ?", 
                                    (additional_hours, now, courier_id))
                     else:
-                        cur.execute("UPDATE couriers SET last_activity = ? WHERE id = ?", (now, courier_id))
+                        cur_update.execute("UPDATE couriers SET last_activity = ? WHERE id = ?", (now, courier_id))
                 except:
-                    cur.execute("UPDATE couriers SET last_activity = ? WHERE id = ?", (now, courier_id))
+                    cur_update.execute("UPDATE couriers SET last_activity = ? WHERE id = ?", (now, courier_id))
             else:
-                cur.execute("UPDATE couriers SET last_activity = ? WHERE id = ?", (now, courier_id))
+                cur_update.execute("UPDATE couriers SET last_activity = ? WHERE id = ?", (now, courier_id))
 
-            conn.commit()
+            conn_update.commit()
+            conn_update.close()
 
         conn.close()
         if not row or not check_password_hash(row["password_hash"], password):
@@ -1206,8 +1211,14 @@ def add_menu_item():
     conn = get_db()
     cur = conn.cursor()
     now = get_current_time().isoformat()
-    cur.execute("INSERT INTO menu_items (name, price, category, description, image_url, created_at) VALUES (?, ?, ?, ?, ?, ?)",
-               (name, price, category, description, image_url, now))
+    try:
+        cur.execute("INSERT INTO menu_items (name, price, category, description, image_url, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+                   (name, price, category, description, image_url, now))
+    except sqlite3.OperationalError:
+        # Agar description ustuni mavjud bo'lmasa, uni qo'shish
+        cur.execute("ALTER TABLE menu_items ADD COLUMN description TEXT;")
+        cur.execute("INSERT INTO menu_items (name, price, category, description, image_url, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+                   (name, price, category, description, image_url, now))
     conn.commit()
     conn.close()
     flash("Yangi mahsulot qo'shildi!", "success")
@@ -1347,10 +1358,7 @@ def super_admin_dashboard():
 
     # Xodimlar ma'lumotlari (soatlar va buyurtmalar bilan)
     cur.execute("""
-        SELECT s.*, 
-               COALESCE(s.total_hours, 0) as hours,
-               COALESCE(s.orders_handled, 0) as handled_orders,
-               s.last_activity as activity
+        SELECT s.*
         FROM staff s
         ORDER BY s.created_at DESC
     """)
@@ -1358,10 +1366,7 @@ def super_admin_dashboard():
 
     # Kuryerlar ma'lumotlari
     cur.execute("""
-        SELECT c.*, 
-               COALESCE(c.total_hours, 0) as hours,
-               COALESCE(c.deliveries_completed, 0) as deliveries,
-               c.last_activity as activity
+        SELECT c.*
         FROM couriers c
         ORDER BY c.created_at DESC
     """)
