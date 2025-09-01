@@ -156,15 +156,16 @@
 
         <!-- Navigatsiya -->
         <div class="text-center">
+            <button class="btn btn-success me-2" onclick="saveProfileSettings()">💾 Sozlamalarni saqlash</button>
             <a href="{{ url_for('general_settings') }}" class="btn btn-outline-primary me-2">🔧 Umumi sozlamalar</a>
-            {% if session.get('user_id') %}
-                <a href="{{ url_for('profile') }}" class="btn btn-outline-secondary">🔙 Profilga qaytish</a>
+            {% if session.get('super_admin') %}
+                <a href="{{ url_for('super_admin_dashboard') }}" class="btn btn-outline-secondary">🔙 Super Admin Dashboard</a>
             {% elif session.get('staff_id') %}
-                <a href="{{ url_for('staff_dashboard') }}" class="btn btn-outline-secondary">🔙 Dashboard</a>
+                <a href="{{ url_for('staff_dashboard') }}" class="btn btn-outline-secondary">🔙 Xodim Dashboard</a>
             {% elif session.get('courier_id') %}
-                <a href="{{ url_for('courier_dashboard') }}" class="btn btn-outline-secondary">🔙 Dashboard</a>
-            {% elif session.get('super_admin') %}
-                <a href="{{ url_for('super_admin_dashboard') }}" class="btn btn-outline-secondary">🔙 Dashboard</a>
+                <a href="{{ url_for('courier_dashboard') }}" class="btn btn-outline-secondary">🔙 Kuryer Dashboard</a>
+            {% elif session.get('user_id') %}
+                <a href="{{ url_for('profile') }}" class="btn btn-outline-secondary">🔙 Profilga qaytish</a>
             {% else %}
                 <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">🔙 Bosh sahifa</a>
             {% endif %}
@@ -227,5 +228,50 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+    function saveProfileSettings() {
+        // Sozlamalarni saqlash funksiyasi
+        const twoFactorAuth = document.getElementById('twoFactorAuth').checked;
+        const emailNotifications = document.getElementById('emailNotifications').checked;
+        const smsNotifications = document.getElementById('smsNotifications').checked;
+        
+        // LocalStorage ga saqlash
+        localStorage.setItem('twoFactorAuth', twoFactorAuth);
+        localStorage.setItem('emailNotifications', emailNotifications);
+        localStorage.setItem('smsNotifications', smsNotifications);
+        
+        // Muvaffaqiyatli xabarni ko'rsatish
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-success alert-dismissible fade show';
+        alertDiv.innerHTML = `
+            Profil sozlamalari muvaffaqiyatli saqlandi! ✅
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        // Sahifaning yuqorisiga qo'shish
+        const container = document.querySelector('.settings-card');
+        container.insertBefore(alertDiv, container.firstChild);
+        
+        // 3 soniyadan keyin xabarni o'chirish
+        setTimeout(() => {
+            if (alertDiv && alertDiv.parentNode) {
+                alertDiv.remove();
+            }
+        }, 3000);
+    }
+    
+    // Sahifa yuklanganda oldingi sozlamalarni yuklash
+    document.addEventListener('DOMContentLoaded', function() {
+        // Oldingi sozlamalarni yuklash
+        const twoFactorAuth = localStorage.getItem('twoFactorAuth') === 'true';
+        const emailNotifications = localStorage.getItem('emailNotifications') !== 'false'; // default true
+        const smsNotifications = localStorage.getItem('smsNotifications') === 'true';
+        
+        document.getElementById('twoFactorAuth').checked = twoFactorAuth;
+        document.getElementById('emailNotifications').checked = emailNotifications;
+        document.getElementById('smsNotifications').checked = smsNotifications;
+    });
+    </script>
 </body>
 </html>
