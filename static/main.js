@@ -705,6 +705,8 @@ window.changeLanguage = function(language) {
     document.body.classList.add('lang-' + language);
 
     localStorage.setItem('language', language);
+    
+    // Darhol tarjima qilish
     translatePage(language);
 
     // Server ga yuborish
@@ -719,14 +721,17 @@ window.changeLanguage = function(language) {
         if (data.success) {
             console.log('Til muvaffaqiyatli saqlandi:', language);
 
-            // 1 soniya kutib, sahifani qayta yuklash
+            // 0.5 soniya kutib, sahifani qayta yuklash
             setTimeout(() => {
                 location.reload();
-            }, 1000);
+            }, 500);
         }
     }).catch(error => {
         console.log('Til sozlamasini saqlashda xato:', error);
-        location.reload();
+        // Xato bo'lsa ham sahifani yangilash
+        setTimeout(() => {
+            location.reload();
+        }, 500);
     });
 };
 
@@ -782,8 +787,22 @@ window.toggleDarkMode = function(isDark) {
     // Body klassini o'zgartirish
     if (isDark) {
         document.body.classList.add('dark-theme');
+        
+        // Navbar klasslarini o'zgartirish
+        const navbar = document.querySelector('.navbar');
+        if (navbar) {
+            navbar.classList.remove('navbar-light', 'bg-light');
+            navbar.classList.add('navbar-dark', 'bg-dark');
+        }
     } else {
         document.body.classList.remove('dark-theme');
+        
+        // Navbar klasslarini o'zgartirish
+        const navbar = document.querySelector('.navbar');
+        if (navbar) {
+            navbar.classList.remove('navbar-dark', 'bg-dark');
+            navbar.classList.add('navbar-light', 'bg-light');
+        }
     }
 
     // Navbar va boshqa elementlarni yangilash
@@ -805,8 +824,17 @@ window.toggleDarkMode = function(isDark) {
         return response.json();
     }).then(data => {
         console.log('Server javob ma\'lumotlari:', data);
+        
+        // 0.5 soniya kutib sahifani yangilash
+        setTimeout(() => {
+            location.reload();
+        }, 500);
     }).catch(error => {
         console.log('Mavzu sozlamasini saqlashda xato:', error);
+        // Xato bo'lsa ham sahifani yangilash
+        setTimeout(() => {
+            location.reload();
+        }, 500);
     });
 };
 
@@ -851,6 +879,16 @@ document.addEventListener('DOMContentLoaded', function() {
     // URL role parametrini qo'shish
     addRoleToURL();
 
+    // Session ma'lumotlarini localStorage ga sinxronlash
+    const sessionDarkMode = document.body.getAttribute('data-dark-mode') === 'true';
+    const sessionFontSize = document.body.getAttribute('data-font-size') || 'medium';
+    const sessionLanguage = document.body.getAttribute('data-language') || 'uz';
+
+    // LocalStorage ni session bilan sinxronlash
+    if (sessionDarkMode !== null) localStorage.setItem('darkMode', sessionDarkMode);
+    if (sessionFontSize) localStorage.setItem('fontSize', sessionFontSize);
+    if (sessionLanguage) localStorage.setItem('language', sessionLanguage);
+
     // Sozlamalarni localStorage dan olish
     const darkMode = localStorage.getItem('darkMode') === 'true';
     const fontSize = localStorage.getItem('fontSize') || 'medium';
@@ -866,9 +904,23 @@ document.addEventListener('DOMContentLoaded', function() {
     if (darkMode) {
         document.body.classList.add('dark-theme');
         console.log('Dark theme qo\'shildi');
+        
+        // Navbar klasslarini ham o'zgartirish
+        const navbar = document.querySelector('.navbar');
+        if (navbar) {
+            navbar.classList.remove('navbar-light', 'bg-light');
+            navbar.classList.add('navbar-dark', 'bg-dark');
+        }
     } else {
         document.body.classList.remove('dark-theme');
         console.log('Light theme qo\'shildi');
+        
+        // Navbar klasslarini ham o'zgartirish
+        const navbar = document.querySelector('.navbar');
+        if (navbar) {
+            navbar.classList.remove('navbar-dark', 'bg-dark');
+            navbar.classList.add('navbar-light', 'bg-light');
+        }
     }
 
     // Font o'lcham klassini qo'shish
@@ -882,8 +934,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Navbar va dropdown klasslarini yangilash
     updateNavbarTheme(darkMode);
 
-    // Tilni tarjima qilish
-    translatePage(language);
+    // Tilni tarjima qilish - biroz kutib
+    setTimeout(function() {
+        translatePage(language);
+        console.log('Til tarjimasi qo\'llandi:', language);
+    }, 100);
 
     // Savatcha sonini dastlabki yuklanish
     updateCartCount();

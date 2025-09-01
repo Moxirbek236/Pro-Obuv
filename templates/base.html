@@ -18,11 +18,32 @@
         background: linear-gradient(135deg, #1e293b 0%, #334155 20%, #475569 100%) !important;
         color: #f8fafc !important;
     }
+    body.dark-theme .navbar,
+    body.dark-theme .navbar-nav,
     body.dark-theme .navbar-dark {
         background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(51, 65, 85, 0.95) 100%) !important;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3) !important;
     }
-    body.dark-theme .card, body.dark-theme .modal-content {
+    body.dark-theme .nav-link,
+    body.dark-theme .navbar-brand,
+    body.dark-theme .navbar-text {
+        color: #f8fafc !important;
+    }
+    body.dark-theme .dropdown-menu {
+        background: rgba(45, 55, 72, 0.98) !important;
+        border: 1px solid rgba(203, 213, 225, 0.2) !important;
+    }
+    body.dark-theme .dropdown-item {
+        color: #f8fafc !important;
+    }
+    body.dark-theme .dropdown-item:hover {
+        background: rgba(71, 85, 105, 0.8) !important;
+        color: #ffffff !important;
+    }
+    body.dark-theme .card, 
+    body.dark-theme .modal-content,
+    body.dark-theme .hero-section,
+    body.dark-theme .service-card {
         background: linear-gradient(145deg, rgba(51, 65, 85, 0.9) 0%, rgba(71, 85, 105, 0.8) 100%) !important;
         color: #f8fafc !important;
         border: 1px solid rgba(203, 213, 225, 0.2) !important;
@@ -32,6 +53,12 @@
         background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
         border: none !important;
         box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3) !important;
+    }
+    body.dark-theme .form-control,
+    body.dark-theme .form-select {
+        background: rgba(51, 65, 85, 0.9) !important;
+        border: 1px solid rgba(203, 213, 225, 0.2) !important;
+        color: #f8fafc !important;
     }
 
     /* Shrift o'lchamlari */
@@ -46,7 +73,9 @@
   {% endblock %}
   {% block extra_head %}{% endblock %}
 </head>
-<body>
+<body data-dark-mode="{{ session.get('dark_theme', False) | lower }}" 
+      data-font-size="{{ session.get('font_size', 'medium') }}" 
+      data-language="{{ session.get('interface_language', 'uz') }}">
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
@@ -231,24 +260,55 @@ document.addEventListener('DOMContentLoaded', function() {
     const sessionFontSize = '{{ session.get("font_size", "medium") }}';
     const sessionLanguage = '{{ session.get("interface_language", "uz") }}';
 
-    // Agar localStorage bo'sh bo'lsa, session dan olish
-    if (!localStorage.getItem('darkMode')) {
-        localStorage.setItem('darkMode', sessionDarkMode);
+    console.log('Session sozlamalari:', { sessionDarkMode, sessionFontSize, sessionLanguage });
+
+    // Session sozlamalarini localStorage ga saqlash
+    localStorage.setItem('darkMode', sessionDarkMode);
+    localStorage.setItem('fontSize', sessionFontSize);
+    localStorage.setItem('language', sessionLanguage);
+
+    // Sozlamalarni darhol qo'llash
+    const isDarkMode = sessionDarkMode === 'true';
+    
+    // Klasslarni tozalash
+    document.body.classList.remove('dark-theme', 'font-small', 'font-medium', 'font-large', 'font-xlarge');
+    document.body.classList.remove('lang-uz', 'lang-ru', 'lang-en');
+
+    // Mavzuni qo'llash
+    if (isDarkMode) {
+        document.body.classList.add('dark-theme');
+        
+        // Navbar klasslarini o'zgartirish
+        const navbar = document.querySelector('.navbar');
+        if (navbar) {
+            navbar.classList.remove('navbar-light', 'bg-light');
+            navbar.classList.add('navbar-dark', 'bg-dark');
+        }
+        console.log('Dark theme qo\'llandi');
+    } else {
+        // Light theme
+        const navbar = document.querySelector('.navbar');
+        if (navbar) {
+            navbar.classList.remove('navbar-dark', 'bg-dark');
+            navbar.classList.add('navbar-light', 'bg-light');
+        }
+        console.log('Light theme qo\'llandi');
     }
-    if (!localStorage.getItem('fontSize')) {
-        localStorage.setItem('fontSize', sessionFontSize);
-    }
-    if (!localStorage.getItem('language')) {
-        localStorage.setItem('language', sessionLanguage);
-    }
+
+    // Font o'lchamini qo'llash
+    document.body.classList.add('font-' + sessionFontSize);
+    console.log('Font size qo\'llandi:', sessionFontSize);
+
+    // Tilni qo'llash
+    document.body.classList.add('lang-' + sessionLanguage);
+    console.log('Language qo\'llandi:', sessionLanguage);
 
     // Sahifani tarjima qilish
     if (typeof translatePage === 'function') {
         setTimeout(() => {
-            const currentLanguage = localStorage.getItem('language') || 'uz';
-            translatePage(currentLanguage);
-            console.log('Base.html dan til qo\'llandi:', currentLanguage);
-        }, 100);
+            translatePage(sessionLanguage);
+            console.log('Til tarjimasi qo\'llandi:', sessionLanguage);
+        }, 200);
     }
 
     // Storage eventini tinglash
