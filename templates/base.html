@@ -198,29 +198,49 @@
 <script>
 // Global sozlamalarni yuklash
 document.addEventListener('DOMContentLoaded', function() {
-    // Tungi rejimni yuklash
+    // Sozlamalarni localStorage va session dan yuklash
     const darkMode = localStorage.getItem('darkMode') === 'true' || {{ 'true' if session.get('dark_theme') else 'false' }};
+    const fontSize = localStorage.getItem('fontSize') || '{{ session.get("font_size", "medium") }}';
+    const language = localStorage.getItem('language') || '{{ session.get("interface_language", "uz") }}';
+
+    // Barcha klasslarni tozalash
+    document.body.classList.remove('dark-theme', 'font-small', 'font-medium', 'font-large', 'font-xlarge');
+    document.body.classList.remove('lang-uz', 'lang-ru', 'lang-en');
+
+    // Tungi rejimni qo'llash
     if (darkMode) {
         document.body.classList.add('dark-theme');
+        localStorage.setItem('darkMode', 'true');
+    } else {
+        localStorage.setItem('darkMode', 'false');
     }
 
-    // Shrift o'lchamini yuklash
-    const fontSize = localStorage.getItem('fontSize') || '{{ session.get("font_size", "medium") }}';
+    // Shrift o'lchamini qo'llash
     document.body.classList.add('font-' + fontSize);
+    localStorage.setItem('fontSize', fontSize);
 
-    // Tilni yuklash va sahifani tarjima qilish
-    const language = localStorage.getItem('language') || '{{ session.get("interface_language", "uz") }}';
-    translatePage(language);
-    
-    // Body ga til klassini qo'shish
+    // Tilni qo'llash va tarjima qilish
     document.body.classList.add('lang-' + language);
+    localStorage.setItem('language', language);
+
+    // Sahifani tarjima qilish
+    if (typeof translatePage === 'function') {
+        translatePage(language);
+    }
+
+    // Sozlamalar o'zgarganda qayta yuklashni ta'minlash
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'darkMode' || e.key === 'fontSize' || e.key === 'language') {
+            location.reload();
+        }
+    });
 });
 
 // Til o'zgartirishni global qilish
 window.changeLanguage = function(language) {
     translatePage(language);
     localStorage.setItem('language', language);
-    
+
     // Server ga yuborish
     fetch('/api/set-language', {
         method: 'POST',
