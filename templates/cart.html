@@ -41,15 +41,51 @@
             <div class="mb-3">
                 <label for="delivery_address" class="form-label">🏠 Dostavka manzili (ixtiyoriy):</label>
                 <textarea class="form-control" id="delivery_address" name="delivery_address" 
-                         rows="2" placeholder="Agar dostavka kerak bo'lsa manzilni kiriting..."></textarea>
+                         rows="2" placeholder="Agar dostavka kerak bo'lsa manzilni kiriting..." 
+                         onchange="toggleCardNumber()"></textarea>
                 <small class="text-muted">Bo'sh qoldirgang takdirda restoranda yeyish uchun buyurtma beriladi.</small>
             </div>
+            
+            <div class="mb-3" id="card-number-field" style="display: none;">
+                <label for="card_number" class="form-label">💳 Karta raqami:</label>
+                <input type="text" class="form-control" id="card_number" name="card_number" 
+                       placeholder="1234 5678 9012 3456" maxlength="19" 
+                       pattern="[0-9\s]+" onkeyup="formatCardNumber(this)">
+                <small class="text-muted">Dostavka uchun to'lov kartasi raqamini kiriting.</small>
+            </div>
+            
             <button type="submit" class="btn btn-success btn-lg w-100">
                 🛒 Buyurtma berish ({{ "{:,}".format(total) }} so'm)
             </button>
         </form>
     </div>
 </div>
+
+<script>
+function toggleCardNumber() {
+    const deliveryAddress = document.getElementById('delivery_address').value.trim();
+    const cardField = document.getElementById('card-number-field');
+    const cardInput = document.getElementById('card_number');
+    
+    if (deliveryAddress) {
+        cardField.style.display = 'block';
+        cardInput.required = true;
+    } else {
+        cardField.style.display = 'none';
+        cardInput.required = false;
+        cardInput.value = '';
+    }
+}
+
+function formatCardNumber(input) {
+    let value = input.value.replace(/\s/g, '');
+    let formattedValue = value.replace(/(.{4})/g, '$1 ').trim();
+    if (formattedValue.length > 19) {
+        formattedValue = formattedValue.substring(0, 19);
+    }
+    input.value = formattedValue;
+}
+</script>
       {% else %}
         <div class="alert alert-warning">
           <p>Buyurtma berish uchun avval tizimga kiring</p>
