@@ -1353,44 +1353,60 @@ def user_page():
             return redirect(url_for("menu"))
 
         try:
-            # Profil ma'lumotlarini yangilash (agar yangi ma'lumotlar berilgan bo'lsa)
+            # Formdan ma'lumotlarni olish
+            order_type = request.form.get("order_type", "dine_in")
+            delivery_address = request.form.get("delivery_address", "").strip()
             home_address = request.form.get("home_address", "").strip()
             customer_phone_new = request.form.get("customer_phone", "").strip()
+            card_number_new = request.form.get("card_number", "").strip()
 
-            print(f"DEBUG: Form ma'lumotlari - home_address: {home_address}, customer_phone: {customer_phone_new}")
+            print(f"DEBUG: Form ma'lumotlari - order_type: {order_type}")
+            print(f"DEBUG: delivery_address: {delivery_address}")
+            print(f"DEBUG: home_address: {home_address}")
+
+            # Delivery uchun kerakli tekshiruvlar
+            if order_type == "delivery":
+                if not delivery_address:
+                    flash("Yetkazib berish manzilini kiriting!", "error")
+                    return redirect(url_for("cart"))
+                
+                # Agar profilda telefon yo'q bo'lsa, formdan olish
+                if not session.get('user_phone') and not customer_phone_new:
+                    flash("Telefon raqamingizni kiriting!", "error")
+                    return redirect(url_for("cart"))
 
             # Foydalanuvchi profilini yangilash
-            if home_address or customer_phone_new:
-                cur_update = conn.cursor()
-                if home_address:
-                    cur_update.execute("UPDATE users SET address = ? WHERE id = ?", (home_address, user_id))
-                    session['user_address'] = home_address
-                if customer_phone_new:
-                    cur_update.execute("UPDATE users SET phone = ? WHERE id = ?", (customer_phone_new, user_id))
-                    session['user_phone'] = customer_phone_new
-                conn.commit()
+            cur_update = conn.cursor()
+            if home_address:
+                cur_update.execute("UPDATE users SET address = ? WHERE id = ?", (home_address, user_id))
+                session['user_address'] = home_address
+            if customer_phone_new:
+                cur_update.execute("UPDATE users SET phone = ? WHERE id = ?", (customer_phone_new, user_id))
+                session['user_phone'] = customer_phone_new
+            if card_number_new:
+                cur_update.execute("UPDATE users SET card_number = ? WHERE id = ?", (card_number_new, user_id))
+                session['user_card_number'] = card_number_new
+            conn.commit()
 
+            # Buyurtma raqami va vaqt hisoblash
             tno = next_ticket_no(conn)
             eta_minutes = calc_eta_minutes(conn)
             now = get_current_time()
             eta_time = now + datetime.timedelta(minutes=eta_minutes)
             total = get_cart_total(conn, session_id, user_id)
 
-            print(f"DEBUG: Buyurtma ma'lumotlari - ticket: {tno}, total: {total}")
+            print(f"DEBUG: Buyurtma yaratilmoqda - ticket: {tno}, total: {total}")
 
-            cur = conn.cursor()
-            # Buyurtma yaratish - dostavka manzili bor bo'lsa delivery, yo'q bo'lsa dine_in
-            order_type = request.form.get("order_type", "dine_in")
-            delivery_address = request.form.get("delivery_address", "").strip()
+            # Delivery uchun qo'shimcha ma'lumotlar
             delivery_latitude = request.form.get("delivery_latitude", "")
             delivery_longitude = request.form.get("delivery_longitude", "")
             delivery_distance = request.form.get("delivery_distance", 0)
             delivery_map_url = request.form.get("delivery_map_url", "")
             customer_note = request.form.get("customer_note", "")
 
-            # Profil ma'lumotlaridan olish
-            customer_phone = session.get('user_phone', '')
-            card_number = session.get('user_card_number', '') or request.form.get("card_number", "").strip()
+            # Telefon va karta ma'lumotlarini olish
+            customer_phone = session.get('user_phone', '') or customer_phone_new
+            card_number = session.get('user_card_number', '') or card_number_new
 
             # Masofa va vaqtni float ga aylantirish
             try:
@@ -1398,13 +1414,13 @@ def user_page():
             except ValueError:
                 delivery_distance = 0
 
-            # Kuryer yetkazish vaqti (30 daqiqa default)
-            courier_delivery_time = 30
-
             # Delivery uchun ETA ni qayta hisoblash
             if order_type == "delivery":
+                courier_delivery_time = 30
                 eta_time = now + datetime.timedelta(minutes=eta_minutes + courier_delivery_time)
 
+            # Buyurtma yaratish
+            cur = conn.cursor()
             cur.execute("""
                 INSERT INTO orders (user_id, customer_name, ticket_no, order_type, status, delivery_address, delivery_distance, delivery_latitude, delivery_longitude, delivery_map_url, customer_note, customer_phone, card_number, created_at, eta_time)
                 VALUES (?, ?, ?, ?, 'waiting', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
@@ -1412,16 +1428,13 @@ def user_page():
 
             order_id = cur.lastrowid
 
-            # Savatchadagi mahsulotlarni order_details ga ko'chirish va JSON uchun to'plash
+            # Savatchadagi mahsulotlarni order_details ga ko'chirish
             order_items_for_json = []
             for item in cart_items:
                 cur.execute("""
                     INSERT INTO order_details (order_id, menu_item_id, quantity, price)
-                    SELECT ?, ci.menu_item_id, ci.quantity, mi.price
-                    FROM cart_items ci
-                    JOIN menu_items mi ON ci.menu_item_id = mi.id
-                    WHERE ci.id = ?
-                """, (order_id, item['id']))
+                    VALUES (?, ?, ?, ?)
+                """, (order_id, item['id'], item['quantity'], item['price']))
 
                 # JSON uchun mahsulot ma'lumotlarini to'plash
                 order_items_for_json.append({
@@ -1450,14 +1463,17 @@ def user_page():
             save_user_to_json(name, tno, now, order_items_for_json)
 
             print(f"DEBUG: Buyurtma muvaffaqiyatli yaratildi - ticket: {tno}")
+            flash("Buyurtma muvaffaqiyatli berildi!", "success")
 
         except Exception as e:
             print(f"ERROR: Buyurtma berishda xatolik: {str(e)}")
             logging.error(f"Buyurtma berishda xatolik: {str(e)}")
             flash("Buyurtma berishda xatolik yuz berdi. Qaytadan urinib ko'ring.", "error")
+            conn.rollback()
             return redirect(url_for("cart"))
         finally:
             conn.close()
+        
         return redirect(url_for("user_success", ticket_no=tno))
     return redirect(url_for("menu"))
 

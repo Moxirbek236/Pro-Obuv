@@ -33,7 +33,7 @@
 
     <div class="cart-actions">
       {% if session.get('user_id') %}
-        <form method="post" action="{{ url_for('user_page') }}" class="checkout-form" onsubmit="return validateOrderForm(this)">
+        <form method="post" action="{{ url_for('user_page') }}" class="checkout-form">
             <h3>📋 Buyurtma berish</h3>
 
             <div class="order-type-selection">
@@ -174,7 +174,7 @@
                         <strong>Jami summa: <span id="total-amount" class="total-amount">{{ total }} so'm</span></strong>
                     </div>
                 </div>
-                <button type="submit" class="btn checkout-btn" id="checkout-button" style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); color: white; font-weight: 600; border: none; padding: 15px 30px; border-radius: 12px; font-size: 16px; cursor: pointer; transition: all 0.3s ease;">🛒 Buyurtma berish</button>
+                <button type="submit" class="btn checkout-btn" onclick="return confirm('Buyurtma berishni tasdiqlaysizmi?')" style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); color: white; font-weight: 600; border: none; padding: 15px 30px; border-radius: 12px; font-size: 16px; cursor: pointer; transition: all 0.3s ease;">🛒 Buyurtma berish</button>
             </div>
         </form>
         <script>
@@ -476,265 +476,54 @@ function validateOrderForm(form) {
     // Buyurtma turi tekshirish
     const orderType = document.querySelector('input[name="order_type"]:checked');
     if (!orderType) {
-        showNotification('Buyurtma turini tanlang!', 'warning');
+        alert('Buyurtma turini tanlang!');
         return false;
     }
 
-    // Agar delivery tanlangan bo'lsa, manzil va telefon tekshirish
+    // Agar delivery tanlangan bo'lsa, manzil tekshirish
     if (orderType.value === 'delivery') {
         const deliveryAddress = document.querySelector('input[name="delivery_address"]');
-        const deliveryLat = document.querySelector('input[name="delivery_latitude"]');
-        const deliveryLng = document.querySelector('input[name="delivery_longitude"]');
         
         if (!deliveryAddress || !deliveryAddress.value.trim()) {
-            showNotification('Yetkazib berish manzilini kiriting!', 'error');
+            alert('Yetkazib berish manzilini kiriting!');
             if (deliveryAddress) {
                 deliveryAddress.focus();
-                deliveryAddress.classList.add('is-invalid');
             }
-            return false;
-        }
-
-        if (!deliveryLat || !deliveryLat.value || !deliveryLng || !deliveryLng.value) {
-            showNotification('Xaritada joylashuvni belgilang!', 'error');
             return false;
         }
 
         // Profilda telefon yo'q bo'lsa, formdan tekshirish
         const customerPhone = document.querySelector('input[name="customer_phone"]');
         if (customerPhone && !customerPhone.value.trim()) {
-            showNotification('Telefon raqamingizni kiriting!', 'error');
+            alert('Telefon raqamingizni kiriting!');
             customerPhone.focus();
-            customerPhone.classList.add('is-invalid');
             return false;
-        }
-
-        // Telefon formatini tekshirish
-        if (customerPhone && customerPhone.value.trim()) {
-            const phoneRegex = /^(\+998|998|8)?[0-9]{9}$/;
-            if (!phoneRegex.test(customerPhone.value.replace(/\s/g, ''))) {
-                showNotification('Telefon raqami noto\'g\'ri formatda!', 'error');
-                customerPhone.focus();
-                customerPhone.classList.add('is-invalid');
-                return false;
-            }
         }
 
         // Karta raqami tekshirish (agar form mavjud bo'lsa)
         const cardNumber = document.querySelector('input[name="card_number"]');
         if (cardNumber && !cardNumber.value.trim()) {
-            showNotification('Karta raqamini kiriting!', 'error');
+            alert('Karta raqamini kiriting!');
             cardNumber.focus();
-            cardNumber.classList.add('is-invalid');
-            return false;
-        }
-
-        // Karta raqami formatini tekshirish
-        if (cardNumber && cardNumber.value.trim()) {
-            const cardRegex = /^[0-9]{16}$/;
-            const cleanCard = cardNumber.value.replace(/\s/g, '');
-            if (!cardRegex.test(cleanCard)) {
-                showNotification('Karta raqami 16 ta raqamdan iborat bo\'lishi kerak!', 'error');
-                cardNumber.focus();
-                cardNumber.classList.add('is-invalid');
-                return false;
-            }
-        }
-
-        // Kuryer yetkazish vaqti tekshirish
-        const deliveryTime = document.querySelector('input[name="courier_delivery_time"]');
-        if (deliveryTime && (!deliveryTime.value || deliveryTime.value < 10)) {
-            showNotification('Kuryer yetkazish vaqtini kiriting (kamida 10 daqiqa)!', 'error');
-            deliveryTime.focus();
-            deliveryTime.classList.add('is-invalid');
             return false;
         }
     }
-
-    // Barcha inputlardan error klasslarini olib tashlash
-    const allInputs = form.querySelectorAll('input, select, textarea');
-    allInputs.forEach(input => {
-        input.classList.remove('is-invalid');
-        input.classList.add('is-valid');
-    });
 
     console.log('Form validatsiyadan o\'tdi, submit qilinmoqda...');
     return true;
 }
 
-// Notification ko'rsatish funksiyasi
-function showNotification(message, type = 'info') {
-    // Mavjud notificationlarni olib tashlash
-    const existingNotifications = document.querySelectorAll('.notification');
-    existingNotifications.forEach(notif => notif.remove());
-    
-    const notification = document.createElement('div');
-    notification.className = `notification alert alert-${type}`;
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 1060;
-        max-width: 350px;
-        padding: 15px 20px;
-        border-radius: 12px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        backdrop-filter: blur(10px);
-        animation: slideIn 0.3s ease-out;
-    `;
-    
-    notification.innerHTML = `
-        <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
-            <span style="flex: 1;">${message}</span>
-            <button onclick="this.parentElement.parentElement.remove()" 
-                    style="background: none; border: none; color: inherit; font-size: 1.5rem; cursor: pointer; padding: 0; opacity: 0.7; transition: opacity 0.2s;"
-                    onmouseover="this.style.opacity='1'" 
-                    onmouseout="this.style.opacity='0.7'">&times;</button>
-        </div>
-    `;
-    
-    document.body.appendChild(notification);
-    
-    // 5 soniyadan keyin avtomatik o'chirish
-    setTimeout(() => {
-        if (notification.parentElement) {
-            notification.style.animation = 'fadeOut 0.3s ease-out forwards';
-            setTimeout(() => notification.remove(), 300);
-        }
-    }, 5000);
-}
+// Oddiy alert funksiyasi
 
-// Sahifa yuklanganda xaritani ishga tushirish va boshqa funksiyalarni chaqirish
+// Sahifa yuklanganda
 document.addEventListener('DOMContentLoaded', function() {
     console.log("Sahifa yuklandi, JavaScript ishga tushmoqda...");
-
-    // Form submit event listener qo'shish
-    const checkoutForm = document.querySelector('.checkout-form');
-    if (checkoutForm) {
-        console.log("Checkout form topildi, event listener qo'shilmoqda...");
-
-        checkoutForm.addEventListener('submit', function(e) {
-            console.log('Form submit hodisasi ishga tushdi');
-            
-            // Default submit ni to'xtatish
-            e.preventDefault();
-
-            // Validatsiyani chaqirish
-            if (!validateOrderForm(this)) {
-                console.log('Form validation o\'tmadi, submit to\'xtatildi');
-                return false;
-            }
-
-            // Loading animatsiyasini ko'rsatish
-            const submitBtn = this.querySelector('#checkout-button');
-            if (submitBtn) {
-                const originalText = submitBtn.innerHTML;
-                submitBtn.innerHTML = '<span class="loading-spinner"></span>Buyurtma berilmoqda...';
-                submitBtn.disabled = true;
-                
-                // Form ni submit qilish
-                setTimeout(() => {
-                    this.submit();
-                }, 100);
-            } else {
-                // Agar tugma topilmasa, to'g'ridan-to'g'ri submit qilish
-                this.submit();
-            }
-
-            console.log('Form yuborilmoqda...');
-        });
-    } else {
-        console.error("Checkout form topilmadi!");
-    }
 
     // Radio buttonlar uchun change event qo'shish
     const radioButtons = document.querySelectorAll('input[name="order_type"]');
     radioButtons.forEach(radio => {
         radio.addEventListener('change', toggleDeliveryFields);
     });
-
-    // Agar delivery allaqachon tanlangan bo'lsa
-    const deliveryRadio = document.querySelector('input[name="order_type"][value="delivery"]');
-    if (deliveryRadio && deliveryRadio.checked) {
-        console.log("Delivery allaqachon tanlangan, fieldlarni ko'rsatish...");
-        toggleDeliveryFields();
-    }
-
-    // Delivery address inputini hidden input bilan sinxronizatsiya qilish
-    const deliveryAddressInput = document.getElementById('delivery_address');
-    const deliveryAddressHidden = document.getElementById('delivery_address_hidden');
-
-    if (deliveryAddressInput && deliveryAddressHidden) {
-        deliveryAddressInput.addEventListener('input', function() {
-            deliveryAddressHidden.value = this.value;
-        });
-
-        // Dastlabki qiymatni o'rnatish
-        if (deliveryAddressInput.value) {
-            deliveryAddressHidden.value = deliveryAddressInput.value;
-        }
-    }
-
-    // Manzil kiritilganda masofa hisoblash
-    const deliveryAddressInput = document.getElementById('delivery_address');
-    if (deliveryAddressInput) {
-        deliveryAddressInput.addEventListener('input', async function() {
-            const address = this.value.trim();
-            const addressStatus = document.getElementById('address_status');
-
-            if (address.length > 10) {
-                if (addressStatus) {
-                    addressStatus.innerHTML = '<small class="text-info">🔍 Manzil tekshirilmoqda...</small>';
-                }
-
-                try {
-                    const response = await fetch('/api/validate-address', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ address: address })
-                    });
-
-                    const result = await response.json();
-
-                    if (result.valid) {
-                        const distanceInput = document.getElementById('delivery_distance');
-                        if (distanceInput) {
-                            distanceInput.value = result.distance;
-                        }
-                        if (addressStatus) {
-                            addressStatus.innerHTML = `<small class="text-success">✅ ${result.message} (${result.distance} km)</small>`;
-                        }
-                        updateDeliveryPrice();
-                    } else {
-                        if (addressStatus) {
-                            addressStatus.innerHTML = `<small class="text-danger">❌ ${result.message}</small>`;
-                        }
-                        const distanceInput = document.getElementById('delivery_distance');
-                        if (distanceInput) {
-                            distanceInput.value = 0;
-                        }
-                        updateDeliveryPrice();
-                    }
-                } catch (error) {
-                    console.error('Manzil tekshirishda xatolik:', error);
-                    if (addressStatus) {
-                        addressStatus.innerHTML = '<small class="text-warning">⚠️ Manzil tekshirib bo\'lmadi</small>';
-                    }
-                }
-            } else {
-                if (addressStatus) {
-                    addressStatus.innerHTML = '';
-                }
-                const distanceInput = document.getElementById('delivery_distance');
-                if (distanceInput) {
-                    distanceInput.value = 0;
-                }
-                updateDeliveryPrice();
-            }
-        });
-    }
 
     console.log("JavaScript muvaffaqiyatli yuklandi va sozlandi");
 });
