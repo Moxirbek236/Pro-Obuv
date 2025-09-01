@@ -22,4 +22,8 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
+args = "pkill -f \"python.*app.py\" || true"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
 args = "python app.py"
