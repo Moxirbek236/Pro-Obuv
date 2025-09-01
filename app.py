@@ -1063,6 +1063,163 @@ def register():
 
     return render_template("register.html")
 
+@app.route("/profile")
+def profile():
+    if not session.get("user_id"):
+        flash("Profilni ko'rish uchun tizimga kiring.", "error")
+        return redirect(url_for("login"))
+
+    user_id = session.get("user_id")
+    conn = get_db()
+    cur = conn.cursor()
+    
+    # Foydalanuvchi ma'lumotlarini olish
+    cur.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+    user = cur.fetchone()
+    
+    # Foydalanuvchi buyurtmalar tarixi va umumiy summa
+    cur.execute("""
+        SELECT o.*, r.total_amount, 
+               GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
+        FROM orders o
+        LEFT JOIN receipts r ON o.id = r.order_id
+        LEFT JOIN order_details od ON o.id = od.order_id
+        LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
+        WHERE o.user_id = ?
+        GROUP BY o.id
+        ORDER BY o.created_at DESC
+        LIMIT 10
+    """, (user_id,))
+    orders = cur.fetchall()
+    
+    conn.close()
+    
+    if not user:
+        flash("Foydalanuvchi ma'lumotlari topilmadi.", "error")
+        return redirect(url_for("logout"))
+    
+    return render_template("profile.html", user=user, orders=orders)
+
+@app.route("/update_profile", methods=["POST"])
+def update_profile():
+    if not session.get("user_id"):
+        flash("Tizimga kiring.", "error")
+        return redirect(url_for("login"))
+
+    user_id = session.get("user_id")
+    first_name = request.form.get("first_name", "").strip()
+    last_name = request.form.get("last_name", "").strip()
+    email = request.form.get("email", "").strip()
+    phone = request.form.get("phone", "").strip()
+
+    if not all([first_name, last_name, email]):
+        flash("Ism, familiya va email majburiy.", "error")
+        return redirect(url_for("profile"))
+
+    conn = get_db()
+    cur = conn.cursor()
+
+    # Email takrorlanishini tekshirish
+    cur.execute("SELECT id FROM users WHERE email = ? AND id != ?", (email, user_id))
+    if cur.fetchone():
+        flash("Bu email allaqachon ishlatilmoqda.", "error")
+        conn.close()
+        return redirect(url_for("profile"))
+
+    # Ma'lumotlarni yangilash
+    cur.execute("""
+        UPDATE users 
+        SET first_name = ?, last_name = ?, email = ?, phone = ?
+        WHERE id = ?
+    """, (first_name, last_name, email, phone, user_id))
+
+    conn.commit()
+    conn.close()
+
+    # Session ma'lumotlarini yangilash
+    session["user_name"] = f"{first_name} {last_name}"
+    session["user_email"] = email
+
+    flash("Profil muvaffaqiyatli yangilandi!", "success")
+    return redirect(url_for("profile"))
+
+@app.route("/update_address", methods=["POST"])
+def update_address():
+    if not session.get("user_id"):
+        flash("Tizimga kiring.", "error")
+        return redirect(url_for("login"))
+
+    user_id = session.get("user_id")
+    address = request.form.get("address", "").strip()
+    address_latitude = request.form.get("address_latitude", "")
+    address_longitude = request.form.get("address_longitude", "")
+
+    if not address:
+        flash("Manzilni xaritadan tanlang.", "error")
+        return redirect(url_for("profile"))
+
+    conn = get_db()
+    cur = conn.cursor()
+
+    # Manzilni yangilash
+    cur.execute("""
+        UPDATE users 
+        SET address = ?, address_latitude = ?, address_longitude = ?
+        WHERE id = ?
+    """, (address, address_latitude if address_latitude else None, 
+          address_longitude if address_longitude else None, user_id))
+
+    conn.commit()
+    conn.close()
+
+    flash("Manzil muvaffaqiyatli yangilandi!", "success")
+    return redirect(url_for("profile"))
+
+@app.route("/change_password", methods=["POST"])
+def change_password():
+    if not session.get("user_id"):
+        flash("Tizimga kiring.", "error")
+        return redirect(url_for("login"))
+
+    user_id = session.get("user_id")
+    current_password = request.form.get("current_password", "")
+    new_password = request.form.get("new_password", "")
+    confirm_password = request.form.get("confirm_password", "")
+
+    if not all([current_password, new_password, confirm_password]):
+        flash("Barcha parol maydonlarini to'ldiring.", "error")
+        return redirect(url_for("profile"))
+
+    if new_password != confirm_password:
+        flash("Yangi parollar mos kelmaydi.", "error")
+        return redirect(url_for("profile"))
+
+    if len(new_password) < 6:
+        flash("Yangi parol kamida 6 ta belgidan iborat bo'lishi kerak.", "error")
+        return redirect(url_for("profile"))
+
+    conn = get_db()
+    cur = conn.cursor()
+
+    # Joriy parolni tekshirish
+    cur.execute("SELECT password_hash FROM users WHERE id = ?", (user_id,))
+    user_hash = cur.fetchone()
+
+    if not user_hash or not check_password_hash(user_hash["password_hash"], current_password):
+        flash("Joriy parol noto'g'ri.", "error")
+        conn.close()
+        return redirect(url_for("profile"))
+
+    # Yangi parolni saqlash
+    new_password_hash = generate_password_hash(new_password)
+    cur.execute("UPDATE users SET password_hash = ? WHERE id = ?", (new_password_hash, user_id))
+
+    conn.commit()
+    conn.close()
+
+    flash("Parol muvaffaqiyatli o'zgartirildi!", "success")
+    return redirect(url_for("profile"))
+
 @app.route("/logout")
 def logout():
     user_name = session.get("user_name", "")
