@@ -29,61 +29,120 @@
 
     <div class="cart-actions">
       {% if session.get('user_id') %}
-        <form method="post" action="{{ url_for('user_page') }}">
-          <div style="display: flex; gap: 10px; align-items: center;">
-            <a href="{{ url_for('menu') }}" class="btn">⬅️ Menuga qaytish</a>
-            <button type="submit" class="btn big" style="background: #4CAF50;">✅ Buyurtma berish</button>
-          </div>
-        </form>
-        <div class="row justify-content-center mt-4">
-    <div class="col-md-8">
-        <form method="POST" action="{{ url_for('user_page') }}" class="checkout-form">
-            <div class="mb-3">
-                <label for="delivery_address" class="form-label">🏠 Dostavka manzili (ixtiyoriy):</label>
-                <textarea class="form-control" id="delivery_address" name="delivery_address" 
-                         rows="2" placeholder="Agar dostavka kerak bo'lsa manzilni kiriting..." 
-                         onchange="toggleCardNumber()"></textarea>
-                <small class="text-muted">Bo'sh qoldirgang takdirda restoranda yeyish uchun buyurtma beriladi.</small>
+        <form method="post" action="{{ url_for('user_page') }}" class="checkout-form">
+            <h3>📋 Buyurtma berish</h3>
+
+            <div class="order-type-selection">
+                <h4>Buyurtma turi:</h4>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="order_type" value="dine_in" checked onchange="toggleDeliveryFields()">
+                        <span class="radio-text">🍽️ Restoranda iste'mol qilish</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="order_type" value="delivery" onchange="toggleDeliveryFields()">
+                        <span class="radio-text">🚚 Yetkazib berish</span>
+                    </label>
+                </div>
             </div>
 
-            <div class="mb-3" id="card-number-field" style="display: none;">
-                <label for="card_number" class="form-label">💳 Karta raqami:</label>
-                <input type="text" class="form-control" id="card_number" name="card_number" 
-                       placeholder="1234 5678 9012 3456" maxlength="19" 
-                       pattern="[0-9\s]+" onkeyup="formatCardNumber(this)">
-                <small class="text-muted">Dostavka uchun to'lov kartasi raqamini kiriting.</small>
+            <div id="delivery-fields" class="delivery-section" style="display: none;">
+                <h4>📍 Yetkazib berish ma'lumotlari:</h4>
+                <div class="form-group">
+                    <label for="delivery_address">Manzil:</label>
+                    <textarea id="delivery_address" name="delivery_address" placeholder="To'liq manzilni kiriting (Ko'cha, uy raqami, orientir)..." rows="3"></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="customer_phone">Telefon raqamingiz:</label>
+                        <input type="tel" id="customer_phone" name="customer_phone" placeholder="+998 90 123 45 67" 
+                               value="{{ session.get('user_phone', '') }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="delivery_distance">Masofa (km):</label>
+                        <input type="number" id="delivery_distance" name="delivery_distance" step="0.1" min="0" placeholder="5.2">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="delivery_price">Yetkazish narxi (so'm):</label>
+                    <input type="number" id="delivery_price" name="delivery_price" min="0" placeholder="15000" onchange="updateTotal()">
+                    <small class="text-muted">Yetkazib berish xizmati uchun to'lov (ixtiyoriy)</small>
+                </div>
+
+                <div class="delivery-info">
+                    <div class="info-item">
+                        <span class="info-icon">⏱️</span>
+                        <span class="info-text">Taxminiy yetkazib berish vaqti: 25-45 daqiqa</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">📞</span>
+                        <span class="info-text">Kuryer sizga yetib borgunga qadar qo'ng'iroq qiladi</span>
+                    </div>
+                </div>
             </div>
-
-            <button type="submit" class="btn btn-success btn-lg w-100">
-                🛒 Buyurtma berish ({{ "{:,}".format(total) }} so'm)
-            </button>
+            <div class="total-section">
+                <div class="total-breakdown">
+                    <div class="total-item">
+                        <span>Mahsulotlar:</span>
+                        <span>{{ total }} so'm</span>
+                    </div>
+                    <div class="delivery-cost-info">
+                        <small class="delivery-cost">Yetkazib berish: Bepul</small>
+                    </div>
+                    <div class="total-final">
+                        <strong>Jami summa: <span id="total-amount" class="total-amount">{{ total }} so'm</span></strong>
+                    </div>
+                </div>
+                <button type="submit" class="btn checkout-btn">🛒 Buyurtma berish</button>
+            </div>
         </form>
-    </div>
-</div>
+        <script>
+function toggleDeliveryFields() {
+    const deliveryRadio = document.querySelector('input[name="order_type"][value="delivery"]');
+    const deliveryFields = document.getElementById('delivery-fields');
+    const deliveryAddress = document.getElementById('delivery_address');
+    const customerPhone = document.getElementById('customer_phone');
 
-<script>
-function toggleCardNumber() {
-    const deliveryAddress = document.getElementById('delivery_address').value.trim();
-    const cardField = document.getElementById('card-number-field');
-    const cardInput = document.getElementById('card_number');
-
-    if (deliveryAddress) {
-        cardField.style.display = 'block';
-        cardInput.required = true;
+    if (deliveryRadio.checked) {
+        deliveryFields.style.display = 'block';
+        deliveryAddress.required = true;
+        customerPhone.required = true;
     } else {
-        cardField.style.display = 'none';
-        cardInput.required = false;
-        cardInput.value = '';
+        deliveryFields.style.display = 'none';
+        deliveryAddress.required = false;
+        customerPhone.required = false;
+        updateTotal(); // Delivery narxini olib tashlash
     }
 }
 
-function formatCardNumber(input) {
-    let value = input.value.replace(/\s/g, '');
-    let formattedValue = value.replace(/(.{4})/g, '$1 ').trim();
-    if (formattedValue.length > 19) {
-        formattedValue = formattedValue.substring(0, 19);
+function updateTotal() {
+    const deliveryPrice = document.getElementById('delivery_price');
+    const totalElement = document.getElementById('total-amount');
+    const deliveryRadio = document.querySelector('input[name="order_type"][value="delivery"]');
+
+    if (!totalElement) return;
+
+    const baseTotal = {{ total }};
+    let deliveryAmount = 0;
+
+    if (deliveryRadio.checked && deliveryPrice.value) {
+        deliveryAmount = parseFloat(deliveryPrice.value) || 0;
     }
-    input.value = formattedValue;
+
+    const finalTotal = baseTotal + deliveryAmount;
+    totalElement.textContent = finalTotal.toLocaleString() + " so'm";
+
+    // Delivery info yangilash
+    const deliveryInfo = document.querySelector('.delivery-cost-info');
+    if (deliveryInfo) {
+        if (deliveryAmount > 0) {
+            deliveryInfo.innerHTML = `<small class="delivery-cost">+ ${deliveryAmount.toLocaleString()} so'm (yetkazib berish)</small>`;
+        } else {
+            deliveryInfo.innerHTML = '<small class="delivery-cost">Yetkazib berish: Bepul</small>';
+        }
+    }
 }
 </script>
       {% else %}
@@ -244,6 +303,78 @@ function formatCardNumber(input) {
 .checkout-form .btn-success:hover {
     background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
     transform: translateY(-2px);
+}
+
+.delivery-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    border-left: 4px solid #007bff;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.delivery-info {
+    background: #e7f3ff;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.info-icon {
+    font-size: 16px;
+}
+
+.info-text {
+    font-size: 13px;
+    color: #495057;
+}
+
+.total-breakdown {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.total-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.delivery-cost {
+    color: #28a745;
+    font-style: italic;
+}
+
+.total-final {
+    border-top: 2px solid #dee2e6;
+    padding-top: 10px;
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+/* Mobile uchun */
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
 }
 </style>
 {% endblock %}
