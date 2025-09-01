@@ -1,0 +1,68 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-container">
+    <h2>🚚 Kuryer Dashboard</h2>
+    <p>Salom, {{ session.get('courier_name') }}!</p>
+    
+    <div class="section-card">
+        <h3>📦 Yetkazib berish uchun buyurtmalar</h3>
+        
+        {% if orders %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Buyurtma #</th>
+                        <th>Mijoz</th>
+                        <th>Manzil</th>
+                        <th>Mahsulotlar</th>
+                        <th>Status</th>
+                        <th>Vaqt</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td><strong>#{{ order.ticket_no }}</strong></td>
+                        <td>{{ order.customer_name }}</td>
+                        <td>{{ order.delivery_address or 'N/A' }}</td>
+                        <td>{{ order.order_items or 'N/A' }}</td>
+                        <td>
+                            {% if order.status == 'ready' %}
+                                <span class="badge bg-warning">Tayyor</span>
+                            {% elif order.status == 'on_way' %}
+                                <span class="badge bg-info">Yo'lda</span>
+                            {% elif order.status == 'delivered' %}
+                                <span class="badge bg-success">Yetkazildi</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ order.created_at[:16].replace('T', ' ') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-center">Hozircha yetkazib berish uchun buyurtmalar yo'q.</p>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.dashboard-container {
+    padding: 20px;
+}
+.section-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+.table {
+    margin-top: 15px;
+}
+</style>
+{% endblock %}
