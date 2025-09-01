@@ -17,6 +17,20 @@ app.secret_key = os.environ.get("SECRET_KEY", "dev_secret_change_me")
 # Database fayl yo'lini to'g'rilash
 DB_PATH = os.path.join(os.path.dirname(__file__), "database.sqlite3")
 
+import logging
+
+# Log faylini sozlash
+logging.basicConfig(
+    level=logging.ERROR,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('error.log'),
+        logging.StreamHandler()
+    ]
+)
+
+
+
 AVG_PREP_MINUTES = int(os.environ.get("AVG_PREP_MINUTES", "7"))
 db = SQLAlchemy(app)
 # o'rtacha tayyorlanish vaqti (daqiqalarda)
@@ -2243,21 +2257,28 @@ def about():
 @app.route("/api/validate-address", methods=["POST"])
 def api_validate_address():
     """Manzilni tekshirish API"""
-    data = request.get_json()
-    address = data.get("address", "").strip()
-    
-    if not address:
-        return jsonify({"valid": False, "message": "Manzil kiritilmagan"})
-    
-    is_valid, message = validate_delivery_address(address)
-    distance = calculate_delivery_distance(address) if is_valid else 0
-    
-    return jsonify({
-        "valid": is_valid,
-        "message": message,
-        "distance": round(distance, 1),
-        "delivery_price": round(distance * 2000, 0)  # Har km uchun 2000 so'm
-    })
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"valid": False, "message": "Ma'lumot yuborilmagan"})
+            
+        address = data.get("address", "").strip()
+        
+        if not address:
+            return jsonify({"valid": False, "message": "Manzil kiritilmagan"})
+        
+        is_valid, message = validate_delivery_address(address)
+        distance = calculate_delivery_distance(address) if is_valid else 0
+        
+        return jsonify({
+            "valid": is_valid,
+            "message": message,
+            "distance": round(distance, 1),
+            "delivery_price": round(distance * 2000, 0)  # Har km uchun 2000 so'm
+        })
+    except Exception as e:
+        logging.error(f"Manzil tekshirishda xatolik: {str(e)}")
+        return jsonify({"valid": False, "message": "Server xatoligi"}), 500
 
 @app.route("/api/search-places", methods=["POST"])
 def api_search_places():
