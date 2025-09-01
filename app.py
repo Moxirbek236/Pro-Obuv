@@ -536,42 +536,99 @@ def get_places_with_serper(query, gl="uz", hl="uz"):
         return None
 
 def validate_delivery_address(address):
-    """Yetkazib berish manzilini tekshirish"""
+    """Yetkazib berish manzilini tekshirish Yandex API orqali"""
     if not address:
         return False, "Manzil kiritilmagan"
     
-    # Serper API orqali manzilni tekshirish
-    search_result = search_location_with_serper(f"{address} Toshkent Uzbekistan")
-    
-    if search_result and search_result.get('organic'):
-        return True, "Manzil topildi"
-    else:
-        return False, "Manzil topilmadi yoki noto'g'ri"
+    try:
+        # Yandex Geocoding API orqali manzilni tekshirish
+        geocoding_url = "https://geocode-maps.yandex.ru/1.x/"
+        params = {
+            'apikey': 'YOUR_YANDEX_GEOCODING_API_KEY',  # Bu yerga Yandex API kalitini qo'ying
+            'geocode': f"{address}, Toshkent, O'zbekiston",
+            'format': 'json',
+            'results': 1
+        }
+        
+        response = requests.get(geocoding_url, params=params, timeout=5)
+        
+        if response.status_code == 200:
+            data = response.json()
+            
+            # Natijalarni tekshirish
+            geo_objects = data.get('response', {}).get('GeoObjectCollection', {}).get('featureMember', [])
+            
+            if geo_objects:
+                return True, "Manzil topildi"
+            else:
+                return False, "Manzil topilmadi"
+        else:
+            # API ishlamasa, oddiy tekshirish
+            if len(address) > 5 and any(word in address.lower() for word in ['ko\'cha', 'mahalla', 'tuman', 'shoh', 'yo\'l']):
+                return True, "Manzil qabul qilindi"
+            else:
+                return False, "Manzilni to'liqroq kiriting"
+                
+    except Exception as e:
+        # Xatolik bo'lsa, oddiy tekshirish
+        if len(address) > 5:
+            return True, "Manzil qabul qilindi"
+        else:
+            return False, "Manzilni to'liqroq kiriting"
 
 def calculate_delivery_distance(address):
-    """Yetkazib berish masofasini hisoblash"""
+    """Yetkazib berish masofasini hisoblash Yandex API orqali"""
     try:
-        # Restoran manzili (misol)
-        restaurant_location = "Amir Temur shoh ko'chasi, Toshkent"
+        # Restoran koordinatalari (Toshkent markazi)
+        restaurant_coords = [41.2995, 69.2401]
         
-        # Manzillarni qidirish
-        places_result = get_places_with_serper(f"{address} Toshkent")
+        # Yandex Geocoding API orqali manzilni koordinatalarga o'tkazish
+        geocoding_url = "https://geocode-maps.yandex.ru/1.x/"
+        params = {
+            'apikey': 'YOUR_YANDEX_GEOCODING_API_KEY',
+            'geocode': f"{address}, Toshkent, O'zbekiston",
+            'format': 'json',
+            'results': 1
+        }
         
-        if places_result and places_result.get('places'):
-            # Birinchi topilgan joyning koordinatalarini olish
-            place = places_result['places'][0]
-            if 'position' in place:
-                lat = place['position'].get('lat', 0)
-                lng = place['position'].get('lng', 0)
+        response = requests.get(geocoding_url, params=params, timeout=5)
+        
+        if response.status_code == 200:
+            data = response.json()
+            geo_objects = data.get('response', {}).get('GeoObjectCollection', {}).get('featureMember', [])
+            
+            if geo_objects:
+                # Koordinatalarni olish
+                point = geo_objects[0]['GeoObject']['Point']['pos'].split()
+                dest_coords = [float(point[1]), float(point[0])]  # lat, lng formatida
                 
-                # Oddiy masofa hisoblash (km)
-                # Bu yerda real GPS koordinatalar orqali masofa hisoblash qilish mumkin
-                # Hozircha statik masofa qaytaramiz
-                return min(50, max(1, abs(lat) + abs(lng)) * 0.1)
+                # To'g'ri chiziq bo'yicha masofa hisoblash (Haversine formula)
+                import math
+                
+                lat1, lng1 = math.radians(restaurant_coords[0]), math.radians(restaurant_coords[1])
+                lat2, lng2 = math.radians(dest_coords[0]), math.radians(dest_coords[1])
+                
+                dlat = lat2 - lat1
+                dlng = lng2 - lng1
+                
+                a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlng/2)**2
+                c = 2 * math.asin(math.sqrt(a))
+                distance_km = 6371 * c  # Yer radiusi 6371 km
+                
+                return round(min(50, max(0.5, distance_km)), 1)
         
-        # Agar API orqali aniqlab bo'lmasa, default masofa
-        return 5.0
-    except:
+        # Agar API ishlamasa yoki natija bo'lmasa, oddiy hisoblash
+        if 'toshkent' in address.lower() or 'алмазар' in address.lower():
+            return 5.0
+        elif any(word in address.lower() for word in ['sergeli', 'yunusobod', 'yashnobod']):
+            return 8.0
+        elif any(word in address.lower() for word in ['chilonzor', 'bektemir']):
+            return 12.0
+        else:
+            return 7.0
+            
+    except Exception as e:
+        logging.error(f"Masofa hisoblashda xatolik: {str(e)}")
         return 5.0
 
 def generate_qr_code(receipt_data):

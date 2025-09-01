@@ -401,5 +401,24 @@
         "jami": 66000.0
       }
     ]
+  },
+  {
+    "ism": "Moxirbek Solijonov",
+    "buyurtma_raqami": 36,
+    "buyurtma_vaqti": "2025-09-01 18:23:35",
+    "buyurtma_mahsulotlari": [
+      {
+        "nomi": "Choy",
+        "miqdori": 4,
+        "narxi": 5000.0,
+        "jami": 20000.0
+      },
+      {
+        "nomi": "Lagmon",
+        "miqdori": 4,
+        "narxi": 22000.0,
+        "jami": 88000.0
+      }
+    ]
   }
 ]
