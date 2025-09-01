@@ -738,8 +738,47 @@ function translateToEnglish() {
     changeLanguage('en');
 }
 
+// Navbar mavzu yangilash funksiyasi
+function updateNavbarTheme(isDark) {
+    const navbar = document.querySelector('.navbar');
+    const dropdowns = document.querySelectorAll('.dropdown-menu');
+    const cards = document.querySelectorAll('.card');
+    
+    if (navbar) {
+        if (isDark) {
+            navbar.classList.add('navbar-dark');
+            navbar.classList.remove('navbar-light');
+        } else {
+            navbar.classList.add('navbar-light');
+            navbar.classList.remove('navbar-dark');
+        }
+    }
+    
+    // Dropdown menu klasslarini yangilash
+    dropdowns.forEach(dropdown => {
+        if (isDark) {
+            dropdown.style.background = 'rgba(45, 55, 72, 0.98) !important';
+        } else {
+            dropdown.style.background = 'rgba(255, 255, 255, 0.98) !important';
+        }
+    });
+    
+    // Kartalar uchun klasslar
+    cards.forEach(card => {
+        if (isDark) {
+            card.style.background = 'linear-gradient(145deg, rgba(51, 65, 85, 0.9) 0%, rgba(71, 85, 105, 0.8) 100%)';
+            card.style.color = '#f8fafc';
+        } else {
+            card.style.background = 'rgba(255, 255, 255, 0.98)';
+            card.style.color = '#2d3748';
+        }
+    });
+}
+
 // Global mavzu o'zgartirish funksiyasi
 window.toggleDarkMode = function(isDark) {
+    console.log('toggleDarkMode chaqirildi:', isDark);
+    
     // Body klassini o'zgartirish
     if (isDark) {
         document.body.classList.add('dark-theme');
@@ -747,8 +786,12 @@ window.toggleDarkMode = function(isDark) {
         document.body.classList.remove('dark-theme');
     }
 
+    // Navbar va boshqa elementlarni yangilash
+    updateNavbarTheme(isDark);
+
     // LocalStorage ga saqlash
     localStorage.setItem('darkMode', isDark.toString());
+    console.log('Dark mode localStorage ga saqlandi:', isDark);
 
     // Server ga yuborish
     fetch('/api/set-theme', {
@@ -757,16 +800,26 @@ window.toggleDarkMode = function(isDark) {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ dark_mode: isDark })
-    }).catch(error => console.log('Mavzu sozlamasini saqlashda xato:', error));
+    }).then(response => {
+        console.log('Server javob berdi:', response.status);
+        return response.json();
+    }).then(data => {
+        console.log('Server javob ma\'lumotlari:', data);
+    }).catch(error => {
+        console.log('Mavzu sozlamasini saqlashda xato:', error);
+    });
 };
 
 // Global font o'lcham o'zgartirish funksiyasi
 window.changeFontSize = function(size) {
+    console.log('changeFontSize chaqirildi:', size);
+    
     // Eski klasslarni olib tashlash
     document.body.classList.remove('font-small', 'font-medium', 'font-large', 'font-xlarge');
 
     // Yangi klassni qo'shish
     document.body.classList.add('font-' + size);
+    console.log('Font size klassini qo\'shildi:', 'font-' + size);
 
     // LocalStorage ga saqlash
     localStorage.setItem('fontSize', size);
@@ -785,6 +838,11 @@ window.changeFontSize = function(size) {
             font_size: size,
             dark_theme: darkMode
         })
+    }).then(response => {
+        console.log('Font size server javob berdi:', response.status);
+        return response.json();
+    }).then(data => {
+        console.log('Font size server ma\'lumotlari:', data);
     }).catch(error => console.log('Font o\'lcham sozlamasini saqlashda xato:', error));
 };
 
@@ -793,25 +851,36 @@ document.addEventListener('DOMContentLoaded', function() {
     // URL role parametrini qo'shish
     addRoleToURL();
 
-    // Barcha sozlamalarni darhol yuklash va qo'llash
+    // Sozlamalarni localStorage dan olish
     const darkMode = localStorage.getItem('darkMode') === 'true';
     const fontSize = localStorage.getItem('fontSize') || 'medium';
     const language = localStorage.getItem('language') || 'uz';
 
-    // Body klasslarini tozalash
+    console.log('DOMContentLoaded - Loading settings:', { darkMode, fontSize, language });
+
+    // Barcha klasslarni tozalash
     document.body.classList.remove('dark-theme', 'font-small', 'font-medium', 'font-large', 'font-xlarge');
     document.body.classList.remove('lang-uz', 'lang-ru', 'lang-en');
 
     // Mavzu klassini qo'shish
     if (darkMode) {
         document.body.classList.add('dark-theme');
+        console.log('Dark theme qo\'shildi');
+    } else {
+        document.body.classList.remove('dark-theme');
+        console.log('Light theme qo\'shildi');
     }
 
     // Font o'lcham klassini qo'shish
     document.body.classList.add('font-' + fontSize);
+    console.log('Font size qo\'shildi:', 'font-' + fontSize);
 
     // Til klassini qo'shish
     document.body.classList.add('lang-' + language);
+    console.log('Language qo\'shildi:', 'lang-' + language);
+
+    // Navbar va dropdown klasslarini yangilash
+    updateNavbarTheme(darkMode);
 
     // Tilni tarjima qilish
     translatePage(language);
