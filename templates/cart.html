@@ -33,7 +33,7 @@
 
     <div class="cart-actions">
       {% if session.get('user_id') %}
-        <form method="post" action="{{ url_for('user_page') }}" class="checkout-form">
+        <form method="post" action="{{ url_for('user_page') }}" class="checkout-form" onsubmit="return validateOrderForm()">
             <h3>📋 Buyurtma berish</h3>
 
             <div class="order-type-selection">
@@ -174,7 +174,7 @@
                         <strong>Jami summa: <span id="total-amount" class="total-amount">{{ total }} so'm</span></strong>
                     </div>
                 </div>
-                <button type="submit" class="btn checkout-btn">🛒 Buyurtma berish</button>
+                <button type="submit" class="btn checkout-btn" id="checkout-button">🛒 Buyurtma berish</button>
             </div>
         </form>
         <script>
@@ -468,6 +468,42 @@ function updateTotal() {
             deliveryCostInfoSpan.style.color = '#28a745'; // Yashil rang
         }
     }
+}
+
+function validateOrderForm() {
+    const orderType = document.querySelector('input[name="order_type"]:checked').value;
+    const checkoutButton = document.getElementById('checkout-button');
+    
+    // Tugmani disable qilish va loading ko'rsatish
+    checkoutButton.disabled = true;
+    checkoutButton.innerHTML = '⏳ Buyurtma berilmoqda...';
+    
+    if (orderType === 'delivery') {
+        const deliveryAddress = document.getElementById('delivery_address').value.trim();
+        const deliveryLat = document.getElementById('delivery_latitude').value;
+        const deliveryLng = document.getElementById('delivery_longitude').value;
+        
+        if (!deliveryAddress || !deliveryLat || !deliveryLng) {
+            alert('Iltimos, yetkazib berish manzilini xaritadan tanlang!');
+            // Tugmani qayta yoqish
+            checkoutButton.disabled = false;
+            checkoutButton.innerHTML = '🛒 Buyurtma berish';
+            return false;
+        }
+        
+        // Telefon raqami tekshiruvi (agar profilda bo'lmasa)
+        const phoneInput = document.getElementById('customer_phone');
+        if (phoneInput && !phoneInput.value.trim()) {
+            alert('Iltimos, telefon raqamingizni kiriting!');
+            checkoutButton.disabled = false;
+            checkoutButton.innerHTML = '🛒 Buyurtma berish';
+            phoneInput.focus();
+            return false;
+        }
+    }
+    
+    // Agar hamma narsa yaxshi bo'lsa, form yuboriladi
+    return true;
 }
 
 // Sahifa yuklanganda xaritani ishga tushirish va boshqa funksiyalarni chaqirish
