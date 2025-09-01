@@ -1258,8 +1258,11 @@ def logout():
 @app.route("/user", methods=["GET", "POST"])
 def user_page():
     if request.method == "POST":
+        print("DEBUG: POST so'rov keldi /user endpoint ga")
+        
         # Foydalanuvchi session'dan ismni olish
         if not session.get("user_id"):
+            print("DEBUG: User ID session da yo'q")
             flash("Buyurtma berish uchun avval tizimga kiring.", "error")
             return redirect(url_for("login"))
 
@@ -1267,8 +1270,12 @@ def user_page():
         user_id = session.get("user_id")
 
         if not name:
+            print("DEBUG: User name session da yo'q")
             flash("Foydalanuvchi ma'lumotlari topilmadi.", "error")
             return redirect(url_for("login"))
+        
+        print(f"DEBUG: Buyurtma berish boshlandi - User ID: {user_id}, Name: {name}")
+        print(f"DEBUG: Form ma'lumotlari: {dict(request.form)}")
 
         # Foydalanuvchi profilidan ma'lumotlarni olish
         conn_profile = get_db()
@@ -1298,6 +1305,8 @@ def user_page():
             home_address = request.form.get("home_address", "").strip()
             customer_phone_new = request.form.get("customer_phone", "").strip()
             
+            print(f"DEBUG: Form ma'lumotlari - home_address: {home_address}, customer_phone: {customer_phone_new}")
+            
             # Foydalanuvchi profilini yangilash
             if home_address or customer_phone_new:
                 cur_update = conn.cursor()
@@ -1314,6 +1323,8 @@ def user_page():
             now = get_current_time()
             eta_time = now + datetime.timedelta(minutes=eta_minutes)
             total = get_cart_total(conn, session_id, user_id)
+            
+            print(f"DEBUG: Buyurtma ma'lumotlari - ticket: {tno}, total: {total}")
 
             cur = conn.cursor()
             # Buyurtma yaratish - dostavka manzili bor bo'lsa delivery, yo'q bo'lsa dine_in
@@ -1385,7 +1396,14 @@ def user_page():
 
             # Foydalanuvchini JSON fayliga saqlash
             save_user_to_json(name, tno, now, order_items_for_json)
+            
+            print(f"DEBUG: Buyurtma muvaffaqiyatli yaratildi - ticket: {tno}")
 
+        except Exception as e:
+            print(f"ERROR: Buyurtma berishda xatolik: {str(e)}")
+            logging.error(f"Buyurtma berishda xatolik: {str(e)}")
+            flash("Buyurtma berishda xatolik yuz berdi. Qaytadan urinib ko'ring.", "error")
+            return redirect(url_for("cart"))
         finally:
             conn.close()
         return redirect(url_for("user_success", ticket_no=tno))
