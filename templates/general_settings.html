@@ -326,6 +326,26 @@
                 document.body.classList.remove('dark-theme');
             }
             localStorage.setItem('darkMode', isDark);
+            
+            // Tungi rejimni server ga yuborish
+            fetch('/api/set-theme', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ dark_mode: isDark })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Tungi rejim o\'zgartirildi');
+                } else {
+                    console.error('Tungi rejimni o\'zgartirishda xatolik');
+                }
+            })
+            .catch(error => {
+                console.error('Tungi rejimni o\'zgartirishda xatolik:', error);
+            });
         }
 
         function updateFontPreview() {
@@ -340,8 +360,26 @@
             const language = document.getElementById('languageSelect').value;
             localStorage.setItem('language', language);
             
-            // Bu yerda til o'zgartirish logikasi bo'lishi kerak
-            console.log('Til o\'zgartirildi:', language);
+            // Tilni server ga yuborish
+            fetch('/api/set-language', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ language: language })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Sahifani qayta yuklash
+                    window.location.reload();
+                } else {
+                    console.error('Tilni o\'zgartirishda xatolik');
+                }
+            })
+            .catch(error => {
+                console.error('Tilni o\'zgartirishda xatolik:', error);
+            });
         }
 
         function toggleAutoTheme() {

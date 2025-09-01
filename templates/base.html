@@ -10,6 +10,33 @@
   <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  
+  <!-- Global sozlamalar uchun CSS -->
+  <style>
+    /* Tungi rejim uchun global CSS */
+    body.dark-theme {
+        background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%) !important;
+        color: #e2e8f0 !important;
+    }
+    body.dark-theme .navbar-dark {
+        background-color: #1a202c !important;
+    }
+    body.dark-theme .card, body.dark-theme .modal-content {
+        background-color: #2d3748 !important;
+        color: #e2e8f0 !important;
+    }
+    body.dark-theme .btn-primary {
+        background-color: #4299e1 !important;
+        border-color: #4299e1 !important;
+    }
+    
+    /* Shrift o'lchamlari */
+    .font-small { font-size: 14px !important; }
+    .font-medium { font-size: 16px !important; }
+    .font-large { font-size: 18px !important; }
+    .font-xlarge { font-size: 20px !important; }
+  </style>
+  
   {% block extra_head %}{% endblock %}
 </head>
 <body>
@@ -142,6 +169,90 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="{{ url_for('static', filename='main.js') }}"></script>
+
+<!-- Global sozlamalarni yuklash -->
+<script>
+// Global sozlamalarni yuklash
+document.addEventListener('DOMContentLoaded', function() {
+    // Tungi rejimni yuklash
+    const darkMode = localStorage.getItem('darkMode') === 'true' || {{ 'true' if session.get('dark_theme') else 'false' }};
+    if (darkMode) {
+        document.body.classList.add('dark-theme');
+    }
+    
+    // Shrift o'lchamini yuklash
+    const fontSize = localStorage.getItem('fontSize') || '{{ session.get("font_size", "medium") }}';
+    document.body.classList.add('font-' + fontSize);
+    
+    // Tilni yuklash
+    const language = localStorage.getItem('language') || '{{ session.get("interface_language", "uz") }}';
+    if (language === 'ru') {
+        // Rus tili uchun matnlarni almashtirish
+        translateToRussian();
+    } else if (language === 'en') {
+        // Ingliz tili uchun matnlarni almashtirish  
+        translateToEnglish();
+    }
+});
+
+function translateToRussian() {
+    // Navbar matnlarini almashtirish
+    const menuLink = document.querySelector('a[href*="menu"]');
+    if (menuLink) menuLink.innerHTML = '📋 Меню';
+    
+    const favoritesLink = document.querySelector('a[href*="favorites"]');
+    if (favoritesLink) favoritesLink.innerHTML = '❤️ Избранное';
+    
+    const contactLink = document.querySelector('a[href*="contact"]');
+    if (contactLink) contactLink.innerHTML = '📞 Контакты';
+    
+    const aboutLink = document.querySelector('a[href*="about"]');
+    if (aboutLink) aboutLink.innerHTML = '❓ Вопросы';
+    
+    // Profil dropdown matnlari
+    const profileItems = document.querySelectorAll('.dropdown-item');
+    profileItems.forEach(item => {
+        if (item.innerHTML.includes('Profil ma\'lumotlari')) {
+            item.innerHTML = '👤 Данные профиля';
+        } else if (item.innerHTML.includes('Profil sozlamalari')) {
+            item.innerHTML = '⚙️ Настройки профиля';
+        } else if (item.innerHTML.includes('Sozlamalar')) {
+            item.innerHTML = '🔧 Настройки';
+        } else if (item.innerHTML.includes('Chiqish')) {
+            item.innerHTML = '🚪 Выход';
+        }
+    });
+}
+
+function translateToEnglish() {
+    // Navbar matnlarini almashtirish
+    const menuLink = document.querySelector('a[href*="menu"]');
+    if (menuLink) menuLink.innerHTML = '📋 Menu';
+    
+    const favoritesLink = document.querySelector('a[href*="favorites"]');
+    if (favoritesLink) favoritesLink.innerHTML = '❤️ Favorites';
+    
+    const contactLink = document.querySelector('a[href*="contact"]');
+    if (contactLink) contactLink.innerHTML = '📞 Contact';
+    
+    const aboutLink = document.querySelector('a[href*="about"]');
+    if (aboutLink) aboutLink.innerHTML = '❓ About';
+    
+    // Profil dropdown matnlari
+    const profileItems = document.querySelectorAll('.dropdown-item');
+    profileItems.forEach(item => {
+        if (item.innerHTML.includes('Profil ma\'lumotlari')) {
+            item.innerHTML = '👤 Profile Info';
+        } else if (item.innerHTML.includes('Profil sozlamalari')) {
+            item.innerHTML = '⚙️ Profile Settings';
+        } else if (item.innerHTML.includes('Sozlamalar')) {
+            item.innerHTML = '🔧 Settings';
+        } else if (item.innerHTML.includes('Chiqish')) {
+            item.innerHTML = '🚪 Logout';
+        }
+    });
+}
+</script>
 
 <!-- Savatcha sonini yangilash -->
 <script>

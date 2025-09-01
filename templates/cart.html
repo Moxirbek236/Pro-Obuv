@@ -33,7 +33,7 @@
 
     <div class="cart-actions">
       {% if session.get('user_id') %}
-        <form method="post" action="{{ url_for('user_page') }}" class="checkout-form" onsubmit="return validateOrderForm()">
+        <form method="post" action="{{ url_for('user_page') }}" class="checkout-form" onsubmit="return validateOrderForm(this)">
             <h3>📋 Buyurtma berish</h3>
 
             <div class="order-type-selection">
@@ -175,7 +175,6 @@
                     </div>
                 </div>
                 <button type="submit" class="btn checkout-btn" id="checkout-button">🛒 Buyurtma berish</button>
-            </div>
         </form>
         <script>
 let map;
@@ -470,66 +469,24 @@ function updateTotal() {
     }
 }
 
-function validateOrderForm() {
-    console.log('Form validation boshlandi...');
-    
-    const orderTypeChecked = document.querySelector('input[name="order_type"]:checked');
-    if (!orderTypeChecked) {
-        alert('Iltimos, buyurtma turini tanlang!');
+function validateOrderForm(form) {
+    console.log('Form validation boshlandi');
+
+    // Savatcha bo'sh emasligini tekshirish
+    const cartItems = document.querySelectorAll('.cart-item');
+    if (cartItems.length === 0) {
+        alert('Savatchangiz bo\'sh! Avval mahsulot qo\'shing.');
         return false;
     }
-    
-    const orderType = orderTypeChecked.value;
-    const checkoutButton = document.getElementById('checkout-button');
-    
-    console.log('Tanlangan buyurtma turi:', orderType);
-    
-    // Tugmani disable qilish va loading ko'rsatish
-    checkoutButton.disabled = true;
-    checkoutButton.innerHTML = '⏳ Buyurtma berilmoqda...';
-    
-    try {
-        if (orderType === 'delivery') {
-            const deliveryAddress = document.getElementById('delivery_address').value.trim();
-            const deliveryLat = document.getElementById('delivery_latitude').value;
-            const deliveryLng = document.getElementById('delivery_longitude').value;
-            
-            console.log('Delivery ma\'lumotlari:', {
-                address: deliveryAddress,
-                latitude: deliveryLat,
-                longitude: deliveryLng
-            });
-            
-            if (!deliveryAddress || !deliveryLat || !deliveryLng) {
-                alert('Iltimos, yetkazib berish manzilini xaritadan tanlang!');
-                // Tugmani qayta yoqish
-                checkoutButton.disabled = false;
-                checkoutButton.innerHTML = '🛒 Buyurtma berish';
-                return false;
-            }
-            
-            // Telefon raqami tekshiruvi (agar profilda bo'lmasa)
-            const phoneInput = document.getElementById('customer_phone');
-            if (phoneInput && !phoneInput.value.trim()) {
-                alert('Iltimos, telefon raqamingizni kiriting!');
-                checkoutButton.disabled = false;
-                checkoutButton.innerHTML = '🛒 Buyurtma berish';
-                phoneInput.focus();
-                return false;
-            }
-        }
-        
-        console.log('Form validation muvaffaqiyatli o\'tdi');
-        // Agar hamma narsa yaxshi bo'lsa, form yuboriladi
-        return true;
-        
-    } catch (error) {
-        console.error('Form validationda xatolik:', error);
-        alert('Formni yuborishda xatolik yuz berdi. Qaytadan urinib ko\'ring.');
-        checkoutButton.disabled = false;
-        checkoutButton.innerHTML = '🛒 Buyurtma berish';
-        return false;
+
+    // Loading animatsiyasini ko'rsatish
+    const submitBtn = form.querySelector('#placeOrderBtn');
+    if (submitBtn) {
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Buyurtma berilmoqda...';
+        submitBtn.disabled = true;
     }
+
+    return true;
 }
 
 // Sahifa yuklanganda xaritani ishga tushirish va boshqa funksiyalarni chaqirish
@@ -541,7 +498,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     if (checkoutForm) {
         checkoutForm.addEventListener('submit', function(e) {
             console.log('Form submit hodisasi ishga tushdi');
-            const isValid = validateOrderForm();
+            const isValid = validateOrderForm(this); // Pass the form to the validation function
             if (!isValid) {
                 e.preventDefault();
                 console.log('Form validation o\'tmadi, submit to\'xtatildi');
