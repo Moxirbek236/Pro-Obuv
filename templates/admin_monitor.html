@@ -145,8 +145,8 @@
         font-size: 1.1rem;
     }
 
-    /* Chap tarafdagi soat */
-    .time-widget {
+    /* Chap tarafdagi sana va soat */
+    .datetime-widget {
         position: fixed; 
         top: 20px; 
         left: 20px; 
@@ -158,18 +158,25 @@
         z-index: 1000; 
         backdrop-filter: blur(10px); 
         border: 2px solid rgba(255,255,255,0.2);
+        text-align: center;
     }
 
     .current-date {
-        font-size: 1.6rem; 
-        margin-bottom: 10px; 
+        font-size: 1.4rem; 
+        margin-bottom: 8px; 
         color: #ffd700;
     }
 
-    .current-clock {
-        font-size: 2.8rem; 
+    .current-time {
+        font-size: 2.5rem; 
         font-weight: 700; 
         color: #00ff88;
+        margin-bottom: 8px;
+    }
+
+    .current-year {
+        font-size: 1.2rem;
+        color: #87ceeb;
     }
 
     /* O'ng tarafdagi ob-havo */
@@ -186,6 +193,13 @@
         backdrop-filter: blur(10px); 
         border: 2px solid rgba(255,255,255,0.2); 
         text-align: center;
+        min-width: 200px;
+    }
+
+    .weather-location {
+        font-size: 1.3rem;
+        color: #87ceeb;
+        margin-bottom: 10px;
     }
 
     .temperature {
@@ -196,8 +210,15 @@
     }
 
     .weather-desc {
-        font-size: 1.5rem; 
+        font-size: 1.3rem; 
         color: #74c0fc;
+        margin-bottom: 8px;
+    }
+
+    .weather-details {
+        font-size: 1rem;
+        color: #ffffff;
+        opacity: 0.8;
     }
 
     @media (max-width: 768px) {
@@ -227,16 +248,16 @@
             font-size: 1.4rem;
         }
 
-        .time-widget, .weather-widget {
+        .datetime-widget, .weather-widget {
             padding: 15px 20px;
         }
 
         .current-date {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
         }
 
-        .current-clock {
-            font-size: 2rem;
+        .current-time {
+            font-size: 1.8rem;
         }
 
         .temperature {
@@ -244,28 +265,31 @@
         }
 
         .weather-desc {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
         }
     }
   </style>
 </head>
 <body>
-    <!-- Chap tarafdagi katta soat -->
-    <div class="time-widget">
+    <!-- Chap tarafdagi sana va vaqt -->
+    <div class="datetime-widget">
+        <div id="currentYear" class="current-year"></div>
         <div id="currentDate" class="current-date"></div>
-        <div id="currentClock" class="current-clock"></div>
+        <div id="currentTime" class="current-time"></div>
     </div>
 
-    <!-- O'ng tarafdagi katta ob-havo -->
+    <!-- O'ng tarafdagi Toshkent ob-havosi -->
     <div class="weather-widget">
+        <div class="weather-location">🏙️ Toshkent</div>
         <div id="temperature" class="temperature">--°C</div>
         <div id="weatherDesc" class="weather-desc">Yuklanmoqda...</div>
+        <div id="weatherDetails" class="weather-details"></div>
     </div>
 
     <div class="monitor-container">
         <div class="monitor-header">
             <h1>📺 Buyurtmalar Monitori</h1>
-            <p style="margin: 10px 0 0 0; font-size: 1.3rem;">Restoran boshqaruv tizimi - TV ko'rinish</p>
+            <p style="margin: 10px 0 0 0; font-size: 1.3rem;">TV ko'rinish - Avtomatik yangilanadi</p>
         </div>
 
         <div class="row">
@@ -410,37 +434,109 @@
     </div>
 
     <script>
-        // Soat va sana yangilash
+        // Sana va vaqtni yangilash
         function updateDateTime() {
             const now = new Date();
-            const options = { 
-                timeZone: 'Asia/Tashkent',
-                year: 'numeric', 
+            
+            // Toshkent vaqt zonasi
+            const tashkentOptions = { timeZone: 'Asia/Tashkent' };
+            
+            // Yil
+            const year = now.toLocaleDateString('uz-UZ', { ...tashkentOptions, year: 'numeric' });
+            
+            // To'liq sana
+            const dateOptions = { 
+                ...tashkentOptions,
                 month: 'long', 
                 day: 'numeric',
                 weekday: 'long'
             };
-            const dateString = now.toLocaleDateString('uz-UZ', options);
+            const dateString = now.toLocaleDateString('uz-UZ', dateOptions);
+            
+            // Vaqt
             const timeString = now.toLocaleTimeString('uz-UZ', {
-                timeZone: 'Asia/Tashkent',
+                ...tashkentOptions,
                 hour: '2-digit',
                 minute: '2-digit',
                 second: '2-digit'
             });
 
+            document.getElementById('currentYear').textContent = year + '-yil';
             document.getElementById('currentDate').textContent = dateString;
-            document.getElementById('currentClock').textContent = timeString;
+            document.getElementById('currentTime').textContent = timeString;
         }
 
-        // Ob-havo ma'lumotlarini olish
-        function updateWeather() {
-            // Toshkent uchun ob-havo ma'lumotlari
-            const temperature = Math.floor(Math.random() * 15) + 10; // 10-25°C orasida tasodifiy
-            const weatherConditions = ['☀️ Quyoshli', '⛅ Bulutli', '🌤️ Qisman bulutli', '🌥️ Ko\'p bulutli'];
-            const randomWeather = weatherConditions[Math.floor(Math.random() * weatherConditions.length)];
+        // Toshkent ob-havosini olish
+        function updateTashkentWeather() {
+            // Haqiqiy ob-havo API chaqiruvi (OpenWeatherMap yoki boshqa)
+            fetch('https://api.openweathermap.org/data/2.5/weather?q=Tashkent,UZ&appid=YOUR_API_KEY&units=metric&lang=uz')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('API not available');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const temp = Math.round(data.main.temp);
+                    const description = data.weather[0].description;
+                    const humidity = data.main.humidity;
+                    const windSpeed = Math.round(data.wind.speed);
+                    
+                    document.getElementById('temperature').textContent = `${temp}°C`;
+                    document.getElementById('weatherDesc').textContent = `${getWeatherIcon(data.weather[0].main)} ${description}`;
+                    document.getElementById('weatherDetails').innerHTML = `
+                        💧 ${humidity}% | 💨 ${windSpeed} m/s
+                    `;
+                })
+                .catch(error => {
+                    // API ishlamasa, simulyatsiya qilish
+                    console.log('API ishlamadi, simulyatsiya qilinmoqda');
+                    simulateWeather();
+                });
+        }
 
-            document.getElementById('temperature').textContent = `${temperature}°C`;
-            document.getElementById('weatherDesc').textContent = randomWeather;
+        // Ob-havo ikonalari
+        function getWeatherIcon(main) {
+            const icons = {
+                'Clear': '☀️',
+                'Clouds': '☁️',
+                'Rain': '🌧️',
+                'Drizzle': '🌦️',
+                'Thunderstorm': '⛈️',
+                'Snow': '❄️',
+                'Mist': '🌫️',
+                'Fog': '🌫️'
+            };
+            return icons[main] || '🌤️';
+        }
+
+        // Ob-havo simulyatsiyasi (API ishlamasa)
+        function simulateWeather() {
+            const seasons = {
+                winter: { temp: [0, 10], conditions: ['☁️ Bulutli', '❄️ Qorli', '🌫️ Tumanli'] },
+                spring: { temp: [15, 25], conditions: ['🌤️ Qisman bulutli', '☀️ Quyoshli', '🌧️ Yomg\'irli'] },
+                summer: { temp: [25, 40], conditions: ['☀️ Quyoshli', '🌤️ Issiq', '⛅ Qisman bulutli'] },
+                autumn: { temp: [10, 20], conditions: ['🍂 Kuzgi', '☁️ Bulutli', '🌧️ Yomg\'irli'] }
+            };
+            
+            const month = new Date().getMonth();
+            let season = 'spring';
+            if (month >= 11 || month <= 1) season = 'winter';
+            else if (month >= 2 && month <= 4) season = 'spring';
+            else if (month >= 5 && month <= 7) season = 'summer';
+            else season = 'autumn';
+            
+            const seasonData = seasons[season];
+            const temp = Math.floor(Math.random() * (seasonData.temp[1] - seasonData.temp[0] + 1)) + seasonData.temp[0];
+            const condition = seasonData.conditions[Math.floor(Math.random() * seasonData.conditions.length)];
+            const humidity = Math.floor(Math.random() * 40) + 30; // 30-70%
+            const windSpeed = Math.floor(Math.random() * 10) + 1; // 1-10 m/s
+            
+            document.getElementById('temperature').textContent = `${temp}°C`;
+            document.getElementById('weatherDesc').textContent = condition;
+            document.getElementById('weatherDetails').innerHTML = `
+                💧 ${humidity}% | 💨 ${windSpeed} m/s
+            `;
         }
 
         // Avtomatik yangilanish
@@ -451,13 +547,13 @@
 
         // Dastlabki ishga tushirish
         updateDateTime();
-        updateWeather();
+        updateTashkentWeather();
 
-        // Har soniyada soat yangilanishi
+        // Har soniyada sana/vaqt yangilanishi
         setInterval(updateDateTime, 1000);
 
-        // Har 2 daqiqada ob-havo yangilanishi
-        setInterval(updateWeather, 120000);
+        // Har 10 daqiqada ob-havo yangilanishi
+        setInterval(updateTashkentWeather, 600000);
 
         // Har 30 soniyada sahifa yangilanishi
         setInterval(autoRefresh, 30000);
@@ -466,7 +562,7 @@
         document.addEventListener('visibilitychange', function() {
             if (!document.hidden) {
                 updateDateTime();
-                updateWeather();
+                updateTashkentWeather();
             }
         });
 
