@@ -1617,8 +1617,8 @@ def user_status(ticket_no):
         "status_text": status_text,
         "ticket_no": order["ticket_no"],
         "queue_position": queue_position,
-        "order_type": order.get("order_type", "dine_in"),
-        "courier_assigned": bool(order.get("courier_id")),
+        "order_type": order["order_type"] if order["order_type"] else "dine_in",
+        "courier_assigned": bool(order["courier_id"]),
         "show_rating": show_rating,
         "order_id": order["id"]
     })
