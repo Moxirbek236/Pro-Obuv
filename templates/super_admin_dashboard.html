@@ -767,25 +767,34 @@
                 .then(orders => {
                     const tbody = document.getElementById('orders-table');
                     tbody.innerHTML = '';
-                    orders.forEach(order => {
-                        const row = `
-                            <tr>
-                                <td>${order.id}</td>
-                                <td>#${order.ticket_no}</td>
-                                <td>${order.customer_name}</td>
-                                <td>${order.order_type === 'delivery' ? 'Dostavka' : 'Zalda'}</td>
-                                <td><span class="badge bg-${getStatusColor(order.status)}">${getStatusText(order.status)}</span></td>
-                                <td>${order.created_at.slice(0, 16).replace('T', ' ')}</td>
-                                <td>${order.delivery_address || 'N/A'}</td>
-                                <td>${order.courier_id || 'N/A'}</td>
-                                <td>
-                                    <button class="btn btn-danger-custom btn-sm" onclick="deleteOrder(${order.id})">🗑️</button>
-                                    <button class="btn btn-success-custom btn-sm" onclick="changeOrderStatus(${order.id})">📝</button>
-                                </td>
-                            </tr>
-                        `;
-                        tbody.innerHTML += row;
-                    });
+                    if (orders && orders.length > 0) {
+                        orders.forEach(order => {
+                            const row = `
+                                <tr>
+                                    <td>${order.id}</td>
+                                    <td>#${order.ticket_no}</td>
+                                    <td>${order.customer_name}</td>
+                                    <td>${order.order_type === 'delivery' ? 'Dostavka' : 'Zalda'}</td>
+                                    <td><span class="badge bg-${getStatusColor(order.status)}">${getStatusText(order.status)}</span></td>
+                                    <td>${order.created_at.slice(0, 16).replace('T', ' ')}</td>
+                                    <td>${order.delivery_address || 'N/A'}</td>
+                                    <td>${order.courier_id || 'N/A'}</td>
+                                    <td>
+                                        <button class="btn btn-danger-custom btn-sm" onclick="deleteOrder(${order.id})">🗑️</button>
+                                        <button class="btn btn-success-custom btn-sm" onclick="changeOrderStatus(${order.id})">📝</button>
+                                    </td>
+                                </tr>
+                            `;
+                            tbody.innerHTML += row;
+                        });
+                    } else {
+                        tbody.innerHTML = '<tr><td colspan="9" class="text-center">Hech qanday buyurtma topilmadi</td></tr>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Buyurtmalarni yuklashda xatolik:', error);
+                    const tbody = document.getElementById('orders-table');
+                    tbody.innerHTML = '<tr><td colspan="9" class="text-center text-danger">Ma\'lumotlarni yuklashda xatolik yuz berdi</td></tr>';
                 });
         }
 
@@ -795,26 +804,35 @@
                 .then(items => {
                     const tbody = document.getElementById('menu-table');
                     tbody.innerHTML = '';
-                    items.forEach(item => {
-                        const row = `
-                            <tr>
-                                <td>${item.id}</td>
-                                <td><img src="${item.image_url || '/static/images/default-food.jpg'}" width="40" height="40" style="border-radius: 8px;"></td>
-                                <td>${item.name}</td>
-                                <td>${item.price} so'm</td>
-                                <td>${item.category === 'food' ? 'Taom' : 'Ichimlik'}</td>
-                                <td>${item.description || 'N/A'}</td>
-                                <td><span class="badge bg-${item.available ? 'success' : 'danger'}">${item.available ? 'Mavjud' : 'Mavjud emas'}</span></td>
-                                <td>${item.orders_count || 0}</td>
-                                <td>${item.discount_percentage || 0}%</td>
-                                <td>
-                                    <button class="btn btn-danger-custom btn-sm" onclick="deleteMenuItem(${item.id})">🗑️</button>
-                                    <button class="btn btn-warning-custom btn-sm" onclick="toggleMenuItem(${item.id})">🔄</button>
-                                </td>
-                            </tr>
-                        `;
-                        tbody.innerHTML += row;
-                    });
+                    if (items && items.length > 0) {
+                        items.forEach(item => {
+                            const row = `
+                                <tr>
+                                    <td>${item.id}</td>
+                                    <td><img src="${item.image_url || '/static/images/default-food.jpg'}" width="40" height="40" style="border-radius: 8px;"></td>
+                                    <td>${item.name}</td>
+                                    <td>${item.price} so'm</td>
+                                    <td>${item.category === 'food' ? 'Taom' : 'Ichimlik'}</td>
+                                    <td>${item.description || 'N/A'}</td>
+                                    <td><span class="badge bg-${item.available ? 'success' : 'danger'}">${item.available ? 'Mavjud' : 'Mavjud emas'}</span></td>
+                                    <td>${item.orders_count || 0}</td>
+                                    <td>${item.discount_percentage || 0}%</td>
+                                    <td>
+                                        <button class="btn btn-danger-custom btn-sm" onclick="deleteMenuItem(${item.id})">🗑️</button>
+                                        <button class="btn btn-warning-custom btn-sm" onclick="toggleMenuItem(${item.id})">🔄</button>
+                                    </td>
+                                </tr>
+                            `;
+                            tbody.innerHTML += row;
+                        });
+                    } else {
+                        tbody.innerHTML = '<tr><td colspan="10" class="text-center">Hech qanday menyu elementi topilmadi</td></tr>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Menyuni yuklashda xatolik:', error);
+                    const tbody = document.getElementById('menu-table');
+                    tbody.innerHTML = '<tr><td colspan="10" class="text-center text-danger">Ma\'lumotlarni yuklashda xatolik yuz berdi</td></tr>';
                 });
         }
 
@@ -824,22 +842,31 @@
                 .then(receipts => {
                     const tbody = document.getElementById('receipts-table');
                     tbody.innerHTML = '';
-                    receipts.forEach(receipt => {
-                        const row = `
-                            <tr>
-                                <td>${receipt.id}</td>
-                                <td>${receipt.receipt_number}</td>
-                                <td>#${receipt.order_id}</td>
-                                <td>${receipt.total_amount} so'm</td>
-                                <td>${receipt.cashback_amount} so'm (${receipt.cashback_percentage}%)</td>
-                                <td>${receipt.created_at.slice(0, 16).replace('T', ' ')}</td>
-                                <td>
-                                    <button class="btn btn-danger-custom btn-sm" onclick="deleteReceipt(${receipt.id})">🗑️</button>
-                                </td>
-                            </tr>
-                        `;
-                        tbody.innerHTML += row;
-                    });
+                    if (receipts && receipts.length > 0) {
+                        receipts.forEach(receipt => {
+                            const row = `
+                                <tr>
+                                    <td>${receipt.id}</td>
+                                    <td>${receipt.receipt_number}</td>
+                                    <td>#${receipt.order_id}</td>
+                                    <td>${receipt.total_amount} so'm</td>
+                                    <td>${receipt.cashback_amount} so'm (${receipt.cashback_percentage}%)</td>
+                                    <td>${receipt.created_at.slice(0, 16).replace('T', ' ')}</td>
+                                    <td>
+                                        <button class="btn btn-danger-custom btn-sm" onclick="deleteReceipt(${receipt.id})">🗑️</button>
+                                    </td>
+                                </tr>
+                            `;
+                            tbody.innerHTML += row;
+                        });
+                    } else {
+                        tbody.innerHTML = '<tr><td colspan="7" class="text-center">Hech qanday chek topilmadi</td></tr>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Cheklarni yuklashda xatolik:', error);
+                    const tbody = document.getElementById('receipts-table');
+                    tbody.innerHTML = '<tr><td colspan="7" class="text-center text-danger">Ma\'lumotlarni yuklashda xatolik yuz berdi</td></tr>';
                 });
         }
 
@@ -867,8 +894,15 @@
             }
         }
 
-        // Tab o'zgarishini kuzatish
+        // Tab o'zgarishini kuzatish va sahifa yuklanganda ma'lumotlarni yuklash
         document.addEventListener('DOMContentLoaded', function () {
+            // Sahifa yuklanganda barcha ma'lumotlarni oldindan yuklash
+            setTimeout(() => {
+                loadOrders();
+                loadMenu();
+                loadReceipts();
+            }, 1000);
+
             const tabTriggerList = document.querySelectorAll('#myTab button[data-bs-toggle="tab"]');
             tabTriggerList.forEach(tabTrigger => {
                 tabTrigger.addEventListener('shown.bs.tab', function (event) {
