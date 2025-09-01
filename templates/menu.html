@@ -27,7 +27,15 @@
                     <h3 class="item-name">{{ food.name }}</h3>
                     <p class="item-description">{{ food.description or 'Mazali taom' }}</p>
                     <div class="item-footer">
+                        {% if food.discount_percentage and food.discount_percentage > 0 %}
+                        <div class="price-with-discount">
+                            <span class="original-price">{{ "{:,.0f}".format(food.price) }} so'm</span>
+                            <span class="discount-price">{{ "{:,.0f}".format(food.price * (100 - food.discount_percentage) / 100) }} so'm</span>
+                            <span class="discount-badge">-{{ food.discount_percentage }}%</span>
+                        </div>
+                        {% else %}
                         <span class="item-price">{{ "{:,.0f}".format(food.price) }} so'm</span>
+                        {% endif %}
                         <div class="item-actions">
                             <form method="POST" action="{{ url_for('add_to_cart') }}" style="display: inline;">
                                 <input type="hidden" name="menu_item_id" value="{{ food.id }}">
@@ -55,7 +63,15 @@
                     <h3 class="item-name">{{ drink.name }}</h3>
                     <p class="item-description">{{ drink.description or 'Mazali ichimlik' }}</p>
                     <div class="item-footer">
+                        {% if drink.discount_percentage and drink.discount_percentage > 0 %}
+                        <div class="price-with-discount">
+                            <span class="original-price">{{ "{:,.0f}".format(drink.price) }} so'm</span>
+                            <span class="discount-price">{{ "{:,.0f}".format(drink.price * (100 - drink.discount_percentage) / 100) }} so'm</span>
+                            <span class="discount-badge">-{{ drink.discount_percentage }}%</span>
+                        </div>
+                        {% else %}
                         <span class="item-price">{{ "{:,.0f}".format(drink.price) }} so'm</span>
+                        {% endif %}
                         <div class="item-actions">
                             <form method="POST" action="{{ url_for('add_to_cart') }}" style="display: inline;">
                                 <input type="hidden" name="menu_item_id" value="{{ drink.id }}">
@@ -213,6 +229,34 @@
 .btn-add-cart:hover {
     background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
     transform: translateY(-2px);
+}
+
+.price-with-discount {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.original-price {
+    color: #999;
+    text-decoration: line-through;
+    font-size: 0.9em;
+}
+
+.discount-price {
+    color: #28a745;
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.discount-badge {
+    background: #dc3545;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: bold;
 }
 
 @media (max-width: 768px) {

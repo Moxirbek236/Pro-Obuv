@@ -1,4 +1,5 @@
 
+
 {% extends "base.html" %}
 
 {% block content %}
@@ -43,52 +44,70 @@
 
   <div class="menu-items">
     <h3>Mavjud mahsulotlar</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Nomi</th>
-          <th>Narxi</th>
-          <th>Kategoriya</th>
-          <th>Holati</th>
-          <th>Amal</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for item in menu_items %}
-        <tr class="{% if not item.available %}unavailable{% endif %}">
-          <td>{{ item.id }}</td>
-          <td>{{ item.name }}</td>
-          <td>{{ "{:,.0f}".format(item.price) }} so'm</td>
-          <td>
-            {% if item.category == 'food' %}
-              🍲 Taom
+    <div class="menu-items-grid">
+      {% for item in menu_items %}
+      <div class="menu-item-card {% if not item.available %}unavailable{% endif %}">
+        <div class="item-image">
+          <img src="{{ item.image_url or 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&h=200&fit=crop' }}" 
+               alt="{{ item.name }}" 
+               onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&h=200&fit=crop'">
+        </div>
+        
+        <div class="item-details">
+          <h4>{{ item.name }}</h4>
+          <p class="item-description">{{ item.description or 'Tavsif mavjud emas' }}</p>
+          
+          <div class="price-section">
+            {% if item.discount_percentage and item.discount_percentage > 0 %}
+              <div class="price-with-discount">
+                <span class="original-price">{{ "{:,.0f}".format(item.price) }} so'm</span>
+                <span class="discount-price">{{ "{:,.0f}".format(item.price * (100 - item.discount_percentage) / 100) }} so'm</span>
+                <span class="discount-badge">-{{ item.discount_percentage }}%</span>
+              </div>
             {% else %}
-              🥤 Ichimlik
+              <span class="price">{{ "{:,.0f}".format(item.price) }} so'm</span>
             {% endif %}
-          </td>
-          <td>
-            {% if item.available %}
-              <span class="status available">✅ Mavjud</span>
-            {% else %}
-              <span class="status unavailable">❌ Mavjud emas</span>
-            {% endif %}
-          </td>
-          <td>
+          </div>
+
+          <div class="item-info">
+            <span class="category">
+              {% if item.category == 'food' %}🍲 Taom{% else %}🥤 Ichimlik{% endif %}
+            </span>
+            <span class="status {% if item.available %}available{% else %}unavailable{% endif %}">
+              {% if item.available %}✅ Mavjud{% else %}❌ Mavjud emas{% endif %}
+            </span>
+          </div>
+
+          <!-- Tahrirlash forması -->
+          <div class="edit-form" id="edit-form-{{ item.id }}" style="display: none;">
+            <form method="post" action="{{ url_for('edit_menu_item', item_id=item.id) }}" enctype="multipart/form-data">
+              <div class="edit-grid">
+                <input type="text" name="name" value="{{ item.name }}" placeholder="Nomi" required>
+                <input type="number" name="price" value="{{ item.price }}" placeholder="Narxi" required>
+                <input type="number" name="discount_percentage" value="{{ item.discount_percentage or 0 }}" 
+                       placeholder="Skidka %" min="0" max="100" step="0.1">
+                <input type="file" name="image" accept="image/*">
+                <textarea name="description" placeholder="Tavsif">{{ item.description }}</textarea>
+                <div class="edit-buttons">
+                  <button type="submit" class="btn small success">💾 Saqlash</button>
+                  <button type="button" class="btn small" onclick="toggleEdit({{ item.id }})">❌ Bekor qilish</button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <div class="item-actions">
+            <button class="btn small" onclick="toggleEdit({{ item.id }})">✏️ Tahrirlash</button>
             <form method="post" action="{{ url_for('toggle_menu_item', item_id=item.id) }}" style="display: inline;">
               <button type="submit" class="btn small">
-                {% if item.available %}
-                  Yashirish
-                {% else %}
-                  Ko'rsatish
-                {% endif %}
+                {% if item.available %}Yashirish{% else %}Ko'rsatish{% endif %}
               </button>
             </form>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
   </div>
   
   <div style="margin-top: 20px;">
@@ -110,11 +129,113 @@
   font-weight: bold;
 }
 
-.form-grid input, .form-grid select {
+.form-grid input, .form-grid select, .form-grid textarea {
   width: 100%;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
+}
+
+.menu-items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.menu-item-card {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+.menu-item-card:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.menu-item-card.unavailable {
+  opacity: 0.6;
+  background: #f5f5f5;
+}
+
+.item-image {
+  height: 200px;
+  overflow: hidden;
+}
+
+.item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.item-details {
+  padding: 15px;
+}
+
+.item-details h4 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-size: 1.2em;
+}
+
+.item-description {
+  color: #666;
+  font-size: 0.9em;
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.price-section {
+  margin-bottom: 10px;
+}
+
+.price {
+  color: #28a745;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.price-with-discount {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.original-price {
+  color: #999;
+  text-decoration: line-through;
+  font-size: 0.9em;
+}
+
+.discount-price {
+  color: #28a745;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.discount-badge {
+  background: #dc3545;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.8em;
+  font-weight: bold;
+}
+
+.item-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  font-size: 0.9em;
+}
+
+.category {
+  color: #666;
 }
 
 .status.available {
@@ -127,13 +248,87 @@
   font-weight: bold;
 }
 
-tr.unavailable {
-  opacity: 0.6;
-  background: #f5f5f5;
+.edit-form {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 5px;
+  margin: 10px 0;
 }
 
-.menu-items {
-  margin-top: 30px;
+.edit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.edit-grid input, .edit-grid textarea {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.edit-grid textarea {
+  grid-column: 1 / -1;
+  resize: vertical;
+  min-height: 60px;
+}
+
+.edit-buttons {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 10px;
+}
+
+.item-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn.small {
+  padding: 6px 12px;
+  font-size: 0.85em;
+}
+
+.btn.success {
+  background: #28a745;
+  color: white;
+}
+
+.btn.success:hover {
+  background: #218838;
+}
+
+@media (max-width: 768px) {
+  .menu-items-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .edit-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .item-actions {
+    justify-content: center;
+  }
 }
 </style>
+
+<script>
+function toggleEdit(itemId) {
+  const editForm = document.getElementById('edit-form-' + itemId);
+  if (editForm.style.display === 'none') {
+    editForm.style.display = 'block';
+  } else {
+    editForm.style.display = 'none';
+  }
+}
+</script>
 {% endblock %}
+

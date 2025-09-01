@@ -216,16 +216,16 @@ def init_db():
     if cur.fetchone()[0] == 0:
         now = get_current_time().isoformat()
         sample_items = [
-            ('Osh', 25000, 'food', 'An\'anaviy o\'zbek taomi, guruch va go\'sht bilan', 'https://via.placeholder.com/300x200/4299e1/ffffff?text=Osh', 1, 50, 0, 4.5, now),
-            ('Manti', 20000, 'food', 'Bug\'da pishirilgan go\'shtli manti', 'https://via.placeholder.com/300x200/38a169/ffffff?text=Manti', 1, 30, 0, 4.8, now),
-            ('Shashlik', 30000, 'food', 'Mangalda pishirilgan mazali shashlik', 'https://via.placeholder.com/300x200/f56565/ffffff?text=Shashlik', 1, 25, 0, 4.7, now),
-            ('Lagmon', 22000, 'food', 'Qo\'l tortmasi bilan tayyorlangan lagmon', 'https://via.placeholder.com/300x200/ed8936/ffffff?text=Lagmon', 1, 40, 0, 4.6, now),
-            ('Choy', 5000, 'drink', 'Issiq qora choy', 'https://via.placeholder.com/300x200/805ad5/ffffff?text=Choy', 1, 100, 0, 4.2, now),
-            ('Qora choy', 6000, 'drink', 'O\'zbek an\'anaviy choy', 'https://via.placeholder.com/300x200/68d391/ffffff?text=Qora+Choy', 1, 80, 0, 4.3, now),
-            ('Kompot', 8000, 'drink', 'Mevali kompot', 'https://via.placeholder.com/300x200/f093fb/ffffff?text=Kompot', 1, 60, 0, 4.1, now),
-            ('Coca Cola', 10000, 'drink', 'Sovuq ichimlik', 'https://via.placeholder.com/300x200/3b82f6/ffffff?text=Coca+Cola', 1, 70, 0, 4.0, now),
+            ('Osh', 25000, 'food', 'An\'anaviy o\'zbek taomi, guruch va go\'sht bilan', 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=300&h=200&fit=crop', 1, 50, 0, 4.5, 0.0, now),
+            ('Manti', 20000, 'food', 'Bug\'da pishirilgan go\'shtli manti', 'https://images.unsplash.com/photo-1534938665420-4193effeacc4?w=300&h=200&fit=crop', 1, 30, 0, 4.8, 5.0, now),
+            ('Shashlik', 30000, 'food', 'Mangalda pishirilgan mazali shashlik', 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=300&h=200&fit=crop', 1, 25, 0, 4.7, 0.0, now),
+            ('Lagmon', 22000, 'food', 'Qo\'l tortmasi bilan tayyorlangan lagmon', 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=300&h=200&fit=crop', 1, 40, 0, 4.6, 10.0, now),
+            ('Choy', 5000, 'drink', 'Issiq qora choy', 'https://images.unsplash.com/photo-1559056961-84c5ffc10e14?w=300&h=200&fit=crop', 1, 100, 0, 4.2, 0.0, now),
+            ('Qora choy', 6000, 'drink', 'O\'zbek an\'anaviy choy', 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=300&h=200&fit=crop', 1, 80, 0, 4.3, 0.0, now),
+            ('Kompot', 8000, 'drink', 'Mevali kompot', 'https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=300&h=200&fit=crop', 1, 60, 0, 4.1, 15.0, now),
+            ('Coca Cola', 10000, 'drink', 'Sovuq ichimlik', 'https://images.unsplash.com/photo-1581636625402-29b2a704ef13?w=300&h=200&fit=crop', 1, 70, 0, 4.0, 0.0, now),
         ]
-        cur.executemany("INSERT INTO menu_items (name, price, category, description, image_url, available, stock_quantity, orders_count, rating, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", sample_items)
+        cur.executemany("INSERT INTO menu_items (name, price, category, description, image_url, available, stock_quantity, orders_count, rating, discount_percentage, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", sample_items)
 
     conn.commit()
     conn.close()
@@ -371,6 +371,10 @@ def ensure_menu_items_columns():
 
         if 'rating' not in cols:
             cur.execute("ALTER TABLE menu_items ADD COLUMN rating REAL DEFAULT 0.0;")
+            conn.commit()
+
+        if 'discount_percentage' not in cols:
+            cur.execute("ALTER TABLE menu_items ADD COLUMN discount_percentage REAL DEFAULT 0.0;")
             conn.commit()
 
     except Exception as e:
@@ -1314,6 +1318,74 @@ def toggle_menu_item(item_id):
     conn.commit()
     conn.close()
     flash("Mahsulot holati o'zgartirildi.", "success")
+    return redirect(url_for("staff_menu"))
+
+@app.route("/admin/edit_menu_item/<int:item_id>", methods=["POST"])
+@login_required
+def edit_menu_item(item_id):
+    name = request.form.get("name", "").strip()
+    price = request.form.get("price", "")
+    description = request.form.get("description", "").strip()
+    discount_percentage = request.form.get("discount_percentage", "0")
+
+    if not all([name, price]):
+        flash("Nom va narx majburiy.", "error")
+        return redirect(url_for("staff_menu"))
+
+    try:
+        price = float(price)
+        discount_percentage = float(discount_percentage)
+        if discount_percentage < 0 or discount_percentage > 100:
+            flash("Skidka 0 dan 100 gacha bo'lishi kerak.", "error")
+            return redirect(url_for("staff_menu"))
+    except ValueError:
+        flash("Narx va skidka raqam bo'lishi kerak.", "error")
+        return redirect(url_for("staff_menu"))
+
+    # Rasm yuklash
+    image_url = None
+    if 'image' in request.files:
+        file = request.files['image']
+        if file and file.filename != '':
+            import uuid
+            from werkzeug.utils import secure_filename
+
+            # Static/images papkasini yaratish
+            images_dir = os.path.join('static', 'images')
+            if not os.path.exists(images_dir):
+                os.makedirs(images_dir)
+
+            # Fayl nomini xavfsiz qilish
+            filename = secure_filename(file.filename)
+            unique_filename = f"{uuid.uuid4().hex}_{filename}"
+            file_path = os.path.join(images_dir, unique_filename)
+
+            try:
+                file.save(file_path)
+                image_url = f"/static/images/{unique_filename}"
+            except Exception as e:
+                flash("Rasmni yuklashda xatolik yuz berdi.", "error")
+                return redirect(url_for("staff_menu"))
+
+    conn = get_db()
+    cur = conn.cursor()
+
+    if image_url:
+        cur.execute("""
+            UPDATE menu_items 
+            SET name = ?, price = ?, description = ?, discount_percentage = ?, image_url = ?
+            WHERE id = ?
+        """, (name, price, description, discount_percentage, image_url, item_id))
+    else:
+        cur.execute("""
+            UPDATE menu_items 
+            SET name = ?, price = ?, description = ?, discount_percentage = ?
+            WHERE id = ?
+        """, (name, price, description, discount_percentage, item_id))
+
+    conn.commit()
+    conn.close()
+    flash("Mahsulot tahrirlandi!", "success")
     return redirect(url_for("staff_menu"))
 
 @app.route("/admin/order/<int:order_id>/served", methods=["POST"])
