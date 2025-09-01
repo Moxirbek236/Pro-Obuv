@@ -264,6 +264,7 @@
                             <th>Telefon</th>
                             <th>Ish vaqti</th>
                             <th>Yetkazish radiusi</th>
+                            <th>Baho</th>
                             <th>Faol</th>
                             <th>Yaratilgan</th>
                             <th>Amallar</th>
@@ -279,6 +280,24 @@
                             <td>{{ branch.phone or 'N/A' }}</td>
                             <td>{{ branch.working_hours }}</td>
                             <td>{{ branch.delivery_radius }} km</td>
+                            <td>
+                                {% if branch.total_ratings > 0 %}
+                                    <div class="rating-display">
+                                        <span class="rating-stars">
+                                            {% for i in range(1, 6) %}
+                                                {% if i <= branch.average_rating %}
+                                                    ⭐
+                                                {% else %}
+                                                    ☆
+                                                {% endif %}
+                                            {% endfor %}
+                                        </span>
+                                        <small>({{ branch.average_rating }}/5 - {{ branch.total_ratings }} baho)</small>
+                                    </div>
+                                {% else %}
+                                    <span class="text-muted">Hali baho berilmagan</span>
+                                {% endif %}
+                            </td>
                             <td>
                                 {% if branch.is_active %}
                                     <span class="badge bg-success">✅ Faol</span>
@@ -988,6 +1007,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
 .text-muted {
     color: #6c757d !important;
+}
+
+.rating-display {
+    text-align: center;
+}
+
+.rating-stars {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 2px;
+}
+
+.rating-display small {
+    color: #666;
+    font-size: 11px;
 }
 
 /* Mobile responsive */

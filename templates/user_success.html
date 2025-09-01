@@ -118,9 +118,9 @@
                 return;
             }
 
-            const comment = document.getElementById('rating-comment').value;
+            const comment = document.getElementById('rating-comment').value.trim();
 
-            fetch('/api/rate-order', {
+            fetch('/api/submit-rating', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -134,8 +134,10 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Rahmat! Bahoyingiz qabul qilindi.');
+                    alert('Rahmat! Filial va xizmat sifati uchun bahoyingiz qabul qilindi.');
                     document.querySelector('.rating-section').style.display = 'none';
+                    // Sahifani yangilash
+                    checkOrderStatus();
                 } else {
                     alert('Xatolik: ' + data.message);
                 }
@@ -198,6 +200,14 @@ function updateOrderDisplay(data) {
     }
 }
 
+// checkOrderStatus funksiyasini global scope'ga chiqarish yoki submitRating'dan chaqirilishini ta'minlash
+function checkOrderStatus() {
+    fetch(`/user/status/${ticketNo}`)
+        .then(response => response.json())
+        .then(data => updateOrderDisplay(data))
+        .catch(error => console.error('Holat tekshirishda xato:', error));
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Notification ruxsatini so'rash
     if (Notification.permission === 'default') {
@@ -205,15 +215,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Dastlabki holat tekshiruvi
-    checkOrderStatus(ticketNo);
+    checkOrderStatus();
 
     // Har 3 soniyada tekshirish
     setInterval(() => {
         if (!document.hidden) {
-            fetch(`/user/status/${ticketNo}`)
-                .then(response => response.json())
-                .then(data => updateOrderDisplay(data))
-                .catch(error => console.error('Holat tekshirishda xato:', error));
+            checkOrderStatus();
         }
     }, 3000);
 });

@@ -759,6 +759,39 @@ def calculate_delivery_cost_and_time(distance_km):
 
     return round(price), delivery_time_minutes
 
+def get_branch_average_rating(branch_id):
+    """Filial uchun o'rtacha bahoni hisoblash"""
+    try:
+        conn = get_db()
+        cur = conn.cursor()
+        
+        # Filial uchun berilgan baholarni olish (menu_item_id = -branch_id)
+        cur.execute("""
+            SELECT AVG(rating) as avg_rating, COUNT(*) as total_ratings
+            FROM ratings 
+            WHERE menu_item_id = ?
+        """, (-branch_id,))
+        
+        result = cur.fetchone()
+        conn.close()
+        
+        if result and result['avg_rating']:
+            return {
+                'average_rating': round(result['avg_rating'], 1),
+                'total_ratings': result['total_ratings']
+            }
+        else:
+            return {
+                'average_rating': 0.0,
+                'total_ratings': 0
+            }
+    except Exception as e:
+        logging.error(f"Filial bahosini hisoblashda xatolik: {str(e)}")
+        return {
+            'average_rating': 0.0,
+            'total_ratings': 0
+        }
+
 def generate_qr_code(receipt_data):
     """Chek uchun QR kod yaratish"""
     # Soliq.uz uchun chek ma'lumotlari
@@ -2322,9 +2355,17 @@ def super_admin_dashboard():
     cur.execute("SELECT * FROM questions ORDER BY created_at DESC")
     questions = cur.fetchall()
 
-    # Filiallarni olish
+    # Filiallarni olish va har biriga baho qo'shish
     cur.execute("SELECT * FROM branches ORDER BY created_at DESC")
-    branches = cur.fetchall()
+    branches_raw = cur.fetchall()
+    
+    branches = []
+    for branch in branches_raw:
+        branch_dict = dict(branch)
+        rating_data = get_branch_average_rating(branch['id'])
+        branch_dict['average_rating'] = rating_data['average_rating']
+        branch_dict['total_ratings'] = rating_data['total_ratings']
+        branches.append(branch_dict)
 
     # Buyurtmalar statistikasi
     cur.execute("SELECT COUNT(*) FROM orders")
@@ -3102,6 +3143,63 @@ def api_set_theme():
         return jsonify({"success": True, "message": "Mavzu o'zgartirildi"})
     except Exception as e:
         logging.error(f"Mavzu sozlamasida xatolik: {str(e)}")
+        return jsonify({"success": False, "message": "Server xatoligi"}), 500
+
+@app.route("/api/submit-rating", methods=["POST"])
+def api_submit_rating():
+    """Buyurtma va filial uchun baho berish"""
+    try:
+        data = request.get_json()
+        order_id = data.get("order_id")
+        rating = data.get("rating")
+        comment = data.get("comment", "")
+
+        if not order_id or not rating:
+            return jsonify({"success": False, "message": "Buyurtma ID va baho majburiy"})
+
+        try:
+            rating = int(rating)
+            if rating < 1 or rating > 5:
+                return jsonify({"success": False, "message": "Baho 1 dan 5 gacha bo'lishi kerak"})
+        except ValueError:
+            return jsonify({"success": False, "message": "Baho raqam bo'lishi kerak"})
+
+        conn = get_db()
+        cur = conn.cursor()
+
+        # Buyurtma ma'lumotlarini olish
+        cur.execute("SELECT * FROM orders WHERE id = ?", (order_id,))
+        order = cur.fetchone()
+
+        if not order:
+            conn.close()
+            return jsonify({"success": False, "message": "Buyurtma topilmadi"})
+
+        # Eng yaqin filialni topish (agar branch_id mavjud bo'lmasa)
+        branch_id = order.get('branch_id', 1)  # Default birinchi filial
+
+        user_id = session.get('user_id')
+        now = get_current_time().isoformat()
+
+        # Filial bahosini saqlash
+        try:
+            cur.execute("""
+                INSERT OR REPLACE INTO ratings (user_id, menu_item_id, rating, comment, created_at)
+                VALUES (?, ?, ?, ?, ?)
+            """, (user_id, -branch_id, rating, comment, now))  # menu_item_id ga manfiy branch_id
+        except Exception as e:
+            logging.error(f"Filial bahosini saqlashda xatolik: {str(e)}")
+
+        # Buyurtma statusini 'rated' ga o'zgartirish
+        cur.execute("UPDATE orders SET status = 'rated' WHERE id = ?", (order_id,))
+
+        conn.commit()
+        conn.close()
+
+        return jsonify({"success": True, "message": "Baho muvaffaqiyatli saqlandi"})
+
+    except Exception as e:
+        logging.error(f"Baho berishda xatolik: {str(e)}")
         return jsonify({"success": False, "message": "Server xatoligi"}), 500
 
 @app.route("/receipt/<int:ticket_no>")
