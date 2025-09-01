@@ -104,6 +104,15 @@
             border-radius: 8px;
             font-weight: 600;
         }
+        .btn-warning-custom {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border: none;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+        }
         .add-form {
             background: #f8fafc;
             padding: 20px;
@@ -204,6 +213,15 @@
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="questions-tab" data-bs-toggle="tab" data-bs-target="#questions" type="button" role="tab">❓ Savollar</button>
             </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders" type="button" role="tab">📋 Buyurtmalar</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="menu-tab" data-bs-toggle="tab" data-bs-target="#menu" type="button" role="tab">🍽️ Menyu</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="receipts-tab" data-bs-toggle="tab" data-bs-target="#receipts" type="button" role="tab">🧾 Cheklar</button>
+            </li>
         </ul>
 
         <div class="tab-content" id="myTabContent">
@@ -249,11 +267,13 @@
                             <thead>
                                 <tr>
                                     <th>ID</th>
+                                    <th>Login (ID)</th>
                                     <th>Ism</th>
                                     <th>Familiya</th>
                                     <th>Tug'ilgan sana</th>
                                     <th>Telefon</th>
                                     <th>Passport</th>
+                                    <th>Parol (Hash)</th>
                                     <th>Faollik vaqti</th>
                                     <th>Soatlar</th>
                                     <th>Buyurtmalar</th>
@@ -265,20 +285,23 @@
                                 {% for staff in staff_db %}
                                 <tr>
                                     <td><strong>{{ staff.id }}</strong></td>
+                                    <td><span class="badge bg-primary">ID: {{ staff.id }}</span></td>
                                     <td>{{ staff.first_name }}</td>
                                     <td>{{ staff.last_name }}</td>
                                     <td>{{ staff.birth_date }}</td>
                                     <td>{{ staff.phone }}</td>
                                     <td>{{ staff.passport_series or 'N/A' }} {{ staff.passport_number or '' }}</td>
+                                    <td><small class="text-muted">{{ staff.password_hash[:20] }}...</small></td>
                                     <td>{{ staff.last_activity[:16].replace('T', ' ') if staff.last_activity else 'Hech qachon' }}</td>
-                                    <td>0.0 soat</td>
-                                    <td>0</td>
+                                    <td>{{ "%.1f" | format(staff.total_hours or 0) }} soat</td>
+                                    <td>{{ staff.orders_handled or 0 }}</td>
                                     <td>{{ staff.created_at[:16].replace('T', ' ') if staff.created_at else 'N/A' }}</td>
                                     <td>
                                         <form method="POST" action="{{ url_for('super_admin_delete_staff', staff_id=staff.id) }}" 
                                               style="display: inline;" onsubmit="return confirm('Rostdan ham bu xodimni o\'chirmoqchimisiz?')">
                                             <button type="submit" class="btn btn-danger-custom">🗑️</button>
                                         </form>
+                                        <button type="button" class="btn btn-warning-custom btn-sm" onclick="resetStaffPassword({{ staff.id }})">🔄 Parolni yangilash</button>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -336,30 +359,42 @@
                             <thead>
                                 <tr>
                                     <th>ID</th>
+                                    <th>Login (ID)</th>
                                     <th>Ism</th>
                                     <th>Familiya</th>
                                     <th>Tug'ilgan sana</th>
                                     <th>Telefon</th>
                                     <th>Passport</th>
+                                    <th>Parol (Hash)</th>
                                     <th>Faollik vaqti</th>
                                     <th>Soatlar</th>
                                     <th>Yetkazib berilgan</th>
                                     <th>Ro'yxatdan o'tgan</th>
+                                    <th>Amallar</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for courier in couriers_db %}
                                 <tr>
                                     <td><strong>{{ courier.id }}</strong></td>
+                                    <td><span class="badge bg-success">ID: {{ courier.id }}</span></td>
                                     <td>{{ courier.first_name }}</td>
                                     <td>{{ courier.last_name }}</td>
                                     <td>{{ courier.birth_date }}</td>
                                     <td>{{ courier.phone }}</td>
                                     <td>{{ courier.passport_series or 'N/A' }} {{ courier.passport_number or '' }}</td>
+                                    <td><small class="text-muted">{{ courier.password_hash[:20] }}...</small></td>
                                     <td>{{ courier.last_activity[:16].replace('T', ' ') if courier.last_activity else 'Hech qachon' }}</td>
-                                    <td>0.0 soat</td>
-                                    <td>0</td>
+                                    <td>{{ "%.1f" | format(courier.total_hours or 0) }} soat</td>
+                                    <td>{{ courier.deliveries_completed or 0 }}</td>
                                     <td>{{ courier.created_at[:16].replace('T', ' ') }}</td>
+                                    <td>
+                                        <form method="POST" action="{{ url_for('super_admin_delete_courier', courier_id=courier.id) }}" 
+                                              style="display: inline;" onsubmit="return confirm('Rostdan ham bu kuryerni o\'chirmoqchimisiz?')">
+                                            <button type="submit" class="btn btn-danger-custom">🗑️</button>
+                                        </form>
+                                        <button type="button" class="btn btn-warning-custom btn-sm" onclick="resetCourierPassword({{ courier.id }})">🔄 Parolni yangilash</button>
+                                    </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -384,24 +419,38 @@
                             <thead>
                                 <tr>
                                     <th>ID</th>
+                                    <th>Login (Email)</th>
                                     <th>Ism</th>
                                     <th>Familiya</th>
                                     <th>Email</th>
                                     <th>Telefon</th>
                                     <th>Manzil</th>
+                                    <th>Parol (Hash)</th>
+                                    <th>Karta</th>
                                     <th>Ro'yxatdan o'tgan</th>
+                                    <th>Amallar</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for user in users_db %}
                                 <tr>
                                     <td><strong>{{ user.id }}</strong></td>
+                                    <td><span class="badge bg-info">{{ user.email }}</span></td>
                                     <td>{{ user.first_name }}</td>
                                     <td>{{ user.last_name }}</td>
                                     <td>{{ user.email }}</td>
                                     <td>{{ user.phone or 'N/A' }}</td>
                                     <td>{{ user.address or 'N/A' }}</td>
+                                    <td><small class="text-muted">{{ user.password_hash[:20] }}...</small></td>
+                                    <td>{{ user.card_number or 'N/A' }}</td>
                                     <td>{{ user.created_at[:16].replace('T', ' ') }}</td>
+                                    <td>
+                                        <form method="POST" action="{{ url_for('super_admin_delete_user_db', user_id=user.id) }}" 
+                                              style="display: inline;" onsubmit="return confirm('Rostdan ham bu foydalanuvchini o\'chirmoqchimisiz?')">
+                                            <button type="submit" class="btn btn-danger-custom">🗑️</button>
+                                        </form>
+                                        <button type="button" class="btn btn-warning-custom btn-sm" onclick="resetUserPassword({{ user.id }})">🔄 Parolni yangilash</button>
+                                    </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -517,6 +566,117 @@
                     {% endif %}
                 </div>
             </div>
+
+            <!-- Buyurtmalar Tab -->
+            <div class="tab-pane fade" id="orders" role="tabpanel">
+                <div class="section-card">
+                    <h3 class="section-title">📋 Barcha buyurtmalar boshqaruvi</h3>
+                    
+                    <div class="table-responsive mt-3">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Ticket</th>
+                                    <th>Mijoz</th>
+                                    <th>Turi</th>
+                                    <th>Holat</th>
+                                    <th>Vaqt</th>
+                                    <th>Manzil</th>
+                                    <th>Kuryer</th>
+                                    <th>Amallar</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orders-table">
+                                <!-- JavaScript orqali to'ldiriladi -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Menyu Tab -->
+            <div class="tab-pane fade" id="menu" role="tabpanel">
+                <div class="section-card">
+                    <h3 class="section-title">🍽️ Menyu boshqaruvi</h3>
+                    
+                    <div class="add-form">
+                        <h5>➕ Yangi mahsulot qo'shish</h5>
+                        <form method="POST" action="{{ url_for('super_admin_add_menu_item') }}" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <input type="text" class="form-control mb-2" name="name" placeholder="Mahsulot nomi" required>
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="number" class="form-control mb-2" name="price" placeholder="Narx" required>
+                                </div>
+                                <div class="col-md-2">
+                                    <select class="form-control mb-2" name="category" required>
+                                        <option value="">Kategoriya</option>
+                                        <option value="food">Taom</option>
+                                        <option value="drink">Ichimlik</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="text" class="form-control mb-2" name="description" placeholder="Tavsif">
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="file" class="form-control mb-2" name="image" accept="image/*">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success-custom">➕ Qo'shish</button>
+                        </form>
+                    </div>
+
+                    <div class="table-responsive mt-3">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Rasm</th>
+                                    <th>Nom</th>
+                                    <th>Narx</th>
+                                    <th>Kategoriya</th>
+                                    <th>Tavsif</th>
+                                    <th>Mavjud</th>
+                                    <th>Buyurtmalar</th>
+                                    <th>Skidka</th>
+                                    <th>Amallar</th>
+                                </tr>
+                            </thead>
+                            <tbody id="menu-table">
+                                <!-- JavaScript orqali to'ldiriladi -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cheklar Tab -->
+            <div class="tab-pane fade" id="receipts" role="tabpanel">
+                <div class="section-card">
+                    <h3 class="section-title">🧾 Cheklar va hisobotlar</h3>
+                    
+                    <div class="table-responsive mt-3">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Chek raqami</th>
+                                    <th>Buyurtma ID</th>
+                                    <th>Umumiy summa</th>
+                                    <th>Cashback</th>
+                                    <th>Vaqt</th>
+                                    <th>Amallar</th>
+                                </tr>
+                            </thead>
+                            <tbody id="receipts-table">
+                                <!-- JavaScript orqali to'ldiriladi -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -526,6 +686,203 @@
         setInterval(function() {
             location.reload();
         }, 300000);
+
+        // Parolni yangilash funksiyalari
+        function resetStaffPassword(staffId) {
+            const newPassword = prompt('Yangi parol kiriting:');
+            if (newPassword) {
+                fetch('/super-admin/reset-staff-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        staff_id: staffId,
+                        new_password: newPassword
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Parol muvaffaqiyatli yangilandi!');
+                    } else {
+                        alert('Xatolik: ' + data.message);
+                    }
+                });
+            }
+        }
+
+        function resetCourierPassword(courierId) {
+            const newPassword = prompt('Yangi parol kiriting:');
+            if (newPassword) {
+                fetch('/super-admin/reset-courier-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        courier_id: courierId,
+                        new_password: newPassword
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Parol muvaffaqiyatli yangilandi!');
+                    } else {
+                        alert('Xatolik: ' + data.message);
+                    }
+                });
+            }
+        }
+
+        function resetUserPassword(userId) {
+            const newPassword = prompt('Yangi parol kiriting:');
+            if (newPassword) {
+                fetch('/super-admin/reset-user-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_id: userId,
+                        new_password: newPassword
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Parol muvaffaqiyatli yangilandi!');
+                    } else {
+                        alert('Xatolik: ' + data.message);
+                    }
+                });
+            }
+        }
+
+        // Ma'lumotlarni yuklash
+        function loadOrders() {
+            fetch('/super-admin/get-orders')
+                .then(response => response.json())
+                .then(orders => {
+                    const tbody = document.getElementById('orders-table');
+                    tbody.innerHTML = '';
+                    orders.forEach(order => {
+                        const row = `
+                            <tr>
+                                <td>${order.id}</td>
+                                <td>#${order.ticket_no}</td>
+                                <td>${order.customer_name}</td>
+                                <td>${order.order_type === 'delivery' ? 'Dostavka' : 'Zalda'}</td>
+                                <td><span class="badge bg-${getStatusColor(order.status)}">${getStatusText(order.status)}</span></td>
+                                <td>${order.created_at.slice(0, 16).replace('T', ' ')}</td>
+                                <td>${order.delivery_address || 'N/A'}</td>
+                                <td>${order.courier_id || 'N/A'}</td>
+                                <td>
+                                    <button class="btn btn-danger-custom btn-sm" onclick="deleteOrder(${order.id})">🗑️</button>
+                                    <button class="btn btn-success-custom btn-sm" onclick="changeOrderStatus(${order.id})">📝</button>
+                                </td>
+                            </tr>
+                        `;
+                        tbody.innerHTML += row;
+                    });
+                });
+        }
+
+        function loadMenu() {
+            fetch('/super-admin/get-menu')
+                .then(response => response.json())
+                .then(items => {
+                    const tbody = document.getElementById('menu-table');
+                    tbody.innerHTML = '';
+                    items.forEach(item => {
+                        const row = `
+                            <tr>
+                                <td>${item.id}</td>
+                                <td><img src="${item.image_url || '/static/images/default-food.jpg'}" width="40" height="40" style="border-radius: 8px;"></td>
+                                <td>${item.name}</td>
+                                <td>${item.price} so'm</td>
+                                <td>${item.category === 'food' ? 'Taom' : 'Ichimlik'}</td>
+                                <td>${item.description || 'N/A'}</td>
+                                <td><span class="badge bg-${item.available ? 'success' : 'danger'}">${item.available ? 'Mavjud' : 'Mavjud emas'}</span></td>
+                                <td>${item.orders_count || 0}</td>
+                                <td>${item.discount_percentage || 0}%</td>
+                                <td>
+                                    <button class="btn btn-danger-custom btn-sm" onclick="deleteMenuItem(${item.id})">🗑️</button>
+                                    <button class="btn btn-warning-custom btn-sm" onclick="toggleMenuItem(${item.id})">🔄</button>
+                                </td>
+                            </tr>
+                        `;
+                        tbody.innerHTML += row;
+                    });
+                });
+        }
+
+        function loadReceipts() {
+            fetch('/super-admin/get-receipts')
+                .then(response => response.json())
+                .then(receipts => {
+                    const tbody = document.getElementById('receipts-table');
+                    tbody.innerHTML = '';
+                    receipts.forEach(receipt => {
+                        const row = `
+                            <tr>
+                                <td>${receipt.id}</td>
+                                <td>${receipt.receipt_number}</td>
+                                <td>#${receipt.order_id}</td>
+                                <td>${receipt.total_amount} so'm</td>
+                                <td>${receipt.cashback_amount} so'm (${receipt.cashback_percentage}%)</td>
+                                <td>${receipt.created_at.slice(0, 16).replace('T', ' ')}</td>
+                                <td>
+                                    <button class="btn btn-danger-custom btn-sm" onclick="deleteReceipt(${receipt.id})">🗑️</button>
+                                </td>
+                            </tr>
+                        `;
+                        tbody.innerHTML += row;
+                    });
+                });
+        }
+
+        function getStatusColor(status) {
+            switch(status) {
+                case 'waiting': return 'warning';
+                case 'ready': return 'success';
+                case 'served': return 'primary';
+                case 'cancelled': return 'danger';
+                case 'on_way': return 'info';
+                case 'delivered': return 'success';
+                default: return 'secondary';
+            }
+        }
+
+        function getStatusText(status) {
+            switch(status) {
+                case 'waiting': return 'Kutilmoqda';
+                case 'ready': return 'Tayyor';
+                case 'served': return 'Berildi';
+                case 'cancelled': return 'Bekor qilindi';
+                case 'on_way': return 'Yo\'lda';
+                case 'delivered': return 'Yetkazildi';
+                default: return status;
+            }
+        }
+
+        // Tab o'zgarishini kuzatish
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabTriggerList = document.querySelectorAll('#myTab button[data-bs-toggle="tab"]');
+            tabTriggerList.forEach(tabTrigger => {
+                tabTrigger.addEventListener('shown.bs.tab', function (event) {
+                    const target = event.target.getAttribute('data-bs-target');
+                    if (target === '#orders') {
+                        loadOrders();
+                    } else if (target === '#menu') {
+                        loadMenu();
+                    } else if (target === '#receipts') {
+                        loadReceipts();
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>
