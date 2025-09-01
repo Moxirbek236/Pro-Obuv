@@ -8,7 +8,7 @@
 
 {% block content %}
 <div class="card cart-section">
-  <h2 class="section-title">🛒 Savatcha</h2>
+  <h2 class="section-title" data-translate="cart_title">🛒 Savatcha</h2>
 
   {% if cart_items %}
     <div class="cart-items">
@@ -37,15 +37,15 @@
             <h3>📋 Buyurtma berish</h3>
 
             <div class="order-type-selection">
-                <h4>Buyurtma turi:</h4>
+                <h4 data-translate="order_type">Buyurtma turi:</h4>
                 <div class="radio-group">
                     <label class="radio-option">
                         <input type="radio" name="order_type" value="dine_in" checked onchange="toggleDeliveryFields()">
-                        <span class="radio-text">🍽️ Restoranda iste'mol qilish</span>
+                        <span class="radio-text" data-translate="dine_in">🍽️ Restoranda iste'mol qilish</span>
                     </label>
                     <label class="radio-option">
                         <input type="radio" name="order_type" value="delivery" onchange="toggleDeliveryFields()">
-                        <span class="radio-text">🚚 Yetkazib berish</span>
+                        <span class="radio-text" data-translate="delivery">🚚 Yetkazib berish</span>
                     </label>
                 </div>
             </div>

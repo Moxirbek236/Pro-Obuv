@@ -216,6 +216,24 @@ document.addEventListener('DOMContentLoaded', function() {
     document.body.classList.add('lang-' + language);
 });
 
+// Til o'zgartirishni global qilish
+window.changeLanguage = function(language) {
+    translatePage(language);
+    localStorage.setItem('language', language);
+    
+    // Server ga yuborish
+    fetch('/api/set-language', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ language: language })
+    }).then(() => {
+        // Sahifani qayta yuklash
+        location.reload();
+    }).catch(error => console.log('Til sozlamasini saqlashda xato:', error));
+};
+
 function translateToRussian() {
     // Navbar matnlarini almashtirish
     const menuLink = document.querySelector('a[href*="menu"]');
