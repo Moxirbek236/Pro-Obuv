@@ -1038,9 +1038,156 @@ body.dark-theme .radio-text {
 }
 
 /* ======================================= */
-/* DESKTOP VA KATTA EKRANLAR (1400px+) */
+/* TV VA JUDA KATTA EKRANLAR (1920px+) */
 /* ======================================= */
-@media (min-width: 1400px) {
+@media (min-width: 1920px) {
+  .container {
+    max-width: 2000px;
+    padding: 0 40px;
+  }
+
+  body {
+    font-size: 22px;
+    line-height: 1.6;
+  }
+
+  /* Navbar */
+  .navbar {
+    padding: 25px 0;
+  }
+
+  .navbar-brand {
+    font-size: 2.5rem;
+  }
+
+  .navbar-nav .nav-link {
+    padding: 15px 30px !important;
+    font-size: 20px;
+  }
+
+  /* Kartalar */
+  .card {
+    padding: 50px;
+    border-radius: 25px;
+    margin-bottom: 40px;
+  }
+
+  /* Tugmalar */
+  .btn {
+    font-size: 20px;
+    padding: 20px 40px;
+    min-height: 64px;
+    border-radius: 20px;
+  }
+
+  .btn.big {
+    font-size: 24px;
+    padding: 25px 50px;
+    min-height: 80px;
+  }
+
+  .btn.small {
+    font-size: 18px;
+    padding: 15px 30px;
+    min-height: 56px;
+  }
+
+  /* Menyu */
+  .menu-section {
+    padding: 50px;
+    margin-bottom: 60px;
+  }
+
+  .menu-section h3 {
+    font-size: 36px;
+    margin-bottom: 40px;
+  }
+
+  .menu-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 35px;
+  }
+
+  .menu-item {
+    padding: 40px;
+    min-height: 450px;
+  }
+
+  .menu-item h4 {
+    font-size: 28px;
+    margin-bottom: 25px;
+  }
+
+  .price {
+    font-size: 30px;
+    padding: 20px 30px;
+    margin-bottom: 30px;
+  }
+
+  .quantity-btn {
+    min-width: 70px;
+    height: 70px;
+    font-size: 24px;
+  }
+
+  .quantity-selector input {
+    width: 100px;
+    height: 70px;
+    font-size: 22px;
+  }
+
+  /* Form elementlari */
+  input, select, textarea {
+    font-size: 22px;
+    padding: 20px 25px;
+    min-height: 70px;
+  }
+
+  label {
+    font-size: 20px;
+  }
+
+  /* Monitor */
+  .monitor-table td, .monitor-table th {
+    font-size: 2rem;
+    padding: 30px 20px;
+  }
+
+  .monitor-section h4 {
+    font-size: 3.5rem;
+  }
+
+  .ticket-no {
+    font-size: 80px;
+  }
+
+  /* Downloads */
+  .download-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+  }
+
+  .download-card {
+    padding: 40px;
+  }
+
+  .download-icon {
+    font-size: 3rem;
+  }
+
+  .download-title {
+    font-size: 1.8rem;
+  }
+
+  .download-description {
+    font-size: 1.2rem;
+  }
+}
+
+/* ======================================= */
+/* DESKTOP VA KATTA EKRANLAR (1400px - 1919px) */
+/* ======================================= */
+@media (min-width: 1400px) and (max-width: 1919px) {
   .container {
     max-width: 1600px;
     padding: 0 30px;
@@ -1060,7 +1207,7 @@ body.dark-theme .radio-text {
   }
 
   .navbar-nav .nav-link {
-    padding: 10px 20px !important;
+    padding: 12px 24px !important;
     font-size: 16px;
   }
 
@@ -1157,6 +1304,24 @@ body.dark-theme .radio-text {
 
   .ticket-no {
     font-size: 60px;
+  }
+
+  /* Downloads */
+  .download-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+  }
+
+  .download-card {
+    padding: 30px;
+  }
+
+  .download-icon {
+    font-size: 2.5rem;
+  }
+
+  .download-title {
+    font-size: 1.5rem;
   }
 }
 
