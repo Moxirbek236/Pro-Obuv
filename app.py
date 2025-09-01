@@ -1258,8 +1258,11 @@ def logout():
 @app.route("/user", methods=["GET", "POST"])
 def user_page():
     if request.method == "POST":
+        print("DEBUG: POST so'rov keldi /user endpoint ga")
+        
         # Foydalanuvchi session'dan ismni olish
         if not session.get("user_id"):
+            print("DEBUG: User ID session da yo'q")
             flash("Buyurtma berish uchun avval tizimga kiring.", "error")
             return redirect(url_for("login"))
 
@@ -1267,10 +1270,12 @@ def user_page():
         user_id = session.get("user_id")
 
         if not name:
+            print("DEBUG: User name session da yo'q")
             flash("Foydalanuvchi ma'lumotlari topilmadi.", "error")
             return redirect(url_for("login"))
         
         print(f"DEBUG: Buyurtma berish boshlandi - User ID: {user_id}, Name: {name}")
+        print(f"DEBUG: Form ma'lumotlari: {dict(request.form)}")
 
         # Foydalanuvchi profilidan ma'lumotlarni olish
         conn_profile = get_db()
