@@ -217,16 +217,38 @@ def init_db():
     conn.close()
 
 # Flask 2.2+ da before_first_request deprecated
-def ensure_orders_status_column():
-    """Agar orders jadvalida status ustuni bo'lmasa, qo'shadi (migration)."""
+def ensure_orders_columns():
+    """Orders jadvaliga kerakli ustunlarni qo'shadi (migration)."""
     conn = get_db()
     cur = conn.cursor()
     try:
         cur.execute("PRAGMA table_info(orders);")
         cols = [r[1] for r in cur.fetchall()]
+        
         if 'status' not in cols:
             cur.execute("ALTER TABLE orders ADD COLUMN status TEXT NOT NULL DEFAULT 'waiting';")
             conn.commit()
+            
+        if 'user_id' not in cols:
+            cur.execute("ALTER TABLE orders ADD COLUMN user_id INTEGER;")
+            conn.commit()
+            
+        if 'delivery_address' not in cols:
+            cur.execute("ALTER TABLE orders ADD COLUMN delivery_address TEXT;")
+            conn.commit()
+            
+        if 'card_number' not in cols:
+            cur.execute("ALTER TABLE orders ADD COLUMN card_number TEXT;")
+            conn.commit()
+            
+        if 'courier_id' not in cols:
+            cur.execute("ALTER TABLE orders ADD COLUMN courier_id INTEGER;")
+            conn.commit()
+            
+        if 'order_type' not in cols:
+            cur.execute("ALTER TABLE orders ADD COLUMN order_type TEXT NOT NULL DEFAULT 'dine_in';")
+            conn.commit()
+            
     except Exception as e:
         pass
     conn.close()
@@ -249,6 +271,62 @@ def ensure_cart_items_columns():
         pass
     conn.close()
 
+def ensure_staff_columns():
+    """Staff jadvaliga kerakli ustunlarni qo'shadi (migration)."""
+    conn = get_db()
+    cur = conn.cursor()
+    try:
+        cur.execute("PRAGMA table_info(staff);")
+        cols = [r[1] for r in cur.fetchall()]
+        
+        if 'passport_series' not in cols:
+            cur.execute("ALTER TABLE staff ADD COLUMN passport_series TEXT;")
+            conn.commit()
+            
+        if 'passport_number' not in cols:
+            cur.execute("ALTER TABLE staff ADD COLUMN passport_number TEXT;")
+            conn.commit()
+            
+        if 'orders_handled' not in cols:
+            cur.execute("ALTER TABLE staff ADD COLUMN orders_handled INTEGER DEFAULT 0;")
+            conn.commit()
+            
+        if 'last_activity' not in cols:
+            cur.execute("ALTER TABLE staff ADD COLUMN last_activity TEXT;")
+            conn.commit()
+            
+    except Exception as e:
+        pass
+    conn.close()
+
+def ensure_courier_columns():
+    """Courier jadvaliga kerakli ustunlarni qo'shadi (migration)."""
+    conn = get_db()
+    cur = conn.cursor()
+    try:
+        cur.execute("PRAGMA table_info(couriers);")
+        cols = [r[1] for r in cur.fetchall()]
+        
+        if 'passport_series' not in cols:
+            cur.execute("ALTER TABLE couriers ADD COLUMN passport_series TEXT;")
+            conn.commit()
+            
+        if 'passport_number' not in cols:
+            cur.execute("ALTER TABLE couriers ADD COLUMN passport_number TEXT;")
+            conn.commit()
+            
+        if 'deliveries_completed' not in cols:
+            cur.execute("ALTER TABLE couriers ADD COLUMN deliveries_completed INTEGER DEFAULT 0;")
+            conn.commit()
+            
+        if 'last_activity' not in cols:
+            cur.execute("ALTER TABLE couriers ADD COLUMN last_activity TEXT;")
+            conn.commit()
+            
+    except Exception as e:
+        pass
+    conn.close()
+
 def cleanup_expired_orders():
     """Waiting holatidagi, 30 daqiqadan oshgan buyurtmalarni cancelled ga o'tkazadi."""
     conn = get_db()
@@ -261,9 +339,11 @@ def cleanup_expired_orders():
         pass
     conn.close()
 
-# Ensure column exists on startup
-ensure_orders_status_column()
+# Ensure columns exist on startup
+ensure_orders_columns()
 ensure_cart_items_columns()
+ensure_staff_columns()
+ensure_courier_columns()
 
 
 # O'rniga buni app context ichida chaqiramiz
