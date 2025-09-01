@@ -55,6 +55,7 @@
             <button class="tab-button" onclick="showTab('orders')">📋 Buyurtmalar</button>
             <button class="tab-button" onclick="showTab('menu')">🍽️ Menyu</button>
             <button class="tab-button" onclick="showTab('receipts')">🧾 Cheklar</button>
+            <button class="tab-button" onclick="showTab('ratings')">⭐ Baholar</button>
         </div>
 
         <!-- Xodimlar tab -->
@@ -345,6 +346,12 @@
             <h3>🧾 Cheklar ro'yxati</h3>
             <div id="receipts-data"></div>
         </div>
+
+        <!-- Baholar tab -->
+        <div id="ratings" class="tab-content">
+            <h3>⭐ Mahsulotlar va filiallar baholari</h3>
+            <div id="ratings-data"></div>
+        </div>
     </div>
 
     <!-- Savollar bo'limi -->
@@ -559,6 +566,8 @@ function showTab(tabName) {
         loadMenu();
     } else if (tabName === 'receipts') {
         loadReceipts();
+    } else if (tabName === 'ratings') {
+        loadRatings();
     }
 }
 
@@ -633,6 +642,67 @@ function loadReceipts() {
             
             html += '</tbody></table></div>';
             document.getElementById('receipts-data').innerHTML = html;
+        });
+}
+
+function loadRatings() {
+    fetch('/super-admin/get-ratings')
+        .then(response => response.json())
+        .then(data => {
+            let html = '<div class="ratings-container">';
+            
+            // Mahsulot baholari
+            html += '<div class="ratings-section"><h4>📋 Mahsulot baholari</h4>';
+            if (data.menu_ratings && data.menu_ratings.length > 0) {
+                html += '<div class="table-container"><table class="admin-table"><thead><tr>';
+                html += '<th>Mahsulot</th><th>Foydalanuvchi</th><th>Baho</th><th>Sharh</th><th>Vaqt</th>';
+                html += '</tr></thead><tbody>';
+                
+                data.menu_ratings.forEach(rating => {
+                    html += '<tr>';
+                    html += `<td><strong>${rating.menu_item_name}</strong></td>`;
+                    html += `<td>${rating.user_name}</td>`;
+                    html += `<td>${'⭐'.repeat(rating.rating)}${'☆'.repeat(5 - rating.rating)} (${rating.rating}/5)</td>`;
+                    html += `<td>${rating.comment || 'Sharh yo\'q'}</td>`;
+                    html += `<td>${rating.created_at.substring(0, 16).replace('T', ' ')}</td>`;
+                    html += '</tr>';
+                });
+                
+                html += '</tbody></table></div>';
+            } else {
+                html += '<p class="text-center">Hali mahsulot baholari yo\'q.</p>';
+            }
+            html += '</div>';
+
+            // Filial baholari
+            html += '<div class="ratings-section"><h4>🏢 Filial baholari</h4>';
+            if (data.branch_ratings && data.branch_ratings.length > 0) {
+                html += '<div class="table-container"><table class="admin-table"><thead><tr>';
+                html += '<th>Filial</th><th>Foydalanuvchi</th><th>Baho</th><th>Sharh</th><th>Vaqt</th>';
+                html += '</tr></thead><tbody>';
+                
+                data.branch_ratings.forEach(rating => {
+                    html += '<tr>';
+                    html += `<td><strong>${rating.branch_name}</strong></td>`;
+                    html += `<td>${rating.user_name}</td>`;
+                    html += `<td>${'⭐'.repeat(rating.rating)}${'☆'.repeat(5 - rating.rating)} (${rating.rating}/5)</td>`;
+                    html += `<td>${rating.comment || 'Sharh yo\'q'}</td>`;
+                    html += `<td>${rating.created_at.substring(0, 16).replace('T', ' ')}</td>`;
+                    html += '</tr>';
+                });
+                
+                html += '</tbody></table></div>';
+            } else {
+                html += '<p class="text-center">Hali filial baholari yo\'q.</p>';
+            }
+            html += '</div>';
+            
+            html += '</div>';
+            document.getElementById('ratings-data').innerHTML = html;
+        })
+        .catch(error => {
+            console.error('Baholarni yuklashda xatolik:', error);
+            document.getElementById('ratings-data').innerHTML = '<p class="text-center">Baholarni yuklashda xatolik</p>';
         });
 }
 
@@ -1022,6 +1092,25 @@ document.addEventListener('DOMContentLoaded', function() {
 .rating-display small {
     color: #666;
     font-size: 11px;
+}
+
+.ratings-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.ratings-section {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.ratings-section h4 {
+    margin-bottom: 15px;
+    color: #2d3748;
+    font-size: 1.2rem;
 }
 
 /* Mobile responsive */

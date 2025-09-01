@@ -2741,6 +2741,75 @@ def super_admin_get_receipts():
 
     return jsonify([dict(receipt) for receipt in receipts])
 
+@app.route("/super-admin/get-ratings")
+def super_admin_get_ratings():
+    """Super admin uchun barcha baholarni olish"""
+    if not session.get("super_admin"):
+        return jsonify({"error": "Unauthorized"}), 401
+
+    conn = get_db()
+    cur = conn.cursor()
+    
+    try:
+        # Mahsulot baholari
+        cur.execute("""
+            SELECT r.rating, r.comment, r.created_at, 
+                   u.first_name, u.last_name, mi.name as menu_item_name
+            FROM ratings r
+            JOIN users u ON r.user_id = u.id
+            JOIN menu_items mi ON r.menu_item_id = mi.id
+            WHERE r.menu_item_id > 0
+            ORDER BY r.created_at DESC
+            LIMIT 100
+        """)
+        menu_ratings = cur.fetchall()
+        
+        # Filial baholari
+        cur.execute("""
+            SELECT r.rating, r.comment, r.created_at, 
+                   u.first_name, u.last_name, b.name as branch_name
+            FROM ratings r
+            JOIN users u ON r.user_id = u.id
+            JOIN branches b ON -r.menu_item_id = b.id
+            WHERE r.menu_item_id < 0
+            ORDER BY r.created_at DESC
+            LIMIT 100
+        """)
+        branch_ratings = cur.fetchall()
+        
+        conn.close()
+        
+        # Ma'lumotlarni format qilish
+        menu_ratings_list = []
+        for rating in menu_ratings:
+            menu_ratings_list.append({
+                'rating': rating['rating'],
+                'comment': rating['comment'],
+                'created_at': rating['created_at'],
+                'user_name': f"{rating['first_name']} {rating['last_name']}",
+                'menu_item_name': rating['menu_item_name']
+            })
+        
+        branch_ratings_list = []
+        for rating in branch_ratings:
+            branch_ratings_list.append({
+                'rating': rating['rating'],
+                'comment': rating['comment'],
+                'created_at': rating['created_at'],
+                'user_name': f"{rating['first_name']} {rating['last_name']}",
+                'branch_name': rating['branch_name']
+            })
+        
+        return jsonify({
+            "menu_ratings": menu_ratings_list,
+            "branch_ratings": branch_ratings_list
+        })
+        
+    except Exception as e:
+        conn.close()
+        logging.error(f"Baholarni olishda xatolik: {str(e)}")
+        return jsonify({"error": "Server xatoligi"}), 500
+
 @app.route("/super-admin/add-menu-item", methods=["POST"])
 def super_admin_add_menu_item():
     if not session.get("super_admin"):
@@ -3256,6 +3325,144 @@ def api_submit_rating():
     except Exception as e:
         logging.error(f"Baho berishda umumiy xatolik: {str(e)}")
         return jsonify({"success": False, "message": f"Server xatoligi: {str(e)}"}), 500
+
+@app.route("/api/submit-menu-rating", methods=["POST"])
+def api_submit_menu_rating():
+    """Menyu mahsuloti uchun baho berish"""
+    try:
+        # Foydalanuvchi tizimga kirganligini tekshirish
+        user_id = session.get('user_id')
+        if not user_id:
+            return jsonify({"success": False, "message": "Tizimga kirishingiz kerak"})
+
+        data = request.get_json()
+        if not data:
+            return jsonify({"success": False, "message": "Ma'lumot topilmadi"})
+
+        menu_item_id = data.get("menu_item_id")
+        rating = data.get("rating")
+        comment = data.get("comment", "").strip()
+
+        if not menu_item_id or not rating:
+            return jsonify({"success": False, "message": "Mahsulot ID va baho majburiy"})
+
+        # Baho formatini tekshirish
+        try:
+            menu_item_id = int(menu_item_id)
+            rating = int(rating)
+            if rating < 1 or rating > 5:
+                return jsonify({"success": False, "message": "Baho 1 dan 5 gacha bo'lishi kerak"})
+        except (ValueError, TypeError):
+            return jsonify({"success": False, "message": "Noto'g'ri ma'lumot formati"})
+
+        conn = get_db()
+        cur = conn.cursor()
+
+        try:
+            # Mahsulot mavjudligini tekshirish
+            cur.execute("SELECT * FROM menu_items WHERE id = ?", (menu_item_id,))
+            menu_item = cur.fetchone()
+
+            if not menu_item:
+                conn.close()
+                return jsonify({"success": False, "message": "Mahsulot topilmadi"})
+
+            now = get_current_time().isoformat()
+
+            # Avval bu foydalanuvchi ushbu mahsulotga baho berganligini tekshirish
+            cur.execute("SELECT id FROM ratings WHERE user_id = ? AND menu_item_id = ?", 
+                       (user_id, menu_item_id))
+            existing_rating = cur.fetchone()
+
+            if existing_rating:
+                # Mavjud bahoni yangilash
+                cur.execute("""
+                    UPDATE ratings 
+                    SET rating = ?, comment = ?, created_at = ?
+                    WHERE user_id = ? AND menu_item_id = ?
+                """, (rating, comment, now, user_id, menu_item_id))
+            else:
+                # Yangi baho qo'shish
+                cur.execute("""
+                    INSERT INTO ratings (user_id, menu_item_id, rating, comment, created_at)
+                    VALUES (?, ?, ?, ?, ?)
+                """, (user_id, menu_item_id, rating, comment, now))
+
+            # Mahsulotning o'rtacha bahosini yangilash
+            cur.execute("""
+                SELECT AVG(rating) as avg_rating, COUNT(*) as total_ratings
+                FROM ratings 
+                WHERE menu_item_id = ?
+            """, (menu_item_id,))
+            
+            avg_result = cur.fetchone()
+            if avg_result and avg_result['avg_rating']:
+                new_avg = round(avg_result['avg_rating'], 1)
+                cur.execute("UPDATE menu_items SET rating = ? WHERE id = ?", (new_avg, menu_item_id))
+
+            conn.commit()
+            conn.close()
+
+            return jsonify({"success": True, "message": "Baho muvaffaqiyatli saqlandi"})
+
+        except sqlite3.Error as db_error:
+            conn.rollback()
+            conn.close()
+            logging.error(f"Ma'lumotlar bazasida xatolik: {str(db_error)}")
+            return jsonify({"success": False, "message": "Ma'lumotlar bazasida xatolik"}), 500
+
+    except Exception as e:
+        logging.error(f"Mahsulot bahosida umumiy xatolik: {str(e)}")
+        return jsonify({"success": False, "message": f"Server xatoligi: {str(e)}"}), 500
+
+@app.route("/api/get-menu-ratings/<int:menu_item_id>")
+def api_get_menu_ratings(menu_item_id):
+    """Mahsulot uchun barcha baholarni olish"""
+    try:
+        conn = get_db()
+        cur = conn.cursor()
+        
+        # Mahsulot uchun barcha baholarni olish
+        cur.execute("""
+            SELECT r.rating, r.comment, r.created_at, u.first_name, u.last_name
+            FROM ratings r
+            JOIN users u ON r.user_id = u.id
+            WHERE r.menu_item_id = ?
+            ORDER BY r.created_at DESC
+            LIMIT 20
+        """, (menu_item_id,))
+        
+        ratings = cur.fetchall()
+        
+        # O'rtacha bahoni hisoblash
+        cur.execute("""
+            SELECT AVG(rating) as avg_rating, COUNT(*) as total_ratings
+            FROM ratings 
+            WHERE menu_item_id = ?
+        """, (menu_item_id,))
+        
+        avg_result = cur.fetchone()
+        conn.close()
+        
+        ratings_list = []
+        for rating in ratings:
+            ratings_list.append({
+                'rating': rating['rating'],
+                'comment': rating['comment'],
+                'created_at': rating['created_at'][:16].replace('T', ' '),
+                'user_name': f"{rating['first_name']} {rating['last_name'][0]}."
+            })
+        
+        return jsonify({
+            "success": True,
+            "ratings": ratings_list,
+            "average_rating": round(avg_result['avg_rating'], 1) if avg_result['avg_rating'] else 0,
+            "total_ratings": avg_result['total_ratings'] if avg_result['total_ratings'] else 0
+        })
+        
+    except Exception as e:
+        logging.error(f"Mahsulot baholarini olishda xatolik: {str(e)}")
+        return jsonify({"success": False, "message": "Server xatoligi"}), 500
 
 @app.route("/receipt/<int:ticket_no>")
 def view_receipt(ticket_no):
