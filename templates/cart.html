@@ -78,13 +78,9 @@
                     <div id="address_status" class="mt-1"></div>
                     <div id="map" style="height: 300px; margin-top: 10px;"></div>
 
-                    <div class="selected-location">
-                        <p><strong>Tanlangan joylashuv:</strong></p>
-                        <p id="selected-address">Xaritada joyni belgilang</p>
-                        <input type="hidden" id="delivery_address_hidden" name="delivery_address">
-                        <input type="hidden" id="delivery_latitude" name="delivery_latitude" value="{{ session.get('user_address_latitude', '') }}">
-                        <input type="hidden" id="delivery_longitude" name="delivery_longitude" value="{{ session.get('user_address_longitude', '') }}">
-                        <input type="hidden" id="delivery_map_url" name="delivery_map_url">
+                    <!-- Filial ma'lumotlari -->
+                    <div id="branch-info" class="branch-info" style="display: none; margin-top: 15px;">
+                        <!-- JavaScript orqali to'ldiriladi -->
                     </div>
                 </div>
 
@@ -174,7 +170,7 @@
                         <strong>Jami summa: <span id="total-amount" class="total-amount">{{ total }} so'm</span></strong>
                     </div>
                 </div>
-                <button type="submit" class="btn checkout-btn" onclick="return confirm('Buyurtma berishni tasdiqlaysizmi?')" style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); color: white; font-weight: 600; border: none; padding: 15px 30px; border-radius: 12px; font-size: 16px; cursor: pointer; transition: all 0.3s ease;">🛒 Buyurtma berish</button>
+                <button type="submit" class="btn checkout-btn" onclick="return confirm('Buyurtma berishni tasdiqlaysizmi?')">🛒 Buyurtma berish</button>
             </div>
         </form>
         <script>
@@ -405,69 +401,68 @@ function toggleDeliveryFields() {
     }
 }
 
-function updateDeliveryPrice() {
-    const baseTotal = {{ total }};
+// Yetkazish narxini hisoblash
+function updateTotal() {
+    const deliveryRadio = document.querySelector('input[name="order_type"][value="delivery"]');
+    const totalElement = document.getElementById('total-amount');
+    const deliveryElement = document.getElementById('delivery-cost');
+
+    let baseTotal = {{ total }};
     let deliveryCost = 0;
 
-    const deliveryDistanceInput = document.getElementById('delivery_distance');
-    if (deliveryDistanceInput && deliveryDistanceInput.value) {
-        const distance = parseFloat(deliveryDistanceInput.value);
-        // Oddiy narxlashuv: har bir km uchun 5000 so'm
-        if (distance > 0) {
-            deliveryCost = distance * 5000; // Masalan, har km uchun 5000 so'm
-        }
+    if (deliveryRadio && deliveryRadio.checked) {
+        deliveryCost = parseFloat(document.getElementById('delivery_price').value) || 0;
     }
 
-    const finalTotal = baseTotal + deliveryCost;
-    const totalElement = document.getElementById('total-amount');
-    if (totalElement) {
-        totalElement.textContent = finalTotal.toLocaleString() + " so'm";
-    }
-
-    // Delivery cost info yangilash
-    const deliveryCostInfoSpan = document.querySelector('.delivery-cost-info .delivery-cost');
-    if (deliveryCostInfoSpan) {
-        if (deliveryCost > 0) {
-            deliveryCostInfoSpan.textContent = `+ ${deliveryCost.toLocaleString()} so'm (yetkazib berish)`;
-            deliveryCostInfoSpan.style.color = '#dc3545'; // Qizil rang
-        } else {
-            deliveryCostInfoSpan.textContent = 'Yetkazib berish: Bepul';
-            deliveryCostInfoSpan.style.color = '#28a745'; // Yashil rang
-        }
-    }
+    deliveryElement.textContent = deliveryCost.toLocaleString() + ' so\'m';
+    totalElement.textContent = (baseTotal + deliveryCost).toLocaleString() + ' so\'m';
 }
 
+// Eng yaqin filialni topish
+function findNearestBranch(userLat, userLng) {
+    fetch('/api/find-nearest-branch', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            latitude: userLat,
+            longitude: userLng
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const branchInfo = document.getElementById('branch-info');
+            if (branchInfo) {
+                branchInfo.innerHTML = `
+                    <div class="branch-details">
+                        <h4>🏢 Eng yaqin filial: ${data.branch.name}</h4>
+                        <p>📍 ${data.branch.address}</p>
+                        <p>📞 ${data.branch.phone || 'N/A'}</p>
+                        <p>🕒 ${data.branch.working_hours}</p>
+                        <p>📏 Masofa: ${data.distance} km</p>
+                        <p>💰 Yetkazish narxi: ${data.delivery_cost.toLocaleString()} so'm</p>
+                        <p>⏱️ Taxminiy yetkazish vaqti: ${data.delivery_time} daqiqa</p>
+                    </div>
+                `;
+                branchInfo.style.display = 'block';
 
-function updateTotal() {
-    const baseTotal = {{ total }};
-    let deliveryCost = 0;
+                // Formga ma'lumotlarni kiritish
+                document.getElementById('delivery_distance').value = data.distance;
+                document.getElementById('delivery_price').value = data.delivery_cost;
+                document.getElementById('delivery_time_display').textContent = data.delivery_time + ' daqiqa';
 
-    const deliveryDistanceInput = document.getElementById('delivery_distance');
-    if (deliveryDistanceInput && deliveryDistanceInput.value) {
-        const distance = parseFloat(deliveryDistanceInput.value);
-        // Oddiy narxlashuv: har bir km uchun 5000 so'm
-        if (distance > 0) {
-            deliveryCost = distance * 5000; // Masalan, har km uchun 5000 so'm
-        }
-    }
-
-    const finalTotal = baseTotal + deliveryCost;
-    const totalElement = document.getElementById('total-amount');
-    if (totalElement) {
-        totalElement.textContent = finalTotal.toLocaleString() + " so'm";
-    }
-
-    // Delivery cost info yangilash
-    const deliveryCostInfoSpan = document.querySelector('.delivery-cost-info .delivery-cost');
-    if (deliveryCostInfoSpan) {
-        if (deliveryCost > 0) {
-            deliveryCostInfoSpan.textContent = `+ ${deliveryCost.toLocaleString()} so'm (yetkazib berish)`;
-            deliveryCostInfoSpan.style.color = '#dc3545'; // Qizil rang
+                updateTotal();
+            }
         } else {
-            deliveryCostInfoSpan.textContent = 'Yetkazib berish: Bepul';
-            deliveryCostInfoSpan.style.color = '#28a745'; // Yashil rang
+            console.error('Eng yaqin filial topilmadi:', data.message);
+            alert('Eng yaqin filial topilmadi: ' + data.message);
         }
-    }
+    })
+    .catch(error => {
+        console.error('Filial topishda xatolik:', error);
+    });
 }
 
 function validateOrderForm(form) {
@@ -483,7 +478,7 @@ function validateOrderForm(form) {
     // Agar delivery tanlangan bo'lsa, manzil tekshirish
     if (orderType.value === 'delivery') {
         const deliveryAddress = document.querySelector('input[name="delivery_address"]');
-        
+
         if (!deliveryAddress || !deliveryAddress.value.trim()) {
             alert('Yetkazib berish manzilini kiriting!');
             if (deliveryAddress) {
@@ -805,6 +800,30 @@ document.addEventListener('DOMContentLoaded', function() {
 #selected-address {
     color: #007bff;
     font-weight: 500;
+}
+
+.branch-info {
+    background-color: #e6ffed;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 5px solid #28a745;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.branch-details h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #276749; /* Darker green for emphasis */
+}
+
+.branch-details p {
+    margin-bottom: 5px;
+    color: #2d3748;
+    font-size: 0.95em;
+}
+
+.branch-details p strong {
+    color: #1a202c;
 }
 
 /* Mobile uchun */
