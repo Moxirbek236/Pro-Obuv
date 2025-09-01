@@ -198,8 +198,34 @@ function cancelOrder(ticketNo) {
     });
 }
 
+// Profil dropdown menusini ishlatish
+function initializeProfileDropdown() {
+    const dropdown = document.getElementById('profileDropdown');
+    if (dropdown) {
+        // Bootstrap dropdown avtomatik ishlaydi, lekin qo'shimcha funksiyalar qo'shish mumkin
+        dropdown.addEventListener('click', function(e) {
+            e.preventDefault();
+            const dropdownMenu = this.nextElementSibling;
+            if (dropdownMenu) {
+                dropdownMenu.classList.toggle('show');
+            }
+        });
+
+        // Boshqa joyga bosilganda dropdown yopish
+        document.addEventListener('click', function(e) {
+            const dropdownMenu = dropdown.nextElementSibling;
+            if (dropdownMenu && !dropdown.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                dropdownMenu.classList.remove('show');
+            }
+        });
+    }
+}
+
 // Sahifa yuklanganda ishga tushiradigan funksiyalar
 document.addEventListener('DOMContentLoaded', function() {
+    // Profil dropdown menusini ishga tushirish
+    initializeProfileDropdown();
+
     // Savatcha sonini dastlabki yuklanish
     updateCartCount();
 
