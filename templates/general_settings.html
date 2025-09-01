@@ -1,0 +1,376 @@
+
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sozlamalar - Restoran</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px 0;
+            transition: all 0.3s ease;
+        }
+        body.dark-theme {
+            background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+        }
+        .settings-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 0 auto;
+            transition: all 0.3s ease;
+        }
+        .dark-theme .settings-card {
+            background: rgba(45, 55, 72, 0.95);
+            color: #e2e8f0;
+        }
+        .settings-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(248, 250, 252, 0.8);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+        .dark-theme .settings-section {
+            background: rgba(26, 32, 44, 0.8);
+        }
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .dark-theme .setting-item {
+            border-bottom-color: #4a5568;
+        }
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+        .setting-label {
+            font-weight: 600;
+            color: #2d3748;
+        }
+        .dark-theme .setting-label {
+            color: #e2e8f0;
+        }
+        .btn-setting {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+        .font-preview {
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+        .dark-theme .font-preview {
+            border-color: #4a5568;
+            background: rgba(26, 32, 44, 0.5);
+        }
+        .font-small { font-size: 14px; }
+        .font-medium { font-size: 16px; }
+        .font-large { font-size: 18px; }
+        .font-xlarge { font-size: 20px; }
+        
+        .lang-flag {
+            width: 24px;
+            height: 16px;
+            margin-right: 8px;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="settings-card">
+        <div class="text-center mb-4">
+            <h2>🔧 Sozlamalar</h2>
+            <p class="text-muted">Dastur va interfeys sozlamalarini boshqaring</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ 'danger' if category=='error' else 'success' if category=='success' else category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <!-- Til sozlamalari -->
+        <div class="settings-section">
+            <h4>🌐 Til sozlamalari</h4>
+            <div class="setting-item">
+                <div>
+                    <div class="setting-label">Interfeys tili</div>
+                    <small class="text-muted">Dastur tili va matn</small>
+                </div>
+                <select class="form-select" style="width: 200px;" id="languageSelect">
+                    <option value="uz" selected>🇺🇿 O'zbek tili</option>
+                    <option value="ru">🇷🇺 Русский</option>
+                    <option value="en">🇺🇸 English</option>
+                </select>
+            </div>
+            <div class="setting-item">
+                <div>
+                    <div class="setting-label">Sana formati</div>
+                    <small class="text-muted">Sanalarning ko'rsatilish uslubi</small>
+                </div>
+                <select class="form-select" style="width: 200px;" id="dateFormat">
+                    <option value="dd.mm.yyyy" selected>DD.MM.YYYY</option>
+                    <option value="mm/dd/yyyy">MM/DD/YYYY</option>
+                    <option value="yyyy-mm-dd">YYYY-MM-DD</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Mavzu sozlamalari -->
+        <div class="settings-section">
+            <h4>🎨 Mavzu va ko'rinish</h4>
+            <div class="setting-item">
+                <div>
+                    <div class="setting-label">Tungi rejim</div>
+                    <small class="text-muted">Qora mavzu faollashtirish</small>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="darkMode">
+                    <label class="form-check-label" for="darkMode"></label>
+                </div>
+            </div>
+            <div class="setting-item">
+                <div>
+                    <div class="setting-label">Avtomatik mavzu</div>
+                    <small class="text-muted">Tizim sozlamalariga qarab o'zgartirish</small>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="autoTheme">
+                    <label class="form-check-label" for="autoTheme"></label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shrift sozlamalari -->
+        <div class="settings-section">
+            <h4>📝 Shrift sozlamalari</h4>
+            <div class="setting-item">
+                <div>
+                    <div class="setting-label">Shrift kattaligi</div>
+                    <small class="text-muted">Matn o'lchamini sozlash</small>
+                </div>
+                <select class="form-select" style="width: 200px;" id="fontSize">
+                    <option value="small">Kichik</option>
+                    <option value="medium" selected>O'rtacha</option>
+                    <option value="large">Katta</option>
+                    <option value="xlarge">Juda katta</option>
+                </select>
+            </div>
+            <div class="font-preview" id="fontPreview">
+                <p class="mb-2"><strong>Namuna matn:</strong></p>
+                <p class="mb-0">Bu yerda siz tanlagan shrift o'lchamini ko'rishingiz mumkin. Menyu, buyurtmalar va boshqa matnlar shu kattalikda ko'rsatiladi.</p>
+            </div>
+        </div>
+
+        <!-- Bildirishnomalar -->
+        <div class="settings-section">
+            <h4>🔔 Bildirishnomalar</h4>
+            <div class="setting-item">
+                <div>
+                    <div class="setting-label">Brauzer bildirishnomalari</div>
+                    <small class="text-muted">Buyurtma holati haqida bildirishnoma</small>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="browserNotifications">
+                    <label class="form-check-label" for="browserNotifications"></label>
+                </div>
+            </div>
+            <div class="setting-item">
+                <div>
+                    <div class="setting-label">Ovoz signallari</div>
+                    <small class="text-muted">Bildirishnomalar uchun ovoz</small>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="soundNotifications" checked>
+                    <label class="form-check-label" for="soundNotifications"></label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ishlash sozlamalari -->
+        <div class="settings-section">
+            <h4>⚡ Ishlash va saqlash</h4>
+            <div class="setting-item">
+                <div>
+                    <div class="setting-label">Keshni tozalash</div>
+                    <small class="text-muted">Vaqtinchalik fayllarni tozalash</small>
+                </div>
+                <button class="btn btn-setting" onclick="clearCache()">Tozalash</button>
+            </div>
+            <div class="setting-item">
+                <div>
+                    <div class="setting-label">Avtomatik saqlash</div>
+                    <small class="text-muted">Sozlamalarni avtomatik saqlash</small>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="autoSave" checked>
+                    <label class="form-check-label" for="autoSave"></label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigatsiya -->
+        <div class="text-center">
+            <button class="btn btn-success me-2" onclick="saveSettings()">💾 Sozlamalarni saqlash</button>
+            <a href="{{ url_for('profile_settings') }}" class="btn btn-outline-primary me-2">⚙️ Profil sozlamalari</a>
+            <a href="{{ url_for('profile') }}" class="btn btn-outline-secondary">🔙 Profilga qaytish</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Sozlamalarni yuklash
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSettings();
+            
+            // Event listenerlar
+            document.getElementById('darkMode').addEventListener('change', toggleDarkMode);
+            document.getElementById('fontSize').addEventListener('change', updateFontPreview);
+            document.getElementById('languageSelect').addEventListener('change', changeLanguage);
+            document.getElementById('autoTheme').addEventListener('change', toggleAutoTheme);
+            
+            // Brauzer bildirishnomalari uchun ruxsat so'rash
+            document.getElementById('browserNotifications').addEventListener('change', function() {
+                if (this.checked && Notification.permission === 'default') {
+                    Notification.requestPermission();
+                }
+            });
+        });
+
+        function loadSettings() {
+            // LocalStorage dan sozlamalarni yuklash
+            const darkMode = localStorage.getItem('darkMode') === 'true';
+            const fontSize = localStorage.getItem('fontSize') || 'medium';
+            const language = localStorage.getItem('language') || 'uz';
+            const autoTheme = localStorage.getItem('autoTheme') === 'true';
+            
+            document.getElementById('darkMode').checked = darkMode;
+            document.getElementById('fontSize').value = fontSize;
+            document.getElementById('languageSelect').value = language;
+            document.getElementById('autoTheme').checked = autoTheme;
+            
+            if (darkMode) {
+                document.body.classList.add('dark-theme');
+            }
+            
+            updateFontPreview();
+        }
+
+        function saveSettings() {
+            const settings = {
+                darkMode: document.getElementById('darkMode').checked,
+                fontSize: document.getElementById('fontSize').value,
+                language: document.getElementById('languageSelect').value,
+                autoTheme: document.getElementById('autoTheme').checked,
+                browserNotifications: document.getElementById('browserNotifications').checked,
+                soundNotifications: document.getElementById('soundNotifications').checked,
+                autoSave: document.getElementById('autoSave').checked,
+                dateFormat: document.getElementById('dateFormat').value
+            };
+            
+            // LocalStorage ga saqlash
+            Object.keys(settings).forEach(key => {
+                localStorage.setItem(key, settings[key]);
+            });
+            
+            // Success alert
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-success alert-dismissible fade show';
+            alert.innerHTML = `
+                Sozlamalar muvaffaqiyatli saqlandi! ✅
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.querySelector('.settings-card').insertBefore(alert, document.querySelector('.settings-card').firstChild);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 3000);
+        }
+
+        function toggleDarkMode() {
+            const isDark = document.getElementById('darkMode').checked;
+            if (isDark) {
+                document.body.classList.add('dark-theme');
+            } else {
+                document.body.classList.remove('dark-theme');
+            }
+            localStorage.setItem('darkMode', isDark);
+        }
+
+        function updateFontPreview() {
+            const fontSize = document.getElementById('fontSize').value;
+            const preview = document.getElementById('fontPreview');
+            
+            preview.className = preview.className.replace(/font-(small|medium|large|xlarge)/, '');
+            preview.classList.add('font-preview', `font-${fontSize}`);
+        }
+
+        function changeLanguage() {
+            const language = document.getElementById('languageSelect').value;
+            localStorage.setItem('language', language);
+            
+            // Bu yerda til o'zgartirish logikasi bo'lishi kerak
+            console.log('Til o\'zgartirildi:', language);
+        }
+
+        function toggleAutoTheme() {
+            const autoTheme = document.getElementById('autoTheme').checked;
+            localStorage.setItem('autoTheme', autoTheme);
+            
+            if (autoTheme) {
+                // Tizim mavzusini tekshirish
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                document.getElementById('darkMode').checked = prefersDark;
+                toggleDarkMode();
+            }
+        }
+
+        function clearCache() {
+            if (confirm('Keshni tozalash barcha vaqtinchalik ma\'lumotlarni o\'chiradi. Davom etasizmi?')) {
+                localStorage.removeItem('cartData');
+                sessionStorage.clear();
+                
+                const alert = document.createElement('div');
+                alert.className = 'alert alert-info alert-dismissible fade show';
+                alert.innerHTML = `
+                    Kesh muvaffaqiyatli tozalandi! 🗑️
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                document.querySelector('.settings-card').insertBefore(alert, document.querySelector('.settings-card').firstChild);
+                
+                setTimeout(() => {
+                    alert.remove();
+                }, 3000);
+            }
+        }
+
+        // Avtomatik saqlash
+        setInterval(() => {
+            if (document.getElementById('autoSave').checked) {
+                saveSettings();
+            }
+        }, 30000); // Har 30 soniyada
+    </script>
+</body>
+</html>

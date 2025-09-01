@@ -1188,15 +1188,15 @@ def change_password():
 
     if not all([current_password, new_password, confirm_password]):
         flash("Barcha parol maydonlarini to'ldiring.", "error")
-        return redirect(url_for("profile"))
+        return redirect(url_for("profile_settings"))
 
     if new_password != confirm_password:
         flash("Yangi parollar mos kelmaydi.", "error")
-        return redirect(url_for("profile"))
+        return redirect(url_for("profile_settings"))
 
     if len(new_password) < 6:
         flash("Yangi parol kamida 6 ta belgidan iborat bo'lishi kerak.", "error")
-        return redirect(url_for("profile"))
+        return redirect(url_for("profile_settings"))
 
     conn = get_db()
     cur = conn.cursor()
@@ -1208,7 +1208,7 @@ def change_password():
     if not user_hash or not check_password_hash(user_hash["password_hash"], current_password):
         flash("Joriy parol noto'g'ri.", "error")
         conn.close()
-        return redirect(url_for("profile"))
+        return redirect(url_for("profile_settings"))
 
     # Yangi parolni saqlash
     new_password_hash = generate_password_hash(new_password)
@@ -1218,7 +1218,19 @@ def change_password():
     conn.close()
 
     flash("Parol muvaffaqiyatli o'zgartirildi!", "success")
-    return redirect(url_for("profile"))
+    return redirect(url_for("profile_settings"))
+
+@app.route("/profile/settings")
+def profile_settings():
+    if not session.get("user_id"):
+        flash("Profil sozlamalarini ko'rish uchun tizimga kiring.", "error")
+        return redirect(url_for("login"))
+    
+    return render_template("profile_settings.html")
+
+@app.route("/settings")
+def general_settings():
+    return render_template("general_settings.html")
 
 @app.route("/logout")
 def logout():
