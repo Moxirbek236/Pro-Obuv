@@ -30,7 +30,7 @@ def get_db():
 def init_db():
     conn = get_db()
     cur = conn.cursor()
-    
+
     # Foydalanuvchilar jadvali
     cur.execute("""
         CREATE TABLE IF NOT EXISTS users (
@@ -46,7 +46,7 @@ def init_db():
             created_at TEXT NOT NULL
         );
     """)
-    
+
     # Xodimlar jadvali
     cur.execute("""
         CREATE TABLE IF NOT EXISTS staff (
@@ -64,7 +64,7 @@ def init_db():
             created_at TEXT NOT NULL
         );
     """)
-    
+
     # Kuryerlar jadvali
     cur.execute("""
         CREATE TABLE IF NOT EXISTS couriers (
@@ -82,7 +82,7 @@ def init_db():
             created_at TEXT NOT NULL
         );
     """)
-    
+
     # Buyurtmalar jadvali (yangilangan)
     cur.execute("""
         CREATE TABLE IF NOT EXISTS orders (
@@ -101,7 +101,7 @@ def init_db():
             FOREIGN KEY (courier_id) REFERENCES couriers (id)
         );
     """)
-    
+
     # Tikketlar hisoblagich
     cur.execute("""
         CREATE TABLE IF NOT EXISTS counters (
@@ -110,7 +110,7 @@ def init_db():
         );
     """)
     cur.execute("INSERT OR IGNORE INTO counters (name, value) VALUES ('ticket', 10000);")
-    
+
     # Menyu mahsulotlari (yangilangan)
     cur.execute("""
         CREATE TABLE IF NOT EXISTS menu_items (
@@ -127,7 +127,7 @@ def init_db():
             created_at TEXT NOT NULL
         );
     """)
-    
+
     # Sevimlilar jadvali
     cur.execute("""
         CREATE TABLE IF NOT EXISTS favorites (
@@ -140,7 +140,7 @@ def init_db():
             UNIQUE(user_id, menu_item_id)
         );
     """)
-    
+
     # Savatcha jadvali (yangilangan)
     cur.execute("""
         CREATE TABLE IF NOT EXISTS cart_items (
@@ -154,7 +154,7 @@ def init_db():
             FOREIGN KEY (menu_item_id) REFERENCES menu_items (id)
         );
     """)
-    
+
     # Buyurtma tafsilotlari jadvali
     cur.execute("""
         CREATE TABLE IF NOT EXISTS order_details (
@@ -167,7 +167,7 @@ def init_db():
             FOREIGN KEY (menu_item_id) REFERENCES menu_items (id)
         );
     """)
-    
+
     # Baholar jadvali
     cur.execute("""
         CREATE TABLE IF NOT EXISTS ratings (
@@ -182,7 +182,7 @@ def init_db():
             UNIQUE(user_id, menu_item_id)
         );
     """)
-    
+
     # Savollar jadvali
     cur.execute("""
         CREATE TABLE IF NOT EXISTS questions (
@@ -196,7 +196,7 @@ def init_db():
             created_at TEXT NOT NULL
         );
     """)
-    
+
     # Boshlang'ich taomlar qo'shish
     cur.execute("SELECT COUNT(*) FROM menu_items")
     if cur.fetchone()[0] == 0:
@@ -212,7 +212,7 @@ def init_db():
             ('Coca Cola', 10000, 'drink', 'Sovuq ichimlik', '/static/images/cola.jpg', 1, 70, 0, 4.0, now),
         ]
         cur.executemany("INSERT INTO menu_items (name, price, category, description, image_url, available, stock_quantity, orders_count, rating, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", sample_items)
-    
+
     conn.commit()
     conn.close()
 
@@ -358,7 +358,7 @@ def clear_cart(conn, session_id, user_id=None):
 def save_user_to_json(name, ticket_no, order_time, order_items):
     """Foydalanuvchi ma'lumotlarini users.json fayliga saqlash"""
     users_file = 'users.json'
-    
+
     # Yangi foydalanuvchi ma'lumotlari
     user_data = {
         'ism': name,
@@ -366,7 +366,7 @@ def save_user_to_json(name, ticket_no, order_time, order_items):
         'buyurtma_vaqti': order_time.strftime("%Y-%m-%d %H:%M:%S"),
         'buyurtma_mahsulotlari': order_items
     }
-    
+
     # Mavjud ma'lumotlarni o'qish
     users_list = []
     if os.path.exists(users_file):
@@ -375,10 +375,10 @@ def save_user_to_json(name, ticket_no, order_time, order_items):
                 users_list = json.load(f)
         except (json.JSONDecodeError, FileNotFoundError):
             users_list = []
-    
+
     # Yangi ma'lumotni qo'shish
     users_list.append(user_data)
-    
+
     # Faylga saqlash
     with open(users_file, 'w', encoding='utf-8') as f:
         json.dump(users_list, f, ensure_ascii=False, indent=2)
@@ -386,7 +386,7 @@ def save_user_to_json(name, ticket_no, order_time, order_items):
 def save_staff_to_json(first_name, last_name, birth_date, phone, staff_id, register_time):
     """Xodim ma'lumotlarini employees.json fayliga saqlash"""
     employees_file = 'employees.json'
-    
+
     # Yangi xodim ma'lumotlari
     employee_data = {
         'id': staff_id,
@@ -396,7 +396,7 @@ def save_staff_to_json(first_name, last_name, birth_date, phone, staff_id, regis
         'telefon': phone,
         'royxatdan_otgan_vaqti': register_time.strftime("%Y-%m-%d %H:%M:%S")
     }
-    
+
     # Mavjud ma'lumotlarni o'qish
     employees_list = []
     if os.path.exists(employees_file):
@@ -405,10 +405,10 @@ def save_staff_to_json(first_name, last_name, birth_date, phone, staff_id, regis
                 employees_list = json.load(f)
         except (json.JSONDecodeError, FileNotFoundError):
             employees_list = []
-    
+
     # Yangi ma'lumotni qo'shish
     employees_list.append(employee_data)
-    
+
     # Faylga saqlash
     with open(employees_file, 'w', encoding='utf-8') as f:
         json.dump(employees_list, f, ensure_ascii=False, indent=2)
@@ -473,35 +473,35 @@ def menu():
     cur.execute("SELECT * FROM menu_items WHERE available = 1 ORDER BY category, name")
     menu_items = cur.fetchall()
     conn.close()
-    
+
     foods = [item for item in menu_items if item['category'] == 'food']
     drinks = [item for item in menu_items if item['category'] == 'drink']
-    
+
     return render_template("menu.html", foods=foods, drinks=drinks)
 
 @app.route("/add_to_cart", methods=["POST"])
 def add_to_cart():
     menu_item_id = request.form.get("menu_item_id")
     quantity = int(request.form.get("quantity", 1))
-    
+
     if not menu_item_id:
         flash("Mahsulot tanlanmadi.", "error")
         return redirect(url_for("menu"))
-    
+
     session_id = get_session_id()
     user_id = session.get("user_id")
     conn = get_db()
     cur = conn.cursor()
-    
+
     # Mavjudligini tekshirish
     if user_id:
         cur.execute("SELECT * FROM cart_items WHERE user_id = ? AND menu_item_id = ?", (user_id, menu_item_id))
     else:
         cur.execute("SELECT * FROM cart_items WHERE session_id = ? AND menu_item_id = ?", (session_id, menu_item_id))
-    
+
     existing = cur.fetchone()
     now = get_current_time().isoformat()
-    
+
     if existing:
         # Mavjud bo'lsa miqdorni oshirish
         cur.execute("UPDATE cart_items SET quantity = quantity + ? WHERE id = ?", (quantity, existing['id']))
@@ -513,7 +513,7 @@ def add_to_cart():
         else:
             cur.execute("INSERT INTO cart_items (session_id, menu_item_id, quantity, created_at) VALUES (?, ?, ?, ?)", 
                        (session_id, menu_item_id, quantity, now))
-    
+
     conn.commit()
     conn.close()
     flash("Mahsulot savatchaga qo'shildi!", "success")
@@ -535,12 +535,12 @@ def remove_from_cart(cart_item_id):
     user_id = session.get("user_id")
     conn = get_db()
     cur = conn.cursor()
-    
+
     if user_id:
         cur.execute("DELETE FROM cart_items WHERE id = ? AND user_id = ?", (cart_item_id, user_id))
     else:
         cur.execute("DELETE FROM cart_items WHERE id = ? AND session_id = ?", (cart_item_id, session_id))
-    
+
     conn.commit()
     conn.close()
     flash("Mahsulot savatchadan olib tashlandi.", "success")
@@ -552,12 +552,12 @@ def get_cart_count():
     user_id = session.get("user_id")
     conn = get_db()
     cur = conn.cursor()
-    
+
     if user_id:
         cur.execute("SELECT SUM(quantity) FROM cart_items WHERE user_id = ?", (user_id,))
     else:
         cur.execute("SELECT SUM(quantity) FROM cart_items WHERE session_id = ?", (session_id,))
-    
+
     result = cur.fetchone()[0]
     count = result if result else 0
     conn.close()
@@ -569,17 +569,17 @@ def login():
     if request.method == "POST":
         email = request.form.get("email", "").strip()
         password = request.form.get("password", "")
-        
+
         if not email or not password:
             flash("Email va parolni kiriting.", "error")
             return redirect(url_for("login"))
-        
+
         conn = get_db()
         cur = conn.cursor()
         cur.execute("SELECT * FROM users WHERE email = ?", (email,))
         user = cur.fetchone()
         conn.close()
-        
+
         if user and check_password_hash(user["password_hash"], password):
             session["user_id"] = user["id"]
             session["user_name"] = f"{user['first_name']} {user['last_name']}"
@@ -589,7 +589,7 @@ def login():
         else:
             flash("Noto'g'ri email yoki parol.", "error")
             return redirect(url_for("login"))
-    
+
     return render_template("login.html")
 
 @app.route("/register", methods=["GET", "POST"])
@@ -602,46 +602,46 @@ def register():
         address = request.form.get("address", "").strip()
         password = request.form.get("password", "")
         confirm_password = request.form.get("confirm_password", "")
-        
+
         if not all([first_name, last_name, email, password, confirm_password]):
             flash("Majburiy maydonlarni to'ldiring.", "error")
             return redirect(url_for("register"))
-        
+
         if password != confirm_password:
             flash("Parollar mos kelmaydi.", "error")
             return redirect(url_for("register"))
-        
+
         conn = get_db()
         cur = conn.cursor()
-        
+
         # Email mavjudligini tekshirish
         cur.execute("SELECT id FROM users WHERE email = ?", (email,))
         if cur.fetchone():
             flash("Bu email allaqachon ro'yxatdan o'tgan.", "error")
             conn.close()
             return redirect(url_for("register"))
-        
+
         # Yangi foydalanuvchi yaratish
         password_hash = generate_password_hash(password)
         now = get_current_time().isoformat()
-        
+
         cur.execute("""
             INSERT INTO users (first_name, last_name, email, phone, address, password_hash, created_at)
             VALUES (?, ?, ?, ?, ?, ?, ?)
         """, (first_name, last_name, email, phone, address, password_hash, now))
-        
+
         conn.commit()
         user_id = cur.lastrowid
         conn.close()
-        
+
         # Avtomatik tizimga kiritish
         session["user_id"] = user_id
         session["user_name"] = f"{first_name} {last_name}"
         session["user_email"] = email
-        
+
         flash(f"Muvaffaqiyatli ro'yxatdan o'tdingiz! Xush kelibsiz, {first_name}!", "success")
         return redirect(url_for("index"))
-    
+
     return render_template("register.html")
 
 @app.route("/logout")
@@ -659,40 +659,40 @@ def user_page():
         if not session.get("user_id"):
             flash("Buyurtma berish uchun avval tizimga kiring.", "error")
             return redirect(url_for("login"))
-        
+
         name = session.get("user_name", "")
         user_id = session.get("user_id")
-        
+
         if not name:
             flash("Foydalanuvchi ma'lumotlari topilmadi.", "error")
             return redirect(url_for("login"))
-            
+
         session_id = get_session_id()
         conn = get_db()
-        
+
         # Savatchani tekshirish
         cart_items = get_cart_items(conn, session_id, user_id)
         if not cart_items:
             flash("Savatchangiz bo'sh. Avval taom tanlang.", "error")
             conn.close()
             return redirect(url_for("menu"))
-            
+
         try:
             tno = next_ticket_no(conn)
             eta_minutes = calc_eta_minutes(conn)
             now = get_current_time()
             eta_time = now + datetime.timedelta(minutes=eta_minutes)
             total = get_cart_total(conn, session_id, user_id)
-            
+
             cur = conn.cursor()
             # Buyurtma yaratish (user_id bilan)
             cur.execute("""
                 INSERT INTO orders (user_id, customer_name, ticket_no, order_type, status, created_at, eta_time)
                 VALUES (?, ?, ?, 'dine_in', 'waiting', ?, ?);
             """, (user_id, name, tno, now.isoformat(), eta_time.isoformat()))
-            
+
             order_id = cur.lastrowid
-            
+
             # Savatchadagi mahsulotlarni order_details ga ko'chirish va JSON uchun to'plash
             order_items_for_json = []
             for item in cart_items:
@@ -703,7 +703,7 @@ def user_page():
                     JOIN menu_items mi ON ci.menu_item_id = mi.id
                     WHERE ci.id = ?
                 """, (order_id, item['id']))
-                
+
                 # JSON uchun mahsulot ma'lumotlarini to'plash
                 order_items_for_json.append({
                     'nomi': item['name'],
@@ -711,15 +711,15 @@ def user_page():
                     'narxi': item['price'],
                     'jami': item['total']
                 })
-            
+
             # Savatchani tozalash
             clear_cart(conn, session_id, user_id)
-            
+
             conn.commit()
-            
+
             # Foydalanuvchini JSON fayliga saqlash
             save_user_to_json(name, tno, now, order_items_for_json)
-            
+
         finally:
             conn.close()
         return redirect(url_for("user_success", ticket_no=tno))
@@ -748,11 +748,11 @@ def user_status(ticket_no):
     if not order:
         conn.close()
         return jsonify({"ok": False, "error": "not_found"}), 404
-    
+
     queue_position = 0
     if order["status"] == "waiting":
         queue_position = get_user_queue_position(conn, ticket_no)
-    
+
     conn.close()
     return jsonify({
         "ok": True,
@@ -774,13 +774,13 @@ def courier_login():
         cur = conn.cursor()
         cur.execute("SELECT * FROM couriers WHERE id=?;", (courier_id,))
         row = cur.fetchone()
-        
+        conn.close()
         if row:
             # Faollik vaqtini yangilash
             now = get_current_time().isoformat()
             cur.execute("UPDATE couriers SET last_activity=? WHERE id=?", (now, courier_id))
             conn.commit()
-        
+
         conn.close()
         if not row or not check_password_hash(row["password_hash"], password):
             flash("Noto'g'ri ID yoki parol.", "error")
@@ -816,7 +816,7 @@ def courier_register():
         conn.commit()
         new_id = cur.lastrowid
         conn.close()
-        
+
         flash(f"Kuryer sifatida ro'yxatdan o'tdingiz. Sizning ID raqamingiz: {new_id}", "success")
         return redirect(url_for("courier_login"))
 
@@ -826,10 +826,10 @@ def courier_register():
 def courier_dashboard():
     if "courier_id" not in session:
         return redirect(url_for("courier_login"))
-    
+
     conn = get_db()
     cur = conn.cursor()
-    
+
     # Kuryerga tegishli delivery buyurtmalarni olish
     cur.execute("""
         SELECT o.*, 
@@ -842,7 +842,7 @@ def courier_dashboard():
         ORDER BY o.created_at DESC
     """)
     delivery_orders = cur.fetchall()
-    
+
     conn.close()
     return render_template("courier_dashboard.html", orders=delivery_orders)
 
@@ -871,7 +871,7 @@ def staff_login():
             now = get_current_time().isoformat()
             cur.execute("UPDATE staff SET last_activity=? WHERE id=?", (now, staff_id))
             conn.commit()
-        
+
         conn.close()
         if not row or not check_password_hash(row["password_hash"], password):
             flash("Noto'g'ri ID yoki parol.", "error")
@@ -912,10 +912,10 @@ def staff_register():
         conn.commit()
         new_id = cur.lastrowid
         conn.close()
-        
+
         # Xodim ma'lumotlarini employees.json fayliga saqlash
         save_staff_to_json(first_name, last_name, birth_date, phone, new_id, now)
-        
+
         flash(f"Ro'yxatdan o'tdingiz. Sizning ID raqamingiz: {new_id}", "success")
         return redirect(url_for("staff_login"))
 
@@ -975,22 +975,50 @@ def add_menu_item():
     name = request.form.get("name", "").strip()
     price = request.form.get("price", "")
     category = request.form.get("category", "")
-    
+    description = request.form.get("description", "").strip()
+
     if not all([name, price, category]):
-        flash("Barcha maydonlarni to'ldiring.", "error")
+        flash("Barcha majburiy maydonlarni to'ldiring.", "error")
         return redirect(url_for("staff_menu"))
-    
+
     try:
         price = float(price)
     except ValueError:
         flash("Narx raqam bo'lishi kerak.", "error")
         return redirect(url_for("staff_menu"))
-    
+
+    # Rasm yuklash
+    image_url = None
+    if 'image' in request.files:
+        file = request.files['image']
+        if file and file.filename != '':
+            # Rasm faylini saqlash
+            import uuid
+            from werkzeug.utils import secure_filename
+
+            # Static/images papkasini yaratish
+            images_dir = os.path.join('static', 'images')
+            if not os.path.exists(images_dir):
+                os.makedirs(images_dir)
+
+            # Fayl nomini xavfsiz qilish
+            filename = secure_filename(file.filename)
+            # Unikal nom yaratish
+            unique_filename = f"{uuid.uuid4().hex}_{filename}"
+            file_path = os.path.join(images_dir, unique_filename)
+
+            try:
+                file.save(file_path)
+                image_url = f"/static/images/{unique_filename}"
+            except Exception as e:
+                flash("Rasmni yuklashda xatolik yuz berdi.", "error")
+                return redirect(url_for("staff_menu"))
+
     conn = get_db()
     cur = conn.cursor()
     now = get_current_time().isoformat()
-    cur.execute("INSERT INTO menu_items (name, price, category, created_at) VALUES (?, ?, ?, ?)",
-               (name, price, category, now))
+    cur.execute("INSERT INTO menu_items (name, price, category, description, image_url, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+               (name, price, category, description, image_url, now))
     conn.commit()
     conn.close()
     flash("Yangi mahsulot qo'shildi!", "success")
@@ -1076,14 +1104,14 @@ def staff_employees():
     """Xodimlar ro'yxatini ko'rish"""
     employees_file = 'employees.json'
     employees = []
-    
+
     if os.path.exists(employees_file):
         try:
             with open(employees_file, 'r', encoding='utf-8') as f:
                 employees = json.load(f)
         except (json.JSONDecodeError, FileNotFoundError):
             employees = []
-    
+
     return render_template("staff_employees.html", employees=employees, staff_name=session.get("staff_name"))
 
 # ---- SUPER ADMIN ----
@@ -1095,11 +1123,11 @@ def super_admin_login():
 def super_admin_login_post():
     username = request.form.get("username", "").strip()
     password = request.form.get("password", "")
-    
+
     # Super admin kredentsiallari (amaliyotda buni muhim joyga saqlash kerak)
     SUPER_ADMIN_USERNAME = "superadmin"
     SUPER_ADMIN_PASSWORD = "Admin123!@#"
-    
+
     if username == SUPER_ADMIN_USERNAME and password == SUPER_ADMIN_PASSWORD:
         session["super_admin"] = True
         return redirect(url_for("super_admin_dashboard"))
@@ -1111,22 +1139,22 @@ def super_admin_login_post():
 def super_admin_dashboard():
     if not session.get("super_admin"):
         return redirect(url_for("super_admin_login"))
-    
+
     conn = get_db()
     cur = conn.cursor()
-    
+
     # Barcha xodimlarni olish (to'liq ma'lumotlar bilan)
     cur.execute("SELECT * FROM staff ORDER BY created_at DESC")
     staff_db = cur.fetchall()
-    
+
     # Barcha kuryerlarni olish
     cur.execute("SELECT * FROM couriers ORDER BY created_at DESC")
     couriers_db = cur.fetchall()
-    
+
     # Foydalanuvchilarni olish
     cur.execute("SELECT * FROM users ORDER BY created_at DESC")
     users_db = cur.fetchall()
-    
+
     # JSON fayldan ham foydalanuvchilarni olish
     users_file = 'users.json'
     users_json = []
@@ -1136,36 +1164,36 @@ def super_admin_dashboard():
                 users_json = json.load(f)
         except (json.JSONDecodeError, FileNotFoundError):
             users_json = []
-    
+
     # Savollarni olish
     cur.execute("SELECT * FROM questions ORDER BY created_at DESC")
     questions = cur.fetchall()
-    
+
     # Buyurtmalar statistikasi
     cur.execute("SELECT COUNT(*) FROM orders")
     result = cur.fetchone()
     total_orders = result[0] if result else 0
-    
+
     cur.execute("SELECT COUNT(*) FROM orders WHERE status='waiting'")
     result = cur.fetchone()
     waiting_orders = result[0] if result else 0
-    
+
     cur.execute("SELECT COUNT(*) FROM orders WHERE status='ready'")
     result = cur.fetchone()
     ready_orders = result[0] if result else 0
-    
+
     cur.execute("SELECT COUNT(*) FROM orders WHERE status='served'")
     result = cur.fetchone()
     served_orders = result[0] if result else 0
-    
+
     # Bu oylik statistika
     current_month = get_current_time().strftime("%Y-%m")
     cur.execute("SELECT COUNT(*) FROM orders WHERE created_at LIKE ?", (f"{current_month}%",))
     result = cur.fetchone()
     month_orders = result[0] if result else 0
-    
+
     conn.close()
-    
+
     stats = {
         'total_orders': total_orders,
         'waiting_orders': waiting_orders,
@@ -1177,7 +1205,7 @@ def super_admin_dashboard():
         'total_users': len(users_db),
         'total_users_json': len(users_json)
     }
-    
+
     return render_template("super_admin_dashboard.html", 
                          staff_db=staff_db,
                          couriers_db=couriers_db,
@@ -1190,27 +1218,27 @@ def super_admin_dashboard():
 def super_admin_delete_staff(staff_id):
     if not session.get("super_admin"):
         return redirect(url_for("super_admin_login"))
-    
+
     conn = get_db()
     cur = conn.cursor()
     cur.execute("DELETE FROM staff WHERE id = ?", (staff_id,))
     conn.commit()
     conn.close()
-    
+
     # JSON fayldan ham o'chirish
     employees_file = 'employees.json'
     if os.path.exists(employees_file):
         try:
             with open(employees_file, 'r', encoding='utf-8') as f:
                 employees = json.load(f)
-            
+
             employees = [emp for emp in employees if emp.get('id') != staff_id]
-            
+
             with open(employees_file, 'w', encoding='utf-8') as f:
                 json.dump(employees, f, ensure_ascii=False, indent=2)
         except:
             pass
-    
+
     flash(f"Xodim #{staff_id} o'chirildi.", "success")
     return redirect(url_for("super_admin_dashboard"))
 
@@ -1218,7 +1246,7 @@ def super_admin_delete_staff(staff_id):
 def super_admin_add_staff():
     if not session.get("super_admin"):
         return redirect(url_for("super_admin_login"))
-    
+
     first_name = request.form.get("first_name", "").strip()
     last_name = request.form.get("last_name", "").strip()
     birth_date = request.form.get("birth_date", "").strip()
@@ -1242,10 +1270,10 @@ def super_admin_add_staff():
     conn.commit()
     new_id = cur.lastrowid
     conn.close()
-    
+
     # JSON fayliga ham saqlash
     save_staff_to_json(first_name, last_name, birth_date, phone, new_id, now)
-    
+
     flash(f"Yangi xodim qo'shildi. ID: {new_id}", "success")
     return redirect(url_for("super_admin_dashboard"))
 
@@ -1253,7 +1281,7 @@ def super_admin_add_staff():
 def super_admin_add_courier():
     if not session.get("super_admin"):
         return redirect(url_for("super_admin_login"))
-    
+
     first_name = request.form.get("first_name", "").strip()
     last_name = request.form.get("last_name", "").strip()
     birth_date = request.form.get("birth_date", "").strip()
@@ -1277,7 +1305,7 @@ def super_admin_add_courier():
     conn.commit()
     new_id = cur.lastrowid
     conn.close()
-    
+
     flash(f"Yangi kuryer qo'shildi. ID: {new_id}", "success")
     return redirect(url_for("super_admin_dashboard"))
 
@@ -1285,44 +1313,44 @@ def super_admin_add_courier():
 def super_admin_delete_user():
     if not session.get("super_admin"):
         return redirect(url_for("super_admin_login"))
-    
+
     ticket_no = request.form.get("ticket_no")
-    
+
     if not ticket_no:
         flash("Buyurtma raqamini kiriting.", "error")
         return redirect(url_for("super_admin_dashboard"))
-    
+
     try:
         ticket_no = int(ticket_no)
     except ValueError:
         flash("Buyurtma raqami raqam bo'lishi kerak.", "error")
         return redirect(url_for("super_admin_dashboard"))
-    
+
     # JSON fayldan o'chirish
     users_file = 'users.json'
     deleted = False
-    
+
     if os.path.exists(users_file):
         try:
             with open(users_file, 'r', encoding='utf-8') as f:
                 users = json.load(f)
-            
+
             original_count = len(users)
             users = [user for user in users if user.get('buyurtma_raqami') != ticket_no]
-            
+
             if len(users) < original_count:
                 deleted = True
                 with open(users_file, 'w', encoding='utf-8') as f:
                     json.dump(users, f, ensure_ascii=False, indent=2)
         except:
             pass
-    
+
     # Ma'lumotlar bazasidan ham o'chirish
     conn = get_db()
     cur = conn.cursor()
     cur.execute("SELECT * FROM orders WHERE ticket_no = ?", (ticket_no,))
     order = cur.fetchone()
-    
+
     if order:
         # Order details ni ham o'chirish
         cur.execute("DELETE FROM order_details WHERE order_id = ?", (order['id'],))
@@ -1330,14 +1358,14 @@ def super_admin_delete_user():
         cur.execute("DELETE FROM orders WHERE ticket_no = ?", (ticket_no,))
         conn.commit()
         deleted = True
-    
+
     conn.close()
-    
+
     if deleted:
         flash(f"Buyurtma #{ticket_no} va unga tegishli barcha ma'lumotlar o'chirildi.", "success")
     else:
         flash(f"Buyurtma #{ticket_no} topilmadi.", "error")
-    
+
     return redirect(url_for("super_admin_dashboard"))
 
 @app.route("/super-admin/logout")
@@ -1352,7 +1380,7 @@ def favorites():
     if not session.get("user_id"):
         flash("Sevimlilarni ko'rish uchun tizimga kiring.", "error")
         return redirect(url_for("login"))
-    
+
     user_id = session.get("user_id")
     conn = get_db()
     cur = conn.cursor()
@@ -1364,7 +1392,7 @@ def favorites():
     """, (user_id,))
     favorites = cur.fetchall()
     conn.close()
-    
+
     return render_template("favorites.html", favorites=favorites)
 
 @app.route("/contact", methods=["GET", "POST"])
@@ -1375,11 +1403,11 @@ def contact():
         phone = request.form.get("phone", "").strip()
         subject = request.form.get("subject", "").strip()
         message = request.form.get("message", "").strip()
-        
+
         if not all([name, subject, message]):
             flash("Ism, mavzu va xabar maydoni majburiy.", "error")
             return redirect(url_for("contact"))
-        
+
         conn = get_db()
         cur = conn.cursor()
         now = get_current_time().isoformat()
@@ -1389,10 +1417,10 @@ def contact():
         """, (name, email, phone, subject, message, now))
         conn.commit()
         conn.close()
-        
+
         flash("Savolingiz muvaffaqiyatli yuborildi! Tez orada javob beramiz.", "success")
         return redirect(url_for("contact"))
-    
+
     return render_template("contact.html")
 
 @app.route("/about")

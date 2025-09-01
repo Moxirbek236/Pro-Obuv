@@ -8,7 +8,7 @@
   
   <div style="margin-bottom: 30px;">
     <h3>Yangi mahsulot qo'shish</h3>
-    <form method="post" action="{{ url_for('add_menu_item') }}" class="add-item-form">
+    <form method="post" action="{{ url_for('add_menu_item') }}" class="add-item-form" enctype="multipart/form-data">
       <div class="form-grid">
         <div>
           <label>Nomi:</label>
@@ -25,6 +25,14 @@
             <option value="food">Taom</option>
             <option value="drink">Ichimlik</option>
           </select>
+        </div>
+        <div>
+          <label>Mahsulot rasmi:</label>
+          <input type="file" name="image" accept="image/*" placeholder="Rasm tanlang">
+        </div>
+        <div>
+          <label>Tavsif:</label>
+          <textarea name="description" placeholder="Mahsulot haqida qisqacha ma'lumot" rows="2"></textarea>
         </div>
         <div style="display: flex; align-items: end;">
           <button type="submit" class="btn">➕ Qo'shish</button>
