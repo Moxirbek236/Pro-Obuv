@@ -329,6 +329,26 @@ def ensure_orders_columns():
         pass
     conn.close()
 
+def ensure_users_columns():
+    """Users jadvaliga latitude va longitude ustunlarini qo'shadi (migration)."""
+    conn = get_db()
+    cur = conn.cursor()
+    try:
+        cur.execute("PRAGMA table_info(users);")
+        cols = [r[1] for r in cur.fetchall()]
+
+        if 'address_latitude' not in cols:
+            cur.execute("ALTER TABLE users ADD COLUMN address_latitude REAL;")
+            conn.commit()
+
+        if 'address_longitude' not in cols:
+            cur.execute("ALTER TABLE users ADD COLUMN address_longitude REAL;")
+            conn.commit()
+
+    except Exception as e:
+        pass
+    conn.close()
+
 def ensure_cart_items_columns():
     """Cart_items jadvaliga user_id ustunini qo'shadi va session_id ni optional qiladi (migration)."""
     conn = get_db()
@@ -465,6 +485,7 @@ ensure_cart_items_columns()
 ensure_staff_columns()
 ensure_courier_columns()
 ensure_menu_items_columns()
+ensure_users_columns()
 
 
 # O'rniga buni app context ichida chaqiramiz
@@ -1015,6 +1036,10 @@ def register():
             conn.close()
             return redirect(url_for("register"))
 
+        # Xarita koordinatalari
+        address_latitude = request.form.get("address_latitude", "")
+        address_longitude = request.form.get("address_longitude", "")
+
         # Yangi foydalanuvchi yaratish
         password_hash = generate_password_hash(password)
         now = get_current_time().isoformat()
@@ -1085,6 +1110,21 @@ def user_page():
             return redirect(url_for("menu"))
 
         try:
+            # Profil ma'lumotlarini yangilash (agar yangi ma'lumotlar berilgan bo'lsa)
+            home_address = request.form.get("home_address", "").strip()
+            customer_phone_new = request.form.get("customer_phone", "").strip()
+            
+            # Foydalanuvchi profilini yangilash
+            if home_address or customer_phone_new:
+                cur_update = conn.cursor()
+                if home_address:
+                    cur_update.execute("UPDATE users SET address = ? WHERE id = ?", (home_address, user_id))
+                    session['user_address'] = home_address
+                if customer_phone_new:
+                    cur_update.execute("UPDATE users SET phone = ? WHERE id = ?", (customer_phone_new, user_id))
+                    session['user_phone'] = customer_phone_new
+                conn.commit()
+
             tno = next_ticket_no(conn)
             eta_minutes = calc_eta_minutes(conn)
             now = get_current_time()
