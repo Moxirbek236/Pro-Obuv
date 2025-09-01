@@ -146,7 +146,7 @@ def init_db():
         CREATE TABLE IF NOT EXISTS cart_items (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER,
-            session_id TEXT,
+            session_id TEXT NOT NULL DEFAULT 'default_session',
             menu_item_id INTEGER NOT NULL,
             quantity INTEGER NOT NULL DEFAULT 1,
             created_at TEXT NOT NULL,
@@ -232,7 +232,7 @@ def ensure_orders_status_column():
     conn.close()
 
 def ensure_cart_items_columns():
-    """Cart_items jadvaliga user_id ustunini qo'shadi (migration)."""
+    """Cart_items jadvaliga user_id ustunini qo'shadi va session_id ni optional qiladi (migration)."""
     conn = get_db()
     cur = conn.cursor()
     try:
@@ -241,6 +241,10 @@ def ensure_cart_items_columns():
         if 'user_id' not in cols:
             cur.execute("ALTER TABLE cart_items ADD COLUMN user_id INTEGER;")
             conn.commit()
+        
+        # Eski jadval strukturasini yangilash - session_id ni NULL qilib qo'yish
+        cur.execute("UPDATE cart_items SET session_id = 'temp_session' WHERE session_id IS NULL OR session_id = ''")
+        conn.commit()
     except Exception as e:
         pass
     conn.close()
@@ -514,10 +518,10 @@ def add_to_cart():
         # Mavjud bo'lsa miqdorni oshirish
         cur.execute("UPDATE cart_items SET quantity = quantity + ? WHERE id = ?", (quantity, existing['id']))
     else:
-        # Yangi qo'shish
+        # Yangi qo'shish - har doim session_id ni ham berish
         if user_id:
-            cur.execute("INSERT INTO cart_items (user_id, menu_item_id, quantity, created_at) VALUES (?, ?, ?, ?)", 
-                       (user_id, menu_item_id, quantity, now))
+            cur.execute("INSERT INTO cart_items (user_id, session_id, menu_item_id, quantity, created_at) VALUES (?, ?, ?, ?, ?)", 
+                       (user_id, session_id, menu_item_id, quantity, now))
         else:
             cur.execute("INSERT INTO cart_items (session_id, menu_item_id, quantity, created_at) VALUES (?, ?, ?, ?)", 
                        (session_id, menu_item_id, quantity, now))
