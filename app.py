@@ -347,6 +347,10 @@ def ensure_courier_columns():
             cur.execute("ALTER TABLE couriers ADD COLUMN passport_number TEXT;")
             conn.commit()
 
+        if 'total_hours' not in cols:
+            cur.execute("ALTER TABLE couriers ADD COLUMN total_hours REAL DEFAULT 0;")
+            conn.commit()
+
         if 'deliveries_completed' not in cols:
             cur.execute("ALTER TABLE couriers ADD COLUMN deliveries_completed INTEGER DEFAULT 0;")
             conn.commit()
