@@ -1,11 +1,11 @@
 /* Asosiy stillar */
-* { 
-  box-sizing: border-box; 
+* {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-body { 
+body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #333;
@@ -13,6 +13,273 @@ body {
   display: flex;
   flex-direction: column;
 }
+
+/* Tungi rejim uchun global CSS */
+    body.dark-theme {
+        background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%) !important;
+        color: #e2e8f0 !important;
+    }
+
+    /* Navbar */
+    body.dark-theme .navbar-dark {
+        background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%) !important;
+    }
+    body.dark-theme .navbar-brand {
+        color: #e2e8f0 !important;
+    }
+    body.dark-theme .navbar-nav .nav-link {
+        color: rgba(226, 232, 240, 0.9) !important;
+    }
+    body.dark-theme .navbar-nav .nav-link:hover {
+        color: #e2e8f0 !important;
+    }
+    body.dark-theme .navbar-text {
+        color: #e2e8f0 !important;
+    }
+    body.dark-theme .dropdown-menu {
+        background-color: #2d3748 !important;
+        border-color: #4a5568 !important;
+    }
+    body.dark-theme .dropdown-item {
+        color: #e2e8f0 !important;
+    }
+    body.dark-theme .dropdown-item:hover {
+        background-color: #4a5568 !important;
+        color: #fff !important;
+    }
+
+    /* Kartalar */
+    body.dark-theme .card, body.dark-theme .modal-content {
+        background: rgba(45, 55, 72, 0.95) !important;
+        color: #e2e8f0 !important;
+        border-color: #4a5568 !important;
+    }
+
+    /* Tugmalar */
+    body.dark-theme .btn {
+        color: #e2e8f0 !important;
+    }
+    body.dark-theme .btn-primary {
+        background-color: #4299e1 !important;
+        border-color: #4299e1 !important;
+    }
+    body.dark-theme .checkout-btn {
+        background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%) !important;
+        color: #fff !important;
+    }
+    body.dark-theme .btn-add-cart {
+        background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%) !important;
+        color: #fff !important;
+    }
+
+    /* Formalar */
+    body.dark-theme input,
+    body.dark-theme select,
+    body.dark-theme textarea {
+        background-color: #4a5568 !important;
+        color: #e2e8f0 !important;
+        border-color: #718096 !important;
+    }
+    body.dark-theme input:focus,
+    body.dark-theme select:focus,
+    body.dark-theme textarea:focus {
+        background-color: #4a5568 !important;
+        color: #e2e8f0 !important;
+        border-color: #4299e1 !important;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.3) !important;
+    }
+    body.dark-theme .form-control {
+        background-color: #4a5568 !important;
+        color: #e2e8f0 !important;
+        border-color: #718096 !important;
+    }
+    body.dark-theme .form-control:focus {
+        background-color: #4a5568 !important;
+        color: #e2e8f0 !important;
+        border-color: #4299e1 !important;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.3) !important;
+    }
+    body.dark-theme label {
+        color: #cbd5e0 !important;
+    }
+
+    /* Menyu elementlari */
+    body.dark-theme .menu-section {
+        background: rgba(26, 32, 44, 0.3) !important;
+        border-color: rgba(226, 232, 240, 0.2) !important;
+    }
+    body.dark-theme .menu-section h3 {
+        color: #e2e8f0 !important;
+        border-bottom-color: #4a5568 !important;
+    }
+    body.dark-theme .menu-item {
+        background: rgba(45, 55, 72, 0.98) !important;
+        color: #e2e8f0 !important;
+        border-color: rgba(226, 232, 240, 0.2) !important;
+    }
+    body.dark-theme .menu-item h4 {
+        color: #e2e8f0 !important;
+    }
+    body.dark-theme .price {
+        background-color: rgba(66, 153, 225, 0.2) !important;
+        border-color: rgba(66, 153, 225, 0.3) !important;
+        color: #63b3ed !important;
+    }
+    body.dark-theme .quantity-selector {
+        background: #4a5568 !important;
+        border-color: #718096 !important;
+    }
+    body.dark-theme .quantity-btn {
+        background: #2d3748 !important;
+        color: #e2e8f0 !important;
+    }
+    body.dark-theme .quantity-btn:hover {
+        background: #4299e1 !important;
+        color: #fff !important;
+    }
+    body.dark-theme .quantity-selector input {
+        background: #4a5568 !important;
+        color: #e2e8f0 !important;
+    }
+
+    /* Jadvallar */
+    body.dark-theme table {
+        background: rgba(45, 55, 72, 0.95) !important;
+    }
+    body.dark-theme table th {
+        background: #2d3748 !important;
+        color: #e2e8f0 !important;
+        border-bottom-color: #4a5568 !important;
+    }
+    body.dark-theme table td {
+        color: #e2e8f0 !important;
+        border-bottom-color: #4a5568 !important;
+    }
+
+    /* Alert xabarlar */
+    body.dark-theme .alert {
+        background-color: #2d3748 !important;
+        color: #e2e8f0 !important;
+        border-color: #4a5568 !important;
+    }
+    body.dark-theme .alert-success {
+        background-color: rgba(72, 187, 120, 0.2) !important;
+        color: #c6f6d5 !important;
+        border-color: #48bb78 !important;
+    }
+    body.dark-theme .alert-danger {
+        background-color: rgba(229, 62, 62, 0.2) !important;
+        color: #fed7d7 !important;
+        border-color: #e53e3e !important;
+    }
+    body.dark-theme .alert-warning {
+        background-color: rgba(237, 137, 54, 0.2) !important;
+        color: #feebc8 !important;
+        border-color: #ed8936 !important;
+    }
+
+    /* Footer */
+    body.dark-theme .footer {
+        background: #1a202c !important;
+        color: #e2e8f0 !important;
+    }
+    body.dark-theme .footer .muted {
+        color: #a0aec0 !important;
+    }
+
+    /* Flash xabarlar */
+    body.dark-theme .flash-item {
+        background-color: #2d3748 !important;
+        color: #e2e8f0 !important;
+    }
+    body.dark-theme .flash-item.error {
+        background: rgba(229, 62, 62, 0.3) !important;
+        color: #fed7d7 !important;
+        border-left-color: #e53e3e !important;
+    }
+    body.dark-theme .flash-item.success {
+        background: rgba(72, 187, 120, 0.3) !important;
+        color: #c6f6d5 !important;
+        border-left-color: #48bb78 !important;
+    }
+    body.dark-theme .flash-item.warning {
+        background: rgba(237, 137, 54, 0.3) !important;
+        color: #feebc8 !important;
+        border-left-color: #ed8936 !important;
+    }
+
+    /* Savatcha */
+    body.dark-theme .cart-item {
+        background: rgba(45, 55, 72, 0.95) !important;
+        color: #e2e8f0 !important;
+        border-color: #4a5568 !important;
+    }
+    body.dark-theme .cart-total {
+        background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%) !important;
+        color: #fff !important;
+    }
+    body.dark-theme .empty-cart {
+        color: #a0aec0 !important;
+    }
+
+    /* Profil ma'lumotlari */
+    body.dark-theme .profile-info {
+        background: rgba(72, 187, 120, 0.2) !important;
+        border-left-color: #48bb78 !important;
+    }
+    body.dark-theme .info-value {
+        color: #68d391 !important;
+    }
+    body.dark-theme .info-label {
+        color: #cbd5e0 !important;
+    }
+
+    /* Delivery section */
+    body.dark-theme .delivery-section {
+        background: rgba(26, 32, 44, 0.5) !important;
+        border-left-color: #4299e1 !important;
+    }
+    body.dark-theme .delivery-info {
+        background: rgba(66, 153, 225, 0.2) !important;
+    }
+    body.dark-theme .info-text {
+        color: #cbd5e0 !important;
+    }
+
+    /* Order type selection */
+    body.dark-theme .radio-option {
+        color: #e2e8f0 !important;
+    }
+    body.dark-theme .radio-text {
+        color: #e2e8f0 !important;
+    }
+
+    /* Map selection */
+    body.dark-theme .selected-location {
+        background: #2d3748 !important;
+        border-color: #4a5568 !important;
+    }
+    body.dark-theme #selected-address {
+        color: #63b3ed !important;
+    }
+
+    /* Total section */
+    body.dark-theme .total-breakdown {
+        background: #2d3748 !important;
+    }
+    body.dark-theme .total-item {
+        color: #e2e8f0 !important;
+    }
+    body.dark-theme .delivery-cost {
+        color: #68d391 !important;
+    }
+    body.dark-theme .total-final {
+        border-top-color: #4a5568 !important;
+        color: #e2e8f0 !important;
+    }
+    body.dark-theme .total-amount {
+        color: #e2e8f0 !important;
+    }
 
 /* Navigation - Responsive */
 .navbar {
@@ -55,7 +322,7 @@ body {
   flex-grow: 0;
 }
 
-/* Navbar responsive qoidalar */
+/*Navbar responsive qoidalar */
 @media (max-width: 991px) {
   .navbar-brand {
     font-size: 1.3rem;
@@ -95,19 +362,19 @@ body {
 }
 
 /* Container */
-.container { 
-  max-width: 1200px; 
-  margin: 20px auto; 
-  padding: 0 20px; 
+.container {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 0 20px;
   flex: 1;
 }
 
 /* Kartalar */
-.card { 
+.card {
   background: rgba(255, 255, 255, 0.95);
   border: none;
-  border-radius: 15px; 
-  padding: 20px; 
+  border-radius: 15px;
+  padding: 20px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.1);
   margin-bottom: 20px;
   backdrop-filter: blur(10px);
@@ -119,19 +386,19 @@ body {
   box-shadow: 0 20px 40px rgba(0,0,0,0.15);
 }
 
-.center { 
-  text-align: center; 
+.center {
+  text-align: center;
 }
 
 /* Tugmalar */
-.btn { 
-  display: inline-block; 
+.btn {
+  display: inline-block;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #fff; 
-  padding: 12px 24px; 
-  border-radius: 25px; 
-  text-decoration: none; 
-  border: none; 
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 25px;
+  text-decoration: none;
+  border: none;
   cursor: pointer;
   font-weight: 600;
   transition: all 0.3s ease;
@@ -145,28 +412,28 @@ body {
   color: #fff;
 }
 
-.btn.big { 
-  font-size: 18px; 
-  padding: 16px 32px; 
+.btn.big {
+  font-size: 18px;
+  padding: 16px 32px;
 }
 
-.btn.small { 
-  font-size: 14px; 
-  padding: 10px 20px; 
+.btn.small {
+  font-size: 14px;
+  padding: 10px 20px;
 }
 
-.btn:disabled { 
-  opacity: 0.6; 
+.btn:disabled {
+  opacity: 0.6;
   cursor: not-allowed;
   transform: none;
 }
 
 /* Form elementlari */
-input, select, textarea { 
-  width: 100%; 
-  padding: 12px 16px; 
-  border-radius: 12px; 
-  border: 2px solid #e2e8f0; 
+input, select, textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 2px solid #e2e8f0;
   margin-bottom: 15px;
   font-size: 16px;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
@@ -179,47 +446,47 @@ input:focus, select:focus, textarea:focus {
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
-label { 
-  font-size: 14px; 
-  color: #4a5568; 
-  margin: 8px 0 4px; 
+label {
+  font-size: 14px;
+  color: #4a5568;
+  margin: 8px 0 4px;
   display: block;
   font-weight: 600;
 }
 
 /* Grid sistemasi */
-.grid-2 { 
-  display: grid; 
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-  gap: 20px; 
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
 }
 
 /* Flash xabarlar */
-.flash { 
-  margin-bottom: 20px; 
+.flash {
+  margin-bottom: 20px;
 }
 
-.flash-item { 
-  padding: 15px 20px; 
-  border-radius: 12px; 
+.flash-item {
+  padding: 15px 20px;
+  border-radius: 12px;
   margin-bottom: 10px;
   font-weight: 500;
   border-left: 4px solid;
 }
 
-.flash-item.error { 
+.flash-item.error {
   background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
   color: #c53030;
   border-left-color: #e53e3e;
 }
 
-.flash-item.success { 
+.flash-item.success {
   background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%);
   color: #22543d;
   border-left-color: #38a169;
 }
 
-.flash-item.warning { 
+.flash-item.warning {
   background: linear-gradient(135deg, #feebc8 0%, #fbd38d 100%);
   color: #c05621;
   border-left-color: #ed8936;
@@ -501,7 +768,7 @@ label {
   border: 1px solid rgba(255, 255, 255, 0.5);
   padding: 35px;
   border-radius: 18px;
-  box-shadow: 
+  box-shadow:
     0 8px 20px rgba(0,0,0,0.08),
     inset 0 1px 0 rgba(255,255,255,0.6);
   transition: all 0.3s ease;
@@ -534,7 +801,7 @@ label {
 
 .menu-item:hover {
   transform: translateY(-8px) scale(1.03);
-  box-shadow: 
+  box-shadow:
     0 20px 45px rgba(0,0,0,0.15),
     inset 0 1px 0 rgba(255,255,255,0.8);
 }
@@ -620,20 +887,20 @@ label {
 }
 
 /* Jadvallar */
-table { 
-  width: 100%; 
-  border-collapse: collapse; 
-  background: rgba(255, 255, 255, 0.95); 
-  border-radius: 12px; 
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 8px 25px rgba(0,0,0,0.1);
 }
 
-table th, table td { 
-  border-bottom: 1px solid #e2e8f0; 
-  padding: 15px; 
-  text-align: left; 
-  font-size: 14px; 
+table th, table td {
+  border-bottom: 1px solid #e2e8f0;
+  padding: 15px;
+  text-align: left;
+  font-size: 14px;
 }
 
 table th {
@@ -642,15 +909,15 @@ table th {
   color: #4a5568;
 }
 
-tr.given { 
-  opacity: 0.7; 
+tr.given {
+  opacity: 0.7;
 }
 
 /* Ticket raqami */
-.ticket-no { 
-  font-size: 48px; 
-  font-weight: 800; 
-  margin: 10px 0; 
+.ticket-no {
+  font-size: 48px;
+  font-weight: 800;
+  margin: 10px 0;
   color: #667eea;
   text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
 }
@@ -733,8 +1000,8 @@ tr.given {
   box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
-.monitor-table td, .monitor-table th { 
-  font-size: 0.9rem; 
+.monitor-table td, .monitor-table th {
+  font-size: 0.9rem;
   padding: 10px 8px;
   border: none;
   text-align: center;
@@ -825,9 +1092,9 @@ tr.given {
 
 /* TV va juda katta ekranlar uchun (1400px+) */
 @media (min-width: 1400px) {
-  .monitor-table td, .monitor-table th { 
-    font-size: 1.3rem; 
-    padding: 18px 15px; 
+  .monitor-table td, .monitor-table th {
+    font-size: 1.3rem;
+    padding: 18px 15px;
   }
 
   .monitor-section h4 {
@@ -857,9 +1124,9 @@ tr.given {
 
 /* Katta ekranlar (1200px - 1399px) */
 @media (min-width: 1200px) and (max-width: 1399px) {
-  .monitor-table td, .monitor-table th { 
-    font-size: 1.1rem; 
-    padding: 15px 12px; 
+  .monitor-table td, .monitor-table th {
+    font-size: 1.1rem;
+    padding: 15px 12px;
   }
 
   .monitor-section h4 {
@@ -883,9 +1150,9 @@ tr.given {
 
 /* O'rta ekranlar (992px - 1199px) */
 @media (min-width: 992px) and (max-width: 1199px) {
-  .monitor-table td, .monitor-table th { 
-    font-size: 1.3rem; 
-    padding: 16px 12px; 
+  .monitor-table td, .monitor-table th {
+    font-size: 1.3rem;
+    padding: 16px 12px;
   }
 
   .monitor-section h4 {
@@ -1095,8 +1362,8 @@ tr.given {
 
 /* Kichik planshet va katta telefon (481px - 767px) */
 @media (min-width: 481px) and (max-width: 767px) {
-  .grid-2 { 
-    grid-template-columns: 1fr; 
+  .grid-2 {
+    grid-template-columns: 1fr;
   }
 
   .container {
@@ -1166,8 +1433,8 @@ tr.given {
 
 /* Telefon (320px - 480px) */
 @media (max-width: 480px) {
-  .grid-2 { 
-    grid-template-columns: 1fr; 
+  .grid-2 {
+    grid-template-columns: 1fr;
   }
 
   .container {
@@ -1527,9 +1794,9 @@ tr.given {
 }
 
 /* Utility klasslar */
-.muted { 
-  color: #718096; 
-  font-size: 14px; 
+.muted {
+  color: #718096;
+  font-size: 14px;
 }
 
 .text-center {
@@ -1627,15 +1894,15 @@ tr.given {
 
 /* Pulse animatsiya tayyor holat uchun */
 @keyframes pulse-green {
-  0% { 
+  0% {
     box-shadow: 0 0 0 0 rgba(72, 187, 120, 0.7);
     background: rgba(72, 187, 120, 0.1);
   }
-  70% { 
+  70% {
     box-shadow: 0 0 0 10px rgba(72, 187, 120, 0);
     background: rgba(72, 187, 120, 0.2);
   }
-  100% { 
+  100% {
     box-shadow: 0 0 0 0 rgba(72, 187, 120, 0);
     background: rgba(72, 187, 120, 0.1);
   }
