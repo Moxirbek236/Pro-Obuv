@@ -2078,3 +2078,256 @@ body.dark-theme .glass-card {
   background: rgba(26, 32, 44, 0.2) !important;
   border-color: rgba(255, 255, 255, 0.1);
 }
+
+/* Downloads sahifasi */
+.downloads-section {
+    padding: var(--spacing-xxl) 0;
+}
+
+.downloads-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xxl);
+}
+
+.downloads-header h1 {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-md);
+}
+
+.downloads-subtitle {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.downloads-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-xxl);
+}
+
+.download-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    text-align: center;
+    transition: var(--transition-normal);
+}
+
+.download-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.app-icon {
+    font-size: 4rem;
+    margin-bottom: var(--spacing-lg);
+    display: block;
+}
+
+.download-card h3 {
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-md);
+    font-size: 1.4rem;
+}
+
+.app-description {
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-lg);
+    line-height: 1.6;
+}
+
+.app-features {
+    text-align: left;
+    margin-bottom: var(--spacing-xl);
+}
+
+.app-features ul {
+    list-style: none;
+    padding: 0;
+}
+
+.app-features li {
+    padding: var(--spacing-sm) 0;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.download-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.btn-download {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition-normal);
+    border: none;
+    cursor: pointer;
+}
+
+.btn-download.android {
+    background: #34d399;
+    color: white;
+}
+
+.btn-download.android:hover {
+    background: #10b981;
+}
+
+.btn-download.ios {
+    background: #60a5fa;
+    color: white;
+}
+
+.btn-download.ios:hover {
+    background: #3b82f6;
+}
+
+.btn-download.windows {
+    background: #a78bfa;
+    color: white;
+}
+
+.btn-download.windows:hover {
+    background: #8b5cf6;
+}
+
+.instructions-section {
+    margin-bottom: var(--spacing-xxl);
+}
+
+.instructions-section h2 {
+    text-align: center;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-xl);
+    font-size: 2rem;
+}
+
+.instruction-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.instruction-card h3 {
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-md);
+}
+
+.instruction-card ol {
+    padding-left: var(--spacing-lg);
+}
+
+.instruction-card li {
+    margin-bottom: var(--spacing-sm);
+    line-height: 1.6;
+}
+
+.tech-info {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.tech-info h2 {
+    text-align: center;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-xl);
+}
+
+.tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.tech-item {
+    text-align: center;
+    padding: var(--spacing-md);
+}
+
+.tech-item h4 {
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-sm);
+}
+
+.tech-item p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background-color: var(--bg-card);
+    margin: 10% auto;
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-lg);
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+}
+
+.close {
+    color: var(--text-muted);
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: var(--spacing-md);
+    right: var(--spacing-lg);
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: var(--text-primary);
+}
+
+/* Responsive tasarım */
+@media (max-width: 768px) {
+    .downloads-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+
+    .downloads-header h1 {
+        font-size: 2rem;
+    }
+
+    .tech-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-content {
+        width: 95%;
+        margin: 20% auto;
+        padding: var(--spacing-lg);
+    }
+}

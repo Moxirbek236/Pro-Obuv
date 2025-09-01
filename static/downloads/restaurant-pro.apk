@@ -1,2 +1,11 @@
 
-PK                      A professional app for staff and couriers to manage orders and deliveries.
+# Bu haqiqiy APK fayl emas, faqat placeholder
+# Haqiqiy APK yaratish uchun Android Studio va Flutter/React Native kerak
+# Ushbu fayl yuklab olinganda ogohlantirishga olib keladi
+#
+# Restaurant Pro - Xodimlar va kuryerlar uchun
+# Versiya: 1.0.0
+# Minimal Android: 5.0 (API 21)
+#
+# Bu web-based ilova bo'lganligi sababli, 
+# mobil qurilmalarda PWA (Progressive Web App) sifatida ishlash tavsiya etiladi
