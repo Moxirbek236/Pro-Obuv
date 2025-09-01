@@ -3,3 +3,4 @@ flask_sqlalchemy
 werkzeug
 bcrypt
 pytz
+qrcode[pil]

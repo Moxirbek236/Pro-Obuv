@@ -13,7 +13,7 @@
             padding: 20px;
         }
         .receipt-container {
-            max-width: 400px;
+            max-width: 450px;
             margin: 0 auto;
             background: white;
             border-radius: 15px;
@@ -27,7 +27,7 @@
             text-align: center;
         }
         .receipt-body {
-            padding: 20px;
+            padding: 25px;
         }
         .receipt-item {
             display: flex;
@@ -42,13 +42,41 @@
             padding-top: 15px;
             border-top: 2px solid #4c1d95;
         }
-        .cashback-info {
+        .cashback-section {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 12px;
             text-align: center;
+        }
+        .qr-section {
+            background: #f8fafc;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 12px;
+            text-align: center;
+            border: 2px dashed #cbd5e0;
+        }
+        .qr-code {
+            margin: 15px 0;
+        }
+        .qr-instructions {
+            background: #e6fffa;
+            border: 1px solid #81e6d9;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        .qr-instructions h5 {
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+        .qr-instructions ol {
+            text-align: left;
+            color: #4a5568;
+            margin: 0;
+            padding-left: 20px;
         }
         .receipt-footer {
             text-align: center;
@@ -56,9 +84,42 @@
             background: #f8fafc;
             color: #6b7280;
         }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn-custom {
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-print {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-print:hover {
+            background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+            transform: translateY(-2px);
+        }
+        .btn-home {
+            background: linear-gradient(135deg, #4fd1c7 0%, #06b6d4 100%);
+            color: white;
+        }
+        .btn-home:hover {
+            background: linear-gradient(135deg, #22d3ee 0%, #0891b2 100%);
+            transform: translateY(-2px);
+            color: white;
+        }
         @media print {
             body { background: white; padding: 0; }
-            .no-print { display: none; }
+            .no-print { display: none !important; }
+            .receipt-container { box-shadow: none; }
         }
     </style>
 </head>
@@ -66,8 +127,9 @@
     <div class="receipt-container">
         <!-- Header -->
         <div class="receipt-header">
-            <h2>🧾 RESTORAN CHEKI</h2>
+            <h2>🧾 RASMIY CHEK</h2>
             <p class="mb-0">Chek raqami: {{ order.receipt_number }}</p>
+            <small>O'zbek Milliy Taomlar Restorani</small>
         </div>
 
         <!-- Body -->
@@ -79,17 +141,23 @@
 
             <div class="mb-3">
                 <strong>👤 Mijoz:</strong> {{ order.customer_name }}<br>
-                <strong>📍 Tur:</strong> 
+                {% if order.customer_phone %}
+                <strong>📞 Telefon:</strong> {{ order.customer_phone }}<br>
+                {% endif %}
+                <strong>📍 Buyurtma turi:</strong> 
                 {% if order.order_type == 'delivery' %}
-                    🚚 Dostavka
+                    🚚 Yetkazib berish
                     {% if order.delivery_address %}
-                        <br><small>Manzil: {{ order.delivery_address }}</small>
+                        <br><small>📍 Manzil: {{ order.delivery_address }}</small>
                     {% endif %}
-                    {% if order.card_number %}
-                        <br><small>Karta: **** **** **** {{ order.card_number[-4:] if order.card_number|length > 4 else order.card_number }}</small>
+                    {% if order.delivery_distance > 0 %}
+                        <br><small>📏 Masofa: {{ order.delivery_distance }} km</small>
+                    {% endif %}
+                    {% if order.delivery_price > 0 %}
+                        <br><small>🚚 Yetkazish narxi: {{ "{:,.0f}".format(order.delivery_price) }} so'm</small>
                     {% endif %}
                 {% else %}
-                    🏪 Restoranda yeyish
+                    🏪 Restoranda iste'mol qilish
                 {% endif %}
             </div>
 
@@ -114,154 +182,82 @@
 
             <!-- Jami summa -->
             <div class="receipt-total">
+                {% if order.delivery_price > 0 %}
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Mahsulotlar:</span>
+                    <span>{{ "{:,.0f}".format(order.total_amount - order.delivery_price) }} so'm</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Yetkazib berish:</span>
+                    <span>{{ "{:,.0f}".format(order.delivery_price) }} so'm</span>
+                </div>
+                <hr>
+                {% endif %}
                 <div class="d-flex justify-content-between">
                     <span>💰 Jami summa:</span>
                     <span>{{ "{:,.0f}".format(order.total_amount) }} so'm</span>
                 </div>
             </div>
 
-            <!-- Keshbek ma'lumoti -->
+            <!-- Keshbek bo'limi -->
             {% if order.cashback_amount > 0 %}
-            <div class="cashback-info">
-                <div><strong>🎁 KESHBEK!</strong></div>
-                <div>{{ order.cashback_percentage }}% = {{ "{:,.2f}".format(order.cashback_amount) }} so'm</div>
-                <small>Keyingi buyurtmalaringizda ishlating!</small>
+            <div class="cashback-section">
+                <div><strong>🎁 KESHBEK MUKOFOTI!</strong></div>
+                <div style="font-size: 20px; margin: 10px 0;">
+                    {{ order.cashback_percentage }}% = {{ "{:,.2f}".format(order.cashback_amount) }} so'm
+                </div>
+                <small>Keyingi xaridlaringizda foydalaning!</small>
+            </div>
+            {% endif %}
+
+            <!-- QR kod bo'limi -->
+            {% if qr_code %}
+            <div class="qr-section">
+                <h4>📱 SOLIQ.UZ uchun QR kod</h4>
+                <div class="qr-code">
+                    <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code" style="max-width: 200px;">
+                </div>
+                <div class="qr-instructions">
+                    <h5>🔍 Qanday foydalanish:</h5>
+                    <ol>
+                        <li>Soliq.uz ilovasini oching</li>
+                        <li>QR kod skanerini faollashtiring</li>
+                        <li>Ushbu QR kodni skanerlang</li>
+                        <li>1% cashback avtomatik hisobingizga qo'shiladi</li>
+                    </ol>
+                    <p><strong>💡 Eslatma:</strong> QR kodni 30 kun ichida skanlash mumkin!</p>
+                </div>
             </div>
             {% endif %}
         </div>
 
         <!-- Footer -->
         <div class="receipt-footer">
-            <p class="mb-2">Restoranimizni tanlaganingiz uchun rahmat!</p>
-            <small>© 2025 Restoran Tizimi</small>
+            <p class="mb-2">🙏 Restoranimizni tanlaganingiz uchun rahmat!</p>
+            <p class="mb-2">📞 Aloqa: +998 90 123 45 67</p>
+            <small>© 2025 O'zbek Milliy Taomlar Restorani</small>
         </div>
 
         <!-- Tugmalar -->
         <div class="p-3 no-print">
-            <div class="d-grid gap-2">
-                <button onclick="window.print()" class="btn btn-primary">🖨️ Chop etish</button>
-                <a href="{{ url_for('index') }}" class="btn btn-secondary">🏠 Bosh sahifa</a>
+            <div class="btn-group">
+                <button onclick="window.print()" class="btn-custom btn-print">🖨️ Chop etish</button>
+                <a href="{{ url_for('index') }}" class="btn-custom btn-home">🏠 Bosh sahifa</a>
             </div>
         </div>
     </div>
+
+    <script>
+        // Sahifa yuklanganda QR kod haqida ma'lumot berish
+        document.addEventListener('DOMContentLoaded', function() {
+            {% if order.cashback_amount > 0 %}
+            setTimeout(function() {
+                if (confirm('🎉 Tabriklaymiz! Sizga {{ "{:,.0f}".format(order.cashback_amount) }} so\'m cashback berildi!\n\n📱 QR kodni soliq.uz da skanerlaysizmi?')) {
+                    document.querySelector('.qr-section').scrollIntoView({ behavior: 'smooth' });
+                }
+            }, 1000);
+            {% endif %}
+        });
+    </script>
 </body>
 </html>
-{% extends "base.html" %}
-
-{% block title %}Chek #{{ receipt.ticket_no }} - Restoran{% endblock %}
-
-{% block content %}
-<div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card receipt-card">
-                <div class="card-body">
-                    <div class="receipt-header text-center mb-4">
-                        <h2>🧾 CHE K</h2>
-                        <h4>Buyurtma #{{ receipt.ticket_no }}</h4>
-                        <p class="text-muted">{{ receipt.created_at[:16].replace('T', ' ') }}</p>
-                    </div>
-                    
-                    <div class="receipt-info mb-4">
-                        <div class="row">
-                            <div class="col-6">
-                                <strong>Mijoz:</strong>
-                            </div>
-                            <div class="col-6 text-end">
-                                {{ receipt.customer_name }}
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="receipt-items mb-4">
-                        <h5>Buyurtma tarkibi:</h5>
-                        <div class="order-items">
-                            {{ receipt.order_items }}
-                        </div>
-                    </div>
-                    
-                    <hr>
-                    
-                    <div class="receipt-total mb-3">
-                        <div class="row">
-                            <div class="col-6">
-                                <strong>Jami summa:</strong>
-                            </div>
-                            <div class="col-6 text-end">
-                                <strong>{{ "{:,.0f}".format(receipt.total_amount) }} so'm</strong>
-                            </div>
-                        </div>
-                        <div class="row text-success">
-                            <div class="col-6">
-                                <strong>Keshbek (1%):</strong>
-                            </div>
-                            <div class="col-6 text-end">
-                                <strong>{{ "{:,.0f}".format(receipt.cashback_amount) }} so'm</strong>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="text-center">
-                        <div class="alert alert-success">
-                            <h5>🎉 Tabriklaymiz!</h5>
-                            <p class="mb-0">Sizga {{ "{:,.0f}".format(receipt.cashback_amount) }} so'm keshbek berildi!</p>
-                        </div>
-                        
-                        <button onclick="window.print()" class="btn btn-primary me-2">
-                            🖨️ Chop etish
-                        </button>
-                        <a href="{{ url_for('index') }}" class="btn btn-secondary">
-                            🏠 Bosh sahifa
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<style>
-.receipt-card {
-    border: 2px dashed #6c757d;
-    border-radius: 15px;
-    background: #fff;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.receipt-header {
-    border-bottom: 2px dashed #dee2e6;
-    padding-bottom: 20px;
-}
-
-.receipt-header h2 {
-    color: #495057;
-    font-weight: 700;
-}
-
-.order-items {
-    background: #f8f9fa;
-    padding: 15px;
-    border-radius: 8px;
-    font-family: monospace;
-    font-size: 14px;
-    white-space: pre-line;
-}
-
-.receipt-total {
-    background: #e9ecef;
-    padding: 15px;
-    border-radius: 8px;
-}
-
-@media print {
-    .btn, .navbar, .footer {
-        display: none !important;
-    }
-    
-    .receipt-card {
-        border: 1px solid #000;
-        box-shadow: none;
-    }
-}
-</style>
-{% endblock %}
