@@ -110,8 +110,8 @@
     <!-- Hero Section -->
     <div class="hero-section">
         <div class="container">
-            <h1 class="display-4 fw-bold mb-4">🍽️ Bizning Restoranga Xush Kelibsiz!</h1>
-            <p class="lead">Eng mazali taomlar va a'lo xizmat</p>
+            <h1 class="display-4 fw-bold mb-4" data-translate="welcome">🍽️ Bizning Restoranga Xush Kelibsiz!</h1>
+            <p class="lead" data-translate="best_food">Eng mazali taomlar va a'lo xizmat</p>
         </div>
     </div>
 
@@ -121,17 +121,17 @@
             <div class="col-md-6">
                 <div class="service-card">
                     <div class="service-icon">🏪</div>
-                    <h3>Restoranda buyurtma berish</h3>
-                    <p>Restoranda o'tirib, navbat oling va buyurtma bering</p>
-                    <a href="{{ url_for('user_page') }}" class="btn-service">Navbat olish</a>
+                    <h3 data-translate="restaurant_order">Restoranda buyurtma berish</h3>
+                    <p data-translate="restaurant_desc">Restoranda o'tirib, navbat oling va buyurtma bering</p>
+                    <a href="{{ url_for('user_page') }}" class="btn-service" data-translate="get_queue">Navbat olish</a>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="service-card">
                     <div class="service-icon">🚚</div>
-                    <h3>Dostavka xizmati</h3>
-                    <p>Uyingizgacha yetkazib berish xizmati</p>
-                    <a href="{{ url_for('menu') }}" class="btn-service">Buyurtma berish</a>
+                    <h3 data-translate="delivery_service">Dostavka xizmati</h3>
+                    <p data-translate="delivery_desc">Uyingizgacha yetkazib berish xizmati</p>
+                    <a href="{{ url_for('menu') }}" class="btn-service" data-translate="order_now">Buyurtma berish</a>
                 </div>
             </div>
         </div>
@@ -140,13 +140,13 @@
     <!-- Contact Section -->
     <div class="container mt-5" id="contact">
         <div class="service-card">
-            <h3>📞 Biz bilan bog'lanish</h3>
+            <h3 data-translate="contact_us">📞 Biz bilan bog'lanish</h3>
             <p><strong>Ism:</strong> Moxirbek</p>
             <p><strong>Telefon:</strong> +998 99 145 96 86</p>
             <p><strong>Email:</strong> nasimjonnasimjon46@gmail.com</p>
             <p><strong>Telegram:</strong> @Rakhimberdiyev_1970</p>
             <p><strong>Manzil:</strong> Toshkent, Sergeli, Yuqori Darxon MFY, Do'stlik 1-tor ko'cha 12 uy</p>
-            <p><strong>Ish vaqti:</strong> 09:00 - 23:00</p>
+            <p><strong data-translate="work_time">Ish vaqti:</strong> 09:00 - 23:00</p>
         </div>
     </div>
 
