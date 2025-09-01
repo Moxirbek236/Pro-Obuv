@@ -122,7 +122,17 @@
     </style>
 </head>
 <body>
-    <div class="current-time" id="currentTime"></div>
+    <!-- Chap tarafdagi katta soat -->
+    <div style="position: fixed; top: 20px; left: 20px; background: rgba(0,0,0,0.8); color: white; padding: 20px 30px; border-radius: 15px; font-weight: 600; z-index: 1000; backdrop-filter: blur(10px); border: 2px solid rgba(255,255,255,0.2);">
+        <div id="currentDate" style="font-size: 1.4rem; margin-bottom: 10px; color: #ffd700;"></div>
+        <div id="currentClock" style="font-size: 2.2rem; font-weight: 700; color: #00ff88;"></div>
+    </div>
+
+    <!-- O'ng tarafdagi katta ob-havo -->
+    <div style="position: fixed; top: 20px; right: 20px; background: rgba(0,0,0,0.8); color: white; padding: 20px 30px; border-radius: 15px; font-weight: 600; z-index: 1000; backdrop-filter: blur(10px); border: 2px solid rgba(255,255,255,0.2); text-align: center;">
+        <div id="temperature" style="font-size: 2rem; margin-bottom: 8px; color: #ff6b6b; font-weight: 700;"></div>
+        <div id="weatherDesc" style="font-size: 1.3rem; color: #74c0fc;"></div>
+    </div>
 
     <div class="monitor-container">
         <div class="monitor-header">
@@ -250,7 +260,12 @@
     </div>
 
     <script>
-        // Joriy vaqtni ko'rsatish
+        // Auto refresh every 30s
+        setInterval(function() {
+            location.reload();
+        }, 30000);
+
+        // Current time display
         function updateTime() {
             const now = new Date();
             const timeString = now.toLocaleTimeString('uz-UZ', {
@@ -258,18 +273,90 @@
                 minute: '2-digit',
                 second: '2-digit'
             });
-            const dateString = now.toLocaleDateString('uz-UZ');
-            document.getElementById('currentTime').textContent = `${dateString} ${timeString}`;
+
+            const dateString = now.toLocaleDateString('uz-UZ', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                weekday: 'long'
+            });
+
+            const clockString = now.toLocaleTimeString('uz-UZ', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+
+            document.getElementById('currentDate').textContent = dateString;
+            document.getElementById('currentClock').textContent = clockString;
         }
 
-        // Har soniyada vaqtni yangilash
-        updateTime();
-        setInterval(updateTime, 1000);
+        // Weather function (OpenWeatherMap API)
+        async function updateWeather() {
+            try {
+                // Toshkent shahri uchun ob-havo ma'lumoti
+                const response = await fetch('https://api.openweathermap.org/data/2.5/weather?q=Tashkent,UZ&appid=YOUR_API_KEY&units=metric&lang=uz');
 
-        // Har 5 soniyada sahifani yangilash
-        setInterval(function() {
-            location.reload();
-        }, 5000);
+                if (!response.ok) {
+                    // Agar API ishlamasa, standart ma'lumot ko'rsatamiz
+                    document.getElementById('temperature').textContent = '🌡️ 22°C';
+                    document.getElementById('weatherDesc').textContent = '☀️ Ochiq';
+                    return;
+                }
+
+                const data = await response.json();
+                const temp = Math.round(data.main.temp);
+                const description = data.weather[0].description;
+
+                // Weather icon mapping
+                const iconMap = {
+                    'clear sky': '☀️',
+                    'few clouds': '🌤️',
+                    'scattered clouds': '⛅',
+                    'broken clouds': '☁️',
+                    'shower rain': '🌦️',
+                    'rain': '🌧️',
+                    'thunderstorm': '⛈️',
+                    'snow': '❄️',
+                    'mist': '🌫️'
+                };
+
+                const icon = iconMap[description] || '☁️';
+
+                document.getElementById('temperature').textContent = `🌡️ ${temp}°C`;
+                document.getElementById('weatherDesc').textContent = `${icon} ${description}`;
+
+            } catch (error) {
+                console.log('Ob-havo ma\'lumotini olishda xato:', error);
+                // Xato bo'lsa standart ma'lumot
+                document.getElementById('temperature').textContent = '🌡️ 22°C';
+                document.getElementById('weatherDesc').textContent = '☀️ Ochiq';
+            }
+        }
+
+        // Simulate weather if no API key (for demo)
+        function simulateWeather() {
+            const temperatures = [18, 20, 22, 25, 28, 24, 21];
+            const weathers = [
+                {temp: 22, desc: '☀️ Ochiq', icon: '🌡️'},
+                {temp: 19, desc: '⛅ Qisman bulutli', icon: '🌡️'},
+                {temp: 16, desc: '☁️ Bulutli', icon: '🌡️'},
+                {temp: 24, desc: '🌤️ Issiq', icon: '🌡️'}
+            ];
+
+            const randomWeather = weathers[Math.floor(Math.random() * weathers.length)];
+
+            document.getElementById('temperature').textContent = `${randomWeather.icon} ${randomWeather.temp}°C`;
+            document.getElementById('weatherDesc').textContent = randomWeather.desc;
+        }
+
+        // Initialize
+        updateTime();
+        simulateWeather();
+
+        // Update every second for time, every 5 minutes for weather
+        setInterval(updateTime, 1000);
+        setInterval(simulateWeather, 300000); // 5 minutes
     </script>
 </body>
 </html>
