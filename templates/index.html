@@ -71,10 +71,10 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('menu_page') }}">📋 Menyu</a>
+                        <a class="nav-link" href="{{ url_for('menu') }}">📋 Menyu</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('favorites') }}">❤️ Sevimlilar</a>
+                        <a class="nav-link" href="#favorites">❤️ Sevimlilar</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#contact">📞 Aloqa</a>
@@ -89,17 +89,17 @@
                             <a class="nav-link" href="{{ url_for('cart') }}">🛒 Savatcha</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('profile') }}">👤 {{ session.get('user_name') }}</a>
+                            <a class="nav-link" href="#profile">👤 {{ session.get('user_name') }}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('logout') }}">🚪 Chiqish</a>
+                            <a class="nav-link" href="#logout">🚪 Chiqish</a>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('login') }}">🔐 Kirish</a>
+                            <a class="nav-link" href="#login">🔐 Kirish</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('register') }}">📝 Ro'yxatdan o'tish</a>
+                            <a class="nav-link" href="#register">📝 Ro'yxatdan o'tish</a>
                         </li>
                     {% endif %}
                 </ul>
@@ -123,7 +123,7 @@
                     <div class="service-icon">🏪</div>
                     <h3>Restoranda buyurtma berish</h3>
                     <p>Restoranda o'tirib, navbat oling va buyurtma bering</p>
-                    <a href="{{ url_for('dine_in') }}" class="btn-service">Navbat olish</a>
+                    <a href="{{ url_for('user_page') }}" class="btn-service">Navbat olish</a>
                 </div>
             </div>
             <div class="col-md-6">
@@ -131,7 +131,7 @@
                     <div class="service-icon">🚚</div>
                     <h3>Dostavka xizmati</h3>
                     <p>Uyingizgacha yetkazib berish xizmati</p>
-                    <a href="{{ url_for('delivery') }}" class="btn-service">Buyurtma berish</a>
+                    <a href="{{ url_for('menu') }}" class="btn-service">Buyurtma berish</a>
                 </div>
             </div>
         </div>
