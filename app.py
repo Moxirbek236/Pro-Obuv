@@ -233,6 +233,22 @@ def init_db():
         );
     """)
 
+    # Filiallar jadvali
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS branches (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            address TEXT NOT NULL,
+            latitude REAL NOT NULL,
+            longitude REAL NOT NULL,
+            phone TEXT,
+            working_hours TEXT DEFAULT '09:00-22:00',
+            is_active BOOLEAN DEFAULT 1,
+            delivery_radius REAL DEFAULT 15.0,
+            created_at TEXT NOT NULL
+        );
+    """)
+
     # Boshlang'ich taomlar qo'shish
     cur.execute("SELECT COUNT(*) FROM menu_items")
     if cur.fetchone()[0] == 0:
@@ -248,6 +264,17 @@ def init_db():
             ('Coca Cola', 10000, 'drink', 'Sovuq ichimlik', 'https://images.unsplash.com/photo-1581636625402-29b2a704ef13?w=300&h=200&fit=crop', 1, 70, 0, 4.0, 0.0, now),
         ]
         cur.executemany("INSERT INTO menu_items (name, price, category, description, image_url, available, stock_quantity, orders_count, rating, discount_percentage, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", sample_items)
+
+    # Boshlang'ich filiallarni qo'shish
+    cur.execute("SELECT COUNT(*) FROM branches")
+    if cur.fetchone()[0] == 0:
+        sample_branches = [
+            ('Markaziy filial', 'Amir Temur ko\'chasi 1, Toshkent', 41.2995, 69.2401, '+998712345678', '09:00-23:00', 1, 20.0, now),
+            ('Chilonzor filiali', 'Chilonzor tumani, Bunyodkor ko\'chasi 10', 41.2753, 69.2056, '+998712345679', '09:00-22:00', 1, 15.0, now),
+            ('Yunusobod filiali', 'Yunusobod tumani, Shahrisabz ko\'chasi 5', 41.3506, 69.2896, '+998712345680', '08:00-22:00', 1, 18.0, now),
+            ('Sergeli filiali', 'Sergeli tumani, Yangi Sergeli MFY', 41.2278, 69.2233, '+998712345681', '09:00-22:00', 1, 12.0, now),
+        ]
+        cur.executemany("INSERT INTO branches (name, address, latitude, longitude, phone, working_hours, is_active, delivery_radius, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", sample_branches)
 
     conn.commit()
     conn.close()
@@ -322,6 +349,10 @@ def ensure_orders_columns():
 
         if 'courier_delivery_minutes' not in cols:
             cur.execute("ALTER TABLE orders ADD COLUMN courier_delivery_minutes INTEGER DEFAULT 0;")
+            conn.commit()
+
+        if 'branch_id' not in cols:
+            cur.execute("ALTER TABLE orders ADD COLUMN branch_id INTEGER DEFAULT 1;")
             conn.commit()
 
     except Exception as e:
@@ -678,6 +709,54 @@ def calculate_delivery_distance(address):
     except Exception as e:
         logging.error(f"Masofa hisoblashda xatolik: {str(e)}")
         return 5.0
+
+def find_nearest_branch(user_latitude, user_longitude):
+    """Foydalanuvchiga eng yaqin filialni topish"""
+    import math
+    
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM branches WHERE is_active = 1")
+    branches = cur.fetchall()
+    conn.close()
+    
+    if not branches:
+        return None
+    
+    nearest_branch = None
+    min_distance = float('inf')
+    
+    for branch in branches:
+        # Haversine formula bilan masofa hisoblash
+        lat1, lng1 = math.radians(user_latitude), math.radians(user_longitude)
+        lat2, lng2 = math.radians(branch['latitude']), math.radians(branch['longitude'])
+        
+        dlat = lat2 - lat1
+        dlng = lng2 - lng1
+        
+        a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlng/2)**2
+        c = 2 * math.asin(math.sqrt(a))
+        distance = 6371 * c  # Yer radiusi 6371 km
+        
+        if distance < min_distance and distance <= branch['delivery_radius']:
+            min_distance = distance
+            nearest_branch = {
+                'branch': dict(branch),
+                'distance': round(distance, 2)
+            }
+    
+    return nearest_branch
+
+def calculate_delivery_cost_and_time(distance_km):
+    """Masofa bo'yicha yetkazib berish narxi va vaqtini hisoblash"""
+    # 1 km uchun 10000 so'm, 2 km uchun 20000 so'm
+    base_price = 10000
+    price = distance_km * base_price
+    
+    # 1 km taxminan 10 daqiqada
+    delivery_time_minutes = max(10, int(distance_km * 10))
+    
+    return round(price), delivery_time_minutes
 
 def generate_qr_code(receipt_data):
     """Chek uchun QR kod yaratish"""
@@ -2212,6 +2291,10 @@ def super_admin_dashboard():
     cur.execute("SELECT * FROM questions ORDER BY created_at DESC")
     questions = cur.fetchall()
 
+    # Filiallarni olish
+    cur.execute("SELECT * FROM branches ORDER BY created_at DESC")
+    branches = cur.fetchall()
+
     # Buyurtmalar statistikasi
     cur.execute("SELECT COUNT(*) FROM orders")
     result = cur.fetchone()
@@ -2255,6 +2338,7 @@ def super_admin_dashboard():
                          users_db=users_db,
                          users_json=users_json,
                          questions=questions,
+                         branches=branches,
                          stats=stats)
 
 @app.route("/super-admin/delete-staff/<int:staff_id>", methods=["POST"])
@@ -2614,6 +2698,73 @@ def super_admin_add_menu_item():
     flash("Yangi mahsulot qo'shildi!", "success")
     return redirect(url_for("super_admin_dashboard"))
 
+@app.route("/super-admin/add-branch", methods=["POST"])
+def super_admin_add_branch():
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+
+    name = request.form.get("name", "").strip()
+    address = request.form.get("address", "").strip()
+    latitude = request.form.get("latitude", "")
+    longitude = request.form.get("longitude", "")
+    phone = request.form.get("phone", "").strip()
+    working_hours = request.form.get("working_hours", "09:00-22:00")
+    delivery_radius = request.form.get("delivery_radius", "15")
+
+    if not all([name, address, latitude, longitude]):
+        flash("Barcha majburiy maydonlarni to'ldiring.", "error")
+        return redirect(url_for("super_admin_dashboard"))
+
+    try:
+        latitude = float(latitude)
+        longitude = float(longitude)
+        delivery_radius = float(delivery_radius)
+    except ValueError:
+        flash("Koordinatalar va yetkazish radiusi raqam bo'lishi kerak.", "error")
+        return redirect(url_for("super_admin_dashboard"))
+
+    conn = get_db()
+    cur = conn.cursor()
+    now = get_current_time().isoformat()
+
+    cur.execute("""
+        INSERT INTO branches (name, address, latitude, longitude, phone, working_hours, delivery_radius, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    """, (name, address, latitude, longitude, phone, working_hours, delivery_radius, now))
+
+    conn.commit()
+    conn.close()
+    flash("Yangi filial qo'shildi!", "success")
+    return redirect(url_for("super_admin_dashboard"))
+
+@app.route("/super-admin/delete-branch/<int:branch_id>", methods=["POST"])
+def super_admin_delete_branch(branch_id):
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("DELETE FROM branches WHERE id = ?", (branch_id,))
+    conn.commit()
+    conn.close()
+
+    flash(f"Filial #{branch_id} o'chirildi.", "success")
+    return redirect(url_for("super_admin_dashboard"))
+
+@app.route("/super-admin/toggle-branch/<int:branch_id>", methods=["POST"])
+def super_admin_toggle_branch(branch_id):
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("UPDATE branches SET is_active = NOT is_active WHERE id = ?", (branch_id,))
+    conn.commit()
+    conn.close()
+
+    flash("Filial holati o'zgartirildi.", "success")
+    return redirect(url_for("super_admin_dashboard"))
+
 # ---- YANGI SAHIFALAR ----
 @app.route("/add_to_favorites/<int:menu_item_id>", methods=["POST"])
 def add_to_favorites(menu_item_id):
@@ -2756,6 +2907,40 @@ def api_search_places():
         return jsonify({"places": places})
 
     return jsonify({"places": []})
+
+@app.route("/api/find-nearest-branch", methods=["POST"])
+def api_find_nearest_branch():
+    """Eng yaqin filialni topish API"""
+    try:
+        data = request.get_json()
+        user_lat = float(data.get("latitude", 0))
+        user_lng = float(data.get("longitude", 0))
+        
+        if not user_lat or not user_lng:
+            return jsonify({"success": False, "message": "Koordinatalar kiritilmagan"})
+        
+        nearest = find_nearest_branch(user_lat, user_lng)
+        
+        if nearest:
+            # Yetkazib berish narxi va vaqtini hisoblash
+            delivery_cost, delivery_time = calculate_delivery_cost_and_time(nearest['distance'])
+            
+            return jsonify({
+                "success": True,
+                "branch": nearest['branch'],
+                "distance": nearest['distance'],
+                "delivery_cost": delivery_cost,
+                "delivery_time": delivery_time
+            })
+        else:
+            return jsonify({
+                "success": False, 
+                "message": "Yaqin atrofda faol filial topilmadi"
+            })
+            
+    except Exception as e:
+        logging.error(f"Eng yaqin filial topishda xatolik: {str(e)}")
+        return jsonify({"success": False, "message": "Server xatoligi"}), 500
 
 @app.route("/api/set-language", methods=["POST"])
 def api_set_language():
