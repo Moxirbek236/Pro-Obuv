@@ -1,0 +1,516 @@
+
+{% extends "base.html" %}
+
+{% block title %}Yuklamalar - Restoran{% endblock %}
+
+{% block content %}
+<div class="downloads-container">
+    <div class="card downloads-header">
+        <h1 class="downloads-title">📱 Ilova dasturlarni yuklash</h1>
+        <p class="downloads-description">Restoran tizimining barcha ilovalarini qulay formatda yuklab oling</p>
+    </div>
+
+    <div class="apps-grid">
+        <!-- Foydalanuvchilar uchun ilova -->
+        <div class="app-card user-app">
+            <div class="app-icon">📱</div>
+            <div class="app-info">
+                <h3 class="app-name">Restaurant App</h3>
+                <p class="app-description">Foydalanuvchilar uchun asosiy ilova</p>
+                <ul class="app-features">
+                    <li>✅ Menyu ko'rish</li>
+                    <li>✅ Buyurtma berish</li>
+                    <li>✅ Sevimlilar ro'yxati</li>
+                    <li>✅ Buyurtma holati</li>
+                    <li>✅ Joylashuv xizmati</li>
+                </ul>
+                <div class="app-download">
+                    <a href="/static/downloads/restaurant.apk" download="restaurant.apk" class="download-btn primary">
+                        <span class="download-icon">⬇️</span>
+                        <div class="download-text">
+                            <span class="download-title">Android APK</span>
+                            <span class="download-size">15.2 MB</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Xodimlar va kuryerlar uchun -->
+        <div class="app-card staff-app">
+            <div class="app-icon">👨‍💼</div>
+            <div class="app-info">
+                <h3 class="app-name">Restaurant Pro</h3>
+                <p class="app-description">Xodimlar va kuryerlar uchun professional ilova</p>
+                <ul class="app-features">
+                    <li>✅ Buyurtmalar boshqaruvi</li>
+                    <li>✅ Menyu tahrirlash</li>
+                    <li>✅ Kuryer funktsiyalari</li>
+                    <li>✅ Statistika</li>
+                    <li>✅ Real-time yangilanishlar</li>
+                </ul>
+                <div class="app-download">
+                    <a href="/static/downloads/restaurant-pro.apk" download="restaurant-pro.apk" class="download-btn professional">
+                        <span class="download-icon">⬇️</span>
+                        <div class="download-text">
+                            <span class="download-title">Android APK</span>
+                            <span class="download-size">22.8 MB</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Super admin uchun -->
+        <div class="app-card admin-app">
+            <div class="app-icon">🔧</div>
+            <div class="app-info">
+                <h3 class="app-name">Restaurant Admin</h3>
+                <p class="app-description">Super adminlar uchun to'liq boshqaruv</p>
+                <ul class="app-features">
+                    <li>✅ Tizim boshqaruvi</li>
+                    <li>✅ Xodimlar nazorati</li>
+                    <li>✅ Moliyaviy hisobotlar</li>
+                    <li>✅ Sozlamalar</li>
+                    <li>✅ Analitika</li>
+                </ul>
+                <div class="app-download">
+                    <a href="/static/downloads/restaurant-admin.apk" download="restaurant-admin.apk" class="download-btn admin">
+                        <span class="download-icon">⬇️</span>
+                        <div class="download-text">
+                            <span class="download-title">Android APK</span>
+                            <span class="download-size">28.5 MB</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monitor ilovasi -->
+        <div class="app-card monitor-app">
+            <div class="app-icon">📺</div>
+            <div class="app-info">
+                <h3 class="app-name">Restaurant Monitor</h3>
+                <p class="app-description">TV va katta ekranlar uchun monitor</p>
+                <ul class="app-features">
+                    <li>✅ Real-time monitor</li>
+                    <li>✅ Buyurtmalar ko'rsatish</li>
+                    <li>✅ Katta ekran uchun</li>
+                    <li>✅ Avtomatik yangilanish</li>
+                    <li>✅ TV rejimi</li>
+                </ul>
+                <div class="app-download">
+                    <a href="/static/downloads/restaurant-monitor.apk" download="restaurant-monitor.apk" class="download-btn monitor">
+                        <span class="download-icon">⬇️</span>
+                        <div class="download-text">
+                            <span class="download-title">Android APK</span>
+                            <span class="download-size">18.7 MB</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Qo'shimcha ma'lumotlar -->
+    <div class="card downloads-info">
+        <h3>📋 O'rnatish bo'yicha ko'rsatmalar</h3>
+        <div class="installation-steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h4>APK faylni yuklash</h4>
+                    <p>Yuqoridagi tugmalar orqali kerakli ilovani yuklab oling</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h4>Noma'lum manbalarni ruxsat etish</h4>
+                    <p>Sozlamalar → Xavfsizlik → "Noma'lum manbalar"ni yoqing</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h4>Ilovani o'rnatish</h4>
+                    <p>Yuklab olingan APK faylni oching va o'rnatish jarayonini boshlang</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tizim talablari -->
+    <div class="card system-requirements">
+        <h3>⚙️ Tizim talablari</h3>
+        <div class="requirements-grid">
+            <div class="requirement-item">
+                <div class="req-icon">📱</div>
+                <div class="req-content">
+                    <h4>Android versiyasi</h4>
+                    <p>Android 7.0 va undan yuqori</p>
+                </div>
+            </div>
+            <div class="requirement-item">
+                <div class="req-icon">💾</div>
+                <div class="req-content">
+                    <h4>Xotira</h4>
+                    <p>Kamida 100 MB bo'sh joy</p>
+                </div>
+            </div>
+            <div class="requirement-item">
+                <div class="req-icon">🌐</div>
+                <div class="req-content">
+                    <h4>Internet</h4>
+                    <p>WiFi yoki mobil internet</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Yuklamalar sahifasi uchun maxsus stillar */
+.downloads-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.downloads-header {
+    text-align: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    margin-bottom: 40px;
+}
+
+.downloads-title {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    font-weight: 800;
+}
+
+.downloads-description {
+    font-size: 1.2rem;
+    margin: 0;
+    opacity: 0.9;
+}
+
+.apps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.app-card {
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.app-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    transition: all 0.3s ease;
+}
+
+.user-app::before {
+    background: linear-gradient(90deg, #48bb78, #38a169);
+}
+
+.staff-app::before {
+    background: linear-gradient(90deg, #4299e1, #3182ce);
+}
+
+.admin-app::before {
+    background: linear-gradient(90deg, #ed8936, #dd6b20);
+}
+
+.monitor-app::before {
+    background: linear-gradient(90deg, #9f7aea, #805ad5);
+}
+
+.app-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+}
+
+.app-icon {
+    font-size: 4rem;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.app-name {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.app-description {
+    text-align: center;
+    color: #666;
+    margin-bottom: 25px;
+    font-size: 1.1rem;
+}
+
+.app-features {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 30px;
+}
+
+.app-features li {
+    padding: 8px 0;
+    font-size: 0.95rem;
+    color: #555;
+}
+
+.download-btn {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 15px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    width: 100%;
+    justify-content: center;
+}
+
+.download-btn.primary {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    box-shadow: 0 8px 20px rgba(72, 187, 120, 0.3);
+}
+
+.download-btn.professional {
+    background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+    box-shadow: 0 8px 20px rgba(66, 153, 225, 0.3);
+}
+
+.download-btn.admin {
+    background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+    box-shadow: 0 8px 20px rgba(237, 137, 54, 0.3);
+}
+
+.download-btn.monitor {
+    background: linear-gradient(135deg, #9f7aea 0%, #805ad5 100%);
+    box-shadow: 0 8px 20px rgba(159, 122, 234, 0.3);
+}
+
+.download-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+    color: white;
+    text-decoration: none;
+}
+
+.download-icon {
+    font-size: 1.5rem;
+    margin-right: 15px;
+}
+
+.download-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.download-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.download-size {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* O'rnatish ko'rsatmalari */
+.downloads-info {
+    margin-bottom: 30px;
+}
+
+.installation-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 25px;
+}
+
+.step {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.step-number {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.step-content h4 {
+    margin: 0 0 8px 0;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.step-content p {
+    margin: 0;
+    color: #666;
+}
+
+/* Tizim talablari */
+.requirements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 25px;
+}
+
+.requirement-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    background: rgba(102, 126, 234, 0.05);
+    border-radius: 12px;
+    border-left: 4px solid #667eea;
+}
+
+.req-icon {
+    font-size: 2rem;
+}
+
+.req-content h4 {
+    margin: 0 0 5px 0;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.req-content p {
+    margin: 0;
+    color: #666;
+    font-size: 0.95rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .downloads-container {
+        padding: 15px;
+    }
+    
+    .downloads-title {
+        font-size: 2rem;
+    }
+    
+    .apps-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .app-card {
+        padding: 20px;
+    }
+    
+    .installation-steps {
+        gap: 15px;
+    }
+    
+    .step {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .requirements-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .downloads-title {
+        font-size: 1.8rem;
+    }
+    
+    .app-card {
+        padding: 15px;
+    }
+    
+    .app-icon {
+        font-size: 3rem;
+    }
+    
+    .app-name {
+        font-size: 1.5rem;
+    }
+    
+    .download-btn {
+        padding: 12px 20px;
+        font-size: 0.95rem;
+    }
+    
+    .download-icon {
+        font-size: 1.3rem;
+        margin-right: 10px;
+    }
+}
+
+/* Tungi rejim uchun */
+body.dark-theme .app-card {
+    background: rgba(45, 55, 72, 0.95) !important;
+    color: #e2e8f0 !important;
+}
+
+body.dark-theme .app-description {
+    color: #a0aec0 !important;
+}
+
+body.dark-theme .app-features li {
+    color: #cbd5e0 !important;
+}
+
+body.dark-theme .step-content h4 {
+    color: #e2e8f0 !important;
+}
+
+body.dark-theme .step-content p {
+    color: #a0aec0 !important;
+}
+
+body.dark-theme .req-content h4 {
+    color: #e2e8f0 !important;
+}
+
+body.dark-theme .req-content p {
+    color: #a0aec0 !important;
+}
+
+body.dark-theme .requirement-item {
+    background: rgba(102, 126, 234, 0.1) !important;
+}
+</style>
+{% endblock %}
