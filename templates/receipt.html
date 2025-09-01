@@ -1,0 +1,148 @@
+
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chek #{{ order.receipt_number }} - Restoran</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .receipt-container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        .receipt-header {
+            background: linear-gradient(135deg, #4c1d95 0%, #7c3aed 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .receipt-body {
+            padding: 20px;
+        }
+        .receipt-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed #e5e7eb;
+        }
+        .receipt-total {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #4c1d95;
+        }
+        .cashback-info {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .receipt-footer {
+            text-align: center;
+            padding: 20px;
+            background: #f8fafc;
+            color: #6b7280;
+        }
+        @media print {
+            body { background: white; padding: 0; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="receipt-container">
+        <!-- Header -->
+        <div class="receipt-header">
+            <h2>🧾 RESTORAN CHEKI</h2>
+            <p class="mb-0">Chek raqami: {{ order.receipt_number }}</p>
+        </div>
+
+        <!-- Body -->
+        <div class="receipt-body">
+            <div class="mb-3">
+                <strong>📋 Buyurtma #{{ order.ticket_no }}</strong><br>
+                <small class="text-muted">{{ order.created_at[:19].replace('T', ' ') }}</small>
+            </div>
+
+            <div class="mb-3">
+                <strong>👤 Mijoz:</strong> {{ order.customer_name }}<br>
+                <strong>📍 Tur:</strong> 
+                {% if order.order_type == 'delivery' %}
+                    🚚 Dostavka
+                    {% if order.delivery_address %}
+                        <br><small>Manzil: {{ order.delivery_address }}</small>
+                    {% endif %}
+                    {% if order.card_number %}
+                        <br><small>Karta: **** **** **** {{ order.card_number[-4:] if order.card_number|length > 4 else order.card_number }}</small>
+                    {% endif %}
+                {% else %}
+                    🏪 Restoranda yeyish
+                {% endif %}
+            </div>
+
+            <hr>
+
+            <!-- Buyurtma mahsulotlari -->
+            <div class="mb-3">
+                <strong>🍽️ Buyurtma tarkibi:</strong>
+                {% if order.order_items %}
+                    {% set items = order.order_items.split(',') %}
+                    {% for item in items %}
+                        <div class="receipt-item">
+                            <span>{{ item.strip() }}</span>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="receipt-item">
+                        <span>Ma'lumot mavjud emas</span>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Jami summa -->
+            <div class="receipt-total">
+                <div class="d-flex justify-content-between">
+                    <span>💰 Jami summa:</span>
+                    <span>{{ "{:,.0f}".format(order.total_amount) }} so'm</span>
+                </div>
+            </div>
+
+            <!-- Keshbek ma'lumoti -->
+            {% if order.cashback_amount > 0 %}
+            <div class="cashback-info">
+                <div><strong>🎁 KESHBEK!</strong></div>
+                <div>{{ order.cashback_percentage }}% = {{ "{:,.2f}".format(order.cashback_amount) }} so'm</div>
+                <small>Keyingi buyurtmalaringizda ishlating!</small>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Footer -->
+        <div class="receipt-footer">
+            <p class="mb-2">Restoranimizni tanlaganingiz uchun rahmat!</p>
+            <small>© 2025 Restoran Tizimi</small>
+        </div>
+
+        <!-- Tugmalar -->
+        <div class="p-3 no-print">
+            <div class="d-grid gap-2">
+                <button onclick="window.print()" class="btn btn-primary">🖨️ Chop etish</button>
+                <a href="{{ url_for('index') }}" class="btn btn-secondary">🏠 Bosh sahifa</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

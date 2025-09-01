@@ -197,6 +197,20 @@ def init_db():
         );
     """)
 
+    # Cheklar jadvali
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS receipts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            order_id INTEGER NOT NULL,
+            receipt_number TEXT NOT NULL UNIQUE,
+            total_amount REAL NOT NULL,
+            cashback_amount REAL NOT NULL,
+            cashback_percentage REAL DEFAULT 1.0,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY (order_id) REFERENCES orders (id)
+        );
+    """)
+
     # Boshlang'ich taomlar qo'shish
     cur.execute("SELECT COUNT(*) FROM menu_items")
     if cur.fetchone()[0] == 0:
@@ -777,11 +791,15 @@ def user_page():
             total = get_cart_total(conn, session_id, user_id)
 
             cur = conn.cursor()
-            # Buyurtma yaratish (user_id bilan)
+            # Buyurtma yaratish - dostavka manzili bor bo'lsa delivery, yo'q bo'lsa dine_in
+            delivery_address = request.form.get("delivery_address", "").strip()
+            card_number = request.form.get("card_number", "").strip()
+            order_type = "delivery" if delivery_address else "dine_in"
+            
             cur.execute("""
-                INSERT INTO orders (user_id, customer_name, ticket_no, order_type, status, created_at, eta_time)
-                VALUES (?, ?, ?, 'dine_in', 'waiting', ?, ?);
-            """, (user_id, name, tno, now.isoformat(), eta_time.isoformat()))
+                INSERT INTO orders (user_id, customer_name, ticket_no, order_type, status, delivery_address, card_number, created_at, eta_time)
+                VALUES (?, ?, ?, ?, 'waiting', ?, ?, ?, ?);
+            """, (user_id, name, tno, order_type, delivery_address, card_number, now.isoformat(), eta_time.isoformat()))
 
             order_id = cur.lastrowid
 
@@ -804,6 +822,16 @@ def user_page():
                     'jami': item['total']
                 })
 
+            # Chek yaratish
+            receipt_number = f"R{tno}{now.strftime('%H%M%S')}"
+            cashback_percentage = 1.0
+            cashback_amount = total * (cashback_percentage / 100)
+            
+            cur.execute("""
+                INSERT INTO receipts (order_id, receipt_number, total_amount, cashback_amount, cashback_percentage, created_at)
+                VALUES (?, ?, ?, ?, ?, ?);
+            """, (order_id, receipt_number, total, cashback_amount, cashback_percentage, now.isoformat()))
+
             # Savatchani tozalash
             clear_cart(conn, session_id, user_id)
 
@@ -823,13 +851,20 @@ def user_success(ticket_no):
     cur = conn.cursor()
     cur.execute("SELECT * FROM orders WHERE ticket_no=? ORDER BY id DESC LIMIT 1;", (ticket_no,))
     order = cur.fetchone()
+    
+    # Chek ma'lumotlarini olish
+    receipt = None
+    if order:
+        cur.execute("SELECT * FROM receipts WHERE order_id=?", (order['id'],))
+        receipt = cur.fetchone()
+    
     conn.close()
     if not order:
         flash("Buyurtma topilmadi.", "error")
         return redirect(url_for("user_page"))
     # valmis bo'lish vaqti
     eta_time = datetime.datetime.fromisoformat(order["eta_time"])
-    return render_template("user_success.html", order=order, eta_hhmm=eta_time.strftime("%H:%M"))
+    return render_template("user_success.html", order=order, receipt=receipt, eta_hhmm=eta_time.strftime("%H:%M"))
 
 @app.route("/user/status/<int:ticket_no>")
 def user_status(ticket_no):
@@ -960,17 +995,25 @@ def courier_dashboard():
     conn = get_db()
     cur = conn.cursor()
 
-    # Kuryerga tegishli delivery buyurtmalarni olish
+    # Barcha ready delivery buyurtmalar va kuryerga tegishli buyurtmalarni olish
     cur.execute("""
         SELECT o.*, 
                GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
         FROM orders o
         LEFT JOIN order_details od ON o.id = od.order_id
         LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
-        WHERE o.order_type = 'delivery' AND o.status IN ('ready', 'on_way', 'delivered')
+        WHERE (o.order_type = 'delivery' AND o.status = 'ready') 
+           OR (o.courier_id = ? AND o.status IN ('on_way', 'delivered'))
         GROUP BY o.id
-        ORDER BY o.created_at DESC
-    """)
+        ORDER BY 
+            CASE 
+                WHEN o.status = 'ready' THEN 1
+                WHEN o.status = 'on_way' THEN 2
+                WHEN o.status = 'delivered' THEN 3
+                ELSE 4
+            END,
+            o.created_at ASC
+    """, (courier_id,))
     delivery_orders = cur.fetchall()
 
     conn.close()
@@ -1659,6 +1702,33 @@ def contact():
 @app.route("/about")
 def about():
     return render_template("about.html")
+
+@app.route("/receipt/<int:ticket_no>")
+def view_receipt(ticket_no):
+    """Chekni ko'rish sahifasi"""
+    conn = get_db()
+    cur = conn.cursor()
+    
+    # Buyurtma va chek ma'lumotlarini olish
+    cur.execute("""
+        SELECT o.*, r.receipt_number, r.total_amount, r.cashback_amount, r.cashback_percentage,
+               GROUP_CONCAT(mi.name || ' x' || od.quantity || ' = ' || od.price || ' so\'m') as order_items
+        FROM orders o
+        LEFT JOIN receipts r ON o.id = r.order_id
+        LEFT JOIN order_details od ON o.id = od.order_id
+        LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
+        WHERE o.ticket_no = ?
+        GROUP BY o.id
+    """, (ticket_no,))
+    
+    order_with_receipt = cur.fetchone()
+    conn.close()
+    
+    if not order_with_receipt:
+        flash("Chek topilmadi.", "error")
+        return redirect(url_for("index"))
+    
+    return render_template("receipt.html", order=order_with_receipt)
 
 
 
