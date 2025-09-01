@@ -3,7 +3,7 @@
 {% block title %}Savatcha - Restoran{% endblock %}
 
 {% block head %}
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBOti4mM-6x9WDnZIjIeyEU21OpxXqWBgw&libraries=geometry&callback=initMap"></script>
+<script src="https://api-maps.yandex.ru/2.1/?apikey=YOUR_YANDEX_API_KEY&lang=uz_UZ" type="text/javascript"></script>
 {% endblock %}
 
 {% block content %}
@@ -156,74 +156,53 @@
 let map;
 let marker;
 let selectedLocation = null;
-let geocoder;
-let autocomplete;
+let searchControl;
 
 function initMap() {
-    // Toshkent markazi
-    const tashkent = { lat: 41.2995, lng: 69.2401 };
+    // Yandex Maps APIni yuklash
+    ymaps.ready(function() {
+        // Toshkent markazi
+        const tashkent = [41.2995, 69.2401];
 
-    // Xarita elementini topish
-    const mapElement = document.getElementById("map");
-    if (!mapElement) {
-        console.error("Xarita elementi topilmadi!");
-        return;
-    }
+        // Xarita yaratish
+        map = new ymaps.Map('map', {
+            center: tashkent,
+            zoom: 12,
+            controls: ['zoomControl', 'fullscreenControl', 'typeSelector']
+        });
 
-    map = new google.maps.Map(mapElement, {
-        zoom: 12,
-        center: tashkent,
-        mapTypeControl: true,
-        fullscreenControl: true,
-        streetViewControl: true,
-    });
-
-    geocoder = new google.maps.Geocoder();
-
-    // Autocomplete
-    const input = document.getElementById("address-search");
-    if (input) {
-        const options = {
-            componentRestrictions: { country: "uz" },
-            fields: ["formatted_address", "geometry", "name"],
-            strictBounds: false,
-        };
-        autocomplete = new google.maps.places.Autocomplete(input, options);
-        autocomplete.bindTo("bounds", map);
-
-        autocomplete.addListener("place_changed", () => {
-            const place = autocomplete.getPlace();
-            if (!place.geometry) {
-                alert("Joy haqida ma'lumot topilmadi: " + place.name);
-                return;
+        // Qidiruv control qo'shish
+        searchControl = new ymaps.control.SearchControl({
+            options: {
+                useMapBounds: true,
+                noCentering: false,
+                noPlacemark: false,
+                placeholderContent: 'Manzilni qidiring...',
+                maxWidth: [30, 64, 150]
             }
-            // Agar joy tanlangan bo'lsa, uni xaritaga qo'yish
-            setDeliveryLocation(place.geometry.location);
-            map.setCenter(place.geometry.location);
-            map.setZoom(15);
         });
-    }
+        
+        map.controls.add(searchControl);
 
-    // Foydalanuvchi joylashuvini olishga harakat qilish
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-            const userLocation = {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude
-            };
-            map.setCenter(userLocation);
-            map.setZoom(15);
-            
-            // Foydalanuvchi joylashuvini belgilash
-            setDeliveryLocation(new google.maps.LatLng(userLocation.lat, userLocation.lng));
-        }, function(error) {
-            console.log("Joylashuvni olishda xatolik:", error);
+        // Foydalanuvchi joylashuvini olishga harakat qilish
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                const userLocation = [position.coords.latitude, position.coords.longitude];
+                map.setCenter(userLocation);
+                map.setZoom(15);
+                
+                // Foydalanuvchi joylashuvini belgilash
+                setDeliveryLocation(userLocation);
+            }, function(error) {
+                console.log("Joylashuvni olishda xatolik:", error);
+            });
+        }
+
+        // Xaritaga bosish hodisasi
+        map.events.add('click', function(e) {
+            const coords = e.get('coords');
+            setDeliveryLocation(coords);
         });
-    }
-
-    // Xaritaga bosish hodisasi
-    map.addListener("click", function(event) {
-        setDeliveryLocation(event.latLng);
     });
 }
 
@@ -234,104 +213,104 @@ function searchAddressOnMap() {
         return;
     }
 
-    geocoder.geocode({ address: address }, function(results, status) {
-        if (status === "OK" && results[0]) {
-            const location = results[0].geometry.location;
-            setDeliveryLocation(location);
-            map.setCenter(location);
+    ymaps.geocode(address, {
+        boundedBy: map.getBounds(),
+        strictBounds: true
+    }).then(function(res) {
+        if (res.geoObjects.getLength() > 0) {
+            const firstGeoObject = res.geoObjects.get(0);
+            const coords = firstGeoObject.geometry.getCoordinates();
+            
+            setDeliveryLocation(coords);
+            map.setCenter(coords);
             map.setZoom(15);
         } else {
-            alert("Manzil topilmadi: " + status);
+            alert("Manzil topilmadi!");
         }
     });
 }
 
-function setDeliveryLocation(location) {
-    selectedLocation = location;
+function setDeliveryLocation(coords) {
+    selectedLocation = coords;
 
     // Avvalgi marker olib tashlash
     if (marker) {
-        marker.setMap(null);
+        map.geoObjects.remove(marker);
     }
 
     // Yangi marker qo'yish
-    marker = new google.maps.Marker({
-        position: location,
-        map: map,
-        title: "Yetkazib berish manzili",
+    marker = new ymaps.Placemark(coords, {
+        hintContent: 'Yetkazib berish manzili',
+        balloonContent: 'Yetkazib berish manzili'
+    }, {
         draggable: true,
-        animation: google.maps.Animation.DROP
+        iconColor: '#1e90ff'
     });
 
+    map.geoObjects.add(marker);
+
     // Marker siqilganda yangi joylashuvni olish
-    marker.addListener('dragend', function() {
-        setDeliveryLocation(marker.getPosition());
+    marker.events.add('dragend', function() {
+        const newCoords = marker.geometry.getCoordinates();
+        setDeliveryLocation(newCoords);
     });
 
     // Manzilni olish (Reverse Geocoding)
-    geocoder.geocode({ location: location }, function(results, status) {
-        if (status === "OK" && results[0]) {
-            const address = results[0].formatted_address;
-            document.getElementById('selected-address').textContent = address;
-            
-            const deliveryAddressInput = document.getElementById('delivery_address');
-            if (deliveryAddressInput) {
-                deliveryAddressInput.value = address;
-            }
-            
-            const latInput = document.getElementById('delivery_latitude');
-            if (latInput) {
-                latInput.value = location.lat();
-            }
-            
-            const lngInput = document.getElementById('delivery_longitude');
-            if (lngInput) {
-                lngInput.value = location.lng();
-            }
-
-            // Masofani hisoblash
-            calculateDistance(location);
+    ymaps.geocode(coords).then(function(res) {
+        const firstGeoObject = res.geoObjects.get(0);
+        let address = '';
+        
+        if (firstGeoObject) {
+            address = firstGeoObject.getAddressLine();
         } else {
-            const coords = `Lat: ${location.lat().toFixed(6)}, Lng: ${location.lng().toFixed(6)}`;
-            document.getElementById('selected-address').textContent = coords;
-            
-            const deliveryAddressInput = document.getElementById('delivery_address');
-            if (deliveryAddressInput) {
-                deliveryAddressInput.value = `${location.lat()},${location.lng()}`;
-            }
-            
-            const latInput = document.getElementById('delivery_latitude');
-            if (latInput) {
-                latInput.value = location.lat();
-            }
-            
-            const lngInput = document.getElementById('delivery_longitude');
-            if (lngInput) {
-                lngInput.value = location.lng();
-            }
+            address = `Lat: ${coords[0].toFixed(6)}, Lng: ${coords[1].toFixed(6)}`;
         }
+        
+        document.getElementById('selected-address').textContent = address;
+        
+        const deliveryAddressInput = document.getElementById('delivery_address');
+        if (deliveryAddressInput) {
+            deliveryAddressInput.value = address;
+        }
+        
+        const latInput = document.getElementById('delivery_latitude');
+        if (latInput) {
+            latInput.value = coords[0];
+        }
+        
+        const lngInput = document.getElementById('delivery_longitude');
+        if (lngInput) {
+            lngInput.value = coords[1];
+        }
+
+        // Masofani hisoblash
+        calculateDistance(coords);
     });
 }
 
 function calculateDistance(destination) {
     // Restoran joylashuvi (Toshkent markazi)
-    const restaurant = { lat: 41.2995, lng: 69.2401 };
+    const restaurant = [41.2995, 69.2401];
 
-    const service = new google.maps.DistanceMatrixService();
-    service.getDistanceMatrix({
-        origins: [restaurant],
-        destinations: [destination],
-        travelMode: google.maps.TravelMode.DRIVING,
-        unitSystem: google.maps.UnitSystem.METRIC,
-    }, function(response, status) {
-        if (status === "OK") {
-            const distance = response.rows[0].elements[0].distance;
-            if (distance) {
-                const distanceKm = distance.value / 1000;
-                document.getElementById('delivery_distance').value = distanceKm.toFixed(1);
-                updateTotal(); // Masofa hisoblangach umumiy summani yangilash
-            }
+    ymaps.route([restaurant, destination], {
+        multiRoute: false,
+        routingMode: 'auto'
+    }).then(function(route) {
+        const distance = route.getLength();
+        if (distance) {
+            const distanceKm = distance / 1000;
+            document.getElementById('delivery_distance').value = distanceKm.toFixed(1);
+            updateTotal(); // Masofa hisoblangach umumiy summani yangilash
         }
+    }, function(error) {
+        console.error('Masofa hisoblashda xatolik:', error);
+        // Oddiy masofa hisoblash (to'g'ri chiziq bo'yicha)
+        const distance = Math.sqrt(
+            Math.pow((destination[0] - restaurant[0]) * 111, 2) + 
+            Math.pow((destination[1] - restaurant[1]) * 111 * Math.cos(restaurant[0] * Math.PI / 180), 2)
+        );
+        document.getElementById('delivery_distance').value = distance.toFixed(1);
+        updateTotal();
     });
 }
 
@@ -363,8 +342,8 @@ function toggleDeliveryFields() {
                 initMap();
             } else {
                 // Xaritani yangilash
-                google.maps.event.trigger(map, 'resize');
-                map.setCenter({ lat: 41.2995, lng: 69.2401 });
+                map.container.fitToViewport();
+                map.setCenter([41.2995, 69.2401]);
             }
         }, 100);
     } else {
