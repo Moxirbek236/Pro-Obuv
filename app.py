@@ -2123,7 +2123,7 @@ def view_receipt(ticket_no):
     # Buyurtma va chek ma'lumotlarini olish
     cur.execute("""
         SELECT o.*, r.receipt_number, r.total_amount, r.cashback_amount, r.cashback_percentage, r.created_at as receipt_created,
-               GROUP_CONCAT(mi.name || ' x' || od.quantity || ' = ' || od.price || ' so\'m') as order_items
+               GROUP_CONCAT(mi.name || ' x' || od.quantity || ' = ' || od.price || ' som') as order_items
         FROM orders o
         LEFT JOIN receipts r ON o.id = r.order_id
         LEFT JOIN order_details od ON o.id = od.order_id
