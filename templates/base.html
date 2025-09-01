@@ -196,45 +196,82 @@
 
 <!-- Global sozlamalarni yuklash -->
 <script>
-// Global sozlamalarni yuklash
-document.addEventListener('DOMContentLoaded', function() {
-    // Sozlamalarni localStorage va session dan yuklash
-    const darkMode = localStorage.getItem('darkMode') === 'true' || {{ 'true' if session.get('dark_theme') else 'false' }};
-    const fontSize = localStorage.getItem('fontSize') || '{{ session.get("font_size", "medium") }}';
-    const language = localStorage.getItem('language') || '{{ session.get("interface_language", "uz") }}';
+// Darhol sozlamalarni qo'llash (DOMContentLoaded dan oldin)
+(function() {
+    // LocalStorage dan sozlamalarni olish
+    const darkMode = localStorage.getItem('darkMode') === 'true';
+    const fontSize = localStorage.getItem('fontSize') || 'medium';
+    const language = localStorage.getItem('language') || 'uz';
 
-    // Barcha klasslarni tozalash
+    console.log('Base.html - Darhol qo\'llanayotgan sozlamalar:', { darkMode, fontSize, language });
+
+    // Body klasslarini tozalash
     document.body.classList.remove('dark-theme', 'font-small', 'font-medium', 'font-large', 'font-xlarge');
     document.body.classList.remove('lang-uz', 'lang-ru', 'lang-en');
 
-    // Tungi rejimni qo'llash
+    // Mavzu klassini qo'shish
     if (darkMode) {
         document.body.classList.add('dark-theme');
-        localStorage.setItem('darkMode', 'true');
-    } else {
-        localStorage.setItem('darkMode', 'false');
+        console.log('Base.html - Dark theme qo\'shildi');
     }
 
-    // Shrift o'lchamini qo'llash
+    // Font o'lcham klassini qo'shish
     document.body.classList.add('font-' + fontSize);
-    localStorage.setItem('fontSize', fontSize);
+    console.log('Base.html - Font size qo\'shildi:', 'font-' + fontSize);
 
-    // Tilni qo'llash va tarjima qilish
+    // Til klassini qo'shish
     document.body.classList.add('lang-' + language);
-    localStorage.setItem('language', language);
+    console.log('Base.html - Language qo\'shildi:', 'lang-' + language);
+})();
+
+// Global sozlamalarni yuklash
+document.addEventListener('DOMContentLoaded', function() {
+    // Session ma'lumotlarini localStorage bilan sinxronlash
+    const sessionDarkMode = {{ 'true' if session.get('dark_theme') else 'false' }};
+    const sessionFontSize = '{{ session.get("font_size", "medium") }}';
+    const sessionLanguage = '{{ session.get("interface_language", "uz") }}';
+
+    // Agar localStorage bo'sh bo'lsa, session dan olish
+    if (!localStorage.getItem('darkMode')) {
+        localStorage.setItem('darkMode', sessionDarkMode);
+    }
+    if (!localStorage.getItem('fontSize')) {
+        localStorage.setItem('fontSize', sessionFontSize);
+    }
+    if (!localStorage.getItem('language')) {
+        localStorage.setItem('language', sessionLanguage);
+    }
 
     // Sahifani tarjima qilish
     if (typeof translatePage === 'function') {
         setTimeout(() => {
-            translatePage(language);
-            console.log('Base.html dan til qo\'llandi:', language);
-        }, 200);
+            const currentLanguage = localStorage.getItem('language') || 'uz';
+            translatePage(currentLanguage);
+            console.log('Base.html dan til qo\'llandi:', currentLanguage);
+        }, 100);
     }
 
-    // Sozlamalar o'zgarganda qayta yuklashni ta'minlash
+    // Storage eventini tinglash
     window.addEventListener('storage', function(e) {
-        if (e.key === 'darkMode' || e.key === 'fontSize' || e.key === 'language') {
-            location.reload();
+        if (e.key === 'darkMode') {
+            const isDark = e.newValue === 'true';
+            if (isDark) {
+                document.body.classList.add('dark-theme');
+            } else {
+                document.body.classList.remove('dark-theme');
+            }
+            console.log('Storage event - Dark mode o\'zgartirildi:', isDark);
+        } else if (e.key === 'fontSize') {
+            document.body.classList.remove('font-small', 'font-medium', 'font-large', 'font-xlarge');
+            document.body.classList.add('font-' + e.newValue);
+            console.log('Storage event - Font size o\'zgartirildi:', e.newValue);
+        } else if (e.key === 'language') {
+            document.body.classList.remove('lang-uz', 'lang-ru', 'lang-en');
+            document.body.classList.add('lang-' + e.newValue);
+            if (typeof translatePage === 'function') {
+                translatePage(e.newValue);
+            }
+            console.log('Storage event - Language o\'zgartirildi:', e.newValue);
         }
     });
 });
