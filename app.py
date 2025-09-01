@@ -1143,18 +1143,26 @@ def super_admin_dashboard():
     
     # Buyurtmalar statistikasi
     cur.execute("SELECT COUNT(*) FROM orders")
-    total_orders = cur.fetchone()[0]
+    result = cur.fetchone()
+    total_orders = result[0] if result else 0
+    
     cur.execute("SELECT COUNT(*) FROM orders WHERE status='waiting'")
-    waiting_orders = cur.fetchone()[0]
+    result = cur.fetchone()
+    waiting_orders = result[0] if result else 0
+    
     cur.execute("SELECT COUNT(*) FROM orders WHERE status='ready'")
-    ready_orders = cur.fetchone()[0]
+    result = cur.fetchone()
+    ready_orders = result[0] if result else 0
+    
     cur.execute("SELECT COUNT(*) FROM orders WHERE status='served'")
-    served_orders = cur.fetchone()[0]
+    result = cur.fetchone()
+    served_orders = result[0] if result else 0
     
     # Bu oylik statistika
     current_month = get_current_time().strftime("%Y-%m")
     cur.execute("SELECT COUNT(*) FROM orders WHERE created_at LIKE ?", (f"{current_month}%",))
-    month_orders = cur.fetchone()[0]
+    result = cur.fetchone()
+    month_orders = result[0] if result else 0
     
     conn.close()
     
