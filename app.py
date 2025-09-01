@@ -778,14 +778,14 @@ def courier_login():
         if row:
             # Faollik vaqtini yangilash va ishchi soatlarini hisoblash
             now = get_current_time().isoformat()
-            
+
             # Agar avvalgi faollik vaqti mavjud bo'lsa, ishchi soatlarni yangilash
             if row["last_activity"]:
                 try:
                     last_activity = datetime.datetime.fromisoformat(row["last_activity"])
                     current_time = get_current_time()
                     time_diff = current_time - last_activity
-                    
+
                     # Agar 8 soatdan kam bo'lsa, ishchi vaqtga qo'shish
                     if time_diff.total_seconds() < 28800:  # 8 soat
                         additional_hours = time_diff.total_seconds() / 3600
@@ -797,7 +797,7 @@ def courier_login():
                     cur.execute("UPDATE couriers SET last_activity = ? WHERE id = ?", (now, courier_id))
             else:
                 cur.execute("UPDATE couriers SET last_activity = ? WHERE id = ?", (now, courier_id))
-            
+
             conn.commit()
 
         conn.close()
@@ -869,15 +869,15 @@ def courier_dashboard():
 def courier_take_order(order_id):
     if "courier_id" not in session:
         return redirect(url_for("courier_login"))
-    
+
     courier_id = session.get("courier_id")
     conn = get_db()
     cur = conn.cursor()
-    
+
     cur.execute("UPDATE orders SET status='on_way', courier_id=? WHERE id=? AND status='ready'", (courier_id, order_id))
     conn.commit()
     conn.close()
-    
+
     flash("Buyurtma olib ketildi!", "success")
     return redirect(url_for("courier_dashboard"))
 
@@ -885,19 +885,19 @@ def courier_take_order(order_id):
 def courier_mark_delivered(order_id):
     if "courier_id" not in session:
         return redirect(url_for("courier_login"))
-    
+
     courier_id = session.get("courier_id")
     conn = get_db()
     cur = conn.cursor()
-    
+
     cur.execute("UPDATE orders SET status='delivered' WHERE id=? AND courier_id=?", (order_id, courier_id))
-    
+
     # Kuryerning yetkazib bergan buyurtmalar sonini oshirish
     cur.execute("UPDATE couriers SET deliveries_completed = COALESCE(deliveries_completed, 0) + 1 WHERE id = ?", (courier_id,))
-    
+
     conn.commit()
     conn.close()
-    
+
     flash("Buyurtma yetkazib berildi!", "success")
     return redirect(url_for("courier_dashboard"))
 
@@ -924,14 +924,14 @@ def staff_login():
         if row:
             # Faollik vaqtini yangilash va ishchi soatlarini hisoblash
             now = get_current_time().isoformat()
-            
+
             # Agar avvalgi faollik vaqti mavjud bo'lsa, ishchi soatlarni yangilash
             if row["last_activity"]:
                 try:
                     last_activity = datetime.datetime.fromisoformat(row["last_activity"])
                     current_time = get_current_time()
                     time_diff = current_time - last_activity
-                    
+
                     # Agar 8 soatdan kam bo'lsa, ishchi vaqtga qo'shish (dakiqalarda)
                     if time_diff.total_seconds() < 28800:  # 8 soat
                         additional_hours = time_diff.total_seconds() / 3600
@@ -943,7 +943,7 @@ def staff_login():
                     cur.execute("UPDATE staff SET last_activity = ? WHERE id = ?", (now, staff_id))
             else:
                 cur.execute("UPDATE staff SET last_activity = ? WHERE id = ?", (now, staff_id))
-            
+
             conn.commit()
 
         conn.close()
@@ -983,8 +983,14 @@ def staff_register():
             INSERT INTO staff (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, created_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?);
         """, (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, now.isoformat()))
-        conn.commit()
+
         new_id = cur.lastrowid
+        # ID kamida 5 ta raqamdan iborat bo'lishi uchun
+        if new_id < 10000:
+            cur.execute("UPDATE staff SET id = ? WHERE id = ?", (10000 + new_id, new_id))
+            new_id = 10000 + new_id
+
+        conn.commit()
         conn.close()
 
         # Xodim ma'lumotlarini employees.json fayliga saqlash
@@ -1115,12 +1121,12 @@ def staff_mark_served(order_id):
     conn = get_db()
     cur = conn.cursor()
     cur.execute("UPDATE orders SET status='served' WHERE id=?;", (order_id,))
-    
+
     # Xodimning bajargan buyurtmalar sonini oshirish
     staff_id = session.get("staff_id")
     if staff_id:
         cur.execute("UPDATE staff SET orders_handled = COALESCE(orders_handled, 0) + 1 WHERE id = ?", (staff_id,))
-    
+
     conn.commit()
     conn.close()
     flash("Buyurtma foydalanuvchiga berildi sifatida belgilandi.", "success")
@@ -1132,12 +1138,12 @@ def staff_mark_ready(order_id):
     conn = get_db()
     cur = conn.cursor()
     cur.execute("UPDATE orders SET status='ready' WHERE id=?;", (order_id,))
-    
+
     # Xodimning bajargan buyurtmalar sonini oshirish
     staff_id = session.get("staff_id")
     if staff_id:
         cur.execute("UPDATE staff SET orders_handled = COALESCE(orders_handled, 0) + 1 WHERE id = ?", (staff_id,))
-    
+
     conn.commit()
     conn.close()
     flash("Buyurtma 'tayyor' deb belgilandi.", "success")
@@ -1367,8 +1373,14 @@ def super_admin_add_staff():
         INSERT INTO staff (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, created_at)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?);
     """, (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, now.isoformat()))
-    conn.commit()
+
     new_id = cur.lastrowid
+    # ID kamida 5 ta raqamdan iborat bo'lishi uchun
+    if new_id < 10000:
+        cur.execute("UPDATE staff SET id = ? WHERE id = ?", (10000 + new_id, new_id))
+        new_id = 10000 + new_id
+
+    conn.commit()
     conn.close()
 
     # JSON fayliga ham saqlash
@@ -1402,8 +1414,14 @@ def super_admin_add_courier():
         INSERT INTO couriers (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, created_at)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?);
     """, (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, now.isoformat()))
-    conn.commit()
+
     new_id = cur.lastrowid
+    # ID kamida 5 ta raqamdan iborat bo'lishi uchun
+    if new_id < 10000:
+        cur.execute("UPDATE couriers SET id = ? WHERE id = ?", (10000 + new_id, new_id))
+        new_id = 10000 + new_id
+
+    conn.commit()
     conn.close()
 
     flash(f"Yangi kuryer qo'shildi. ID: {new_id}", "success")
