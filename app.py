@@ -777,11 +777,14 @@ def user_page():
             total = get_cart_total(conn, session_id, user_id)
 
             cur = conn.cursor()
-            # Buyurtma yaratish (user_id bilan)
+            # Buyurtma yaratish - dostavka manzili bor bo'lsa delivery, yo'q bo'lsa dine_in
+            delivery_address = request.form.get("delivery_address", "").strip()
+            order_type = "delivery" if delivery_address else "dine_in"
+            
             cur.execute("""
-                INSERT INTO orders (user_id, customer_name, ticket_no, order_type, status, created_at, eta_time)
-                VALUES (?, ?, ?, 'dine_in', 'waiting', ?, ?);
-            """, (user_id, name, tno, now.isoformat(), eta_time.isoformat()))
+                INSERT INTO orders (user_id, customer_name, ticket_no, order_type, status, delivery_address, created_at, eta_time)
+                VALUES (?, ?, ?, ?, 'waiting', ?, ?, ?);
+            """, (user_id, name, tno, order_type, delivery_address, now.isoformat(), eta_time.isoformat()))
 
             order_id = cur.lastrowid
 
@@ -960,17 +963,25 @@ def courier_dashboard():
     conn = get_db()
     cur = conn.cursor()
 
-    # Kuryerga tegishli delivery buyurtmalarni olish
+    # Barcha ready delivery buyurtmalar va kuryerga tegishli buyurtmalarni olish
     cur.execute("""
         SELECT o.*, 
                GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
         FROM orders o
         LEFT JOIN order_details od ON o.id = od.order_id
         LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
-        WHERE o.order_type = 'delivery' AND o.status IN ('ready', 'on_way', 'delivered')
+        WHERE (o.order_type = 'delivery' AND o.status = 'ready') 
+           OR (o.courier_id = ? AND o.status IN ('on_way', 'delivered'))
         GROUP BY o.id
-        ORDER BY o.created_at DESC
-    """)
+        ORDER BY 
+            CASE 
+                WHEN o.status = 'ready' THEN 1
+                WHEN o.status = 'on_way' THEN 2
+                WHEN o.status = 'delivered' THEN 3
+                ELSE 4
+            END,
+            o.created_at ASC
+    """, (courier_id,))
     delivery_orders = cur.fetchall()
 
     conn.close()
