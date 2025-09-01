@@ -234,7 +234,17 @@
         <div class="text-center">
             <button class="btn btn-success me-2" onclick="saveSettings()">💾 Sozlamalarni saqlash</button>
             <a href="{{ url_for('profile_settings') }}" class="btn btn-outline-primary me-2">⚙️ Profil sozlamalari</a>
-            <a href="{{ url_for('profile') }}" class="btn btn-outline-secondary">🔙 Profilga qaytish</a>
+            {% if session.get('user_id') %}
+                <a href="{{ url_for('profile') }}" class="btn btn-outline-secondary">🔙 Profilga qaytish</a>
+            {% elif session.get('staff_id') %}
+                <a href="{{ url_for('staff_dashboard') }}" class="btn btn-outline-secondary">🔙 Dashboard</a>
+            {% elif session.get('courier_id') %}
+                <a href="{{ url_for('courier_dashboard') }}" class="btn btn-outline-secondary">🔙 Dashboard</a>
+            {% elif session.get('super_admin') %}
+                <a href="{{ url_for('super_admin_dashboard') }}" class="btn btn-outline-secondary">🔙 Dashboard</a>
+            {% else %}
+                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">🔙 Bosh sahifa</a>
+            {% endif %}
         </div>
     </div>
 

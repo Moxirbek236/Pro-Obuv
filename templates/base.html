@@ -41,9 +41,6 @@
       <ul class="navbar-nav">
         {% if session.get('user_id') %}
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('cart') }}">🛒 Savatcha <span id="cart-count" class="badge bg-danger"></span></a>
-          </li>
-          <li class="nav-item">
             <span class="navbar-text text-white me-3">👤 {{ session.get('user_first_name') }} {{ session.get('user_last_name') }}</span>
           </li>
           <li class="nav-item dropdown">
@@ -62,21 +59,49 @@
           <li class="nav-item">
             <span class="navbar-text text-white me-3">👨‍💼 {{ session.get('staff_name') }}</span>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('staff_dashboard') }}">🏠 Dashboard</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('staff_logout') }}">🚪 Chiqish</a>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="staffDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
+              🏠 Menu
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="staffDropdown">
+              <li><a class="dropdown-item" href="{{ url_for('staff_dashboard') }}">🏠 Dashboard</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('profile_settings') }}">⚙️ Profil sozlamalari</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('general_settings') }}">🔧 Sozlamalar</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="{{ url_for('staff_logout') }}">🚪 Chiqish</a></li>
+            </ul>
           </li>
         {% elif session.get('courier_id') %}
           <li class="nav-item">
             <span class="navbar-text text-white me-3">🚚 {{ session.get('courier_name') }}</span>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('courier_dashboard') }}">🏠 Dashboard</a>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="courierDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
+              🏠 Menu
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="courierDropdown">
+              <li><a class="dropdown-item" href="{{ url_for('courier_dashboard') }}">🏠 Dashboard</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('profile_settings') }}">⚙️ Profil sozlamalari</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('general_settings') }}">🔧 Sozlamalar</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="{{ url_for('courier_logout') }}">🚪 Chiqish</a></li>
+            </ul>
           </li>
+        {% elif session.get('super_admin') %}
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('courier_logout') }}">🚪 Chiqish</a>
+            <span class="navbar-text text-white me-3">🔧 Super Admin</span>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
+              🏠 Menu
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminDropdown">
+              <li><a class="dropdown-item" href="{{ url_for('super_admin_dashboard') }}">🏠 Dashboard</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('profile_settings') }}">⚙️ Profil sozlamalari</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('general_settings') }}">🔧 Sozlamalar</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="{{ url_for('super_admin_logout') }}">🚪 Chiqish</a></li>
+            </ul>
           </li>
         {% else %}
           <li class="nav-item">
