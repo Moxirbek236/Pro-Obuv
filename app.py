@@ -183,6 +183,20 @@ def init_db():
         );
     """)
     
+    # Savollar jadvali
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS questions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_name TEXT NOT NULL,
+            email TEXT,
+            phone TEXT,
+            subject TEXT NOT NULL,
+            message TEXT NOT NULL,
+            status TEXT DEFAULT 'pending',
+            created_at TEXT NOT NULL
+        );
+    """)
+    
     # Boshlang'ich taomlar qo'shish
     cur.execute("SELECT COUNT(*) FROM menu_items")
     if cur.fetchone()[0] == 0:
@@ -217,6 +231,20 @@ def ensure_orders_status_column():
         pass
     conn.close()
 
+def ensure_cart_items_columns():
+    """Cart_items jadvaliga user_id ustunini qo'shadi (migration)."""
+    conn = get_db()
+    cur = conn.cursor()
+    try:
+        cur.execute("PRAGMA table_info(cart_items);")
+        cols = [r[1] for r in cur.fetchall()]
+        if 'user_id' not in cols:
+            cur.execute("ALTER TABLE cart_items ADD COLUMN user_id INTEGER;")
+            conn.commit()
+    except Exception as e:
+        pass
+    conn.close()
+
 def cleanup_expired_orders():
     """Waiting holatidagi, 30 daqiqadan oshgan buyurtmalarni cancelled ga o'tkazadi."""
     conn = get_db()
@@ -231,6 +259,7 @@ def cleanup_expired_orders():
 
 # Ensure column exists on startup
 ensure_orders_status_column()
+ensure_cart_items_columns()
 
 
 # O'rniga buni app context ichida chaqiramiz
@@ -1108,6 +1137,10 @@ def super_admin_dashboard():
         except (json.JSONDecodeError, FileNotFoundError):
             users_json = []
     
+    # Savollarni olish
+    cur.execute("SELECT * FROM questions ORDER BY created_at DESC")
+    questions = cur.fetchall()
+    
     # Buyurtmalar statistikasi
     cur.execute("SELECT COUNT(*) FROM orders")
     total_orders = cur.fetchone()[0]
@@ -1142,6 +1175,7 @@ def super_admin_dashboard():
                          couriers_db=couriers_db,
                          users_db=users_db,
                          users_json=users_json,
+                         questions=questions,
                          stats=stats)
 
 @app.route("/super-admin/delete-staff/<int:staff_id>", methods=["POST"])
@@ -1303,6 +1337,59 @@ def super_admin_logout():
     session.pop("super_admin", None)
     flash("Super admin panelidan chiqildi.", "info")
     return redirect(url_for("index"))
+
+# ---- YANGI SAHIFALAR ----
+@app.route("/favorites")
+def favorites():
+    if not session.get("user_id"):
+        flash("Sevimlilarni ko'rish uchun tizimga kiring.", "error")
+        return redirect(url_for("login"))
+    
+    user_id = session.get("user_id")
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT mi.* FROM favorites f
+        JOIN menu_items mi ON f.menu_item_id = mi.id
+        WHERE f.user_id = ? AND mi.available = 1
+        ORDER BY f.created_at DESC
+    """, (user_id,))
+    favorites = cur.fetchall()
+    conn.close()
+    
+    return render_template("favorites.html", favorites=favorites)
+
+@app.route("/contact", methods=["GET", "POST"])
+def contact():
+    if request.method == "POST":
+        name = request.form.get("name", "").strip()
+        email = request.form.get("email", "").strip()
+        phone = request.form.get("phone", "").strip()
+        subject = request.form.get("subject", "").strip()
+        message = request.form.get("message", "").strip()
+        
+        if not all([name, subject, message]):
+            flash("Ism, mavzu va xabar maydoni majburiy.", "error")
+            return redirect(url_for("contact"))
+        
+        conn = get_db()
+        cur = conn.cursor()
+        now = get_current_time().isoformat()
+        cur.execute("""
+            INSERT INTO questions (user_name, email, phone, subject, message, created_at)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (name, email, phone, subject, message, now))
+        conn.commit()
+        conn.close()
+        
+        flash("Savolingiz muvaffaqiyatli yuborildi! Tez orada javob beramiz.", "success")
+        return redirect(url_for("contact"))
+    
+    return render_template("contact.html")
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
 
 
 

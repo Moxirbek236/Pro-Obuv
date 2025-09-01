@@ -201,6 +201,9 @@
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab">👥 Foydalanuvchilar</button>
             </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="questions-tab" data-bs-toggle="tab" data-bs-target="#questions" type="button" role="tab">❓ Savollar</button>
+            </li>
         </ul>
 
         <div class="tab-content" id="myTabContent">
@@ -462,6 +465,52 @@
                     </div>
                     {% else %}
                     <p class="text-center">Hech qanday buyurtma bergan foydalanuvchi topilmadi.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Savollar Tab -->
+            <div class="tab-pane fade" id="questions" role="tabpanel">
+                <div class="section-card">
+                    <h3 class="section-title">❓ Foydalanuvchilardan kelgan savollar</h3>
+                    
+                    {% if questions %}
+                    <div class="table-responsive mt-3">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Ism</th>
+                                    <th>Email</th>
+                                    <th>Telefon</th>
+                                    <th>Mavzu</th>
+                                    <th>Xabar</th>
+                                    <th>Vaqt</th>
+                                    <th>Holat</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for question in questions %}
+                                <tr>
+                                    <td><strong>{{ question.id }}</strong></td>
+                                    <td>{{ question.user_name }}</td>
+                                    <td>{{ question.email or 'N/A' }}</td>
+                                    <td>{{ question.phone or 'N/A' }}</td>
+                                    <td>{{ question.subject }}</td>
+                                    <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;">{{ question.message }}</td>
+                                    <td>{{ question.created_at[:16].replace('T', ' ') }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'warning' if question.status == 'pending' else 'success' }}">
+                                            {{ 'Kutilmoqda' if question.status == 'pending' else 'Javob berildi' }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-center">Hech qanday savol topilmadi.</p>
                     {% endif %}
                 </div>
             </div>
