@@ -253,8 +253,41 @@ function cancelOrder(ticketNo) {
     });
 }
 
+// URL role parametrini qo'shish
+function addRoleToURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (!urlParams.has('role')) {
+        // Session dan role ni aniqlash
+        let userRole = 'guest';
+        
+        // Body class yoki session ma'lumotlaridan role ni aniqlash
+        if (document.querySelector('.navbar-text')?.textContent.includes('Super Admin')) {
+            userRole = 'admin';
+        } else if (document.querySelector('.navbar-text')?.textContent.includes('👨‍💼')) {
+            userRole = 'staff';
+        } else if (document.querySelector('.navbar-text')?.textContent.includes('🚚')) {
+            userRole = 'courier';
+        } else if (document.querySelector('.navbar-text')?.textContent.includes('👤')) {
+            userRole = 'user';
+        }
+        
+        // URL ga role parametrini qo'shish
+        if (userRole !== 'guest') {
+            urlParams.set('role', userRole);
+            const newURL = window.location.pathname + '?' + urlParams.toString();
+            window.history.replaceState({}, '', newURL);
+            
+            // Body ga role class qo'shish
+            document.body.classList.add('role-' + userRole);
+        }
+    }
+}
+
 // Sahifa yuklanganda ishga tushiradigan funksiyalar
 document.addEventListener('DOMContentLoaded', function() {
+    // URL role parametrini qo'shish
+    addRoleToURL();
+    
     // Savatcha sonini dastlabki yuklanish
     updateCartCount();
 
