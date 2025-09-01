@@ -47,6 +47,9 @@
             <span class="navbar-text text-white me-3">👤 {{ session.get('user_first_name') }} {{ session.get('user_last_name') }}</span>
           </li>
           <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('profile') }}">👤 Profil</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="{{ url_for('logout') }}">🚪 Chiqish</a>
           </li>
         {% elif session.get('staff_id') %}

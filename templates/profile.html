@@ -1,0 +1,266 @@
+
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil - Restoran</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=036467b2-54b9-44c8-bc32-9e85e02183c4&lang=uz_UZ" type="text/javascript"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+        .profile-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .profile-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .profile-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(248, 250, 252, 0.8);
+            border-radius: 15px;
+        }
+        .form-control {
+            border-radius: 10px;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+        }
+        .form-control:focus {
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+        }
+        .btn-update {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+        .btn-update:hover {
+            background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-card">
+        <div class="profile-header">
+            <h2>👤 Profil</h2>
+            <p class="text-muted">Shaxsiy ma'lumotlaringizni boshqaring</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ 'danger' if category=='error' else 'success' if category=='success' else category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <!-- Shaxsiy ma'lumotlar -->
+        <div class="profile-section">
+            <h4>📋 Shaxsiy ma'lumotlar</h4>
+            <form method="POST" action="{{ url_for('update_profile') }}">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="first_name" class="form-label">Ism</label>
+                        <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.first_name }}" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="last_name" class="form-label">Familiya</label>
+                        <input type="text" class="form-control" id="last_name" name="last_name" value="{{ user.last_name }}" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">📧 Email</label>
+                    <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="phone" class="form-label">📱 Telefon</label>
+                    <input type="tel" class="form-control" id="phone" name="phone" value="{{ user.phone or '' }}" placeholder="+998901234567">
+                </div>
+                <button type="submit" class="btn btn-update">💾 Saqlash</button>
+            </form>
+        </div>
+
+        <!-- Manzil -->
+        <div class="profile-section">
+            <h4>📍 Yashash manzili</h4>
+            <form method="POST" action="{{ url_for('update_address') }}">
+                <div class="mb-3">
+                    <label for="address" class="form-label">Manzil</label>
+                    <input type="text" class="form-control" id="address" name="address" value="{{ user.address or '' }}" placeholder="Manzilni xaritadan tanlang" readonly>
+                </div>
+                <div id="profile-map" style="height: 250px; border-radius: 10px; margin-bottom: 15px;"></div>
+                <input type="hidden" id="address_latitude" name="address_latitude" value="{{ user.address_latitude or '' }}">
+                <input type="hidden" id="address_longitude" name="address_longitude" value="{{ user.address_longitude or '' }}">
+                <button type="submit" class="btn btn-update">📍 Manzilni yangilash</button>
+            </form>
+        </div>
+
+        <!-- Parolni o'zgartirish -->
+        <div class="profile-section">
+            <h4>🔐 Parolni o'zgartirish</h4>
+            <form method="POST" action="{{ url_for('change_password') }}">
+                <div class="mb-3">
+                    <label for="current_password" class="form-label">Joriy parol</label>
+                    <input type="password" class="form-control" id="current_password" name="current_password" required>
+                </div>
+                <div class="mb-3">
+                    <label for="new_password" class="form-label">Yangi parol</label>
+                    <input type="password" class="form-control" id="new_password" name="new_password" required>
+                </div>
+                <div class="mb-3">
+                    <label for="confirm_password" class="form-label">Yangi parolni tasdiqlash</label>
+                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                </div>
+                <button type="submit" class="btn btn-update">🔑 Parolni o'zgartirish</button>
+            </form>
+        </div>
+
+        <!-- Buyurtmalar tarixi -->
+        <div class="profile-section">
+            <h4>📦 Buyurtmalar tarixi</h4>
+            {% if orders %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Raqam</th>
+                                <th>Sana</th>
+                                <th>Holat</th>
+                                <th>Jami</th>
+                                <th>Amallar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+                            <tr>
+                                <td>#{{ order.ticket_no }}</td>
+                                <td>{{ order.created_at[:16] }}</td>
+                                <td>
+                                    {% if order.status == 'waiting' %}
+                                        <span class="badge bg-warning">⏳ Tayyorlanmoqda</span>
+                                    {% elif order.status == 'ready' %}
+                                        <span class="badge bg-success">✅ Tayyor</span>
+                                    {% elif order.status == 'served' %}
+                                        <span class="badge bg-primary">🎉 Berildi</span>
+                                    {% elif order.status == 'delivered' %}
+                                        <span class="badge bg-info">🚚 Yetkazildi</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ order.status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ "{:,.0f}".format(order.total_amount or 0) }} so'm</td>
+                                <td>
+                                    <a href="{{ url_for('view_receipt', ticket_no=order.ticket_no) }}" class="btn btn-sm btn-outline-primary">📄 Chek</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-muted">Sizda hali buyurtmalar yo'q.</p>
+                <a href="{{ url_for('menu') }}" class="btn btn-primary">🍽️ Menuga o'tish</a>
+            {% endif %}
+        </div>
+
+        <!-- Navigatsiya tugmalari -->
+        <div class="text-center">
+            <a href="{{ url_for('index') }}" class="btn btn-outline-secondary me-2">🏠 Bosh sahifa</a>
+            <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">🚪 Chiqish</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let profileMap;
+        let profileMarker;
+
+        ymaps.ready(function() {
+            const userLat = parseFloat(document.getElementById('address_latitude').value);
+            const userLng = parseFloat(document.getElementById('address_longitude').value);
+            const center = (userLat && userLng) ? [userLat, userLng] : [41.2995, 69.2401];
+
+            // Xarita yaratish
+            profileMap = new ymaps.Map('profile-map', {
+                center: center,
+                zoom: userLat && userLng ? 15 : 12,
+                controls: ['zoomControl', 'typeSelector']
+            });
+
+            // Agar mavjud manzil bo'lsa, marker qo'yish
+            if (userLat && userLng) {
+                setProfileLocation([userLat, userLng]);
+            }
+
+            // Xaritaga bosish hodisasi
+            profileMap.events.add('click', function(e) {
+                const coords = e.get('coords');
+                setProfileLocation(coords);
+            });
+        });
+
+        function setProfileLocation(coords) {
+            // Avvalgi marker olib tashlash
+            if (profileMarker) {
+                profileMap.geoObjects.remove(profileMarker);
+            }
+
+            // Yangi marker qo'yish
+            profileMarker = new ymaps.Placemark(coords, {
+                hintContent: 'Sizning manzilingiz',
+                balloonContent: 'Yashash manzilingiz'
+            }, {
+                draggable: true,
+                iconColor: '#4CAF50'
+            });
+
+            profileMap.geoObjects.add(profileMarker);
+
+            // Marker siqilganda yangi joylashuvni olish
+            profileMarker.events.add('dragend', function() {
+                const newCoords = profileMarker.geometry.getCoordinates();
+                setProfileLocation(newCoords);
+            });
+
+            // Koordinatalarni saqlash
+            document.getElementById('address_latitude').value = coords[0];
+            document.getElementById('address_longitude').value = coords[1];
+
+            // Manzilni olish (Reverse Geocoding)
+            ymaps.geocode(coords).then(function(res) {
+                const firstGeoObject = res.geoObjects.get(0);
+                let address = '';
+
+                if (firstGeoObject) {
+                    address = firstGeoObject.getAddressLine();
+                } else {
+                    address = `Lat: ${coords[0].toFixed(6)}, Lng: ${coords[1].toFixed(6)}`;
+                }
+
+                document.getElementById('address').value = address;
+            });
+        }
+    </script>
+</body>
+</html>
