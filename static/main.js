@@ -80,6 +80,11 @@ function handleFormSubmit(form) {
     if (submitButton) {
         console.log('Submit tugma topildi:', submitButton);
         showLoading(submitButton);
+        
+        // Form ni submit qilish
+        setTimeout(() => {
+            form.submit();
+        }, 100);
     } else {
         console.log('Submit tugma topilmadi');
     }
@@ -213,8 +218,33 @@ document.addEventListener('DOMContentLoaded', function() {
     // Form submit eventlarini tinglash
     const forms = document.querySelectorAll('form');
     forms.forEach(form => {
-        form.addEventListener('submit', function() {
-            handleFormSubmit(this);
+        form.addEventListener('submit', function(e) {
+            // Buyurtma berish formi uchun maxsus logic
+            if (this.action && this.action.includes('/user')) {
+                console.log('Buyurtma berish formi submit qilindi');
+                
+                // Formda kerakli maydonlar borligini tekshirish
+                const requiredFields = this.querySelectorAll('input[required], select[required]');
+                let isValid = true;
+                
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        isValid = false;
+                        field.style.borderColor = 'red';
+                    } else {
+                        field.style.borderColor = '';
+                    }
+                });
+                
+                if (!isValid) {
+                    e.preventDefault();
+                    alert('Barcha majburiy maydonlarni to\'ldiring!');
+                    return false;
+                }
+                
+                // Loading ko'rsatish
+                handleFormSubmit(this);
+            }
         });
     });
 

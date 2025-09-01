@@ -2674,6 +2674,36 @@ def api_search_places():
     
     return jsonify({"places": []})
 
+@app.route("/api/set-language", methods=["POST"])
+def api_set_language():
+    """Til sozlamasini saqlash"""
+    try:
+        data = request.get_json()
+        language = data.get("language", "uz")
+        
+        # Session ga til sozlamasini saqlash
+        session['interface_language'] = language
+        
+        return jsonify({"success": True, "message": "Til o'zgartirildi"})
+    except Exception as e:
+        logging.error(f"Til sozlamasida xatolik: {str(e)}")
+        return jsonify({"success": False, "message": "Server xatoligi"}), 500
+
+@app.route("/api/set-theme", methods=["POST"])
+def api_set_theme():
+    """Mavzu sozlamasini saqlash"""
+    try:
+        data = request.get_json()
+        dark_mode = data.get("dark_mode", False)
+        
+        # Session ga mavzu sozlamasini saqlash
+        session['dark_theme'] = dark_mode
+        
+        return jsonify({"success": True, "message": "Mavzu o'zgartirildi"})
+    except Exception as e:
+        logging.error(f"Mavzu sozlamasida xatolik: {str(e)}")
+        return jsonify({"success": False, "message": "Server xatoligi"}), 500
+
 @app.route("/receipt/<int:ticket_no>")
 def view_receipt(ticket_no):
     """Chekni ko'rish sahifasi"""
