@@ -270,9 +270,9 @@
                                     <td>{{ staff.birth_date }}</td>
                                     <td>{{ staff.phone }}</td>
                                     <td>{{ staff.passport_series or 'N/A' }} {{ staff.passport_number or '' }}</td>
-                                    <td>{{ staff.activity[:16].replace('T', ' ') if staff.activity else 'Hech qachon' }}</td>
-                                    <td>{{ "%.1f"|format(staff.hours or 0) }} soat</td>
-                                    <td>{{ staff.handled_orders or 0 }}</td>
+                                    <td>{{ staff.last_activity[:16].replace('T', ' ') if staff.last_activity else 'Hech qachon' }}</td>
+                                    <td>{{ "%.1f"|format(staff.total_hours or 0) }} soat</td>
+                                    <td>{{ staff.orders_handled or 0 }}</td>
                                     <td>{{ staff.created_at[:16].replace('T', ' ') if staff.created_at else 'N/A' }}</td>
                                     <td>
                                         <form method="POST" action="{{ url_for('super_admin_delete_staff', staff_id=staff.id) }}" 
@@ -356,9 +356,9 @@
                                     <td>{{ courier.birth_date }}</td>
                                     <td>{{ courier.phone }}</td>
                                     <td>{{ courier.passport_series or 'N/A' }} {{ courier.passport_number or '' }}</td>
-                                    <td>{{ courier.activity[:16].replace('T', ' ') if courier.activity else 'Hech qachon' }}</td>
-                                    <td>{{ "%.1f"|format(courier.hours or 0) }} soat</td>
-                                    <td>{{ courier.deliveries or 0 }}</td>
+                                    <td>{{ courier.last_activity[:16].replace('T', ' ') if courier.last_activity else 'Hech qachon' }}</td>
+                                    <td>{{ "%.1f"|format(courier.total_hours or 0) }} soat</td>
+                                    <td>{{ courier.deliveries_completed or 0 }}</td>
                                     <td>{{ courier.created_at[:16].replace('T', ' ') }}</td>
                                 </tr>
                                 {% endfor %}
