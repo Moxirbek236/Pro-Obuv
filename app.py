@@ -1148,10 +1148,11 @@ def user_page():
             # Masofa va vaqtni float ga aylantirish
             try:
                 delivery_distance = float(delivery_distance) if delivery_distance else 0
-                courier_delivery_time = int(courier_delivery_time) if courier_delivery_time else 30
             except ValueError:
                 delivery_distance = 0
-                courier_delivery_time = 30
+            
+            # Kuryer yetkazish vaqti (30 daqiqa default)
+            courier_delivery_time = 30
 
             # Delivery uchun ETA ni qayta hisoblash
             if order_type == "delivery":
