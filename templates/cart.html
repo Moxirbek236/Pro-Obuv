@@ -53,30 +53,25 @@
             <div id="delivery-fields" class="delivery-section" style="display: none;">
                 <h4>📍 Yetkazib berish ma'lumotlari:</h4>
 
-                <!-- Profil ma'lumotlari ko'rsatish -->
-                <div class="profile-info">
-                    <div class="info-row">
-                        <span class="info-label">📱 Telefon:</span>
-                        <span class="info-value">{{ session.get('user_phone', 'Kiritilmagan') }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">🏠 Manzil:</span>
-                        <span class="info-value">{{ session.get('user_address', 'Kiritilmagan') }}</span>
-                    </div>
-                </div>
-
-                <!-- Xaritada joylashuvni tanlash -->
+                <!-- Yetkazib berish manzili -->
                 <div class="map-selection">
-                    <label for="delivery_address" class="form-label">Yetkazib berish manzili:</label>
+                    <label for="delivery_address" class="form-label">📍 Yetkazib berish manzili:</label>
                     <input type="text"
                            class="form-control"
                            id="delivery_address"
                            name="delivery_address"
-                           placeholder="Manzilni kiriting"
+                           placeholder="Manzilni xaritadan tanlang"
                            value="{{ session.get('user_address', '') }}"
-                           required>
+                           readonly>
                     <div id="address_status" class="mt-1"></div>
                     <div id="map" style="height: 300px; margin-top: 10px;"></div>
+
+                    <!-- Yashirin maydonlar -->
+                    <input type="hidden" id="delivery_latitude" name="delivery_latitude">
+                    <input type="hidden" id="delivery_longitude" name="delivery_longitude">
+                    <input type="hidden" id="delivery_distance" name="delivery_distance">
+                    <input type="hidden" id="delivery_price" name="delivery_price">
+                    <input type="hidden" id="delivery_map_url" name="delivery_map_url">
 
                     <!-- Filial ma'lumotlari -->
                     <div id="branch-info" class="branch-info" style="display: none; margin-top: 15px;">
@@ -86,74 +81,29 @@
 
                 <!-- Manzil qidirish -->
                 <div class="mb-3">
-                    <label for="address-search" class="form-label">Manzilni qidiring:</label>
+                    <label for="address-search" class="form-label">🔍 Manzilni qidiring:</label>
                     <div class="input-group">
                         <input type="text" class="form-control" id="address-search" placeholder="Masalan: Amir Temur ko'chasi">
-                        <button type="button" class="btn btn-outline-primary" onclick="searchAddressOnMap()">🔍 Qidirish</button>
+                        <button type="button" class="btn btn-outline-primary" onclick="searchAddressOnMap()">Qidirish</button>
                     </div>
                 </div>
 
-                <!-- Shaxsiy ma'lumotlar -->
-                <div class="customer-info">
-                    {% if session.get('user_phone') %}
-                        <div class="info-row">
-                            <span class="info-label">📱 Telefon:</span>
-                            <span class="info-value">{{ session.get('user_phone') }}</span>
+                <!-- Yetkazib berish ma'lumotlari ko'rsatish -->
+                <div id="delivery-summary" class="delivery-summary" style="display: none;">
+                    <h4>📦 Yetkazib berish ma'lumotlari</h4>
+                    <div class="delivery-details">
+                        <div class="detail-item">
+                            <span class="detail-label">📏 Masofa:</span>
+                            <span id="distance-display" class="detail-value">-</span>
                         </div>
-                    {% else %}
-                        <div class="form-group">
-                            <label for="customer_phone">📱 Telefon raqami:</label>
-                            <input type="tel" id="customer_phone" name="customer_phone" placeholder="+998901234567" required>
+                        <div class="detail-item">
+                            <span class="detail-label">💰 Yetkazish narxi:</span>
+                            <span id="delivery-price-display" class="detail-value">-</span>
                         </div>
-                    {% endif %}
-
-                    <!-- Uy manzili profilda bo'lmasa so'ralsin -->
-                    {% if not session.get('user_address') %}
-                        <div class="form-group">
-                            <label for="home_address">🏠 Uy manzili:</label>
-                            <input type="text" id="home_address" name="home_address" placeholder="Uy manzilingizni kiriting" required>
-                            <small class="text-muted">Bu manzil profilingizga saqlanadi</small>
+                        <div class="detail-item">
+                            <span class="detail-label">⏱️ Taxminiy vaqt:</span>
+                            <span id="delivery-time-display" class="detail-value">-</span>
                         </div>
-                    {% endif %}
-                </div>
-
-                <!-- Karta ma'lumotlari -->
-                <div class="card-info">
-                    {% if session.get('user_card_number') %}
-                        <div class="info-row">
-                            <span class="info-label">💳 Karta:</span>
-                            <span class="info-value">**** **** **** {{ session.get('user_card_number')[-4:] if session.get('user_card_number') else '' }}</span>
-                        </div>
-                    {% else %}
-                        <div class="form-group">
-                            <label for="card_number">💳 Karta raqami:</label>
-                            <input type="text" id="card_number" name="card_number" placeholder="1234 5678 9012 3456"
-                                   pattern="[0-9\s]{13,19}" maxlength="19" required>
-                            <small class="text-muted">To'lov uchun karta raqamini kiriting</small>
-                        </div>
-                    {% endif %}
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="delivery_distance">Masofa (km):</label>
-                        <input type="number" id="delivery_distance" name="delivery_distance" step="0.1" min="0" placeholder="Avtomatik hisoblanadi" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label for="courier_delivery_time">Kuryer taxminiy yetkazish vaqti (daqiqa):</label>
-                        <input type="number" id="courier_delivery_time" name="courier_delivery_time" min="10" max="120" placeholder="30" required>
-                        <small class="text-muted">Kuryer qancha vaqtda yetkazishini kiriting</small>
-                    </div>
-                </div>
-
-                <div class="delivery-info">
-                    <div class="info-item">
-                        <span class="info-icon">⏱️</span>
-                        <span class="info-text">Taxminiy yetkazib berish vaqti: 25-45 daqiqa</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-icon">📞</span>
-                        <span class="info-text">Kuryer sizga yetib borgunga qadar qo'ng'iroq qiladi</span>
                     </div>
                 </div>
             </div>
@@ -298,8 +248,6 @@ function setDeliveryLocation(coords) {
             address = `Lat: ${coords[0].toFixed(6)}, Lng: ${coords[1].toFixed(6)}`;
         }
 
-        document.getElementById('selected-address').textContent = address;
-
         const deliveryAddressInput = document.getElementById('delivery_address');
         if (deliveryAddressInput) {
             deliveryAddressInput.value = address;
@@ -322,12 +270,12 @@ function setDeliveryLocation(coords) {
             deliveryMapUrlInput.value = mapUrl;
         }
 
-        // Masofani hisoblash
-        calculateDistance(coords);
+        // Masofani va narxni avtomatik hisoblash
+        calculateDistanceAndPrice(coords);
     });
 }
 
-function calculateDistance(destination) {
+function calculateDistanceAndPrice(destination) {
     // Restoran joylashuvi (Toshkent markazi)
     const restaurant = [41.2995, 69.2401];
 
@@ -338,8 +286,7 @@ function calculateDistance(destination) {
         const distance = route.getLength();
         if (distance) {
             const distanceKm = distance / 1000;
-            document.getElementById('delivery_distance').value = distanceKm.toFixed(1);
-            updateTotal(); // Masofa hisoblangach umumiy summani yangilash
+            updateDeliveryInfo(distanceKm);
         }
     }, function(error) {
         console.error('Masofa hisoblashda xatolik:', error);
@@ -348,9 +295,31 @@ function calculateDistance(destination) {
             Math.pow((destination[0] - restaurant[0]) * 111, 2) +
             Math.pow((destination[1] - restaurant[1]) * 111 * Math.cos(restaurant[0] * Math.PI / 180), 2)
         );
-        document.getElementById('delivery_distance').value = distance.toFixed(1);
-        updateTotal();
+        updateDeliveryInfo(distance);
     });
+}
+
+function updateDeliveryInfo(distanceKm) {
+    // 1 km uchun 10000 so'm
+    const deliveryPrice = Math.round(distanceKm * 10000);
+    
+    // 1 km taxminan 10 daqiqada
+    const deliveryTime = Math.max(10, Math.round(distanceKm * 10));
+
+    // Yashirin maydonlarni to'ldirish
+    document.getElementById('delivery_distance').value = distanceKm.toFixed(1);
+    document.getElementById('delivery_price').value = deliveryPrice;
+
+    // Ko'rsatish maydonlarini yangilash
+    document.getElementById('distance-display').textContent = distanceKm.toFixed(1) + ' km';
+    document.getElementById('delivery-price-display').textContent = deliveryPrice.toLocaleString() + ' so\'m';
+    document.getElementById('delivery-time-display').textContent = deliveryTime + ' daqiqa';
+
+    // Yetkazib berish ma'lumotlarini ko'rsatish
+    document.getElementById('delivery-summary').style.display = 'block';
+
+    // Umumiy summani yangilash
+    updateTotal();
 }
 
 function toggleDeliveryFields() {
@@ -405,7 +374,7 @@ function toggleDeliveryFields() {
 function updateTotal() {
     const deliveryRadio = document.querySelector('input[name="order_type"][value="delivery"]');
     const totalElement = document.getElementById('total-amount');
-    const deliveryElement = document.getElementById('delivery-cost');
+    const deliveryCostElement = document.querySelector('.delivery-cost');
 
     let baseTotal = {{ total }};
     let deliveryCost = 0;
@@ -414,8 +383,17 @@ function updateTotal() {
         deliveryCost = parseFloat(document.getElementById('delivery_price').value) || 0;
     }
 
-    deliveryElement.textContent = deliveryCost.toLocaleString() + ' so\'m';
-    totalElement.textContent = (baseTotal + deliveryCost).toLocaleString() + ' so\'m';
+    if (deliveryCostElement) {
+        if (deliveryCost > 0) {
+            deliveryCostElement.textContent = 'Yetkazib berish: ' + deliveryCost.toLocaleString() + ' so\'m';
+        } else {
+            deliveryCostElement.textContent = 'Yetkazib berish: Bepul';
+        }
+    }
+
+    if (totalElement) {
+        totalElement.textContent = (baseTotal + deliveryCost).toLocaleString() + ' so\'m';
+    }
 }
 
 // Eng yaqin filialni topish
@@ -475,31 +453,18 @@ function validateOrderForm(form) {
         return false;
     }
 
-    // Agar delivery tanlangan bo'lsa, manzil tekshirish
+    // Agar delivery tanlangan bo'lsa, manzil va masofa tekshirish
     if (orderType.value === 'delivery') {
         const deliveryAddress = document.querySelector('input[name="delivery_address"]');
+        const deliveryDistance = document.querySelector('input[name="delivery_distance"]');
 
         if (!deliveryAddress || !deliveryAddress.value.trim()) {
-            alert('Yetkazib berish manzilini kiriting!');
-            if (deliveryAddress) {
-                deliveryAddress.focus();
-            }
+            alert('Yetkazib berish manzilini xaritadan tanlang!');
             return false;
         }
 
-        // Profilda telefon yo'q bo'lsa, formdan tekshirish
-        const customerPhone = document.querySelector('input[name="customer_phone"]');
-        if (customerPhone && !customerPhone.value.trim()) {
-            alert('Telefon raqamingizni kiriting!');
-            customerPhone.focus();
-            return false;
-        }
-
-        // Karta raqami tekshirish (agar form mavjud bo'lsa)
-        const cardNumber = document.querySelector('input[name="card_number"]');
-        if (cardNumber && !cardNumber.value.trim()) {
-            alert('Karta raqamini kiriting!');
-            cardNumber.focus();
+        if (!deliveryDistance || !deliveryDistance.value || parseFloat(deliveryDistance.value) <= 0) {
+            alert('Iltimos, avval xaritadan manzilni tanlang va masofa hisoblanishini kuting!');
             return false;
         }
     }
@@ -699,27 +664,46 @@ document.addEventListener('DOMContentLoaded', function() {
     margin-bottom: 15px;
 }
 
-.delivery-info {
-    background: #e7f3ff;
-    padding: 15px;
-    border-radius: 8px;
-    margin-top: 15px;
+.delivery-summary {
+    background: #e8f5e8;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+    border-left: 4px solid #28a745;
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.1);
 }
 
-.info-item {
-    display: flex;
-    align-items: center;
+.delivery-summary h4 {
+    margin: 0 0 15px 0;
+    color: #155724;
+    font-size: 18px;
+}
+
+.delivery-details {
+    display: grid;
     gap: 10px;
-    margin-bottom: 8px;
 }
 
-.info-icon {
-    font-size: 16px;
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(40, 167, 69, 0.2);
 }
 
-.info-text {
-    font-size: 13px;
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    font-weight: 500;
     color: #495057;
+}
+
+.detail-value {
+    color: #28a745;
+    font-weight: 600;
 }
 
 .total-breakdown {
