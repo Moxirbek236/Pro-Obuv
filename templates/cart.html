@@ -68,11 +68,12 @@
                 <!-- Xaritada joylashuvni tanlash -->
                 <div class="map-selection">
                     <label for="delivery_address" class="form-label">Yetkazib berish manzili:</label>
-                    <input type="text" 
-                           class="form-control" 
-                           id="delivery_address" 
-                           name="delivery_address" 
-                           placeholder="Manzilni kiriting" 
+                    <input type="text"
+                           class="form-control"
+                           id="delivery_address"
+                           name="delivery_address"
+                           placeholder="Manzilni kiriting"
+                           value="{{ session.get('user_address', '') }}"
                            required>
                     <div id="address_status" class="mt-1"></div>
                     <div id="map" style="height: 300px; margin-top: 10px;"></div>
@@ -80,9 +81,9 @@
                     <div class="selected-location">
                         <p><strong>Tanlangan joylashuv:</strong></p>
                         <p id="selected-address">Xaritada joyni belgilang</p>
-                        <input type="hidden" id="delivery_address" name="delivery_address">
-                        <input type="hidden" id="delivery_latitude" name="delivery_latitude">
-                        <input type="hidden" id="delivery_longitude" name="delivery_longitude">
+                        <input type="hidden" id="delivery_address_hidden" name="delivery_address">
+                        <input type="hidden" id="delivery_latitude" name="delivery_latitude" value="{{ session.get('user_address_latitude', '') }}">
+                        <input type="hidden" id="delivery_longitude" name="delivery_longitude" value="{{ session.get('user_address_longitude', '') }}">
                         <input type="hidden" id="delivery_map_url" name="delivery_map_url">
                     </div>
                 </div>
@@ -183,51 +184,62 @@ let selectedLocation = null;
 let searchControl;
 
 function initMap() {
-    // Yandex Maps APIni yuklash
-    ymaps.ready(function() {
-        // Toshkent markazi
-        const tashkent = [41.2995, 69.2401];
+            // Yandex Maps APIni yuklash
+            ymaps.ready(function() {
+                // Profil ma'lumotlarini olish
+                const userLat = parseFloat('{{ session.get("user_address_latitude", "") }}');
+                const userLng = parseFloat('{{ session.get("user_address_longitude", "") }}');
+                const userAddress = '{{ session.get("user_address", "") }}';
 
-        // Xarita yaratish
-        map = new ymaps.Map('map', {
-            center: tashkent,
-            zoom: 12,
-            controls: ['zoomControl', 'fullscreenControl', 'typeSelector']
-        });
+                // Agar profilda joylashuv mavjud bo'lsa, uni ishlatish
+                const initialCenter = (userLat && userLng) ? [userLat, userLng] : [41.2995, 69.2401];
+                const initialZoom = (userLat && userLng) ? 15 : 12;
 
-        // Qidiruv control qo'shish
-        searchControl = new ymaps.control.SearchControl({
-            options: {
-                useMapBounds: true,
-                noCentering: false,
-                noPlacemark: false,
-                placeholderContent: 'Manzilni qidiring...',
-                maxWidth: [30, 64, 150]
-            }
-        });
+                // Xarita yaratish
+                map = new ymaps.Map('map', {
+                    center: initialCenter,
+                    zoom: initialZoom,
+                    controls: ['zoomControl', 'fullscreenControl', 'typeSelector']
+                });
 
-        map.controls.add(searchControl);
+                // Qidiruv control qo'shish
+                searchControl = new ymaps.control.SearchControl({
+                    options: {
+                        useMapBounds: true,
+                        noCentering: false,
+                        noPlacemark: false,
+                        placeholderContent: 'Manzilni qidiring...',
+                        maxWidth: [30, 64, 150]
+                    }
+                });
 
-        // Foydalanuvchi joylashuvini olishga harakat qilish
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                const userLocation = [position.coords.latitude, position.coords.longitude];
-                map.setCenter(userLocation);
-                map.setZoom(15);
+                map.controls.add(searchControl);
 
-                // Foydalanuvchi joylashuvini belgilash
-                setDeliveryLocation(userLocation);
-            }, function(error) {
-                console.log("Joylashuvni olishda xatolik:", error);
+                // Agar profilda joylashuv mavjud bo'lsa, uni belgilash
+                if (userLat && userLng) {
+                    setDeliveryLocation([userLat, userLng]);
+                } else {
+                    // Foydalanuvchi joylashuvini olishga harakat qilish
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(function(position) {
+                            const userLocation = [position.coords.latitude, position.coords.longitude];
+                            map.setCenter(userLocation);
+                            map.setZoom(15);
+
+                            // Foydalanuvchi joylashuvini belgilash
+                            setDeliveryLocation(userLocation);
+                        }, function(error) {
+                            console.log("Joylashuvni olishda xatolik:", error);
+                        });
+                    }
+                }
+
+                // Xaritaga bosish hodisasi
+                map.events.add('click', function(e) {
+                    const coords = e.get('coords');
+                    setDeliveryLocation(coords);
+                });
             });
-        }
-
-        // Xaritaga bosish hodisasi
-        map.events.add('click', function(e) {
-            const coords = e.get('coords');
-            setDeliveryLocation(coords);
-        });
-    });
 }
 
 function searchAddressOnMap() {
@@ -337,7 +349,7 @@ function calculateDistance(destination) {
         console.error('Masofa hisoblashda xatolik:', error);
         // Oddiy masofa hisoblash (to'g'ri chiziq bo'yicha)
         const distance = Math.sqrt(
-            Math.pow((destination[0] - restaurant[0]) * 111, 2) + 
+            Math.pow((destination[0] - restaurant[0]) * 111, 2) +
             Math.pow((destination[1] - restaurant[1]) * 111 * Math.cos(restaurant[0] * Math.PI / 180), 2)
         );
         document.getElementById('delivery_distance').value = distance.toFixed(1);
@@ -473,6 +485,29 @@ document.addEventListener('DOMContentLoaded', (event) => {
     if (deliveryRadio && deliveryRadio.checked) {
         console.log("Delivery allaqachon tanlangan, fieldlarni ko'rsatish...");
         toggleDeliveryFields();
+    }
+
+    // Manzil inputiga yo'naltirish
+    // Agar delivery allaqachon tanlangan bo'lsa
+    const deliveryRadio = document.querySelector('input[name="order_type"][value="delivery"]');
+    if (deliveryRadio && deliveryRadio.checked) {
+        console.log("Delivery allaqachon tanlangan, fieldlarni ko'rsatish...");
+        toggleDeliveryFields();
+    }
+
+    // Delivery address inputini hidden input bilan sinxronizatsiya qilish
+    const deliveryAddressInput = document.getElementById('delivery_address');
+    const deliveryAddressHidden = document.getElementById('delivery_address_hidden');
+
+    if (deliveryAddressInput && deliveryAddressHidden) {
+        deliveryAddressInput.addEventListener('input', function() {
+            deliveryAddressHidden.value = this.value;
+        });
+
+        // Dastlabki qiymatni o'rnatish
+        if (deliveryAddressInput.value) {
+            deliveryAddressHidden.value = deliveryAddressInput.value;
+        }
     }
 
     // Manzil kiritilganda masofa hisoblash
