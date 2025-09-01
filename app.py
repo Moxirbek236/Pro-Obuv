@@ -2691,6 +2691,16 @@ def api_set_language():
 
         # Session ga til sozlamasini saqlash
         session['interface_language'] = language
+        session['font_size'] = data.get('font_size', 'medium') # Font size ham qabul qilib olamiz
+
+        # Tungi rejim sozlamasi
+        theme_mode = data.get('theme_mode', 'light')
+        dark_theme = (theme_mode == 'dark')
+
+        # Sozlamalarni session ga saqlash
+        session['interface_language'] = language
+        session['font_size'] = data.get('font_size', 'medium') # Font size ham saqlaymiz
+        session['dark_theme'] = dark_theme
 
         return jsonify({"success": True, "message": "Til o'zgartirildi"})
     except Exception as e:
