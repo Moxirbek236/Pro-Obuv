@@ -281,6 +281,18 @@ def ensure_orders_columns():
             cur.execute("ALTER TABLE orders ADD COLUMN order_type TEXT NOT NULL DEFAULT 'dine_in';")
             conn.commit()
 
+        if 'delivery_latitude' not in cols:
+            cur.execute("ALTER TABLE orders ADD COLUMN delivery_latitude REAL;")
+            conn.commit()
+
+        if 'delivery_longitude' not in cols:
+            cur.execute("ALTER TABLE orders ADD COLUMN delivery_longitude REAL;")
+            conn.commit()
+
+        if 'courier_delivery_time' not in cols:
+            cur.execute("ALTER TABLE orders ADD COLUMN courier_delivery_time INTEGER DEFAULT 30;")
+            conn.commit()
+
     except Exception as e:
         pass
     conn.close()
@@ -873,6 +885,19 @@ def user_page():
             flash("Foydalanuvchi ma'lumotlari topilmadi.", "error")
             return redirect(url_for("login"))
 
+        # Foydalanuvchi profilidan ma'lumotlarni olish
+        conn_profile = get_db()
+        cur_profile = conn_profile.cursor()
+        cur_profile.execute("SELECT phone, address, card_number FROM users WHERE id = ?", (user_id,))
+        user_profile = cur_profile.fetchone()
+        conn_profile.close()
+        
+        # Session ga profil ma'lumotlarini saqlash
+        if user_profile:
+            session['user_phone'] = user_profile['phone'] or ''
+            session['user_address'] = user_profile['address'] or ''
+            session['user_card_number'] = user_profile['card_number'] or ''
+
         session_id = get_session_id()
         conn = get_db()
 
@@ -892,25 +917,33 @@ def user_page():
 
             cur = conn.cursor()
             # Buyurtma yaratish - dostavka manzili bor bo'lsa delivery, yo'q bo'lsa dine_in
+            order_type = request.form.get("order_type", "dine_in")
             delivery_address = request.form.get("delivery_address", "").strip()
+            delivery_latitude = request.form.get("delivery_latitude", "")
+            delivery_longitude = request.form.get("delivery_longitude", "")
             delivery_distance = request.form.get("delivery_distance", 0)
-            delivery_price = request.form.get("delivery_price", 0)
-            customer_phone = request.form.get("customer_phone", "").strip()
-            card_number = request.form.get("card_number", "").strip()
-            order_type = "delivery" if delivery_address else "dine_in"
+            courier_delivery_time = request.form.get("courier_delivery_time", 30)
+            
+            # Profil ma'lumotlaridan olish
+            customer_phone = session.get('user_phone', '')
+            card_number = session.get('user_card_number', '') or request.form.get("card_number", "").strip()
 
-            # Masofa va narxni float ga aylantirish
+            # Masofa va vaqtni float ga aylantirish
             try:
                 delivery_distance = float(delivery_distance) if delivery_distance else 0
-                delivery_price = float(delivery_price) if delivery_price else 0
+                courier_delivery_time = int(courier_delivery_time) if courier_delivery_time else 30
             except ValueError:
                 delivery_distance = 0
-                delivery_price = 0
+                courier_delivery_time = 30
+
+            # Delivery uchun ETA ni qayta hisoblash
+            if order_type == "delivery":
+                eta_time = now + datetime.timedelta(minutes=eta_minutes + courier_delivery_time)
 
             cur.execute("""
-                INSERT INTO orders (user_id, customer_name, ticket_no, order_type, status, delivery_address, delivery_distance, delivery_price, customer_phone, card_number, created_at, eta_time)
-                VALUES (?, ?, ?, ?, 'waiting', ?, ?, ?, ?, ?, ?, ?);
-            """, (user_id, name, tno, order_type, delivery_address, delivery_distance, delivery_price, customer_phone, card_number, now.isoformat(), eta_time.isoformat()))
+                INSERT INTO orders (user_id, customer_name, ticket_no, order_type, status, delivery_address, delivery_distance, delivery_latitude, delivery_longitude, courier_delivery_time, customer_phone, card_number, created_at, eta_time)
+                VALUES (?, ?, ?, ?, 'waiting', ?, ?, ?, ?, ?, ?, ?, ?, ?);
+            """, (user_id, name, tno, order_type, delivery_address, delivery_distance, delivery_latitude, delivery_longitude, courier_delivery_time, customer_phone, card_number, now.isoformat(), eta_time.isoformat()))
 
             order_id = cur.lastrowid
 
