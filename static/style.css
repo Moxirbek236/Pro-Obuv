@@ -338,9 +338,9 @@ body.dark-theme .card {
   height: 50px;
 }
 
-.row{
+/* .row{
   margin-top: 500px;
-}
+} */
 
 .btn:hover {
   background: linear-gradient(135deg, var(--primary-dark) 0%, #6b46c1 100%);
