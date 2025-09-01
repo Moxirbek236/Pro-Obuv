@@ -202,20 +202,12 @@ function cancelOrder(ticketNo) {
 function initializeProfileDropdown() {
     const dropdown = document.getElementById('profileDropdown');
     if (dropdown) {
-        // Bootstrap dropdown avtomatik ishlaydi, lekin qo'shimcha funksiyalar qo'shish mumkin
+        // Bootstrap dropdown automatic ishlashi uchun event preventionni olib tashlaymiz
         dropdown.addEventListener('click', function(e) {
-            e.preventDefault();
+            // Bootstrap dropdown o'zi ishlashi uchun preventDefault qilmaymiz
             const dropdownMenu = this.nextElementSibling;
             if (dropdownMenu) {
                 dropdownMenu.classList.toggle('show');
-            }
-        });
-
-        // Boshqa joyga bosilganda dropdown yopish
-        document.addEventListener('click', function(e) {
-            const dropdownMenu = dropdown.nextElementSibling;
-            if (dropdownMenu && !dropdown.contains(e.target) && !dropdownMenu.contains(e.target)) {
-                dropdownMenu.classList.remove('show');
             }
         });
     }
