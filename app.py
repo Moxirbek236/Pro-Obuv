@@ -537,9 +537,9 @@ def search_location_with_serper(query, gl="uz", hl="uz"):
             "gl": gl,
             "hl": hl
         }
-        
+
         response = requests.post(url, headers=headers, json=data)
-        
+
         if response.status_code == 200:
             return response.json()
         else:
@@ -561,9 +561,9 @@ def get_places_with_serper(query, gl="uz", hl="uz"):
             "gl": gl,
             "hl": hl
         }
-        
+
         response = requests.post(url, headers=headers, json=data)
-        
+
         if response.status_code == 200:
             return response.json()
         else:
@@ -576,25 +576,25 @@ def validate_delivery_address(address):
     """Yetkazib berish manzilini tekshirish Yandex API orqali"""
     if not address:
         return False, "Manzil kiritilmagan"
-    
+
     try:
         # Yandex Geocoding API orqali manzilni tekshirish
         geocoding_url = "https://geocode-maps.yandex.ru/1.x/"
         params = {
-            'apikey': '036467b2-54b9-44c8-bc32-9e85e02183c4',
+            'apikey': app.config['YANDEX_GEOCODER_API'],
             'geocode': f"{address}, Toshkent, O'zbekiston",
             'format': 'json',
             'results': 1
         }
-        
+
         response = requests.get(geocoding_url, params=params, timeout=5)
-        
+
         if response.status_code == 200:
             data = response.json()
-            
+
             # Natijalarni tekshirish
             geo_objects = data.get('response', {}).get('GeoObjectCollection', {}).get('featureMember', [])
-            
+
             if geo_objects:
                 return True, "Manzil topildi"
             else:
@@ -605,7 +605,7 @@ def validate_delivery_address(address):
                 return True, "Manzil qabul qilindi"
             else:
                 return False, "Manzilni to'liqroq kiriting"
-                
+
     except Exception as e:
         # Xatolik bo'lsa, oddiy tekshirish
         if len(address) > 5:
@@ -618,42 +618,42 @@ def calculate_delivery_distance(address):
     try:
         # Restoran koordinatalari (Toshkent markazi)
         restaurant_coords = [41.2995, 69.2401]
-        
+
         # Yandex Geocoding API orqali manzilni koordinatalarga o'tkazish
         geocoding_url = "https://geocode-maps.yandex.ru/1.x/"
         params = {
-            'apikey': '036467b2-54b9-44c8-bc32-9e85e02183c4',
+            'apikey': app.config['YANDEX_GEOCODER_API'],
             'geocode': f"{address}, Toshkent, O'zbekiston",
             'format': 'json',
             'results': 1
         }
-        
+
         response = requests.get(geocoding_url, params=params, timeout=5)
-        
+
         if response.status_code == 200:
             data = response.json()
             geo_objects = data.get('response', {}).get('GeoObjectCollection', {}).get('featureMember', [])
-            
+
             if geo_objects:
                 # Koordinatalarni olish
                 point = geo_objects[0]['GeoObject']['Point']['pos'].split()
                 dest_coords = [float(point[1]), float(point[0])]  # lat, lng formatida
-                
+
                 # To'g'ri chiziq bo'yicha masofa hisoblash (Haversine formula)
                 import math
-                
+
                 lat1, lng1 = math.radians(restaurant_coords[0]), math.radians(restaurant_coords[1])
                 lat2, lng2 = math.radians(dest_coords[0]), math.radians(dest_coords[1])
-                
+
                 dlat = lat2 - lat1
                 dlng = lng2 - lng1
-                
+
                 a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlng/2)**2
                 c = 2 * math.asin(math.sqrt(a))
                 distance_km = 6371 * c  # Yer radiusi 6371 km
-                
+
                 return round(min(50, max(0.5, distance_km)), 1)
-        
+
         # Agar API ishlamasa yoki natija bo'lmasa, oddiy hisoblash
         if 'toshkent' in address.lower() or 'алмазар' in address.lower():
             return 5.0
@@ -663,7 +663,7 @@ def calculate_delivery_distance(address):
             return 12.0
         else:
             return 7.0
-            
+
     except Exception as e:
         logging.error(f"Masofa hisoblashda xatolik: {str(e)}")
         return 5.0
@@ -681,10 +681,10 @@ def generate_qr_code(receipt_data):
         "inn": "123456789",  # Restoran INN raqami
         "cashback_percent": receipt_data['cashback_percentage']
     }
-    
+
     # JSON formatda ma'lumotlarni tayyorlash
     qr_text = json.dumps(qr_data, ensure_ascii=False)
-    
+
     # QR kod yaratish
     qr = qrcode.QRCode(
         version=1,
@@ -694,15 +694,15 @@ def generate_qr_code(receipt_data):
     )
     qr.add_data(qr_text)
     qr.make(fit=True)
-    
+
     # QR kod rasmini yaratish
     img = qr.make_image(fill_color="black", back_color="white")
-    
+
     # Base64 formatga o'tkazish
     buffered = BytesIO()
     img.save(buffered, format="PNG")
     img_str = base64.b64encode(buffered.getvalue()).decode()
-    
+
     return img_str
 
 def get_session_id():
@@ -939,13 +939,13 @@ def cart():
     session_id = get_session_id()
     user_id = session.get("user_id")
     conn = get_db()
-    
+
     # Foydalanuvchi ma'lumotlarini olish va session ga yuklash
     if user_id:
         cur = conn.cursor()
         cur.execute("SELECT phone, address, address_latitude, address_longitude, first_name, last_name FROM users WHERE id = ?", (user_id,))
         user_profile = cur.fetchone()
-        
+
         if user_profile:
             session['user_phone'] = user_profile['phone'] or ''
             session['user_address'] = user_profile['address'] or ''
@@ -953,7 +953,7 @@ def cart():
             session['user_address_longitude'] = user_profile['address_longitude'] or ''
             session['user_first_name'] = user_profile['first_name'] or ''
             session['user_last_name'] = user_profile['last_name'] or ''
-    
+
     cart_items = get_cart_items(conn, session_id, user_id)
     total = get_cart_total(conn, session_id, user_id)
     conn.close()
@@ -1087,17 +1087,17 @@ def profile():
     user_id = session.get("user_id")
     conn = get_db()
     cur = conn.cursor()
-    
+
     try:
         # Foydalanuvchi ma'lumotlarini olish
         cur.execute("SELECT * FROM users WHERE id = ?", (user_id,))
         user = cur.fetchone()
-        
+
         if not user:
             conn.close()
             flash("Foydalanuvchi ma'lumotlari topilmadi.", "error")
             return redirect(url_for("logout"))
-        
+
         # Foydalanuvchi buyurtmalar tarixi va umumiy summa
         cur.execute("""
             SELECT o.*, COALESCE(r.total_amount, 0) as total_amount, 
@@ -1112,11 +1112,11 @@ def profile():
             LIMIT 10
         """, (user_id,))
         orders = cur.fetchall()
-        
+
         conn.close()
-        
+
         return render_template("profile.html", user=user, orders=orders)
-        
+
     except Exception as e:
         conn.close()
         logging.error(f"Profile sahifasida xatolik: {str(e)}")
@@ -1249,7 +1249,7 @@ def profile_settings():
     if not (session.get("user_id") or session.get("staff_id") or session.get("courier_id") or session.get("super_admin")):
         flash("Profil sozlamalarini ko'rish uchun tizimga kiring.", "error")
         return redirect(url_for("index"))
-    
+
     return render_template("profile_settings.html")
 
 @app.route("/settings")
@@ -1258,7 +1258,7 @@ def general_settings():
     if not (session.get("user_id") or session.get("staff_id") or session.get("courier_id") or session.get("super_admin")):
         flash("Umumi sozlamalarni ko'rish uchun tizimga kiring.", "error")
         return redirect(url_for("index"))
-    
+
     return render_template("general_settings.html")
 
 @app.route("/logout")
@@ -1273,7 +1273,7 @@ def logout():
 def user_page():
     if request.method == "POST":
         print("DEBUG: POST so'rov keldi /user endpoint ga")
-        
+
         # Foydalanuvchi session'dan ismni olish
         if not session.get("user_id"):
             print("DEBUG: User ID session da yo'q")
@@ -1287,7 +1287,7 @@ def user_page():
             print("DEBUG: User name session da yo'q")
             flash("Foydalanuvchi ma'lumotlari topilmadi.", "error")
             return redirect(url_for("login"))
-        
+
         print(f"DEBUG: Buyurtma berish boshlandi - User ID: {user_id}, Name: {name}")
         print(f"DEBUG: Form ma'lumotlari: {dict(request.form)}")
 
@@ -1297,7 +1297,7 @@ def user_page():
         cur_profile.execute("SELECT phone, address, card_number FROM users WHERE id = ?", (user_id,))
         user_profile = cur_profile.fetchone()
         conn_profile.close()
-        
+
         # Session ga profil ma'lumotlarini saqlash
         if user_profile:
             session['user_phone'] = user_profile['phone'] or ''
@@ -1318,9 +1318,9 @@ def user_page():
             # Profil ma'lumotlarini yangilash (agar yangi ma'lumotlar berilgan bo'lsa)
             home_address = request.form.get("home_address", "").strip()
             customer_phone_new = request.form.get("customer_phone", "").strip()
-            
+
             print(f"DEBUG: Form ma'lumotlari - home_address: {home_address}, customer_phone: {customer_phone_new}")
-            
+
             # Foydalanuvchi profilini yangilash
             if home_address or customer_phone_new:
                 cur_update = conn.cursor()
@@ -1337,7 +1337,7 @@ def user_page():
             now = get_current_time()
             eta_time = now + datetime.timedelta(minutes=eta_minutes)
             total = get_cart_total(conn, session_id, user_id)
-            
+
             print(f"DEBUG: Buyurtma ma'lumotlari - ticket: {tno}, total: {total}")
 
             cur = conn.cursor()
@@ -1349,7 +1349,7 @@ def user_page():
             delivery_distance = request.form.get("delivery_distance", 0)
             delivery_map_url = request.form.get("delivery_map_url", "")
             customer_note = request.form.get("customer_note", "")
-            
+
             # Profil ma'lumotlaridan olish
             customer_phone = session.get('user_phone', '')
             card_number = session.get('user_card_number', '') or request.form.get("card_number", "").strip()
@@ -1359,7 +1359,7 @@ def user_page():
                 delivery_distance = float(delivery_distance) if delivery_distance else 0
             except ValueError:
                 delivery_distance = 0
-            
+
             # Kuryer yetkazish vaqti (30 daqiqa default)
             courier_delivery_time = 30
 
@@ -1410,7 +1410,7 @@ def user_page():
 
             # Foydalanuvchini JSON fayliga saqlash
             save_user_to_json(name, tno, now, order_items_for_json)
-            
+
             print(f"DEBUG: Buyurtma muvaffaqiyatli yaratildi - ticket: {tno}")
 
         except Exception as e:
@@ -1591,7 +1591,7 @@ def courier_dashboard():
     # Kuryer statistikasini olish
     cur.execute("SELECT deliveries_completed, total_hours FROM couriers WHERE id = ?", (courier_id,))
     courier_stats = cur.fetchone()
-    
+
     # Faol buyurtmalar sonini olish
     cur.execute("SELECT COUNT(*) FROM orders WHERE courier_id = ? AND status = 'on_way'", (courier_id,))
     active_orders = cur.fetchone()[0]
@@ -1657,17 +1657,17 @@ def courier_set_price_time():
     try:
         price = float(price)
         delivery_time = int(delivery_time)
-        
+
         if price <= 0 or delivery_time <= 0:
             return jsonify({"success": False, "message": "Narx va vaqt musbat bo'lishi kerak"})
 
         conn = get_db()
         cur = conn.cursor()
-        
+
         # Buyurtma mavjudligini va statusini tekshirish
         cur.execute("SELECT * FROM orders WHERE id = ? AND status = 'ready'", (order_id,))
         order = cur.fetchone()
-        
+
         if not order:
             conn.close()
             return jsonify({"success": False, "message": "Buyurtma topilmadi yoki tayyor emas"})
@@ -1678,12 +1678,12 @@ def courier_set_price_time():
             SET courier_price = ?, courier_delivery_minutes = ?, delivery_price = ?
             WHERE id = ?
         """, (price, delivery_time, price, order_id))
-        
+
         conn.commit()
         conn.close()
-        
+
         return jsonify({"success": True, "message": "Narx va vaqt belgilandi"})
-        
+
     except Exception as e:
         logging.error(f"Kuryer narx belgilashda xatolik: {str(e)}")
         return jsonify({"success": False, "message": "Server xatoligi"}), 500
@@ -1887,21 +1887,21 @@ def add_menu_item():
     conn = get_db()
     cur = conn.cursor()
     now = get_current_time().isoformat()
-    
+
     # Jadval tuzilishini tekshirish va kerakli ustunlarni qo'shish
     cur.execute("PRAGMA table_info(menu_items);")
     columns = [col[1] for col in cur.fetchall()]
-    
+
     if 'description' not in columns:
         cur.execute("ALTER TABLE menu_items ADD COLUMN description TEXT;")
-    
+
     if 'image_url' not in columns:
         cur.execute("ALTER TABLE menu_items ADD COLUMN image_url TEXT;")
-    
+
     # Ma'lumotni kiritish
     cur.execute("INSERT INTO menu_items (name, price, category, description, image_url, created_at) VALUES (?, ?, ?, ?, ?, ?)",
                (name, price, category, description, image_url, now))
-    
+
     conn.commit()
     conn.close()
     flash("Yangi mahsulot qo'shildi!", "success")
@@ -2534,10 +2534,10 @@ def super_admin_add_menu_item():
     conn = get_db()
     cur = conn.cursor()
     now = get_current_time().isoformat()
-    
+
     cur.execute("INSERT INTO menu_items (name, price, category, description, image_url, created_at) VALUES (?, ?, ?, ?, ?, ?)",
                (name, price, category, description, image_url, now))
-    
+
     conn.commit()
     conn.close()
     flash("Yangi mahsulot qo'shildi!", "success")
@@ -2639,15 +2639,15 @@ def api_validate_address():
         data = request.get_json()
         if not data:
             return jsonify({"valid": False, "message": "Ma'lumot yuborilmagan"})
-            
+
         address = data.get("address", "").strip()
-        
+
         if not address:
             return jsonify({"valid": False, "message": "Manzil kiritilmagan"})
-        
+
         is_valid, message = validate_delivery_address(address)
         distance = calculate_delivery_distance(address) if is_valid else 0
-        
+
         return jsonify({
             "valid": is_valid,
             "message": message,
@@ -2663,12 +2663,12 @@ def api_search_places():
     """Joylarni qidirish API"""
     data = request.get_json()
     query = data.get("query", "").strip()
-    
+
     if not query:
         return jsonify({"places": []})
-    
+
     places_result = get_places_with_serper(f"{query} Toshkent")
-    
+
     if places_result and places_result.get('places'):
         places = []
         for place in places_result['places'][:5]:  # Faqat birinchi 5 ta natija
@@ -2679,7 +2679,7 @@ def api_search_places():
                 "rating": place.get("rating", 0)
             })
         return jsonify({"places": places})
-    
+
     return jsonify({"places": []})
 
 @app.route("/api/set-language", methods=["POST"])
@@ -2688,10 +2688,10 @@ def api_set_language():
     try:
         data = request.get_json()
         language = data.get("language", "uz")
-        
+
         # Session ga til sozlamasini saqlash
         session['interface_language'] = language
-        
+
         return jsonify({"success": True, "message": "Til o'zgartirildi"})
     except Exception as e:
         logging.error(f"Til sozlamasida xatolik: {str(e)}")
@@ -2703,10 +2703,10 @@ def api_set_theme():
     try:
         data = request.get_json()
         dark_mode = data.get("dark_mode", False)
-        
+
         # Session ga mavzu sozlamasini saqlash
         session['dark_theme'] = dark_mode
-        
+
         return jsonify({"success": True, "message": "Mavzu o'zgartirildi"})
     except Exception as e:
         logging.error(f"Mavzu sozlamasida xatolik: {str(e)}")
