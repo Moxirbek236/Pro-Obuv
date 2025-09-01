@@ -208,15 +208,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const fontSize = localStorage.getItem('fontSize') || '{{ session.get("font_size", "medium") }}';
     document.body.classList.add('font-' + fontSize);
 
-    // Tilni yuklash
+    // Tilni yuklash va sahifani tarjima qilish
     const language = localStorage.getItem('language') || '{{ session.get("interface_language", "uz") }}';
-    if (language === 'ru') {
-        // Rus tili uchun matnlarni almashtirish
-        translateToRussian();
-    } else if (language === 'en') {
-        // Ingliz tili uchun matnlarni almashtirish  
-        translateToEnglish();
-    }
+    translatePage(language);
+    
+    // Body ga til klassini qo'shish
+    document.body.classList.add('lang-' + language);
 });
 
 function translateToRussian() {
