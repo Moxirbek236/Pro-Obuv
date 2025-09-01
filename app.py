@@ -202,14 +202,14 @@ def init_db():
     if cur.fetchone()[0] == 0:
         now = get_current_time().isoformat()
         sample_items = [
-            ('Osh', 25000, 'food', 'An\'anaviy o\'zbek taomi, guruch va go\'sht bilan', '/static/images/osh.jpg', 1, 50, 0, 4.5, now),
-            ('Manti', 20000, 'food', 'Bug\'da pishirilgan go\'shtli manti', '/static/images/manti.jpg', 1, 30, 0, 4.8, now),
-            ('Shashlik', 30000, 'food', 'Mangalda pishirilgan mazali shashlik', '/static/images/shashlik.jpg', 1, 25, 0, 4.7, now),
-            ('Lagmon', 22000, 'food', 'Qo\'l tortmasi bilan tayyorlangan lagmon', '/static/images/lagmon.jpg', 1, 40, 0, 4.6, now),
-            ('Choy', 5000, 'drink', 'Issiq qora choy', '/static/images/tea.jpg', 1, 100, 0, 4.2, now),
-            ('Qora choy', 6000, 'drink', 'O\'zbek an\'anaviy choy', '/static/images/black_tea.jpg', 1, 80, 0, 4.3, now),
-            ('Kompot', 8000, 'drink', 'Mevali kompot', '/static/images/kompot.jpg', 1, 60, 0, 4.1, now),
-            ('Coca Cola', 10000, 'drink', 'Sovuq ichimlik', '/static/images/cola.jpg', 1, 70, 0, 4.0, now),
+            ('Osh', 25000, 'food', 'An\'anaviy o\'zbek taomi, guruch va go\'sht bilan', 'https://via.placeholder.com/300x200/4299e1/ffffff?text=Osh', 1, 50, 0, 4.5, now),
+            ('Manti', 20000, 'food', 'Bug\'da pishirilgan go\'shtli manti', 'https://via.placeholder.com/300x200/38a169/ffffff?text=Manti', 1, 30, 0, 4.8, now),
+            ('Shashlik', 30000, 'food', 'Mangalda pishirilgan mazali shashlik', 'https://via.placeholder.com/300x200/f56565/ffffff?text=Shashlik', 1, 25, 0, 4.7, now),
+            ('Lagmon', 22000, 'food', 'Qo\'l tortmasi bilan tayyorlangan lagmon', 'https://via.placeholder.com/300x200/ed8936/ffffff?text=Lagmon', 1, 40, 0, 4.6, now),
+            ('Choy', 5000, 'drink', 'Issiq qora choy', 'https://via.placeholder.com/300x200/805ad5/ffffff?text=Choy', 1, 100, 0, 4.2, now),
+            ('Qora choy', 6000, 'drink', 'O\'zbek an\'anaviy choy', 'https://via.placeholder.com/300x200/68d391/ffffff?text=Qora+Choy', 1, 80, 0, 4.3, now),
+            ('Kompot', 8000, 'drink', 'Mevali kompot', 'https://via.placeholder.com/300x200/f093fb/ffffff?text=Kompot', 1, 60, 0, 4.1, now),
+            ('Coca Cola', 10000, 'drink', 'Sovuq ichimlik', 'https://via.placeholder.com/300x200/3b82f6/ffffff?text=Coca+Cola', 1, 70, 0, 4.0, now),
         ]
         cur.executemany("INSERT INTO menu_items (name, price, category, description, image_url, available, stock_quantity, orders_count, rating, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", sample_items)
 
