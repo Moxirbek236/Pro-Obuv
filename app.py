@@ -421,10 +421,18 @@ def index():
 
 @app.route("/system-management-panel-x8k2m")
 def admin_index():
+    # Super admin yoki staff kirgan bo'lishi kerak
+    if not session.get("super_admin") and not session.get("staff_id"):
+        flash("Bu sahifaga kirish uchun admin huquqi kerak.", "error")
+        return redirect(url_for("index"))
     return render_template("admin_index.html")
 
 @app.route("/display-monitor-tv-screen-z9p4n")
 def admin_monitor():
+    # Super admin yoki staff kirgan bo'lishi kerak
+    if not session.get("super_admin") and not session.get("staff_id"):
+        flash("Bu sahifaga kirish uchun admin huquqi kerak.", "error")
+        return redirect(url_for("index"))
     cleanup_expired_orders()
     conn = get_db()
     cur = conn.cursor()
@@ -975,7 +983,12 @@ def staff_login():
 
 @app.route("/admin/logout")
 def staff_logout():
+    # Super admin bo'lsa, super admin sessionni saqlash
+    is_super_admin = session.get("super_admin", False)
     session.clear()
+    if is_super_admin:
+        session["super_admin"] = True
+        flash("Staff sessiondan chiqildi, super admin sessioni saqlandi.", "info")
     return redirect(url_for("index"))
 
 @app.route("/staff-register-secure-k3x8p", methods=["GET", "POST"])
@@ -1024,7 +1037,8 @@ def login_required(f):
     from functools import wraps
     @wraps(f)
     def wrapper(*args, **kwargs):
-        if "staff_id" not in session:
+        # Super admin yoki staff kirgan bo'lishi kerak
+        if not session.get("super_admin") and not session.get("staff_id"):
             return redirect(url_for("staff_login"))
         return f(*args, **kwargs)
     return wrapper
