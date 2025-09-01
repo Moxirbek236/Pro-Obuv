@@ -80,11 +80,11 @@ function handleFormSubmit(form) {
     if (submitButton) {
         console.log('Submit tugma topildi:', submitButton);
         showLoading(submitButton);
-        
+
         // Form validation
         const requiredInputs = form.querySelectorAll('input[required], select[required], textarea[required]');
         let isValid = true;
-        
+
         requiredInputs.forEach(input => {
             if (!input.value.trim()) {
                 isValid = false;
@@ -95,19 +95,19 @@ function handleFormSubmit(form) {
                 input.classList.add('is-valid');
             }
         });
-        
+
         if (!isValid) {
             submitButton.disabled = false;
             submitButton.innerHTML = submitButton.getAttribute('data-original-text') || 'Yuborish';
             showNotification('Barcha majburiy maydonlarni to\'ldiring!', 'error');
             return false;
         }
-        
+
         // Form ni submit qilish
         setTimeout(() => {
             form.submit();
         }, 100);
-        
+
         return true;
     } else {
         console.log('Submit tugma topilmadi');
@@ -125,9 +125,9 @@ function showNotification(message, type = 'info') {
             <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; color: inherit; font-size: 1.2rem; cursor: pointer; padding: 0; margin-left: 10px;">&times;</button>
         </div>
     `;
-    
+
     document.body.appendChild(notification);
-    
+
     // 5 soniyadan keyin avtomatik o'chirish
     setTimeout(() => {
         if (notification.parentElement) {
@@ -259,7 +259,7 @@ function addRoleToURL() {
     if (!urlParams.has('role')) {
         // Session dan role ni aniqlash
         let userRole = 'guest';
-        
+
         // Body class yoki session ma'lumotlaridan role ni aniqlash
         if (document.querySelector('.navbar-text')?.textContent.includes('Super Admin')) {
             userRole = 'admin';
@@ -270,24 +270,438 @@ function addRoleToURL() {
         } else if (document.querySelector('.navbar-text')?.textContent.includes('👤')) {
             userRole = 'user';
         }
-        
+
         // URL ga role parametrini qo'shish
         if (userRole !== 'guest') {
             urlParams.set('role', userRole);
             const newURL = window.location.pathname + '?' + urlParams.toString();
             window.history.replaceState({}, '', newURL);
-            
+
             // Body ga role class qo'shish
             document.body.classList.add('role-' + userRole);
         }
     }
 }
 
+// To'liq tarjima lug'ati
+const translations = {
+    'uz': {
+        // Navbar
+        'brand': '🍽️ Restoran',
+        'menu': '📋 Menyu',
+        'favorites': '❤️ Sevimlilar', 
+        'contact': '📞 Aloqa',
+        'about': '❓ Savollar',
+        'downloads': '📱 Yuklamalar',
+        'cart': '🛒 Savatcha',
+        'login': '🔐 Kirish',
+        'register': '📝 Ro\'yxat',
+
+        // Profile dropdown
+        'profile_info': '👤 Profil ma\'lumotlari',
+        'profile_settings': '⚙️ Profil sozlamalari',
+        'settings': '🔧 Sozlamalar',
+        'logout': '🚪 Chiqish',
+
+        // Sahifa matnlari
+        'welcome': 'Bizning Restoranga Xush Kelibsiz!',
+        'best_food': 'Eng mazali taomlar va a\'lo xizmat',
+        'restaurant_order': 'Restoranda buyurtma berish',
+        'restaurant_desc': 'Restoranda o\'tirib, navbat oling va buyurtma bering',
+        'get_queue': 'Navbat olish',
+        'delivery_service': 'Dostavka xizmati',
+        'delivery_desc': 'Uyingizgacha yetkazib berish xizmati',
+        'order_now': 'Buyurtma berish',
+        'contact_us': 'Biz bilan bog\'lanish',
+        'work_time': 'Ish vaqti',
+
+        // Menu sahifasi
+        'menu_title': 'Restoran Menyusi',
+        'all_categories': 'Hammasi',
+        'food_category': 'Taomlar',
+        'drink_category': 'Ichimliklar',
+        'add_to_cart': 'Qo\'shish',
+        'add_to_favorites': 'Sevimli',
+
+        // Cart sahifasi
+        'cart_title': 'Savatcha',
+        'delete': 'O\'chirish',
+        'place_order': 'Buyurtma berish',
+        'dine_in': 'Restoranda iste\'mol qilish',
+        'delivery': 'Yetkazib berish',
+        'total': 'Jami',
+        'order_type': 'Buyurtma turi',
+        'delivery_info_title': 'Yetkazib berish ma\'lumotlari',
+
+        // Favorites sahifasi
+        'favorites_title': 'Sevimli taomlarim',
+        'remove': 'Olib tashlash',
+        'no_favorites': 'Sevimli taomlaringiz yo\'q',
+        'go_to_menu': 'Menyuga o\'tish',
+
+        // About sahifasi
+        'faq_title': 'Ko\'p so\'raladigan savollar',
+
+        // Contact sahifasi
+        'send_question': 'Savol yuborish',
+        'send': 'Yuborish',
+
+        // Downloads sahifasi
+        'mobile_apps': 'Mobil Ilovalar',
+
+        // Footer
+        'copyright': '© 2025 Restoran Tizimi | Barcha huquqlar himoyalangan',
+        'questions_phone': 'Savollar uchun: +998 99 145 96 86'
+    },
+    'ru': {
+        // Navbar
+        'brand': '🍽️ Ресторан',
+        'menu': '📋 Меню',
+        'favorites': '❤️ Избранное',
+        'contact': '📞 Контакты', 
+        'about': '❓ Вопросы',
+        'downloads': '📱 Загрузки',
+        'cart': '🛒 Корзина',
+        'login': '🔐 Вход',
+        'register': '📝 Регистрация',
+
+        // Profile dropdown
+        'profile_info': '👤 Данные профиля',
+        'profile_settings': '⚙️ Настройки профиля',
+        'settings': '🔧 Настройки',
+        'logout': '🚪 Выход',
+
+        // Sahifa matnlari
+        'welcome': 'Добро пожаловать в наш ресторан!',
+        'best_food': 'Самые вкусные блюда и отличный сервис',
+        'restaurant_order': 'Заказ в ресторане',
+        'restaurant_desc': 'Займите очередь и сделайте заказ в ресторане',
+        'get_queue': 'Занять очередь',
+        'delivery_service': 'Служба доставки',
+        'delivery_desc': 'Доставка на дом',
+        'order_now': 'Заказать',
+        'contact_us': 'Связаться с нами',
+        'work_time': 'Время работы',
+
+        // Menu sahifasi
+        'menu_title': 'Меню ресторана',
+        'all_categories': 'Все',
+        'food_category': 'Блюда',
+        'drink_category': 'Напитки',
+        'add_to_cart': 'Добавить',
+        'add_to_favorites': 'Избранное',
+
+        // Cart sahifasi
+        'cart_title': 'Корзина',
+        'delete': 'Удалить',
+        'place_order': 'Оформить заказ',
+        'dine_in': 'В ресторане',
+        'delivery': 'Доставка',
+        'total': 'Итого',
+        'order_type': 'Тип заказа',
+        'delivery_info_title': 'Информация о доставке',
+
+        // Favorites sahifasi
+        'favorites_title': 'Мои избранные блюда',
+        'remove': 'Удалить',
+        'no_favorites': 'У вас нет избранных блюд',
+        'go_to_menu': 'Перейти в меню',
+
+        // About sahifasi
+        'faq_title': 'Часто задаваемые вопросы',
+
+        // Contact sahifasi
+        'send_question': 'Отправить вопрос',
+        'send': 'Отправить',
+
+        // Downloads sahifasi
+        'mobile_apps': 'Мобильные приложения',
+
+        // Footer
+        'copyright': '© 2025 Система ресторана | Все права защищены',
+        'questions_phone': 'По вопросам: +998 99 145 96 86'
+    },
+    'en': {
+        // Navbar
+        'brand': '🍽️ Restaurant',
+        'menu': '📋 Menu',
+        'favorites': '❤️ Favorites',
+        'contact': '📞 Contact',
+        'about': '❓ About',
+        'downloads': '📱 Downloads',
+        'cart': '🛒 Cart',
+        'login': '🔐 Login',
+        'register': '📝 Register',
+
+        // Profile dropdown
+        'profile_info': '👤 Profile Info',
+        'profile_settings': '⚙️ Profile Settings',
+        'settings': '🔧 Settings',
+        'logout': '🚪 Logout',
+
+        // Sahifa matnlari
+        'welcome': 'Welcome to our Restaurant!',
+        'best_food': 'The most delicious food and excellent service',
+        'restaurant_order': 'Restaurant Order',
+        'restaurant_desc': 'Take a queue and order at the restaurant',
+        'get_queue': 'Get Queue',
+        'delivery_service': 'Delivery Service',
+        'delivery_desc': 'Home delivery service',
+        'order_now': 'Order Now',
+        'contact_us': 'Contact Us',
+        'work_time': 'Working Hours',
+
+        // Menu sahifasi
+        'menu_title': 'Restaurant Menu',
+        'all_categories': 'All',
+        'food_category': 'Food',
+        'drink_category': 'Drinks',
+        'add_to_cart': 'Add',
+        'add_to_favorites': 'Favorite',
+
+        // Cart sahifasi
+        'cart_title': 'Cart',
+        'delete': 'Delete',
+        'place_order': 'Place Order',
+        'dine_in': 'Dine In',
+        'delivery': 'Delivery',
+        'total': 'Total',
+        'order_type': 'Order Type',
+        'delivery_info_title': 'Delivery Information',
+
+        // Favorites sahifasi
+        'favorites_title': 'My Favorite Foods',
+        'remove': 'Remove',
+        'no_favorites': 'You have no favorite foods',
+        'go_to_menu': 'Go to Menu',
+
+        // About sahifasi
+        'faq_title': 'Frequently Asked Questions',
+
+        // Contact sahifasi
+        'send_question': 'Send Question',
+        'send': 'Send',
+
+        // Downloads sahifasi
+        'mobile_apps': 'Mobile Applications',
+
+        // Footer
+        'copyright': '© 2025 Restaurant System | All rights reserved',
+        'questions_phone': 'For questions: +998 99 145 96 86'
+    }
+};
+
+function translatePage(language) {
+    const lang = translations[language] || translations['uz'];
+
+    // Navbar brand
+    const brand = document.querySelector('.navbar-brand');
+    if (brand) brand.textContent = lang.brand;
+
+    // Navbar links
+    const menuLink = document.querySelector('a[href*="menu"]');
+    if (menuLink) menuLink.innerHTML = lang.menu;
+
+    const favoritesLink = document.querySelector('a[href*="favorites"]');
+    if (favoritesLink) favoritesLink.innerHTML = lang.favorites;
+
+    const contactLink = document.querySelector('a[href*="contact"]');
+    if (contactLink) contactLink.innerHTML = lang.contact;
+
+    const aboutLink = document.querySelector('a[href*="about"]');
+    if (aboutLink) aboutLink.innerHTML = lang.about;
+
+    const downloadsLink = document.querySelector('a[href*="downloads"]');
+    if (downloadsLink) downloadsLink.innerHTML = lang.downloads;
+
+    const cartLink = document.querySelector('a[href*="cart"]');
+    if (cartLink) {
+        const cartBadge = cartLink.querySelector('.cart-badge');
+        const badgeHTML = cartBadge ? cartBadge.outerHTML : '';
+        cartLink.innerHTML = `${lang.cart} ${badgeHTML}`;
+    }
+
+    // Login/Register links
+    const loginLink = document.querySelector('a[href*="login"]');
+    if (loginLink) loginLink.innerHTML = lang.login;
+
+    const registerLink = document.querySelector('a[href*="register"]');
+    if (registerLink) registerLink.innerHTML = lang.register;
+
+    // Profile dropdown items
+    document.querySelectorAll('.dropdown-item').forEach(item => {
+        if (item.innerHTML.includes('Profil ma\'lumotlari') || item.innerHTML.includes('Данные профиля') || item.innerHTML.includes('Profile Info')) {
+            item.innerHTML = lang.profile_info;
+        } else if (item.innerHTML.includes('Profil sozlamalari') || item.innerHTML.includes('Настройки профиля') || item.innerHTML.includes('Profile Settings')) {
+            item.innerHTML = lang.profile_settings;
+        } else if (item.innerHTML.includes('Sozlamalar') || item.innerHTML.includes('Настройки') || item.innerHTML.includes('Settings')) {
+            item.innerHTML = lang.settings;
+        } else if (item.innerHTML.includes('Chiqish') || item.innerHTML.includes('Выход') || item.innerHTML.includes('Logout')) {
+            item.innerHTML = lang.logout;
+        }
+    });
+
+    // Hero section (bosh sahifa uchun)
+    const heroTitle = document.querySelector('.hero-section h1, .display-4');
+    if (heroTitle) heroTitle.innerHTML = `🍽️ ${lang.welcome}`;
+
+    const heroSubtitle = document.querySelector('.hero-section .lead');
+    if (heroSubtitle) heroSubtitle.textContent = lang.best_food;
+
+    // Service cards
+    document.querySelectorAll('.service-card h3').forEach((title, index) => {
+        if (index === 0) {
+            title.textContent = lang.restaurant_order;
+        } else if (index === 1) {
+            title.textContent = lang.delivery_service;
+        }
+    });
+
+    document.querySelectorAll('.service-card p').forEach((desc, index) => {
+        if (index === 0) {
+            desc.textContent = lang.restaurant_desc;
+        } else if (index === 1) {
+            desc.textContent = lang.delivery_desc;
+        }
+    });
+
+    document.querySelectorAll('.btn-service').forEach((btn, index) => {
+        if (index === 0) {
+            btn.textContent = lang.get_queue;
+        } else if (index === 1) {
+            btn.textContent = lang.order_now;
+        }
+    });
+
+    // Contact section
+    const contactTitle = document.querySelector('h3');
+    if (contactTitle && contactTitle.innerHTML.includes('bog\'lanish')) {
+        contactTitle.innerHTML = `📞 ${lang.contact_us}`;
+    }
+
+    // Footer
+    const copyright = document.querySelector('.footer p:first-child');
+    if (copyright) copyright.textContent = lang.copyright;
+
+    const questionsPhone = document.querySelector('.footer .muted');
+    if (questionsPhone) questionsPhone.textContent = lang.questions_phone;
+
+    // Data attributelarini yangilash
+    document.querySelectorAll('[data-translate]').forEach(element => {
+        const key = element.getAttribute('data-translate');
+        if (lang[key]) {
+            element.textContent = lang[key];
+        }
+    });
+
+    // Barcha sahifalar uchun umumiy elementlar
+    // Menu sahifasi
+    if (window.location.pathname.includes('/menu')) {
+        const menuTitle = document.querySelector('.menu-title');
+        if (menuTitle) menuTitle.textContent = `🍽️ ${lang.menu_title || 'Restoran Menyusi'}`;
+
+        const categoryButtons = document.querySelectorAll('.category-btn');
+        if (categoryButtons.length > 0) {
+            categoryButtons[0].textContent = lang.all_categories || 'Hammasi';
+            categoryButtons[1].textContent = lang.food_category || '🍽️ Taomlar';
+            categoryButtons[2].textContent = lang.drink_category || '🥤 Ichimliklar';
+        }
+
+        const addToCartButtons = document.querySelectorAll('.btn-add-cart');
+        addToCartButtons.forEach(btn => {
+            if (btn.innerHTML.includes('Qo\'shish')) {
+                btn.innerHTML = `🛒 ${lang.add_to_cart || 'Qo\'shish'}`;
+            } else if (btn.innerHTML.includes('Sevimli')) {
+                btn.innerHTML = `❤️ ${lang.add_to_favorites || 'Sevimli'}`;
+            }
+        });
+    }
+
+    // Savatcha sahifasi
+    if (window.location.pathname.includes('/cart')) {
+        const cartTitle = document.querySelector('.section-title');
+        if (cartTitle) cartTitle.innerHTML = `🛒 ${lang.cart}`;
+
+        const deleteButtons = document.querySelectorAll('.btn.danger');
+        deleteButtons.forEach(btn => {
+            btn.innerHTML = `🗑️ ${lang.delete || 'O\'chirish'}`;
+        });
+
+        const checkoutButton = document.querySelector('#checkout-button');
+        if (checkoutButton) {
+            checkoutButton.innerHTML = `🛒 ${lang.place_order || 'Buyurtma berish'}`;
+        }
+
+        // Order type labels
+        const dineInLabel = document.querySelector('input[value="dine_in"]');
+        if (dineInLabel && dineInLabel.nextElementSibling) {
+            dineInLabel.nextElementSibling.innerHTML = `🍽️ ${lang.dine_in || 'Restoranda iste\'mol qilish'}`;
+        }
+
+        const deliveryLabel = document.querySelector('input[value="delivery"]');
+        if (deliveryLabel && deliveryLabel.nextElementSibling) {
+            deliveryLabel.nextElementSibling.innerHTML = `🚚 ${lang.delivery || 'Yetkazib berish'}`;
+        }
+    }
+
+    // Favorites sahifasi
+    if (window.location.pathname.includes('/favorites')) {
+        const favoritesTitle = document.querySelector('h2');
+        if (favoritesTitle) favoritesTitle.innerHTML = `❤️ ${lang.favorites_title || 'Sevimli taomlarim'}`;
+
+        const removeButtons = document.querySelectorAll('.btn[style*="background: #dc3545"]');
+        removeButtons.forEach(btn => {
+            btn.innerHTML = `🗑️ ${lang.remove || 'Olib tashlash'}`;
+        });
+    }
+
+    // About sahifasi
+    if (window.location.pathname.includes('/about')) {
+        const aboutTitle = document.querySelector('h2');
+        if (aboutTitle) aboutTitle.innerHTML = `❓ ${lang.faq_title || 'Ko\'p so\'raladigan savollar'}`;
+    }
+
+    // Contact sahifasi
+    if (window.location.pathname.includes('/contact')) {
+        const contactFormTitle = document.querySelector('h4');
+        if (contactFormTitle) contactFormTitle.innerHTML = `📋 ${lang.send_question || 'Savol yuborish'}`;
+
+        const submitButton = document.querySelector('button[type="submit"]');
+        if (submitButton) submitButton.innerHTML = `📨 ${lang.send || 'Yuborish'}`;
+    }
+
+    // Downloads sahifasi
+    if (window.location.pathname.includes('/downloads')) {
+        const downloadTitle = document.querySelector('h1');
+        if (downloadTitle) downloadTitle.innerHTML = `📱 ${lang.mobile_apps || 'Mobil Ilovalar'}`;
+    }
+
+    // Local storage ga tilni saqlash
+    localStorage.setItem('language', language);
+    
+    // Server ga til ma'lumotini yuborish
+    fetch('/api/set-language', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ language: language })
+    }).catch(error => console.log('Til sozlamasini saqlashda xato:', error));
+}
+
+function translateToRussian() {
+    translatePage('ru');
+}
+
+function translateToEnglish() {
+    translatePage('en');
+}
+
 // Sahifa yuklanganda ishga tushiradigan funksiyalar
 document.addEventListener('DOMContentLoaded', function() {
     // URL role parametrini qo'shish
     addRoleToURL();
-    
+
     // Savatcha sonini dastlabki yuklanish
     updateCartCount();
 
@@ -301,11 +715,11 @@ document.addEventListener('DOMContentLoaded', function() {
             // Buyurtma berish formi uchun maxsus logic
             if (this.action && this.action.includes('/user')) {
                 console.log('Buyurtma berish formi submit qilindi');
-                
+
                 // Formda kerakli maydonlar borligini tekshirish
                 const requiredFields = this.querySelectorAll('input[required], select[required]');
                 let isValid = true;
-                
+
                 requiredFields.forEach(field => {
                     if (!field.value.trim()) {
                         isValid = false;
@@ -314,13 +728,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         field.style.borderColor = '';
                     }
                 });
-                
+
                 if (!isValid) {
                     e.preventDefault();
                     alert('Barcha majburiy maydonlarni to\'ldiring!');
                     return false;
                 }
-                
+
                 // Loading ko'rsatish
                 handleFormSubmit(this);
             }
