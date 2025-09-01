@@ -1481,8 +1481,8 @@ def staff_employees():
 
 # ---- SUPER ADMIN ----
 # Super admin kredentsiallari
-SUPER_ADMIN_USERNAME = "superadmin"
-SUPER_ADMIN_PASSWORD = "Admin123!@#"
+SUPER_ADMIN_USERNAME = "masteradmin"
+SUPER_ADMIN_PASSWORD = "SuperAdmin2025!@#$%"
 
 @app.route("/super-admin-control-panel-master-z8x9k", methods=["GET", "POST"])
 def super_admin_login():
@@ -1761,6 +1761,42 @@ def super_admin_logout():
     return redirect(url_for("index"))
 
 # ---- YANGI SAHIFALAR ----
+@app.route("/add_to_favorites/<int:menu_item_id>", methods=["POST"])
+def add_to_favorites(menu_item_id):
+    if not session.get("user_id"):
+        flash("Sevimlilarni qo'shish uchun tizimga kiring.", "error")
+        return redirect(url_for("login"))
+
+    user_id = session.get("user_id")
+    conn = get_db()
+    cur = conn.cursor()
+    now = get_current_time().isoformat()
+
+    try:
+        cur.execute("INSERT INTO favorites (user_id, menu_item_id, created_at) VALUES (?, ?, ?)",
+                   (user_id, menu_item_id, now))
+        conn.commit()
+        flash("Sevimlilar ro'yxatiga qo'shildi!", "success")
+    except sqlite3.IntegrityError:
+        flash("Bu mahsulot allaqachon sevimlilar ro'yxatida!", "warning")
+
+    conn.close()
+    return redirect(url_for("menu"))
+
+@app.route("/remove_from_favorites/<int:menu_item_id>", methods=["POST"])
+def remove_from_favorites(menu_item_id):
+    if not session.get("user_id"):
+        return redirect(url_for("login"))
+
+    user_id = session.get("user_id")
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("DELETE FROM favorites WHERE user_id = ? AND menu_item_id = ?", (user_id, menu_item_id))
+    conn.commit()
+    conn.close()
+    flash("Sevimlilardan olib tashlandi!", "success")
+    return redirect(url_for("favorites"))
+
 @app.route("/favorites")
 def favorites():
     if not session.get("user_id"):
