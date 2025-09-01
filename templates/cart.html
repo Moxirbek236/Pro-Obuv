@@ -174,7 +174,7 @@
                         <strong>Jami summa: <span id="total-amount" class="total-amount">{{ total }} so'm</span></strong>
                     </div>
                 </div>
-                <button type="submit" class="btn checkout-btn" id="checkout-button">🛒 Buyurtma berish</button>
+                <button type="submit" class="btn checkout-btn" id="checkout-button" style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); color: white; font-weight: 600; border: none; padding: 15px 30px; border-radius: 12px; font-size: 16px; cursor: pointer; transition: all 0.3s ease;">🛒 Buyurtma berish</button>
             </div>
         </form>
         <script>
@@ -483,9 +483,17 @@ function validateOrderForm(form) {
     // Agar delivery tanlangan bo'lsa, manzil va telefon tekshirish
     if (orderType.value === 'delivery') {
         const deliveryAddress = document.querySelector('input[name="delivery_address"]');
+        const deliveryLat = document.querySelector('input[name="delivery_latitude"]');
+        const deliveryLng = document.querySelector('input[name="delivery_longitude"]');
+        
         if (!deliveryAddress || !deliveryAddress.value.trim()) {
             alert('Yetkazib berish manzilini kiriting!');
             if (deliveryAddress) deliveryAddress.focus();
+            return false;
+        }
+
+        if (!deliveryLat || !deliveryLat.value || !deliveryLng || !deliveryLng.value) {
+            alert('Xaritada joylashuvni belgilang!');
             return false;
         }
 
@@ -496,12 +504,20 @@ function validateOrderForm(form) {
             customerPhone.focus();
             return false;
         }
-    } else {
-        // Dine-in uchun telefon tekshirish (agar form mavjud bo'lsa)
-        const customerPhone = document.querySelector('input[name="customer_phone"]');
-        if (customerPhone && !customerPhone.value.trim()) {
-            alert('Telefon raqamingizni kiriting!');
-            customerPhone.focus();
+
+        // Karta raqami tekshirish (agar form mavjud bo'lsa)
+        const cardNumber = document.querySelector('input[name="card_number"]');
+        if (cardNumber && !cardNumber.value.trim()) {
+            alert('Karta raqamini kiriting!');
+            cardNumber.focus();
+            return false;
+        }
+
+        // Kuryer yetkazish vaqti tekshirish
+        const deliveryTime = document.querySelector('input[name="courier_delivery_time"]');
+        if (deliveryTime && (!deliveryTime.value || deliveryTime.value < 10)) {
+            alert('Kuryer yetkazish vaqtini kiriting (kamida 10 daqiqa)!');
+            deliveryTime.focus();
             return false;
         }
     }
@@ -521,10 +537,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         checkoutForm.addEventListener('submit', function(e) {
             console.log('Form submit hodisasi ishga tushdi');
+            
+            // Default submit ni to'xtatish
+            e.preventDefault();
 
             // Validatsiyani chaqirish
             if (!validateOrderForm(this)) {
-                e.preventDefault();
                 console.log('Form validation o\'tmadi, submit to\'xtatildi');
                 return false;
             }
@@ -532,12 +550,20 @@ document.addEventListener('DOMContentLoaded', function() {
             // Loading animatsiyasini ko'rsatish
             const submitBtn = this.querySelector('#checkout-button');
             if (submitBtn) {
+                const originalText = submitBtn.innerHTML;
                 submitBtn.innerHTML = '<span class="loading-spinner"></span>Buyurtma berilmoqda...';
                 submitBtn.disabled = true;
+                
+                // Form ni submit qilish
+                setTimeout(() => {
+                    this.submit();
+                }, 100);
+            } else {
+                // Agar tugma topilmasa, to'g'ridan-to'g'ri submit qilish
+                this.submit();
             }
 
             console.log('Form yuborilmoqda...');
-            return true;
         });
     } else {
         console.error("Checkout form topilmadi!");
