@@ -75,9 +75,13 @@ function showLoading(element) {
 
 // Form yuborish uchun loading qo'shish
 function handleFormSubmit(form) {
+    console.log('handleFormSubmit chaqirildi:', form);
     const submitButton = form.querySelector('button[type="submit"]');
     if (submitButton) {
+        console.log('Submit tugma topildi:', submitButton);
         showLoading(submitButton);
+    } else {
+        console.log('Submit tugma topilmadi');
     }
 }
 

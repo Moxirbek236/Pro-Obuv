@@ -471,44 +471,85 @@ function updateTotal() {
 }
 
 function validateOrderForm() {
-    const orderType = document.querySelector('input[name="order_type"]:checked').value;
+    console.log('Form validation boshlandi...');
+    
+    const orderTypeChecked = document.querySelector('input[name="order_type"]:checked');
+    if (!orderTypeChecked) {
+        alert('Iltimos, buyurtma turini tanlang!');
+        return false;
+    }
+    
+    const orderType = orderTypeChecked.value;
     const checkoutButton = document.getElementById('checkout-button');
+    
+    console.log('Tanlangan buyurtma turi:', orderType);
     
     // Tugmani disable qilish va loading ko'rsatish
     checkoutButton.disabled = true;
     checkoutButton.innerHTML = '⏳ Buyurtma berilmoqda...';
     
-    if (orderType === 'delivery') {
-        const deliveryAddress = document.getElementById('delivery_address').value.trim();
-        const deliveryLat = document.getElementById('delivery_latitude').value;
-        const deliveryLng = document.getElementById('delivery_longitude').value;
-        
-        if (!deliveryAddress || !deliveryLat || !deliveryLng) {
-            alert('Iltimos, yetkazib berish manzilini xaritadan tanlang!');
-            // Tugmani qayta yoqish
-            checkoutButton.disabled = false;
-            checkoutButton.innerHTML = '🛒 Buyurtma berish';
-            return false;
+    try {
+        if (orderType === 'delivery') {
+            const deliveryAddress = document.getElementById('delivery_address').value.trim();
+            const deliveryLat = document.getElementById('delivery_latitude').value;
+            const deliveryLng = document.getElementById('delivery_longitude').value;
+            
+            console.log('Delivery ma\'lumotlari:', {
+                address: deliveryAddress,
+                latitude: deliveryLat,
+                longitude: deliveryLng
+            });
+            
+            if (!deliveryAddress || !deliveryLat || !deliveryLng) {
+                alert('Iltimos, yetkazib berish manzilini xaritadan tanlang!');
+                // Tugmani qayta yoqish
+                checkoutButton.disabled = false;
+                checkoutButton.innerHTML = '🛒 Buyurtma berish';
+                return false;
+            }
+            
+            // Telefon raqami tekshiruvi (agar profilda bo'lmasa)
+            const phoneInput = document.getElementById('customer_phone');
+            if (phoneInput && !phoneInput.value.trim()) {
+                alert('Iltimos, telefon raqamingizni kiriting!');
+                checkoutButton.disabled = false;
+                checkoutButton.innerHTML = '🛒 Buyurtma berish';
+                phoneInput.focus();
+                return false;
+            }
         }
         
-        // Telefon raqami tekshiruvi (agar profilda bo'lmasa)
-        const phoneInput = document.getElementById('customer_phone');
-        if (phoneInput && !phoneInput.value.trim()) {
-            alert('Iltimos, telefon raqamingizni kiriting!');
-            checkoutButton.disabled = false;
-            checkoutButton.innerHTML = '🛒 Buyurtma berish';
-            phoneInput.focus();
-            return false;
-        }
+        console.log('Form validation muvaffaqiyatli o\'tdi');
+        // Agar hamma narsa yaxshi bo'lsa, form yuboriladi
+        return true;
+        
+    } catch (error) {
+        console.error('Form validationda xatolik:', error);
+        alert('Formni yuborishda xatolik yuz berdi. Qaytadan urinib ko\'ring.');
+        checkoutButton.disabled = false;
+        checkoutButton.innerHTML = '🛒 Buyurtma berish';
+        return false;
     }
-    
-    // Agar hamma narsa yaxshi bo'lsa, form yuboriladi
-    return true;
 }
 
 // Sahifa yuklanganda xaritani ishga tushirish va boshqa funksiyalarni chaqirish
 document.addEventListener('DOMContentLoaded', (event) => {
     console.log("Sahifa yuklandi, JavaScript ishga tushmoqda...");
+
+    // Form submit event listener qo'shish
+    const checkoutForm = document.querySelector('.checkout-form');
+    if (checkoutForm) {
+        checkoutForm.addEventListener('submit', function(e) {
+            console.log('Form submit hodisasi ishga tushdi');
+            const isValid = validateOrderForm();
+            if (!isValid) {
+                e.preventDefault();
+                console.log('Form validation o\'tmadi, submit to\'xtatildi');
+                return false;
+            }
+            console.log('Form yuborilmoqda...');
+        });
+    }
 
     // Radio buttonlar uchun change event qo'shish
     const radioButtons = document.querySelectorAll('input[name="order_type"]');
