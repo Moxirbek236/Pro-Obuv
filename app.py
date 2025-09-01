@@ -6,6 +6,7 @@ import pytz
 import qrcode
 from io import BytesIO
 import base64
+from location_service import LocationService
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///restaurant.db'
@@ -1996,6 +1997,54 @@ def super_admin_get_menu():
 
 @app.route("/super-admin/get-receipts")
 def super_admin_get_receipts():
+
+
+# ---- LOCATION SERVICE ROUTES ----
+@app.route("/api/search-location", methods=["POST"])
+def search_location():
+    """Joylashuvni qidirish API"""
+    data = request.get_json()
+    query = data.get("query", "")
+    
+    if not query:
+        return jsonify({"error": "Qidiruv so'zi kiritilmadi"}), 400
+    
+    location_service = LocationService()
+    result = location_service.search_places(query)
+    
+    return jsonify(result)
+
+@app.route("/api/validate-address", methods=["POST"])
+def validate_address():
+    """Manzilni tekshirish API"""
+    data = request.get_json()
+    address = data.get("address", "")
+    
+    if not address:
+        return jsonify({"error": "Manzil kiritilmadi"}), 400
+    
+    location_service = LocationService()
+    result = location_service.validate_address(address)
+    
+    return jsonify(result)
+
+@app.route("/api/nearby-places")
+def nearby_places():
+    """Yaqin atrofdagi joylar"""
+    query = request.args.get("query", "restoran")
+    location = request.args.get("location", "Tashkent")
+    
+    location_service = LocationService()
+    result = location_service.get_nearby_places(query, location)
+    
+    return jsonify(result)
+</app.route>
+
+@app.route("/location-finder")
+def location_finder():
+    """Joylashuvni topish sahifasi"""
+    return render_template("location_finder.html")
+
     if not session.get("super_admin"):
         return jsonify({"error": "Unauthorized"}), 401
 

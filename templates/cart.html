@@ -52,7 +52,7 @@
 
             <div id="delivery-fields" class="delivery-section" style="display: none;">
                 <h4>📍 Yetkazib berish ma'lumotlari:</h4>
-                
+
                 <!-- Profil ma'lumotlari ko'rsatish -->
                 <div class="profile-info">
                     <div class="info-row">
@@ -68,7 +68,7 @@
                 <!-- Xaritada joylashuvni tanlash -->
                 <div class="map-selection">
                     <label for="location-map">📍 Xaritada joylashuvni belgilang:</label>
-                    <div id="map-container" style="height: 300px; border: 2px solid #ddd; border-radius: 8px; margin: 10px 0;">
+                    <div id="location-map-container" style="height: 300px; border: 2px solid #ddd; border-radius: 8px; margin: 10px 0;">
                         <div id="location-map" style="height: 100%; width: 100%;"></div>
                     </div>
                     <div class="selected-location">
@@ -80,6 +80,16 @@
                     </div>
                 </div>
 
+                <!-- Manzil qidirish -->
+                <div class="mb-3">
+                    <label for="address-search" class="form-label">Manzilni qidiring:</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="address-search" placeholder="Masalan: Amir Temur ko'chasi">
+                        <button type="button" class="btn btn-outline-primary" onclick="searchAddressOnMap()">🔍 Qidirish</button>
+                    </div>
+                </div>
+
+
                 <!-- Karta ma'lumotlari -->
                 <div class="card-info">
                     {% if session.get('user_card_number') %}
@@ -90,7 +100,7 @@
                     {% else %}
                         <div class="form-group">
                             <label for="card_number">💳 Karta raqami:</label>
-                            <input type="text" id="card_number" name="card_number" placeholder="1234 5678 9012 3456" 
+                            <input type="text" id="card_number" name="card_number" placeholder="1234 5678 9012 3456"
                                    pattern="[0-9\s]{13,19}" maxlength="19" required>
                             <small class="text-muted">To'lov uchun karta raqamini kiriting</small>
                         </div>
@@ -140,15 +150,43 @@
 let map;
 let marker;
 let selectedLocation = null;
+let geocoder;
+let autocomplete;
 
 function initMap() {
     // Toshkent markazi
     const tashkent = { lat: 41.2995, lng: 69.2401 };
-    
+
     map = new google.maps.Map(document.getElementById("location-map"), {
         zoom: 12,
         center: tashkent,
     });
+
+    geocoder = new google.maps.Geocoder();
+
+    // Autocomplete
+    const input = document.getElementById("address-search");
+    const options = {
+        componentRestrictions: { country: "uz" },
+        fields: ["formatted_address", "geometry", "name"],
+        strictBounds: false,
+    };
+    autocomplete = new google.maps.places.Autocomplete(input, options);
+    autocomplete.bindTo("bounds", map);
+
+    autocomplete.addListener("place_changed", () => {
+        const place = autocomplete.getPlace();
+        if (!place.geometry) {
+            // Browser support doesn't support the function.
+            window.alert("No details available for input: '" + place.name + "'");
+            return;
+        }
+        // Agar joy tanlangan bo'lsa, uni xaritaga qo'yish
+        setDeliveryLocation(place.geometry.location);
+        map.setCenter(place.geometry.location);
+        map.setZoom(15);
+    });
+
 
     // Foydalanuvchi joylashuvini olishga harakat qilish
     if (navigator.geolocation) {
@@ -168,15 +206,34 @@ function initMap() {
     });
 }
 
+function searchAddressOnMap() {
+    const address = document.getElementById("address-search").value;
+    if (!address) {
+        alert("Manzil kiritilmagan!");
+        return;
+    }
+
+    geocoder.geocode({ address: address }, function(results, status) {
+        if (status === "OK" && results[0]) {
+            const location = results[0].geometry.location;
+            setDeliveryLocation(location);
+            map.setCenter(location);
+            map.setZoom(15);
+        } else {
+            alert("Manzil topilmadi: " + status);
+        }
+    });
+}
+
 function setDeliveryLocation(location) {
     selectedLocation = location;
-    
-    // Avvalgi markerni o'chirish
+
+    // Avvalgi marker
     if (marker) {
         marker.setMap(null);
     }
-    
-    // Yangi marker qo'yish
+
+    // Yangi marker
     marker = new google.maps.Marker({
         position: location,
         map: map,
@@ -184,7 +241,6 @@ function setDeliveryLocation(location) {
     });
 
     // Manzilni olish (Reverse Geocoding)
-    const geocoder = new google.maps.Geocoder();
     geocoder.geocode({ location: location }, function(results, status) {
         if (status === "OK" && results[0]) {
             const address = results[0].formatted_address;
@@ -192,7 +248,9 @@ function setDeliveryLocation(location) {
             document.getElementById('delivery_address').value = address;
             document.getElementById('delivery_latitude').value = location.lat();
             document.getElementById('delivery_longitude').value = location.lng();
-            
+
+            document.getElementById('selected-location-info').style.display = 'block';
+
             // Masofani hisoblash (Toshkent markazidan)
             calculateDistance(location);
         } else {
@@ -200,6 +258,7 @@ function setDeliveryLocation(location) {
             document.getElementById('delivery_address').value = `${location.lat()},${location.lng()}`;
             document.getElementById('delivery_latitude').value = location.lat();
             document.getElementById('delivery_longitude').value = location.lng();
+            document.getElementById('selected-location-info').style.display = 'block';
         }
     });
 }
@@ -207,7 +266,7 @@ function setDeliveryLocation(location) {
 function calculateDistance(destination) {
     // Restoran joylashuvi (Toshkent markazi)
     const restaurant = { lat: 41.2995, lng: 69.2401 };
-    
+
     const service = new google.maps.DistanceMatrixService();
     service.getDistanceMatrix({
         origins: [restaurant],
@@ -220,6 +279,7 @@ function calculateDistance(destination) {
             if (distance) {
                 const distanceKm = distance.value / 1000;
                 document.getElementById('delivery_distance').value = distanceKm.toFixed(1);
+                updateTotal(); // Masofa hisoblangach umumiy summani yangilash
             }
         }
     });
@@ -228,49 +288,74 @@ function calculateDistance(destination) {
 function toggleDeliveryFields() {
     const deliveryRadio = document.querySelector('input[name="order_type"][value="delivery"]');
     const deliveryFields = document.getElementById('delivery-fields');
-    const deliveryAddress = document.getElementById('delivery_address');
+    const deliveryAddressInput = document.getElementById('delivery_address');
+    const deliveryLatitudeInput = document.getElementById('delivery_latitude');
+    const deliveryLongitudeInput = document.getElementById('delivery_longitude');
 
     if (deliveryRadio.checked) {
         deliveryFields.style.display = 'block';
-        deliveryAddress.required = true;
-        
-        // Xaritani yuklash
-        setTimeout(initMap, 100);
+        deliveryAddressInput.required = true;
+        deliveryLatitudeInput.required = true;
+        deliveryLongitudeInput.required = true;
+
+        // Xaritani yuklash agar hali yuklanmagan bo'lsa
+        if (!map) {
+            setTimeout(initMap, 100);
+        }
     } else {
         deliveryFields.style.display = 'none';
-        deliveryAddress.required = false;
+        deliveryAddressInput.required = false;
+        deliveryLatitudeInput.required = false;
+        deliveryLongitudeInput.required = false;
         updateTotal();
     }
 }
 
 function updateTotal() {
-    const deliveryPrice = document.getElementById('delivery_price');
-    const totalElement = document.getElementById('total-amount');
-    const deliveryRadio = document.querySelector('input[name="order_type"][value="delivery"]');
-
-    if (!totalElement) return;
-
     const baseTotal = {{ total }};
-    let deliveryAmount = 0;
+    let deliveryCost = 0;
 
-    if (deliveryRadio.checked && deliveryPrice.value) {
-        deliveryAmount = parseFloat(deliveryPrice.value) || 0;
+    const deliveryDistanceInput = document.getElementById('delivery_distance');
+    if (deliveryDistanceInput && deliveryDistanceInput.value) {
+        const distance = parseFloat(deliveryDistanceInput.value);
+        // Oddiy narxlashuv: har bir km uchun 5000 so'm
+        if (distance > 0) {
+            deliveryCost = distance * 5000; // Masalan, har km uchun 5000 so'm
+        }
     }
 
-    const finalTotal = baseTotal + deliveryAmount;
-    totalElement.textContent = finalTotal.toLocaleString() + " so'm";
+    const finalTotal = baseTotal + deliveryCost;
+    const totalElement = document.getElementById('total-amount');
+    if (totalElement) {
+        totalElement.textContent = finalTotal.toLocaleString() + " so'm";
+    }
 
-    // Delivery info yangilash
-    const deliveryInfo = document.querySelector('.delivery-cost-info');
-    if (deliveryInfo) {
-        if (deliveryAmount > 0) {
-            deliveryInfo.innerHTML = `<small class="delivery-cost">+ ${deliveryAmount.toLocaleString()} so'm (yetkazib berish)</small>`;
+    // Delivery cost info yangilash
+    const deliveryCostInfoSpan = document.querySelector('.delivery-cost-info .delivery-cost');
+    if (deliveryCostInfoSpan) {
+        if (deliveryCost > 0) {
+            deliveryCostInfoSpan.textContent = `+ ${deliveryCost.toLocaleString()} so'm (yetkazib berish)`;
+            deliveryCostInfoSpan.style.color = '#dc3545'; // Qizil rang
         } else {
-            deliveryInfo.innerHTML = '<small class="delivery-cost">Yetkazib berish: Bepul</small>';
+            deliveryCostInfoSpan.textContent = 'Yetkazib berish: Bepul';
+            deliveryCostInfoSpan.style.color = '#28a745'; // Yashil rang
         }
     }
 }
-</script>
+
+// Sahifa yuklanganda xaritani ishga tushirish va boshqa funksiyalarni chaqirish
+document.addEventListener('DOMContentLoaded', (event) => {
+    const deliveryRadio = document.querySelector('input[name="order_type"][value="delivery"]');
+    if (deliveryRadio && deliveryRadio.checked) {
+        toggleDeliveryFields();
+    }
+    // Agar sahifa ochilganda allaqachon delivery tanlangan bo'lsa, xaritani yuklash
+    if (deliveryRadio && deliveryRadio.checked && !map) {
+        initMap();
+    }
+});
+
+        </script>
       {% else %}
         <div class="alert alert-warning">
           <p>Buyurtma berish uchun avval tizimga kiring</p>
@@ -556,5 +641,64 @@ function updateTotal() {
         gap: 10px;
     }
 }
+
+/* Address search uchun qo'shimcha stil */
+.mb-3 {
+    margin-bottom: 1rem !important;
+}
+.input-group {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    width: 100%;
+}
+.form-label {
+    margin-bottom: 0.5rem;
+}
+.btn-outline-primary {
+    color: #007bff;
+    background-color: transparent;
+    background-image: none;
+    border-color: #007bff;
+}
+.btn {
+    display: inline-block;
+    font-weight: 400;
+    color: #212529;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    user-select: none;
+    background-color: transparent;
+    border: 1px solid transparent;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: 0.25rem;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+.btn-outline-primary:hover {
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+.input-group > :not(:last-child):not(.dropdown-toggle):not(.dropdown-menu) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.input-group > :not(:first-child):not(.dropdown-menu) {
+    margin-left: -1px;
+}
+.input-group .form-control {
+    position: relative;
+    flex: 1 1 auto;
+    width: 1%;
+    margin-bottom: 0;
+}
+.input-group > .form-control:focus {
+    z-index: 3;
+}
+
 </style>
 {% endblock %}
