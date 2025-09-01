@@ -1,3 +1,4 @@
+
 {% extends "base.html" %}
 
 {% block title %}Menyu - Restoran{% endblock %}
@@ -18,13 +19,31 @@
         <h2 class="section-title">🍽️ Taomlar</h2>
         <div class="menu-grid">
             {% for food in foods %}
-            <div class="menu-item" data-category="food">
+            <div class="menu-item" data-category="food" onclick="openItemModal({{ food.id }})">
                 <div class="item-image">
                     <img src="{{ food.image_url or '/static/images/default-food.jpg' }}" alt="{{ food.name }}" onerror="this.src='/static/images/default-food.jpg'">
+                    <div class="quick-actions">
+                        <form method="POST" action="{{ url_for('add_to_cart') }}" onclick="event.stopPropagation()">
+                            <input type="hidden" name="menu_item_id" value="{{ food.id }}">
+                            <input type="number" name="quantity" value="1" min="1" max="99" class="quantity-input">
+                            <button type="submit" class="btn-quick-add">🛒</button>
+                        </form>
+                    </div>
                 </div>
                 <div class="item-content">
                     <h3 class="item-name">{{ food.name }}</h3>
                     <p class="item-description">{{ food.description or 'Mazali taom' }}</p>
+                    
+                    <!-- Baholar -->
+                    <div class="rating-section">
+                        <div class="stars">
+                            {% for i in range(1, 6) %}
+                                <span class="star {% if i <= (food.rating or 0) %}filled{% endif %}">⭐</span>
+                            {% endfor %}
+                        </div>
+                        <span class="rating-text">{{ "%.1f"|format(food.rating or 0) }} ({{ food.orders_count or 0 }} buyurtma)</span>
+                    </div>
+
                     <div class="item-footer">
                         {% if food.discount_percentage and food.discount_percentage > 0 %}
                         <div class="price-with-discount">
@@ -35,17 +54,12 @@
                         {% else %}
                         <span class="item-price">{{ "{:,.0f}".format(food.price) }} so'm</span>
                         {% endif %}
+                        
                         <div class="item-actions">
-                            <form method="POST" action="{{ url_for('add_to_cart') }}" style="display: inline;">
-                                <input type="hidden" name="menu_item_id" value="{{ food.id }}">
-                                <input type="number" name="quantity" value="1" min="1" max="99" class="quantity-input">
-                                <button type="submit" class="btn-add-cart">🛒 Qo'shish</button>
-                            </form>
+                            <button class="btn-view-details" onclick="event.stopPropagation(); openItemModal({{ food.id }})">📋 Batafsil</button>
                             {% if session.user_id %}
-                            <form method="post" action="{{ url_for('add_to_favorites', menu_item_id=food.id) }}" style="display: inline;">
-                              <button type="submit" class="btn-add-cart" style="background: #e91e63;">
-                                <span>❤️ Sevimli</span>
-                              </button>
+                            <form method="post" action="{{ url_for('add_to_favorites', menu_item_id=food.id) }}" style="display: inline;" onclick="event.stopPropagation()">
+                              <button type="submit" class="btn-favorite">❤️</button>
                             </form>
                             {% endif %}
                         </div>
@@ -61,13 +75,31 @@
         <h2 class="section-title">🥤 Ichimliklar</h2>
         <div class="menu-grid">
             {% for drink in drinks %}
-            <div class="menu-item" data-category="drink">
+            <div class="menu-item" data-category="drink" onclick="openItemModal({{ drink.id }})">
                 <div class="item-image">
                     <img src="{{ drink.image_url or '/static/images/default-drink.jpg' }}" alt="{{ drink.name }}" onerror="this.src='/static/images/default-drink.jpg'">
+                    <div class="quick-actions">
+                        <form method="POST" action="{{ url_for('add_to_cart') }}" onclick="event.stopPropagation()">
+                            <input type="hidden" name="menu_item_id" value="{{ drink.id }}">
+                            <input type="number" name="quantity" value="1" min="1" max="99" class="quantity-input">
+                            <button type="submit" class="btn-quick-add">🛒</button>
+                        </form>
+                    </div>
                 </div>
                 <div class="item-content">
                     <h3 class="item-name">{{ drink.name }}</h3>
                     <p class="item-description">{{ drink.description or 'Mazali ichimlik' }}</p>
+                    
+                    <!-- Baholar -->
+                    <div class="rating-section">
+                        <div class="stars">
+                            {% for i in range(1, 6) %}
+                                <span class="star {% if i <= (drink.rating or 0) %}filled{% endif %}">⭐</span>
+                            {% endfor %}
+                        </div>
+                        <span class="rating-text">{{ "%.1f"|format(drink.rating or 0) }} ({{ drink.orders_count or 0 }} buyurtma)</span>
+                    </div>
+
                     <div class="item-footer">
                         {% if drink.discount_percentage and drink.discount_percentage > 0 %}
                         <div class="price-with-discount">
@@ -78,17 +110,12 @@
                         {% else %}
                         <span class="item-price">{{ "{:,.0f}".format(drink.price) }} so'm</span>
                         {% endif %}
+                        
                         <div class="item-actions">
-                            <form method="POST" action="{{ url_for('add_to_cart') }}" style="display: inline;">
-                                <input type="hidden" name="menu_item_id" value="{{ drink.id }}">
-                                <input type="number" name="quantity" value="1" min="1" max="99" class="quantity-input">
-                                <button type="submit" class="btn-add-cart">🛒 Qo'shish</button>
-                            </form>
+                            <button class="btn-view-details" onclick="event.stopPropagation(); openItemModal({{ drink.id }})">📋 Batafsil</button>
                             {% if session.user_id %}
-                            <form method="post" action="{{ url_for('add_to_favorites', menu_item_id=drink.id) }}" style="display: inline;">
-                              <button type="submit" class="btn-add-cart" style="background: #e91e63;">
-                                <span>❤️ Sevimli</span>
-                              </button>
+                            <form method="post" action="{{ url_for('add_to_favorites', menu_item_id=drink.id) }}" style="display: inline;" onclick="event.stopPropagation()">
+                              <button type="submit" class="btn-favorite">❤️</button>
                             </form>
                             {% endif %}
                         </div>
@@ -96,6 +123,48 @@
                 </div>
             </div>
             {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal oyna mahsulot tafsilotlari uchun -->
+<div id="itemModal" class="modal-overlay" onclick="closeItemModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h2 id="modalTitle"></h2>
+            <button class="modal-close" onclick="closeItemModal()">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="modal-image">
+                <img id="modalImage" src="" alt="">
+            </div>
+            <div class="modal-details">
+                <p id="modalDescription"></p>
+                <div class="modal-rating">
+                    <div class="stars" id="modalStars"></div>
+                    <span id="modalRatingText"></span>
+                </div>
+                <div class="modal-price" id="modalPrice"></div>
+                <div class="modal-actions">
+                    <form id="modalCartForm" method="POST" action="{{ url_for('add_to_cart') }}">
+                        <input type="hidden" id="modalItemId" name="menu_item_id" value="">
+                        <div class="quantity-selector">
+                            <button type="button" onclick="decreaseModalQuantity()">-</button>
+                            <input type="number" id="modalQuantity" name="quantity" value="1" min="1" max="99">
+                            <button type="button" onclick="increaseModalQuantity()">+</button>
+                        </div>
+                        <button type="submit" class="btn-add-cart">🛒 Savatchaga qo'shish</button>
+                    </form>
+                </div>
+                
+                <!-- Sharhlar bo'limi -->
+                <div class="comments-section">
+                    <h3>Mijozlar sharhlari</h3>
+                    <div id="modalComments" class="comments-list">
+                        <!-- Sharhlar bu yerda dinamik yuklash -->
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -164,7 +233,9 @@
     border-radius: 15px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
 }
 
 .menu-item:hover {
@@ -175,12 +246,57 @@
 .item-image {
     height: 200px;
     overflow: hidden;
+    position: relative;
 }
 
 .item-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.menu-item:hover .item-image img {
+    transform: scale(1.05);
+}
+
+.quick-actions {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 5px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.menu-item:hover .quick-actions {
+    opacity: 1;
+}
+
+.quantity-input {
+    width: 50px;
+    padding: 2px 5px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    text-align: center;
+    font-size: 12px;
+}
+
+.btn-quick-add {
+    background: #4299e1;
+    color: white;
+    border: none;
+    padding: 5px 8px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.3s ease;
+}
+
+.btn-quick-add:hover {
+    background: #3182ce;
+    transform: scale(1.1);
 }
 
 .item-content {
@@ -198,6 +314,34 @@
     color: #718096;
     margin-bottom: 15px;
     line-height: 1.5;
+    font-size: 0.9rem;
+}
+
+.rating-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.stars {
+    display: flex;
+    gap: 2px;
+}
+
+.star {
+    font-size: 16px;
+    color: #ddd;
+    transition: color 0.3s ease;
+}
+
+.star.filled {
+    color: #ffd700;
+}
+
+.rating-text {
+    font-size: 0.8rem;
+    color: #666;
 }
 
 .item-footer {
@@ -212,36 +356,6 @@
     color: #38a169;
     font-size: 1.2rem;
     font-weight: 700;
-}
-
-.item-actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.quantity-input {
-    width: 60px;
-    padding: 5px;
-    border: 1px solid #e2e8f0;
-    border-radius: 5px;
-    text-align: center;
-}
-
-.btn-add-cart {
-    background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-.btn-add-cart:hover {
-    background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
-    transform: translateY(-2px);
 }
 
 .price-with-discount {
@@ -272,6 +386,235 @@
     font-weight: bold;
 }
 
+.item-actions {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-view-details {
+    background: #6366f1;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-view-details:hover {
+    background: #4f46e5;
+}
+
+.btn-favorite {
+    background: #e91e63;
+    color: white;
+    border: none;
+    padding: 5px 8px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.3s ease;
+}
+
+.btn-favorite:hover {
+    background: #c2185b;
+    transform: scale(1.1);
+}
+
+/* Modal stillari */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 15px;
+    max-width: 90vw;
+    max-height: 90vh;
+    width: 600px;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8f9fa;
+    border-radius: 15px 15px 0 0;
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: #2d3748;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.modal-close:hover {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-image {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.modal-image img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.modal-details p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+.modal-rating {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.modal-price {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #38a169;
+    margin-bottom: 20px;
+}
+
+.modal-actions {
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+    margin-bottom: 20px;
+}
+
+.quantity-selector {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    justify-content: center;
+}
+
+.quantity-selector button {
+    background: #f0f0f0;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.quantity-selector button:hover {
+    background: #4299e1;
+    color: white;
+}
+
+.quantity-selector input {
+    width: 60px;
+    text-align: center;
+    border: 2px solid #e2e8f0;
+    border-radius: 5px;
+    padding: 8px;
+    font-size: 16px;
+}
+
+.btn-add-cart {
+    width: 100%;
+    background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+    color: white;
+    border: none;
+    padding: 15px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.btn-add-cart:hover {
+    background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
+    transform: translateY(-2px);
+}
+
+.comments-section {
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+}
+
+.comments-section h3 {
+    margin-bottom: 15px;
+    color: #2d3748;
+}
+
+.comments-list {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.comment-item {
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    background: #f8f9fa;
+}
+
+.comment-author {
+    font-weight: bold;
+    color: #4299e1;
+    margin-bottom: 5px;
+}
+
+.comment-text {
+    color: #555;
+    font-size: 0.9rem;
+}
+
 @media (max-width: 768px) {
     .menu-grid {
         grid-template-columns: 1fr;
@@ -284,11 +627,46 @@
 
     .item-actions {
         justify-content: center;
+        margin-top: 10px;
+    }
+
+    .modal-content {
+        width: 95vw;
+        margin: 20px;
+    }
+    
+    .quantity-selector {
+        flex-direction: row;
     }
 }
 </style>
 
 <script>
+let menuData = {
+    {% for food in foods %}
+    {{ food.id }}: {
+        name: "{{ food.name }}",
+        description: "{{ food.description or 'Mazali taom' }}",
+        price: {{ food.price }},
+        image: "{{ food.image_url or '/static/images/default-food.jpg' }}",
+        rating: {{ food.rating or 0 }},
+        orders_count: {{ food.orders_count or 0 }},
+        discount_percentage: {{ food.discount_percentage or 0 }}
+    },
+    {% endfor %}
+    {% for drink in drinks %}
+    {{ drink.id }}: {
+        name: "{{ drink.name }}",
+        description: "{{ drink.description or 'Mazali ichimlik' }}",
+        price: {{ drink.price }},
+        image: "{{ drink.image_url or '/static/images/default-drink.jpg' }}",
+        rating: {{ drink.rating or 0 }},
+        orders_count: {{ drink.orders_count or 0 }},
+        discount_percentage: {{ drink.discount_percentage or 0 }}
+    },
+    {% endfor %}
+};
+
 function showCategory(category) {
     const items = document.querySelectorAll('.menu-item');
     const buttons = document.querySelectorAll('.category-btn');
@@ -306,6 +684,97 @@ function showCategory(category) {
         }
     });
 }
+
+function openItemModal(itemId) {
+    const item = menuData[itemId];
+    if (!item) return;
+
+    // Modal ma'lumotlarini to'ldirish
+    document.getElementById('modalTitle').textContent = item.name;
+    document.getElementById('modalImage').src = item.image;
+    document.getElementById('modalDescription').textContent = item.description;
+    document.getElementById('modalItemId').value = itemId;
+
+    // Baholarni ko'rsatish
+    const modalStars = document.getElementById('modalStars');
+    modalStars.innerHTML = '';
+    for (let i = 1; i <= 5; i++) {
+        const star = document.createElement('span');
+        star.className = `star ${i <= item.rating ? 'filled' : ''}`;
+        star.textContent = '⭐';
+        modalStars.appendChild(star);
+    }
+    document.getElementById('modalRatingText').textContent = `${item.rating.toFixed(1)} (${item.orders_count} buyurtma)`;
+
+    // Narxni ko'rsatish
+    let priceHtml = '';
+    if (item.discount_percentage > 0) {
+        const discountedPrice = item.price * (100 - item.discount_percentage) / 100;
+        priceHtml = `
+            <span style="text-decoration: line-through; color: #999; margin-right: 10px;">${item.price.toLocaleString()} so'm</span>
+            <span style="color: #28a745; font-weight: bold;">${discountedPrice.toLocaleString()} so'm</span>
+            <span style="background: #dc3545; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; margin-left: 10px;">-${item.discount_percentage}%</span>
+        `;
+    } else {
+        priceHtml = `${item.price.toLocaleString()} so'm`;
+    }
+    document.getElementById('modalPrice').innerHTML = priceHtml;
+
+    // Sharhlarni yuklash
+    loadComments(itemId);
+
+    // Modalni ko'rsatish
+    document.getElementById('itemModal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeItemModal() {
+    document.getElementById('itemModal').style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+
+function increaseModalQuantity() {
+    const input = document.getElementById('modalQuantity');
+    const currentValue = parseInt(input.value) || 1;
+    if (currentValue < 99) {
+        input.value = currentValue + 1;
+    }
+}
+
+function decreaseModalQuantity() {
+    const input = document.getElementById('modalQuantity');
+    const currentValue = parseInt(input.value) || 1;
+    if (currentValue > 1) {
+        input.value = currentValue - 1;
+    }
+}
+
+function loadComments(itemId) {
+    // Bu yerda API orqali sharhlarni yuklash mumkin
+    // Hozircha statik ma'lumot ko'rsatamiz
+    const commentsContainer = document.getElementById('modalComments');
+    commentsContainer.innerHTML = `
+        <div class="comment-item">
+            <div class="comment-author">Aziz M.</div>
+            <div class="comment-text">Juda mazali! Tavsiya qilaman.</div>
+        </div>
+        <div class="comment-item">
+            <div class="comment-author">Madina K.</div>
+            <div class="comment-text">A'lo sifat, tez yetkazib berishdi.</div>
+        </div>
+        <div class="comment-item">
+            <div class="comment-author">Sardor T.</div>
+            <div class="comment-text">Narxi ham mos, ta'mi ham zo'r!</div>
+        </div>
+    `;
+}
+
+// ESC tugmasi bilan modalni yopish
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        closeItemModal();
+    }
+});
 
 // Sahifa yuklanganda barcha mahsulotlarni ko'rsatish
 document.addEventListener('DOMContentLoaded', function() {
