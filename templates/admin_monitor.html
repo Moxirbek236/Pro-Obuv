@@ -122,12 +122,16 @@
     </style>
 </head>
 <body>
-    <div class="current-time" id="currentTime"></div>
-    <div class="current-date-time-weather" style="position: fixed; top: 60px; right: 20px; background: rgba(0,0,0,0.7); color: white; padding: 10px 20px; border-radius: 10px; font-size: 1rem; font-weight: 500; text-align: right;">
-        <div id="currentDate"></div>
-        <div id="currentClock"></div>
-        <div id="temperature"></div>
-        <div id="weatherDesc"></div>
+    <!-- Chap tarafdagi katta soat -->
+    <div style="position: fixed; top: 20px; left: 20px; background: rgba(0,0,0,0.8); color: white; padding: 20px 30px; border-radius: 15px; font-weight: 600; z-index: 1000; backdrop-filter: blur(10px); border: 2px solid rgba(255,255,255,0.2);">
+        <div id="currentDate" style="font-size: 1.4rem; margin-bottom: 10px; color: #ffd700;"></div>
+        <div id="currentClock" style="font-size: 2.2rem; font-weight: 700; color: #00ff88;"></div>
+    </div>
+
+    <!-- O'ng tarafdagi katta ob-havo -->
+    <div style="position: fixed; top: 20px; right: 20px; background: rgba(0,0,0,0.8); color: white; padding: 20px 30px; border-radius: 15px; font-weight: 600; z-index: 1000; backdrop-filter: blur(10px); border: 2px solid rgba(255,255,255,0.2); text-align: center;">
+        <div id="temperature" style="font-size: 2rem; margin-bottom: 8px; color: #ff6b6b; font-weight: 700;"></div>
+        <div id="weatherDesc" style="font-size: 1.3rem; color: #74c0fc;"></div>
     </div>
 
     <div class="monitor-container">
@@ -283,9 +287,8 @@
                 second: '2-digit'
             });
 
-            document.getElementById('currentTime').textContent = timeString;
             document.getElementById('currentDate').textContent = dateString;
-            document.getElementById('currentClock').textContent = '🕒 ' + clockString;
+            document.getElementById('currentClock').textContent = clockString;
         }
 
         // Weather function (OpenWeatherMap API)
