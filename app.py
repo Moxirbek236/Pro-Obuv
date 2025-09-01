@@ -2727,26 +2727,34 @@ def api_set_language():
     try:
         data = request.get_json()
         language = data.get("language", "uz")
-        font_size = data.get("font_size", "medium")
+        
+        print(f"API: Til o'zgartirilmoqda: {language}")
 
         # Til sozlamalarini session ga saqlash
         session['interface_language'] = language
-        session['font_size'] = font_size
-
+        
         # Agar foydalanuvchi tizimda bo'lsa, ma'lumotlar bazasiga ham saqlash
         if 'user_id' in session:
             try:
                 conn = get_db()
                 cur = conn.cursor()
                 cur.execute(
-                    'UPDATE users SET interface_language = ?, font_size = ? WHERE id = ?',
-                    (language, font_size, session['user_id'])
+                    'UPDATE users SET interface_language = ? WHERE id = ?',
+                    (language, session['user_id'])
                 )
                 conn.commit()
                 conn.close()
+                print(f"API: Foydalanuvchi {session['user_id']} uchun til {language} ga o'zgartirildi")
             except Exception as db_error:
                 logging.error(f"Ma'lumotlar bazasiga til sozlamasini saqlashda xatolik: {str(db_error)}")
-                # Session da saqlashni davom ettirish
+
+        # Xodim, kuryer va super admin uchun ham saqlash
+        if 'staff_id' in session:
+            print(f"API: Staff {session['staff_id']} uchun til {language} ga o'zgartirildi")
+        if 'courier_id' in session:
+            print(f"API: Courier {session['courier_id']} uchun til {language} ga o'zgartirildi")
+        if 'super_admin' in session:
+            print(f"API: Super admin uchun til {language} ga o'zgartirildi")
 
         # Til o'zgarishi bo'yicha message
         if language == 'ru':
@@ -2754,13 +2762,13 @@ def api_set_language():
         elif language == 'en':
             message = "Language changed to English"
         else:
-            message = "Til o'zgartirildi"
+            message = "Til o'zbek tiliga o'zgartirildi"
 
         return jsonify({
             "success": True, 
             "message": message,
             "language": language,
-            "font_size": font_size
+            "session_language": session.get('interface_language')
         })
     except Exception as e:
         logging.error(f"Til sozlamasida xatolik: {str(e)}")

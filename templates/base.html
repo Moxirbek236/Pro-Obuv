@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="uz">
+<html lang="{{ session.get('interface_language', 'uz') }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -225,7 +225,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Sahifani tarjima qilish
     if (typeof translatePage === 'function') {
-        translatePage(language);
+        setTimeout(() => {
+            translatePage(language);
+            console.log('Base.html dan til qo\'llandi:', language);
+        }, 200);
     }
 
     // Sozlamalar o'zgarganda qayta yuklashni ta'minlash
