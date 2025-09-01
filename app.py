@@ -3,6 +3,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3, os, datetime, json
 from flask_sqlalchemy import SQLAlchemy
 import pytz
+import qrcode
+from io import BytesIO
+import base64
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///restaurant.db'
@@ -451,6 +454,43 @@ def get_user_queue_position(conn, ticket_no):
 
 def fmt_time(dt):
     return dt.strftime("%H:%M")
+
+def generate_qr_code(receipt_data):
+    """Chek uchun QR kod yaratish"""
+    # Soliq.uz uchun chek ma'lumotlari
+    qr_data = {
+        "receipt_number": receipt_data['receipt_number'],
+        "total_amount": receipt_data['total_amount'],
+        "cashback_amount": receipt_data['cashback_amount'],
+        "date": receipt_data['created_at'][:10],
+        "time": receipt_data['created_at'][11:19],
+        "restaurant": "O'zbek Milliy Taomlar Restorani",
+        "inn": "123456789",  # Restoran INN raqami
+        "cashback_percent": receipt_data['cashback_percentage']
+    }
+    
+    # JSON formatda ma'lumotlarni tayyorlash
+    qr_text = json.dumps(qr_data, ensure_ascii=False)
+    
+    # QR kod yaratish
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(qr_text)
+    qr.make(fit=True)
+    
+    # QR kod rasmini yaratish
+    img = qr.make_image(fill_color="black", back_color="white")
+    
+    # Base64 formatga o'tkazish
+    buffered = BytesIO()
+    img.save(buffered, format="PNG")
+    img_str = base64.b64encode(buffered.getvalue()).decode()
+    
+    return img_str
 
 def get_session_id():
     """Session ID yaratish yoki olish"""
@@ -2082,7 +2122,7 @@ def view_receipt(ticket_no):
 
     # Buyurtma va chek ma'lumotlarini olish
     cur.execute("""
-        SELECT o.*, r.receipt_number, r.total_amount, r.cashback_amount, r.cashback_percentage,
+        SELECT o.*, r.receipt_number, r.total_amount, r.cashback_amount, r.cashback_percentage, r.created_at as receipt_created,
                GROUP_CONCAT(mi.name || ' x' || od.quantity || ' = ' || od.price || ' so\'m') as order_items
         FROM orders o
         LEFT JOIN receipts r ON o.id = r.order_id
@@ -2099,7 +2139,11 @@ def view_receipt(ticket_no):
         flash("Chek topilmadi.", "error")
         return redirect(url_for("index"))
 
-    return render_template("receipt.html", order=order_with_receipt)
+    # QR kod yaratish
+    receipt_dict = dict(order_with_receipt)
+    qr_code_base64 = generate_qr_code(receipt_dict)
+
+    return render_template("receipt.html", order=order_with_receipt, qr_code=qr_code_base64)
 
 
 
