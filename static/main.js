@@ -1,4 +1,3 @@
-
 // Universal Restaurant System - Main JavaScript
 
 // Global o'zgaruvchilar
