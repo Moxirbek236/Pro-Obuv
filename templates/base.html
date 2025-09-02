@@ -530,7 +530,7 @@ function applyLanguageStyles(language) {
 <!-- Savatcha sonini yangilash -->
 <script>
 function updateCartCount() {
-    fetch('/get_cart_count')
+    fetch('/api/cart-count')
         .then(response => response.json())
         .then(data => {
             const cartCountElement = document.getElementById('cart-count');

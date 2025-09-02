@@ -1,6 +1,6 @@
 // Savatcha sonini yangilash funksiyasi
 function updateCartCount() {
-    fetch('/get_cart_count')
+    fetch('/api/cart-count')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
