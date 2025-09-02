@@ -344,6 +344,9 @@ function addRoleToURL() {
     }
 }
 
+// Current path variable declaration
+const currentPath = window.location.pathname;
+
 // To'liq tarjima lug'ati
 const translations = {
     'uz': {
@@ -1256,23 +1259,4 @@ function showRatingForm(orderId) {
     };
 }
 
-// User status check
-if (currentPath.includes('/user/success/')) {
-    const ticketNo = currentPath.split('/').pop();
-
-    // Dastlabki holat tekshiruvi
-    checkOrderStatus(ticketNo);
-
-    // Har 5 soniyada holat tekshiruvi
-    setInterval(() => checkOrderStatus(ticketNo), 5000);
-
-    // Bekor qilish tugmasini qo'shish
-    const orderInfo = document.querySelector('.order-info');
-    if (orderInfo) {
-        const cancelBtn = document.createElement('button');
-        cancelBtn.className = 'btn btn-danger mt-3';
-        cancelBtn.innerHTML = '❌ Buyurtmani bekor qilish';
-        cancelBtn.onclick = () => cancelOrder(ticketNo);
-        orderInfo.appendChild(cancelBtn);
-    }
-}
+// User status check is handled in DOMContentLoaded event
