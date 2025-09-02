@@ -2775,7 +2775,12 @@ def courier_logout():
     return redirect(url_for("index"))
 
 # ---- LOGIN ROUTES ----
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/login")
+def login():
+    """Login route - login_page ga yo'naltirish"""
+    return redirect(url_for("login_page"))
+
+@app.route("/login_page", methods=["GET", "POST"])
 def login_page():
     # URL dan role parametrini tekshirish
     role_param = request.args.get('role')
