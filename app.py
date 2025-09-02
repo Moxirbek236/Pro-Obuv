@@ -1504,38 +1504,27 @@ def auto_calculate_courier_delivery_price(distance_km):
 def get_branch_average_rating(branch_id):
     """Filial uchun o'rtacha bahoni hisoblash"""
     try:
-        conn = get_db()
-        cur = conn.cursor()
+        with db_pool.get_connection() as conn:
+            cur = conn.cursor()
 
-        # Filial uchun berilgan baholarni olish (menu_item_id = -branch_id)
-        cur.execute("""
-            SELECT AVG(rating) as avg_rating, COUNT(*) as total_ratings
-            FROM ratings 
-            WHERE menu_item_id = ?
-        """, (-branch_id,))
+            # Filial uchun berilgan baholarni olish (menu_item_id = -branch_id)
+            cur.execute("""
+                SELECT AVG(CAST(rating AS FLOAT)) as avg_rating, COUNT(*) as total_ratings
+                FROM ratings 
+                WHERE menu_item_id = ?
+            """, (-branch_id,))
 
-        result = cur.fetchone()
-        conn.close()
+            result = cur.fetchone()
 
-        if result:
-            # SQLite Row obyektiga to'g'ri murojaat
-            try:
-                if hasattr(result, 'keys'):
-                    # Row obyekti
-                    avg_rating = result['avg_rating']
-                    total_ratings = result['total_ratings']
-                else:
-                    # Tuple
-                    avg_rating = result[0]
-                    total_ratings = result[1]
+            if result and result[0] is not None:
+                # Tuple access bilan xavfsiz
+                avg_rating = float(result[0]) if result[0] else 0.0
+                total_ratings = int(result[1]) if result[1] else 0
                     
-                if avg_rating:
-                    return {
-                        'average_rating': round(float(avg_rating), 1),
-                        'total_ratings': int(total_ratings)
-                    }
-            except (KeyError, IndexError, TypeError) as access_error:
-                app_logger.warning(f"Result access error: {str(access_error)}")
+                return {
+                    'average_rating': round(avg_rating, 1),
+                    'total_ratings': total_ratings
+                }
         
         return {
             'average_rating': 0.0,
@@ -4379,8 +4368,14 @@ def api_reports_data():
         
         # Filial baholarini qo'shish
         for branch in branches_data:
-            rating_data = get_branch_average_rating(branch['id'])
-            branch['average_rating'] = rating_data['average_rating']
+            try:
+                rating_data = get_branch_average_rating(branch['id'])
+                branch['average_rating'] = rating_data['average_rating']
+                branch['total_ratings'] = rating_data['total_ratings']
+            except Exception as rating_error:
+                app_logger.warning(f"Branch {branch['id']} rating olishda xatolik: {str(rating_error)}")
+                branch['average_rating'] = 0.0
+                branch['total_ratings'] = 0
         
         return jsonify({
             "summary": dict(summary) if summary else {},

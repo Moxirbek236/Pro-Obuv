@@ -7,8 +7,8 @@ let currentPath = window.location.pathname;
 
 // Professional Translation System
 // Global translations object - check if already exists to prevent redeclaration
-if (typeof window.translations === 'undefined') {
-    window.translations = {
+if (typeof translations === 'undefined') {
+    var translations = {
         uz: {
             menu: '📋 Menyu',
             favorites: '❤️ Sevimlilar',
