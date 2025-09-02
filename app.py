@@ -383,7 +383,12 @@ class PerformanceMonitor:
                 'total_requests': len(durations)
             }
 
-performance_monitor = PerformanceMonitor()
+# Performance monitor instance yaratish
+try:
+    performance_monitor = PerformanceMonitor()
+except Exception as e:
+    app_logger.warning(f"Performance monitor yaratishda xatolik: {str(e)}")
+    performance_monitor = None
 
 @app.before_request
 def before_request():
@@ -393,13 +398,20 @@ def before_request():
 @app.after_request  
 def after_request(response):
     """So'rov tugagach performance ni yozib olish"""
-    if hasattr(request, 'start_time'):
-        duration = time.time() - request.start_time
-        performance_monitor.record_request(duration, request.endpoint)
-
-        # Sekin so'rovlarni log qilish
-        if duration > 2.0:
-            app_logger.warning(f"Slow request: {request.endpoint} took {duration:.2f}s")
+    try:
+        if hasattr(request, 'start_time'):
+            duration = time.time() - request.start_time
+            
+            # Performance monitor instance mavjudligini tekshirish
+            if hasattr(performance_monitor, 'record_request'):
+                performance_monitor.record_request(duration, request.endpoint)
+            
+            # Sekin so'rovlarni log qilish
+            if duration > 2.0:
+                app_logger.warning(f"Slow request: {request.endpoint} took {duration:.2f}s")
+    except Exception as e:
+        # Performance monitoring xatoligi uchun logga yozish, lekin javobni buzmaslik
+        app_logger.warning(f"Performance monitoring error: {str(e)}")
 
     # Security headers qo'shish
     response.headers['X-Content-Type-Options'] = 'nosniff'
