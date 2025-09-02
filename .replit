@@ -13,7 +13,7 @@ localPort = 8080
 externalPort = 8080
 
 [workflows]
-runButton = "Run Flask App"
+runButton = "Professional Flask Server"
 
 [[workflows.workflow]]
 name = "Run Flask App"
@@ -23,6 +23,27 @@ mode = "sequential"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "pkill -f \"python.*app.py\" || true"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python app.py"
+
+[[workflows.workflow]]
+name = "Professional Flask Server"
+author = 45556560
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "export FLASK_ENV=production"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "export FLASK_APP=app.py"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python -m pip install --quiet -r requirements.txt"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
