@@ -867,7 +867,18 @@ def get_cart_items(conn, session_id, user_id=None):
             WHERE ci.session_id = ?
             ORDER BY ci.created_at DESC
         """, (session_id,))
-    return cur.fetchall()
+    
+    results = cur.fetchall()
+    # Row obyektlarini dict formatiga o'tkazish
+    cart_items = []
+    for row in results:
+        item_dict = dict(row)
+        # discount_percentage ni tekshirish va None bo'lsa 0 qilib qo'yish
+        if item_dict['discount_percentage'] is None:
+            item_dict['discount_percentage'] = 0
+        cart_items.append(item_dict)
+    
+    return cart_items
 
 def get_cart_total(conn, session_id, user_id=None):
     """Savatchaning umumiy summasini hisoblash"""
