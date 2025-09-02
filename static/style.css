@@ -1149,6 +1149,30 @@ body.dark-theme .table-hover tbody tr:hover td {
   background: rgba(51, 65, 85, 0.9) !important;
 }
 
+/* Section card tungi rejim */
+body.dark-theme .section-card {
+  background: rgba(26, 32, 44, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: var(--dark-text-primary) !important;
+}
+
+body.dark-theme .section-card .card-header {
+  background: rgba(45, 55, 72, 0.5) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: var(--dark-text-primary) !important;
+}
+
+body.dark-theme .section-card .card-body {
+  background: rgba(26, 32, 44, 0.3) !important;
+  color: var(--dark-text-primary) !important;
+}
+
+body.dark-theme .section-card .list-group-item {
+  background: rgba(45, 55, 72, 0.3) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: var(--dark-text-primary) !important;
+}
+
 /* Status System */
 .status-badge {
   padding: var(--spacing-xs) var(--spacing-sm);
