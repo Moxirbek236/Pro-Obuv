@@ -1,3 +1,25 @@
+
+# Global start time tracking
+start_time = time.time()
+
+# Cleanup function
+def cleanup_resources():
+    """Resource cleanup on app shutdown"""
+    try:
+        executor.shutdown(wait=True)
+        if hasattr(db_pool, 'connections'):
+            for conn in db_pool.connections:
+                try:
+                    conn.close()
+                except:
+                    pass
+        app_logger.info("Resources cleaned up successfully")
+    except Exception as e:
+        app_logger.error(f"Cleanup error: {str(e)}")
+
+import atexit
+atexit.register(cleanup_resources)
+
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3, os, datetime, json
@@ -9,33 +31,283 @@ import base64
 import requests
 import json
 from location_service import LocationService
+from functools import wraps
+import threading
+from contextlib import contextmanager
+import time
+from concurrent.futures import ThreadPoolExecutor
+import hashlib
+from collections import defaultdict
+import redis
+from werkzeug.middleware.proxy_fix import ProxyFix
+from werkzeug.middleware.profiler import ProfilerMiddleware
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///restaurant.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.secret_key = os.environ.get("SECRET_KEY", "dev_secret_change_me")
+
+# Production-ready konfiguratsiya
+app.config.update(
+    SQLALCHEMY_DATABASE_URI='sqlite:///restaurant.db',
+    SQLALCHEMY_TRACK_MODIFICATIONS=False,
+    SQLALCHEMY_ENGINE_OPTIONS={
+        'pool_timeout': 20,
+        'pool_recycle': -1,
+        'pool_pre_ping': True,
+        'connect_args': {
+            'check_same_thread': False,
+            'timeout': 30,
+            'isolation_level': None
+        }
+    },
+    SECRET_KEY=os.environ.get("SECRET_KEY", "dev_secret_change_me_ultra_secure_2025"),
+    SESSION_COOKIE_SECURE=True,
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE='Lax',
+    PERMANENT_SESSION_LIFETIME=7200,  # 2 soat
+    MAX_CONTENT_LENGTH=16 * 1024 * 1024,  # 16MB max file size
+    JSON_SORT_KEYS=False,
+    JSONIFY_PRETTYPRINT_REGULAR=False
+)
+
+# Production middleware
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+
+# Performance profiling (faqat debug rejimida)
+if app.debug:
+    app.wsgi_app = ProfilerMiddleware(app.wsgi_app, restrictions=[30])
 
 # Location service instance
 location_service = LocationService()
+
+# Cache tizimi
+class CacheManager:
+    def __init__(self):
+        self.memory_cache = {}
+        self.cache_timestamps = {}
+        self.cache_lock = threading.Lock()
+        self.redis_client = None
+        self._init_redis()
+    
+    def _init_redis(self):
+        """Redis connection (agar mavjud bo'lsa)"""
+        try:
+            import redis
+            redis_url = os.environ.get('REDIS_URL')
+            if redis_url:
+                self.redis_client = redis.from_url(redis_url)
+                self.redis_client.ping()
+                app_logger.info("Redis cache tizimi ulandi")
+        except Exception as e:
+            app_logger.warning(f"Redis ulanmadi, memory cache ishlatiladi: {str(e)}")
+    
+    def get(self, key, default=None):
+        """Cache dan ma'lumot olish"""
+        try:
+            if self.redis_client:
+                value = self.redis_client.get(f"restaurant:{key}")
+                if value:
+                    return json.loads(value.decode())
+            
+            # Memory cache dan olish
+            with self.cache_lock:
+                if key in self.memory_cache:
+                    timestamp = self.cache_timestamps.get(key, 0)
+                    if time.time() - timestamp < 300:  # 5 daqiqa
+                        return self.memory_cache[key]
+                    else:
+                        del self.memory_cache[key]
+                        del self.cache_timestamps[key]
+        except Exception as e:
+            app_logger.error(f"Cache get error: {str(e)}")
+        
+        return default
+    
+    def set(self, key, value, ttl=300):
+        """Cache ga ma'lumot saqlash"""
+        try:
+            if self.redis_client:
+                self.redis_client.setex(f"restaurant:{key}", ttl, json.dumps(value, default=str))
+            
+            # Memory cache ga ham saqlash
+            with self.cache_lock:
+                self.memory_cache[key] = value
+                self.cache_timestamps[key] = time.time()
+                
+                # Memory cache ni tozalash (maksimal 1000 ta element)
+                if len(self.memory_cache) > 1000:
+                    oldest_key = min(self.cache_timestamps.keys(), key=lambda k: self.cache_timestamps[k])
+                    del self.memory_cache[oldest_key]
+                    del self.cache_timestamps[oldest_key]
+        except Exception as e:
+            app_logger.error(f"Cache set error: {str(e)}")
+    
+    def delete(self, key):
+        """Cache dan o'chirish"""
+        try:
+            if self.redis_client:
+                self.redis_client.delete(f"restaurant:{key}")
+            
+            with self.cache_lock:
+                self.memory_cache.pop(key, None)
+                self.cache_timestamps.pop(key, None)
+        except Exception as e:
+            app_logger.error(f"Cache delete error: {str(e)}")
+
+# Global cache manager
+cache_manager = CacheManager()
+
+# Rate limiting
+class RateLimiter:
+    def __init__(self):
+        self.requests = defaultdict(list)
+        self.lock = threading.Lock()
+    
+    def is_allowed(self, identifier, max_requests=100, window=3600):
+        """Rate limiting tekshiruvi"""
+        current_time = time.time()
+        
+        with self.lock:
+            # Eski so'rovlarni tozalash
+            self.requests[identifier] = [
+                req_time for req_time in self.requests[identifier] 
+                if current_time - req_time < window
+            ]
+            
+            # Yangi so'rovni qo'shish
+            if len(self.requests[identifier]) < max_requests:
+                self.requests[identifier].append(current_time)
+                return True
+            
+            return False
+
+rate_limiter = RateLimiter()
+
+# Thread pool for async operations
+executor = ThreadPoolExecutor(max_workers=10)
 
 # Database fayl yo'lini to'g'rilash
 DB_PATH = os.path.join(os.path.dirname(__file__), "database.sqlite3")
 
 import logging
+from logging.handlers import RotatingFileHandler, SMTPHandler
 
-# Log faylini sozlash - DEBUG darajasida barcha xabalarni yozish
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('error.log'),
-        logging.StreamHandler()
-    ]
-)
+# Advanced logging konfiguratsiyasi
+def setup_logging():
+    """Professional logging setup"""
+    formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s'
+    )
+    
+    # Rotating file handler (maksimal 10MB, 5 ta backup)
+    file_handler = RotatingFileHandler('logs/restaurant.log', maxBytes=10485760, backupCount=5)
+    file_handler.setFormatter(formatter)
+    file_handler.setLevel(logging.INFO)
+    
+    # Error file handler
+    error_handler = RotatingFileHandler('logs/errors.log', maxBytes=10485760, backupCount=5)
+    error_handler.setFormatter(formatter)
+    error_handler.setLevel(logging.ERROR)
+    
+    # Console handler
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(formatter)
+    console_handler.setLevel(logging.WARNING)
+    
+    # Root logger konfiguratsiya
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.INFO)
+    root_logger.addHandler(file_handler)
+    root_logger.addHandler(error_handler)
+    root_logger.addHandler(console_handler)
+    
+    # Flask app logger
+    app.logger.setLevel(logging.INFO)
+    app.logger.addHandler(file_handler)
+    app.logger.addHandler(error_handler)
+    
+    return logging.getLogger('restaurant_app')
 
-# Flask app uchun alohida logger
-app_logger = logging.getLogger('app')
-app_logger.setLevel(logging.DEBUG)
+# Logs papkasini yaratish
+os.makedirs('logs', exist_ok=True)
+app_logger = setup_logging()
+
+# Global error handlers
+@app.errorhandler(404)
+def not_found_error(error):
+    app_logger.warning(f"404 Error: {request.url}")
+    if request.is_json:
+        return jsonify({"error": "Not found", "code": 404}), 404
+    return render_template('error.html', error_code=404, error_message="Sahifa topilmadi"), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    app_logger.error(f"500 Error: {str(error)} - URL: {request.url}")
+    if request.is_json:
+        return jsonify({"error": "Internal server error", "code": 500}), 500
+    return render_template('error.html', error_code=500, error_message="Server xatoligi"), 500
+
+@app.errorhandler(429)
+def rate_limit_error(error):
+    app_logger.warning(f"Rate limit exceeded: {request.remote_addr}")
+    if request.is_json:
+        return jsonify({"error": "Rate limit exceeded", "code": 429}), 429
+    return render_template('error.html', error_code=429, error_message="Juda ko'p so'rov"), 429
+
+# Performance monitoring
+class PerformanceMonitor:
+    def __init__(self):
+        self.request_times = []
+        self.lock = threading.Lock()
+    
+    def record_request(self, duration, endpoint):
+        with self.lock:
+            self.request_times.append({
+                'duration': duration,
+                'endpoint': endpoint,
+                'timestamp': time.time()
+            })
+            
+            # Faqat so'nggi 1000 ta so'rovni saqlash
+            if len(self.request_times) > 1000:
+                self.request_times = self.request_times[-1000:]
+    
+    def get_stats(self):
+        with self.lock:
+            if not self.request_times:
+                return {}
+            
+            durations = [req['duration'] for req in self.request_times]
+            return {
+                'avg_response_time': sum(durations) / len(durations),
+                'max_response_time': max(durations),
+                'min_response_time': min(durations),
+                'total_requests': len(durations)
+            }
+
+performance_monitor = PerformanceMonitor()
+
+@app.before_request
+def before_request():
+    """So'rov boshlanishida vaqtni yozib olish"""
+    request.start_time = time.time()
+
+@app.after_request  
+def after_request(response):
+    """So'rov tugagach performance ni yozib olish"""
+    if hasattr(request, 'start_time'):
+        duration = time.time() - request.start_time
+        performance_monitor.record_request(duration, request.endpoint)
+        
+        # Sekin so'rovlarni log qilish
+        if duration > 2.0:
+            app_logger.warning(f"Slow request: {request.endpoint} took {duration:.2f}s")
+    
+    # Security headers qo'shish
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'DENY'
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+    
+    return response
 
 
 
@@ -49,10 +321,121 @@ TASHKENT_TZ = pytz.timezone('Asia/Tashkent')
 def get_current_time():
     return datetime.datetime.now(TASHKENT_TZ)
 
+# Database connection pool
+class DatabasePool:
+    def __init__(self, db_path, max_connections=20):
+        self.db_path = db_path
+        self.max_connections = max_connections
+        self.connections = []
+        self.lock = threading.Lock()
+        self._init_pool()
+    
+    def _init_pool(self):
+        """Connection pool ni ishga tushirish"""
+        for _ in range(5):  # Boshlang'ich 5 ta connection
+            conn = self._create_connection()
+            if conn:
+                self.connections.append(conn)
+    
+    def _create_connection(self):
+        """Yangi database connection yaratish"""
+        try:
+            conn = sqlite3.connect(
+                self.db_path,
+                check_same_thread=False,
+                timeout=30.0,
+                isolation_level=None
+            )
+            conn.row_factory = sqlite3.Row
+            
+            # SQLite optimizatsiya sozlamalari
+            conn.execute("PRAGMA journal_mode=WAL")
+            conn.execute("PRAGMA synchronous=NORMAL")
+            conn.execute("PRAGMA cache_size=10000")
+            conn.execute("PRAGMA temp_store=MEMORY")
+            conn.execute("PRAGMA mmap_size=268435456")  # 256MB
+            conn.execute("PRAGMA foreign_keys=ON")
+            
+            return conn
+        except Exception as e:
+            app_logger.error(f"Database connection yaratishda xatolik: {str(e)}")
+            return None
+    
+    @contextmanager
+    def get_connection(self):
+        """Context manager orqali connection olish"""
+        conn = None
+        try:
+            with self.lock:
+                if self.connections:
+                    conn = self.connections.pop()
+                else:
+                    conn = self._create_connection()
+            
+            if not conn:
+                raise Exception("Database connection olinmadi")
+            
+            yield conn
+            
+        except Exception as e:
+            if conn:
+                try:
+                    conn.rollback()
+                except:
+                    pass
+            raise e
+        finally:
+            if conn:
+                try:
+                    with self.lock:
+                        if len(self.connections) < self.max_connections:
+                            self.connections.append(conn)
+                        else:
+                            conn.close()
+                except:
+                    pass
+
+# Global database pool
+db_pool = DatabasePool(DB_PATH)
+
 def get_db():
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    return conn
+    """Legacy support uchun"""
+    return sqlite3.connect(DB_PATH, check_same_thread=False)
+
+# Optimized database operations
+def execute_query(query, params=None, fetch_one=False, fetch_all=False):
+    """Optimizatsiya qilingan database so'rovi"""
+    with db_pool.get_connection() as conn:
+        try:
+            cur = conn.cursor()
+            
+            if params:
+                cur.execute(query, params)
+            else:
+                cur.execute(query)
+            
+            if fetch_one:
+                return cur.fetchone()
+            elif fetch_all:
+                return cur.fetchall()
+            else:
+                conn.commit()
+                return cur.lastrowid
+        except Exception as e:
+            conn.rollback()
+            raise e
+
+def execute_many(query, params_list):
+    """Bulk operations uchun optimizatsiya"""
+    with db_pool.get_connection() as conn:
+        try:
+            cur = conn.cursor()
+            cur.executemany(query, params_list)
+            conn.commit()
+            return cur.rowcount
+        except Exception as e:
+            conn.rollback()
+            raise e
 
 def init_db():
     conn = get_db()
@@ -1126,17 +1509,65 @@ def admin_monitor():
 
 # ---- MENU ----
 @app.route("/menu")
+@rate_limit(max_requests=500, window=60)
+@cache_result(ttl=120)
+@performance_monitor
 def menu():
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM menu_items WHERE available = 1 ORDER BY category, name")
-    menu_items = cur.fetchall()
-    conn.close()
-
-    foods = [item for item in menu_items if item['category'] == 'food']
-    drinks = [item for item in menu_items if item['category'] == 'drink']
-
-    return render_template("menu.html", foods=foods, drinks=drinks)
+    """Optimized menu endpoint"""
+    try:
+        # Cache dan menu ma'lumotlarini olish
+        cached_menu = cache_manager.get("menu_items_active")
+        
+        if not cached_menu:
+            menu_items = execute_query(
+                """SELECT m.*, COALESCE(AVG(r.rating), 0) as avg_rating, COUNT(r.rating) as rating_count
+                   FROM menu_items m 
+                   LEFT JOIN ratings r ON m.id = r.menu_item_id 
+                   WHERE m.available = 1 
+                   GROUP BY m.id 
+                   ORDER BY m.category, m.orders_count DESC, m.name""",
+                fetch_all=True
+            )
+            
+            # Cache ga saqlash
+            cache_manager.set("menu_items_active", [dict(item) for item in menu_items], 120)
+        else:
+            menu_items = cached_menu
+        
+        # Kategoriyalar bo'yicha ajratish
+        foods = [item for item in menu_items if item['category'] == 'food']
+        drinks = [item for item in menu_items if item['category'] == 'drink']
+        
+        # Foydalanuvchi sevimlilarini olish
+        favorites = []
+        if session.get('user_id'):
+            favorites = execute_query(
+                "SELECT menu_item_id FROM favorites WHERE user_id = ?",
+                (session['user_id'],),
+                fetch_all=True
+            )
+            favorites = [fav['menu_item_id'] for fav in favorites]
+        
+        return render_template("menu.html", 
+                             foods=foods, 
+                             drinks=drinks, 
+                             favorites=favorites,
+                             current_page='menu')
+    
+    except Exception as e:
+        app_logger.error(f"Menu endpoint error: {str(e)}")
+        # Fallback - oddiy menu
+        try:
+            menu_items = execute_query(
+                "SELECT * FROM menu_items WHERE available = 1 ORDER BY category, name",
+                fetch_all=True
+            )
+            foods = [item for item in menu_items if item['category'] == 'food']
+            drinks = [item for item in menu_items if item['category'] == 'drink']
+            return render_template("menu.html", foods=foods, drinks=drinks, current_page='menu')
+        except:
+            flash("Menu yuklashda xatolik yuz berdi.", "error")
+            return redirect(url_for("index"))
 
 @app.route("/add_to_cart", methods=["POST"])
 def add_to_cart():
@@ -1244,22 +1675,37 @@ def remove_from_cart(cart_item_id):
     return redirect(url_for("cart"))
 
 @app.route("/api/cart-count")
+@rate_limit(max_requests=200, window=60)
+@cache_result(ttl=30)
+@performance_monitor
 def get_cart_count():
+    """Optimized cart count API"""
     session_id = get_session_id()
     user_id = session.get("user_id")
-    conn = get_db()
-    cur = conn.cursor()
-
-    if user_id:
-        cur.execute("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE user_id = ?", (user_id,))
-    else:
-        cur.execute("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE session_id = ?", (session_id,))
-
-    result = cur.fetchone()
-    conn.close()
-
-    count = result['total_count'] if result else 0
-    return jsonify({"count": count})
+    
+    try:
+        if user_id:
+            result = execute_query(
+                "SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE user_id = ?", 
+                (user_id,), 
+                fetch_one=True
+            )
+        else:
+            result = execute_query(
+                "SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE session_id = ?", 
+                (session_id,), 
+                fetch_one=True
+            )
+        
+        count = result['total_count'] if result else 0
+        return jsonify({
+            "count": count,
+            "success": True,
+            "timestamp": time.time()
+        })
+    except Exception as e:
+        app_logger.error(f"Cart count API error: {str(e)}")
+        return jsonify({"count": 0, "success": False, "error": str(e)}), 500
 
 
 # ---- USER LOGIN & REGISTER ----
@@ -1546,6 +1992,9 @@ def logout():
 
 # ---- USER ----
 @app.route("/place_order", methods=["POST"])
+@rate_limit(max_requests=50, window=300)
+@performance_monitor
+@validate_json()
 def place_order():
     """Buyurtma berish funksiyasi"""
     print("DEBUG: POST so'rov keldi /place_order endpoint ga")
@@ -2203,14 +2652,99 @@ def staff_logout():
     return redirect(url_for("index"))
 
 # ---- STAFF DASHBOARD ----
+# Advanced decorators
 def login_required(f):
-    from functools import wraps
+    """Enhanced login decorator"""
     @wraps(f)
     def wrapper(*args, **kwargs):
-        # Super admin yoki staff kirgan bo'lishi kerak
         if not session.get("super_admin") and not session.get("staff_id"):
+            if request.is_json:
+                return jsonify({"error": "Authorization required"}), 401
             return redirect(url_for("staff_login"))
         return f(*args, **kwargs)
+    return wrapper
+
+def rate_limit(max_requests=100, window=3600):
+    """Rate limiting decorator"""
+    def decorator(f):
+        @wraps(f)
+        def wrapper(*args, **kwargs):
+            identifier = request.remote_addr
+            if not rate_limiter.is_allowed(identifier, max_requests, window):
+                if request.is_json:
+                    return jsonify({"error": "Rate limit exceeded"}), 429
+                flash("Juda ko'p so'rov yuborildi. Biroz kuting.", "error")
+                return redirect(url_for("index"))
+            return f(*args, **kwargs)
+        return wrapper
+    return decorator
+
+def cache_result(ttl=300):
+    """Result caching decorator"""
+    def decorator(f):
+        @wraps(f)
+        def wrapper(*args, **kwargs):
+            # Cache key yaratish
+            cache_key = f"{f.__name__}:{hashlib.md5(str(args + tuple(kwargs.items())).encode()).hexdigest()}"
+            
+            # Cache dan olishga harakat qilish
+            cached_result = cache_manager.get(cache_key)
+            if cached_result is not None:
+                return cached_result
+            
+            # Yangi natija hisoblash va cache ga saqlash
+            result = f(*args, **kwargs)
+            cache_manager.set(cache_key, result, ttl)
+            return result
+        return wrapper
+    return decorator
+
+def async_task(f):
+    """Asynchronous task decorator"""
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        return executor.submit(f, *args, **kwargs)
+    return wrapper
+
+def validate_json(required_fields=None):
+    """JSON validation decorator"""
+    def decorator(f):
+        @wraps(f)
+        def wrapper(*args, **kwargs):
+            if not request.is_json:
+                return jsonify({"error": "JSON format required"}), 400
+            
+            data = request.get_json()
+            if not data:
+                return jsonify({"error": "Empty JSON"}), 400
+            
+            if required_fields:
+                missing_fields = [field for field in required_fields if field not in data]
+                if missing_fields:
+                    return jsonify({"error": f"Missing fields: {missing_fields}"}), 400
+            
+            return f(*args, **kwargs)
+        return wrapper
+    return decorator
+
+def performance_monitor(f):
+    """Performance monitoring decorator"""
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        start_time = time.time()
+        try:
+            result = f(*args, **kwargs)
+            execution_time = time.time() - start_time
+            
+            # Sekin endpoint larni log qilish
+            if execution_time > 1.0:
+                app_logger.warning(f"Slow endpoint: {f.__name__} took {execution_time:.2f}s")
+            
+            return result
+        except Exception as e:
+            execution_time = time.time() - start_time
+            app_logger.error(f"Error in {f.__name__} after {execution_time:.2f}s: {str(e)}")
+            raise
     return wrapper
 
 @app.route("/admin/dashboard")
@@ -3477,14 +4011,107 @@ with app.app_context():
     db.create_all()
 
 @app.route("/debug")
+@login_required
 def debug():
-    """Debug ma'lumotlari"""
-    return {
-        "session": dict(session),
-        "user_id": session.get("user_id"),
-        "user_name": session.get("user_name"),
-        "logged_in": "user_id" in session
-    }
+    """Enhanced debug ma'lumotlari"""
+    return jsonify({
+        "session_info": {
+            "user_id": session.get("user_id"),
+            "user_name": session.get("user_name"),
+            "logged_in": "user_id" in session,
+            "staff_id": session.get("staff_id"),
+            "courier_id": session.get("courier_id"),
+            "super_admin": session.get("super_admin", False)
+        },
+        "performance": performance_monitor.get_stats(),
+        "cache_stats": {
+            "memory_cache_size": len(cache_manager.memory_cache),
+            "redis_connected": cache_manager.redis_client is not None
+        },
+        "database_pool": {
+            "available_connections": len(db_pool.connections),
+            "max_connections": db_pool.max_connections
+        },
+        "system_info": {
+            "python_version": os.sys.version,
+            "current_time": get_current_time().isoformat(),
+            "uptime": time.time() - start_time if 'start_time' in globals() else 0
+        }
+    })
+
+@app.route("/api/health")
+@performance_monitor
+def health_check():
+    """System health check"""
+    try:
+        # Database connectivity check
+        db_status = "ok"
+        try:
+            execute_query("SELECT 1", fetch_one=True)
+        except Exception as e:
+            db_status = f"error: {str(e)}"
+        
+        # Cache check
+        cache_status = "ok"
+        try:
+            cache_manager.set("health_check", "test", 10)
+            cache_manager.get("health_check")
+        except Exception as e:
+            cache_status = f"error: {str(e)}"
+        
+        return jsonify({
+            "status": "healthy",
+            "timestamp": time.time(),
+            "services": {
+                "database": db_status,
+                "cache": cache_status,
+                "redis": "connected" if cache_manager.redis_client else "disconnected"
+            },
+            "performance": performance_monitor.get_stats()
+        })
+    except Exception as e:
+        app_logger.error(f"Health check failed: {str(e)}")
+        return jsonify({
+            "status": "unhealthy",
+            "error": str(e),
+            "timestamp": time.time()
+        }), 500
+
+@app.route("/api/metrics")
+@login_required
+def system_metrics():
+    """Detailed system metrics"""
+    try:
+        # Database statistics
+        db_stats = {}
+        try:
+            tables = ['users', 'orders', 'menu_items', 'cart_items', 'ratings']
+            for table in tables:
+                count = execute_query(f"SELECT COUNT(*) as count FROM {table}", fetch_one=True)
+                db_stats[table] = count['count'] if count else 0
+        except Exception as e:
+            db_stats = {"error": str(e)}
+        
+        # Current active sessions
+        active_sessions = len([s for s in ['user_id', 'staff_id', 'courier_id', 'super_admin'] 
+                              if session.get(s)])
+        
+        return jsonify({
+            "database_stats": db_stats,
+            "performance_stats": performance_monitor.get_stats(),
+            "cache_stats": {
+                "memory_items": len(cache_manager.memory_cache),
+                "redis_available": cache_manager.redis_client is not None
+            },
+            "active_sessions": active_sessions,
+            "system_load": {
+                "thread_pool_active": executor._threads,
+                "database_pool": len(db_pool.connections)
+            }
+        })
+    except Exception as e:
+        app_logger.error(f"Metrics endpoint error: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     try:
