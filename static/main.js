@@ -2,18 +2,26 @@
 function updateCartCount(retryCount = 0) {
     const maxRetries = 3;
     
-    fetch('/api/cart-count', {
+    // Cache buster qo'shish
+    const timestamp = new Date().getTime();
+    const url = `/api/cart-count?_=${timestamp}`;
+    
+    fetch(url, {
         method: 'GET',
         headers: {
             'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache'
         }
     })
     .then(response => {
+        console.log('Cart count response status:', response.status);
+        console.log('Cart count response headers:', response.headers.get('content-type'));
+        
         // Response content type ni tekshirish
         const contentType = response.headers.get('content-type');
         if (!contentType || !contentType.includes('application/json')) {
-            console.warn('Cart count API HTML qaytardi, JSON emas');
+            console.warn('Cart count API HTML qaytardi, JSON emas. Content-Type:', contentType);
             throw new Error('API HTML qaytardi');
         }
         
@@ -24,6 +32,8 @@ function updateCartCount(retryCount = 0) {
         return response.json();
     })
     .then(data => {
+        console.log('Cart count API muvaffaqiyatli javob:', data);
+        
         if (data.success) {
             const cartBadge = document.querySelector('.cart-badge');
             const cartCountElements = document.querySelectorAll('.cart-count');
@@ -36,6 +46,17 @@ function updateCartCount(retryCount = 0) {
             cartCountElements.forEach(element => {
                 element.textContent = data.count || 0;
             });
+            
+            // Floating cart badge ham yangilash
+            const floatingBadge = document.querySelector('.cart-badge-floating');
+            if (floatingBadge) {
+                floatingBadge.textContent = data.count || 0;
+                if (data.count > 0) {
+                    floatingBadge.classList.add('show');
+                } else {
+                    floatingBadge.classList.remove('show');
+                }
+            }
         } else {
             console.warn('Cart count API success=false qaytardi:', data);
         }
@@ -48,13 +69,20 @@ function updateCartCount(retryCount = 0) {
             console.log(`Qayta urinish ${retryCount + 1}/${maxRetries}`);
             setTimeout(() => {
                 updateCartCount(retryCount + 1);
-            }, 1000 * (retryCount + 1));
+            }, 2000 * (retryCount + 1)); // Uzaytirilgan kutish vaqti
         } else {
+            console.log('Maksimal urinishlar tugadi, fallback qo\'llanilmoqda');
             // Fallback - savatcha sonini 0 qilib qo'yish
             const cartBadge = document.querySelector('.cart-badge');
             if (cartBadge) {
                 cartBadge.textContent = '0';
                 cartBadge.style.display = 'none';
+            }
+            
+            const floatingBadge = document.querySelector('.cart-badge-floating');
+            if (floatingBadge) {
+                floatingBadge.textContent = '0';
+                floatingBadge.classList.remove('show');
             }
         }
     });
