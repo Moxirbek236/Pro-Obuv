@@ -1892,37 +1892,6 @@ def remove_from_cart(cart_item_id):
     return redirect(url_for("cart"))
 
 # ---- USER LOGIN & REGISTER ----
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    if request.method == "POST":
-        email = request.form.get("email", "").strip()
-        password = request.form.get("password", "")
-
-        if not email or not password:
-            flash("Email va parolni kiriting.", "error")
-            return redirect(url_for("login"))
-
-        conn = get_db()
-        cur = conn.cursor()
-        cur.execute("SELECT * FROM users WHERE email = ?", (email,))
-        user = cur.fetchone()
-        conn.close()
-
-        if user and check_password_hash(user["password_hash"], password):
-            session["user_id"] = user["id"]
-            session["user_name"] = f"{user['first_name']} {user['last_name']}"
-            session["user_email"] = user["email"]
-            # Tillar va mavzu sozlamalarini session ga yuklash
-            session['interface_language'] = user.get('interface_language') or 'uz'
-            session['font_size'] = user.get('font_size') or 'medium'
-            session['dark_theme'] = bool(user.get('dark_theme', 0))
-            flash(f"Xush kelibsiz, {user['first_name']}!", "success")
-            return redirect(url_for("index"))
-        else:
-            flash("Noto'g'ri email yoki parol.", "error")
-            return redirect(url_for("login"))
-
-    return render_template("login.html")
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -2708,6 +2677,49 @@ def courier_logout():
     session.pop("courier_id", None)
     session.pop("courier_name", None)
     return redirect(url_for("index"))
+
+# ---- LOGIN ROUTES ----
+@app.route("/login", methods=["GET", "POST"])
+def login_page():
+    # URL dan role parametrini tekshirish
+    role_param = request.args.get('role')
+    
+    if role_param == 'staff':
+        return redirect(url_for("staff_login"))
+    elif role_param == 'courier':
+        return redirect(url_for("courier_login"))
+    elif role_param == 'admin':
+        return redirect(url_for("super_admin_login"))
+    else:
+        # Regular user login
+        if request.method == "POST":
+            email = request.form.get("email", "").strip()
+            password = request.form.get("password", "")
+
+            if not email or not password:
+                flash("Email va parolni kiriting.", "error")
+                return redirect(url_for("login_page"))
+
+            conn = get_db()
+            cur = conn.cursor()
+            cur.execute("SELECT * FROM users WHERE email = ?", (email,))
+            user = cur.fetchone()
+            conn.close()
+
+            if user and check_password_hash(user["password_hash"], password):
+                session["user_id"] = user["id"]
+                session["user_name"] = f"{user['first_name']} {user['last_name']}"
+                session["user_email"] = user["email"]
+                session['interface_language'] = user.get('interface_language') or 'uz'
+                session['font_size'] = user.get('font_size') or 'medium'
+                session['dark_theme'] = bool(user.get('dark_theme', 0))
+                flash(f"Xush kelibsiz, {user['first_name']}!", "success")
+                return redirect(url_for("index"))
+            else:
+                flash("Noto'g'ri email yoki parol.", "error")
+                return redirect(url_for("login_page"))
+
+        return render_template("login.html")
 
 # ---- STAFF AUTH ----
 @app.route("/staff-secure-login-w7m2k", methods=["GET", "POST"])
@@ -3762,10 +3774,7 @@ def api_save_settings():
 
 @app.route("/api/cart-count", methods=["GET"])
 def api_cart_count():
-    """Savatcha buyumlari sonini qaytarish"""
-    # Content-Type ni majburiy JSON qilib o'rnatish
-    from flask import make_response
-    
+    """Savatcha buyumlari sonini qaytarish - JSON format bilan"""
     try:
         # Session ID ni xavfsiz yaratish
         try:
@@ -3799,32 +3808,63 @@ def api_cart_count():
 
             conn.close()
 
-            response = make_response(jsonify({
+            # Explicit JSON response yaratish
+            response_data = {
                 "count": int(count), 
-                "success": True
-            }))
-            response.headers['Content-Type'] = 'application/json'
+                "success": True,
+                "timestamp": time.time()
+            }
+            
+            response = app.response_class(
+                response=json.dumps(response_data),
+                status=200,
+                mimetype='application/json'
+            )
+            
+            # CORS headers qo'shish
+            response.headers['Access-Control-Allow-Origin'] = '*'
+            response.headers['Access-Control-Allow-Methods'] = 'GET'
+            response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+            
             return response
 
         except Exception as db_error:
             app_logger.error(f"Database xatoligi cart count da: {str(db_error)}")
-            response = make_response(jsonify({
+            
+            error_response = {
                 "count": 0, 
                 "success": False,
-                "error": "Database xatoligi"
-            }))
-            response.headers['Content-Type'] = 'application/json'
+                "error": "Database xatoligi",
+                "timestamp": time.time()
+            }
+            
+            response = app.response_class(
+                response=json.dumps(error_response),
+                status=500,
+                mimetype='application/json'
+            )
+            response.headers['Access-Control-Allow-Origin'] = '*'
             return response
 
     except Exception as e:
         app_logger.error(f"Savatcha sonini olishda umumiy xatolik: {str(e)}")
-        response = make_response(jsonify({
+        
+        error_response = {
             "count": 0, 
             "success": False, 
-            "error": "Server xatoligi"
-        }))
-        response.headers['Content-Type'] = 'application/json'
+            "error": "Server xatoligi",
+            "timestamp": time.time()
+        }
+        
+        response = app.response_class(
+            response=json.dumps(error_response),
+            status=500,
+            mimetype='application/json'
+        )
+        response.headers['Access-Control-Allow-Origin'] = '*'
         return response
+
+# ---- API ENDPOINTS (yuqori prioritet) ----
 
 @app.route("/api/set-theme", methods=["POST"])
 def api_set_theme():
