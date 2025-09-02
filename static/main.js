@@ -1,11 +1,11 @@
 // Savatcha sonini yangilash funksiyasi
 function updateCartCount(retryCount = 0) {
     const maxRetries = 3;
-    
+
     // Cache buster qo'shish
     const timestamp = new Date().getTime();
     const url = `/api/cart-count?_=${timestamp}`;
-    
+
     fetch(url, {
         method: 'GET',
         headers: {
@@ -17,23 +17,23 @@ function updateCartCount(retryCount = 0) {
     .then(response => {
         console.log('Cart count response status:', response.status);
         console.log('Cart count response headers:', response.headers.get('content-type'));
-        
+
         // Response content type ni tekshirish
         const contentType = response.headers.get('content-type');
         if (!contentType || !contentType.includes('application/json')) {
             console.warn('Cart count API HTML qaytardi, JSON emas. Content-Type:', contentType);
             throw new Error('API HTML qaytardi');
         }
-        
+
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+
         return response.json();
     })
     .then(data => {
         console.log('Cart count API muvaffaqiyatli javob:', data);
-        
+
         if (data.success) {
             const cartBadge = document.querySelector('.cart-badge');
             const cartCountElements = document.querySelectorAll('.cart-count');
@@ -46,7 +46,7 @@ function updateCartCount(retryCount = 0) {
             cartCountElements.forEach(element => {
                 element.textContent = data.count || 0;
             });
-            
+
             // Floating cart badge ham yangilash
             const floatingBadge = document.querySelector('.cart-badge-floating');
             if (floatingBadge) {
@@ -63,7 +63,7 @@ function updateCartCount(retryCount = 0) {
     })
     .catch(error => {
         console.error('Savatcha sonini olishda xato:', error);
-        
+
         // Retry logic
         if (retryCount < maxRetries) {
             console.log(`Qayta urinish ${retryCount + 1}/${maxRetries}`);
@@ -78,7 +78,7 @@ function updateCartCount(retryCount = 0) {
                 cartBadge.textContent = '0';
                 cartBadge.style.display = 'none';
             }
-            
+
             const floatingBadge = document.querySelector('.cart-badge-floating');
             if (floatingBadge) {
                 floatingBadge.textContent = '0';
@@ -483,7 +483,7 @@ const translations = {
         'questions_phone': 'По вопросам: +998 99 145 96 86'
     },
     'en': {
-        // Navbar
+        //Navbar
         'brand': '🍽️ Restaurant',
         'menu': '📋 Menu',
         'favorites': '❤️ Favorites',

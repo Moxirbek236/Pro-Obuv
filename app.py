@@ -404,27 +404,9 @@ def before_request():
 
 @app.after_request  
 def after_request(response):
-    """So'rov tugagach performance ni yozib olish"""
+    """So'rov tugagach xavfsizlik sarlavhalarini qo'shish"""
     try:
-        if hasattr(request, 'start_time'):
-            duration = time.time() - request.start_time
-
-            # Performance monitor instance mavjudligini tekshirish
-            if performance_monitor and hasattr(performance_monitor, 'record_request'):
-                try:
-                    performance_monitor.record_request(duration, request.endpoint)
-                except Exception as perf_error:
-                    pass  # Performance logging error ni ignore qilish
-
-            # Sekin so'rovlarni log qilish
-            if duration > 2.0:
-                app_logger.warning(f"Slow request: {request.endpoint} took {duration:.2f}s")
-    except Exception as e:
-        # Performance monitoring xatoligi uchun logga yozish, lekin javobni buzmaslik
-        pass
-
-    # Security headers qo'shish
-    try:
+        # Faqat security headers qo'shish
         response.headers['X-Content-Type-Options'] = 'nosniff'
         response.headers['X-Frame-Options'] = 'DENY'
         response.headers['X-XSS-Protection'] = '1; mode=block'
@@ -1693,31 +1675,12 @@ def validate_json(required_fields=None):
         return wrapper
     return decorator
 
-def performance_monitor(f):
-    """Performance monitoring decorator"""
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        start_time = time.time()
-        try:
-            result = f(*args, **kwargs)
-            execution_time = time.time() - start_time
-
-            # Sekin endpoint larni log qilish
-            if execution_time > 1.0:
-                app_logger.warning(f"Slow endpoint: {f.__name__} took {execution_time:.2f}s")
-
-            return result
-        except Exception as e:
-            execution_time = time.time() - start_time
-            app_logger.error(f"Error in {f.__name__} after {execution_time:.2f}s: {str(e)}")
-            raise
-    return wrapper
+# Performance monitoring decorator ni olib tashlaymiz - conflict keltiryapti
 
 # ---- MENU ----
 @app.route("/menu")
 @rate_limit(max_requests=500, window=60)
 @cache_result(ttl=120)
-@performance_monitor
 def menu():
     """Optimized menu endpoint"""
     try:
