@@ -53,12 +53,20 @@ load_dotenv()
 
 app = Flask(__name__)
 
-# Professional production konfiguratsiya
-app.config.update(
-    # Database
-    SQLALCHEMY_DATABASE_URI=os.environ.get('DATABASE_URL', 'sqlite:///restaurant.db'),
-    SQLALCHEMY_TRACK_MODIFICATIONS=False,
-    SQLALCHEMY_ENGINE_OPTIONS={
+# Universal configuration class
+class Config:
+    """Universal dastur konfiguratsiyasi"""
+    
+    # Environment detection
+    ENVIRONMENT = os.environ.get('FLASK_ENV', 'production')
+    IS_DEVELOPMENT = ENVIRONMENT == 'development'
+    IS_PRODUCTION = ENVIRONMENT == 'production'
+    
+    # Database configuration
+    DATABASE_URL = os.environ.get('DATABASE_URL', 'sqlite:///restaurant.db')
+    SQLALCHEMY_DATABASE_URI = DATABASE_URL
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_ENGINE_OPTIONS = {
         'pool_timeout': 30,
         'pool_recycle': 3600,
         'pool_pre_ping': True,
@@ -67,43 +75,67 @@ app.config.update(
             'timeout': 60,
             'isolation_level': None
         }
-    },
+    }
     
-    # Security
-    SECRET_KEY=os.environ.get("SECRET_KEY", secrets.token_urlsafe(32)),
-    SESSION_COOKIE_SECURE=os.environ.get('FLASK_ENV') == 'production',
-    SESSION_COOKIE_HTTPONLY=True,
-    SESSION_COOKIE_SAMESITE='Lax',
-    PERMANENT_SESSION_LIFETIME=7200,  # 2 soat
-    WTF_CSRF_ENABLED=True,
+    # Security configuration
+    SECRET_KEY = os.environ.get("SECRET_KEY", secrets.token_urlsafe(32))
+    SESSION_COOKIE_SECURE = IS_PRODUCTION
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = 'Lax'
+    PERMANENT_SESSION_LIFETIME = 7200
+    WTF_CSRF_ENABLED = True
     
-    # Upload
-    MAX_CONTENT_LENGTH=32 * 1024 * 1024,  # 32MB max file size
-    UPLOAD_FOLDER='static/uploads',
+    # File upload configuration
+    MAX_CONTENT_LENGTH = 32 * 1024 * 1024  # 32MB
+    UPLOAD_FOLDER = 'static/uploads'
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
     
-    # JSON
-    JSON_SORT_KEYS=False,
-    JSONIFY_PRETTYPRINT_REGULAR=False,
+    # JSON configuration
+    JSON_SORT_KEYS = False
+    JSONIFY_PRETTYPRINT_REGULAR = IS_DEVELOPMENT
     
-    # Performance
-    SEND_FILE_MAX_AGE_DEFAULT=31536000,  # 1 yil cache
+    # Cache configuration
+    SEND_FILE_MAX_AGE_DEFAULT = 31536000 if IS_PRODUCTION else 300
+    REDIS_URL = os.environ.get('REDIS_URL', 'memory://')
     
     # External APIs
-    YANDEX_GEOCODER_API=os.environ.get('YANDEX_GEOCODER_API', ''),
-    GOOGLE_MAPS_API=os.environ.get('GOOGLE_MAPS_API', ''),
+    YANDEX_GEOCODER_API = os.environ.get('YANDEX_GEOCODER_API', '')
+    GOOGLE_MAPS_API = os.environ.get('GOOGLE_MAPS_API', '')
+    SERPER_API_KEY = os.environ.get('SERPER_API_KEY', '1b077296f67499a12ee28ce232bb48221d29be14')
     
-    # App settings
-    DEFAULT_LANGUAGE='uz',
-    SUPPORTED_LANGUAGES=['uz', 'ru', 'en'],
-    DEFAULT_CURRENCY='UZS',
-    TIMEZONE='Asia/Tashkent',
+    # Localization
+    DEFAULT_LANGUAGE = os.environ.get('DEFAULT_LANGUAGE', 'uz')
+    SUPPORTED_LANGUAGES = ['uz', 'ru', 'en', 'tr', 'ar']
+    DEFAULT_CURRENCY = os.environ.get('DEFAULT_CURRENCY', 'UZS')
+    TIMEZONE = os.environ.get('TIMEZONE', 'Asia/Tashkent')
     
-    # Business settings
-    AVG_PREP_MINUTES=int(os.environ.get("AVG_PREP_MINUTES", "7")),
-    DELIVERY_BASE_PRICE=10000,
-    COURIER_BASE_RATE=8000,
-    CASHBACK_PERCENTAGE=1.0
-)
+    # Business logic
+    AVG_PREP_MINUTES = int(os.environ.get("AVG_PREP_MINUTES", "7"))
+    DELIVERY_BASE_PRICE = int(os.environ.get("DELIVERY_BASE_PRICE", "10000"))
+    COURIER_BASE_RATE = int(os.environ.get("COURIER_BASE_RATE", "8000"))
+    CASHBACK_PERCENTAGE = float(os.environ.get("CASHBACK_PERCENTAGE", "1.0"))
+    MAX_DELIVERY_DISTANCE = float(os.environ.get("MAX_DELIVERY_DISTANCE", "50.0"))
+    
+    # Rate limiting
+    RATE_LIMIT_DAILY = int(os.environ.get("RATE_LIMIT_DAILY", "1000"))
+    RATE_LIMIT_HOURLY = int(os.environ.get("RATE_LIMIT_HOURLY", "200"))
+    RATE_LIMIT_MINUTE = int(os.environ.get("RATE_LIMIT_MINUTE", "50"))
+    
+    # Logging
+    LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO')
+    LOG_FILE_MAX_SIZE = int(os.environ.get('LOG_FILE_MAX_SIZE', '10485760'))  # 10MB
+    LOG_BACKUP_COUNT = int(os.environ.get('LOG_BACKUP_COUNT', '5'))
+    
+    # Performance
+    THREAD_POOL_MAX_WORKERS = int(os.environ.get('THREAD_POOL_MAX_WORKERS', '10'))
+    DB_POOL_MAX_CONNECTIONS = int(os.environ.get('DB_POOL_MAX_CONNECTIONS', '20'))
+    
+    # Admin credentials
+    SUPER_ADMIN_USERNAME = os.environ.get('SUPER_ADMIN_USERNAME', 'masteradmin')
+    SUPER_ADMIN_PASSWORD = os.environ.get('SUPER_ADMIN_PASSWORD', 'SuperAdmin2025!@#$%')
+
+# Apply configuration
+app.config.from_object(Config)
 
 # Professional middleware stack
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
@@ -114,12 +146,16 @@ CORS(app, origins=['*'], methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'])
 # Compression
 Compress(app)
 
-# Rate limiting
+# Rate limiting with universal configuration
 limiter = Limiter(
     app,
     key_func=get_remote_address,
-    default_limits=["1000 per day", "200 per hour", "50 per minute"],
-    storage_uri=os.environ.get('REDIS_URL', 'memory://')
+    default_limits=[
+        f"{Config.RATE_LIMIT_DAILY} per day", 
+        f"{Config.RATE_LIMIT_HOURLY} per hour", 
+        f"{Config.RATE_LIMIT_MINUTE} per minute"
+    ],
+    storage_uri=Config.REDIS_URL
 )
 
 # Performance profiling (faqat debug rejimida)
@@ -235,8 +271,8 @@ class RateLimiter:
 
 rate_limiter = RateLimiter()
 
-# Thread pool for async operations
-executor = ThreadPoolExecutor(max_workers=10)
+# Thread pool for async operations with configurable workers
+executor = ThreadPoolExecutor(max_workers=Config.THREAD_POOL_MAX_WORKERS)
 
 # Database fayl yo'lini to'g'rilash
 DB_PATH = os.path.join(os.path.dirname(__file__), "database.sqlite3")
@@ -451,8 +487,8 @@ class DatabasePool:
                 except:
                     pass
 
-# Global database pool
-db_pool = DatabasePool(DB_PATH)
+# Global database pool with configurable max connections
+db_pool = DatabasePool(DB_PATH, Config.DB_POOL_MAX_CONNECTIONS)
 
 def get_db():
     """Legacy support uchun"""
@@ -3039,9 +3075,9 @@ def staff_employees():
     return render_template("staff_employees.html", employees=employees, staff_name=session.get("staff_name"))
 
 # ---- SUPER ADMIN ----
-# Super admin kredentsiallari
-SUPER_ADMIN_USERNAME = "masteradmin"
-SUPER_ADMIN_PASSWORD = "SuperAdmin2025!@#$%"
+# Super admin kredentsiallari - universal konfiguratsiyadan
+SUPER_ADMIN_USERNAME = Config.SUPER_ADMIN_USERNAME
+SUPER_ADMIN_PASSWORD = Config.SUPER_ADMIN_PASSWORD
 
 @app.route("/super-admin-control-panel-master-z8x9k", methods=["GET", "POST"])
 def super_admin_login():
@@ -4054,6 +4090,30 @@ def debug():
         }
     })
 
+@app.route("/api/config")
+@login_required
+def get_config():
+    """Universal konfiguratsiya ma'lumotlari"""
+    return jsonify({
+        "environment": Config.ENVIRONMENT,
+        "supported_languages": Config.SUPPORTED_LANGUAGES,
+        "default_language": Config.DEFAULT_LANGUAGE,
+        "default_currency": Config.DEFAULT_CURRENCY,
+        "timezone": Config.TIMEZONE,
+        "business_settings": {
+            "avg_prep_minutes": Config.AVG_PREP_MINUTES,
+            "delivery_base_price": Config.DELIVERY_BASE_PRICE,
+            "courier_base_rate": Config.COURIER_BASE_RATE,
+            "cashback_percentage": Config.CASHBACK_PERCENTAGE,
+            "max_delivery_distance": Config.MAX_DELIVERY_DISTANCE
+        },
+        "rate_limits": {
+            "daily": Config.RATE_LIMIT_DAILY,
+            "hourly": Config.RATE_LIMIT_HOURLY,
+            "minute": Config.RATE_LIMIT_MINUTE
+        }
+    })
+
 @app.route("/api/health")
 @performance_monitor
 def health_check():
@@ -4130,43 +4190,57 @@ def system_metrics():
 
 if __name__ == '__main__':
     try:
+        # Import universal deployment config
+        from deploy_config import get_server_config
+        
+        print("🚀 Universal Restaurant System ishga tushmoqda...")
+        print(f"Muhit: {Config.ENVIRONMENT}")
+        print(f"Debug: {Config.IS_DEVELOPMENT}")
+        
         # Ma'lumotlar bazasini ishga tushirish
-        print("Ma'lumotlar bazasini ishga tushirish...")
+        print("📊 Ma'lumotlar bazasini ishga tushirish...")
         init_db()
-        print("Ma'lumotlar bazasi muvaffaqiyatli ishga tushirildi")
-
-        # Port konfiguratsiyasi
-        port = int(os.environ.get('PORT', 5000))
-        print(f"Server {port} portda ishga tushmoqda...")
-
-        # Flask app konfiguratsiyasi
-        app.config['DEBUG'] = False
-        app.config['TEMPLATES_AUTO_RELOAD'] = False
-
+        print("✅ Ma'lumotlar bazasi muvaffaqiyatli ishga tushirildi")
+        
+        # Server konfiguratsiyasini olish
+        server_config = get_server_config()
+        
+        print(f"🌐 Server {server_config['host']}:{server_config['port']} da ishga tushmoqda...")
+        print(f"📋 Qo'llab-quvvatlanadigan tillar: {', '.join(Config.SUPPORTED_LANGUAGES)}")
+        print(f"💰 Asosiy valyuta: {Config.DEFAULT_CURRENCY}")
+        print(f"⏰ Vaqt zonasi: {Config.TIMEZONE}")
+        print(f"🏪 O'rtacha tayyorlanish vaqti: {Config.AVG_PREP_MINUTES} daqiqa")
+        
         # Serverni ishga tushirish
-        print("Flask server ishga tushmoqda...")
-        app.run(debug=False, host='0.0.0.0', port=port, threaded=True, use_reloader=False)
+        print("🎯 Flask server ishlamoqda...")
+        app.run(**server_config)
 
     except KeyboardInterrupt:
-        print("\nServer to'xtatildi (Ctrl+C)")
+        print("\n🛑 Server to'xtatildi (Ctrl+C)")
+        
     except Exception as e:
-        print(f"XATOLIK: Server ishga tushirishda xatolik: {str(e)}")
-        logging.error(f"Server startup error: {str(e)}")
-        import traceback
-        print("To'liq xatolik ma'lumoti:")
-        traceback.print_exc()
-
-        # Qo'shimcha debug ma'lumotlari
-        print(f"Python versiya: {os.sys.version}")
-        print(f"Ishchi katalog: {os.getcwd()}")
-        print(f"Flask versiya: {app.__class__.__module__}")
-
-        # Ma'lumotlar bazasi holatini tekshirish
+        print(f"❌ XATOLIK: Server ishga tushirishda xatolik: {str(e)}")
+        app_logger.error(f"Server startup error: {str(e)}")
+        
+        # Debug ma'lumotlari
+        print(f"🐍 Python versiya: {os.sys.version}")
+        print(f"📁 Ishchi katalog: {os.getcwd()}")
+        print(f"🌍 Muhit o'zgaruvchilari:")
+        print(f"   FLASK_ENV: {os.environ.get('FLASK_ENV', 'None')}")
+        print(f"   PORT: {os.environ.get('PORT', 'None')}")
+        print(f"   DATABASE_URL: {os.environ.get('DATABASE_URL', 'None')}")
+        
+        # Ma'lumotlar bazasi tekshiruvi
         try:
             if os.path.exists(DB_PATH):
-                print(f"Ma'lumotlar bazasi mavjud: {DB_PATH}")
-                print(f"Fayl hajmi: {os.path.getsize(DB_PATH)} bytes")
+                print(f"✅ Ma'lumotlar bazasi mavjud: {DB_PATH}")
+                print(f"📏 Fayl hajmi: {os.path.getsize(DB_PATH)} bytes")
             else:
-                print(f"Ma'lumotlar bazasi topilmadi: {DB_PATH}")
+                print(f"❌ Ma'lumotlar bazasi topilmadi: {DB_PATH}")
         except Exception as db_error:
-            print(f"Ma'lumotlar bazasini tekshirishda xatolik: {str(db_error)}")
+            print(f"❌ Ma'lumotlar bazasini tekshirishda xatolik: {str(db_error)}")
+        
+        # Xatolik haqida batafsil ma'lumot
+        import traceback
+        print("\n📋 To'liq xatolik ma'lumoti:")
+        traceback.print_exc()
