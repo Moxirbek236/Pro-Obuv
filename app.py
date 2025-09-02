@@ -861,46 +861,61 @@ def get_session_id():
 def get_cart_items(conn, session_id, user_id=None):
     """Savatchadagi mahsulotlarni olish"""
     cur = conn.cursor()
-    if user_id:
-        cur.execute("""
-            SELECT ci.id, ci.menu_item_id, mi.name, mi.price, ci.quantity, 
-                   COALESCE(mi.discount_percentage, 0) as discount_percentage,
-                   CASE 
-                       WHEN COALESCE(mi.discount_percentage, 0) > 0 
-                       THEN (mi.price * (100 - COALESCE(mi.discount_percentage, 0)) / 100) * ci.quantity
-                       ELSE mi.price * ci.quantity
-                   END as total
-            FROM cart_items ci
-            JOIN menu_items mi ON ci.menu_item_id = mi.id
-            WHERE ci.user_id = ?
-            ORDER BY ci.created_at DESC
-        """, (user_id,))
-    else:
-        cur.execute("""
-            SELECT ci.id, ci.menu_item_id, mi.name, mi.price, ci.quantity, 
-                   COALESCE(mi.discount_percentage, 0) as discount_percentage,
-                   CASE 
-                       WHEN COALESCE(mi.discount_percentage, 0) > 0 
-                       THEN (mi.price * (100 - COALESCE(mi.discount_percentage, 0)) / 100) * ci.quantity
-                       ELSE mi.price * ci.quantity
-                   END as total
-            FROM cart_items ci
-            JOIN menu_items mi ON ci.menu_item_id = mi.id
-            WHERE ci.session_id = ?
-            ORDER BY ci.created_at DESC
-        """, (session_id,))
     
-    results = cur.fetchall()
-    # Row obyektlarini dict formatiga o'tkazish
-    cart_items = []
-    for row in results:
-        item_dict = dict(row)
-        # discount_percentage ni tekshirish va None bo'lsa 0 qilib qo'yish
-        if item_dict['discount_percentage'] is None:
-            item_dict['discount_percentage'] = 0
-        cart_items.append(item_dict)
-    
-    return cart_items
+    try:
+        if user_id:
+            cur.execute("""
+                SELECT ci.id, ci.menu_item_id, mi.name, mi.price, ci.quantity, 
+                       COALESCE(mi.discount_percentage, 0) as discount_percentage,
+                       CASE 
+                           WHEN COALESCE(mi.discount_percentage, 0) > 0 
+                           THEN (mi.price * (100 - COALESCE(mi.discount_percentage, 0)) / 100) * ci.quantity
+                           ELSE mi.price * ci.quantity
+                       END as total
+                FROM cart_items ci
+                JOIN menu_items mi ON ci.menu_item_id = mi.id
+                WHERE ci.user_id = ? AND mi.available = 1
+                ORDER BY ci.created_at DESC
+            """, (user_id,))
+        else:
+            cur.execute("""
+                SELECT ci.id, ci.menu_item_id, mi.name, mi.price, ci.quantity, 
+                       COALESCE(mi.discount_percentage, 0) as discount_percentage,
+                       CASE 
+                           WHEN COALESCE(mi.discount_percentage, 0) > 0 
+                           THEN (mi.price * (100 - COALESCE(mi.discount_percentage, 0)) / 100) * ci.quantity
+                           ELSE mi.price * ci.quantity
+                       END as total
+                FROM cart_items ci
+                JOIN menu_items mi ON ci.menu_item_id = mi.id
+                WHERE ci.session_id = ? AND mi.available = 1
+                ORDER BY ci.created_at DESC
+            """, (session_id,))
+        
+        results = cur.fetchall()
+        
+        # Agar natijalar bo'lmasa, bo'sh list qaytarish
+        if not results:
+            return []
+            
+        # Row obyektlarini dict formatiga o'tkazish
+        cart_items = []
+        for row in results:
+            try:
+                item_dict = dict(row)
+                # discount_percentage ni tekshirish va None bo'lsa 0 qilib qo'yish
+                if item_dict.get('discount_percentage') is None:
+                    item_dict['discount_percentage'] = 0
+                cart_items.append(item_dict)
+            except Exception as row_error:
+                logging.error(f"Savatcha element o'qishda xatolik: {str(row_error)}")
+                continue
+        
+        return cart_items
+        
+    except Exception as e:
+        logging.error(f"Savatcha ma'lumotlarini olishda xatolik: {str(e)}")
+        return []
 
 def get_cart_total(conn, session_id, user_id=None):
     """Savatchaning umumiy summasini hisoblash"""
@@ -1140,25 +1155,36 @@ def cart():
     session_id = get_session_id()
     user_id = session.get("user_id")
     conn = get_db()
+    
+    try:
+        # Foydalanuvchi ma'lumotlarini olish va session ga yuklash
+        if user_id:
+            cur = conn.cursor()
+            cur.execute("SELECT phone, address, address_latitude, address_longitude, first_name, last_name FROM users WHERE id = ?", (user_id,))
+            user_profile = cur.fetchone()
 
-    # Foydalanuvchi ma'lumotlarini olish va session ga yuklash
-    if user_id:
-        cur = conn.cursor()
-        cur.execute("SELECT phone, address, address_latitude, address_longitude, first_name, last_name FROM users WHERE id = ?", (user_id,))
-        user_profile = cur.fetchone()
+            if user_profile:
+                session['user_phone'] = user_profile['phone'] or ''
+                session['user_address'] = user_profile['address'] or ''
+                session['user_address_latitude'] = user_profile['address_latitude'] or ''
+                session['user_address_longitude'] = user_profile['address_longitude'] or ''
+                session['user_first_name'] = user_profile['first_name'] or ''
+                session['user_last_name'] = user_profile['last_name'] or ''
 
-        if user_profile:
-            session['user_phone'] = user_profile['phone'] or ''
-            session['user_address'] = user_profile['address'] or ''
-            session['user_address_latitude'] = user_profile['address_latitude'] or ''
-            session['user_address_longitude'] = user_profile['address_longitude'] or ''
-            session['user_first_name'] = user_profile['first_name'] or ''
-            session['user_last_name'] = user_profile['last_name'] or ''
-
-    cart_items = get_cart_items(conn, session_id, user_id)
-    total = get_cart_total(conn, session_id, user_id)
-    conn.close()
-    return render_template("cart.html", cart_items=cart_items, total=total)
+        # Savatcha ma'lumotlarini olish
+        cart_items = get_cart_items(conn, session_id, user_id)
+        total = get_cart_total(conn, session_id, user_id)
+        
+        # Debug logging
+        logging.info(f"Cart sahifa: user_id={user_id}, session_id={session_id}, cart_items_count={len(cart_items) if cart_items else 0}, total={total}")
+        
+        conn.close()
+        return render_template("cart.html", cart_items=cart_items or [], total=total or 0)
+        
+    except Exception as e:
+        logging.error(f"Cart sahifasida xatolik: {str(e)}")
+        conn.close()
+        return render_template("cart.html", cart_items=[], total=0)
 
 @app.route("/remove_from_cart/<int:cart_item_id>", methods=["POST"])
 def remove_from_cart(cart_item_id):
@@ -1895,8 +1921,21 @@ def courier_dashboard():
 
     # Session ga statistikani saqlash
     if courier_stats:
-        session['courier_deliveries'] = courier_stats[0] or 0
-        session['courier_hours'] = round(courier_stats[1] or 0, 1)
+        try:
+            # courier_stats tuple yoki Row obyekti bo'lishi mumkin
+            if hasattr(courier_stats, '__getitem__'):
+                session['courier_deliveries'] = courier_stats[0] or 0
+                session['courier_hours'] = round(courier_stats[1] or 0, 1) if courier_stats[1] else 0
+            else:
+                session['courier_deliveries'] = getattr(courier_stats, 'deliveries_completed', 0) or 0
+                session['courier_hours'] = round(getattr(courier_stats, 'total_hours', 0) or 0, 1)
+        except (TypeError, IndexError) as e:
+            logging.error(f"Kuryer statistikasini o'qishda xatolik: {str(e)}")
+            session['courier_deliveries'] = 0
+            session['courier_hours'] = 0
+    else:
+        session['courier_deliveries'] = 0
+        session['courier_hours'] = 0
     session['courier_active_orders'] = active_orders
 
     conn.close()
