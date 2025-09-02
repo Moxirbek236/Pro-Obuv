@@ -407,21 +407,26 @@ def after_request(response):
     """So'rov tugagach xavfsizlik sarlavhalarini qo'shish"""
     try:
         # Performance monitoring (agar mavjud bo'lsa)
-        if hasattr(request, 'start_time') and hasattr(performance_monitor, 'record_request'):
+        if hasattr(request, 'start_time'):
             try:
                 duration = time.time() - request.start_time
-                performance_monitor.record_request(duration, request.endpoint)
+                if hasattr(performance_monitor, 'record_request'):
+                    performance_monitor.record_request(duration, request.endpoint or 'unknown')
             except Exception:
                 pass  # Performance monitoring xatoligi ahamiyatsiz
 
         # Security headers qo'shish
         response.headers['X-Content-Type-Options'] = 'nosniff'
-        response.headers['X-Frame-Options'] = 'DENY'
+        response.headers['X-Frame-Options'] = 'DENY' 
         response.headers['X-XSS-Protection'] = '1; mode=block'
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+        
         if Config.IS_PRODUCTION:
             response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
     except Exception as header_error:
-        pass  # Header qo'shishda xatolik bo'lsa ham javobni buzmaslik
+        app_logger.error(f"After request header error: {str(header_error)}")
 
     return response
 
@@ -3749,39 +3754,34 @@ def api_save_settings():
 @app.route("/api/cart-count")
 def api_cart_count_fixed():
     """Savatcha buyumlari sonini qaytarish - majburiy JSON"""
-    response_headers = {
-        'Content-Type': 'application/json; charset=utf-8',
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0'
-    }
-    
     try:
         session_id = get_session_id()
         user_id = session.get('user_id')
 
-        with db_pool.get_connection() as conn:
-            cur = conn.cursor()
-            
-            if user_id:
-                cur.execute('SELECT COALESCE(SUM(quantity), 0) FROM cart_items WHERE user_id = ?', (user_id,))
-            else:
-                cur.execute('SELECT COALESCE(SUM(quantity), 0) FROM cart_items WHERE session_id = ?', (session_id,))
-            
-            result = cur.fetchone()
-            count = int(result[0]) if result and result[0] else 0
+        conn = get_db()
+        cur = conn.cursor()
+        
+        if user_id:
+            cur.execute('SELECT COALESCE(SUM(quantity), 0) FROM cart_items WHERE user_id = ?', (user_id,))
+        else:
+            cur.execute('SELECT COALESCE(SUM(quantity), 0) FROM cart_items WHERE session_id = ?', (session_id,))
+        
+        result = cur.fetchone()
+        count = int(result[0]) if result and result[0] else 0
+        conn.close()
 
-        json_response = jsonify({
+        response = jsonify({
             "count": count,
-            "success": True,
-            "session_id": session_id,
-            "user_id": user_id
+            "success": True
         })
         
-        for key, value in response_headers.items():
-            json_response.headers[key] = value
+        # JSON headers
+        response.headers['Content-Type'] = 'application/json; charset=utf-8'
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
             
-        return json_response
+        return response
 
     except Exception as e:
         app_logger.error(f"Cart count API error: {str(e)}")
@@ -3792,9 +3792,7 @@ def api_cart_count_fixed():
             "error": "Server error"
         })
         
-        for key, value in response_headers.items():
-            error_response.headers[key] = value
-            
+        error_response.headers['Content-Type'] = 'application/json; charset=utf-8'
         error_response.status_code = 500
         return error_response
 
