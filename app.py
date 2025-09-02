@@ -3755,40 +3755,58 @@ def api_save_settings():
 def api_cart_count():
     """Savatcha buyumlari sonini qaytarish"""
     try:
-        session_id = get_session_id()
+        # Session ID ni xavfsiz yaratish
+        try:
+            session_id = get_session_id()
+        except Exception as session_error:
+            session_id = 'default_session'
+
         user_id = session.get('user_id')
 
-        conn = get_db()
-        cur = conn.cursor()
+        # Database ulanishini xavfsiz yaratish
+        try:
+            conn = get_db()
+            cur = conn.cursor()
 
-        # Foydalanuvchining savatcha buyumlari sonini hisoblash
-        if user_id:
-            cur.execute('''
-                SELECT COALESCE(SUM(quantity), 0) as total_count 
-                FROM cart_items 
-                WHERE user_id = ?
-            ''', (user_id,))
-        else:
-            cur.execute('''
-                SELECT COALESCE(SUM(quantity), 0) as total_count 
-                FROM cart_items 
-                WHERE session_id = ?
-            ''', (session_id,))
+            # Foydalanuvchining savatcha buyumlari sonini hisoblash
+            if user_id:
+                cur.execute('''
+                    SELECT COALESCE(SUM(quantity), 0) as total_count 
+                    FROM cart_items 
+                    WHERE user_id = ?
+                ''', (user_id,))
+            else:
+                cur.execute('''
+                    SELECT COALESCE(SUM(quantity), 0) as total_count 
+                    FROM cart_items 
+                    WHERE session_id = ?
+                ''', (session_id,))
 
-        result = cur.fetchone()
-        count = result[0] if result else 0
+            result = cur.fetchone()
+            count = result[0] if result and result[0] is not None else 0
 
-        conn.close()
-        return jsonify({
-            "count": count, 
-            "success": True,
-            "session_id": session_id,
-            "user_id": user_id
-        })
+            conn.close()
+
+            return jsonify({
+                "count": int(count), 
+                "success": True
+            })
+
+        except Exception as db_error:
+            app_logger.error(f"Database xatoligi cart count da: {str(db_error)}")
+            return jsonify({
+                "count": 0, 
+                "success": False,
+                "error": "Database xatoligi"
+            })
 
     except Exception as e:
-        app_logger.error(f"Savatcha sonini olishda xatolik: {str(e)}")
-        return jsonify({"count": 0, "success": False, "error": str(e)})
+        app_logger.error(f"Savatcha sonini olishda umumiy xatolik: {str(e)}")
+        return jsonify({
+            "count": 0, 
+            "success": False, 
+            "error": "Server xatoligi"
+        })
 
 @app.route("/api/set-theme", methods=["POST"])
 def api_set_theme():
