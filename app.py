@@ -296,41 +296,58 @@ from logging.handlers import RotatingFileHandler, SMTPHandler
 
 # Advanced logging konfiguratsiyasi
 def setup_logging():
-    """Professional logging setup"""
-    formatter = logging.Formatter(
+    """Professional logging setup with structured logging"""
+    # Detailed formatter
+    detailed_formatter = logging.Formatter(
+        '%(asctime)s | %(levelname)s | %(name)s | %(funcName)s:%(lineno)d | %(message)s'
+    )
+    
+    # Simple formatter
+    simple_formatter = logging.Formatter(
         '%(asctime)s - %(levelname)s - %(message)s'
     )
 
-    # Rotating file handler (maksimal 10MB, 5 ta backup)
-    file_handler = RotatingFileHandler('logs/restaurant.log', maxBytes=10485760, backupCount=5)
-    file_handler.setFormatter(formatter)
-    file_handler.setLevel(logging.INFO)
+    try:
+        # Rotating file handler (maksimal 10MB, 5 ta backup)
+        file_handler = RotatingFileHandler('logs/restaurant.log', maxBytes=10485760, backupCount=5)
+        file_handler.setFormatter(detailed_formatter)
+        file_handler.setLevel(logging.INFO)
 
-    # Error file handler
-    error_handler = RotatingFileHandler('logs/errors.log', maxBytes=10485760, backupCount=5)
-    error_handler.setFormatter(formatter)
-    error_handler.setLevel(logging.ERROR)
+        # Error file handler
+        error_handler = RotatingFileHandler('logs/errors.log', maxBytes=10485760, backupCount=5)
+        error_handler.setFormatter(detailed_formatter)
+        error_handler.setLevel(logging.ERROR)
 
-    # Console handler - faqat xatoliklar uchun
-    console_handler = logging.StreamHandler()
-    console_handler.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))
-    console_handler.setLevel(logging.ERROR)
+        # Console handler - faqat development uchun
+        console_handler = logging.StreamHandler()
+        if Config.IS_DEVELOPMENT:
+            console_handler.setFormatter(simple_formatter)
+            console_handler.setLevel(logging.INFO)
+        else:
+            console_handler.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))
+            console_handler.setLevel(logging.ERROR)
 
-    # Root logger konfiguratsiya
-    root_logger = logging.getLogger()
-    root_logger.setLevel(logging.WARNING)
-    root_logger.addHandler(file_handler)
-    root_logger.addHandler(error_handler)
-    root_logger.addHandler(console_handler)
+        # Root logger konfiguratsiya
+        root_logger = logging.getLogger()
+        root_logger.setLevel(logging.INFO if Config.IS_DEVELOPMENT else logging.WARNING)
+        root_logger.addHandler(file_handler)
+        root_logger.addHandler(error_handler)
+        root_logger.addHandler(console_handler)
 
-    # Flask app logger - ortiqcha loglarni o'chirish
-    app.logger.setLevel(logging.ERROR)
-    app.logger.addHandler(error_handler)
+        # Flask app logger
+        app.logger.setLevel(logging.INFO if Config.IS_DEVELOPMENT else logging.ERROR)
+        app.logger.addHandler(error_handler)
 
-    # Werkzeug loglarni o'chirish
-    logging.getLogger('werkzeug').setLevel(logging.ERROR)
+        # Werkzeug loglarni sozlash
+        werkzeug_logger = logging.getLogger('werkzeug')
+        werkzeug_logger.setLevel(logging.WARNING)
 
-    return logging.getLogger('restaurant_app')
+        return logging.getLogger('restaurant_app')
+        
+    except Exception as e:
+        # Fallback logging
+        print(f"Logging setup failed: {e}")
+        return logging.getLogger('restaurant_app')
 
 # Logs papkasini yaratish
 os.makedirs('logs', exist_ok=True)
@@ -363,18 +380,42 @@ class PerformanceMonitor:
     def __init__(self):
         self.request_times = []
         self.lock = threading.Lock()
+        self.error_count = 0
+        self.success_count = 0
+        self.last_cleanup = time.time()
 
-    def record_request(self, duration, endpoint):
+    def record_request(self, duration, endpoint, status_code=200):
         with self.lock:
-            self.request_times.append({
-                'duration': duration,
-                'endpoint': endpoint,
-                'timestamp': time.time()
-            })
+            try:
+                self.request_times.append({
+                    'duration': duration,
+                    'endpoint': endpoint,
+                    'timestamp': time.time(),
+                    'status_code': status_code
+                })
 
-            # Faqat so'nggi 1000 ta so'rovni saqlash
-            if len(self.request_times) > 1000:
-                self.request_times = self.request_times[-1000:]
+                # Status ni hisoblash
+                if status_code >= 400:
+                    self.error_count += 1
+                else:
+                    self.success_count += 1
+
+                # Memory management - har 10 daqiqada eski ma'lumotlarni tozalash
+                current_time = time.time()
+                if current_time - self.last_cleanup > 600:  # 10 daqiqa
+                    cutoff_time = current_time - 3600  # 1 soat
+                    self.request_times = [
+                        req for req in self.request_times 
+                        if req['timestamp'] > cutoff_time
+                    ]
+                    self.last_cleanup = current_time
+
+                # Faqat so'nggi 1000 ta so'rovni saqlash
+                if len(self.request_times) > 1000:
+                    self.request_times = self.request_times[-1000:]
+                    
+            except Exception as e:
+                app_logger.error(f"Performance monitoring xatoligi: {str(e)}")
 
     def get_stats(self):
         with self.lock:
@@ -496,27 +537,36 @@ class DatabasePool:
 
     def _create_connection(self):
         """Yangi database connection yaratish"""
-        try:
-            conn = sqlite3.connect(
-                self.db_path,
-                check_same_thread=False,
-                timeout=30.0,
-                isolation_level=None
-            )
-            conn.row_factory = sqlite3.Row
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                conn = sqlite3.connect(
+                    self.db_path,
+                    check_same_thread=False,
+                    timeout=60.0,  # Timeout ni oshirish
+                    isolation_level=None
+                )
+                conn.row_factory = sqlite3.Row
 
-            # SQLite optimizatsiya sozlamalari
-            conn.execute("PRAGMA journal_mode=WAL")
-            conn.execute("PRAGMA synchronous=NORMAL")
-            conn.execute("PRAGMA cache_size=10000")
-            conn.execute("PRAGMA temp_store=MEMORY")
-            conn.execute("PRAGMA mmap_size=268435456")  # 256MB
-            conn.execute("PRAGMA foreign_keys=ON")
+                # SQLite optimizatsiya sozlamalari
+                conn.execute("PRAGMA journal_mode=WAL")
+                conn.execute("PRAGMA synchronous=NORMAL")
+                conn.execute("PRAGMA cache_size=10000")
+                conn.execute("PRAGMA temp_store=MEMORY")
+                conn.execute("PRAGMA mmap_size=268435456")  # 256MB
+                conn.execute("PRAGMA foreign_keys=ON")
+                conn.execute("PRAGMA busy_timeout=30000")  # 30 soniya
 
-            return conn
-        except Exception as e:
-            app_logger.error(f"Database connection yaratishda xatolik: {str(e)}")
-            return None
+                # Connection test
+                conn.execute("SELECT 1").fetchone()
+                return conn
+                
+            except Exception as e:
+                app_logger.error(f"Database connection attempt {attempt + 1} failed: {str(e)}")
+                if attempt == max_retries - 1:
+                    app_logger.error(f"Database connection yaratishda xatolik (barcha urinishlar): {str(e)}")
+                    return None
+                time.sleep(1)  # Qayta urinishdan oldin kutish
 
     @contextmanager
     def get_connection(self):
@@ -1448,7 +1498,7 @@ def generate_qr_code(receipt_data):
     return img_str
 
 def get_session_id():
-    """Session ID yaratish yoki olish"""
+    """Session ID yaratish yoki olish - yaxshilangan versiya"""
     try:
         # Session mavjudligini tekshirish
         if not session or 'session_id' not in session or not session['session_id'] or session['session_id'] == 'None':
@@ -1456,19 +1506,50 @@ def get_session_id():
             session_id = str(uuid.uuid4())
             session['session_id'] = session_id
             session.permanent = True  # Session ni permanent qilish
+            
+            # Session timeout belgilash
+            session.permanent_session_lifetime = datetime.timedelta(days=30)
+            
+            app_logger.info(f"Yangi session yaratildi: {session_id[:8]}...")
             return session_id
-        return session['session_id']
+            
+        # Mavjud session ID ni validatsiya qilish
+        session_id = session['session_id']
+        if len(session_id) < 10:  # UUID minimal uzunlik tekshiruvi
+            import uuid
+            new_session_id = str(uuid.uuid4())
+            session['session_id'] = new_session_id
+            app_logger.warning(f"Noto'g'ri session ID tuzatildi: {session_id} -> {new_session_id[:8]}...")
+            return new_session_id
+            
+        return session_id
+        
     except Exception as e:
         app_logger.error(f"Session ID yaratishda xatolik: {str(e)}")
         # Fallback - oddiy UUID
         import uuid
-        return str(uuid.uuid4())
+        fallback_id = str(uuid.uuid4())
+        try:
+            session['session_id'] = fallback_id
+            session.permanent = True
+        except:
+            pass  # Agar session ishlamasa ham davom etish
+        return fallback_id
 
 def get_cart_items(conn, session_id, user_id=None):
-    """Savatchadagi mahsulotlarni olish"""
+    """Savatchadagi mahsulotlarni olish - xavfsizligi yuqori"""
+    if not conn:
+        app_logger.error("Database connection not available in get_cart_items")
+        return []
+    
     cur = conn.cursor()
 
     try:
+        # Parametrlarni tekshirish
+        if not session_id and not user_id:
+            app_logger.warning("Neither session_id nor user_id provided to get_cart_items")
+            return []
+
         if user_id:
             # Asosiy so'rov
             cur.execute("""
@@ -3878,35 +3959,50 @@ def api_save_settings():
 
 @app.route("/api/cart-count")
 def api_cart_count_fixed():
-    """Savatcha buyumlari sonini qaytarish - majburiy JSON"""
+    """Savatcha buyumlari sonini qaytarish - xavfsiz JSON"""
+    conn = None
     try:
         session_id = get_session_id()
         user_id = session.get('user_id')
 
-        conn = get_db()
-        cur = conn.cursor()
+        # Cache dan tekshirish
+        cache_key = f"cart_count_{user_id}_{session_id}"
+        cached_count = cache_manager.get(cache_key)
+        if cached_count is not None:
+            return jsonify({
+                "count": cached_count,
+                "success": True,
+                "cached": True
+            })
 
-        if user_id:
-            cur.execute('SELECT COALESCE(SUM(quantity), 0) FROM cart_items WHERE user_id = ?', (user_id,))
-        else:
-            cur.execute('SELECT COALESCE(SUM(quantity), 0) FROM cart_items WHERE session_id = ?', (session_id,))
+        # Database dan olish
+        with db_pool.get_connection() as conn:
+            cur = conn.cursor()
 
-        result = cur.fetchone()
-        count = int(result[0]) if result and result[0] else 0
-        conn.close()
+            if user_id:
+                cur.execute('SELECT COALESCE(SUM(quantity), 0) FROM cart_items WHERE user_id = ?', (user_id,))
+            else:
+                cur.execute('SELECT COALESCE(SUM(quantity), 0) FROM cart_items WHERE session_id = ?', (session_id,))
 
-        response = jsonify({
-            "count": count,
-            "success": True
-        })
+            result = cur.fetchone()
+            count = int(result[0]) if result and result[0] else 0
 
-        # JSON headers
-        response.headers['Content-Type'] = 'application/json; charset=utf-8'
-        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-        response.headers['Pragma'] = 'no-cache'
-        response.headers['Expires'] = '0'
+            # Cache ga saqlash (5 daqiqa)
+            cache_manager.set(cache_key, count, 300)
 
-        return response
+            response = jsonify({
+                "count": count,
+                "success": True,
+                "cached": False
+            })
+
+            # JSON headers
+            response.headers['Content-Type'] = 'application/json; charset=utf-8'
+            response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+            response.headers['Pragma'] = 'no-cache'
+            response.headers['Expires'] = '0'
+
+            return response
 
     except Exception as e:
         app_logger.error(f"Cart count API error: {str(e)}")
@@ -3914,7 +4010,8 @@ def api_cart_count_fixed():
         error_response = jsonify({
             "count": 0,
             "success": False,
-            "error": "Server error"
+            "error": "Server error",
+            "message": str(e) if Config.IS_DEVELOPMENT else "Internal error"
         })
 
         error_response.headers['Content-Type'] = 'application/json; charset=utf-8'
