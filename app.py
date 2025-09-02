@@ -194,7 +194,7 @@ from logging.handlers import RotatingFileHandler, SMTPHandler
 def setup_logging():
     """Professional logging setup"""
     formatter = logging.Formatter(
-        '%(asctime)s - %(name)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s'
+        '%(asctime)s - %(levelname)s - %(message)s'
     )
     
     # Rotating file handler (maksimal 10MB, 5 ta backup)
@@ -207,22 +207,24 @@ def setup_logging():
     error_handler.setFormatter(formatter)
     error_handler.setLevel(logging.ERROR)
     
-    # Console handler
+    # Console handler - faqat xatoliklar uchun
     console_handler = logging.StreamHandler()
-    console_handler.setFormatter(formatter)
-    console_handler.setLevel(logging.WARNING)
+    console_handler.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))
+    console_handler.setLevel(logging.ERROR)
     
     # Root logger konfiguratsiya
     root_logger = logging.getLogger()
-    root_logger.setLevel(logging.INFO)
+    root_logger.setLevel(logging.WARNING)
     root_logger.addHandler(file_handler)
     root_logger.addHandler(error_handler)
     root_logger.addHandler(console_handler)
     
-    # Flask app logger
-    app.logger.setLevel(logging.INFO)
-    app.logger.addHandler(file_handler)
+    # Flask app logger - ortiqcha loglarni o'chirish
+    app.logger.setLevel(logging.ERROR)
     app.logger.addHandler(error_handler)
+    
+    # Werkzeug loglarni o'chirish
+    logging.getLogger('werkzeug').setLevel(logging.ERROR)
     
     return logging.getLogger('restaurant_app')
 
@@ -1256,15 +1258,7 @@ def get_cart_items(conn, session_id, user_id=None):
     cur = conn.cursor()
 
     try:
-        # Debug logging
-        logging.info(f"get_cart_items chaqirildi: user_id={user_id}, session_id={session_id}")
-
         if user_id:
-            # Avval cart_items jadvalida user_id bo'yicha ma'lumot borligini tekshirish
-            cur.execute("SELECT COUNT(*) FROM cart_items WHERE user_id = ?", (user_id,))
-            user_count = cur.fetchone()[0]
-            logging.info(f"User {user_id} uchun cart_items soni: {user_count}")
-
             # Asosiy so'rov
             cur.execute("""
                 SELECT ci.id, ci.menu_item_id, mi.name, mi.price, ci.quantity, 
@@ -1280,11 +1274,6 @@ def get_cart_items(conn, session_id, user_id=None):
                 ORDER BY ci.created_at DESC
             """, (user_id,))
         else:
-            # Session bo'yicha ham tekshirish
-            cur.execute("SELECT COUNT(*) FROM cart_items WHERE session_id = ?", (session_id,))
-            session_count = cur.fetchone()[0]
-            logging.info(f"Session {session_id} uchun cart_items soni: {session_count}")
-
             cur.execute("""
                 SELECT ci.id, ci.menu_item_id, mi.name, mi.price, ci.quantity, 
                        COALESCE(mi.discount_percentage, 0) as discount_percentage,
@@ -1300,11 +1289,9 @@ def get_cart_items(conn, session_id, user_id=None):
             """, (session_id,))
 
         results = cur.fetchall()
-        logging.info(f"So'rov natijasi: {len(results) if results else 0} ta element")
 
         # Agar natijalar bo'lmasa, bo'sh list qaytarish
         if not results:
-            logging.warning(f"Savatcha bo'sh: user_id={user_id}, session_id={session_id}")
             return []
 
         # Row obyektlarini dict formatiga o'tkazish
@@ -1316,16 +1303,14 @@ def get_cart_items(conn, session_id, user_id=None):
                 if item_dict.get('discount_percentage') is None:
                     item_dict['discount_percentage'] = 0
                 cart_items.append(item_dict)
-                logging.debug(f"Savatcha element qo'shildi: {item_dict.get('name', 'Unknown')}")
             except Exception as row_error:
-                logging.error(f"Savatcha element o'qishda xatolik: {str(row_error)}")
+                app_logger.error(f"Savatcha element o'qishda xatolik: {str(row_error)}")
                 continue
 
-        logging.info(f"Savatcha ma'lumotlari muvaffaqiyatli olindi: {len(cart_items)} ta element")
         return cart_items
 
     except Exception as e:
-        logging.error(f"Savatcha ma'lumotlarini olishda xatolik: {str(e)}")
+        app_logger.error(f"Savatcha ma'lumotlarini olishda xatolik: {str(e)}")
         return []
 
 def get_cart_total(conn, session_id, user_id=None):
@@ -1490,9 +1475,6 @@ def admin_monitor():
         """, (five_min_ago,))
         served_recent = cur.fetchall()
 
-        # Debug ma'lumotlari
-        logging.info(f"Monitor: Waiting={len(waiting) if waiting else 0}, Ready={len(ready) if ready else 0}, Served={len(served_recent) if served_recent else 0}")
-
         conn.close()
         return render_template('admin_monitor.html', 
                              waiting=waiting or [], 
@@ -1500,7 +1482,7 @@ def admin_monitor():
                              served_recent=served_recent or [])
 
     except Exception as e:
-        logging.error(f"Monitor sahifasida xatolik: {str(e)}")
+        app_logger.error(f"Monitor sahifasida xatolik: {str(e)}")
         conn.close()
         return render_template('admin_monitor.html', 
                              waiting=[], 
@@ -1600,22 +1582,11 @@ def add_to_cart():
         if user_id:
             cur.execute("INSERT INTO cart_items (user_id, session_id, menu_item_id, quantity, created_at) VALUES (?, ?, ?, ?, ?)", 
                        (user_id, session_id, menu_item_id, quantity, now))
-            print(f"DEBUG: Savatcha qo'shildi - user_id: {user_id}, session_id: {session_id}, menu_item_id: {menu_item_id}, quantity: {quantity}")
         else:
             cur.execute("INSERT INTO cart_items (session_id, menu_item_id, quantity, created_at) VALUES (?, ?, ?, ?)", 
                        (session_id, menu_item_id, quantity, now))
-            print(f"DEBUG: Savatcha qo'shildi - session_id: {session_id}, menu_item_id: {menu_item_id}, quantity: {quantity}")
 
     conn.commit()
-
-    # Qo'shgandan keyin tekshirish
-    if user_id:
-        cur.execute("SELECT COUNT(*) FROM cart_items WHERE user_id = ?", (user_id,))
-    else:
-        cur.execute("SELECT COUNT(*) FROM cart_items WHERE session_id = ?", (session_id,))
-
-    count_after = cur.fetchone()[0]
-    print(f"DEBUG: Qo'shgandan keyin savatcha elementi soni: {count_after}")
 
     conn.close()
     flash("Mahsulot savatchaga qo'shildi!", "success")
@@ -1646,14 +1617,11 @@ def cart():
         cart_items = get_cart_items(conn, session_id, user_id)
         total = get_cart_total(conn, session_id, user_id)
 
-        # Debug logging
-        logging.info(f"Cart sahifa: user_id={user_id}, session_id={session_id}, cart_items_count={len(cart_items) if cart_items else 0}, total={total}")
-
         conn.close()
         return render_template("cart.html", cart_items=cart_items or [], total=total or 0)
 
     except Exception as e:
-        logging.error(f"Cart sahifasida xatolik: {str(e)}")
+        app_logger.error(f"Cart sahifasida xatolik: {str(e)}")
         conn.close()
         return render_template("cart.html", cart_items=[], total=0)
 
@@ -1997,11 +1965,8 @@ def logout():
 @validate_json()
 def place_order():
     """Buyurtma berish funksiyasi"""
-    print("DEBUG: POST so'rov keldi /place_order endpoint ga")
-
     # Foydalanuvchi session'dan ismni olish
     if not session.get("user_id"):
-        print("DEBUG: User ID session da yo'q")
         flash("Buyurtma berish uchun avval tizimga kiring.", "error")
         return redirect(url_for("login"))
 
@@ -2009,12 +1974,8 @@ def place_order():
     user_id = session.get("user_id")
 
     if not name:
-        print("DEBUG: User name session da yo'q")
         flash("Foydalanuvchi ma'lumotlari topilmadi.", "error")
         return redirect(url_for("login"))
-
-    print(f"DEBUG: Buyurtma berish boshlandi - User ID: {user_id}, Name: {name}")
-    print(f"DEBUG: Form ma'lumotlari: {dict(request.form)}")
 
     # Foydalanuvchi profilidan ma'lumotlarni olish
     conn_profile = get_db()
@@ -2032,29 +1993,10 @@ def place_order():
     session_id = get_session_id()
     conn = get_db()
 
-    # Savatchani tekshirish va debug
+    # Savatchani tekshirish
     cart_items = get_cart_items(conn, session_id, user_id)
-    print(f"DEBUG: Savatcha tekshiruvi - cart_items: {len(cart_items) if cart_items else 0} ta element")
-
-    # Qo'shimcha tekshiruv - to'g'ridan-to'g'ri jadvaldan ham tekshirish
-    cur_check = conn.cursor()
-    if user_id:
-        cur_check.execute("SELECT COUNT(*) FROM cart_items WHERE user_id = ?", (user_id,))
-        direct_count = cur_check.fetchone()[0]
-        print(f"DEBUG: To'g'ridan-to'g'ri jadvaldan user_id={user_id} uchun: {direct_count} ta element")
-    else:
-        cur_check.execute("SELECT COUNT(*) FROM cart_items WHERE session_id = ?", (session_id,))
-        direct_count = cur_check.fetchone()[0]
-        print(f"DEBUG: To'g'ridan-to'g'ri jadvaldan session_id={session_id} uchun: {direct_count} ta element")
 
     if not cart_items or len(cart_items) == 0:
-        print(f"DEBUG: Savatcha bo'sh deb topildi")
-
-        # Qo'shimcha debug - barcha cart_items ni ko'rsatish
-        cur_check.execute("SELECT * FROM cart_items LIMIT 10")
-        all_items = cur_check.fetchall()
-        print(f"DEBUG: Barcha cart_items (10 ta): {[dict(item) for item in all_items] if all_items else 'Bo\'sh'}")
-
         flash("Savatchangiz bo'sh. Avval taom tanlang.", "error")
         conn.close()
         return redirect(url_for("menu"))
@@ -2066,10 +2008,6 @@ def place_order():
         home_address = request.form.get("home_address", "").strip()
         customer_phone_new = request.form.get("customer_phone", "").strip()
         card_number_new = request.form.get("card_number", "").strip()
-
-        print(f"DEBUG: Form ma'lumotlari - order_type: {order_type}")
-        print(f"DEBUG: delivery_address: {delivery_address}")
-        print(f"DEBUG: home_address: {home_address}")
 
         # Delivery uchun kerakli tekshiruvlar
         if order_type == "delivery":
@@ -2101,8 +2039,6 @@ def place_order():
         now = get_current_time()
         eta_time = now + datetime.timedelta(minutes=eta_minutes)
         total = get_cart_total(conn, session_id, user_id)
-
-        print(f"DEBUG: Buyurtma yaratilmoqda - ticket: {tno}, total: {total}")
 
         # Delivery uchun qo'shimcha ma'lumotlar
         delivery_latitude = request.form.get("delivery_latitude", "")
@@ -2184,16 +2120,11 @@ def place_order():
         # Foydalanuvchini JSON fayliga saqlash
         save_user_to_json(name, tno, now, order_items_for_json)
 
-        print(f"DEBUG: Buyurtma muvaffaqiyatli yaratildi - ticket: {tno}")
         flash("Buyurtma muvaffaqiyatli berildi!", "success")
 
     except Exception as e:
-        import traceback
-        error_details = traceback.format_exc()
-        print(f"ERROR: Buyurtma berishda xatolik: {str(e)}")
-        print(f"ERROR DETAILS: {error_details}")
-        logging.error(f"Buyurtma berishda xatolik: {str(e)} - {error_details}")
-        flash(f"Buyurtma berishda xatolik yuz berdi: {str(e)}", "error")
+        app_logger.error(f"Buyurtma berishda xatolik: {str(e)}")
+        flash("Buyurtma berishda xatolik yuz berdi. Qaytadan urinib ko'ring.", "error")
         conn.rollback()
         return redirect(url_for("cart"))
     finally:
@@ -4125,12 +4056,12 @@ if __name__ == '__main__':
         print(f"Server {port} portda ishga tushmoqda...")
 
         # Flask app konfiguratsiyasi
-        app.config['DEBUG'] = True
-        app.config['TEMPLATES_AUTO_RELOAD'] = True
+        app.config['DEBUG'] = False
+        app.config['TEMPLATES_AUTO_RELOAD'] = False
 
         # Serverni ishga tushirish
         print("Flask server ishga tushmoqda...")
-        app.run(debug=True, host='0.0.0.0', port=port, threaded=True)
+        app.run(debug=False, host='0.0.0.0', port=port, threaded=True, use_reloader=False)
 
     except KeyboardInterrupt:
         print("\nServer to'xtatildi (Ctrl+C)")
