@@ -1,10 +1,26 @@
 // ===== GLOBAL VARIABLES =====
 // Current path variable declaration
 let currentLanguage = 'uz';
-let currentPath = window.location.pathname || '/';
+// Global o'zgaruvchilarni e'lon qilish
+let currentPath;
+let translations;
+
+// Sahifa yuklanganda o'rnatish
+document.addEventListener('DOMContentLoaded', function() {
+    // currentPath ni xavfsiz e'lon qilish
+    currentPath = window.location.pathname || '/';
+    
+    // Super admin sahifasi ekanligini tekshirish
+    const isSuperAdminPage = currentPath.includes('super-admin-dashboard');
+    
+    if (isSuperAdminPage) {
+        console.log('Super admin dashboard yuklandi');
+        // Super admin uchun maxsus JavaScript
+        initializeSuperAdminDashboard();
+    }
+});
 
 // Til tarjimalari - faqat bir marta e'lon qilish
-let translations;
 if (typeof window.translations === 'undefined') {
     translations = {
     'uz': {
@@ -337,6 +353,427 @@ function applyLanguage(lang) {
     });
     
     console.log('Til tarjimasi qo\'llandi:', lang);
+}
+
+// Super Admin Dashboard funksiyalari
+function initializeSuperAdminDashboard() {
+    console.log('Super admin dashboard funksiyalari ishga tushirildi');
+    
+    // Tab funksiyalarini global qilish
+    window.showTab = showTab;
+    window.loadOrders = loadOrders;
+    window.loadMenu = loadMenu;
+    window.loadReceipts = loadReceipts;
+    window.loadRatings = loadRatings;
+    
+    // Modal funksiyalarini global qilish
+    window.showAddStaffModal = showAddStaffModal;
+    window.showAddCourierModal = showAddCourierModal;
+    window.showAddMenuModal = showAddMenuModal;
+    window.showAddBranchModal = showAddBranchModal;
+    window.closeModal = closeModal;
+    
+    // Password reset funksiyalarini global qilish
+    window.resetStaffPassword = resetStaffPassword;
+    window.resetCourierPassword = resetCourierPassword;
+    window.resetUserPassword = resetUserPassword;
+    
+    // Ilk tab ma'lumotlarini yuklash
+    setTimeout(() => {
+        if (typeof loadOrders === 'function') {
+            loadOrders();
+        }
+    }, 500);
+}
+
+// Super admin uchun tab ko'rsatish funksiyasi
+function showTab(tabName) {
+    console.log('Tab ochilmoqda:', tabName);
+    
+    // Barcha tab-contentlarni yashirish
+    const contents = document.querySelectorAll('.tab-content');
+    contents.forEach(content => content.classList.remove('active'));
+    
+    // Barcha tugmalardan active klassini olib tashlash
+    const buttons = document.querySelectorAll('.tab-button');
+    buttons.forEach(button => button.classList.remove('active'));
+    
+    // Kerakli tab va tugmani faollashtirish
+    const targetTab = document.getElementById(tabName);
+    if (targetTab) {
+        targetTab.classList.add('active');
+    }
+    
+    // Tugmani faollashtirish
+    event.target.classList.add('active');
+    
+    // Ma'lumotlarni yuklash
+    if (tabName === 'orders') {
+        loadOrders();
+    } else if (tabName === 'menu') {
+        loadMenu();
+    } else if (tabName === 'receipts') {
+        loadReceipts();
+    } else if (tabName === 'ratings') {
+        loadRatings();
+    }
+}
+
+// Buyurtmalarni yuklash
+function loadOrders() {
+    console.log('Buyurtmalarni yuklash boshlandi');
+    
+    const ordersContainer = document.getElementById('orders-data');
+    if (!ordersContainer) {
+        console.error('Orders container topilmadi');
+        return;
+    }
+    
+    ordersContainer.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"></div><p>Buyurtmalar yuklanmoqda...</p></div>';
+    
+    fetch('/super-admin/get-orders')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Buyurtmalar muvaffaqiyatli yuklandi:', data.length);
+            displayOrders(data);
+        })
+        .catch(error => {
+            console.error('Buyurtmalarni yuklashda xatolik:', error);
+            ordersContainer.innerHTML = '<div class="alert alert-danger">Buyurtmalarni yuklashda xatolik yuz berdi.</div>';
+        });
+}
+
+// Buyurtmalarni ko'rsatish
+function displayOrders(orders) {
+    const ordersContainer = document.getElementById('orders-data');
+    if (!ordersContainer) return;
+    
+    if (!orders || orders.length === 0) {
+        ordersContainer.innerHTML = '<div class="alert alert-info">Hozircha buyurtmalar yo\'q.</div>';
+        return;
+    }
+    
+    let html = '<div class="table-container"><table class="admin-table"><thead><tr>';
+    html += '<th>ID</th><th>Mijoz</th><th>Tiket</th><th>Turi</th><th>Status</th><th>Manzil</th><th>Kuryer</th><th>Vaqt</th>';
+    html += '</tr></thead><tbody>';
+    
+    orders.forEach(order => {
+        html += '<tr>';
+        html += `<td>${order.id}</td>`;
+        html += `<td>${order.customer_name || 'N/A'}</td>`;
+        html += `<td><strong>#${order.ticket_no}</strong></td>`;
+        html += `<td>${order.order_type || 'dine_in'}</td>`;
+        html += `<td><span class="badge ${getStatusClass(order.status)}">${getStatusText(order.status)}</span></td>`;
+        html += `<td>${order.delivery_address || 'N/A'}</td>`;
+        html += `<td>${order.courier_id || 'N/A'}</td>`;
+        html += `<td>${order.created_at ? order.created_at.substring(0, 16).replace('T', ' ') : 'N/A'}</td>`;
+        html += '</tr>';
+    });
+    
+    html += '</tbody></table></div>';
+    ordersContainer.innerHTML = html;
+}
+
+// Status class olish
+function getStatusClass(status) {
+    const statusClasses = {
+        'waiting': 'bg-warning',
+        'ready': 'bg-info',
+        'served': 'bg-success',
+        'cancelled': 'bg-danger',
+        'on_way': 'bg-primary',
+        'delivered': 'bg-success'
+    };
+    return statusClasses[status] || 'bg-secondary';
+}
+
+// Status text olish
+function getStatusText(status) {
+    const statusTexts = {
+        'waiting': 'Kutilmoqda',
+        'ready': 'Tayyor',
+        'served': 'Berildi',
+        'cancelled': 'Bekor qilindi',
+        'on_way': 'Yo\'lda',
+        'delivered': 'Yetkazildi'
+    };
+    return statusTexts[status] || status;
+}
+
+// Menyuni yuklash
+function loadMenu() {
+    console.log('Menyu yuklanmoqda');
+    const menuContainer = document.getElementById('menu-data');
+    if (!menuContainer) return;
+    
+    menuContainer.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"></div><p>Menyu yuklanmoqda...</p></div>';
+    
+    fetch('/super-admin/get-menu')
+        .then(response => response.json())
+        .then(data => {
+            console.log('Menyu muvaffaqiyatli yuklandi:', data.length);
+            displayMenu(data);
+        })
+        .catch(error => {
+            console.error('Menyuni yuklashda xatolik:', error);
+            menuContainer.innerHTML = '<div class="alert alert-danger">Menyuni yuklashda xatolik yuz berdi.</div>';
+        });
+}
+
+// Menyuni ko'rsatish
+function displayMenu(menuItems) {
+    const menuContainer = document.getElementById('menu-data');
+    if (!menuContainer) return;
+    
+    if (!menuItems || menuItems.length === 0) {
+        menuContainer.innerHTML = '<div class="alert alert-info">Menyu bo\'sh.</div>';
+        return;
+    }
+    
+    let html = '<div class="table-container"><table class="admin-table"><thead><tr>';
+    html += '<th>ID</th><th>Nomi</th><th>Narxi</th><th>Kategoriya</th><th>Tavsif</th><th>Mavjud</th><th>Rasm</th>';
+    html += '</tr></thead><tbody>';
+    
+    menuItems.forEach(item => {
+        html += '<tr>';
+        html += `<td>${item.id}</td>`;
+        html += `<td>${item.name}</td>`;
+        html += `<td>${item.price} so'm</td>`;
+        html += `<td>${item.category}</td>`;
+        html += `<td>${item.description || 'N/A'}</td>`;
+        html += `<td>${item.available ? '✅' : '❌'}</td>`;
+        html += `<td>${item.image_url ? '<img src="' + item.image_url + '" width="50">' : 'N/A'}</td>`;
+        html += '</tr>';
+    });
+    
+    html += '</tbody></table></div>';
+    menuContainer.innerHTML = html;
+}
+
+// Cheklar yuklash
+function loadReceipts() {
+    console.log('Cheklar yuklanmoqda');
+    const receiptsContainer = document.getElementById('receipts-data');
+    if (!receiptsContainer) return;
+    
+    receiptsContainer.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"></div><p>Cheklar yuklanmoqda...</p></div>';
+    
+    fetch('/super-admin/get-receipts')
+        .then(response => response.json())
+        .then(data => {
+            console.log('Cheklar muvaffaqiyatli yuklandi:', data.length);
+            displayReceipts(data);
+        })
+        .catch(error => {
+            console.error('Cheklarni yuklashda xatolik:', error);
+            receiptsContainer.innerHTML = '<div class="alert alert-danger">Cheklarni yuklashda xatolik yuz berdi.</div>';
+        });
+}
+
+// Cheklarni ko'rsatish
+function displayReceipts(receipts) {
+    const receiptsContainer = document.getElementById('receipts-data');
+    if (!receiptsContainer) return;
+    
+    if (!receipts || receipts.length === 0) {
+        receiptsContainer.innerHTML = '<div class="alert alert-info">Hozircha cheklar yo\'q.</div>';
+        return;
+    }
+    
+    let html = '<div class="table-container"><table class="admin-table"><thead><tr>';
+    html += '<th>Chek raqami</th><th>Buyurtma ID</th><th>Summa</th><th>Cashback</th><th>Vaqt</th>';
+    html += '</tr></thead><tbody>';
+    
+    receipts.forEach(receipt => {
+        html += '<tr>';
+        html += `<td><strong>${receipt.receipt_number}</strong></td>`;
+        html += `<td>${receipt.order_id}</td>`;
+        html += `<td>${receipt.total_amount} so'm</td>`;
+        html += `<td>${receipt.cashback_amount} so'm</td>`;
+        html += `<td>${receipt.created_at ? receipt.created_at.substring(0, 16).replace('T', ' ') : 'N/A'}</td>`;
+        html += '</tr>';
+    });
+    
+    html += '</tbody></table></div>';
+    receiptsContainer.innerHTML = html;
+}
+
+// Baholarni yuklash
+function loadRatings() {
+    console.log('Baholar yuklanmoqda');
+    const ratingsContainer = document.getElementById('ratings-data');
+    if (!ratingsContainer) return;
+    
+    ratingsContainer.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"></div><p>Baholar yuklanmoqda...</p></div>';
+    
+    fetch('/super-admin/get-ratings')
+        .then(response => response.json())
+        .then(data => {
+            console.log('Baholar muvaffaqiyatli yuklandi:', data);
+            displayRatings(data);
+        })
+        .catch(error => {
+            console.error('Baholarni yuklashda xatolik:', error);
+            ratingsContainer.innerHTML = '<div class="alert alert-danger">Baholarni yuklashda xatolik yuz berdi.</div>';
+        });
+}
+
+// Baholarni ko'rsatish
+function displayRatings(data) {
+    const ratingsContainer = document.getElementById('ratings-data');
+    if (!ratingsContainer) return;
+    
+    let html = '<div class="ratings-container">';
+    
+    // Mahsulot baholari
+    html += '<div class="ratings-section"><h4>📋 Mahsulot baholari</h4>';
+    if (data.menu_ratings && data.menu_ratings.length > 0) {
+        html += '<div class="table-container"><table class="admin-table"><thead><tr>';
+        html += '<th>Mahsulot</th><th>Foydalanuvchi</th><th>Baho</th><th>Sharh</th><th>Vaqt</th>';
+        html += '</tr></thead><tbody>';
+        
+        data.menu_ratings.forEach(rating => {
+            html += '<tr>';
+            html += `<td><strong>${rating.menu_item_name}</strong></td>`;
+            html += `<td>${rating.user_name}</td>`;
+            html += `<td>${'⭐'.repeat(rating.rating)}${'☆'.repeat(5 - rating.rating)} (${rating.rating}/5)</td>`;
+            html += `<td>${rating.comment || 'Sharh yo\'q'}</td>`;
+            html += `<td>${rating.created_at ? rating.created_at.substring(0, 16).replace('T', ' ') : 'N/A'}</td>`;
+            html += '</tr>';
+        });
+        
+        html += '</tbody></table></div>';
+    } else {
+        html += '<p class="text-center">Hali mahsulot baholari yo\'q.</p>';
+    }
+    html += '</div>';
+
+    // Filial baholari
+    html += '<div class="ratings-section"><h4>🏢 Filial baholari</h4>';
+    if (data.branch_ratings && data.branch_ratings.length > 0) {
+        html += '<div class="table-container"><table class="admin-table"><thead><tr>';
+        html += '<th>Filial</th><th>Foydalanuvchi</th><th>Baho</th><th>Sharh</th><th>Vaqt</th>';
+        html += '</tr></thead><tbody>';
+        
+        data.branch_ratings.forEach(rating => {
+            html += '<tr>';
+            html += `<td><strong>${rating.branch_name}</strong></td>`;
+            html += `<td>${rating.user_name}</td>`;
+            html += `<td>${'⭐'.repeat(rating.rating)}${'☆'.repeat(5 - rating.rating)} (${rating.rating}/5)</td>`;
+            html += `<td>${rating.comment || 'Sharh yo\'q'}</td>`;
+            html += `<td>${rating.created_at ? rating.created_at.substring(0, 16).replace('T', ' ') : 'N/A'}</td>`;
+            html += '</tr>';
+        });
+        
+        html += '</tbody></table></div>';
+    } else {
+        html += '<p class="text-center">Hali filial baholari yo\'q.</p>';
+    }
+    html += '</div>';
+    
+    html += '</div>';
+    ratingsContainer.innerHTML = html;
+}
+
+// Modal funksiyalari
+function showAddStaffModal() {
+    const modal = document.getElementById('addStaffModal');
+    if (modal) modal.style.display = 'block';
+}
+
+function showAddCourierModal() {
+    const modal = document.getElementById('addCourierModal');
+    if (modal) modal.style.display = 'block';
+}
+
+function showAddMenuModal() {
+    const modal = document.getElementById('addMenuModal');
+    if (modal) modal.style.display = 'block';
+}
+
+function showAddBranchModal() {
+    const modal = document.getElementById('addBranchModal');
+    if (modal) modal.style.display = 'block';
+}
+
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) modal.style.display = 'none';
+}
+
+// Parol reset funksiyalari
+function resetStaffPassword(staffId) {
+    const newPassword = prompt('Yangi parolni kiriting:');
+    if (newPassword) {
+        fetch('/super-admin/reset-staff-password', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({staff_id: staffId, new_password: newPassword})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Parol muvaffaqiyatli yangilandi!');
+            } else {
+                alert('Xatolik: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Parol yangilashda xatolik:', error);
+            alert('Parol yangilashda xatolik yuz berdi.');
+        });
+    }
+}
+
+function resetCourierPassword(courierId) {
+    const newPassword = prompt('Yangi parolni kiriting:');
+    if (newPassword) {
+        fetch('/super-admin/reset-courier-password', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({courier_id: courierId, new_password: newPassword})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Parol muvaffaqiyatli yangilandi!');
+            } else {
+                alert('Xatolik: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Parol yangilashda xatolik:', error);
+            alert('Parol yangilashda xatolik yuz berdi.');
+        });
+    }
+}
+
+function resetUserPassword(userId) {
+    const newPassword = prompt('Yangi parolni kiriting:');
+    if (newPassword) {
+        fetch('/super-admin/reset-user-password', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({user_id: userId, new_password: newPassword})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Parol muvaffaqiyatli yangilandi!');
+            } else {
+                alert('Xatolik: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Parol yangilashda xatolik:', error);
+            alert('Parol yangilashda xatolik yuz berdi.');
+        });
+    }
 }
 
 // Til sozlamasini saqlash

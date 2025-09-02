@@ -3841,6 +3841,87 @@ def super_admin_get_ratings():
         app_logger.error(f"Super admin get ratings error: {str(e)}")
         return jsonify({"menu_ratings": [], "branch_ratings": []}), 500
 
+@app.route("/super-admin/reset-staff-password", methods=["POST"])
+def super_admin_reset_staff_password():
+    """Super admin tomonidan xodim parolini yangilash"""
+    if not session.get("super_admin"):
+        return jsonify({"success": False, "message": "Ruxsat yo'q"}), 403
+
+    try:
+        data = request.get_json()
+        staff_id = data.get("staff_id")
+        new_password = data.get("new_password")
+
+        if not staff_id or not new_password:
+            return jsonify({"success": False, "message": "Staff ID va yangi parol majburiy"})
+
+        if len(new_password) < 6:
+            return jsonify({"success": False, "message": "Parol kamida 6 ta belgidan iborat bo'lishi kerak"})
+
+        password_hash = generate_password_hash(new_password)
+        execute_query("UPDATE staff SET password_hash = ? WHERE id = ?", (password_hash, staff_id))
+
+        app_logger.info(f"Super admin tomonidan staff {staff_id} paroli yangilandi")
+        return jsonify({"success": True, "message": "Parol muvaffaqiyatli yangilandi"})
+
+    except Exception as e:
+        app_logger.error(f"Staff parolini yangilashda xatolik: {str(e)}")
+        return jsonify({"success": False, "message": "Server xatoligi"}), 500
+
+@app.route("/super-admin/reset-courier-password", methods=["POST"])
+def super_admin_reset_courier_password():
+    """Super admin tomonidan kuryer parolini yangilash"""
+    if not session.get("super_admin"):
+        return jsonify({"success": False, "message": "Ruxsat yo'q"}), 403
+
+    try:
+        data = request.get_json()
+        courier_id = data.get("courier_id")
+        new_password = data.get("new_password")
+
+        if not courier_id or not new_password:
+            return jsonify({"success": False, "message": "Courier ID va yangi parol majburiy"})
+
+        if len(new_password) < 6:
+            return jsonify({"success": False, "message": "Parol kamida 6 ta belgidan iborat bo'lishi kerak"})
+
+        password_hash = generate_password_hash(new_password)
+        execute_query("UPDATE couriers SET password_hash = ? WHERE id = ?", (password_hash, courier_id))
+
+        app_logger.info(f"Super admin tomonidan courier {courier_id} paroli yangilandi")
+        return jsonify({"success": True, "message": "Parol muvaffaqiyatli yangilandi"})
+
+    except Exception as e:
+        app_logger.error(f"Courier parolini yangilashda xatolik: {str(e)}")
+        return jsonify({"success": False, "message": "Server xatoligi"}), 500
+
+@app.route("/super-admin/reset-user-password", methods=["POST"])
+def super_admin_reset_user_password():
+    """Super admin tomonidan foydalanuvchi parolini yangilash"""
+    if not session.get("super_admin"):
+        return jsonify({"success": False, "message": "Ruxsat yo'q"}), 403
+
+    try:
+        data = request.get_json()
+        user_id = data.get("user_id")
+        new_password = data.get("new_password")
+
+        if not user_id or not new_password:
+            return jsonify({"success": False, "message": "User ID va yangi parol majburiy"})
+
+        if len(new_password) < 6:
+            return jsonify({"success": False, "message": "Parol kamida 6 ta belgidan iborat bo'lishi kerak"})
+
+        password_hash = generate_password_hash(new_password)
+        execute_query("UPDATE users SET password_hash = ? WHERE id = ?", (password_hash, user_id))
+
+        app_logger.info(f"Super admin tomonidan user {user_id} paroli yangilandi")
+        return jsonify({"success": True, "message": "Parol muvaffaqiyatli yangilandi"})
+
+    except Exception as e:
+        app_logger.error(f"User parolini yangilashda xatolik: {str(e)}")
+        return jsonify({"success": False, "message": "Server xatoligi"}), 500
+
 @app.route("/super-admin/delete-courier/<int:courier_id>", methods=["POST"])
 def super_admin_delete_courier(courier_id):
     if not session.get("super_admin"):
