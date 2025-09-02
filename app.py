@@ -542,10 +542,14 @@ def after_request(response):
         if hasattr(request, 'start_time') and 'performance_monitor' in globals():
             try:
                 duration = time.time() - request.start_time
-                if hasattr(performance_monitor, 'record_request') and callable(performance_monitor.record_request):
-                    performance_monitor.record_request(duration, getattr(request, 'endpoint', None) or 'unknown')
+                # Performance monitor instance ekanligini tekshirish
+                if hasattr(performance_monitor, 'record_request') and callable(getattr(performance_monitor, 'record_request', None)):
+                    endpoint = getattr(request, 'endpoint', None) or 'unknown'
+                    status_code = getattr(response, 'status_code', 200)
+                    performance_monitor.record_request(duration, endpoint, status_code)
             except Exception as perf_error:
                 # Performance monitoring xatoligi ahamiyatsiz
+                app_logger.debug(f"Performance monitoring error: {str(perf_error)}")
                 pass
 
         # Security headers qo'shish
@@ -2921,6 +2925,16 @@ def courier_logout():
     session.pop("courier_id", None)
     session.pop("courier_name", None)
     return redirect(url_for("index"))
+
+# ---- STATIC FILE HANDLING ----
+@app.route('/static/<path:filename>')
+def static_files(filename):
+    """Static fayllar uchun xavfsiz route"""
+    try:
+        return app.send_static_file(filename)
+    except Exception as e:
+        app_logger.error(f"Static file error for {filename}: {str(e)}")
+        return "File not found", 404
 
 # ---- LOGIN ROUTES ----
 @app.route("/login")
