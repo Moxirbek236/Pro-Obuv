@@ -47,38 +47,38 @@
     <!-- Statistika kartlari -->
     <div class="stats-grid">
         <div class="stat-card">
-            <h3>📊 Umumiy Statistika</h3>
+            <h3>📊 Umumiy Statistika <button class="refresh-btn" onclick="refreshStats()">🔄</button></h3>
             <div class="stat-item">
                 <span class="stat-label">Jami buyurtmalar:</span>
-                <span class="stat-value">{{ stats.total_orders }}</span>
+                <span class="stat-value" id="total-orders">{{ stats.total_orders }}</span>
             </div>
             <div class="stat-item">
                 <span class="stat-label">Kutayotgan:</span>
-                <span class="stat-value">{{ stats.waiting_orders }}</span>
+                <span class="stat-value" id="waiting-orders">{{ stats.waiting_orders }}</span>
             </div>
             <div class="stat-item">
                 <span class="stat-label">Tayyor:</span>
-                <span class="stat-value">{{ stats.ready_orders }}</span>
+                <span class="stat-value" id="ready-orders">{{ stats.ready_orders }}</span>
             </div>
             <div class="stat-item">
                 <span class="stat-label">Berilgan:</span>
-                <span class="stat-value">{{ stats.served_orders }}</span>
+                <span class="stat-value" id="served-orders">{{ stats.served_orders }}</span>
             </div>
         </div>
 
         <div class="stat-card">
-            <h3>👥 Xodimlar</h3>
+            <h3>👥 Xodimlar <button class="refresh-btn" onclick="refreshStats()">🔄</button></h3>
             <div class="stat-item">
                 <span class="stat-label">Jami xodimlar:</span>
-                <span class="stat-value">{{ stats.total_staff }}</span>
+                <span class="stat-value" id="total-staff">{{ stats.total_staff }}</span>
             </div>
             <div class="stat-item">
                 <span class="stat-label">Jami kuryerlar:</span>
-                <span class="stat-value">{{ stats.total_couriers }}</span>
+                <span class="stat-value" id="total-couriers">{{ stats.total_couriers }}</span>
             </div>
             <div class="stat-item">
                 <span class="stat-label">Jami foydalanuvchilar:</span>
-                <span class="stat-value">{{ stats.total_users }}</span>
+                <span class="stat-value" id="total-users">{{ stats.total_users }}</span>
             </div>
         </div>
     </div>
@@ -872,9 +872,69 @@ function resetAllData() {
     }
 }
 
+// Statistikalarni yangilash
+function refreshStats() {
+    fetch('/api/super-admin/dashboard-stats')
+        .then(response => response.json())
+        .then(data => {
+            if (data.stats) {
+                document.getElementById('total-orders').textContent = data.stats.total_orders || 0;
+                document.getElementById('waiting-orders').textContent = data.stats.waiting_orders || 0;
+                document.getElementById('ready-orders').textContent = data.stats.ready_orders || 0;
+                document.getElementById('served-orders').textContent = data.stats.served_orders || 0;
+                document.getElementById('total-staff').textContent = data.stats.total_staff || 0;
+                document.getElementById('total-couriers').textContent = data.stats.total_couriers || 0;
+                document.getElementById('total-users').textContent = data.stats.total_users || 0;
+                
+                // Show success message
+                showSuccessMessage('Statistikalar yangilandi');
+            }
+        })
+        .catch(error => {
+            console.error('Statistikalarni yangilashda xatolik:', error);
+            showErrorMessage('Statistikalarni yangilashda xatolik');
+        });
+}
+
+// Success/Error message functions
+function showSuccessMessage(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification success';
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 100);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+
+function showErrorMessage(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification error';
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 100);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+
+// Auto refresh every 30 seconds
+setInterval(refreshStats, 30000);
+
 // Sahifa yuklanganda buyurtmalarni yuklash
 document.addEventListener('DOMContentLoaded', function() {
     loadOrders();
+    // Initial stats refresh
+    setTimeout(refreshStats, 1000);
 });
 </script>
 
@@ -1142,6 +1202,47 @@ document.addEventListener('DOMContentLoaded', function() {
 
 .text-muted {
     color: #6c757d !important;
+}
+
+.refresh-btn {
+    background: none;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    margin-left: 10px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.refresh-btn:hover {
+    opacity: 1;
+}
+
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 500;
+    z-index: 10000;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.3s ease;
+}
+
+.notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.notification.success {
+    background-color: #28a745;
+}
+
+.notification.error {
+    background-color: #dc3545;
 }
 
 .rating-display {

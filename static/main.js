@@ -1,3 +1,4 @@
+
 // Universal Restaurant System - Main JavaScript
 
 // Global o'zgaruvchilar
@@ -5,9 +6,9 @@ let cartCount = 0;
 let currentPath = window.location.pathname;
 
 // Professional Translation System
-// Global translations object - check if already exists
-if (typeof translations === 'undefined') {
-    var translations = {
+// Global translations object - check if already exists to prevent redeclaration
+if (typeof window.translations === 'undefined') {
+    window.translations = {
         uz: {
             menu: '📋 Menyu',
             favorites: '❤️ Sevimlilar',
@@ -177,7 +178,7 @@ class UniversalThemeManager {
     }
 
     translatePage(language) {
-        const trans = translations[language] || translations.uz;
+        const trans = window.translations[language] || window.translations.uz;
 
         // Navbar links
         this.updateElementText('a[href*="menu"]', trans.menu);
@@ -291,18 +292,23 @@ class UniversalThemeManager {
 
 // Global functions
 window.changeTheme = function(isDark) {
-    universalTheme.applyTheme(isDark);
+    if (window.universalTheme) {
+        window.universalTheme.applyTheme(isDark);
+    }
 };
 
 window.changeFontSize = function(size) {
-    universalTheme.applyFontSize(size);
+    if (window.universalTheme) {
+        window.universalTheme.applyFontSize(size);
+    }
 };
 
 window.changeLanguage = function(language) {
-    universalTheme.applyLanguage(language);
-
-    // Show notification
-    showNotification('Til muvaffaqiyatli o\'zgartirildi');
+    if (window.universalTheme) {
+        window.universalTheme.applyLanguage(language);
+        // Show notification
+        showNotification('Til muvaffaqiyatli o\'zgartirildi');
+    }
 };
 
 // Cart Management
@@ -421,9 +427,11 @@ document.addEventListener('DOMContentLoaded', function() {
     try {
         // Initialize theme manager
         universalTheme = new UniversalThemeManager();
+        window.universalTheme = universalTheme;
 
         // Initialize cart manager
         cartManager = new CartManager();
+        window.cartManager = cartManager;
 
         // Register service worker
         registerServiceWorker();
@@ -449,8 +457,8 @@ function setupMenuItemClicks() {
             e.preventDefault();
             const itemId = e.target.getAttribute('data-item-id');
             const quantity = e.target.getAttribute('data-quantity') || 1;
-            if (itemId) {
-                cartManager.addToCart(itemId, quantity);
+            if (itemId && window.cartManager) {
+                window.cartManager.addToCart(itemId, quantity);
             }
         }
 
@@ -458,7 +466,9 @@ function setupMenuItemClicks() {
         if (e.target.classList.contains('theme-toggle')) {
             e.preventDefault();
             const isDark = !document.body.classList.contains('dark-theme');
-            universalTheme.applyTheme(isDark);
+            if (window.universalTheme) {
+                window.universalTheme.applyTheme(isDark);
+            }
         }
     });
 }
@@ -475,14 +485,14 @@ function setupFormSubmissions() {
             const settings = Object.fromEntries(formData);
 
             // Apply settings immediately
-            if (settings.theme_mode) {
-                universalTheme.applyTheme(settings.theme_mode === 'dark');
+            if (settings.theme_mode && window.universalTheme) {
+                window.universalTheme.applyTheme(settings.theme_mode === 'dark');
             }
-            if (settings.font_size) {
-                universalTheme.applyFontSize(settings.font_size);
+            if (settings.font_size && window.universalTheme) {
+                window.universalTheme.applyFontSize(settings.font_size);
             }
-            if (settings.language) {
-                universalTheme.applyLanguage(settings.language);
+            if (settings.language && window.universalTheme) {
+                window.universalTheme.applyLanguage(settings.language);
             }
 
             showNotification('Sozlamalar saqlandi', 'success');
@@ -512,13 +522,15 @@ function formatDate(date) {
 // Global error handler
 window.addEventListener('error', function(e) {
     console.error('JavaScript xatosi:', e.error);
-    showNotification('Sahifada xatolik yuz berdi', 'error');
+    if (typeof showNotification === 'function') {
+        showNotification('Sahifada xatolik yuz berdi', 'error');
+    }
 });
 
 // Page visibility handler
 document.addEventListener('visibilitychange', function() {
-    if (!document.hidden && cartManager) {
-        cartManager.updateCartCount();
+    if (!document.hidden && window.cartManager) {
+        window.cartManager.updateCartCount();
     }
 });
 
@@ -530,6 +542,4 @@ window.addEventListener('resize', function() {
 });
 
 // Export for global use
-window.universalTheme = universalTheme;
-window.cartManager = cartManager;
 window.showNotification = showNotification;
