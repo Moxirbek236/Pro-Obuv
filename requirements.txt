@@ -65,3 +65,4 @@ qrcode
 redis
 requests
 werkzeug
+psycopg2-binary
