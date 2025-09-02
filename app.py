@@ -37,7 +37,6 @@ import qrcode
 from io import BytesIO
 import base64
 import requests
-from location_service import LocationService
 from functools import wraps
 import threading
 from contextlib import contextmanager
@@ -173,8 +172,16 @@ if os.environ.get('FLASK_ENV') == 'development':
 # Upload papkasini yaratish
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-# Location service instance
-location_service = LocationService()
+# Location service instance - xatolik bo'lsa fallback yaratish
+try:
+    from location_service import LocationService
+    location_service = LocationService()
+except ImportError:
+    class FallbackLocationService:
+        def search_places(self, query):
+            app_logger.warning("Location service not found, returning empty results.")
+            return {"places": [], "error": "Location service not available"}
+    location_service = FallbackLocationService()
 
 # Cache tizimi
 class CacheManager:
@@ -188,9 +195,8 @@ class CacheManager:
     def _init_redis(self):
         """Redis connection (agar mavjud bo'lsa)"""
         try:
-            import redis
             redis_url = os.environ.get('REDIS_URL')
-            if redis_url:
+            if redis_url and not redis_url.startswith('memory'): # Agar memory:// emasligini tekshirish
                 self.redis_client = redis.from_url(redis_url)
                 self.redis_client.ping()
                 app_logger.info("Redis cache tizimi ulandi")
@@ -423,16 +429,16 @@ def after_request(response):
         response.headers['X-Content-Type-Options'] = 'nosniff'
         response.headers['X-Frame-Options'] = 'DENY' 
         response.headers['X-XSS-Protection'] = '1; mode=block'
-        
+
         # Cache headers faqat static files uchun emas
         if not request.path.startswith('/static/'):
             response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
             response.headers['Pragma'] = 'no-cache'
             response.headers['Expires'] = '0'
-        
+
         if Config.IS_PRODUCTION:
             response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
-            
+
     except Exception as header_error:
         app_logger.error(f"After request header error: {str(header_error)}")
 
@@ -587,7 +593,12 @@ def init_db():
             address TEXT,
             card_number TEXT,
             card_expiry TEXT,
-            created_at TEXT NOT NULL
+            created_at TEXT NOT NULL,
+            address_latitude REAL,
+            address_longitude REAL,
+            interface_language TEXT DEFAULT 'uz',
+            font_size TEXT DEFAULT 'medium',
+            dark_theme BOOLEAN DEFAULT 0
         );
     """)
 
@@ -620,7 +631,7 @@ def init_db():
             passport_series TEXT NOT NULL,
             passport_number TEXT NOT NULL,
             password_hash TEXT NOT NULL,
-            total_hours INTEGER DEFAULT 0,
+            total_hours REAL DEFAULT 0,
             deliveries_completed INTEGER DEFAULT 0,
             last_activity TEXT,
             created_at TEXT NOT NULL
@@ -639,9 +650,16 @@ def init_db():
             delivery_address TEXT,
             delivery_distance REAL DEFAULT 0, -- masofa km da
             delivery_price REAL DEFAULT 0, -- yetkazish narxi
+            delivery_latitude REAL,
+            delivery_longitude REAL,
+            delivery_map_url TEXT,
+            customer_note TEXT,
             customer_phone TEXT,
             card_number TEXT,
             courier_id INTEGER,
+            courier_price REAL DEFAULT 0,
+            courier_delivery_minutes INTEGER DEFAULT 0,
+            branch_id INTEGER DEFAULT 1,
             created_at TEXT NOT NULL,
             eta_time TEXT NOT NULL,
             FOREIGN KEY (user_id) REFERENCES users (id),
@@ -671,6 +689,7 @@ def init_db():
             stock_quantity INTEGER DEFAULT 0,
             orders_count INTEGER DEFAULT 0,
             rating REAL DEFAULT 0.0,
+            discount_percentage REAL DEFAULT 0.0,
             created_at TEXT NOT NULL
         );
     """)
@@ -779,14 +798,14 @@ def init_db():
     if cur.fetchone()[0] == 0:
         now = get_current_time().isoformat()
         sample_items = [
-            ('Osh', 25000, 'food', 'An\'anaviy o\'zbek taomi, guruch va go\'sht bilan', '/static/images/default-food.jpg', 1, 50, 0, 4.5, 0.0, now),
-            ('Manti', 20000, 'food', 'Bug\'da pishirilgan go\'shtli manti', '/static/images/default-food.jpg', 1, 30, 0, 4.8, 5.0, now),
-            ('Shashlik', 30000, 'food', 'Mangalda pishirilgan mazali shashlik', '/static/images/default-food.jpg', 1, 25, 0, 4.7, 0.0, now),
-            ('Lagmon', 22000, 'food', 'Qo\'l tortmasi bilan tayyorlangan lagmon', '/static/images/default-food.jpg', 1, 40, 0, 4.6, 10.0, now),
-            ('Choy', 5000, 'drink', 'Issiq qora choy', '/static/images/default-drink.jpg', 1, 100, 0, 4.2, 0.0, now),
-            ('Qora choy', 6000, 'drink', 'O\'zbek an\'anaviy choy', '/static/images/default-drink.jpg', 1, 80, 0, 4.3, 0.0, now),
-            ('Kompot', 8000, 'drink', 'Mevali kompot', '/static/images/default-drink.jpg', 1, 60, 0, 4.1, 15.0, now),
-            ('Coca Cola', 10000, 'drink', 'Sovuq ichimlik', '/static/images/default-drink.jpg', 1, 70, 0, 4.0, 0.0, now),
+            ('Osh', 25000, 'food', 'An\'anaviy o\'zbek taomi, guruch va go\'sht bilan', '/static/images/osh.jpg', 1, 50, 0, 4.5, 0.0, now),
+            ('Manti', 20000, 'food', 'Bug\'da pishirilgan go\'shtli manti', '/static/images/manti.jpg', 1, 30, 0, 4.8, 5.0, now),
+            ('Shashlik', 30000, 'food', 'Mangalda pishirilgan mazali shashlik', '/static/images/shashlik.jpg', 1, 25, 0, 4.7, 0.0, now),
+            ('Lagmon', 22000, 'food', 'Qo\'l tortmasi bilan tayyorlangan lagmon', '/static/images/lagmon.jpg', 1, 40, 0, 4.6, 10.0, now),
+            ('Choy', 5000, 'drink', 'Issiq qora choy', '/static/images/choy.jpg', 1, 100, 0, 4.2, 0.0, now),
+            ('Qora choy', 6000, 'drink', 'O\'zbek an\'anaviy choy', '/static/images/qora_choy.jpg', 1, 80, 0, 4.3, 0.0, now),
+            ('Kompot', 8000, 'drink', 'Mevali kompot', '/static/images/kompot.jpg', 1, 60, 0, 4.1, 15.0, now),
+            ('Coca Cola', 10000, 'drink', 'Sovuq ichimlik', '/static/images/coca_cola.jpg', 1, 70, 0, 4.0, 0.0, now),
         ]
         cur.executemany("INSERT INTO menu_items (name, price, category, description, image_url, available, stock_quantity, orders_count, rating, discount_percentage, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", sample_items)
 
@@ -1003,7 +1022,7 @@ def ensure_menu_items_columns():
     try:
         conn = get_db()
         cur = conn.cursor()
-        
+
         cur.execute("PRAGMA table_info(menu_items);")
         cols = [r[1] for r in cur.fetchall()]
 
@@ -1096,7 +1115,7 @@ def search_location_with_serper(query, gl="uz", hl="uz"):
     try:
         url = "https://google.serper.dev/search"
         headers = {
-            'X-API-KEY': '1b077296f67499a12ee28ce232bb48221d29be14',
+            'X-API-KEY': Config.SERPER_API_KEY, # Config dan API kalitini olish
             'Content-Type': 'application/json'
         }
         data = {
@@ -1110,9 +1129,10 @@ def search_location_with_serper(query, gl="uz", hl="uz"):
         if response.status_code == 200:
             return response.json()
         else:
+            app_logger.error(f"Serper API search error: {response.status_code} - {response.text}")
             return None
     except Exception as e:
-        print(f"Serper API xatoligi: {e}")
+        app_logger.error(f"Serper API xatoligi: {e}")
         return None
 
 def get_places_with_serper(query, gl="uz", hl="uz"):
@@ -1120,7 +1140,7 @@ def get_places_with_serper(query, gl="uz", hl="uz"):
     try:
         url = "https://google.serper.dev/places"
         headers = {
-            'X-API-KEY': '1b077296f67499a12ee28ce232bb48221d29be14',
+            'X-API-KEY': Config.SERPER_API_KEY, # Config dan API kalitini olish
             'Content-Type': 'application/json'
         }
         data = {
@@ -1134,15 +1154,25 @@ def get_places_with_serper(query, gl="uz", hl="uz"):
         if response.status_code == 200:
             return response.json()
         else:
+            app_logger.error(f"Serper API places error: {response.status_code} - {response.text}")
             return None
     except Exception as e:
-        print(f"Serper Places API xatoligi: {e}")
+        app_logger.error(f"Serper Places API xatoligi: {e}")
         return None
 
 def validate_delivery_address(address):
     """Yetkazib berish manzilini tekshirish Yandex API orqali"""
     if not address:
         return False, "Manzil kiritilmagan"
+
+    # Yandex API kaliti mavjudligini tekshirish
+    if not app.config['YANDEX_GEOCODER_API']:
+        app_logger.warning("Yandex Geocoding API kaliti belgilanmagan. Manzil tekshiruvi cheklangan.")
+        # Agar API kaliti bo'lmasa, oddiy tekshiruv
+        if len(address) > 5 and any(word in address.lower() for word in ['ko\'cha', 'mahalla', 'tuman', 'shoh', 'yo\'l']):
+            return True, "Manzil qabul qilindi (API kaliti yo'q)"
+        else:
+            return False, "Manzilni to'liqroq kiriting (API kaliti yo'q)"
 
     try:
         # Yandex Geocoding API orqali manzilni tekshirish
@@ -1167,21 +1197,29 @@ def validate_delivery_address(address):
             else:
                 return False, "Manzil topilmadi"
         else:
+            app_logger.error(f"Yandex Geocoding API error: {response.status_code} - {response.text}")
             # API ishlamasa, oddiy tekshirish
             if len(address) > 5 and any(word in address.lower() for word in ['ko\'cha', 'mahalla', 'tuman', 'shoh', 'yo\'l']):
-                return True, "Manzil qabul qilindi"
+                return True, "Manzil qabul qilindi (API xatosi)"
             else:
-                return False, "Manzilni to'liqroq kiriting"
+                return False, "Manzilni to'liqroq kiriting (API xatosi)"
 
     except Exception as e:
         # Xatolik bo'lsa, oddiy tekshirish
+        app_logger.error(f"Manzil tekshirishda umumiy xatolik: {str(e)}")
         if len(address) > 5:
-            return True, "Manzil qabul qilindi"
+            return True, "Manzil qabul qilindi (Xatolik)"
         else:
-            return False, "Manzilni to'liqroq kiriting"
+            return False, "Manzilni to'liqroq kiriting (Xatolik)"
 
 def calculate_delivery_distance(address):
     """Yetkazib berish masofasini hisoblash Yandex API orqali"""
+    # Yandex API kaliti mavjudligini tekshirish
+    if not app.config['YANDEX_GEOCODER_API']:
+        app_logger.warning("Yandex Geocoding API kaliti belgilanmagan. Masofa hisoblash cheklangan.")
+        # Agar API kaliti bo'lmasa, taxminiy masofa
+        return calculate_distance_fallback(address)
+
     try:
         # Restoran koordinatalari (Toshkent markazi)
         restaurant_coords = [41.2995, 69.2401]
@@ -1220,20 +1258,37 @@ def calculate_delivery_distance(address):
                 distance_km = 6371 * c  # Yer radiusi 6371 km
 
                 return round(min(50, max(0.5, distance_km)), 1)
+            else:
+                # Agar Yandex API manzilni topa olmasa, fallback
+                return calculate_distance_fallback(address)
 
-        # Agar API ishlamasa yoki natija bo'lmasa, oddiy hisoblash
-        if 'toshkent' in address.lower() or 'алмазар' in address.lower():
-            return 5.0
-        elif any(word in address.lower() for word in ['sergeli', 'yunusobod', 'yashnobod']):
-            return 8.0
-        elif any(word in address.lower() for word in ['chilonzor', 'bektemir']):
-            return 12.0
         else:
-            return 7.0
+            app_logger.error(f"Yandex Geocoding API distance error: {response.status_code} - {response.text}")
+            return calculate_distance_fallback(address) # Agar API xato bersa, fallback
 
     except Exception as e:
-        logging.error(f"Masofa hisoblashda xatolik: {str(e)}")
-        return 5.0
+        app_logger.error(f"Masofa hisoblashda umumiy xatolik: {str(e)}")
+        return calculate_distance_fallback(address) # Umumiy xatolikda fallback
+
+def calculate_distance_fallback(address):
+    """Masofa hisoblash uchun fallback funksiyasi"""
+    address_lower = address.lower()
+    if 'toshkent' in address_lower or 'алмазар' in address_lower or 'olmazor' in address_lower:
+        if any(word in address_lower for word in ['chilonzor', 'olmazor', 'shayxontohur']):
+            return 8.0
+        elif any(word in address_lower for word in ['yunusobod', 'yashnobod']):
+            return 12.0
+        elif any(word in address_lower for word in ['sergeli', 'bektemir']):
+            return 15.0
+        else:
+            return 5.0
+    elif 'sirdaryo' in address_lower or 'jizzax' in address_lower:
+        return 20.0
+    elif 'samarqand' in address_lower:
+        return 30.0
+    else:
+        return 7.0 # Umumiy taxminiy qiymat
+
 
 def find_nearest_branch(user_latitude, user_longitude):
     """Foydalanuvchiga eng yaqin filialni topish"""
@@ -1342,14 +1397,14 @@ def generate_qr_code(receipt_data):
     """Chek uchun QR kod yaratish"""
     # Soliq.uz uchun chek ma'lumotlari
     qr_data = {
-        "receipt_number": receipt_data['receipt_number'],
-        "total_amount": receipt_data['total_amount'],
-        "cashback_amount": receipt_data['cashback_amount'],
-        "date": receipt_data['created_at'][:10],
-        "time": receipt_data['created_at'][11:19],
+        "receipt_number": receipt_data.get('receipt_number', 'N/A'),
+        "total_amount": receipt_data.get('total_amount', 0.0),
+        "cashback_amount": receipt_data.get('cashback_amount', 0.0),
+        "date": receipt_data.get('receipt_created', '')[:10],
+        "time": receipt_data.get('receipt_created', '')[11:19],
         "restaurant": "O'zbek Milliy Taomlar Restorani",
         "inn": "123456789",  # Restoran INN raqami
-        "cashback_percent": receipt_data['cashback_percentage']
+        "cashback_percent": receipt_data.get('cashback_percentage', 1.0)
     }
 
     # JSON formatda ma'lumotlarni tayyorlash
@@ -1451,11 +1506,11 @@ def get_cart_items(conn, session_id, user_id=None):
                         'discount_percentage': row[5] if row[5] is not None else 0,
                         'total': row[6] if len(row) > 6 else row[3] * row[4]
                     }
-                
+
                 # discount_percentage ni tekshirish va None bo'lsa 0 qilib qo'yish
                 if item_dict.get('discount_percentage') is None:
                     item_dict['discount_percentage'] = 0
-                    
+
                 cart_items.append(item_dict)
             except Exception as row_error:
                 app_logger.error(f"Savatcha element o'qishda xatolik: {str(row_error)}")
@@ -2148,7 +2203,7 @@ def logout():
     flash(f"Tizimdan chiqdingiz. Xayr, {user_name}!", "info")
     return redirect(url_for("index"))
 
-# ---- USER ----
+# ---- PLACE ORDER ----
 @app.route("/place_order", methods=["POST"])
 def place_order():
     """Buyurtma berish funksiyasi - to'liq qayta ishlangan"""
@@ -2950,12 +3005,10 @@ def edit_menu_item(item_id):
             import uuid
             from werkzeug.utils import secure_filename
 
-            # Static/images papkasini yaratish
             images_dir = os.path.join('static', 'images')
             if not os.path.exists(images_dir):
                 os.makedirs(images_dir)
 
-            # Fayl nomini xavfsiz qilish
             filename = secure_filename(file.filename)
             unique_filename = f"{uuid.uuid4().hex}_{filename}"
             file_path = os.path.join(images_dir, unique_filename)
@@ -3779,7 +3832,7 @@ def api_save_settings():
 # Cart count endpoint moved to top priority section
 
 # ---- CRITICAL API ENDPOINTS (eng yuqori prioritet) ----
-# Bu endpoint har doim JSON qaytarishi kerak
+# Bu endpoint har doim JSON response qaytarishi kerak
 
 @app.route("/api/cart-count")
 def api_cart_count_fixed():
@@ -3790,12 +3843,12 @@ def api_cart_count_fixed():
 
         conn = get_db()
         cur = conn.cursor()
-        
+
         if user_id:
             cur.execute('SELECT COALESCE(SUM(quantity), 0) FROM cart_items WHERE user_id = ?', (user_id,))
         else:
             cur.execute('SELECT COALESCE(SUM(quantity), 0) FROM cart_items WHERE session_id = ?', (session_id,))
-        
+
         result = cur.fetchone()
         count = int(result[0]) if result and result[0] else 0
         conn.close()
@@ -3804,24 +3857,24 @@ def api_cart_count_fixed():
             "count": count,
             "success": True
         })
-        
+
         # JSON headers
         response.headers['Content-Type'] = 'application/json; charset=utf-8'
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
         response.headers['Pragma'] = 'no-cache'
         response.headers['Expires'] = '0'
-            
+
         return response
 
     except Exception as e:
         app_logger.error(f"Cart count API error: {str(e)}")
-        
+
         error_response = jsonify({
             "count": 0,
             "success": False,
             "error": "Server error"
         })
-        
+
         error_response.headers['Content-Type'] = 'application/json; charset=utf-8'
         error_response.status_code = 500
         return error_response
@@ -4193,18 +4246,18 @@ def get_cart_count():
     try:
         session_id = get_session_id()
         user_id = session.get("user_id")
-        
+
         conn = get_db()
         cur = conn.cursor()
-        
+
         if user_id:
             cur.execute("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE user_id = ?", (user_id,))
         else:
             cur.execute("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE session_id = ?", (session_id,))
-        
+
         cart_count = cur.fetchone()['total_count']
         conn.close()
-        
+
         # Majburiy JSON response headers bilan
         response = jsonify({
             "count": int(cart_count) if cart_count else 0,
@@ -4214,12 +4267,12 @@ def get_cart_count():
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
         response.headers['Pragma'] = 'no-cache'
         response.headers['Expires'] = '0'
-        
+
         return response
-        
+
     except Exception as e:
         app_logger.error(f"Get cart count error: {str(e)}")
-        
+
         error_response = jsonify({
             "count": 0,
             "success": False,
