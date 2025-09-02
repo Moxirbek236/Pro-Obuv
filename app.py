@@ -4691,6 +4691,105 @@ def super_admin_delete_user_db(user_id):
     flash(f"Foydalanuvchi #{user_id} va barcha ma'lumotlari o'chirildi.", "success")
     return redirect(url_for("super_admin_dashboard"))
 
+@app.route("/super-admin/reset-all-data", methods=["POST"])
+def super_admin_reset_all_data():
+    """Barcha ma'lumotlarni o'chirish va test ma'lumotlarini yaratish"""
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+
+    try:
+        conn = get_db()
+        cur = conn.cursor()
+
+        # Barcha ma'lumotlarni o'chirish
+        tables_to_clear = [
+            'cart_items', 'favorites', 'ratings', 'order_details', 
+            'receipts', 'orders', 'questions', 'users', 'staff', 'couriers', 'branches'
+        ]
+
+        for table in tables_to_clear:
+            try:
+                cur.execute(f"DELETE FROM {table}")
+                app_logger.info(f"Jadval {table} tozalandi")
+            except Exception as e:
+                app_logger.warning(f"Jadval {table} tozalashda xatolik: {str(e)}")
+
+        # Counterlarni tiklash
+        cur.execute("UPDATE counters SET value = 10000 WHERE name = 'ticket'")
+
+        now = get_current_time().isoformat()
+        common_password = "123456"  # Bir xil parol
+        password_hash = generate_password_hash(common_password)
+
+        # 1 ta test foydalanuvchi yaratish
+        cur.execute("""
+            INSERT INTO users (id, first_name, last_name, email, phone, password_hash, address, created_at, interface_language, font_size, dark_theme)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (1001, "Test", "Foydalanuvchi", "user@test.com", "+998901234567", password_hash, "Toshkent, Chilonzor tumani", now, "uz", "medium", 0))
+
+        # 1 ta test xodim yaratish
+        cur.execute("""
+            INSERT INTO staff (id, first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, total_hours, orders_handled, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (20001, "Test", "Xodim", "1990-01-01", "+998901234568", "AA", "1234567", password_hash, 0, 0, now))
+
+        # 1 ta test kuryer yaratish
+        cur.execute("""
+            INSERT INTO couriers (id, first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, total_hours, deliveries_completed, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (30001, "Test", "Kuryer", "1995-01-01", "+998901234569", "BB", "7654321", password_hash, 0, 0, now))
+
+        # 1 ta test filial yaratish
+        cur.execute("""
+            INSERT INTO branches (id, name, address, latitude, longitude, phone, working_hours, is_active, delivery_radius, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (1, "Test Filial", "Toshkent, Amir Temur ko'chasi 1", 41.2995, 69.2401, "+998712345678", "09:00-23:00", 1, 20.0, now))
+
+        conn.commit()
+        conn.close()
+
+        # JSON fayllarni ham tozalash va yangilash
+        try:
+            # users.json ni tozalash
+            with open('users.json', 'w', encoding='utf-8') as f:
+                json.dump([], f, ensure_ascii=False, indent=2)
+
+            # employees.json ni tozalash
+            with open('employees.json', 'w', encoding='utf-8') as f:
+                json.dump([], f, ensure_ascii=False, indent=2)
+
+            # courier.json ni tozalash
+            if os.path.exists('courier.json'):
+                with open('courier.json', 'w', encoding='utf-8') as f:
+                    json.dump([], f, ensure_ascii=False, indent=2)
+
+        except Exception as json_error:
+            app_logger.warning(f"JSON fayllarni tozalashda xatolik: {str(json_error)}")
+
+        # Cache ni tozalash
+        cache_manager.memory_cache.clear()
+        cache_manager.cache_timestamps.clear()
+
+        app_logger.info("Barcha ma'lumotlar tozalandi va test ma'lumotlari yaratildi")
+        flash(f"""
+        ✅ Barcha ma'lumotlar muvaffaqiyatli tozalandi va test ma'lumotlari yaratildi!
+        
+        📋 Yaratilgan test ma'lumotlari:
+        👤 Foydalanuvchi: ID 1001, Email: user@test.com, Parol: {common_password}
+        👨‍💼 Xodim: ID 20001, Parol: {common_password}
+        🚚 Kuryer: ID 30001, Parol: {common_password}
+        🏢 Filial: Test Filial (ID: 1)
+        
+        ⚠️ Barcha parollar bir xil: {common_password}
+        """, "success")
+
+        return redirect(url_for("super_admin_dashboard"))
+
+    except Exception as e:
+        app_logger.error(f"Ma'lumotlarni tozalashda xatolik: {str(e)}")
+        flash(f"Ma'lumotlarni tozalashda xatolik yuz berdi: {str(e)}", "error")
+        return redirect(url_for("super_admin_dashboard"))
+
 @app.route("/super-admin/logout")
 def super_admin_logout():
     session.pop("super_admin", None)

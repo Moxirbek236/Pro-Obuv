@@ -854,6 +854,24 @@ function resetUserPassword(userId) {
     }
 }
 
+function resetAllData() {
+    if (confirm('Rostdan ham barcha ma\'lumotlarni tozalab, yangi bir martalik ma\'lumotlarni yaratmoqchimisiz? Bu amal qaytarib bo\'lmaydi.')) {
+        fetch('/super-admin/reset-all-data', { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Ma\'lumotlar muvaffaqiyatli tozalandi va qayta yaratildi. Sahifa qayta yuklanadi...');
+                    location.reload();
+                } else {
+                    alert('Xatolik yuz berdi: ' + data.message);
+                }
+            })
+            .catch(error => {
+                alert('So\'rov yuborishda xatolik: ' + error);
+            });
+    }
+}
+
 // Sahifa yuklanganda buyurtmalarni yuklash
 document.addEventListener('DOMContentLoaded', function() {
     loadOrders();
