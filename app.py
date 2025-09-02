@@ -406,7 +406,15 @@ def before_request():
 def after_request(response):
     """So'rov tugagach xavfsizlik sarlavhalarini qo'shish"""
     try:
-        # Faqat security headers qo'shish
+        # Performance monitoring (agar mavjud bo'lsa)
+        if hasattr(request, 'start_time') and hasattr(performance_monitor, 'record_request'):
+            try:
+                duration = time.time() - request.start_time
+                performance_monitor.record_request(duration, request.endpoint)
+            except Exception:
+                pass  # Performance monitoring xatoligi ahamiyatsiz
+
+        # Security headers qo'shish
         response.headers['X-Content-Type-Options'] = 'nosniff'
         response.headers['X-Frame-Options'] = 'DENY'
         response.headers['X-XSS-Protection'] = '1; mode=block'
@@ -4138,6 +4146,29 @@ def get_config():
             "minute": Config.RATE_LIMIT_MINUTE
         }
     })
+
+@app.route("/get_cart_count")
+def get_cart_count():
+    """Savatcha sonini olish"""
+    try:
+        session_id = get_session_id()
+        user_id = session.get("user_id")
+        
+        conn = get_db()
+        cur = conn.cursor()
+        
+        if user_id:
+            cur.execute("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE user_id = ?", (user_id,))
+        else:
+            cur.execute("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE session_id = ?", (session_id,))
+        
+        cart_count = cur.fetchone()['total_count']
+        conn.close()
+        
+        return jsonify({"count": cart_count})
+    except Exception as e:
+        app_logger.error(f"Get cart count error: {str(e)}")
+        return jsonify({"count": 0})
 
 @app.route("/api/health")
 def health_check():
