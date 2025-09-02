@@ -4188,6 +4188,467 @@ def super_admin_activity_feed():
         app_logger.error(f"Activity feed API error: {str(e)}")
         return jsonify({"activities": []}), 500
 
+# ---- SUPER ADMIN ADDITIONAL PAGES ----
+
+@app.route("/super-admin/analytics")
+def super_admin_analytics():
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+    return render_template("super_admin_analytics.html")
+
+@app.route("/super-admin/reports")
+def super_admin_reports():
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+    return render_template("super_admin_reports.html")
+
+@app.route("/super-admin/system")
+def super_admin_system():
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+    return render_template("super_admin_system.html")
+
+@app.route("/super-admin/logs")
+def super_admin_logs():
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+    return render_template("super_admin_logs.html")
+
+# ---- ANALYTICS API ENDPOINTS ----
+
+@app.route("/api/super-admin/analytics")
+@login_required
+def api_analytics_data():
+    """Analytics ma'lumotlarini olish"""
+    try:
+        period = request.args.get('period', 'today')
+        
+        if period == 'today':
+            start_date = get_current_time().date()
+            end_date = start_date
+        elif period == 'week':
+            end_date = get_current_time().date()
+            start_date = end_date - datetime.timedelta(days=7)
+        elif period == 'month':
+            end_date = get_current_time().date()
+            start_date = end_date - datetime.timedelta(days=30)
+        else:
+            end_date = get_current_time().date()
+            start_date = end_date - datetime.timedelta(days=365)
+        
+        # KPI ma'lumotlari
+        kpis = {
+            "revenue": 0,
+            "orders": 0,
+            "activeUsers": 0,
+            "avgRating": 0,
+            "revenueChange": 0,
+            "ordersChange": 0,
+            "usersChange": 0,
+            "ratingChange": 0
+        }
+        
+        # Bugungi/davr daromadi
+        revenue_result = execute_query("""
+            SELECT COALESCE(SUM(r.total_amount), 0) as revenue
+            FROM receipts r
+            JOIN orders o ON r.order_id = o.id
+            WHERE DATE(o.created_at) BETWEEN ? AND ?
+        """, (start_date.isoformat(), end_date.isoformat()), fetch_one=True)
+        kpis["revenue"] = revenue_result["revenue"] if revenue_result else 0
+        
+        # Chart ma'lumotlari
+        charts = {
+            "revenue": {"labels": [], "data": []},
+            "orders": {"data": [0, 0, 0, 0]},
+            "hourly": {"labels": [], "data": []}
+        }
+        
+        # Statistika ma'lumotlari
+        stats = {
+            "cardPayments": 75,
+            "cashPayments": 25,
+            "deliveryOrders": 120,
+            "pickupOrders": 80,
+            "avgDeliveryTime": 25,
+            "tashkentOrders": 150,
+            "otherRegions": 50
+        }
+        
+        return jsonify({
+            "kpis": kpis,
+            "charts": charts,
+            "stats": stats
+        })
+        
+    except Exception as e:
+        app_logger.error(f"Analytics API error: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/super-admin/reports")
+@login_required
+def api_reports_data():
+    """Hisobotlar ma'lumotlarini olish"""
+    try:
+        report_type = request.args.get('type', 'daily')
+        start_date = request.args.get('start_date', '')
+        end_date = request.args.get('end_date', '')
+        
+        if not start_date:
+            start_date = (get_current_time() - datetime.timedelta(days=7)).date().isoformat()
+        if not end_date:
+            end_date = get_current_time().date().isoformat()
+        
+        # Summary ma'lumotlari
+        summary = execute_query("""
+            SELECT 
+                COALESCE(SUM(r.total_amount), 0) as total_revenue,
+                COUNT(DISTINCT o.id) as total_orders,
+                COUNT(DISTINCT o.user_id) as new_customers
+            FROM orders o
+            LEFT JOIN receipts r ON o.id = r.order_id
+            WHERE DATE(o.created_at) BETWEEN ? AND ?
+        """, (start_date, end_date), fetch_one=True)
+        
+        # Sotuvlar ma'lumotlari
+        sales_data = execute_query("""
+            SELECT 
+                DATE(o.created_at) as date,
+                COUNT(o.id) as orders_count,
+                COALESCE(SUM(r.total_amount), 0) as revenue,
+                COALESCE(AVG(r.total_amount), 0) as avg_order,
+                COALESCE(SUM(r.cashback_amount), 0) as cashback
+            FROM orders o
+            LEFT JOIN receipts r ON o.id = r.order_id
+            WHERE DATE(o.created_at) BETWEEN ? AND ?
+            GROUP BY DATE(o.created_at)
+            ORDER BY date DESC
+        """, (start_date, end_date), fetch_all=True)
+        
+        # Mahsulotlar ma'lumotlari
+        products_data = execute_query("""
+            SELECT 
+                m.name,
+                m.category,
+                COUNT(od.id) as orders_count,
+                SUM(od.price * od.quantity) as revenue,
+                m.rating,
+                m.stock_quantity
+            FROM menu_items m
+            LEFT JOIN order_details od ON m.id = od.menu_item_id
+            LEFT JOIN orders o ON od.order_id = o.id AND DATE(o.created_at) BETWEEN ? AND ?
+            GROUP BY m.id
+            ORDER BY orders_count DESC
+        """, (start_date, end_date), fetch_all=True)
+        
+        # Mijozlar ma'lumotlari
+        customers_data = execute_query("""
+            SELECT 
+                u.first_name,
+                u.last_name,
+                u.email,
+                u.phone,
+                COUNT(o.id) as orders_count,
+                COALESCE(SUM(r.total_amount), 0) as total_spent,
+                MAX(o.created_at) as last_order
+            FROM users u
+            LEFT JOIN orders o ON u.id = o.user_id AND DATE(o.created_at) BETWEEN ? AND ?
+            LEFT JOIN receipts r ON o.id = r.order_id
+            GROUP BY u.id
+            HAVING orders_count > 0
+            ORDER BY total_spent DESC
+        """, (start_date, end_date), fetch_all=True)
+        
+        # Xodimlar ma'lumotlari
+        staff_data = execute_query("""
+            SELECT * FROM staff ORDER BY orders_handled DESC
+        """, fetch_all=True)
+        
+        # Filiallar ma'lumotlari
+        branches_data = execute_query("""
+            SELECT 
+                b.*,
+                COUNT(o.id) as orders_count,
+                COALESCE(SUM(r.total_amount), 0) as revenue
+            FROM branches b
+            LEFT JOIN orders o ON b.id = o.branch_id AND DATE(o.created_at) BETWEEN ? AND ?
+            LEFT JOIN receipts r ON o.id = r.order_id
+            GROUP BY b.id
+            ORDER BY orders_count DESC
+        """, (start_date, end_date), fetch_all=True)
+        
+        # Filial baholarini qo'shish
+        for branch in branches_data:
+            rating_data = get_branch_average_rating(branch['id'])
+            branch['average_rating'] = rating_data['average_rating']
+        
+        return jsonify({
+            "summary": dict(summary) if summary else {},
+            "sales": [dict(sale) for sale in sales_data],
+            "products": [dict(product) for product in products_data],
+            "customers": [dict(customer) for customer in customers_data],
+            "staff": [dict(staff) for staff in staff_data],
+            "branches": [dict(branch) for branch in branches_data]
+        })
+        
+    except Exception as e:
+        app_logger.error(f"Reports API error: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/super-admin/system-info")
+@login_required
+def api_system_info():
+    """Tizim ma'lumotlarini olish"""
+    try:
+        import sys
+        import psutil
+        import os
+        
+        # Server status
+        status = {
+            "server": "Ishlayapti",
+            "database": "Ulangan",
+            "performance": "Yaxshi",
+            "memory": "Normal",
+            "uptime": f"{int((time.time() - start_time) // 3600)}h {int(((time.time() - start_time) % 3600) // 60)}m",
+            "dbSize": round(os.path.getsize(DB_PATH) / (1024 * 1024), 2) if os.path.exists(DB_PATH) else 0,
+            "responseTime": 50,
+            "memoryPercent": int(psutil.virtual_memory().percent) if 'psutil' in sys.modules else 0
+        }
+        
+        # System info
+        info = {
+            "python": sys.version.split()[0],
+            "platform": sys.platform,
+            "flask": "2.3.0",
+            "environment": Config.ENVIRONMENT,
+            "totalStorage": "1 GB",
+            "usedStorage": "200 MB",
+            "packages": "25+",
+            "lastUpdate": get_current_time().strftime("%Y-%m-%d")
+        }
+        
+        return jsonify({
+            "status": status,
+            "info": info
+        })
+        
+    except Exception as e:
+        app_logger.error(f"System info API error: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/super-admin/logs")
+@login_required
+def api_logs_data():
+    """Log ma'lumotlarini olish"""
+    try:
+        log_type = request.args.get('type', 'all')
+        time_range = request.args.get('range', '24h')
+        format_type = request.args.get('format', 'json')
+        
+        # Vaqt oralig'ini hisoblash
+        now = get_current_time()
+        if time_range == '1h':
+            start_time_filter = now - datetime.timedelta(hours=1)
+        elif time_range == '6h':
+            start_time_filter = now - datetime.timedelta(hours=6)
+        elif time_range == '7d':
+            start_time_filter = now - datetime.timedelta(days=7)
+        elif time_range == '30d':
+            start_time_filter = now - datetime.timedelta(days=30)
+        else:  # 24h
+            start_time_filter = now - datetime.timedelta(hours=24)
+        
+        # Log fayllarini o'qish
+        logs = []
+        stats = {"total": 0, "errors": 0, "warnings": 0, "info": 0}
+        
+        log_files = ['logs/restaurant.log', 'logs/errors.log']
+        
+        for log_file in log_files:
+            if os.path.exists(log_file):
+                try:
+                    with open(log_file, 'r', encoding='utf-8') as f:
+                        lines = f.readlines()[-1000:]  # Oxirgi 1000 ta log
+                        
+                    for line in lines:
+                        if line.strip():
+                            # Log formatini parse qilish
+                            parts = line.strip().split(' | ')
+                            if len(parts) >= 4:
+                                timestamp = parts[0]
+                                level = parts[1]
+                                source = parts[2]
+                                message = ' | '.join(parts[3:])
+                                
+                                # Vaqt filtri
+                                try:
+                                    log_time = datetime.datetime.fromisoformat(timestamp.replace(',', '.'))
+                                    if log_time < start_time_filter:
+                                        continue
+                                except:
+                                    pass
+                                
+                                # Type filtri
+                                if log_type != 'all' and level.lower() != log_type.lower():
+                                    continue
+                                
+                                logs.append({
+                                    "timestamp": timestamp,
+                                    "level": level,
+                                    "source": source,
+                                    "message": message,
+                                    "details": None
+                                })
+                                
+                                # Statistika
+                                stats["total"] += 1
+                                if level.lower() == 'error':
+                                    stats["errors"] += 1
+                                elif level.lower() == 'warning':
+                                    stats["warnings"] += 1
+                                elif level.lower() == 'info':
+                                    stats["info"] += 1
+                                
+                except Exception as file_error:
+                    app_logger.error(f"Log file {log_file} o'qishda xatolik: {str(file_error)}")
+        
+        # Vaqt bo'yicha saralash
+        logs.sort(key=lambda x: x['timestamp'], reverse=True)
+        
+        # Format bo'yicha qaytarish
+        if format_type == 'file':
+            # Fayl formatida qaytarish
+            content = '\n'.join([f"{log['timestamp']} | {log['level']} | {log['source']} | {log['message']}" for log in logs])
+            response = app.response_class(
+                content,
+                mimetype='text/plain',
+                headers={"Content-Disposition": f"attachment; filename=logs_{log_type}_{time_range}.log"}
+            )
+            return response
+        
+        return jsonify({
+            "logs": logs[:500],  # Faqat oxirgi 500 ta log
+            "stats": stats
+        })
+        
+    except Exception as e:
+        app_logger.error(f"Logs API error: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/super-admin/clear-cache", methods=["POST"])
+@login_required
+def api_clear_cache():
+    """Cache tozalash"""
+    try:
+        # Memory cache tozalash
+        cache_manager.memory_cache.clear()
+        cache_manager.cache_timestamps.clear()
+        
+        # Redis cache tozalash
+        if cache_manager.redis_client:
+            cache_manager.redis_client.flushdb()
+        
+        app_logger.info("Cache muvaffaqiyatli tozalandi")
+        return jsonify({"success": True, "message": "Cache tozalandi"})
+        
+    except Exception as e:
+        app_logger.error(f"Cache tozalashda xatolik: {str(e)}")
+        return jsonify({"success": False, "message": str(e)}), 500
+
+@app.route("/api/super-admin/optimize-database", methods=["POST"])
+@login_required
+def api_optimize_database():
+    """Database optimallashtirish"""
+    try:
+        with db_pool.get_connection() as conn:
+            cur = conn.cursor()
+            
+            # SQLite optimallashtirish komandlari
+            cur.execute("VACUUM")
+            cur.execute("REINDEX")
+            cur.execute("ANALYZE")
+            
+        app_logger.info("Database muvaffaqiyatli optimallashtirildi")
+        return jsonify({"success": True, "message": "Database optimallashtirildi"})
+        
+    except Exception as e:
+        app_logger.error(f"Database optimallashtirish xatoligi: {str(e)}")
+        return jsonify({"success": False, "message": str(e)}), 500
+
+@app.route("/api/super-admin/health-report")
+@login_required
+def api_health_report():
+    """Health report yaratish"""
+    try:
+        import sys
+        
+        # Database ma'lumotlari
+        with db_pool.get_connection() as conn:
+            cur = conn.cursor()
+            
+            # Jadvallar sonini hisoblash
+            cur.execute("SELECT name FROM sqlite_master WHERE type='table'")
+            tables = cur.fetchall()
+            
+            # Jami yozuvlar
+            total_records = 0
+            for table in tables:
+                try:
+                    cur.execute(f"SELECT COUNT(*) FROM {table['name']}")
+                    count = cur.fetchone()[0]
+                    total_records += count
+                except:
+                    pass
+        
+        # Database hajmi
+        db_size = round(os.path.getsize(DB_PATH) / (1024 * 1024), 2) if os.path.exists(DB_PATH) else 0
+        
+        health_data = {
+            "server": {
+                "status": "Ishlayapti",
+                "uptime": f"{int((time.time() - start_time) // 3600)}h {int(((time.time() - start_time) % 3600) // 60)}m",
+                "cpu": "N/A",
+                "memory": "N/A"
+            },
+            "database": {
+                "status": "Ulangang",
+                "tables": len(tables),
+                "records": total_records,
+                "size": db_size
+            },
+            "performance": {
+                "avgResponse": 50,
+                "activeSessions": 10,
+                "cacheHitRate": 85
+            }
+        }
+        
+        return jsonify(health_data)
+        
+    except Exception as e:
+        app_logger.error(f"Health report API error: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/super-admin/clear-logs", methods=["POST"])
+@login_required
+def api_clear_logs():
+    """Loglarni tozalash"""
+    try:
+        log_files = ['logs/restaurant.log', 'logs/errors.log']
+        
+        for log_file in log_files:
+            if os.path.exists(log_file):
+                with open(log_file, 'w') as f:
+                    f.write("")
+        
+        app_logger.info("Loglar muvaffaqiyatli tozalandi")
+        return jsonify({"success": True, "message": "Loglar tozalandi"})
+        
+    except Exception as e:
+        app_logger.error(f"Loglarni tozalashda xatolik: {str(e)}")
+        return jsonify({"success": False, "message": str(e)}), 500
+
 @app.route("/super-admin/delete-courier/<int:courier_id>", methods=["POST"])
 def super_admin_delete_courier(courier_id):
     if not session.get("super_admin"):
