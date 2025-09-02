@@ -3786,6 +3786,33 @@ def api_save_settings():
         logging.error(f"Sozlamalarni saqlashda xatolik: {str(e)}")
         return jsonify({"success": False, "message": "Server xatoligi"}), 500
 
+@app.route("/api/cart-count", methods=["GET"])
+def api_cart_count():
+    """Savatcha buyumlari sonini qaytarish"""
+    try:
+        if 'user_id' not in session:
+            return jsonify({"count": 0})
+        
+        conn = get_db()
+        cur = conn.cursor()
+        
+        # Foydalanuvchining savatcha buyumlari sonini hisoblash
+        cur.execute('''
+            SELECT COALESCE(SUM(quantity), 0) as total_count 
+            FROM cart_items 
+            WHERE user_id = ?
+        ''', (session['user_id'],))
+        
+        result = cur.fetchone()
+        count = result[0] if result else 0
+        
+        conn.close()
+        return jsonify({"count": count})
+        
+    except Exception as e:
+        logging.error(f"Savatcha sonini olishda xatolik: {str(e)}")
+        return jsonify({"count": 0})
+
 @app.route("/api/set-theme", methods=["POST"])
 def api_set_theme():
     """Mavzu sozlamasini saqlash"""
