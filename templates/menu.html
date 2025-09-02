@@ -1101,6 +1101,34 @@ document.addEventListener('keydown', function(event) {
 /* Sahifa yuklanganda barcha mahsulotlarni ko'rsatish */
 document.addEventListener('DOMContentLoaded', function() {
     showCategory('all');
+    updateCartBadge();
+});
+
+// Savatcha badge-ni yangilash
+function updateCartBadge() {
+    fetch('/api/cart-count')
+        .then(response => response.json())
+        .then(data => {
+            const badge = document.getElementById('cart-badge');
+            if (badge) {
+                if (data.count > 0) {
+                    badge.textContent = data.count;
+                    badge.classList.add('show');
+                } else {
+                    badge.classList.remove('show');
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Cart count olishda xatolik:', error);
+        });
+}
+
+// Savatcha qo'shilganda badge-ni yangilash
+document.addEventListener('submit', function(e) {
+    if (e.target.action && e.target.action.includes('add_to_cart')) {
+        setTimeout(updateCartBadge, 500); // 500ms kechikish bilan yangilash
+    }
 });
 
 // Baho berish modal
