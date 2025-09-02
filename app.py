@@ -1517,18 +1517,33 @@ def get_branch_average_rating(branch_id):
         result = cur.fetchone()
         conn.close()
 
-        if result and result['avg_rating']:
-            return {
-                'average_rating': round(result['avg_rating'], 1),
-                'total_ratings': result['total_ratings']
-            }
-        else:
-            return {
-                'average_rating': 0.0,
-                'total_ratings': 0
-            }
+        if result:
+            # SQLite Row obyektiga to'g'ri murojaat
+            try:
+                if hasattr(result, 'keys'):
+                    # Row obyekti
+                    avg_rating = result['avg_rating']
+                    total_ratings = result['total_ratings']
+                else:
+                    # Tuple
+                    avg_rating = result[0]
+                    total_ratings = result[1]
+                    
+                if avg_rating:
+                    return {
+                        'average_rating': round(float(avg_rating), 1),
+                        'total_ratings': int(total_ratings)
+                    }
+            except (KeyError, IndexError, TypeError) as access_error:
+                app_logger.warning(f"Result access error: {str(access_error)}")
+        
+        return {
+            'average_rating': 0.0,
+            'total_ratings': 0
+        }
+        
     except Exception as e:
-        logging.error(f"Filial bahosini hisoblashda xatolik: {str(e)}")
+        app_logger.error(f"Filial bahosini hisoblashda xatolik: {str(e)}")
         return {
             'average_rating': 0.0,
             'total_ratings': 0
@@ -3377,29 +3392,96 @@ def super_admin_dashboard():
         conn = get_db()
         cur = conn.cursor()
 
-        # Xodimlar ma'lumotlari - xavfsiz olish
+        # Xodimlar ma'lumotlari - xavfsiz olish va dict ga aylantirish
+        staff_db = []
         try:
             cur.execute("SELECT * FROM staff ORDER BY created_at DESC")
-            staff_db = cur.fetchall() or []
+            staff_raw = cur.fetchall() or []
+            for staff in staff_raw:
+                try:
+                    if hasattr(staff, 'keys'):
+                        staff_db.append(dict(zip(staff.keys(), staff)))
+                    else:
+                        # Tuple format uchun manual dict yaratish
+                        staff_db.append({
+                            'id': staff[0],
+                            'first_name': staff[1] if len(staff) > 1 else '',
+                            'last_name': staff[2] if len(staff) > 2 else '',
+                            'birth_date': staff[3] if len(staff) > 3 else '',
+                            'phone': staff[4] if len(staff) > 4 else '',
+                            'passport_series': staff[5] if len(staff) > 5 else '',
+                            'passport_number': staff[6] if len(staff) > 6 else '',
+                            'password_hash': staff[7] if len(staff) > 7 else '',
+                            'total_hours': staff[8] if len(staff) > 8 else 0,
+                            'orders_handled': staff[9] if len(staff) > 9 else 0,
+                            'last_activity': staff[10] if len(staff) > 10 else '',
+                            'created_at': staff[11] if len(staff) > 11 else ''
+                        })
+                except Exception as staff_error:
+                    app_logger.error(f"Staff {staff} qayta ishlashda xatolik: {str(staff_error)}")
+                    continue
         except Exception as e:
             app_logger.error(f"Staff ma'lumotlarini olishda xatolik: {str(e)}")
-            staff_db = []
 
-        # Kuryerlar ma'lumotlari - xavfsiz olish
+        # Kuryerlar ma'lumotlari - xavfsiz olish va dict ga aylantirish
+        couriers_db = []
         try:
             cur.execute("SELECT * FROM couriers ORDER BY created_at DESC")
-            couriers_db = cur.fetchall() or []
+            couriers_raw = cur.fetchall() or []
+            for courier in couriers_raw:
+                try:
+                    if hasattr(courier, 'keys'):
+                        couriers_db.append(dict(zip(courier.keys(), courier)))
+                    else:
+                        # Tuple format uchun manual dict yaratish
+                        couriers_db.append({
+                            'id': courier[0],
+                            'first_name': courier[1] if len(courier) > 1 else '',
+                            'last_name': courier[2] if len(courier) > 2 else '',
+                            'birth_date': courier[3] if len(courier) > 3 else '',
+                            'phone': courier[4] if len(courier) > 4 else '',
+                            'passport_series': courier[5] if len(courier) > 5 else '',
+                            'passport_number': courier[6] if len(courier) > 6 else '',
+                            'password_hash': courier[7] if len(courier) > 7 else '',
+                            'total_hours': courier[8] if len(courier) > 8 else 0,
+                            'deliveries_completed': courier[9] if len(courier) > 9 else 0,
+                            'last_activity': courier[10] if len(courier) > 10 else '',
+                            'created_at': courier[11] if len(courier) > 11 else ''
+                        })
+                except Exception as courier_error:
+                    app_logger.error(f"Courier {courier} qayta ishlashda xatolik: {str(courier_error)}")
+                    continue
         except Exception as e:
             app_logger.error(f"Couriers ma'lumotlarini olishda xatolik: {str(e)}")
-            couriers_db = []
 
-        # Foydalanuvchilarni olish - xavfsiz
+        # Foydalanuvchilarni olish - xavfsiz va dict ga aylantirish
+        users_db = []
         try:
             cur.execute("SELECT * FROM users ORDER BY created_at DESC")
-            users_db = cur.fetchall() or []
+            users_raw = cur.fetchall() or []
+            for user in users_raw:
+                try:
+                    if hasattr(user, 'keys'):
+                        users_db.append(dict(zip(user.keys(), user)))
+                    else:
+                        # Tuple format uchun manual dict yaratish
+                        users_db.append({
+                            'id': user[0],
+                            'first_name': user[1] if len(user) > 1 else '',
+                            'last_name': user[2] if len(user) > 2 else '',
+                            'email': user[3] if len(user) > 3 else '',
+                            'phone': user[4] if len(user) > 4 else '',
+                            'password_hash': user[5] if len(user) > 5 else '',
+                            'address': user[6] if len(user) > 6 else '',
+                            'card_number': user[7] if len(user) > 7 else '',
+                            'card_expiry': user[8] if len(user) > 8 else '',
+                            'created_at': user[9] if len(user) > 9 else ''
+                        })
+                except Exception as user_error:
+                    app_logger.error(f"User {user} qayta ishlashda xatolik: {str(user_error)}")
+                    continue
         except Exception as e:
             app_logger.error(f"Users ma'lumotlarini olishda xatolik: {str(e)}")
-            users_db = []
 
         # JSON fayldan foydalanuvchilarni olish - xavfsiz
         users_json = []
