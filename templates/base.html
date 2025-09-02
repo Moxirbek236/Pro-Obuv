@@ -469,11 +469,15 @@ function translatePage(language) {
 // Enhanced Language Change Function
 window.changeLanguage = function(language) {
     console.log('Changing language to:', language);
+    
+    // Immediately apply translation
     translatePage(language);
     localStorage.setItem('language', language);
 
     // Update body attribute
     document.body.setAttribute('data-language', language);
+    document.body.classList.remove('lang-uz', 'lang-ru', 'lang-en');
+    document.body.classList.add('lang-' + language);
 
     // Server ga yuborish
     fetch('/api/set-language', {
@@ -482,18 +486,31 @@ window.changeLanguage = function(language) {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ language: language })
-    }).then(response => {
-        if (response.ok) {
+    }).then(response => response.json())
+    .then(data => {
+        if (data.success) {
             console.log('Language saved to server:', language);
-            // Sahifani qayta yuklash
-            setTimeout(() => location.reload(), 300);
+            // Show success message briefly
+            showNotification(data.message || 'Til muvaffaqiyatli o\'zgartirildi');
         }
     }).catch(error => {
         console.log('Til sozlamasini saqlashda xato:', error);
-        // Xato bo'lsa ham local tilni qo'llash
-        translatePage(language);
+        // Show error but keep local changes
+        showNotification('Til mahalliy o\'zgartirildi');
     });
 };
+
+// Notification function
+function showNotification(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
 
 // Language-specific CSS classes
 const languageStyles = {
