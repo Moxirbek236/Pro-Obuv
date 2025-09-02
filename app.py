@@ -4468,7 +4468,13 @@ def get_config():
 
 @app.route("/get_cart_count")
 def get_cart_count():
-    """Savatcha sonini olish - majburiy JSON response"""
+    """Legacy endpoint - yangi API ga yo'naltirish"""
+    return redirect(url_for("api_cart_count_fixed"))
+
+# Asosiy savatcha count endpoint - buni saqlab qolamiz
+@app.route("/cart_count")
+def cart_count_endpoint():
+    """Savatcha sonini olish - asosiy endpoint"""
     try:
         session_id = get_session_id()
         user_id = session.get("user_id")
@@ -4497,7 +4503,7 @@ def get_cart_count():
         return response
 
     except Exception as e:
-        app_logger.error(f"Get cart count error: {str(e)}")
+        app_logger.error(f"Cart count endpoint error: {str(e)}")
 
         error_response = jsonify({
             "count": 0,
