@@ -17,21 +17,17 @@
         {% if orders %}
         <div class="table-responsive">
             <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Buyurtma #</th>
-                        <th>Mijoz ismi</th>
-                        <th>Telefon raqami</th>
-                        <th>Yetkazish manzili</th>
-                        <th>Masofa (km)</th>
-                        <th>Kuryer narxi</th>
-                        <th>Buyurtma mahsulotlari</th>
-                        <th>Holati</th>
-                        <th>Buyurtma bergan vaqt</th>
-                        <th>Taxminiy yetkazish vaqti</th>
-                        <th>Harakat qilish</th>
-                    </tr>
-                </thead>
+                <thead style="background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%); color: white;">
+          <tr>
+            <th style="color: white; background: transparent;">№</th>
+            <th style="color: white; background: transparent;">Mijoz</th>
+            <th style="color: white; background: transparent;">Manzil</th>
+            <th style="color: white; background: transparent;">Masofa</th>
+            <th style="color: white; background: transparent;">Holat</th>
+            <th style="color: white; background: transparent;">Narx</th>
+            <th style="color: white; background: transparent;">Amallar</th>
+          </tr>
+        </thead>
                 <tbody>
                     {% for order in orders %}
                     <tr>
