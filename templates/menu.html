@@ -1145,8 +1145,12 @@ document.addEventListener('keydown', function(event) {
 
 // Sahifa yuklangandan keyin cart sonini yangilash
     window.addEventListener('DOMContentLoaded', function() {
-        updateCartCount();
-        updateFloatingCartIcon();
+        try {
+            updateCartCount();
+            updateFloatingCartIcon();
+        } catch (error) {
+            console.error('DOMContentLoaded da xatolik:', error);
+        }
     });
 
     // Floating cart iconini yangilash
