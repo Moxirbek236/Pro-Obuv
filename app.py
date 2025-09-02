@@ -3509,30 +3509,38 @@ def super_admin_dashboard():
                     else:
                         # Agar tuple bo'lsa, xavfsiz dict yaratish
                         branch_dict = {
-                            'id': branch[0] if len(branch) > 0 else 0,
-                            'name': branch[1] if len(branch) > 1 else 'N/A',
-                            'address': branch[2] if len(branch) > 2 else 'N/A',
-                            'latitude': float(str(branch[3])) if len(branch) > 3 and branch[3] is not None else 0.0,
-                            'longitude': float(str(branch[4])) if len(branch) > 4 and branch[4] is not None else 0.0,
+                            'id': int(branch[0]) if len(branch) > 0 and branch[0] is not None else 0,
+                            'name': str(branch[1]) if len(branch) > 1 and branch[1] is not None else 'N/A',
+                            'address': str(branch[2]) if len(branch) > 2 and branch[2] is not None else 'N/A',
+                            'latitude': 0.0,
+                            'longitude': 0.0,
                             'phone': str(branch[5]) if len(branch) > 5 and branch[5] is not None else 'N/A',
                             'working_hours': str(branch[6]) if len(branch) > 6 and branch[6] is not None else '09:00-22:00',
                             'is_active': int(branch[7]) if len(branch) > 7 and branch[7] is not None else 1,
-                            'delivery_radius': float(str(branch[8])) if len(branch) > 8 and branch[8] is not None else 15.0,
+                            'delivery_radius': 15.0,
                             'created_at': str(branch[9]) if len(branch) > 9 and branch[9] is not None else ''
                         }
+                        
+                        # Coordinate conversion with proper error handling
+                        try:
+                            if len(branch) > 3 and branch[3] is not None:
+                                branch_dict['latitude'] = float(branch[3])
+                        except (ValueError, TypeError):
+                            branch_dict['latitude'] = 0.0
+                            
+                        try:
+                            if len(branch) > 4 and branch[4] is not None:
+                                branch_dict['longitude'] = float(branch[4])
+                        except (ValueError, TypeError):
+                            branch_dict['longitude'] = 0.0
+                            
+                        try:
+                            if len(branch) > 8 and branch[8] is not None:
+                                branch_dict['delivery_radius'] = float(branch[8])
+                        except (ValueError, TypeError):
+                            branch_dict['delivery_radius'] = 15.0
                     
-                    # Numeric fields ni xavfsiz conversion
-                    try:
-                        if isinstance(branch_dict.get('latitude'), str):
-                            branch_dict['latitude'] = float(branch_dict['latitude'])
-                        if isinstance(branch_dict.get('longitude'), str):
-                            branch_dict['longitude'] = float(branch_dict['longitude'])
-                        if isinstance(branch_dict.get('delivery_radius'), str):
-                            branch_dict['delivery_radius'] = float(branch_dict['delivery_radius'])
-                    except (ValueError, TypeError):
-                        branch_dict['latitude'] = 0.0
-                        branch_dict['longitude'] = 0.0
-                        branch_dict['delivery_radius'] = 15.0
+                    # Coordinates are already converted above
                     
                     # Baho ma'lumotlarini xavfsiz olish
                     try:
