@@ -2,10 +2,11 @@
 // Current path variable declaration
 let currentLanguage = 'uz';
 // Global o'zgaruvchilarni xavfsiz e'lon qilish
-let currentPath = window.location.pathname || '/';
-// Tarjimalar obyekti - duplicate declaration ni oldini olish uchun
+window.currentPath = window.location.pathname || '/';
+
+// Til tarjimalari - faqat bir marta e'lon qilish
 if (typeof window.translations === 'undefined') {
-    var translations = {
+    window.translations = {
     'uz': {
         'menu': 'Menyu',
         'cart': 'Savatcha',
@@ -771,9 +772,7 @@ function saveLanguage(language) {
             applyLanguage(language);
         }
     })
-    .catch(error => {
-        console.error('Til saqlashda xatolik:', error);
-    });
+    .catch(error => console.error('Til saqlashda xatolik:', error));
 }
 
 // Mavzuni o'zgartirish
