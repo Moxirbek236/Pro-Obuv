@@ -759,6 +759,28 @@ def calculate_delivery_cost_and_time(distance_km):
 
     return round(price), delivery_time_minutes
 
+def auto_calculate_courier_delivery_price(distance_km):
+    """Kuryer uchun avtomatik yetkazish narxini hisoblash"""
+    # Asosiy narx: 1 km uchun 8000 so'm
+    base_rate = 8000
+    
+    # Masofa bo'yicha narx hisoblash
+    distance_price = distance_km * base_rate
+    
+    # Minimum narx 15000 so'm
+    minimum_price = 15000
+    
+    # Maksimum narx 50000 so'm (juda uzoq masofalar uchun)
+    maximum_price = 50000
+    
+    # Yakuniy narx
+    final_price = max(minimum_price, min(distance_price, maximum_price))
+    
+    # Yetkazish vaqti: 1 km = 8 daqiqa (shahar trafigi hisobga olingan)
+    delivery_time = max(15, int(distance_km * 8))
+    
+    return round(final_price), delivery_time
+
 def get_branch_average_rating(branch_id):
     """Filial uchun o'rtacha bahoni hisoblash"""
     try:
@@ -1889,11 +1911,28 @@ def courier_take_order(order_id):
     conn = get_db()
     cur = conn.cursor()
 
-    cur.execute("UPDATE orders SET status='on_way', courier_id=? WHERE id=? AND status='ready'", (courier_id, order_id))
-    conn.commit()
+    # Buyurtma ma'lumotlarini olish
+    cur.execute("SELECT * FROM orders WHERE id=? AND status='ready'", (order_id,))
+    order = cur.fetchone()
+    
+    if order:
+        # Avtomatik narx va vaqt hisoblash
+        distance = order['delivery_distance'] or 5.0  # Default 5 km
+        auto_price, auto_delivery_time = auto_calculate_courier_delivery_price(distance)
+        
+        # Buyurtmani yangilash
+        cur.execute("""
+            UPDATE orders 
+            SET status='on_way', courier_id=?, courier_price=?, courier_delivery_minutes=?, delivery_price=?
+            WHERE id=? AND status='ready'
+        """, (courier_id, auto_price, auto_delivery_time, auto_price, order_id))
+        
+        conn.commit()
+        flash(f"Buyurtma olib ketildi! Avtomatik narx: {auto_price:,} so'm, Vaqt: {auto_delivery_time} daqiqa", "success")
+    else:
+        flash("Buyurtma topilmadi yoki allaqachon olingan!", "error")
+    
     conn.close()
-
-    flash("Buyurtma olib ketildi!", "success")
     return redirect(url_for("courier_dashboard"))
 
 @app.route("/courier/order/<int:order_id>/delivered", methods=["POST"])
