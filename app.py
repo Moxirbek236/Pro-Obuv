@@ -180,6 +180,10 @@ if os.environ.get('FLASK_ENV') == 'development':
 # Upload papkasini yaratish
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
+# Logs papkasini yaratish va logging ni sozlash
+os.makedirs('logs', exist_ok=True)
+app_logger = setup_logging()
+
 # Location service instance - xatolik bo'lsa fallback yaratish
 try:
     from location_service import LocationService
@@ -362,9 +366,7 @@ def setup_logging():
         print(f"Logging setup failed: {e}")
         return logging.getLogger('restaurant_app')
 
-# Logs papkasini yaratish
-os.makedirs('logs', exist_ok=True)
-app_logger = setup_logging()
+
 
 # Global error handlers
 @app.errorhandler(404)
