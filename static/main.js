@@ -1198,7 +1198,7 @@ function showRatingForm(orderId) {
 // User status check
 if (currentPath.includes('/user/success/')) {
     const ticketNo = currentPath.split('/').pop();
-    
+
     // Dastlabki holat tekshiruvi
     checkOrderStatus(ticketNo);
 

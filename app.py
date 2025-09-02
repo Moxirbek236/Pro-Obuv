@@ -408,14 +408,14 @@ def after_request(response):
     try:
         if hasattr(request, 'start_time'):
             duration = time.time() - request.start_time
-            
+
             # Performance monitor instance mavjudligini tekshirish
             if performance_monitor and hasattr(performance_monitor, 'record_request'):
                 try:
                     performance_monitor.record_request(duration, request.endpoint)
                 except Exception as perf_error:
                     pass  # Performance logging error ni ignore qilish
-            
+
             # Sekin so'rovlarni log qilish
             if duration > 2.0:
                 app_logger.warning(f"Slow request: {request.endpoint} took {duration:.2f}s")
@@ -1377,7 +1377,7 @@ def generate_qr_code(receipt_data):
 
 def get_session_id():
     """Session ID yaratish yoki olish"""
-    if 'session_id' not in session:
+    if 'session_id' not in session or session['session_id'] is None or session['session_id'] == 'None':
         import uuid
         session['session_id'] = str(uuid.uuid4())
     return session['session_id']
@@ -2389,8 +2389,6 @@ def user_status(ticket_no):
     elif order["status"] == "delivered":
         status_text = "✅ Yetkazib berildi! Baholang"
         show_rating = True
-    elif order["status"] == "served":
-        status_text = "😋 Yoqimli ishtaha!"
     elif order["status"] == "rated":
         status_text = "⭐ Baholangan. Rahmat!"
     elif order["status"] == "cancelled":
@@ -2683,7 +2681,7 @@ def courier_logout():
 def login_page():
     # URL dan role parametrini tekshirish
     role_param = request.args.get('role')
-    
+
     if role_param == 'staff':
         return redirect(url_for("staff_login"))
     elif role_param == 'courier':
@@ -3774,95 +3772,57 @@ def api_save_settings():
 
 @app.route("/api/cart-count", methods=["GET"])
 def api_cart_count():
-    """Savatcha buyumlari sonini qaytarish - JSON format bilan"""
+    """Savatcha buyumlari sonini qaytarish - JSON format kafolatlangan"""
     try:
         # Session ID ni xavfsiz yaratish
-        try:
-            session_id = get_session_id()
-        except Exception as session_error:
+        session_id = session.get('session_id', 'default_session')
+        if not session_id or session_id == 'None':
             session_id = 'default_session'
 
         user_id = session.get('user_id')
 
-        # Database ulanishini xavfsiz yaratish
-        try:
-            conn = get_db()
-            cur = conn.cursor()
+        # Ma'lumotlar bazasiga ulanish
+        conn = get_db()
+        cur = conn.cursor()
 
-            # Foydalanuvchining savatcha buyumlari sonini hisoblash
-            if user_id:
-                cur.execute('''
-                    SELECT COALESCE(SUM(quantity), 0) as total_count 
-                    FROM cart_items 
-                    WHERE user_id = ?
-                ''', (user_id,))
-            else:
-                cur.execute('''
-                    SELECT COALESCE(SUM(quantity), 0) as total_count 
-                    FROM cart_items 
-                    WHERE session_id = ?
-                ''', (session_id,))
+        # Savatcha elementlari sonini hisoblash
+        if user_id:
+            cur.execute('SELECT COALESCE(SUM(quantity), 0) FROM cart_items WHERE user_id = ?', (user_id,))
+        else:
+            cur.execute('SELECT COALESCE(SUM(quantity), 0) FROM cart_items WHERE session_id = ?', (session_id,))
 
-            result = cur.fetchone()
-            count = result[0] if result and result[0] is not None else 0
+        result = cur.fetchone()
+        count = int(result[0]) if result and result[0] else 0
 
-            conn.close()
+        conn.close()
 
-            # Explicit JSON response yaratish
-            response_data = {
-                "count": int(count), 
-                "success": True,
-                "timestamp": time.time()
-            }
-            
-            response = app.response_class(
-                response=json.dumps(response_data),
-                status=200,
-                mimetype='application/json'
-            )
-            
-            # CORS headers qo'shish
-            response.headers['Access-Control-Allow-Origin'] = '*'
-            response.headers['Access-Control-Allow-Methods'] = 'GET'
-            response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
-            
-            return response
-
-        except Exception as db_error:
-            app_logger.error(f"Database xatoligi cart count da: {str(db_error)}")
-            
-            error_response = {
-                "count": 0, 
-                "success": False,
-                "error": "Database xatoligi",
-                "timestamp": time.time()
-            }
-            
-            response = app.response_class(
-                response=json.dumps(error_response),
-                status=500,
-                mimetype='application/json'
-            )
-            response.headers['Access-Control-Allow-Origin'] = '*'
-            return response
-
-    except Exception as e:
-        app_logger.error(f"Savatcha sonini olishda umumiy xatolik: {str(e)}")
-        
-        error_response = {
-            "count": 0, 
-            "success": False, 
-            "error": "Server xatoligi",
+        # JSON response yaratish
+        response_data = {
+            "count": count,
+            "success": True,
             "timestamp": time.time()
         }
-        
-        response = app.response_class(
-            response=json.dumps(error_response),
-            status=500,
-            mimetype='application/json'
-        )
-        response.headers['Access-Control-Allow-Origin'] = '*'
+
+        response = jsonify(response_data)
+        response.headers['Content-Type'] = 'application/json; charset=utf-8'
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+
         return response
+
+    except Exception as e:
+        app_logger.error(f"Cart count API xatoligi: {str(e)}")
+
+        error_response = jsonify({
+            "count": 0,
+            "success": False,
+            "error": "Server xatoligi",
+            "timestamp": time.time()
+        })
+
+        error_response.headers['Content-Type'] = 'application/json; charset=utf-8'
+        return error_response, 500
 
 # ---- API ENDPOINTS (yuqori prioritet) ----
 
