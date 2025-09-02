@@ -1,0 +1,764 @@
+
+{% extends "base.html" %}
+
+{% block title %}Hisobotlar - Super Admin{% endblock %}
+
+{% block content %}
+<div class="reports-container">
+    <div class="reports-header">
+        <h1>📈 Hisobotlar va Tahlillar</h1>
+        <div class="breadcrumb">
+            <a href="{{ url_for('super_admin_dashboard') }}">Dashboard</a> / Hisobotlar
+        </div>
+    </div>
+
+    <!-- Report Filters -->
+    <div class="filters-section">
+        <div class="filter-group">
+            <label>Hisobot turi:</label>
+            <select id="reportType" onchange="generateReport()">
+                <option value="daily">Kunlik hisobot</option>
+                <option value="weekly">Haftalik hisobot</option>
+                <option value="monthly">Oylik hisobot</option>
+                <option value="yearly">Yillik hisobot</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <label>Boshlanish sanasi:</label>
+            <input type="date" id="startDate" onchange="generateReport()">
+        </div>
+        
+        <div class="filter-group">
+            <label>Tugash sanasi:</label>
+            <input type="date" id="endDate" onchange="generateReport()">
+        </div>
+        
+        <div class="filter-group">
+            <button class="btn btn-primary" onclick="generateReport()">📊 Hisobot yaratish</button>
+            <button class="btn btn-success" onclick="exportReport()">📄 Eksport</button>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="summary-grid">
+        <div class="summary-card">
+            <h4>💰 Jami Daromad</h4>
+            <div class="summary-value" id="total-revenue">0 so'm</div>
+            <div class="summary-subtitle">Tanlangan davr uchun</div>
+        </div>
+        
+        <div class="summary-card">
+            <h4>📦 Jami Buyurtmalar</h4>
+            <div class="summary-value" id="total-orders-count">0</div>
+            <div class="summary-subtitle">Muvaffaqiyatli buyurtmalar</div>
+        </div>
+        
+        <div class="summary-card">
+            <h4>👥 Yangi Mijozlar</h4>
+            <div class="summary-value" id="new-customers">0</div>
+            <div class="summary-subtitle">Ro'yxatdan o'tganlar</div>
+        </div>
+        
+        <div class="summary-card">
+            <h4>📈 O'sish Sur'ati</h4>
+            <div class="summary-value" id="growth-rate">+0%</div>
+            <div class="summary-subtitle">Oldingi davr bilan</div>
+        </div>
+    </div>
+
+    <!-- Detailed Reports -->
+    <div class="reports-section">
+        <div class="report-tabs">
+            <button class="tab-btn active" onclick="showReportTab('sales')">💰 Sotuvlar</button>
+            <button class="tab-btn" onclick="showReportTab('products')">🍽️ Mahsulotlar</button>
+            <button class="tab-btn" onclick="showReportTab('customers')">👥 Mijozlar</button>
+            <button class="tab-btn" onclick="showReportTab('staff')">👨‍💼 Xodimlar</button>
+            <button class="tab-btn" onclick="showReportTab('branches')">🏢 Filiallar</button>
+        </div>
+
+        <!-- Sales Report Tab -->
+        <div id="sales-report" class="report-tab active">
+            <div class="report-content">
+                <h3>💰 Sotuvlar Hisoboti</h3>
+                <div id="sales-data" class="table-responsive">
+                    <p class="text-center">Hisobot yaratish uchun yuqoridagi tugmani bosing</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Report Tab -->
+        <div id="products-report" class="report-tab">
+            <div class="report-content">
+                <h3>🍽️ Mahsulotlar Hisoboti</h3>
+                <div id="products-data" class="table-responsive">
+                    <p class="text-center">Hisobot yaratish uchun yuqoridagi tugmani bosing</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customers Report Tab -->
+        <div id="customers-report" class="report-tab">
+            <div class="report-content">
+                <h3>👥 Mijozlar Hisoboti</h3>
+                <div id="customers-data" class="table-responsive">
+                    <p class="text-center">Hisobot yaratish uchun yuqoridagi tugmani bosing</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Staff Report Tab -->
+        <div id="staff-report" class="report-tab">
+            <div class="report-content">
+                <h3>👨‍💼 Xodimlar Hisoboti</h3>
+                <div id="staff-data" class="table-responsive">
+                    <p class="text-center">Hisobot yaratish uchun yuqoridagi tugmani bosing</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Branches Report Tab -->
+        <div id="branches-report" class="report-tab">
+            <div class="report-content">
+                <h3>🏢 Filiallar Hisoboti</h3>
+                <div id="branches-data" class="table-responsive">
+                    <p class="text-center">Hisobot yaratish uchun yuqoridagi tugmani bosing</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentReportData = null;
+
+// Hisobot yaratish
+function generateReport() {
+    const reportType = document.getElementById('reportType').value;
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    
+    console.log('Hisobot yaratilmoqda:', {reportType, startDate, endDate});
+    
+    // Loading indicator
+    showLoading();
+    
+    const params = new URLSearchParams({
+        type: reportType,
+        start_date: startDate || '',
+        end_date: endDate || ''
+    });
+    
+    fetch(`/api/super-admin/reports?${params}`)
+        .then(response => response.json())
+        .then(data => {
+            currentReportData = data;
+            updateSummary(data.summary);
+            updateCurrentTab(data);
+            hideLoading();
+        })
+        .catch(error => {
+            console.error('Hisobot yaratishda xatolik:', error);
+            hideLoading();
+            alert('Hisobot yaratishda xatolik yuz berdi');
+        });
+}
+
+// Summary kartalarini yangilash
+function updateSummary(summary) {
+    document.getElementById('total-revenue').textContent = formatCurrency(summary.total_revenue || 0);
+    document.getElementById('total-orders-count').textContent = summary.total_orders || 0;
+    document.getElementById('new-customers').textContent = summary.new_customers || 0;
+    document.getElementById('growth-rate').textContent = `${summary.growth_rate > 0 ? '+' : ''}${summary.growth_rate || 0}%`;
+}
+
+// Report tab ni ko'rsatish
+function showReportTab(tabName) {
+    // Barcha tablarni yashirish
+    document.querySelectorAll('.report-tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // Barcha tugmalarni deactivate qilish
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Kerakli tab va tugmani faollashtirish
+    document.getElementById(`${tabName}-report`).classList.add('active');
+    event.target.classList.add('active');
+    
+    // Ma'lumotlarni yangilash
+    if (currentReportData) {
+        updateTabData(tabName, currentReportData);
+    }
+}
+
+// Tab ma'lumotlarini yangilash
+function updateTabData(tabName, data) {
+    switch(tabName) {
+        case 'sales':
+            updateSalesReport(data.sales);
+            break;
+        case 'products':
+            updateProductsReport(data.products);
+            break;
+        case 'customers':
+            updateCustomersReport(data.customers);
+            break;
+        case 'staff':
+            updateStaffReport(data.staff);
+            break;
+        case 'branches':
+            updateBranchesReport(data.branches);
+            break;
+    }
+}
+
+// Joriy faol tabni yangilash
+function updateCurrentTab(data) {
+    const activeTab = document.querySelector('.tab-btn.active');
+    if (activeTab) {
+        const tabName = activeTab.textContent.includes('Sotuvlar') ? 'sales' :
+                       activeTab.textContent.includes('Mahsulotlar') ? 'products' :
+                       activeTab.textContent.includes('Mijozlar') ? 'customers' :
+                       activeTab.textContent.includes('Xodimlar') ? 'staff' : 'branches';
+        updateTabData(tabName, data);
+    } else {
+        // Default - sales tab
+        updateSalesReport(data.sales);
+    }
+}
+
+// Sotuvlar hisoboti
+function updateSalesReport(salesData) {
+    const container = document.getElementById('sales-data');
+    
+    if (!salesData || salesData.length === 0) {
+        container.innerHTML = '<p class="text-center">Tanlangan davr uchun sotuvlar ma\'lumoti topilmadi</p>';
+        return;
+    }
+    
+    let html = `
+        <table class="report-table">
+            <thead>
+                <tr>
+                    <th>Sana</th>
+                    <th>Buyurtmalar</th>
+                    <th>Daromad</th>
+                    <th>O'rtacha chek</th>
+                    <th>Cashback</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    
+    salesData.forEach(sale => {
+        html += `
+            <tr>
+                <td>${sale.date}</td>
+                <td>${sale.orders_count}</td>
+                <td>${formatCurrency(sale.revenue)}</td>
+                <td>${formatCurrency(sale.avg_order)}</td>
+                <td>${formatCurrency(sale.cashback)}</td>
+            </tr>
+        `;
+    });
+    
+    html += '</tbody></table>';
+    container.innerHTML = html;
+}
+
+// Mahsulotlar hisoboti
+function updateProductsReport(productsData) {
+    const container = document.getElementById('products-data');
+    
+    if (!productsData || productsData.length === 0) {
+        container.innerHTML = '<p class="text-center">Mahsulotlar ma\'lumoti topilmadi</p>';
+        return;
+    }
+    
+    let html = `
+        <table class="report-table">
+            <thead>
+                <tr>
+                    <th>Mahsulot</th>
+                    <th>Kategoriya</th>
+                    <th>Sotilgan</th>
+                    <th>Daromad</th>
+                    <th>Baho</th>
+                    <th>Stock</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    
+    productsData.forEach(product => {
+        html += `
+            <tr>
+                <td><strong>${product.name}</strong></td>
+                <td>${product.category}</td>
+                <td>${product.orders_count}</td>
+                <td>${formatCurrency(product.revenue)}</td>
+                <td>${product.rating ? product.rating.toFixed(1) : 'N/A'} ⭐</td>
+                <td>${product.stock_quantity}</td>
+            </tr>
+        `;
+    });
+    
+    html += '</tbody></table>';
+    container.innerHTML = html;
+}
+
+// Mijozlar hisoboti
+function updateCustomersReport(customersData) {
+    const container = document.getElementById('customers-data');
+    
+    if (!customersData || customersData.length === 0) {
+        container.innerHTML = '<p class="text-center">Mijozlar ma\'lumoti topilmadi</p>';
+        return;
+    }
+    
+    let html = `
+        <table class="report-table">
+            <thead>
+                <tr>
+                    <th>Mijoz</th>
+                    <th>Email</th>
+                    <th>Telefon</th>
+                    <th>Buyurtmalar</th>
+                    <th>Jami xarid</th>
+                    <th>Oxirgi buyurtma</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    
+    customersData.forEach(customer => {
+        html += `
+            <tr>
+                <td><strong>${customer.first_name} ${customer.last_name}</strong></td>
+                <td>${customer.email}</td>
+                <td>${customer.phone || 'N/A'}</td>
+                <td>${customer.orders_count}</td>
+                <td>${formatCurrency(customer.total_spent)}</td>
+                <td>${customer.last_order || 'N/A'}</td>
+            </tr>
+        `;
+    });
+    
+    html += '</tbody></table>';
+    container.innerHTML = html;
+}
+
+// Xodimlar hisoboti
+function updateStaffReport(staffData) {
+    const container = document.getElementById('staff-data');
+    
+    if (!staffData || staffData.length === 0) {
+        container.innerHTML = '<p class="text-center">Xodimlar ma\'lumoti topilmadi</p>';
+        return;
+    }
+    
+    let html = `
+        <table class="report-table">
+            <thead>
+                <tr>
+                    <th>Xodim</th>
+                    <th>Telefon</th>
+                    <th>Ish soatlari</th>
+                    <th>Buyurtmalar</th>
+                    <th>Samaradorlik</th>
+                    <th>Oxirgi faollik</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    
+    staffData.forEach(staff => {
+        const efficiency = staff.total_hours > 0 ? (staff.orders_handled / staff.total_hours).toFixed(1) : '0';
+        html += `
+            <tr>
+                <td><strong>${staff.first_name} ${staff.last_name}</strong></td>
+                <td>${staff.phone}</td>
+                <td>${staff.total_hours || 0} soat</td>
+                <td>${staff.orders_handled || 0}</td>
+                <td>${efficiency} buyurtma/soat</td>
+                <td>${staff.last_activity ? staff.last_activity.substring(0, 16).replace('T', ' ') : 'N/A'}</td>
+            </tr>
+        `;
+    });
+    
+    html += '</tbody></table>';
+    container.innerHTML = html;
+}
+
+// Filiallar hisoboti
+function updateBranchesReport(branchesData) {
+    const container = document.getElementById('branches-data');
+    
+    if (!branchesData || branchesData.length === 0) {
+        container.innerHTML = '<p class="text-center">Filiallar ma\'lumoti topilmadi</p>';
+        return;
+    }
+    
+    let html = `
+        <table class="report-table">
+            <thead>
+                <tr>
+                    <th>Filial</th>
+                    <th>Manzil</th>
+                    <th>Buyurtmalar</th>
+                    <th>Daromad</th>
+                    <th>Baho</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    
+    branchesData.forEach(branch => {
+        html += `
+            <tr>
+                <td><strong>${branch.name}</strong></td>
+                <td>${branch.address}</td>
+                <td>${branch.orders_count || 0}</td>
+                <td>${formatCurrency(branch.revenue || 0)}</td>
+                <td>${branch.average_rating ? branch.average_rating.toFixed(1) : 'N/A'} ⭐</td>
+                <td>${branch.is_active ? '<span class="badge bg-success">Faol</span>' : '<span class="badge bg-danger">Nofaol</span>'}</td>
+            </tr>
+        `;
+    });
+    
+    html += '</tbody></table>';
+    container.innerHTML = html;
+}
+
+// Hisobotni eksport qilish
+function exportReport() {
+    if (!currentReportData) {
+        alert('Avval hisobot yarating');
+        return;
+    }
+    
+    const reportType = document.getElementById('reportType').value;
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    
+    fetch('/api/super-admin/export-report', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            type: reportType,
+            start_date: startDate,
+            end_date: endDate,
+            data: currentReportData
+        })
+    })
+    .then(response => response.blob())
+    .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `hisobot_${reportType}_${new Date().toISOString().split('T')[0]}.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+    })
+    .catch(error => {
+        console.error('Eksport xatoligi:', error);
+        alert('Hisobotni eksport qilishda xatolik');
+    });
+}
+
+// Loading ko'rsatish
+function showLoading() {
+    const containers = ['sales-data', 'products-data', 'customers-data', 'staff-data', 'branches-data'];
+    containers.forEach(id => {
+        const container = document.getElementById(id);
+        if (container) {
+            container.innerHTML = '<div class="text-center"><div class="spinner-border"></div><p>Hisobot yaratilmoqda...</p></div>';
+        }
+    });
+}
+
+// Loading yashirish
+function hideLoading() {
+    // Ma'lumotlar yuklandi, loading ni avtomatik olib tashlash
+}
+
+// Pul formatini ko'rsatish
+function formatCurrency(amount) {
+    return new Intl.NumberFormat('uz-UZ').format(amount) + ' so\'m';
+}
+
+// Sana tanlagichlarini sozlash
+document.addEventListener('DOMContentLoaded', function() {
+    const today = new Date();
+    const sevenDaysAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+    
+    document.getElementById('startDate').value = sevenDaysAgo.toISOString().split('T')[0];
+    document.getElementById('endDate').value = today.toISOString().split('T')[0];
+});
+</script>
+
+<style>
+.reports-container {
+    padding: 20px;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.reports-header {
+    margin-bottom: 30px;
+}
+
+.reports-header h1 {
+    color: #2d3748;
+    margin-bottom: 10px;
+}
+
+.breadcrumb {
+    color: #718096;
+    font-size: 14px;
+}
+
+.breadcrumb a {
+    color: #3182ce;
+    text-decoration: none;
+}
+
+.filters-section {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    margin-bottom: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.filter-group label {
+    font-weight: 500;
+    color: #2d3748;
+    font-size: 14px;
+}
+
+.filter-group select,
+.filter-group input {
+    padding: 10px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 14px;
+    min-width: 150px;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.summary-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    text-align: center;
+}
+
+.summary-card h4 {
+    color: #718096;
+    font-size: 1rem;
+    margin-bottom: 15px;
+}
+
+.summary-value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #2d3748;
+    margin-bottom: 8px;
+}
+
+.summary-subtitle {
+    color: #a0aec0;
+    font-size: 0.9rem;
+}
+
+.reports-section {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+.report-tabs {
+    display: flex;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e2e8f0;
+    overflow-x: auto;
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    padding: 15px 25px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #718096;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+}
+
+.tab-btn.active,
+.tab-btn:hover {
+    background: white;
+    color: #2d3748;
+    border-bottom: 3px solid #007bff;
+}
+
+.report-tab {
+    display: none;
+}
+
+.report-tab.active {
+    display: block;
+}
+
+.report-content {
+    padding: 25px;
+}
+
+.report-content h3 {
+    margin-bottom: 20px;
+    color: #2d3748;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.report-table th,
+.report-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.report-table th {
+    background: #f8f9fa;
+    font-weight: 600;
+    color: #2d3748;
+    position: sticky;
+    top: 0;
+}
+
+.report-table tr:hover {
+    background: #f8f9fa;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #0056b3;
+}
+
+.btn-success {
+    background: #28a745;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #1e7e34;
+}
+
+.badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.bg-success { background: #28a745; color: white; }
+.bg-danger { background: #dc3545; color: white; }
+
+.text-center { text-align: center; }
+
+.spinner-border {
+    width: 2rem;
+    height: 2rem;
+    border: 0.25em solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .reports-container {
+        padding: 15px;
+    }
+    
+    .filters-section {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filter-group {
+        width: 100%;
+    }
+    
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .report-tabs {
+        flex-direction: column;
+    }
+    
+    .tab-btn {
+        text-align: center;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .tab-btn.active {
+        border-bottom: 3px solid #007bff;
+    }
+}
+</style>
+{% endblock %}

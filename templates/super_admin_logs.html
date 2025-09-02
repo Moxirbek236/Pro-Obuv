@@ -1,0 +1,715 @@
+
+{% extends "base.html" %}
+
+{% block title %}Tizim Loglari - Super Admin{% endblock %}
+
+{% block content %}
+<div class="logs-container">
+    <div class="logs-header">
+        <h1>📝 Tizim Loglari</h1>
+        <div class="breadcrumb">
+            <a href="{{ url_for('super_admin_dashboard') }}">Dashboard</a> / Loglar
+        </div>
+    </div>
+
+    <!-- Log Controls -->
+    <div class="controls-section">
+        <div class="control-group">
+            <label>Log turi:</label>
+            <select id="logType" onchange="loadLogs()">
+                <option value="all">Barcha loglar</option>
+                <option value="error">Xatolar</option>
+                <option value="warning">Ogohlantirishlar</option>
+                <option value="info">Ma'lumotlar</option>
+                <option value="debug">Debug</option>
+            </select>
+        </div>
+        
+        <div class="control-group">
+            <label>Oxirgi:</label>
+            <select id="timeRange" onchange="loadLogs()">
+                <option value="1h">1 soat</option>
+                <option value="6h">6 soat</option>
+                <option value="24h">24 soat</option>
+                <option value="7d">7 kun</option>
+                <option value="30d">30 kun</option>
+            </select>
+        </div>
+        
+        <div class="control-group">
+            <label>Qidiruv:</label>
+            <input type="text" id="logSearch" placeholder="Log ichidan qidirish..." onkeyup="filterLogs()">
+        </div>
+        
+        <div class="control-group">
+            <button class="btn btn-primary" onclick="loadLogs()">🔄 Yangilash</button>
+            <button class="btn btn-success" onclick="downloadLogs()">📄 Yuklab olish</button>
+            <button class="btn btn-warning" onclick="clearLogs()">🗑️ Tozalash</button>
+        </div>
+    </div>
+
+    <!-- Log Statistics -->
+    <div class="stats-section">
+        <div class="stat-item">
+            <span class="stat-label">Jami loglar:</span>
+            <span class="stat-value" id="total-logs">0</span>
+        </div>
+        <div class="stat-item error">
+            <span class="stat-label">Xatolar:</span>
+            <span class="stat-value" id="error-count">0</span>
+        </div>
+        <div class="stat-item warning">
+            <span class="stat-label">Ogohlantirishlar:</span>
+            <span class="stat-value" id="warning-count">0</span>
+        </div>
+        <div class="stat-item info">
+            <span class="stat-label">Ma'lumotlar:</span>
+            <span class="stat-value" id="info-count">0</span>
+        </div>
+    </div>
+
+    <!-- Log Viewer -->
+    <div class="logs-viewer">
+        <div class="viewer-header">
+            <h3>📋 Log Entries</h3>
+            <div class="viewer-controls">
+                <button class="btn btn-sm btn-secondary" onclick="toggleAutoRefresh()">
+                    <span id="auto-refresh-text">⏸️ Auto Refresh OFF</span>
+                </button>
+                <button class="btn btn-sm btn-info" onclick="scrollToBottom()">⬇️ Oxiriga</button>
+            </div>
+        </div>
+        
+        <div class="log-content" id="log-content">
+            <div class="text-center">
+                <div class="spinner-border"></div>
+                <p>Loglar yuklanmoqda...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Log Details Modal -->
+    <div id="logDetailsModal" class="modal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5>📝 Log Tafsilotlari</h5>
+                    <button type="button" class="btn-close" onclick="closeLogDetails()"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="log-details-content"></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeLogDetails()">Yopish</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let autoRefreshInterval = null;
+let allLogs = [];
+
+// Loglarni yuklash
+function loadLogs() {
+    const logType = document.getElementById('logType').value;
+    const timeRange = document.getElementById('timeRange').value;
+    
+    const params = new URLSearchParams({
+        type: logType,
+        range: timeRange
+    });
+    
+    fetch(`/api/super-admin/logs?${params}`)
+        .then(response => response.json())
+        .then(data => {
+            allLogs = data.logs || [];
+            updateLogStats(data.stats);
+            displayLogs(allLogs);
+        })
+        .catch(error => {
+            console.error('Loglarni yuklashda xatolik:', error);
+            document.getElementById('log-content').innerHTML = 
+                '<div class="alert alert-danger">Loglarni yuklashda xatolik yuz berdi</div>';
+        });
+}
+
+// Log statistikasini yangilash
+function updateLogStats(stats) {
+    document.getElementById('total-logs').textContent = stats.total || 0;
+    document.getElementById('error-count').textContent = stats.errors || 0;
+    document.getElementById('warning-count').textContent = stats.warnings || 0;
+    document.getElementById('info-count').textContent = stats.info || 0;
+}
+
+// Loglarni ko'rsatish
+function displayLogs(logs) {
+    const container = document.getElementById('log-content');
+    
+    if (!logs || logs.length === 0) {
+        container.innerHTML = '<div class="text-center">Loglar topilmadi</div>';
+        return;
+    }
+    
+    let html = '<div class="log-entries">';
+    
+    logs.forEach((log, index) => {
+        const levelClass = getLogLevelClass(log.level);
+        html += `
+            <div class="log-entry ${levelClass}" onclick="showLogDetails(${index})">
+                <div class="log-header">
+                    <span class="log-time">${log.timestamp}</span>
+                    <span class="log-level">${log.level}</span>
+                    <span class="log-source">${log.source || 'system'}</span>
+                </div>
+                <div class="log-message">${log.message}</div>
+                ${log.details ? '<div class="log-has-details">📋 Tafsilotlar mavjud</div>' : ''}
+            </div>
+        `;
+    });
+    
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+// Log level uchun CSS class
+function getLogLevelClass(level) {
+    switch(level?.toLowerCase()) {
+        case 'error': return 'log-error';
+        case 'warning': return 'log-warning';
+        case 'info': return 'log-info';
+        case 'debug': return 'log-debug';
+        default: return 'log-default';
+    }
+}
+
+// Loglarni filterlash
+function filterLogs() {
+    const searchTerm = document.getElementById('logSearch').value.toLowerCase();
+    
+    if (!searchTerm) {
+        displayLogs(allLogs);
+        return;
+    }
+    
+    const filteredLogs = allLogs.filter(log => 
+        log.message.toLowerCase().includes(searchTerm) ||
+        log.source?.toLowerCase().includes(searchTerm)
+    );
+    
+    displayLogs(filteredLogs);
+}
+
+// Log tafsilotlarini ko'rsatish
+function showLogDetails(index) {
+    const log = allLogs[index];
+    if (!log) return;
+    
+    document.getElementById('log-details-content').innerHTML = `
+        <div class="log-detail">
+            <h6>🕒 Vaqt</h6>
+            <p>${log.timestamp}</p>
+        </div>
+        
+        <div class="log-detail">
+            <h6>📊 Level</h6>
+            <p><span class="badge ${getLogLevelClass(log.level)}">${log.level}</span></p>
+        </div>
+        
+        <div class="log-detail">
+            <h6>📁 Manba</h6>
+            <p>${log.source || 'system'}</p>
+        </div>
+        
+        <div class="log-detail">
+            <h6>💬 Xabar</h6>
+            <p>${log.message}</p>
+        </div>
+        
+        ${log.details ? `
+            <div class="log-detail">
+                <h6>📋 Tafsilotlar</h6>
+                <pre class="log-details-pre">${JSON.stringify(log.details, null, 2)}</pre>
+            </div>
+        ` : ''}
+        
+        ${log.stackTrace ? `
+            <div class="log-detail">
+                <h6>🔍 Stack Trace</h6>
+                <pre class="log-details-pre">${log.stackTrace}</pre>
+            </div>
+        ` : ''}
+    `;
+    
+    document.getElementById('logDetailsModal').style.display = 'flex';
+}
+
+// Log tafsilotlarini yopish
+function closeLogDetails() {
+    document.getElementById('logDetailsModal').style.display = 'none';
+}
+
+// Auto refresh
+function toggleAutoRefresh() {
+    if (autoRefreshInterval) {
+        clearInterval(autoRefreshInterval);
+        autoRefreshInterval = null;
+        document.getElementById('auto-refresh-text').textContent = '⏸️ Auto Refresh OFF';
+    } else {
+        autoRefreshInterval = setInterval(loadLogs, 5000);
+        document.getElementById('auto-refresh-text').textContent = '▶️ Auto Refresh ON';
+    }
+}
+
+// Oxiriga scroll qilish
+function scrollToBottom() {
+    const logContent = document.getElementById('log-content');
+    logContent.scrollTop = logContent.scrollHeight;
+}
+
+// Loglarni yuklab olish
+function downloadLogs() {
+    const logType = document.getElementById('logType').value;
+    const timeRange = document.getElementById('timeRange').value;
+    
+    const params = new URLSearchParams({
+        type: logType,
+        range: timeRange,
+        format: 'file'
+    });
+    
+    fetch(`/api/super-admin/logs?${params}`)
+        .then(response => response.blob())
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `logs_${logType}_${new Date().toISOString().split('T')[0]}.log`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        })
+        .catch(error => {
+            console.error('Loglarni yuklab olishda xatolik:', error);
+            alert('Loglarni yuklab olishda xatolik');
+        });
+}
+
+// Loglarni tozalash
+function clearLogs() {
+    if (confirm('Barcha loglarni tozalamoqchimisiz? Bu amalni bekor qilib bo\'lmaydi.')) {
+        fetch('/api/super-admin/clear-logs', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'}
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Loglar tozalandi');
+                loadLogs();
+            } else {
+                alert('Xatolik: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Loglarni tozalashda xatolik:', error);
+            alert('Loglarni tozalashda xatolik');
+        });
+    }
+}
+
+// Sahifa yuklanganda
+document.addEventListener('DOMContentLoaded', function() {
+    loadLogs();
+});
+
+// Sahifa yopilganda auto refresh ni to'xtatish
+window.addEventListener('beforeunload', function() {
+    if (autoRefreshInterval) {
+        clearInterval(autoRefreshInterval);
+    }
+});
+</script>
+
+<style>
+.logs-container {
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.logs-header {
+    margin-bottom: 30px;
+}
+
+.logs-header h1 {
+    color: #2d3748;
+    margin-bottom: 10px;
+}
+
+.breadcrumb {
+    color: #718096;
+    font-size: 14px;
+}
+
+.breadcrumb a {
+    color: #3182ce;
+    text-decoration: none;
+}
+
+.controls-section {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: end;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.control-group label {
+    font-weight: 500;
+    color: #2d3748;
+    font-size: 14px;
+}
+
+.control-group select,
+.control-group input {
+    padding: 10px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 14px;
+    min-width: 150px;
+}
+
+.stats-section {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.stat-item.error .stat-value { color: #dc3545; }
+.stat-item.warning .stat-value { color: #ffc107; }
+.stat-item.info .stat-value { color: #17a2b8; }
+
+.stat-label {
+    font-size: 14px;
+    color: #718096;
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #2d3748;
+}
+
+.logs-viewer {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+.viewer-header {
+    background: #f8f9fa;
+    padding: 20px;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.viewer-header h3 {
+    margin: 0;
+    color: #2d3748;
+}
+
+.viewer-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.log-content {
+    height: 500px;
+    overflow-y: auto;
+    background: #1e1e1e;
+    color: #ffffff;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.log-entries {
+    padding: 15px;
+}
+
+.log-entry {
+    margin-bottom: 12px;
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.log-entry:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.log-entry.log-error {
+    border-left: 4px solid #dc3545;
+    background: rgba(220, 53, 69, 0.1);
+}
+
+.log-entry.log-warning {
+    border-left: 4px solid #ffc107;
+    background: rgba(255, 193, 7, 0.1);
+}
+
+.log-entry.log-info {
+    border-left: 4px solid #17a2b8;
+    background: rgba(23, 162, 184, 0.1);
+}
+
+.log-entry.log-debug {
+    border-left: 4px solid #6c757d;
+    background: rgba(108, 117, 125, 0.1);
+}
+
+.log-header {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 8px;
+    font-size: 12px;
+}
+
+.log-time {
+    color: #a0aec0;
+    min-width: 120px;
+}
+
+.log-level {
+    font-weight: bold;
+    min-width: 80px;
+}
+
+.log-level {
+    color: #ffffff;
+}
+
+.log-entry.log-error .log-level { color: #ff6b6b; }
+.log-entry.log-warning .log-level { color: #ffd93d; }
+.log-entry.log-info .log-level { color: #74c0fc; }
+.log-entry.log-debug .log-level { color: #ced4da; }
+
+.log-source {
+    color: #cbd5e0;
+    font-style: italic;
+}
+
+.log-message {
+    color: #ffffff;
+    word-wrap: break-word;
+}
+
+.log-has-details {
+    color: #ffd93d;
+    font-size: 11px;
+    margin-top: 5px;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-dialog {
+    background: white;
+    border-radius: 12px;
+    max-width: 800px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    padding: 20px;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.log-detail {
+    margin-bottom: 20px;
+}
+
+.log-detail h6 {
+    color: #2d3748;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.log-detail p {
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 6px;
+    margin: 0;
+}
+
+.log-details-pre {
+    background: #1e1e1e;
+    color: #ffffff;
+    padding: 15px;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: 12px;
+    margin: 0;
+}
+
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+.btn-primary { background: #007bff; color: white; }
+.btn-secondary { background: #6c757d; color: white; }
+.btn-success { background: #28a745; color: white; }
+.btn-warning { background: #ffc107; color: #212529; }
+.btn-info { background: #17a2b8; color: white; }
+
+.btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.text-center { text-align: center; }
+
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+}
+
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+.spinner-border {
+    width: 2rem;
+    height: 2rem;
+    border: 0.25em solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .logs-container {
+        padding: 15px;
+    }
+    
+    .controls-section {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .control-group {
+        width: 100%;
+    }
+    
+    .stats-section {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .viewer-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+    }
+    
+    .viewer-controls {
+        justify-content: center;
+    }
+    
+    .log-header {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .log-time,
+    .log-level,
+    .log-source {
+        min-width: auto;
+    }
+}
+</style>
+{% endblock %}
