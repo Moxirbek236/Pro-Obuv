@@ -336,10 +336,144 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Til o'zgartirishni global qilish
+// Professional Translation System
+const translations = {
+    uz: {
+        menu: '📋 Menyu',
+        favorites: '❤️ Sevimlilar',
+        contact: '📞 Aloqa',
+        about: '❓ Savollar',
+        downloads: '📱 Yuklamalar',
+        cart: '🛒 Savatcha',
+        profile_info: '👤 Profil ma\'lumotlari',
+        profile_settings: '⚙️ Profil sozlamalari',
+        settings: '🔧 Sozlamalar',
+        logout: '🚪 Chiqish',
+        login: '🔐 Kirish',
+        register: '📝 Ro\'yxat',
+        user: '👤 Foydalanuvchi',
+        staff: '👨‍💼 Xodim',
+        courier: '🚚 Kuryer',
+        admin: '🔧 Admin',
+        dashboard: '🏠 Dashboard'
+    },
+    ru: {
+        menu: '📋 Меню',
+        favorites: '❤️ Избранное',
+        contact: '📞 Контакты',
+        about: '❓ Вопросы',
+        downloads: '📱 Загрузки',
+        cart: '🛒 Корзина',
+        profile_info: '👤 Данные профиля',
+        profile_settings: '⚙️ Настройки профиля',
+        settings: '🔧 Настройки',
+        logout: '🚪 Выход',
+        login: '🔐 Вход',
+        register: '📝 Регистрация',
+        user: '👤 Пользователь',
+        staff: '👨‍💼 Сотрудник',
+        courier: '🚚 Курьер',
+        admin: '🔧 Админ',
+        dashboard: '🏠 Панель'
+    },
+    en: {
+        menu: '📋 Menu',
+        favorites: '❤️ Favorites',
+        contact: '📞 Contact',
+        about: '❓ About',
+        downloads: '📱 Downloads',
+        cart: '🛒 Cart',
+        profile_info: '👤 Profile Info',
+        profile_settings: '⚙️ Profile Settings',
+        settings: '🔧 Settings',
+        logout: '🚪 Logout',
+        login: '🔐 Login',
+        register: '📝 Register',
+        user: '👤 User',
+        staff: '👨‍💼 Staff',
+        courier: '🚚 Courier',
+        admin: '🔧 Admin',
+        dashboard: '🏠 Dashboard'
+    }
+};
+
+// Global Translation Function
+function translatePage(language) {
+    const trans = translations[language] || translations.uz;
+    
+    // Navbar links
+    const menuLink = document.querySelector('a[href*="menu"]');
+    if (menuLink) menuLink.innerHTML = trans.menu;
+
+    const favoritesLink = document.querySelector('a[href*="favorites"]');
+    if (favoritesLink) favoritesLink.innerHTML = trans.favorites;
+
+    const contactLink = document.querySelector('a[href*="contact"]');
+    if (contactLink) contactLink.innerHTML = trans.contact;
+
+    const aboutLink = document.querySelector('a[href*="about"]');
+    if (aboutLink) aboutLink.innerHTML = trans.about;
+
+    const downloadsLink = document.querySelector('a[href*="downloads"]');
+    if (downloadsLink) downloadsLink.innerHTML = trans.downloads;
+
+    const cartLink = document.querySelector('a[href*="cart"]');
+    if (cartLink && cartLink.innerHTML.includes('Savatcha')) {
+        cartLink.innerHTML = cartLink.innerHTML.replace(/🛒.*?<span/, trans.cart + ' <span');
+    }
+
+    // Login/Register links
+    const loginLink = document.querySelector('a[href*="login"]');
+    if (loginLink && loginLink.textContent.includes('Kirish')) {
+        loginLink.innerHTML = trans.login;
+    }
+
+    const registerLink = document.querySelector('a[href*="register"]');
+    if (registerLink && registerLink.textContent.includes('Ro\'yxat')) {
+        registerLink.innerHTML = trans.register;
+    }
+
+    // Dropdown items
+    const dropdownItems = document.querySelectorAll('.dropdown-item');
+    dropdownItems.forEach(item => {
+        const text = item.textContent.trim();
+        
+        if (text.includes('Foydalanuvchi')) {
+            item.innerHTML = trans.user;
+        } else if (text.includes('Xodim')) {
+            item.innerHTML = trans.staff;
+        } else if (text.includes('Kuryer')) {
+            item.innerHTML = trans.courier;
+        } else if (text.includes('Admin')) {
+            item.innerHTML = trans.admin;
+        } else if (text.includes('Profil ma\'lumotlari')) {
+            item.innerHTML = trans.profile_info;
+        } else if (text.includes('Profil sozlamalari')) {
+            item.innerHTML = trans.profile_settings;
+        } else if (text.includes('Sozlamalar')) {
+            item.innerHTML = trans.settings;
+        } else if (text.includes('Dashboard')) {
+            item.innerHTML = trans.dashboard;
+        } else if (text.includes('Chiqish')) {
+            item.innerHTML = trans.logout;
+        }
+    });
+
+    // Update body class for language-specific styling
+    document.body.classList.remove('lang-uz', 'lang-ru', 'lang-en');
+    document.body.classList.add('lang-' + language);
+    
+    console.log('Translation applied:', language);
+}
+
+// Enhanced Language Change Function
 window.changeLanguage = function(language) {
+    console.log('Changing language to:', language);
     translatePage(language);
     localStorage.setItem('language', language);
+
+    // Update body attribute
+    document.body.setAttribute('data-language', language);
 
     // Server ga yuborish
     fetch('/api/set-language', {
@@ -348,68 +482,31 @@ window.changeLanguage = function(language) {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ language: language })
-    }).then(() => {
-        // Sahifani qayta yuklash
-        location.reload();
-    }).catch(error => console.log('Til sozlamasini saqlashda xato:', error));
+    }).then(response => {
+        if (response.ok) {
+            console.log('Language saved to server:', language);
+            // Sahifani qayta yuklash
+            setTimeout(() => location.reload(), 300);
+        }
+    }).catch(error => {
+        console.log('Til sozlamasini saqlashda xato:', error);
+        // Xato bo'lsa ham local tilni qo'llash
+        translatePage(language);
+    });
 };
 
-function translateToRussian() {
-    // Navbar matnlarini almashtirish
-    const menuLink = document.querySelector('a[href*="menu"]');
-    if (menuLink) menuLink.innerHTML = '📋 Меню';
+// Language-specific CSS classes
+const languageStyles = {
+    uz: { direction: 'ltr', fontFamily: 'Inter, sans-serif' },
+    ru: { direction: 'ltr', fontFamily: 'Inter, sans-serif' },
+    en: { direction: 'ltr', fontFamily: 'Inter, sans-serif' }
+};
 
-    const favoritesLink = document.querySelector('a[href*="favorites"]');
-    if (favoritesLink) favoritesLink.innerHTML = '❤️ Избранное';
-
-    const contactLink = document.querySelector('a[href*="contact"]');
-    if (contactLink) contactLink.innerHTML = '📞 Контакты';
-
-    const aboutLink = document.querySelector('a[href*="about"]');
-    if (aboutLink) aboutLink.innerHTML = '❓ Вопросы';
-
-    // Profil dropdown matnlari
-    const profileItems = document.querySelectorAll('.dropdown-item');
-    profileItems.forEach(item => {
-        if (item.innerHTML.includes('Profil ma\'lumotlari')) {
-            item.innerHTML = '👤 Данные профиля';
-        } else if (item.innerHTML.includes('Profil sozlamalari')) {
-            item.innerHTML = '⚙️ Настройки профиля';
-        } else if (item.innerHTML.includes('Sozlamalar')) {
-            item.innerHTML = '🔧 Настройки';
-        } else if (item.innerHTML.includes('Chiqish')) {
-            item.innerHTML = '🚪 Выход';
-        }
-    });
-}
-
-function translateToEnglish() {
-    // Navbar matnlarini almashtirish
-    const menuLink = document.querySelector('a[href*="menu"]');
-    if (menuLink) menuLink.innerHTML = '📋 Menu';
-
-    const favoritesLink = document.querySelector('a[href*="favorites"]');
-    if (favoritesLink) favoritesLink.innerHTML = '❤️ Favorites';
-
-    const contactLink = document.querySelector('a[href*="contact"]');
-    if (contactLink) contactLink.innerHTML = '📞 Contact';
-
-    const aboutLink = document.querySelector('a[href*="about"]');
-    if (aboutLink) aboutLink.innerHTML = '❓ About';
-
-    // Profil dropdown matnlari
-    const profileItems = document.querySelectorAll('.dropdown-item');
-    profileItems.forEach(item => {
-        if (item.innerHTML.includes('Profil ma\'lumotlari')) {
-            item.innerHTML = '👤 Profile Info';
-        } else if (item.innerHTML.includes('Profil sozlamalari')) {
-            item.innerHTML = '⚙️ Profile Settings';
-        } else if (item.innerHTML.includes('Sozlamalar')) {
-            item.innerHTML = '🔧 Settings';
-        } else if (item.innerHTML.includes('Chiqish')) {
-            item.innerHTML = '🚪 Logout';
-        }
-    });
+// Apply language-specific styles
+function applyLanguageStyles(language) {
+    const styles = languageStyles[language] || languageStyles.uz;
+    document.documentElement.dir = styles.direction;
+    document.body.style.fontFamily = styles.fontFamily;
 }
 </script>
 
