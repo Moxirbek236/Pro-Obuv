@@ -1,30 +1,63 @@
 // Savatcha sonini yangilash funksiyasi
-function updateCartCount() {
-    fetch('/api/cart-count')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
+function updateCartCount(retryCount = 0) {
+    const maxRetries = 3;
+    
+    fetch('/api/cart-count', {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        // Response content type ni tekshirish
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            console.warn('Cart count API HTML qaytardi, JSON emas');
+            throw new Error('API HTML qaytardi');
+        }
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
             const cartBadge = document.querySelector('.cart-badge');
             const cartCountElements = document.querySelectorAll('.cart-count');
 
             if (cartBadge) {
                 cartBadge.textContent = data.count || 0;
-                // Agar savatcha bo'sh bo'lsa, badge ni yashirish
                 cartBadge.style.display = data.count > 0 ? 'flex' : 'none';
             }
 
-            // Barcha cart-count elementlarini yangilash
             cartCountElements.forEach(element => {
                 element.textContent = data.count || 0;
             });
-        })
-        .catch(error => {
-            console.error('Savatcha sonini olishda xato:', error);
-        });
+        } else {
+            console.warn('Cart count API success=false qaytardi:', data);
+        }
+    })
+    .catch(error => {
+        console.error('Savatcha sonini olishda xato:', error);
+        
+        // Retry logic
+        if (retryCount < maxRetries) {
+            console.log(`Qayta urinish ${retryCount + 1}/${maxRetries}`);
+            setTimeout(() => {
+                updateCartCount(retryCount + 1);
+            }, 1000 * (retryCount + 1));
+        } else {
+            // Fallback - savatcha sonini 0 qilib qo'yish
+            const cartBadge = document.querySelector('.cart-badge');
+            if (cartBadge) {
+                cartBadge.textContent = '0';
+                cartBadge.style.display = 'none';
+            }
+        }
+    });
 }
 
 // Miqdor oshirish funksiyasi

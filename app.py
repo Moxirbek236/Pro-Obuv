@@ -3770,59 +3770,63 @@ def api_save_settings():
         logging.error(f"Sozlamalarni saqlashda xatolik: {str(e)}")
         return jsonify({"success": False, "message": "Server xatoligi"}), 500
 
-@app.route("/api/cart-count", methods=["GET"])
+@app.route("/api/cart-count")
 def api_cart_count():
-    """Savatcha buyumlari sonini qaytarish - JSON format kafolatlangan"""
+    """Savatcha buyumlari sonini qaytarish - faqat JSON"""
+    # Majburiy JSON response headers
+    from flask import Response
+    
     try:
-        # Session ID ni xavfsiz yaratish
-        session_id = session.get('session_id', 'default_session')
-        if not session_id or session_id == 'None':
-            session_id = 'default_session'
-
+        # Session ID ni olish
+        session_id = get_session_id()
         user_id = session.get('user_id')
 
-        # Ma'lumotlar bazasiga ulanish
-        conn = get_db()
-        cur = conn.cursor()
+        # Savatcha sonini hisoblash
+        with db_pool.get_connection() as conn:
+            cur = conn.cursor()
+            
+            if user_id:
+                cur.execute('SELECT COALESCE(SUM(quantity), 0) FROM cart_items WHERE user_id = ?', (user_id,))
+            else:
+                cur.execute('SELECT COALESCE(SUM(quantity), 0) FROM cart_items WHERE session_id = ?', (session_id,))
+            
+            result = cur.fetchone()
+            count = int(result[0]) if result and result[0] else 0
 
-        # Savatcha elementlari sonini hisoblash
-        if user_id:
-            cur.execute('SELECT COALESCE(SUM(quantity), 0) FROM cart_items WHERE user_id = ?', (user_id,))
-        else:
-            cur.execute('SELECT COALESCE(SUM(quantity), 0) FROM cart_items WHERE session_id = ?', (session_id,))
-
-        result = cur.fetchone()
-        count = int(result[0]) if result and result[0] else 0
-
-        conn.close()
-
-        # JSON response yaratish
-        response_data = {
+        # JSON string yaratish
+        response_json = json.dumps({
             "count": count,
             "success": True,
-            "timestamp": time.time()
-        }
+            "session_id": session_id,
+            "user_id": user_id
+        })
 
-        response = jsonify(response_data)
+        # Response yaratish
+        response = Response(
+            response_json,
+            status=200,
+            mimetype='application/json'
+        )
+        
         response.headers['Content-Type'] = 'application/json; charset=utf-8'
-        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-        response.headers['Pragma'] = 'no-cache'
-        response.headers['Expires'] = '0'
-
+        response.headers['Cache-Control'] = 'no-cache'
+        
         return response
 
     except Exception as e:
-        app_logger.error(f"Cart count API xatoligi: {str(e)}")
-
-        error_response = jsonify({
+        app_logger.error(f"Cart count xatoligi: {str(e)}")
+        
+        error_json = json.dumps({
             "count": 0,
             "success": False,
-            "error": "Server xatoligi",
-            "timestamp": time.time()
+            "error": str(e)
         })
-
-        error_response.headers['Content-Type'] = 'application/json; charset=utf-8'
-        return error_response, 500
+        
+        return Response(
+            error_json,
+            status=500,
+            mimetype='application/json'
+        )
 
 # ---- API ENDPOINTS (yuqori prioritet) ----
 
