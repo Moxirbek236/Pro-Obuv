@@ -672,7 +672,7 @@ def calculate_delivery_distance(address):
         # Restoran koordinatalari (Toshkent markazi)
         restaurant_coords = [41.2995, 69.2401]
 
-        # Yandex Geocoding API orqali manzilni koordinatalarga o'tkazish
+        # Yandex Geocoding API orqali manzilni manzilga o'tkazish
         geocoding_url = "https://geocode-maps.yandex.ru/1.x/"
         params = {
             'apikey': app.config['YANDEX_GEOCODER_API'],
@@ -773,22 +773,22 @@ def auto_calculate_courier_delivery_price(distance_km):
     """Kuryer uchun avtomatik yetkazish narxini hisoblash"""
     # Asosiy narx: 1 km uchun 8000 so'm
     base_rate = 8000
-    
+
     # Masofa bo'yicha narx hisoblash
     distance_price = distance_km * base_rate
-    
+
     # Minimum narx 15000 so'm
     minimum_price = 15000
-    
+
     # Maksimum narx 50000 so'm (juda uzoq masofalar uchun)
     maximum_price = 50000
-    
+
     # Yakuniy narx
     final_price = max(minimum_price, min(distance_price, maximum_price))
-    
+
     # Yetkazish vaqti: 1 km = 8 daqiqa (shahar trafigi hisobga olingan)
     delivery_time = max(15, int(distance_km * 8))
-    
+
     return round(final_price), delivery_time
 
 def get_branch_average_rating(branch_id):
@@ -796,17 +796,17 @@ def get_branch_average_rating(branch_id):
     try:
         conn = get_db()
         cur = conn.cursor()
-        
+
         # Filial uchun berilgan baholarni olish (menu_item_id = -branch_id)
         cur.execute("""
             SELECT AVG(rating) as avg_rating, COUNT(*) as total_ratings
             FROM ratings 
             WHERE menu_item_id = ?
         """, (-branch_id,))
-        
+
         result = cur.fetchone()
         conn.close()
-        
+
         if result and result['avg_rating']:
             return {
                 'average_rating': round(result['avg_rating'], 1),
@@ -871,7 +871,7 @@ def get_session_id():
 def get_cart_items(conn, session_id, user_id=None):
     """Savatchadagi mahsulotlarni olish"""
     cur = conn.cursor()
-    
+
     try:
         if user_id:
             cur.execute("""
@@ -901,13 +901,13 @@ def get_cart_items(conn, session_id, user_id=None):
                 WHERE ci.session_id = ? AND mi.available = 1
                 ORDER BY ci.created_at DESC
             """, (session_id,))
-        
+
         results = cur.fetchall()
-        
+
         # Agar natijalar bo'lmasa, bo'sh list qaytarish
         if not results:
             return []
-            
+
         # Row obyektlarini dict formatiga o'tkazish
         cart_items = []
         for row in results:
@@ -920,9 +920,9 @@ def get_cart_items(conn, session_id, user_id=None):
             except Exception as row_error:
                 logging.error(f"Savatcha element o'qishda xatolik: {str(row_error)}")
                 continue
-        
+
         return cart_items
-        
+
     except Exception as e:
         logging.error(f"Savatcha ma'lumotlarini olishda xatolik: {str(e)}")
         return []
@@ -1165,7 +1165,7 @@ def cart():
     session_id = get_session_id()
     user_id = session.get("user_id")
     conn = get_db()
-    
+
     try:
         # Foydalanuvchi ma'lumotlarini olish va session ga yuklash
         if user_id:
@@ -1184,13 +1184,13 @@ def cart():
         # Savatcha ma'lumotlarini olish
         cart_items = get_cart_items(conn, session_id, user_id)
         total = get_cart_total(conn, session_id, user_id)
-        
+
         # Debug logging
         logging.info(f"Cart sahifa: user_id={user_id}, session_id={session_id}, cart_items_count={len(cart_items) if cart_items else 0}, total={total}")
-        
+
         conn.close()
         return render_template("cart.html", cart_items=cart_items or [], total=total or 0)
-        
+
     except Exception as e:
         logging.error(f"Cart sahifasida xatolik: {str(e)}")
         conn.close()
@@ -1213,7 +1213,7 @@ def remove_from_cart(cart_item_id):
     flash("Mahsulot savatchadan olib tashlandi.", "success")
     return redirect(url_for("cart"))
 
-@app.route("/get_cart_count")
+@app.route("/api/cart-count")
 def get_cart_count():
     session_id = get_session_id()
     user_id = session.get("user_id")
@@ -1221,14 +1221,16 @@ def get_cart_count():
     cur = conn.cursor()
 
     if user_id:
-        cur.execute("SELECT SUM(quantity) FROM cart_items WHERE user_id = ?", (user_id,))
+        cur.execute("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE user_id = ?", (user_id,))
     else:
-        cur.execute("SELECT SUM(quantity) FROM cart_items WHERE session_id = ?", (session_id,))
+        cur.execute("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE session_id = ?", (session_id,))
 
-    result = cur.fetchone()[0]
-    count = result if result else 0
+    result = cur.fetchone()
     conn.close()
+
+    count = result['total_count'] if result else 0
     return jsonify({"count": count})
+
 
 # ---- USER LOGIN & REGISTER ----
 @app.route("/login", methods=["GET", "POST"])
@@ -1711,16 +1713,16 @@ def user_page():
 def user_success(ticket_no):
     conn = get_db()
     cur = conn.cursor()
-    
+
     # Buyurtma ma'lumotlarini olish
     cur.execute("SELECT * FROM orders WHERE ticket_no=? ORDER BY id DESC LIMIT 1;", (ticket_no,))
     order = cur.fetchone()
-    
+
     if not order:
         conn.close()
         flash("Buyurtma topilmadi.", "error")
         return redirect(url_for("menu"))
-    
+
     # Buyurtma tafsilotlarini olish
     cur.execute("""
         SELECT od.*, mi.name 
@@ -1729,12 +1731,12 @@ def user_success(ticket_no):
         WHERE od.order_id = ?
     """, (order['id'],))
     order_items = cur.fetchall()
-    
+
     conn.close()
-    
+
     # ETA vaqtini formatlash
     eta_time = datetime.datetime.fromisoformat(order["eta_time"])
-    
+
     return render_template("user_success.html", 
                          order=order, 
                          order_items=order_items,
@@ -1963,24 +1965,24 @@ def courier_take_order(order_id):
     # Buyurtma ma'lumotlarini olish
     cur.execute("SELECT * FROM orders WHERE id=? AND status='ready'", (order_id,))
     order = cur.fetchone()
-    
+
     if order:
         # Avtomatik narx va vaqt hisoblash
         distance = order['delivery_distance'] or 5.0  # Default 5 km
         auto_price, auto_delivery_time = auto_calculate_courier_delivery_price(distance)
-        
+
         # Buyurtmani yangilash
         cur.execute("""
             UPDATE orders 
             SET status='on_way', courier_id=?, courier_price=?, courier_delivery_minutes=?, delivery_price=?
             WHERE id=? AND status='ready'
         """, (courier_id, auto_price, auto_delivery_time, auto_price, order_id))
-        
+
         conn.commit()
         flash(f"Buyurtma olib ketildi! Avtomatik narx: {auto_price:,} so'm, Vaqt: {auto_delivery_time} daqiqa", "success")
     else:
         flash("Buyurtma topilmadi yoki allaqachon olingan!", "error")
-    
+
     conn.close()
     return redirect(url_for("courier_dashboard"))
 
@@ -2103,14 +2105,14 @@ def staff_login():
             # Faollik vaqtini yangilash va ishchi soatlarini hisoblash
             now = get_current_time()
             now_iso = now.isoformat()
-            
+
             try:
                 # Agar avvalgi faollik vaqti mavjud bo'lsa, ishchi soatlarni yangilash
                 if row["last_activity"]:
                     try:
                         last_activity = datetime.datetime.fromisoformat(row["last_activity"])
                         time_diff = now - last_activity
-                        
+
                         # Agar 8 soatdan kam bo'lsa, ishchi vaqtga qo'shish
                         if time_diff.total_seconds() < 28800:  # 8 soat
                             additional_hours = time_diff.total_seconds() / 3600
@@ -2123,7 +2125,7 @@ def staff_login():
                         cur.execute("UPDATE staff SET last_activity = ? WHERE id = ?", (now_iso, staff_id_int))
                 else:
                     cur.execute("UPDATE staff SET last_activity = ? WHERE id = ?", (now_iso, staff_id_int))
-                
+
                 conn.commit()
             except Exception as e:
                 print(f"Staff faollik yangilashda xatolik: {e}")
@@ -2545,7 +2547,7 @@ def super_admin_dashboard():
     # Filiallarni olish va har biriga baho qo'shish
     cur.execute("SELECT * FROM branches ORDER BY created_at DESC")
     branches_raw = cur.fetchall()
-    
+
     branches = []
     for branch in branches_raw:
         branch_dict = dict(branch)
@@ -2910,7 +2912,7 @@ def super_admin_get_ratings():
 
     conn = get_db()
     cur = conn.cursor()
-    
+
     try:
         # Mahsulot baholari
         cur.execute("""
@@ -2924,7 +2926,7 @@ def super_admin_get_ratings():
             LIMIT 100
         """)
         menu_ratings = cur.fetchall()
-        
+
         # Filial baholari
         cur.execute("""
             SELECT r.rating, r.comment, r.created_at, 
@@ -2937,9 +2939,9 @@ def super_admin_get_ratings():
             LIMIT 100
         """)
         branch_ratings = cur.fetchall()
-        
+
         conn.close()
-        
+
         # Ma'lumotlarni format qilish
         menu_ratings_list = []
         for rating in menu_ratings:
@@ -2947,25 +2949,23 @@ def super_admin_get_ratings():
                 'rating': rating['rating'],
                 'comment': rating['comment'],
                 'created_at': rating['created_at'],
-                'user_name': f"{rating['first_name']} {rating['last_name']}",
-                'menu_item_name': rating['menu_item_name']
+                'user_name': f"{rating['first_name']} {rating['last_name'][0]}."
             })
-        
+
         branch_ratings_list = []
         for rating in branch_ratings:
             branch_ratings_list.append({
                 'rating': rating['rating'],
                 'comment': rating['comment'],
                 'created_at': rating['created_at'],
-                'user_name': f"{rating['first_name']} {rating['last_name']}",
-                'branch_name': rating['branch_name']
+                'user_name': f"{rating['first_name']} {rating['last_name'][0]}."
             })
-        
+
         return jsonify({
             "menu_ratings": menu_ratings_list,
             "branch_ratings": branch_ratings_list
         })
-        
+
     except Exception as e:
         conn.close()
         logging.error(f"Baholarni olishda xatolik: {str(e)}")
@@ -3224,7 +3224,7 @@ def api_search_places():
 
         # Location service orqali qidirish
         result = location_service.search_places(query)
-        
+
         if "error" in result:
             logging.error(f"Location search error: {result['error']}")
             return jsonify({"places": []})
@@ -3240,7 +3240,7 @@ def api_search_places():
                 })
 
         return jsonify({"places": places})
-        
+
     except Exception as e:
         logging.error(f"API search places error: {str(e)}")
         return jsonify({"places": []})
@@ -3503,15 +3503,15 @@ def api_submit_menu_rating():
         # Foydalanuvchi tizimga kirganligini tekshirish
         user_id = session.get('user_id')
         if not user_id:
-            return jsonify({"success": False, "message": "Tizimga kirishingiz kerak"})
+            return jsonify({"success": False, "message": "Tizimga kiring"})
 
         data = request.get_json()
         if not data:
             return jsonify({"success": False, "message": "Ma'lumot topilmadi"})
 
-        menu_item_id = data.get("menu_item_id")
-        rating = data.get("rating")
-        comment = data.get("comment", "").strip()
+        menu_item_id = data.get('menu_item_id')
+        rating = data.get('rating')
+        comment = data.get('comment', '').strip()
 
         if not menu_item_id or not rating:
             return jsonify({"success": False, "message": "Mahsulot ID va baho majburiy"})
@@ -3564,7 +3564,7 @@ def api_submit_menu_rating():
                 FROM ratings 
                 WHERE menu_item_id = ?
             """, (menu_item_id,))
-            
+
             avg_result = cur.fetchone()
             if avg_result and avg_result['avg_rating']:
                 new_avg = round(avg_result['avg_rating'], 1)
@@ -3591,7 +3591,7 @@ def api_get_menu_ratings(menu_item_id):
     try:
         conn = get_db()
         cur = conn.cursor()
-        
+
         # Mahsulot uchun barcha baholarni olish
         cur.execute("""
             SELECT r.rating, r.comment, r.created_at, u.first_name, u.last_name
@@ -3601,19 +3601,19 @@ def api_get_menu_ratings(menu_item_id):
             ORDER BY r.created_at DESC
             LIMIT 20
         """, (menu_item_id,))
-        
+
         ratings = cur.fetchall()
-        
+
         # O'rtacha bahoni hisoblash
         cur.execute("""
             SELECT AVG(rating) as avg_rating, COUNT(*) as total_ratings
             FROM ratings 
             WHERE menu_item_id = ?
         """, (menu_item_id,))
-        
+
         avg_result = cur.fetchone()
         conn.close()
-        
+
         ratings_list = []
         for rating in ratings:
             ratings_list.append({
@@ -3622,14 +3622,14 @@ def api_get_menu_ratings(menu_item_id):
                 'created_at': rating['created_at'][:16].replace('T', ' '),
                 'user_name': f"{rating['first_name']} {rating['last_name'][0]}."
             })
-        
+
         return jsonify({
             "success": True,
             "ratings": ratings_list,
             "average_rating": round(avg_result['avg_rating'], 1) if avg_result['avg_rating'] else 0,
             "total_ratings": avg_result['total_ratings'] if avg_result['total_ratings'] else 0
         })
-        
+
     except Exception as e:
         logging.error(f"Mahsulot baholarini olishda xatolik: {str(e)}")
         return jsonify({"success": False, "message": "Server xatoligi"}), 500
@@ -3686,19 +3686,19 @@ if __name__ == '__main__':
         print("Ma'lumotlar bazasini ishga tushirish...")
         init_db()
         print("Ma'lumotlar bazasi muvaffaqiyatli ishga tushirildi")
-        
+
         # Port konfiguratsiyasi
         port = int(os.environ.get('PORT', 5000))
         print(f"Server {port} portda ishga tushmoqda...")
-        
+
         # Flask app konfiguratsiyasi
         app.config['DEBUG'] = True
         app.config['TEMPLATES_AUTO_RELOAD'] = True
-        
+
         # Serverni ishga tushirish
         print("Flask server ishga tushmoqda...")
         app.run(debug=True, host='0.0.0.0', port=port, threaded=True)
-        
+
     except KeyboardInterrupt:
         print("\nServer to'xtatildi (Ctrl+C)")
     except Exception as e:
@@ -3707,12 +3707,12 @@ if __name__ == '__main__':
         import traceback
         print("To'liq xatolik ma'lumoti:")
         traceback.print_exc()
-        
+
         # Qo'shimcha debug ma'lumotlari
         print(f"Python versiya: {os.sys.version}")
         print(f"Ishchi katalog: {os.getcwd()}")
         print(f"Flask versiya: {app.__class__.__module__}")
-        
+
         # Ma'lumotlar bazasi holatini tekshirish
         try:
             if os.path.exists(DB_PATH):
