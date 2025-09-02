@@ -1,4 +1,7 @@
 
+// Current path variable declaration
+const currentPath = window.location.pathname;
+
 // Savatcha sonini yangilash funksiyasi
 function updateCartCount(retryCount = 0) {
     const maxRetries = 3;
@@ -1058,7 +1061,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Buyurtma holati sahifasi uchun
-    const currentPath = window.location.pathname;
     if (currentPath.includes('/user/success/')) {
         const ticketNo = currentPath.split('/').pop();
 
