@@ -2,12 +2,12 @@
 // Current path variable declaration
 let currentLanguage = 'uz';
 // Global o'zgaruvchilarni xavfsiz e'lon qilish
-let currentPath = window.location.pathname || '/';
+window.currentPath = window.location.pathname || '/';
 let translations;
 
 // Til tarjimalari - faqat bir marta e'lon qilish
 if (typeof window.translations === 'undefined') {
-    translations = {
+    window.translations = {
     'uz': {
         'menu': 'Menyu',
         'cart': 'Savatcha',
@@ -317,10 +317,7 @@ function submitRating() {
     });
 }
 
-// Current path variable - faqat bir marta e'lon qilish
-if (typeof currentPath === 'undefined') {
-    var currentPath = window.location.pathname || '/';
-}
+// Current path variable is already defined as window.currentPath above
 
 // Til o'zgartirish funksiyasi
 function applyLanguage(lang) {
@@ -337,7 +334,7 @@ function applyLanguage(lang) {
         if (langData && langData[key]) {
             if (element.tagName === 'INPUT' && element.type === 'submit') {
                 element.value = langData[key];
-            } else if (element.placeholder !== undefinednedi) {
+            } else if (element.placeholder !== undefined) {
                 element.placeholder = langData[key];
             } else {
                 element.textContent = langData[key];
@@ -1177,7 +1174,7 @@ window.addEventListener('error', function(event) {
 // DOMContentLoaded event
 document.addEventListener('DOMContentLoaded', function() {
     // currentPath ni yangilash
-    currentPath = window.location.pathname || '/';
+    window.currentPath = window.location.pathname || '/';
 
     // Sozlamalarni yuklash
     loadSettings();
@@ -1186,7 +1183,7 @@ document.addEventListener('DOMContentLoaded', function() {
     updateCartCount();
 
     // Super admin sahifasi ekanligini tekshirish
-    const isSuperAdminPage = currentPath.includes('super-admin-dashboard');
+    const isSuperAdminPage = window.currentPath.includes('super-admin-dashboard');
 
     if (isSuperAdminPage) {
         console.log('Super admin dashboard yuklandi');
@@ -1195,8 +1192,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Buyurtma holati sahifasi uchun
-    if (currentPath.includes('/user/success/')) {
-        const ticketNo = currentPath.split('/').pop();
+    if (window.currentPath.includes('/user/success/')) {
+        const ticketNo = window.currentPath.split('/').pop();
 
         // Dastlabki holat tekshiruvi
         checkOrderStatus(ticketNo);
