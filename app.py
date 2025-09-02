@@ -151,8 +151,8 @@ Compress(app)
 
 # Rate limiting with universal configuration
 limiter = Limiter(
-    app,
     key_func=get_remote_address,
+    app=app,
     default_limits=[
         f"{Config.RATE_LIMIT_DAILY} per day", 
         f"{Config.RATE_LIMIT_HOURLY} per hour", 
