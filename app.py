@@ -20,16 +20,19 @@ def cleanup_resources():
 import atexit
 atexit.register(cleanup_resources)
 
-from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify, g
 from werkzeug.security import generate_password_hash, check_password_hash
-import sqlite3, os, datetime, json
+import sqlite3, os, datetime, json, uuid, secrets
 from flask_sqlalchemy import SQLAlchemy
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+from flask_cors import CORS
+from flask_compress import Compress
 import pytz
 import qrcode
 from io import BytesIO
 import base64
 import requests
-import json
 from location_service import LocationService
 from functools import wraps
 import threading
@@ -41,39 +44,88 @@ from collections import defaultdict
 import redis
 from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.middleware.profiler import ProfilerMiddleware
+from dotenv import load_dotenv
+
+# Environment variables yuklash
+load_dotenv()
 
 app = Flask(__name__)
 
-# Production-ready konfiguratsiya
+# Professional production konfiguratsiya
 app.config.update(
-    SQLALCHEMY_DATABASE_URI='sqlite:///restaurant.db',
+    # Database
+    SQLALCHEMY_DATABASE_URI=os.environ.get('DATABASE_URL', 'sqlite:///restaurant.db'),
     SQLALCHEMY_TRACK_MODIFICATIONS=False,
     SQLALCHEMY_ENGINE_OPTIONS={
-        'pool_timeout': 20,
-        'pool_recycle': -1,
+        'pool_timeout': 30,
+        'pool_recycle': 3600,
         'pool_pre_ping': True,
         'connect_args': {
             'check_same_thread': False,
-            'timeout': 30,
+            'timeout': 60,
             'isolation_level': None
         }
     },
-    SECRET_KEY=os.environ.get("SECRET_KEY", "dev_secret_change_me_ultra_secure_2025"),
-    SESSION_COOKIE_SECURE=True,
+    
+    # Security
+    SECRET_KEY=os.environ.get("SECRET_KEY", secrets.token_urlsafe(32)),
+    SESSION_COOKIE_SECURE=os.environ.get('FLASK_ENV') == 'production',
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE='Lax',
     PERMANENT_SESSION_LIFETIME=7200,  # 2 soat
-    MAX_CONTENT_LENGTH=16 * 1024 * 1024,  # 16MB max file size
+    WTF_CSRF_ENABLED=True,
+    
+    # Upload
+    MAX_CONTENT_LENGTH=32 * 1024 * 1024,  # 32MB max file size
+    UPLOAD_FOLDER='static/uploads',
+    
+    # JSON
     JSON_SORT_KEYS=False,
-    JSONIFY_PRETTYPRINT_REGULAR=False
+    JSONIFY_PRETTYPRINT_REGULAR=False,
+    
+    # Performance
+    SEND_FILE_MAX_AGE_DEFAULT=31536000,  # 1 yil cache
+    
+    # External APIs
+    YANDEX_GEOCODER_API=os.environ.get('YANDEX_GEOCODER_API', ''),
+    GOOGLE_MAPS_API=os.environ.get('GOOGLE_MAPS_API', ''),
+    
+    # App settings
+    DEFAULT_LANGUAGE='uz',
+    SUPPORTED_LANGUAGES=['uz', 'ru', 'en'],
+    DEFAULT_CURRENCY='UZS',
+    TIMEZONE='Asia/Tashkent',
+    
+    # Business settings
+    AVG_PREP_MINUTES=int(os.environ.get("AVG_PREP_MINUTES", "7")),
+    DELIVERY_BASE_PRICE=10000,
+    COURIER_BASE_RATE=8000,
+    CASHBACK_PERCENTAGE=1.0
 )
 
-# Production middleware
+# Professional middleware stack
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
+# CORS support
+CORS(app, origins=['*'], methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'])
+
+# Compression
+Compress(app)
+
+# Rate limiting
+limiter = Limiter(
+    app,
+    key_func=get_remote_address,
+    default_limits=["1000 per day", "200 per hour", "50 per minute"],
+    storage_uri=os.environ.get('REDIS_URL', 'memory://')
+)
+
 # Performance profiling (faqat debug rejimida)
-if app.debug:
+if os.environ.get('FLASK_ENV') == 'development':
     app.wsgi_app = ProfilerMiddleware(app.wsgi_app, restrictions=[30])
+
+# Upload papkasini yaratish
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # Location service instance
 location_service = LocationService()
@@ -194,7 +246,7 @@ from logging.handlers import RotatingFileHandler, SMTPHandler
 def setup_logging():
     """Professional logging setup"""
     formatter = logging.Formatter(
-        '%(asctime)s - %(name)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s'
+        '%(asctime)s - %(levelname)s - %(message)s'
     )
     
     # Rotating file handler (maksimal 10MB, 5 ta backup)
@@ -207,22 +259,24 @@ def setup_logging():
     error_handler.setFormatter(formatter)
     error_handler.setLevel(logging.ERROR)
     
-    # Console handler
+    # Console handler - faqat xatoliklar uchun
     console_handler = logging.StreamHandler()
-    console_handler.setFormatter(formatter)
-    console_handler.setLevel(logging.WARNING)
+    console_handler.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))
+    console_handler.setLevel(logging.ERROR)
     
     # Root logger konfiguratsiya
     root_logger = logging.getLogger()
-    root_logger.setLevel(logging.INFO)
+    root_logger.setLevel(logging.WARNING)
     root_logger.addHandler(file_handler)
     root_logger.addHandler(error_handler)
     root_logger.addHandler(console_handler)
     
-    # Flask app logger
-    app.logger.setLevel(logging.INFO)
-    app.logger.addHandler(file_handler)
+    # Flask app logger - ortiqcha loglarni o'chirish
+    app.logger.setLevel(logging.ERROR)
     app.logger.addHandler(error_handler)
+    
+    # Werkzeug loglarni o'chirish
+    logging.getLogger('werkzeug').setLevel(logging.ERROR)
     
     return logging.getLogger('restaurant_app')
 
@@ -1256,15 +1310,7 @@ def get_cart_items(conn, session_id, user_id=None):
     cur = conn.cursor()
 
     try:
-        # Debug logging
-        logging.info(f"get_cart_items chaqirildi: user_id={user_id}, session_id={session_id}")
-
         if user_id:
-            # Avval cart_items jadvalida user_id bo'yicha ma'lumot borligini tekshirish
-            cur.execute("SELECT COUNT(*) FROM cart_items WHERE user_id = ?", (user_id,))
-            user_count = cur.fetchone()[0]
-            logging.info(f"User {user_id} uchun cart_items soni: {user_count}")
-
             # Asosiy so'rov
             cur.execute("""
                 SELECT ci.id, ci.menu_item_id, mi.name, mi.price, ci.quantity, 
@@ -1280,11 +1326,6 @@ def get_cart_items(conn, session_id, user_id=None):
                 ORDER BY ci.created_at DESC
             """, (user_id,))
         else:
-            # Session bo'yicha ham tekshirish
-            cur.execute("SELECT COUNT(*) FROM cart_items WHERE session_id = ?", (session_id,))
-            session_count = cur.fetchone()[0]
-            logging.info(f"Session {session_id} uchun cart_items soni: {session_count}")
-
             cur.execute("""
                 SELECT ci.id, ci.menu_item_id, mi.name, mi.price, ci.quantity, 
                        COALESCE(mi.discount_percentage, 0) as discount_percentage,
@@ -1300,11 +1341,9 @@ def get_cart_items(conn, session_id, user_id=None):
             """, (session_id,))
 
         results = cur.fetchall()
-        logging.info(f"So'rov natijasi: {len(results) if results else 0} ta element")
 
         # Agar natijalar bo'lmasa, bo'sh list qaytarish
         if not results:
-            logging.warning(f"Savatcha bo'sh: user_id={user_id}, session_id={session_id}")
             return []
 
         # Row obyektlarini dict formatiga o'tkazish
@@ -1316,16 +1355,14 @@ def get_cart_items(conn, session_id, user_id=None):
                 if item_dict.get('discount_percentage') is None:
                     item_dict['discount_percentage'] = 0
                 cart_items.append(item_dict)
-                logging.debug(f"Savatcha element qo'shildi: {item_dict.get('name', 'Unknown')}")
             except Exception as row_error:
-                logging.error(f"Savatcha element o'qishda xatolik: {str(row_error)}")
+                app_logger.error(f"Savatcha element o'qishda xatolik: {str(row_error)}")
                 continue
 
-        logging.info(f"Savatcha ma'lumotlari muvaffaqiyatli olindi: {len(cart_items)} ta element")
         return cart_items
 
     except Exception as e:
-        logging.error(f"Savatcha ma'lumotlarini olishda xatolik: {str(e)}")
+        app_logger.error(f"Savatcha ma'lumotlarini olishda xatolik: {str(e)}")
         return []
 
 def get_cart_total(conn, session_id, user_id=None):
@@ -1490,9 +1527,6 @@ def admin_monitor():
         """, (five_min_ago,))
         served_recent = cur.fetchall()
 
-        # Debug ma'lumotlari
-        logging.info(f"Monitor: Waiting={len(waiting) if waiting else 0}, Ready={len(ready) if ready else 0}, Served={len(served_recent) if served_recent else 0}")
-
         conn.close()
         return render_template('admin_monitor.html', 
                              waiting=waiting or [], 
@@ -1500,7 +1534,7 @@ def admin_monitor():
                              served_recent=served_recent or [])
 
     except Exception as e:
-        logging.error(f"Monitor sahifasida xatolik: {str(e)}")
+        app_logger.error(f"Monitor sahifasida xatolik: {str(e)}")
         conn.close()
         return render_template('admin_monitor.html', 
                              waiting=[], 
@@ -1571,55 +1605,69 @@ def menu():
 
 @app.route("/add_to_cart", methods=["POST"])
 def add_to_cart():
-    menu_item_id = request.form.get("menu_item_id")
-    quantity = int(request.form.get("quantity", 1))
+    try:
+        menu_item_id = request.form.get("menu_item_id")
+        quantity = int(request.form.get("quantity", 1))
 
-    if not menu_item_id:
-        flash("Mahsulot tanlanmadi.", "error")
-        return redirect(url_for("menu"))
+        if not menu_item_id:
+            if request.is_json or request.headers.get('Content-Type') == 'application/json':
+                return jsonify({"success": False, "message": "Mahsulot tanlanmadi"})
+            flash("Mahsulot tanlanmadi.", "error")
+            return redirect(url_for("menu"))
 
-    session_id = get_session_id()
-    user_id = session.get("user_id")
-    conn = get_db()
-    cur = conn.cursor()
+        session_id = get_session_id()
+        user_id = session.get("user_id")
+        
+        # Cache dan savatchani tozalash
+        cache_manager.delete(f"cart_count_{user_id}_{session_id}")
+        
+        conn = get_db()
+        cur = conn.cursor()
 
-    # Mavjudligini tekshirish
-    if user_id:
-        cur.execute("SELECT * FROM cart_items WHERE user_id = ? AND menu_item_id = ?", (user_id, menu_item_id))
-    else:
-        cur.execute("SELECT * FROM cart_items WHERE session_id = ? AND menu_item_id = ?", (session_id, menu_item_id))
-
-    existing = cur.fetchone()
-    now = get_current_time().isoformat()
-
-    if existing:
-        # Mavjud bo'lsa miqdorni oshirish
-        cur.execute("UPDATE cart_items SET quantity = quantity + ? WHERE id = ?", (quantity, existing['id']))
-    else:
-        # Yangi qo'shish - har doim session_id ni ham berish
+        # Mavjudligini tekshirish
         if user_id:
-            cur.execute("INSERT INTO cart_items (user_id, session_id, menu_item_id, quantity, created_at) VALUES (?, ?, ?, ?, ?)", 
-                       (user_id, session_id, menu_item_id, quantity, now))
-            print(f"DEBUG: Savatcha qo'shildi - user_id: {user_id}, session_id: {session_id}, menu_item_id: {menu_item_id}, quantity: {quantity}")
+            cur.execute("SELECT * FROM cart_items WHERE user_id = ? AND menu_item_id = ?", (user_id, menu_item_id))
         else:
-            cur.execute("INSERT INTO cart_items (session_id, menu_item_id, quantity, created_at) VALUES (?, ?, ?, ?)", 
-                       (session_id, menu_item_id, quantity, now))
-            print(f"DEBUG: Savatcha qo'shildi - session_id: {session_id}, menu_item_id: {menu_item_id}, quantity: {quantity}")
+            cur.execute("SELECT * FROM cart_items WHERE session_id = ? AND menu_item_id = ?", (session_id, menu_item_id))
 
-    conn.commit()
+        existing = cur.fetchone()
+        now = get_current_time().isoformat()
 
-    # Qo'shgandan keyin tekshirish
-    if user_id:
-        cur.execute("SELECT COUNT(*) FROM cart_items WHERE user_id = ?", (user_id,))
-    else:
-        cur.execute("SELECT COUNT(*) FROM cart_items WHERE session_id = ?", (session_id,))
+        if existing:
+            # Mavjud bo'lsa miqdorni oshirish
+            cur.execute("UPDATE cart_items SET quantity = quantity + ? WHERE id = ?", (quantity, existing['id']))
+        else:
+            # Yangi qo'shish - har doim session_id ni ham berish
+            if user_id:
+                cur.execute("INSERT INTO cart_items (user_id, session_id, menu_item_id, quantity, created_at) VALUES (?, ?, ?, ?, ?)", 
+                           (user_id, session_id, menu_item_id, quantity, now))
+            else:
+                cur.execute("INSERT INTO cart_items (session_id, menu_item_id, quantity, created_at) VALUES (?, ?, ?, ?)", 
+                           (session_id, menu_item_id, quantity, now))
 
-    count_after = cur.fetchone()[0]
-    print(f"DEBUG: Qo'shgandan keyin savatcha elementi soni: {count_after}")
+        conn.commit()
+        
+        # Yangi cart count ni olish
+        if user_id:
+            cur.execute("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE user_id = ?", (user_id,))
+        else:
+            cur.execute("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE session_id = ?", (session_id,))
+        
+        cart_count = cur.fetchone()['total_count']
+        conn.close()
 
-    conn.close()
-    flash("Mahsulot savatchaga qo'shildi!", "success")
-    return redirect(url_for("menu"))
+        if request.is_json or request.headers.get('Content-Type') == 'application/json':
+            return jsonify({"success": True, "message": "Mahsulot qo'shildi", "cart_count": cart_count})
+        
+        flash("Mahsulot savatchaga qo'shildi!", "success")
+        return redirect(url_for("menu"))
+        
+    except Exception as e:
+        app_logger.error(f"Add to cart error: {str(e)}")
+        if request.is_json or request.headers.get('Content-Type') == 'application/json':
+            return jsonify({"success": False, "message": "Xatolik yuz berdi"})
+        flash("Savatchaga qo'shishda xatolik yuz berdi.", "error")
+        return redirect(url_for("menu"))
 
 @app.route("/cart")
 def cart():
@@ -1646,14 +1694,11 @@ def cart():
         cart_items = get_cart_items(conn, session_id, user_id)
         total = get_cart_total(conn, session_id, user_id)
 
-        # Debug logging
-        logging.info(f"Cart sahifa: user_id={user_id}, session_id={session_id}, cart_items_count={len(cart_items) if cart_items else 0}, total={total}")
-
         conn.close()
         return render_template("cart.html", cart_items=cart_items or [], total=total or 0)
 
     except Exception as e:
-        logging.error(f"Cart sahifasida xatolik: {str(e)}")
+        app_logger.error(f"Cart sahifasida xatolik: {str(e)}")
         conn.close()
         return render_template("cart.html", cart_items=[], total=0)
 
@@ -1992,214 +2037,178 @@ def logout():
 
 # ---- USER ----
 @app.route("/place_order", methods=["POST"])
-@rate_limit(max_requests=50, window=300)
-@performance_monitor
-@validate_json()
 def place_order():
-    """Buyurtma berish funksiyasi"""
-    print("DEBUG: POST so'rov keldi /place_order endpoint ga")
-
-    # Foydalanuvchi session'dan ismni olish
-    if not session.get("user_id"):
-        print("DEBUG: User ID session da yo'q")
-        flash("Buyurtma berish uchun avval tizimga kiring.", "error")
-        return redirect(url_for("login"))
-
-    name = session.get("user_name", "")
-    user_id = session.get("user_id")
-
-    if not name:
-        print("DEBUG: User name session da yo'q")
-        flash("Foydalanuvchi ma'lumotlari topilmadi.", "error")
-        return redirect(url_for("login"))
-
-    print(f"DEBUG: Buyurtma berish boshlandi - User ID: {user_id}, Name: {name}")
-    print(f"DEBUG: Form ma'lumotlari: {dict(request.form)}")
-
-    # Foydalanuvchi profilidan ma'lumotlarni olish
-    conn_profile = get_db()
-    cur_profile = conn_profile.cursor()
-    cur_profile.execute("SELECT phone, address, card_number FROM users WHERE id = ?", (user_id,))
-    user_profile = cur_profile.fetchone()
-    conn_profile.close()
-
-    # Session ga profil ma'lumotlarini saqlash
-    if user_profile:
-        session['user_phone'] = user_profile['phone'] or ''
-        session['user_address'] = user_profile['address'] or ''
-        session['user_card_number'] = user_profile['card_number'] or ''
-
-    session_id = get_session_id()
-    conn = get_db()
-
-    # Savatchani tekshirish va debug
-    cart_items = get_cart_items(conn, session_id, user_id)
-    print(f"DEBUG: Savatcha tekshiruvi - cart_items: {len(cart_items) if cart_items else 0} ta element")
-
-    # Qo'shimcha tekshiruv - to'g'ridan-to'g'ri jadvaldan ham tekshirish
-    cur_check = conn.cursor()
-    if user_id:
-        cur_check.execute("SELECT COUNT(*) FROM cart_items WHERE user_id = ?", (user_id,))
-        direct_count = cur_check.fetchone()[0]
-        print(f"DEBUG: To'g'ridan-to'g'ri jadvaldan user_id={user_id} uchun: {direct_count} ta element")
-    else:
-        cur_check.execute("SELECT COUNT(*) FROM cart_items WHERE session_id = ?", (session_id,))
-        direct_count = cur_check.fetchone()[0]
-        print(f"DEBUG: To'g'ridan-to'g'ri jadvaldan session_id={session_id} uchun: {direct_count} ta element")
-
-    if not cart_items or len(cart_items) == 0:
-        print(f"DEBUG: Savatcha bo'sh deb topildi")
-
-        # Qo'shimcha debug - barcha cart_items ni ko'rsatish
-        cur_check.execute("SELECT * FROM cart_items LIMIT 10")
-        all_items = cur_check.fetchall()
-        print(f"DEBUG: Barcha cart_items (10 ta): {[dict(item) for item in all_items] if all_items else 'Bo\'sh'}")
-
-        flash("Savatchangiz bo'sh. Avval taom tanlang.", "error")
-        conn.close()
-        return redirect(url_for("menu"))
-
+    """Buyurtma berish funksiyasi - to'liq qayta ishlangan"""
     try:
-        # Formdan ma'lumotlarni olish
-        order_type = request.form.get("order_type", "dine_in")
-        delivery_address = request.form.get("delivery_address", "").strip()
-        home_address = request.form.get("home_address", "").strip()
-        customer_phone_new = request.form.get("customer_phone", "").strip()
-        card_number_new = request.form.get("card_number", "").strip()
+        # Rate limiting
+        identifier = request.remote_addr
+        if not rate_limiter.is_allowed(identifier, 20, 300):
+            flash("Juda ko'p buyurtma. 5 daqiqa kuting.", "error")
+            return redirect(url_for("cart"))
 
-        print(f"DEBUG: Form ma'lumotlari - order_type: {order_type}")
-        print(f"DEBUG: delivery_address: {delivery_address}")
-        print(f"DEBUG: home_address: {home_address}")
+        # Foydalanuvchi session'dan ismni olish
+        if not session.get("user_id"):
+            flash("Buyurtma berish uchun avval tizimga kiring.", "error")
+            return redirect(url_for("login"))
 
-        # Delivery uchun kerakli tekshiruvlar
-        if order_type == "delivery":
-            if not delivery_address:
-                flash("Yetkazib berish manzilini kiriting!", "error")
-                return redirect(url_for("cart"))
+        name = session.get("user_name", "")
+        user_id = session.get("user_id")
 
-            # Agar profilda telefon yo'q bo'lsa, formdan olish
-            if not session.get('user_phone') and not customer_phone_new:
-                flash("Telefon raqamingizni kiriting!", "error")
-                return redirect(url_for("cart"))
+        if not name:
+            flash("Foydalanuvchi ma'lumotlari topilmadi.", "error")
+            return redirect(url_for("login"))
 
-        # Foydalanuvchi profilini yangilash
-        cur_update = conn.cursor()
-        if home_address:
-            cur_update.execute("UPDATE users SET address = ? WHERE id = ?", (home_address, user_id))
-            session['user_address'] = home_address
-        if customer_phone_new:
-            cur_update.execute("UPDATE users SET phone = ? WHERE id = ?", (customer_phone_new, user_id))
-            session['user_phone'] = customer_phone_new
-        if card_number_new:
-            cur_update.execute("UPDATE users SET card_number = ? WHERE id = ?", (card_number_new, user_id))
-            session['user_card_number'] = card_number_new
-        conn.commit()
+        # Ma'lumotlar bazasi bilan ishash
+        with db_pool.get_connection() as conn:
+            cur = conn.cursor()
+            
+            # Foydalanuvchi profilidan ma'lumotlarni olish
+            cur.execute("SELECT phone, address, card_number FROM users WHERE id = ?", (user_id,))
+            user_profile = cur.fetchone()
 
-        # Buyurtma raqami va vaqt hisoblash
-        tno = next_ticket_no(conn)
-        eta_minutes = calc_eta_minutes(conn)
-        now = get_current_time()
-        eta_time = now + datetime.timedelta(minutes=eta_minutes)
-        total = get_cart_total(conn, session_id, user_id)
+            # Session ga profil ma'lumotlarini saqlash
+            if user_profile:
+                session['user_phone'] = user_profile['phone'] or ''
+                session['user_address'] = user_profile['address'] or ''
+                session['user_card_number'] = user_profile['card_number'] or ''
 
-        print(f"DEBUG: Buyurtma yaratilmoqda - ticket: {tno}, total: {total}")
+            session_id = get_session_id()
 
-        # Delivery uchun qo'shimcha ma'lumotlar
-        delivery_latitude = request.form.get("delivery_latitude", "")
-        delivery_longitude = request.form.get("delivery_longitude", "")
-        delivery_distance = request.form.get("delivery_distance", 0)
-        delivery_map_url = request.form.get("delivery_map_url", "")
-        customer_note = request.form.get("customer_note", "")
+            # Savatchani tekshirish
+            cart_items = get_cart_items(conn, session_id, user_id)
 
-        # Telefon va karta ma'lumotlarini olish
-        customer_phone = session.get('user_phone', '') or customer_phone_new
-        card_number = session.get('user_card_number', '') or card_number_new
+            if not cart_items or len(cart_items) == 0:
+                flash("Savatchangiz bo'sh. Avval taom tanlang.", "error")
+                return redirect(url_for("menu"))
 
-        # Masofa va vaqtni float ga aylantirish
-        try:
-            delivery_distance = float(delivery_distance) if delivery_distance else 0
-        except ValueError:
-            delivery_distance = 0
+            # Formdan ma'lumotlarni xavfsiz olish
+            order_type = request.form.get("order_type", "dine_in")
+            delivery_address = request.form.get("delivery_address", "").strip()
+            home_address = request.form.get("home_address", "").strip()
+            customer_phone_new = request.form.get("customer_phone", "").strip()
+            card_number_new = request.form.get("card_number", "").strip()
 
-        # Delivery uchun ETA ni qayta hisoblash
-        if order_type == "delivery":
-            courier_delivery_time = 30
-            eta_time = now + datetime.timedelta(minutes=eta_minutes + courier_delivery_time)
+            # Delivery uchun kerakli tekshiruvlar
+            if order_type == "delivery":
+                if not delivery_address:
+                    flash("Yetkazib berish manzilini kiriting!", "error")
+                    return redirect(url_for("cart"))
 
-        # Branch ID ni olish delivery uchun
-        branch_id = request.form.get("branch_id", 1)
-        try:
-            branch_id = int(branch_id) if branch_id else 1
-        except ValueError:
+                # Telefon tekshiruvi
+                if not session.get('user_phone') and not customer_phone_new:
+                    flash("Telefon raqamingizni kiriting!", "error")
+                    return redirect(url_for("cart"))
+
+            # Foydalanuvchi profilini yangilash
+            if home_address:
+                cur.execute("UPDATE users SET address = ? WHERE id = ?", (home_address, user_id))
+                session['user_address'] = home_address
+            if customer_phone_new:
+                cur.execute("UPDATE users SET phone = ? WHERE id = ?", (customer_phone_new, user_id))
+                session['user_phone'] = customer_phone_new
+            if card_number_new:
+                cur.execute("UPDATE users SET card_number = ? WHERE id = ?", (card_number_new, user_id))
+                session['user_card_number'] = card_number_new
+
+            # Buyurtma raqami va vaqt hisoblash
+            tno = next_ticket_no(conn)
+            eta_minutes = calc_eta_minutes(conn)
+            now = get_current_time()
+            eta_time = now + datetime.timedelta(minutes=eta_minutes)
+            total = get_cart_total(conn, session_id, user_id)
+
+            # Delivery uchun qo'shimcha ma'lumotlar
+            delivery_latitude = request.form.get("delivery_latitude", "")
+            delivery_longitude = request.form.get("delivery_longitude", "")
+            delivery_distance = request.form.get("delivery_distance", 0)
+            delivery_map_url = request.form.get("delivery_map_url", "")
+            customer_note = request.form.get("customer_note", "")
+
+            # Telefon va karta ma'lumotlarini olish
+            customer_phone = session.get('user_phone', '') or customer_phone_new
+            card_number = session.get('user_card_number', '') or card_number_new
+
+            # Masofa va vaqtni xavfsiz aylantirish
+            try:
+                delivery_distance = float(delivery_distance) if delivery_distance else 0
+            except (ValueError, TypeError):
+                delivery_distance = 0
+
+            # Delivery uchun ETA ni qayta hisoblash
+            if order_type == "delivery":
+                courier_delivery_time = 30
+                eta_time = now + datetime.timedelta(minutes=eta_minutes + courier_delivery_time)
+
+            # Branch ID ni xavfsiz olish
             branch_id = 1
+            try:
+                branch_id = int(request.form.get("branch_id", 1))
+            except (ValueError, TypeError):
+                branch_id = 1
 
-        # Buyurtma yaratish
-        cur = conn.cursor()
-        cur.execute("""
-            INSERT INTO orders (user_id, customer_name, ticket_no, order_type, status, delivery_address, delivery_distance, delivery_latitude, delivery_longitude, delivery_map_url, customer_note, customer_phone, card_number, branch_id, created_at, eta_time)
-            VALUES (?, ?, ?, ?, 'waiting', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-        """, (user_id, name, tno, order_type, delivery_address, delivery_distance, delivery_latitude, delivery_longitude, delivery_map_url, customer_note, customer_phone, card_number, branch_id, now.isoformat(), eta_time.isoformat()))
+            # Buyurtma yaratish
+            cur.execute("""
+                INSERT INTO orders (user_id, customer_name, ticket_no, order_type, status, delivery_address, delivery_distance, delivery_latitude, delivery_longitude, delivery_map_url, customer_note, customer_phone, card_number, branch_id, created_at, eta_time)
+                VALUES (?, ?, ?, ?, 'waiting', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+            """, (user_id, name, tno, order_type, delivery_address, delivery_distance, delivery_latitude, delivery_longitude, delivery_map_url, customer_note, customer_phone, card_number, branch_id, now.isoformat(), eta_time.isoformat()))
 
-        order_id = cur.lastrowid
+            order_id = cur.lastrowid
 
-        # Savatchadagi mahsulotlarni order_details ga ko'chirish
-        order_items_for_json = []
-        for item in cart_items:
-            # Skidka narxini hisoblash
-            discount_percentage = item.get('discount_percentage', 0) or 0
-            final_price = item['price']
-            if discount_percentage > 0:
-                final_price = item['price'] * (100 - discount_percentage) / 100
+            # Savatchadagi mahsulotlarni order_details ga ko'chirish
+            order_items_for_json = []
+            total_amount = 0
+            
+            for item in cart_items:
+                # Skidka narxini hisoblash
+                discount_percentage = item.get('discount_percentage', 0) or 0
+                final_price = item['price']
+                if discount_percentage > 0:
+                    final_price = item['price'] * (100 - discount_percentage) / 100
+
+                item_total = final_price * item['quantity']
+                total_amount += item_total
+
+                cur.execute("""
+                    INSERT INTO order_details (order_id, menu_item_id, quantity, price)
+                    VALUES (?, ?, ?, ?)
+                """, (order_id, item['menu_item_id'], item['quantity'], final_price))
+
+                # JSON uchun mahsulot ma'lumotlarini to'plash
+                order_items_for_json.append({
+                    'nomi': item['name'],
+                    'miqdori': item['quantity'],
+                    'asl_narxi': item['price'],
+                    'skidka_foizi': discount_percentage,
+                    'yakuniy_narxi': final_price,
+                    'jami': item_total
+                })
+
+            # Chek yaratish
+            receipt_number = f"R{tno}{now.strftime('%H%M%S')}"
+            cashback_percentage = 1.0
+            cashback_amount = total_amount * (cashback_percentage / 100)
 
             cur.execute("""
-                INSERT INTO order_details (order_id, menu_item_id, quantity, price)
-                VALUES (?, ?, ?, ?)
-            """, (order_id, item['menu_item_id'], item['quantity'], final_price))
+                INSERT INTO receipts (order_id, receipt_number, total_amount, cashback_amount, cashback_percentage, created_at)
+                VALUES (?, ?, ?, ?, ?, ?);
+            """, (order_id, receipt_number, total_amount, cashback_amount, cashback_percentage, now.isoformat()))
 
-            # JSON uchun mahsulot ma'lumotlarini to'plash
-            order_items_for_json.append({
-                'nomi': item['name'],
-                'miqdori': item['quantity'],
-                'asl_narxi': item['price'],
-                'skidka_foizi': discount_percentage,
-                'yakuniy_narxi': final_price,
-                'jami': final_price * item['quantity']
-            })
+            # Savatchani tozalash
+            clear_cart(conn, session_id, user_id)
+            
+            # Cache ni tozalash
+            cache_manager.delete(f"cart_count_{user_id}_{session_id}")
 
-        # Chek yaratish
-        receipt_number = f"R{tno}{now.strftime('%H%M%S')}"
-        cashback_percentage = 1.0
-        cashback_amount = total * (cashback_percentage / 100)
+            # Foydalanuvchini JSON fayliga saqlash
+            executor.submit(save_user_to_json, name, tno, now, order_items_for_json)
 
-        cur.execute("""
-            INSERT INTO receipts (order_id, receipt_number, total_amount, cashback_amount, cashback_percentage, created_at)
-            VALUES (?, ?, ?, ?, ?, ?);
-        """, (order_id, receipt_number, total, cashback_amount, cashback_percentage, now.isoformat()))
-
-        # Savatchani tozalash
-        clear_cart(conn, session_id, user_id)
-
-        conn.commit()
-
-        # Foydalanuvchini JSON fayliga saqlash
-        save_user_to_json(name, tno, now, order_items_for_json)
-
-        print(f"DEBUG: Buyurtma muvaffaqiyatli yaratildi - ticket: {tno}")
-        flash("Buyurtma muvaffaqiyatli berildi!", "success")
+            flash("Buyurtma muvaffaqiyatli berildi!", "success")
+            return redirect(url_for("user_success", ticket_no=tno))
 
     except Exception as e:
-        import traceback
-        error_details = traceback.format_exc()
-        print(f"ERROR: Buyurtma berishda xatolik: {str(e)}")
-        print(f"ERROR DETAILS: {error_details}")
-        logging.error(f"Buyurtma berishda xatolik: {str(e)} - {error_details}")
-        flash(f"Buyurtma berishda xatolik yuz berdi: {str(e)}", "error")
-        conn.rollback()
+        app_logger.error(f"Buyurtma berishda xatolik: {str(e)}")
+        flash("Buyurtma berishda xatolik yuz berdi. Qaytadan urinib ko'ring.", "error")
         return redirect(url_for("cart"))
-    finally:
-        conn.close()
-
-    return redirect(url_for("user_success", ticket_no=tno))
 
 @app.route("/user", methods=["GET", "POST"])
 def user_page():
@@ -2458,31 +2467,35 @@ def courier_take_order(order_id):
         return redirect(url_for("courier_login"))
 
     courier_id = session.get("courier_id")
-    conn = get_db()
-    cur = conn.cursor()
+    
+    try:
+        with db_pool.get_connection() as conn:
+            cur = conn.cursor()
 
-    # Buyurtma ma'lumotlarini olish
-    cur.execute("SELECT * FROM orders WHERE id=? AND status='ready'", (order_id,))
-    order = cur.fetchone()
+            # Buyurtma ma'lumotlarini olish
+            cur.execute("SELECT * FROM orders WHERE id=? AND status='ready' AND order_type='delivery'", (order_id,))
+            order = cur.fetchone()
 
-    if order:
-        # Avtomatik narx va vaqt hisoblash
-        distance = order['delivery_distance'] or 5.0  # Default 5 km
-        auto_price, auto_delivery_time = auto_calculate_courier_delivery_price(distance)
+            if order:
+                # Avtomatik narx va vaqt hisoblash
+                distance = float(order['delivery_distance']) if order['delivery_distance'] else 5.0
+                auto_price, auto_delivery_time = auto_calculate_courier_delivery_price(distance)
 
-        # Buyurtmani yangilash
-        cur.execute("""
-            UPDATE orders 
-            SET status='on_way', courier_id=?, courier_price=?, courier_delivery_minutes=?, delivery_price=?
-            WHERE id=? AND status='ready'
-        """, (courier_id, auto_price, auto_delivery_time, auto_price, order_id))
+                # Buyurtmani yangilash
+                cur.execute("""
+                    UPDATE orders 
+                    SET status='on_way', courier_id=?, courier_price=?, courier_delivery_minutes=?, delivery_price=?
+                    WHERE id=? AND status='ready'
+                """, (courier_id, auto_price, auto_delivery_time, auto_price, order_id))
 
-        conn.commit()
-        flash(f"Buyurtma olib ketildi! Avtomatik narx: {auto_price:,} so'm, Vaqt: {auto_delivery_time} daqiqa", "success")
-    else:
-        flash("Buyurtma topilmadi yoki allaqachon olingan!", "error")
+                flash(f"Buyurtma olib ketildi! Avtomatik narx: {auto_price:,} so'm, Vaqt: {auto_delivery_time} daqiqa", "success")
+            else:
+                flash("Buyurtma topilmadi yoki allaqachon olingan!", "error")
 
-    conn.close()
+    except Exception as e:
+        app_logger.error(f"Courier take order error: {str(e)}")
+        flash("Buyurtmani olishda xatolik yuz berdi.", "error")
+
     return redirect(url_for("courier_dashboard"))
 
 @app.route("/courier/order/<int:order_id>/delivered", methods=["POST"])
@@ -4125,12 +4138,12 @@ if __name__ == '__main__':
         print(f"Server {port} portda ishga tushmoqda...")
 
         # Flask app konfiguratsiyasi
-        app.config['DEBUG'] = True
-        app.config['TEMPLATES_AUTO_RELOAD'] = True
+        app.config['DEBUG'] = False
+        app.config['TEMPLATES_AUTO_RELOAD'] = False
 
         # Serverni ishga tushirish
         print("Flask server ishga tushmoqda...")
-        app.run(debug=True, host='0.0.0.0', port=port, threaded=True)
+        app.run(debug=False, host='0.0.0.0', port=port, threaded=True, use_reloader=False)
 
     except KeyboardInterrupt:
         print("\nServer to'xtatildi (Ctrl+C)")

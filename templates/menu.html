@@ -154,7 +154,7 @@
 
 <!-- Floating Cart Icon -->
 {% if current_page == 'menu' %}
-<a href="{{ url_for('view_cart') }}" class="floating-cart-icon">
+<a href="{{ url_for('view_cart') }}" class="floating-cart-icon" id="floating-cart">
     <span class="cart-icon">🛒</span>
     <span class="cart-badge-floating" id="cart-badge">0</span>
 </a>
@@ -918,6 +918,51 @@
         width: 95vw;
     }
 }
+
+/* Toast notification styles */
+.toast-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #48bb78; /* Default to success */
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    z-index: 1050;
+    opacity: 0;
+    transform: translateY(-100%);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+}
+
+.toast-notification.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.toast-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.toast-icon {
+    font-size: 18px;
+}
+
+.toast-message {
+    font-size: 0.95rem;
+}
+
+.toast-success { background-color: #48bb78; }
+.toast-error { background-color: #f56565; }
+.toast-info { background-color: #4299e1; }
+.toast-warning { background-color: #ed8936; }
+
 </style>
 
 <script>
@@ -1098,14 +1143,104 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
-/* Sahifa yuklanganda barcha mahsulotlarni ko'rsatish */
-document.addEventListener('DOMContentLoaded', function() {
-    showCategory('all');
-    updateCartBadge();
-});
+// Sahifa yuklangandan keyin cart sonini yangilash
+    window.addEventListener('DOMContentLoaded', function() {
+        updateCartCount();
+        updateFloatingCartIcon();
+    });
+
+    // Floating cart iconini yangilash
+    function updateFloatingCartIcon() {
+        fetch('/api/cart-count')
+        .then(response => response.json())
+        .then(data => {
+            const floatingCartBadge = document.getElementById('cart-badge-floating');
+            const floatingCart = document.getElementById('floating-cart');
+
+            if (floatingCartBadge && floatingCart) {
+                floatingCartBadge.textContent = data.count || 0;
+
+                if (data.count > 0) {
+                    floatingCartBadge.classList.add('show');
+                    floatingCart.style.display = 'flex';
+                } else {
+                    floatingCartBadge.classList.remove('show');
+                    // Cart bo'sh bo'lsa ham iconni ko'rsatish, faqat badge yashirish
+                    floatingCart.style.display = 'flex';
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Cart count olishda xatolik:', error);
+        });
+    }
+
+    // Add to cart funksiyasini yangilash
+    function addToCartAjax(menuItemId, quantity = 1) {
+        const formData = new FormData();
+        formData.append('menu_item_id', menuItemId);
+        formData.append('quantity', quantity);
+
+        fetch('/add_to_cart', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Cart count ni yangilash
+                updateCartCount();
+                updateFloatingCartIcon();
+
+                // Success animatsiyasi
+                showToast(data.message || 'Mahsulot qo\'shildi!', 'success');
+
+                // Floating cart animation
+                const floatingCart = document.getElementById('floating-cart');
+                if (floatingCart) {
+                    floatingCart.style.transform = 'scale(1.2)';
+                    setTimeout(() => {
+                        floatingCart.style.transform = 'scale(1)';
+                    }, 200);
+                }
+            } else {
+                showToast(data.message || 'Xatolik yuz berdi', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Add to cart error:', error);
+            showToast('Savatchaga qo\'shishda xatolik', 'error');
+        });
+    }
+
+    // Toast notification funksiyasi
+    function showToast(message, type = 'info') {
+        const toast = document.createElement('div');
+        toast.className = `toast-notification toast-${type}`;
+        toast.innerHTML = `
+            <div class="toast-content">
+                <span class="toast-icon">${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span>
+                <span class="toast-message">${message}</span>
+            </div>
+        `;
+
+        document.body.appendChild(toast);
+
+        // Show animation
+        setTimeout(() => toast.classList.add('show'), 100);
+
+        // Auto remove
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => document.body.removeChild(toast), 300);
+        }, 3000);
+    }
 
 // Savatcha badge-ni yangilash
-function updateCartBadge() {
+function updateCartCount() {
     fetch('/api/cart-count')
         .then(response => response.json())
         .then(data => {
@@ -1125,11 +1260,28 @@ function updateCartBadge() {
 }
 
 // Savatcha qo'shilganda badge-ni yangilash
-document.addEventListener('submit', function(e) {
-    if (e.target.action && e.target.action.includes('add_to_cart')) {
-        setTimeout(updateCartBadge, 500); // 500ms kechikish bilan yangilash
-    }
+// Form submit eventni tinglash va AJAX chaqiruvini o'rash
+document.querySelectorAll('form[action*="/add_to_cart"]').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault(); // Default submitni oldini olish
+        const menuItemId = this.querySelector('input[name="menu_item_id"]').value;
+        const quantity = this.querySelector('input[name="quantity"]').value || 1;
+        addToCartAjax(menuItemId, quantity);
+    });
 });
+
+// Modal form submitni tinglash
+const modalCartForm = document.getElementById('modalCartForm');
+if (modalCartForm) {
+    modalCartForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const menuItemId = document.getElementById('modalItemId').value;
+        const quantity = document.getElementById('modalQuantity').value || 1;
+        addToCartAjax(menuItemId, quantity);
+        closeItemModal(); // Modalni yopish
+    });
+}
+
 
 // Baho berish modal
 let currentRatingItemId = null;

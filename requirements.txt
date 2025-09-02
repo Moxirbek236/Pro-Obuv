@@ -12,3 +12,8 @@ pytz
 qrcode[pil]
 requests
 requests
+celery
+flask-compress
+flask-cors
+flask-limiter
+python-dotenv
