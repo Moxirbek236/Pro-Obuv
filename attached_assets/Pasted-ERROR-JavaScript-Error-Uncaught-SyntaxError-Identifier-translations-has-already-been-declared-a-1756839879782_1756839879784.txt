@@ -1,0 +1,28 @@
+ERROR: JavaScript Error: Uncaught SyntaxError: Identifier 'translations' has already been declared at https://be2efde8-2011-44ba-8349-63d8ec2924d2-00-2z8sl9ccrxfw8.janeway.replit.dev/super-admin/system:243
+ERROR: Filial bahosini hisoblashda xatolik: tuple indices must be integers or slices, not str
+ERROR: Filial bahosini hisoblashda xatolik: tuple indices must be integers or slices, not str
+ERROR: Filial bahosini hisoblashda xatolik: tuple indices must be integers or slices, not str
+ERROR: Filial bahosini hisoblashda xatolik: tuple indices must be integers or slices, not str
+ERROR: Filial bahosini hisoblashda xatolik: tuple indices must be integers or slices, not str
+ERROR: Filial bahosini hisoblashda xatolik: tuple indices must be integers or slices, not str
+ERROR: Super admin dashboard xatoligi: 'tuple object' has no attribute 'password_hash'
+ERROR: JavaScript Error: Uncaught SyntaxError: Identifier 'translations' has already been declared at https://be2efde8-2011-44ba-8349-63d8ec2924d2-00-2z8sl9ccrxfw8.janeway.replit.dev/super-admin-dashboard-ultimate-m4st3r:1205
+ERROR: JavaScript Error: Uncaught SyntaxError: Identifier 'translations' has already been declared at https://be2efde8-2011-44ba-8349-63d8ec2924d2-00-2z8sl9ccrxfw8.janeway.replit.dev/super-admin/analytics:244
+ERROR: Filial bahosini hisoblashda xatolik: tuple indices must be integers or slices, not str
+ERROR: Filial bahosini hisoblashda xatolik: tuple indices must be integers or slices, not str
+ERROR: Filial bahosini hisoblashda xatolik: tuple indices must be integers or slices, not str
+ERROR: Filial bahosini hisoblashda xatolik: tuple indices must be integers or slices, not str
+ERROR: Filial bahosini hisoblashda xatolik: tuple indices must be integers or slices, not str
+ERROR: Filial bahosini hisoblashda xatolik: tuple indices must be integers or slices, not str
+ERROR: Super admin dashboard xatoligi: 'tuple object' has no attribute 'password_hash'
+ERROR: JavaScript Error: Uncaught SyntaxError: Identifier 'translations' has already been declared at https://be2efde8-2011-44ba-8349-63d8ec2924d2-00-2z8sl9ccrxfw8.janeway.replit.dev/super-admin-dashboard-ultimate-m4st3r:1196
+ERROR: JavaScript Error: Uncaught SyntaxError: Identifier 'translations' has already been declared at https://be2efde8-2011-44ba-8349-63d8ec2924d2-00-2z8sl9ccrxfw8.janeway.replit.dev/super-admin/reports:244
+ERROR: Filial bahosini hisoblashda xatolik: tuple indices must be integers or slices, not str
+ERROR: Filial bahosini hisoblashda xatolik: tuple indices must be integers or slices, not str
+ERROR: Filial bahosini hisoblashda xatolik: tuple indices must be integers or slices, not str
+ERROR: Filial bahosini hisoblashda xatolik: tuple indices must be integers or slices, not str
+ERROR: Filial bahosini hisoblashda xatolik: tuple indices must be integers or slices, not str
+ERROR: Filial bahosini hisoblashda xatolik: tuple indices must be integers or slices, not str
+ERROR: Super admin dashboard xatoligi: 'tuple object' has no attribute 'password_hash'
+ERROR: JavaScript Error: Uncaught SyntaxError: Identifier 'translations' has already been declared at https://be2efde8-2011-44ba-8349-63d8ec2924d2-00-2z8sl9ccrxfw8.janeway.replit.dev/super-admin-dashboard-ultimate-m4st3r:1196
+ERROR: JavaScript Error: Uncaught SyntaxError: Identifier 'translations' has already been declared at https://be2efde8-2011-44ba-8349-63d8ec2924d2-00-2z8sl9ccrxfw8.janeway.replit.dev/super-admin/logs:244
