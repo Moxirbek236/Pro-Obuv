@@ -701,5 +701,20 @@
         "jami": 12015.0
       }
     ]
+  },
+  {
+    "ism": "Munira Raximberdiyeva",
+    "buyurtma_raqami": 58,
+    "buyurtma_vaqti": "2025-09-02 13:36:17",
+    "buyurtma_mahsulotlari": [
+      {
+        "nomi": "Lagmon",
+        "miqdori": 1,
+        "asl_narxi": 22000.0,
+        "skidka_foizi": 15.0,
+        "yakuniy_narxi": 18700.0,
+        "jami": 18700.0
+      }
+    ]
   }
 ]
