@@ -841,7 +841,13 @@ def get_cart_items(conn, session_id, user_id=None):
     cur = conn.cursor()
     if user_id:
         cur.execute("""
-            SELECT ci.id, ci.menu_item_id, mi.name, mi.price, ci.quantity, (mi.price * ci.quantity) as total
+            SELECT ci.id, ci.menu_item_id, mi.name, mi.price, ci.quantity, 
+                   COALESCE(mi.discount_percentage, 0) as discount_percentage,
+                   CASE 
+                       WHEN COALESCE(mi.discount_percentage, 0) > 0 
+                       THEN (mi.price * (100 - COALESCE(mi.discount_percentage, 0)) / 100) * ci.quantity
+                       ELSE mi.price * ci.quantity
+                   END as total
             FROM cart_items ci
             JOIN menu_items mi ON ci.menu_item_id = mi.id
             WHERE ci.user_id = ?
@@ -849,7 +855,13 @@ def get_cart_items(conn, session_id, user_id=None):
         """, (user_id,))
     else:
         cur.execute("""
-            SELECT ci.id, ci.menu_item_id, mi.name, mi.price, ci.quantity, (mi.price * ci.quantity) as total
+            SELECT ci.id, ci.menu_item_id, mi.name, mi.price, ci.quantity, 
+                   COALESCE(mi.discount_percentage, 0) as discount_percentage,
+                   CASE 
+                       WHEN COALESCE(mi.discount_percentage, 0) > 0 
+                       THEN (mi.price * (100 - COALESCE(mi.discount_percentage, 0)) / 100) * ci.quantity
+                       ELSE mi.price * ci.quantity
+                   END as total
             FROM cart_items ci
             JOIN menu_items mi ON ci.menu_item_id = mi.id
             WHERE ci.session_id = ?
@@ -862,14 +874,26 @@ def get_cart_total(conn, session_id, user_id=None):
     cur = conn.cursor()
     if user_id:
         cur.execute("""
-            SELECT SUM(mi.price * ci.quantity)
+            SELECT SUM(
+                CASE 
+                    WHEN COALESCE(mi.discount_percentage, 0) > 0 
+                    THEN (mi.price * (100 - COALESCE(mi.discount_percentage, 0)) / 100) * ci.quantity
+                    ELSE mi.price * ci.quantity
+                END
+            )
             FROM cart_items ci
             JOIN menu_items mi ON ci.menu_item_id = mi.id
             WHERE ci.user_id = ?
         """, (user_id,))
     else:
         cur.execute("""
-            SELECT SUM(mi.price * ci.quantity)
+            SELECT SUM(
+                CASE 
+                    WHEN COALESCE(mi.discount_percentage, 0) > 0 
+                    THEN (mi.price * (100 - COALESCE(mi.discount_percentage, 0)) / 100) * ci.quantity
+                    ELSE mi.price * ci.quantity
+                END
+            )
             FROM cart_items ci
             JOIN menu_items mi ON ci.menu_item_id = mi.id
             WHERE ci.session_id = ?
@@ -1551,17 +1575,25 @@ def place_order():
         # Savatchadagi mahsulotlarni order_details ga ko'chirish
         order_items_for_json = []
         for item in cart_items:
+            # Skidka narxini hisoblash
+            discount_percentage = item.get('discount_percentage', 0) or 0
+            final_price = item['price']
+            if discount_percentage > 0:
+                final_price = item['price'] * (100 - discount_percentage) / 100
+
             cur.execute("""
                 INSERT INTO order_details (order_id, menu_item_id, quantity, price)
                 VALUES (?, ?, ?, ?)
-            """, (order_id, item['menu_item_id'], item['quantity'], item['price']))
+            """, (order_id, item['menu_item_id'], item['quantity'], final_price))
 
             # JSON uchun mahsulot ma'lumotlarini to'plash
             order_items_for_json.append({
                 'nomi': item['name'],
                 'miqdori': item['quantity'],
-                'narxi': item['price'],
-                'jami': item['total']
+                'asl_narxi': item['price'],
+                'skidka_foizi': discount_percentage,
+                'yakuniy_narxi': final_price,
+                'jami': final_price * item['quantity']
             })
 
         # Chek yaratish
