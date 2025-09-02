@@ -43,7 +43,7 @@ args = "export FLASK_APP=app.py"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python -m pip install --quiet -r requirements.txt"
+args = "upm add -q flask werkzeug python-dotenv flask-sqlalchemy bcrypt pytz qrcode requests celery flask-compress flask-cors flask-limiter redis gunicorn psutil apscheduler"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
@@ -64,7 +64,7 @@ args = "export FLASK_APP=app.py"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python -m pip install --quiet -r requirements.txt"
+args = "upm add -q flask werkzeug python-dotenv flask-sqlalchemy bcrypt pytz qrcode requests celery flask-compress flask-cors flask-limiter redis gunicorn psutil apscheduler"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
