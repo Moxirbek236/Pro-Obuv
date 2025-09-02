@@ -4147,7 +4147,6 @@ def get_config():
     })
 
 @app.route("/api/health")
-@performance_monitor
 def health_check():
     """System health check"""
     try:
