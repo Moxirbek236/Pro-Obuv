@@ -1016,7 +1016,7 @@ body.dark-theme table th {
 }
 
 body.dark-theme table td {
-  color: var(--dark-text-primary) !important;
+  color: white;
   border-bottom-color: rgba(148, 163, 184, 0.2);
   background: rgba(30, 41, 59, 0.6) !important;
 }
