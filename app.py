@@ -180,8 +180,65 @@ if os.environ.get('FLASK_ENV') == 'development':
 # Upload papkasini yaratish
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-# Logs papkasini yaratish va logging ni sozlash
+# Logs papkasini yaratish
 os.makedirs('logs', exist_ok=True)
+
+# Advanced logging konfiguratsiyasi - funksiyani oldinroq e'lon qilish
+def setup_logging():
+    """Professional logging setup with structured logging"""
+    # Detailed formatter
+    detailed_formatter = logging.Formatter(
+        '%(asctime)s | %(levelname)s | %(name)s | %(funcName)s:%(lineno)d | %(message)s'
+    )
+    
+    # Simple formatter
+    simple_formatter = logging.Formatter(
+        '%(asctime)s - %(levelname)s - %(message)s'
+    )
+
+    try:
+        # Rotating file handler (maksimal 10MB, 5 ta backup)
+        file_handler = RotatingFileHandler('logs/restaurant.log', maxBytes=10485760, backupCount=5)
+        file_handler.setFormatter(detailed_formatter)
+        file_handler.setLevel(logging.INFO)
+
+        # Error file handler
+        error_handler = RotatingFileHandler('logs/errors.log', maxBytes=10485760, backupCount=5)
+        error_handler.setFormatter(detailed_formatter)
+        error_handler.setLevel(logging.ERROR)
+
+        # Console handler - faqat development uchun
+        console_handler = logging.StreamHandler()
+        if Config.IS_DEVELOPMENT:
+            console_handler.setFormatter(simple_formatter)
+            console_handler.setLevel(logging.INFO)
+        else:
+            console_handler.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))
+            console_handler.setLevel(logging.ERROR)
+
+        # Root logger konfiguratsiya
+        root_logger = logging.getLogger()
+        root_logger.setLevel(logging.INFO if Config.IS_DEVELOPMENT else logging.WARNING)
+        root_logger.addHandler(file_handler)
+        root_logger.addHandler(error_handler)
+        root_logger.addHandler(console_handler)
+
+        # Flask app logger
+        app.logger.setLevel(logging.INFO if Config.IS_DEVELOPMENT else logging.ERROR)
+        app.logger.addHandler(error_handler)
+
+        # Werkzeug loglarni sozlash
+        werkzeug_logger = logging.getLogger('werkzeug')
+        werkzeug_logger.setLevel(logging.WARNING)
+
+        return logging.getLogger('restaurant_app')
+        
+    except Exception as e:
+        # Fallback logging
+        print(f"Logging setup failed: {e}")
+        return logging.getLogger('restaurant_app')
+
+# Logging ni sozlash
 app_logger = setup_logging()
 
 # Location service instance - xatolik bo'lsa fallback yaratish
@@ -310,61 +367,6 @@ DB_PATH = os.path.join(os.path.dirname(__file__), "database.sqlite3")
 
 import logging
 from logging.handlers import RotatingFileHandler, SMTPHandler
-
-# Advanced logging konfiguratsiyasi
-def setup_logging():
-    """Professional logging setup with structured logging"""
-    # Detailed formatter
-    detailed_formatter = logging.Formatter(
-        '%(asctime)s | %(levelname)s | %(name)s | %(funcName)s:%(lineno)d | %(message)s'
-    )
-    
-    # Simple formatter
-    simple_formatter = logging.Formatter(
-        '%(asctime)s - %(levelname)s - %(message)s'
-    )
-
-    try:
-        # Rotating file handler (maksimal 10MB, 5 ta backup)
-        file_handler = RotatingFileHandler('logs/restaurant.log', maxBytes=10485760, backupCount=5)
-        file_handler.setFormatter(detailed_formatter)
-        file_handler.setLevel(logging.INFO)
-
-        # Error file handler
-        error_handler = RotatingFileHandler('logs/errors.log', maxBytes=10485760, backupCount=5)
-        error_handler.setFormatter(detailed_formatter)
-        error_handler.setLevel(logging.ERROR)
-
-        # Console handler - faqat development uchun
-        console_handler = logging.StreamHandler()
-        if Config.IS_DEVELOPMENT:
-            console_handler.setFormatter(simple_formatter)
-            console_handler.setLevel(logging.INFO)
-        else:
-            console_handler.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))
-            console_handler.setLevel(logging.ERROR)
-
-        # Root logger konfiguratsiya
-        root_logger = logging.getLogger()
-        root_logger.setLevel(logging.INFO if Config.IS_DEVELOPMENT else logging.WARNING)
-        root_logger.addHandler(file_handler)
-        root_logger.addHandler(error_handler)
-        root_logger.addHandler(console_handler)
-
-        # Flask app logger
-        app.logger.setLevel(logging.INFO if Config.IS_DEVELOPMENT else logging.ERROR)
-        app.logger.addHandler(error_handler)
-
-        # Werkzeug loglarni sozlash
-        werkzeug_logger = logging.getLogger('werkzeug')
-        werkzeug_logger.setLevel(logging.WARNING)
-
-        return logging.getLogger('restaurant_app')
-        
-    except Exception as e:
-        # Fallback logging
-        print(f"Logging setup failed: {e}")
-        return logging.getLogger('restaurant_app')
 
 
 
