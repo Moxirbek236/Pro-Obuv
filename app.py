@@ -66,19 +66,25 @@ class Config:
     IS_PRODUCTION = ENVIRONMENT == 'production'
     
     # Database configuration
-    DATABASE_URL = os.environ.get('DATABASE_URL', 'sqlite:///restaurant.db')
+    DATABASE_URL = os.environ.get('DATABASE_URL', 'sqlite:///database.sqlite3')
     SQLALCHEMY_DATABASE_URI = DATABASE_URL
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_ENGINE_OPTIONS = {
-        'pool_timeout': 30,
-        'pool_recycle': 3600,
-        'pool_pre_ping': True,
-        'connect_args': {
-            'check_same_thread': False,
-            'timeout': 60,
-            'isolation_level': None
+    
+    # SQLite-specific engine options
+    if DATABASE_URL.startswith('sqlite'):
+        SQLALCHEMY_ENGINE_OPTIONS = {
+            'connect_args': {
+                'check_same_thread': False,
+                'timeout': 60
+            }
         }
-    }
+    else:
+        # PostgreSQL options (if using PostgreSQL)
+        SQLALCHEMY_ENGINE_OPTIONS = {
+            'pool_timeout': 30,
+            'pool_recycle': 3600,
+            'pool_pre_ping': True
+        }
     
     # Security configuration
     SECRET_KEY = os.environ.get("SECRET_KEY", secrets.token_urlsafe(32))
@@ -407,8 +413,13 @@ def after_request(response):
 
 
 AVG_PREP_MINUTES = int(os.environ.get("AVG_PREP_MINUTES", "7"))
-db = SQLAlchemy(app)
 # o'rtacha tayyorlanish vaqti (daqiqalarda)
+
+# Initialize SQLAlchemy only if using PostgreSQL
+if Config.DATABASE_URL.startswith('postgresql'):
+    db = SQLAlchemy(app)
+else:
+    db = None  # Use custom SQLite connection pool instead
 
 # O'zbekiston vaqt zonasi
 TASHKENT_TZ = pytz.timezone('Asia/Tashkent')
@@ -4061,8 +4072,14 @@ def view_receipt(ticket_no):
 
 
 
-with app.app_context():
-    db.create_all()
+# Initialize database tables
+if db is not None:
+    # Using SQLAlchemy (PostgreSQL)
+    with app.app_context():
+        db.create_all()
+else:
+    # Using custom SQLite setup
+    init_db()
 
 @app.route("/debug")
 @login_required
