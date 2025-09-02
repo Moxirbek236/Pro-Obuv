@@ -1843,56 +1843,55 @@ def admin_monitor():
         return redirect(url_for("index"))
 
     cleanup_expired_orders()
-    conn = get_db()
-    cur = conn.cursor()
-
+    
     try:
-        # Waiting orders - kutayotgan buyurtmalar
-        cur.execute("""SELECT o.*, 
-                   GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
-            FROM orders o
-            LEFT JOIN order_details od ON o.id = od.order_id
-            LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
-            WHERE o.status='waiting'
-            GROUP BY o.id
-            ORDER BY o.eta_time ASC
-        """)
-        waiting = cur.fetchall()
+        with db_pool.get_connection() as conn:
+            cur = conn.cursor()
 
-        # Ready orders - tayyor buyurtmalar
-        cur.execute("""SELECT o.*, 
-                   GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
-            FROM orders o
-            LEFT JOIN order_details od ON o.id = od.order_id
-            LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
-            WHERE o.status='ready'
-            GROUP BY o.id
-            ORDER BY o.eta_time ASC
-        """)
-        ready = cur.fetchall()
+            # Waiting orders - kutayotgan buyurtmalar
+            cur.execute("""SELECT o.*, 
+                       GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
+                FROM orders o
+                LEFT JOIN order_details od ON o.id = od.order_id
+                LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
+                WHERE o.status='waiting'
+                GROUP BY o.id
+                ORDER BY o.eta_time ASC
+            """)
+            waiting = cur.fetchall() or []
 
-        # Served orders in last 5 minutes - so'nggi 5 daqiqada berilgan buyurtmalar
-        five_min_ago = (get_current_time() - datetime.timedelta(minutes=5)).isoformat()
-        cur.execute("""SELECT o.*, 
-                   GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
-            FROM orders o
-            LEFT JOIN order_details od ON o.id = od.order_id
-            LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
-            WHERE o.status='served' AND o.created_at >= ?
-            GROUP BY o.id
-            ORDER BY o.created_at DESC
-        """, (five_min_ago,))
-        served_recent = cur.fetchall()
+            # Ready orders - tayyor buyurtmalar
+            cur.execute("""SELECT o.*, 
+                       GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
+                FROM orders o
+                LEFT JOIN order_details od ON o.id = od.order_id
+                LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
+                WHERE o.status='ready'
+                GROUP BY o.id
+                ORDER BY o.eta_time ASC
+            """)
+            ready = cur.fetchall() or []
 
-        conn.close()
-        return render_template('admin_monitor.html', 
-                             waiting=waiting or [], 
-                             ready=ready or [], 
-                             served_recent=served_recent or [])
+            # Served orders in last 5 minutes - so'nggi 5 daqiqada berilgan buyurtmalar
+            five_min_ago = (get_current_time() - datetime.timedelta(minutes=5)).isoformat()
+            cur.execute("""SELECT o.*, 
+                       GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
+                FROM orders o
+                LEFT JOIN order_details od ON o.id = od.order_id
+                LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
+                WHERE o.status='served' AND o.created_at >= ?
+                GROUP BY o.id
+                ORDER BY o.created_at DESC
+            """, (five_min_ago,))
+            served_recent = cur.fetchall() or []
+
+            return render_template('admin_monitor.html', 
+                                 waiting=[dict(w) for w in waiting], 
+                                 ready=[dict(r) for r in ready], 
+                                 served_recent=[dict(s) for s in served_recent])
 
     except Exception as e:
         app_logger.error(f"Monitor sahifasida xatolik: {str(e)}")
-        conn.close()
         return render_template('admin_monitor.html', 
                              waiting=[], 
                              ready=[], 

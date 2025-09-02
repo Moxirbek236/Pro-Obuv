@@ -1,293 +1,317 @@
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Buyurtmalar Monitori - TV</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  
-  <style>
-    body {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        margin: 0;
-        padding: 0;
-        overflow-x: hidden;
-        min-height: 100vh;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buyurtmalar Monitori - TV</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
 
-    .monitor-container {
-        padding: 20px;
-        max-width: 100%;
-        margin: 0 auto;
-        min-height: 100vh;
-    }
-
-    .monitor-header {
-        text-align: center;
-        color: white;
-        margin-bottom: 30px;
-        background: rgba(0,0,0,0.3);
-        padding: 20px;
-        border-radius: 15px;
-        backdrop-filter: blur(10px);
-    }
-
-    .monitor-header h1 {
-        font-size: 3rem;
-        margin: 0;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-    }
-
-    .monitor-section {
-        background: rgba(255,255,255,0.95);
-        border-radius: 15px;
-        padding: 20px;
-        margin-bottom: 20px;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255,255,255,0.2);
-    }
-
-    .monitor-section h4 {
-        color: #2d3748;
-        font-size: 2rem;
-        margin-bottom: 15px;
-        text-align: center;
-        padding: 15px;
-        border-radius: 10px;
-        margin-top: 0;
-    }
-
-    .waiting-section h4 {
-        background: linear-gradient(135deg, #ffa500 0%, #ff7b00 100%);
-        color: white;
-    }
-
-    .ready-section h4 {
-        background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-        color: white;
-    }
-
-    .served-section h4 {
-        background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
-        color: white;
-    }
-
-    .monitor-table {
-        width: 100%;
-        margin-bottom: 0;
-        background: white;
-        border-radius: 10px;
-        overflow: hidden;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-
-    .monitor-table thead th {
-        background: #2d3748;
-        color: white;
-        padding: 20px 15px;
-        text-align: center;
-        font-weight: 600;
-        border: none;
-        font-size: 1.3rem;
-    }
-
-    .row{
-        margin-top: 70px;
-    }
-    .monitor-table td {
-        border: 1px solid #e2e8f0;
-        vertical-align: middle;
-        padding: 20px 15px;
-        font-size: 1.2rem;
-    }
-
-    .table-warning {
-        background-color: #fff3cd !important;
-    }
-
-    .table-success {
-        background-color: #d1f2eb !important;
-    }
-
-    .table-info {
-        background-color: #cff4fc !important;
-    }
-
-    .ticket-number {
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: #2b6cb0;
-    }
-
-    .order-items {
-        font-size: 1.1rem;
-        color: #4a5568;
-        background: #f7fafc;
-        padding: 12px;
-        border-radius: 5px;
-        margin-top: 5px;
-    }
-
-    .no-orders {
-        text-align: center;
-        padding: 40px;
-        color: #718096;
-        font-size: 1.4rem;
-    }
-
-    /* TV ekrani uchun katta shrift */
-    .customer-name {
-        font-size: 1.3rem;
-        font-weight: 600;
-    }
-
-    .order-time {
-        font-size: 1.1rem;
-    }
-
-    /* Chap tarafdagi sana va soat */
-    .datetime-widget {
-        position: fixed; 
-        top: 20px; 
-        left: 20px; 
-        background: rgba(0,0,0,0.8); 
-        color: white; 
-        padding: 25px 35px; 
-        border-radius: 15px; 
-        font-weight: 600; 
-        z-index: 1000; 
-        backdrop-filter: blur(10px); 
-        border: 2px solid rgba(255,255,255,0.2);
-        text-align: center;
-    }
-
-    .current-date {
-        font-size: 1.4rem; 
-        margin-bottom: 8px; 
-        color: #ffd700;
-    }
-
-    .current-time {
-        font-size: 2.5rem; 
-        font-weight: 700; 
-        color: #00ff88;
-        margin-bottom: 8px;
-    }
-
-    .current-year {
-        font-size: 1.2rem;
-        color: #87ceeb;
-    }
-
-    /* O'ng tarafdagi ob-havo */
-    .weather-widget {
-        position: fixed; 
-        top: 20px; 
-        right: 20px; 
-        background: rgba(0,0,0,0.8); 
-        color: white; 
-        padding: 25px 35px; 
-        border-radius: 15px; 
-        font-weight: 600; 
-        z-index: 1000; 
-        backdrop-filter: blur(10px); 
-        border: 2px solid rgba(255,255,255,0.2); 
-        text-align: center;
-        min-width: 200px;
-        height: 192px;
-    }
-
-    .weather-location {
-        font-size: 1.3rem;
-        color: #87ceeb;
-        margin-bottom: 10px;
-    }
-
-    .temperature {
-        font-size: 2.5rem; 
-        margin-bottom: 8px; 
-        color: #ff6b6b; 
-        font-weight: 700;
-    }
-
-    .weather-desc {
-        font-size: 1.3rem; 
-        color: #74c0fc;
-        margin-bottom: 8px;
-    }
-
-    .weather-details {
-        font-size: 1rem;
-        color: #ffffff;
-        opacity: 0.8;
-    }
-
-    @media (max-width: 768px) {
         .monitor-container {
-            padding: 15px;
+            padding: 20px;
+            max-width: 100%;
+            margin: 0 auto;
+            min-height: 100vh;
         }
-        
+
+        .monitor-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            background: rgba(0,0,0,0.3);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
         .monitor-header h1 {
-            font-size: 2.2rem;
+            font-size: 3rem;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
-        
-        .monitor-section h4 {
-            font-size: 1.5rem;
+
+        .monitor-section {
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
         }
-        
+
+        .section-title {
+            color: #2d3748;
+            font-size: 2rem;
+            margin-bottom: 15px;
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 0;
+        }
+
+        .waiting-section .section-title {
+            background: linear-gradient(135deg, #ffa500 0%, #ff7b00 100%);
+            color: white;
+        }
+
+        .ready-section .section-title {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+        }
+
+        .served-section .section-title {
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+            color: white;
+        }
+
+        .monitor-table {
+            width: 100%;
+            margin-bottom: 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
         .monitor-table thead th {
-            font-size: 1.1rem;
-            padding: 15px 10px;
+            background: #2d3748;
+            color: white;
+            padding: 20px 15px;
+            text-align: center;
+            font-weight: 600;
+            border: none;
+            font-size: 1.3rem;
         }
-        
+
         .monitor-table td {
-            padding: 15px 10px;
-            font-size: 1rem;
+            border: 1px solid #e2e8f0;
+            vertical-align: middle;
+            padding: 20px 15px;
+            font-size: 1.2rem;
+            text-align: center;
         }
-        
+
+        .table-warning {
+            background-color: #fff3cd !important;
+        }
+
+        .table-success {
+            background-color: #d1f2eb !important;
+        }
+
+        .table-info {
+            background-color: #cff4fc !important;
+        }
+
         .ticket-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2b6cb0;
+        }
+
+        .customer-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .order-time {
+            font-size: 1.1rem;
+        }
+
+        .order-items {
+            font-size: 1.1rem;
+            color: #4a5568;
+            background: #f7fafc;
+            padding: 12px;
+            border-radius: 5px;
+            margin-top: 5px;
+            text-align: left;
+        }
+
+        .no-orders {
+            text-align: center;
+            padding: 40px;
+            color: #718096;
             font-size: 1.4rem;
         }
 
-        .datetime-widget, .weather-widget {
-            padding: 15px 20px;
+        .datetime-widget {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 25px 35px;
+            border-radius: 15px;
+            font-weight: 600;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.2);
+            text-align: center;
         }
 
         .current-date {
-            font-size: 1.1rem;
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+            color: #ffd700;
         }
 
         .current-time {
-            font-size: 1.8rem;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #00ff88;
+            margin-bottom: 8px;
+        }
+
+        .current-year {
+            font-size: 1.2rem;
+            color: #87ceeb;
+        }
+
+        .weather-widget {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 25px 35px;
+            border-radius: 15px;
+            font-weight: 600;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.2);
+            text-align: center;
+            min-width: 200px;
+            height: 192px;
+        }
+
+        .weather-location {
+            font-size: 1.3rem;
+            color: #87ceeb;
+            margin-bottom: 10px;
         }
 
         .temperature {
-            font-size: 1.8rem;
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+            color: #ff6b6b;
+            font-weight: 700;
         }
 
         .weather-desc {
+            font-size: 1.3rem;
+            color: #74c0fc;
+            margin-bottom: 8px;
+        }
+
+        .weather-details {
+            font-size: 1rem;
+            color: #ffffff;
+            opacity: 0.8;
+        }
+
+        .status-counter {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: rgba(255,255,255,0.9);
+            color: #2d3748;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
             font-size: 1.1rem;
         }
-    }
-  </style>
+
+        .auto-refresh-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 1rem;
+            z-index: 1000;
+        }
+
+        @media (max-width: 768px) {
+            .monitor-container {
+                padding: 15px;
+            }
+
+            .monitor-header h1 {
+                font-size: 2.2rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .monitor-table thead th {
+                font-size: 1.1rem;
+                padding: 15px 10px;
+            }
+
+            .monitor-table td {
+                padding: 15px 10px;
+                font-size: 1rem;
+            }
+
+            .ticket-number {
+                font-size: 1.4rem;
+            }
+
+            .datetime-widget, .weather-widget {
+                padding: 15px 20px;
+            }
+
+            .current-date {
+                font-size: 1.1rem;
+            }
+
+            .current-time {
+                font-size: 1.8rem;
+            }
+
+            .temperature {
+                font-size: 1.8rem;
+            }
+
+            .weather-desc {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Chap tarafdagi sana va vaqt -->
+    <!-- Date and Time Widget -->
     <div class="datetime-widget">
         <div id="currentYear" class="current-year"></div>
         <div id="currentDate" class="current-date"></div>
         <div id="currentTime" class="current-time"></div>
     </div>
 
-    <!-- O'ng tarafdagi Toshkent ob-havosi -->
+    <!-- Weather Widget -->
     <div class="weather-widget">
         <div class="weather-location">🏙️ Toshkent</div>
         <div id="temperature" class="temperature">--°C</div>
         <div id="weatherDesc" class="weather-desc">Yuklanmoqda...</div>
         <div id="weatherDetails" class="weather-details"></div>
+    </div>
+
+    <!-- Auto Refresh Indicator -->
+    <div class="auto-refresh-indicator">
+        <span id="refreshTimer">Yangilanish: 30s</span>
     </div>
 
     <div class="monitor-container">
@@ -297,15 +321,16 @@
         </div>
 
         <div class="row" style="margin-top: 50px;">
-            <!-- Kutayotgan buyurtmalar -->
+            <!-- Waiting Orders -->
             <div class="col-12 col-lg-4">
                 <div class="monitor-section waiting-section">
-                    <h4>⏳ Kutayotgan ({{ waiting|length }})</h4>
+                    <div class="status-counter">{{ waiting|length }}</div>
+                    <h4 class="section-title">⏳ Kutayotgan</h4>
                     <div class="table-responsive">
-                        <table class="table table-bordered table-hover monitor-table">
+                        <table class="monitor-table">
                             <thead>
                                 <tr>
-                                    <th>#</th>
+                                    <th>№</th>
                                     <th>Ticket</th>
                                     <th>Mijoz</th>
                                     <th>Vaqt</th>
@@ -324,7 +349,7 @@
                                     <tr class="table-warning">
                                         <td colspan="4">
                                             <div class="order-items">
-                                                <strong>Buyurtma:</strong> {{ o['order_items'] }}
+                                                <strong>📋 Buyurtma:</strong> {{ o['order_items'] }}
                                             </div>
                                         </td>
                                     </tr>
@@ -333,7 +358,7 @@
                                 {% else %}
                                     <tr>
                                         <td colspan="4" class="no-orders">
-                                            Hozirda kutayotgan buyurtmalar yo'q
+                                            🎉 Kutayotgan buyurtmalar yo'q
                                         </td>
                                     </tr>
                                 {% endif %}
@@ -343,18 +368,19 @@
                 </div>
             </div>
 
-            <!-- Tayyor buyurtmalar -->
+            <!-- Ready Orders -->
             <div class="col-12 col-lg-4">
                 <div class="monitor-section ready-section">
-                    <h4>✅ Tayyor ({{ ready|length }})</h4>
+                    <div class="status-counter">{{ ready|length }}</div>
+                    <h4 class="section-title">✅ Tayyor</h4>
                     <div class="table-responsive">
-                        <table class="table table-bordered table-hover monitor-table">
+                        <table class="monitor-table">
                             <thead>
                                 <tr>
-                                    <th>#</th>
+                                    <th>№</th>
                                     <th>Ticket</th>
                                     <th>Mijoz</th>
-                                    <th>Vaqt</th>
+                                    <th>Tayyor vaqt</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -370,7 +396,7 @@
                                     <tr class="table-success">
                                         <td colspan="4">
                                             <div class="order-items">
-                                                <strong>Buyurtma:</strong> {{ o['order_items'] }}
+                                                <strong>📋 Mahsulotlar:</strong> {{ o['order_items'] }}
                                             </div>
                                         </td>
                                     </tr>
@@ -379,7 +405,7 @@
                                 {% else %}
                                     <tr>
                                         <td colspan="4" class="no-orders">
-                                            Hozirda tayyor buyurtmalar yo'q
+                                            🔄 Tayyor buyurtmalar yo'q
                                         </td>
                                     </tr>
                                 {% endif %}
@@ -389,15 +415,16 @@
                 </div>
             </div>
 
-            <!-- Berilgan buyurtmalar -->
+            <!-- Served Orders -->
             <div class="col-12 col-lg-4">
                 <div class="monitor-section served-section">
-                    <h4>🍽️ Berildi (So'nggi 5 daqiqa) ({{ served_recent|length }})</h4>
+                    <div class="status-counter">{{ served_recent|length }}</div>
+                    <h4 class="section-title">🍽️ Berildi (So'nggi 5 daqiqa)</h4>
                     <div class="table-responsive">
-                        <table class="table table-bordered table-hover monitor-table">
+                        <table class="monitor-table">
                             <thead>
                                 <tr>
-                                    <th>#</th>
+                                    <th>№</th>
                                     <th>Ticket</th>
                                     <th>Mijoz</th>
                                     <th>Berilgan vaqt</th>
@@ -416,7 +443,7 @@
                                     <tr class="table-info">
                                         <td colspan="4">
                                             <div class="order-items">
-                                                <strong>Mahsulotlar:</strong> {{ o['order_items'] }}
+                                                <strong>📋 Mahsulotlar:</strong> {{ o['order_items'] }}
                                             </div>
                                         </td>
                                     </tr>
@@ -425,7 +452,7 @@
                                 {% else %}
                                     <tr>
                                         <td colspan="4" class="no-orders">
-                                            So'nggi 5 daqiqada berilgan buyurtmalar yo'q
+                                            ✨ So'nggi 5 daqiqada berilgan buyurtmalar yo'q
                                         </td>
                                     </tr>
                                 {% endif %}
@@ -438,17 +465,15 @@
     </div>
 
     <script>
-        // Sana va vaqtni yangilash
+        let refreshCountdown = 30;
+        let refreshInterval;
+
+        // Update date and time
         function updateDateTime() {
             const now = new Date();
-            
-            // Toshkent vaqt zonasi
             const tashkentOptions = { timeZone: 'Asia/Tashkent' };
             
-            // Yil
             const year = now.toLocaleDateString('uz-UZ', { ...tashkentOptions, year: 'numeric' });
-            
-            // To'liq sana
             const dateOptions = { 
                 ...tashkentOptions,
                 month: 'long', 
@@ -456,8 +481,6 @@
                 weekday: 'long'
             };
             const dateString = now.toLocaleDateString('uz-UZ', dateOptions);
-            
-            // Vaqt
             const timeString = now.toLocaleTimeString('uz-UZ', {
                 ...tashkentOptions,
                 hour: '2-digit',
@@ -470,9 +493,8 @@
             document.getElementById('currentTime').textContent = timeString;
         }
 
-        // Toshkent ob-havosini olish
+        // Update weather
         function updateTashkentWeather() {
-            // Haqiqiy ob-havo API chaqiruvi (OpenWeatherMap yoki boshqa)
             fetch('https://api.openweathermap.org/data/2.5/weather?q=Tashkent,UZ&appid=57e2dc54a5dfd435e2bb7586af756faf&units=metric&lang=uz')
                 .then(response => {
                     if (!response.ok) {
@@ -488,18 +510,15 @@
                     
                     document.getElementById('temperature').textContent = `${temp}°C`;
                     document.getElementById('weatherDesc').textContent = `${getWeatherIcon(data.weather[0].main)} ${description}`;
-                    document.getElementById('weatherDetails').innerHTML = `
-                        💧 ${humidity}% | 💨 ${windSpeed} m/s
-                    `;
+                    document.getElementById('weatherDetails').innerHTML = `💧 ${humidity}% | 💨 ${windSpeed} m/s`;
                 })
                 .catch(error => {
-                    // API ishlamasa, simulyatsiya qilish
-                    console.log('API ishlamadi, simulyatsiya qilinmoqda');
+                    console.log('Weather API failed, using simulation');
                     simulateWeather();
                 });
         }
 
-        // Ob-havo ikonalari
+        // Weather icons
         function getWeatherIcon(main) {
             const icons = {
                 'Clear': '☀️',
@@ -514,7 +533,7 @@
             return icons[main] || '🌤️';
         }
 
-        // Ob-havo simulyatsiyasi (API ishlamasa)
+        // Weather simulation
         function simulateWeather() {
             const seasons = {
                 winter: { temp: [0, 10], conditions: ['☁️ Bulutli', '❄️ Qorli', '🌫️ Tumanli'] },
@@ -533,44 +552,48 @@
             const seasonData = seasons[season];
             const temp = Math.floor(Math.random() * (seasonData.temp[1] - seasonData.temp[0] + 1)) + seasonData.temp[0];
             const condition = seasonData.conditions[Math.floor(Math.random() * seasonData.conditions.length)];
-            const humidity = Math.floor(Math.random() * 40) + 30; // 30-70%
-            const windSpeed = Math.floor(Math.random() * 10) + 1; // 1-10 m/s
+            const humidity = Math.floor(Math.random() * 40) + 30;
+            const windSpeed = Math.floor(Math.random() * 10) + 1;
             
             document.getElementById('temperature').textContent = `${temp}°C`;
             document.getElementById('weatherDesc').textContent = condition;
-            document.getElementById('weatherDetails').innerHTML = `
-                💧 ${humidity}% | 💨 ${windSpeed} m/s
-            `;
+            document.getElementById('weatherDetails').innerHTML = `💧 ${humidity}% | 💨 ${windSpeed} m/s`;
         }
 
-        // Avtomatik yangilanish
-        function autoRefresh() {
-            console.log('Monitor sahifasi yangilanmoqda...');
-            location.reload();
+        // Auto refresh countdown
+        function startRefreshCountdown() {
+            refreshCountdown = 30;
+            refreshInterval = setInterval(() => {
+                refreshCountdown--;
+                document.getElementById('refreshTimer').textContent = `Yangilanish: ${refreshCountdown}s`;
+                
+                if (refreshCountdown <= 0) {
+                    console.log('Monitor sahifasi yangilanmoqda...');
+                    location.reload();
+                }
+            }, 1000);
         }
 
-        // Dastlabki ishga tushirish
-        updateDateTime();
-        updateTashkentWeather();
+        // Initialize
+        function initialize() {
+            updateDateTime();
+            updateTashkentWeather();
+            startRefreshCountdown();
+            
+            console.log('TV Monitor yuklandi:', new Date().toLocaleString('uz-UZ', {timeZone: 'Asia/Tashkent'}));
+            console.log('Kutayotgan buyurtmalar:', {{ waiting|length }});
+            console.log('Tayyor buyurtmalar:', {{ ready|length }});
+            console.log('Berilgan buyurtmalar:', {{ served_recent|length }});
+        }
 
-        // Har soniyada sana/vaqt yangilanishi
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', initialize);
+
+        // Update intervals
         setInterval(updateDateTime, 1000);
+        setInterval(updateTashkentWeather, 600000); // 10 minutes
 
-        // Har 10 daqiqada ob-havo yangilanishi
-        setInterval(updateTashkentWeather, 600000);
-
-        // Har 30 soniyada sahifa yangilanishi
-        setInterval(autoRefresh, 30000);
-
-        // Sahifa ko'rinishi o'zgarganda intervallarni boshqarish
-        document.addEventListener('visibilitychange', function() {
-            if (!document.hidden) {
-                updateDateTime();
-                updateTashkentWeather();
-            }
-        });
-
-        // Klaviatura orqali yangilash (F5 yoki R tugmasi)
+        // Keyboard shortcuts
         document.addEventListener('keydown', function(e) {
             if (e.key === 'F5' || (e.ctrlKey && e.key === 'r')) {
                 e.preventDefault();
@@ -578,11 +601,16 @@
             }
         });
 
-        // Console da debug ma'lumotlari
-        console.log('TV Monitor yuklandi:', new Date().toLocaleString('uz-UZ', {timeZone: 'Asia/Tashkent'}));
-        console.log('Kutayotgan buyurtmalar:', {{ waiting|length }});
-        console.log('Tayyor buyurtmalar:', {{ ready|length }});
-        console.log('Berilgan buyurtmalar:', {{ served_recent|length }});
+        // Page visibility handling
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                clearInterval(refreshInterval);
+            } else {
+                startRefreshCountdown();
+                updateDateTime();
+                updateTashkentWeather();
+            }
+        });
     </script>
 </body>
 </html>

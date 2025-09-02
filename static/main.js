@@ -2,7 +2,8 @@
 
 // Global o'zgaruvchilar
 let cartCount = 0;
-let currentPath = window.location.pathname;
+// Global current path tracking
+window.currentPath = window.currentPath || window.location.pathname;
 
 // Professional Translation System
 // Global translations object - check if already exists to prevent redeclaration
