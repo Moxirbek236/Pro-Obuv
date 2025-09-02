@@ -45,6 +45,15 @@
         </div>
     </div>
 
+    <!-- Navigation Menu -->
+    <div class="admin-nav">
+        <a href="{{ url_for('super_admin_dashboard') }}" class="nav-link active">🏠 Dashboard</a>
+        <a href="/super-admin/analytics" class="nav-link">📊 Analytics</a>
+        <a href="/super-admin/reports" class="nav-link">📈 Hisobotlar</a>
+        <a href="/super-admin/system" class="nav-link">⚙️ Tizim</a>
+        <a href="/super-admin/logs" class="nav-link">📝 Loglar</a>
+    </div>
+
     <!-- Tablar -->
     <div class="tabs-container">
         <div class="tabs">
@@ -1113,6 +1122,34 @@ document.addEventListener('DOMContentLoaded', function() {
     font-size: 1.2rem;
 }
 
+/* Navigation styles */
+.admin-nav {
+    display: flex;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    gap: 10px;
+}
+
+.nav-link {
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    text-decoration: none;
+}
+
 /* Mobile responsive */
 @media (max-width: 768px) {
     .super-admin-container {
@@ -1135,6 +1172,27 @@ document.addEventListener('DOMContentLoaded', function() {
     .admin-table th,
     .admin-table td {
         padding: 8px 4px;
+    }
+    
+    .admin-nav {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .nav-link {
+        text-align: center;
+        padding: 12px;
+    }
+    
+    .tabs {
+        flex-wrap: wrap;
+    }
+    
+    .tab-button {
+        flex: 1;
+        min-width: 120px;
+        font-size: 12px;
+        padding: 10px 5px;
     }
 }
 </style>
