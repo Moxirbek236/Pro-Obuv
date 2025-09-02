@@ -1866,40 +1866,6 @@ def remove_from_cart(cart_item_id):
     flash("Mahsulot savatchadan olib tashlandi.", "success")
     return redirect(url_for("cart"))
 
-@app.route("/api/cart-count")
-@rate_limit(max_requests=200, window=60)
-@cache_result(ttl=30)
-@performance_monitor
-def get_cart_count():
-    """Optimized cart count API"""
-    session_id = get_session_id()
-    user_id = session.get("user_id")
-    
-    try:
-        if user_id:
-            result = execute_query(
-                "SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE user_id = ?", 
-                (user_id,), 
-                fetch_one=True
-            )
-        else:
-            result = execute_query(
-                "SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE session_id = ?", 
-                (session_id,), 
-                fetch_one=True
-            )
-        
-        count = result['total_count'] if result else 0
-        return jsonify({
-            "count": count,
-            "success": True,
-            "timestamp": time.time()
-        })
-    except Exception as e:
-        app_logger.error(f"Cart count API error: {str(e)}")
-        return jsonify({"count": 0, "success": False, "error": str(e)}), 500
-
-
 # ---- USER LOGIN & REGISTER ----
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -3790,28 +3756,40 @@ def api_save_settings():
 def api_cart_count():
     """Savatcha buyumlari sonini qaytarish"""
     try:
-        if 'user_id' not in session:
-            return jsonify({"count": 0})
+        session_id = get_session_id()
+        user_id = session.get("user_id")
         
         conn = get_db()
         cur = conn.cursor()
         
         # Foydalanuvchining savatcha buyumlari sonini hisoblash
-        cur.execute('''
-            SELECT COALESCE(SUM(quantity), 0) as total_count 
-            FROM cart_items 
-            WHERE user_id = ?
-        ''', (session['user_id'],))
+        if user_id:
+            cur.execute('''
+                SELECT COALESCE(SUM(quantity), 0) as total_count 
+                FROM cart_items 
+                WHERE user_id = ?
+            ''', (user_id,))
+        else:
+            cur.execute('''
+                SELECT COALESCE(SUM(quantity), 0) as total_count 
+                FROM cart_items 
+                WHERE session_id = ?
+            ''', (session_id,))
         
         result = cur.fetchone()
         count = result[0] if result else 0
         
         conn.close()
-        return jsonify({"count": count})
+        return jsonify({
+            "count": count, 
+            "success": True,
+            "session_id": session_id,
+            "user_id": user_id
+        })
         
     except Exception as e:
-        logging.error(f"Savatcha sonini olishda xatolik: {str(e)}")
-        return jsonify({"count": 0})
+        app_logger.error(f"Savatcha sonini olishda xatolik: {str(e)}")
+        return jsonify({"count": 0, "success": False, "error": str(e)})
 
 @app.route("/api/set-theme", methods=["POST"])
 def api_set_theme():
@@ -4238,9 +4216,6 @@ def system_metrics():
 
 if __name__ == '__main__':
     try:
-        # Import universal deployment config
-        from deploy_config import get_server_config
-        
         print("🚀 Universal Restaurant System ishga tushmoqda...")
         print(f"Muhit: {Config.ENVIRONMENT}")
         print(f"Debug: {Config.IS_DEVELOPMENT}")
@@ -4250,10 +4225,12 @@ if __name__ == '__main__':
         init_db()
         print("✅ Ma'lumotlar bazasi muvaffaqiyatli ishga tushirildi")
         
-        # Server konfiguratsiyasini olish
-        server_config = get_server_config()
+        # Server portini belgilash
+        port = int(os.environ.get('PORT', 5000))
+        host = '0.0.0.0'  # Replit uchun 0.0.0.0 ishlatish kerak
+        debug = Config.IS_DEVELOPMENT
         
-        print(f"🌐 Server {server_config['host']}:{server_config['port']} da ishga tushmoqda...")
+        print(f"🌐 Server {host}:{port} da ishga tushmoqda...")
         print(f"📋 Qo'llab-quvvatlanadigan tillar: {', '.join(Config.SUPPORTED_LANGUAGES)}")
         print(f"💰 Asosiy valyuta: {Config.DEFAULT_CURRENCY}")
         print(f"⏰ Vaqt zonasi: {Config.TIMEZONE}")
@@ -4261,14 +4238,15 @@ if __name__ == '__main__':
         
         # Serverni ishga tushirish
         print("🎯 Flask server ishlamoqda...")
-        app.run(**server_config)
+        app.run(host=host, port=port, debug=debug, threaded=True)
 
     except KeyboardInterrupt:
         print("\n🛑 Server to'xtatildi (Ctrl+C)")
         
     except Exception as e:
         print(f"❌ XATOLIK: Server ishga tushirishda xatolik: {str(e)}")
-        app_logger.error(f"Server startup error: {str(e)}")
+        if 'app_logger' in globals():
+            app_logger.error(f"Server startup error: {str(e)}")
         
         # Debug ma'lumotlari
         print(f"🐍 Python versiya: {os.sys.version}")
@@ -4292,3 +4270,10 @@ if __name__ == '__main__':
         import traceback
         print("\n📋 To'liq xatolik ma'lumoti:")
         traceback.print_exc()
+        
+        # Fallback server (sodda konfiguratsiya)
+        print("\n🔄 Fallback server ishga tushmoqda...")
+        try:
+            app.run(host='0.0.0.0', port=5000, debug=False)
+        except Exception as fallback_error:
+            print(f"❌ Fallback server ham ishlamadi: {str(fallback_error)}")
