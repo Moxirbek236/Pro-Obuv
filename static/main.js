@@ -1,3 +1,7 @@
+// ===== GLOBAL VARIABLES =====
+// Current path variable declaration
+const currentPath = window.location.pathname;
+
 // To'liq tarjima lug'ati
 const translations = {
     'uz': {
@@ -107,9 +111,7 @@ const translations = {
     }
 };
 
-// Current path variable declaration
-const currentPath = window.location.pathname;
-
+// ===== CART FUNCTIONS =====
 // Savatcha sonini yangilash funksiyasi
 function updateCartCount(retryCount = 0) {
     const maxRetries = 3;
