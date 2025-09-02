@@ -1,4 +1,6 @@
 
+import time
+
 # Global start time tracking
 start_time = time.time()
 
