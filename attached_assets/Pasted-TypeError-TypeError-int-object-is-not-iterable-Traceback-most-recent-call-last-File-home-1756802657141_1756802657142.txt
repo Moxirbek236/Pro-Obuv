@@ -1,0 +1,64 @@
+TypeError
+TypeError: 'int' object is not iterable
+
+Traceback (most recent call last)
+File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1536, in __call__
+return self.wsgi_app(environ, start_response)
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1514, in wsgi_app
+            try:
+                ctx.push()
+                response = self.full_dispatch_request()
+            except Exception as e:
+                error = e
+                response = self.handle_exception(e)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^
+            except:  # noqa: B001
+                error = sys.exc_info()[1]
+                raise
+            return response(environ, start_response)
+        finally:
+File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1511, in wsgi_app
+response = self.full_dispatch_request()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 919, in full_dispatch_request
+rv = self.handle_user_exception(e)
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 917, in full_dispatch_request
+rv = self.dispatch_request()
+     ^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 902, in dispatch_request
+return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/workspace/app.py", line 1952, in courier_dashboard
+return render_template("courier_dashboard.html", orders=delivery_orders)
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/templating.py", line 150, in render_template
+return _render(app, template, context)
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/templating.py", line 131, in _render
+rv = template.render(context)
+     ^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/jinja2/environment.py", line 1295, in render
+self.environment.handle_exception()
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/jinja2/environment.py", line 942, in handle_exception
+raise rewrite_traceback_stack(source=source)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/workspace/templates/courier_dashboard.html", line 1, in top-level template code
+{% extends "base.html" %}
+File "/home/runner/workspace/templates/base.html", line 213, in top-level template code
+{% block content %}{% endblock %}
+File "/home/runner/workspace/templates/courier_dashboard.html", line 114, in block 'content'
+{% set auto_price = [15000, auto_price, 50000] | max | min %}
+File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/jinja2/filters.py", line 523, in do_min
+return _min_or_max(environment, value, min, case_sensitive, attribute)
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/jinja2/filters.py", line 493, in _min_or_max
+it = iter(value)
+     ^^^^^^^^^^^
+TypeError: 'int' object is not iterable
+The debugger caught an exception in your WSGI application. You can now look at the traceback which led to the error.
+To switch between the interactive traceback and the plaintext one, you can click on the "Traceback" headline. From the text traceback you can also create a paste of it.
+
+Brought to you by DON'T PANIC, your friendly Werkzeug powered traceback interpreter.
