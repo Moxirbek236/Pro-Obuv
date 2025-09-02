@@ -1,9 +1,11 @@
 // ===== GLOBAL VARIABLES =====
 // Current path variable declaration
-const currentPath = window.location.pathname;
+let currentLanguage = 'uz';
+let currentPath = window.location.pathname || '/';
 
-// To'liq tarjima lug'ati
-const translations = {
+// Til tarjimalari - faqat bir marta e'lon qilish
+if (typeof translations === 'undefined') {
+    const translations = {
     'uz': {
         'menu': 'Menyu',
         'cart': 'Savatcha',
@@ -110,6 +112,10 @@ const translations = {
         'pickup': 'Pickup'
     }
 };
+
+    // Global scope ga qo'shish
+    window.translations = translations;
+}
 
 // ===== CART FUNCTIONS =====
 // Savatcha sonini yangilash funksiyasi
@@ -306,17 +312,23 @@ function submitRating() {
 
 // Til o'zgartirish funksiyasi
 function applyLanguage(lang) {
-    console.log('Til tarjimasi qo\'llandi:', lang);
+    const translationsObj = window.translations || translations;
+    if (!translationsObj[lang]) {
+        console.warn('Til topilmadi:', lang);
+        return;
+    }
+
+    const langData = translationsObj[lang];
     const elements = document.querySelectorAll('[data-translate]');
     elements.forEach(element => {
         const key = element.dataset.translate;
-        if (translations[lang] && translations[lang][key]) {
+        if (langData && langData[key]) {
             if (element.tagName === 'INPUT' && element.type === 'submit') {
-                element.value = translations[lang][key];
+                element.value = langData[key];
             } else if (element.placeholder !== undefined) {
-                element.placeholder = translations[lang][key];
+                element.placeholder = langData[key];
             } else {
-                element.textContent = translations[lang][key];
+                element.textContent = langData[key];
             }
         }
     });
