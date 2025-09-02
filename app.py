@@ -544,12 +544,14 @@ def after_request(response):
             try:
                 duration = time.time() - request.start_time
                 # Performance monitor mavjudligini va metodini tekshirish
-                if globals().get('performance_monitor') and hasattr(performance_monitor, 'record_request'):
+                if (globals().get('performance_monitor') and 
+                    hasattr(performance_monitor, 'record_request') and
+                    callable(getattr(performance_monitor, 'record_request', None))):
                     endpoint = getattr(request, 'endpoint', None) or 'unknown'
                     status_code = getattr(response, 'status_code', 200)
                     performance_monitor.record_request(duration, endpoint, status_code)
             except Exception as perf_error:
-                # Performance monitoring xatoligi ahamiyatsiz - log qilmasdan o'tkazish
+                # Performance monitoring xatoligi ahamiyatsiz
                 pass
 
         # Security headers qo'shish
@@ -567,7 +569,8 @@ def after_request(response):
             response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
 
     except Exception as header_error:
-        app_logger.error(f"After request header error: {str(header_error)}")
+        # Log qilmasdan o'tkazish - xavfsizlik uchun
+        pass
 
     return response
 

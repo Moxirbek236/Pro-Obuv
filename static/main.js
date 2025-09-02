@@ -155,15 +155,18 @@ function updateCartCount(retryCount = 0) {
         }
     })
     .catch(error => {
-        console.log('Savatcha sonini olishda xatolik:', error);
+        console.error('JavaScript xatosi:', error.message || error);
 
         if (retryCount < maxRetries) {
+            console.log(`Qayta urinish ${retryCount + 1}/${maxRetries}`);
             setTimeout(() => updateCartCount(retryCount + 1), 1000 * (retryCount + 1));
         } else {
+            console.error('Savatcha sonini yangilashda xatolik:', error.message || error);
+            // Default count ko'rsatish
             const cartCountElement = document.querySelector('.cart-count, #cart-count, [data-cart-count]');
             if (cartCountElement) {
                 cartCountElement.textContent = '0';
-                cartCountElement.style.display = 'none';
+                cartCountElement.style.display = 'inline-block';
             }
         }
     });
@@ -341,28 +344,28 @@ function applyLanguage(lang) {
             }
         }
     });
-    
+
     console.log('Til tarjimasi qo\'llandi:', lang);
 }
 
 // Super Admin Dashboard funksiyalari
 function initializeSuperAdminDashboard() {
     console.log('Super admin dashboard funksiyalari ishga tushirildi');
-    
+
     // Tab funksiyalarini global qilish
     window.showTab = showTab;
     window.loadOrders = loadOrders;
     window.loadMenu = loadMenu;
     window.loadReceipts = loadReceipts;
     window.loadRatings = loadRatings;
-    
+
     // Modal funksiyalarini global qilish
     window.showAddStaffModal = showAddStaffModal;
     window.showAddCourierModal = showAddCourierModal;
     window.showAddMenuModal = showAddMenuModal;
     window.showAddBranchModal = showAddBranchModal;
     window.closeModal = closeModal;
-    
+
     // Password reset funksiyalarini global qilish
     window.resetStaffPassword = resetStaffPassword;
     window.resetCourierPassword = resetCourierPassword;
@@ -373,19 +376,19 @@ function initializeSuperAdminDashboard() {
 function showTab(tabName) {
     const contents = document.querySelectorAll('.tab-content');
     contents.forEach(content => content.classList.remove('active'));
-    
+
     const buttons = document.querySelectorAll('.tab-button');
     buttons.forEach(button => button.classList.remove('active'));
-    
+
     document.getElementById(tabName).classList.add('active');
-    
+
     // Find and activate the correct button
     buttons.forEach(button => {
         if (button.textContent.includes(getTabText(tabName))) {
             button.classList.add('active');
         }
     });
-    
+
     if (tabName === 'orders') {
         loadOrders();
     } else if (tabName === 'menu') {
@@ -400,7 +403,7 @@ function showTab(tabName) {
 function getTabText(tabName) {
     const tabTexts = {
         'staff': 'Xodimlar',
-        'couriers': 'Kuryerlar', 
+        'couriers': 'Kuryerlar',
         'users': 'Foydalanuvchilar',
         'branches': 'Filiallar',
         'orders': 'Buyurtmalar',
@@ -418,7 +421,7 @@ function loadOrders() {
             let html = '<div class="table-container"><table class="admin-table"><thead><tr>';
             html += '<th>ID</th><th>Mijoz</th><th>Tiket</th><th>Turi</th><th>Status</th><th>Manzil</th><th>Kuryer</th><th>Vaqt</th>';
             html += '</tr></thead><tbody>';
-            
+
             data.forEach(order => {
                 html += '<tr>';
                 html += `<td>${order.id}</td>`;
@@ -431,7 +434,7 @@ function loadOrders() {
                 html += `<td>${order.created_at.substring(0, 16).replace('T', ' ')}</td>`;
                 html += '</tr>';
             });
-            
+
             html += '</tbody></table></div>';
             document.getElementById('orders-data').innerHTML = html;
         })
@@ -448,7 +451,7 @@ function loadMenu() {
             let html = '<div class="table-container"><table class="admin-table"><thead><tr>';
             html += '<th>ID</th><th>Nomi</th><th>Narxi</th><th>Kategoriya</th><th>Tavsif</th><th>Mavjud</th><th>Rasm</th>';
             html += '</tr></thead><tbody>';
-            
+
             data.forEach(item => {
                 html += '<tr>';
                 html += `<td>${item.id}</td>`;
@@ -460,7 +463,7 @@ function loadMenu() {
                 html += `<td>${item.image_url ? '<img src="' + item.image_url + '" width="50">' : 'N/A'}</td>`;
                 html += '</tr>';
             });
-            
+
             html += '</tbody></table></div>';
             document.getElementById('menu-data').innerHTML = html;
         })
@@ -477,7 +480,7 @@ function loadReceipts() {
             let html = '<div class="table-container"><table class="admin-table"><thead><tr>';
             html += '<th>Chek raqami</th><th>Buyurtma ID</th><th>Summa</th><th>Cashback</th><th>Vaqt</th>';
             html += '</tr></thead><tbody>';
-            
+
             data.forEach(receipt => {
                 html += '<tr>';
                 html += `<td><strong>${receipt.receipt_number}</strong></td>`;
@@ -487,7 +490,7 @@ function loadReceipts() {
                 html += `<td>${receipt.created_at.substring(0, 16).replace('T', ' ')}</td>`;
                 html += '</tr>';
             });
-            
+
             html += '</tbody></table></div>';
             document.getElementById('receipts-data').innerHTML = html;
         })
@@ -502,14 +505,14 @@ function loadRatings() {
         .then(response => response.json())
         .then(data => {
             let html = '<div class="ratings-container">';
-            
+
             // Mahsulot baholari
             html += '<div class="ratings-section"><h4>📋 Mahsulot baholari</h4>';
             if (data.menu_ratings && data.menu_ratings.length > 0) {
                 html += '<div class="table-container"><table class="admin-table"><thead><tr>';
                 html += '<th>Mahsulot</th><th>Foydalanuvchi</th><th>Baho</th><th>Sharh</th><th>Vaqt</th>';
                 html += '</tr></thead><tbody>';
-                
+
                 data.menu_ratings.forEach(rating => {
                     html += '<tr>';
                     html += `<td><strong>${rating.menu_item_name}</strong></td>`;
@@ -519,7 +522,7 @@ function loadRatings() {
                     html += `<td>${rating.created_at.substring(0, 16).replace('T', ' ')}</td>`;
                     html += '</tr>';
                 });
-                
+
                 html += '</tbody></table></div>';
             } else {
                 html += '<p class="text-center">Hali mahsulot baholari yo\'q.</p>';
@@ -532,7 +535,7 @@ function loadRatings() {
                 html += '<div class="table-container"><table class="admin-table"><thead><tr>';
                 html += '<th>Filial</th><th>Foydalanuvchi</th><th>Baho</th><th>Sharh</th><th>Vaqt</th>';
                 html += '</tr></thead><tbody>';
-                
+
                 data.branch_ratings.forEach(rating => {
                     html += '<tr>';
                     html += `<td><strong>${rating.branch_name}</strong></td>`;
@@ -542,13 +545,13 @@ function loadRatings() {
                     html += `<td>${rating.created_at.substring(0, 16).replace('T', ' ')}</td>`;
                     html += '</tr>';
                 });
-                
+
                 html += '</tbody></table></div>';
             } else {
                 html += '<p class="text-center">Hali filial baholari yo\'q.</p>';
             }
             html += '</div>';
-            
+
             html += '</div>';
             document.getElementById('ratings-data').innerHTML = html;
         })
@@ -582,7 +585,7 @@ function getStatusText(status) {
     }
 }
 
-// Modal functions
+// Modal funksiyalari
 function showAddStaffModal() {
     document.getElementById('addStaffModal').style.display = 'block';
 }
@@ -679,7 +682,7 @@ function resetUserPassword(userId) {
     }
 };
     window.resetUserPassword = resetUserPassword;
-    
+
     // Ilk tab ma'lumotlarini yuklash
     setTimeout(() => {
         if (typeof loadOrders === 'function') {
@@ -691,24 +694,24 @@ function resetUserPassword(userId) {
 // Super admin uchun tab ko'rsatish funksiyasi
 function showTab(tabName) {
     console.log('Tab ochilmoqda:', tabName);
-    
+
     // Barcha tab-contentlarni yashirish
     const contents = document.querySelectorAll('.tab-content');
     contents.forEach(content => content.classList.remove('active'));
-    
+
     // Barcha tugmalardan active klassini olib tashlash
     const buttons = document.querySelectorAll('.tab-button');
     buttons.forEach(button => button.classList.remove('active'));
-    
+
     // Kerakli tab va tugmani faollashtirish
     const targetTab = document.getElementById(tabName);
     if (targetTab) {
         targetTab.classList.add('active');
     }
-    
+
     // Tugmani faollashtirish
     event.target.classList.add('active');
-    
+
     // Ma'lumotlarni yuklash
     if (tabName === 'orders') {
         loadOrders();
@@ -724,15 +727,15 @@ function showTab(tabName) {
 // Buyurtmalarni yuklash
 function loadOrders() {
     console.log('Buyurtmalarni yuklash boshlandi');
-    
+
     const ordersContainer = document.getElementById('orders-data');
     if (!ordersContainer) {
         console.error('Orders container topilmadi');
         return;
     }
-    
+
     ordersContainer.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"></div><p>Buyurtmalar yuklanmoqda...</p></div>';
-    
+
     fetch('/super-admin/get-orders')
         .then(response => {
             if (!response.ok) {
@@ -754,16 +757,16 @@ function loadOrders() {
 function displayOrders(orders) {
     const ordersContainer = document.getElementById('orders-data');
     if (!ordersContainer) return;
-    
+
     if (!orders || orders.length === 0) {
         ordersContainer.innerHTML = '<div class="alert alert-info">Hozircha buyurtmalar yo\'q.</div>';
         return;
     }
-    
+
     let html = '<div class="table-container"><table class="admin-table"><thead><tr>';
     html += '<th>ID</th><th>Mijoz</th><th>Tiket</th><th>Turi</th><th>Status</th><th>Manzil</th><th>Kuryer</th><th>Vaqt</th>';
     html += '</tr></thead><tbody>';
-    
+
     orders.forEach(order => {
         html += '<tr>';
         html += `<td>${order.id}</td>`;
@@ -776,7 +779,7 @@ function displayOrders(orders) {
         html += `<td>${order.created_at ? order.created_at.substring(0, 16).replace('T', ' ') : 'N/A'}</td>`;
         html += '</tr>';
     });
-    
+
     html += '</tbody></table></div>';
     ordersContainer.innerHTML = html;
 }
@@ -812,9 +815,9 @@ function loadMenu() {
     console.log('Menyu yuklanmoqda');
     const menuContainer = document.getElementById('menu-data');
     if (!menuContainer) return;
-    
+
     menuContainer.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"></div><p>Menyu yuklanmoqda...</p></div>';
-    
+
     fetch('/super-admin/get-menu')
         .then(response => response.json())
         .then(data => {
@@ -831,16 +834,16 @@ function loadMenu() {
 function displayMenu(menuItems) {
     const menuContainer = document.getElementById('menu-data');
     if (!menuContainer) return;
-    
+
     if (!menuItems || menuItems.length === 0) {
         menuContainer.innerHTML = '<div class="alert alert-info">Menyu bo\'sh.</div>';
         return;
     }
-    
+
     let html = '<div class="table-container"><table class="admin-table"><thead><tr>';
     html += '<th>ID</th><th>Nomi</th><th>Narxi</th><th>Kategoriya</th><th>Tavsif</th><th>Mavjud</th><th>Rasm</th>';
     html += '</tr></thead><tbody>';
-    
+
     menuItems.forEach(item => {
         html += '<tr>';
         html += `<td>${item.id}</td>`;
@@ -852,7 +855,7 @@ function displayMenu(menuItems) {
         html += `<td>${item.image_url ? '<img src="' + item.image_url + '" width="50">' : 'N/A'}</td>`;
         html += '</tr>';
     });
-    
+
     html += '</tbody></table></div>';
     menuContainer.innerHTML = html;
 }
@@ -862,9 +865,9 @@ function loadReceipts() {
     console.log('Cheklar yuklanmoqda');
     const receiptsContainer = document.getElementById('receipts-data');
     if (!receiptsContainer) return;
-    
+
     receiptsContainer.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"></div><p>Cheklar yuklanmoqda...</p></div>';
-    
+
     fetch('/super-admin/get-receipts')
         .then(response => response.json())
         .then(data => {
@@ -881,16 +884,16 @@ function loadReceipts() {
 function displayReceipts(receipts) {
     const receiptsContainer = document.getElementById('receipts-data');
     if (!receiptsContainer) return;
-    
+
     if (!receipts || receipts.length === 0) {
         receiptsContainer.innerHTML = '<div class="alert alert-info">Hozircha cheklar yo\'q.</div>';
         return;
     }
-    
+
     let html = '<div class="table-container"><table class="admin-table"><thead><tr>';
     html += '<th>Chek raqami</th><th>Buyurtma ID</th><th>Summa</th><th>Cashback</th><th>Vaqt</th>';
     html += '</tr></thead><tbody>';
-    
+
     receipts.forEach(receipt => {
         html += '<tr>';
         html += `<td><strong>${receipt.receipt_number}</strong></td>`;
@@ -900,7 +903,7 @@ function displayReceipts(receipts) {
         html += `<td>${receipt.created_at ? receipt.created_at.substring(0, 16).replace('T', ' ') : 'N/A'}</td>`;
         html += '</tr>';
     });
-    
+
     html += '</tbody></table></div>';
     receiptsContainer.innerHTML = html;
 }
@@ -910,9 +913,9 @@ function loadRatings() {
     console.log('Baholar yuklanmoqda');
     const ratingsContainer = document.getElementById('ratings-data');
     if (!ratingsContainer) return;
-    
+
     ratingsContainer.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"></div><p>Baholar yuklanmoqda...</p></div>';
-    
+
     fetch('/super-admin/get-ratings')
         .then(response => response.json())
         .then(data => {
@@ -929,16 +932,16 @@ function loadRatings() {
 function displayRatings(data) {
     const ratingsContainer = document.getElementById('ratings-data');
     if (!ratingsContainer) return;
-    
+
     let html = '<div class="ratings-container">';
-    
+
     // Mahsulot baholari
     html += '<div class="ratings-section"><h4>📋 Mahsulot baholari</h4>';
     if (data.menu_ratings && data.menu_ratings.length > 0) {
         html += '<div class="table-container"><table class="admin-table"><thead><tr>';
         html += '<th>Mahsulot</th><th>Foydalanuvchi</th><th>Baho</th><th>Sharh</th><th>Vaqt</th>';
         html += '</tr></thead><tbody>';
-        
+
         data.menu_ratings.forEach(rating => {
             html += '<tr>';
             html += `<td><strong>${rating.menu_item_name}</strong></td>`;
@@ -948,7 +951,7 @@ function displayRatings(data) {
             html += `<td>${rating.created_at ? rating.created_at.substring(0, 16).replace('T', ' ') : 'N/A'}</td>`;
             html += '</tr>';
         });
-        
+
         html += '</tbody></table></div>';
     } else {
         html += '<p class="text-center">Hali mahsulot baholari yo\'q.</p>';
@@ -961,7 +964,7 @@ function displayRatings(data) {
         html += '<div class="table-container"><table class="admin-table"><thead><tr>';
         html += '<th>Filial</th><th>Foydalanuvchi</th><th>Baho</th><th>Sharh</th><th>Vaqt</th>';
         html += '</tr></thead><tbody>';
-        
+
         data.branch_ratings.forEach(rating => {
             html += '<tr>';
             html += `<td><strong>${rating.branch_name}</strong></td>`;
@@ -971,13 +974,13 @@ function displayRatings(data) {
             html += `<td>${rating.created_at ? rating.created_at.substring(0, 16).replace('T', ' ') : 'N/A'}</td>`;
             html += '</tr>';
         });
-        
+
         html += '</tbody></table></div>';
     } else {
         html += '<p class="text-center">Hali filial baholari yo\'q.</p>';
     }
     html += '</div>';
-    
+
     html += '</div>';
     ratingsContainer.innerHTML = html;
 }
@@ -1175,16 +1178,16 @@ window.addEventListener('error', function(event) {
 document.addEventListener('DOMContentLoaded', function() {
     // currentPath ni yangilash
     currentPath = window.location.pathname || '/';
-    
+
     // Sozlamalarni yuklash
     loadSettings();
 
     // Savatcha sonini yangilash
     updateCartCount();
-    
+
     // Super admin sahifasi ekanligini tekshirish
     const isSuperAdminPage = currentPath.includes('super-admin-dashboard');
-    
+
     if (isSuperAdminPage) {
         console.log('Super admin dashboard yuklandi');
         // Super admin uchun maxsus JavaScript
