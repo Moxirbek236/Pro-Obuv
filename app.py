@@ -3387,111 +3387,187 @@ def super_admin_dashboard():
     if not session.get("super_admin"):
         return redirect(url_for("super_admin_login"))
 
-    conn = get_db()
-    cur = conn.cursor()
+    conn = None
+    try:
+        conn = get_db()
+        cur = conn.cursor()
 
-    # Xodimlar ma'lumotlari (soatlar va buyurtmalar bilan)
-    cur.execute("""
-        SELECT s.*
-        FROM staff s
-        ORDER BY s.created_at DESC
-    """)
-    staff_db = cur.fetchall()
-
-    # Kuryerlar ma'lumotlari
-    cur.execute("""
-        SELECT c.*
-        FROM couriers c
-        ORDER BY c.created_at DESC
-    """)
-    couriers_db = cur.fetchall()
-
-    # Foydalanuvchilarni olish
-    cur.execute("SELECT * FROM users ORDER BY created_at DESC")
-    users_db = cur.fetchall()
-
-    # JSON fayldan ham foydalanuvchilarni olish
-    users_file = 'users.json'
-    users_json = []
-    if os.path.exists(users_file):
+        # Xodimlar ma'lumotlari - xavfsiz olish
         try:
-            with open(users_file, 'r', encoding='utf-8') as f:
-                users_json = json.load(f)
-        except (json.JSONDecodeError, FileNotFoundError):
-            users_json = []
+            cur.execute("SELECT * FROM staff ORDER BY created_at DESC")
+            staff_db = cur.fetchall() or []
+        except Exception as e:
+            app_logger.error(f"Staff ma'lumotlarini olishda xatolik: {str(e)}")
+            staff_db = []
 
-    # Savollarni olish
-    cur.execute("SELECT * FROM questions ORDER BY created_at DESC")
-    questions = cur.fetchall()
+        # Kuryerlar ma'lumotlari - xavfsiz olish
+        try:
+            cur.execute("SELECT * FROM couriers ORDER BY created_at DESC")
+            couriers_db = cur.fetchall() or []
+        except Exception as e:
+            app_logger.error(f"Couriers ma'lumotlarini olishda xatolik: {str(e)}")
+            couriers_db = []
 
-    # Filiallarni olish va har biriga baho qo'shish
-    cur.execute("SELECT * FROM branches ORDER BY created_at DESC")
-    branches_raw = cur.fetchall()
+        # Foydalanuvchilarni olish - xavfsiz
+        try:
+            cur.execute("SELECT * FROM users ORDER BY created_at DESC")
+            users_db = cur.fetchall() or []
+        except Exception as e:
+            app_logger.error(f"Users ma'lumotlarini olishda xatolik: {str(e)}")
+            users_db = []
 
-    branches = []
-    for branch in branches_raw:
-        # SQLite Row obyektini dict ga xavfsiz o'tkazish
-        if hasattr(branch, 'keys'):
-            branch_dict = dict(zip(branch.keys(), branch))
-        else:
-            # Agar tuple bo'lsa, manual dict yaratish
-            branch_dict = {
-                'id': branch[0], 'name': branch[1], 'address': branch[2],
-                'latitude': branch[3], 'longitude': branch[4], 'phone': branch[5],
-                'working_hours': branch[6], 'is_active': branch[7], 
-                'delivery_radius': branch[8], 'created_at': branch[9]
-            }
+        # JSON fayldan foydalanuvchilarni olish - xavfsiz
+        users_json = []
+        users_file = 'users.json'
+        if os.path.exists(users_file):
+            try:
+                with open(users_file, 'r', encoding='utf-8') as f:
+                    users_json = json.load(f) or []
+            except (json.JSONDecodeError, FileNotFoundError, Exception) as e:
+                app_logger.warning(f"Users JSON faylini o'qishda xatolik: {str(e)}")
+                users_json = []
+
+        # Savollarni olish - xavfsiz
+        try:
+            cur.execute("SELECT * FROM questions ORDER BY created_at DESC")
+            questions = cur.fetchall() or []
+        except Exception as e:
+            app_logger.error(f"Questions ma'lumotlarini olishda xatolik: {str(e)}")
+            questions = []
+
+        # Filiallarni olish - xavfsiz va baho qo'shish
+        branches = []
+        try:
+            cur.execute("SELECT * FROM branches ORDER BY created_at DESC")
+            branches_raw = cur.fetchall() or []
+
+            for branch in branches_raw:
+                try:
+                    # SQLite Row obyektini dict ga xavfsiz o'tkazish
+                    if hasattr(branch, 'keys'):
+                        branch_dict = dict(zip(branch.keys(), branch))
+                    else:
+                        # Agar tuple bo'lsa, xavfsiz dict yaratish
+                        branch_dict = {
+                            'id': branch[0] if len(branch) > 0 else 0,
+                            'name': branch[1] if len(branch) > 1 else 'N/A',
+                            'address': branch[2] if len(branch) > 2 else 'N/A',
+                            'latitude': branch[3] if len(branch) > 3 else 0,
+                            'longitude': branch[4] if len(branch) > 4 else 0,
+                            'phone': branch[5] if len(branch) > 5 else 'N/A',
+                            'working_hours': branch[6] if len(branch) > 6 else '09:00-22:00',
+                            'is_active': branch[7] if len(branch) > 7 else 1,
+                            'delivery_radius': branch[8] if len(branch) > 8 else 15.0,
+                            'created_at': branch[9] if len(branch) > 9 else ''
+                        }
+                    
+                    # Baho ma'lumotlarini xavfsiz olish
+                    try:
+                        rating_data = get_branch_average_rating(branch_dict['id'])
+                        branch_dict['average_rating'] = rating_data.get('average_rating', 0.0)
+                        branch_dict['total_ratings'] = rating_data.get('total_ratings', 0)
+                    except Exception as rating_error:
+                        app_logger.warning(f"Branch {branch_dict['id']} bahosini olishda xatolik: {str(rating_error)}")
+                        branch_dict['average_rating'] = 0.0
+                        branch_dict['total_ratings'] = 0
+                    
+                    branches.append(branch_dict)
+                    
+                except Exception as branch_error:
+                    app_logger.error(f"Branch ma'lumotini qayta ishlashda xatolik: {str(branch_error)}")
+                    continue
+
+        except Exception as e:
+            app_logger.error(f"Branches ma'lumotlarini olishda xatolik: {str(e)}")
+            branches = []
+
+        # Buyurtmalar statistikasi - xavfsiz hisoblash
+        stats = {
+            'total_orders': 0,
+            'waiting_orders': 0,
+            'ready_orders': 0,
+            'served_orders': 0,
+            'month_orders': 0,
+            'total_staff': len(staff_db),
+            'total_couriers': len(couriers_db),
+            'total_users': len(users_db),
+            'total_users_json': len(users_json)
+        }
+
+        try:
+            # Jami buyurtmalar
+            cur.execute("SELECT COUNT(*) FROM orders")
+            result = cur.fetchone()
+            stats['total_orders'] = result[0] if result else 0
+
+            # Status bo'yicha statistika
+            status_queries = [
+                ('waiting_orders', "SELECT COUNT(*) FROM orders WHERE status='waiting'"),
+                ('ready_orders', "SELECT COUNT(*) FROM orders WHERE status='ready'"),
+                ('served_orders', "SELECT COUNT(*) FROM orders WHERE status='served'")
+            ]
+
+            for stat_key, query in status_queries:
+                try:
+                    cur.execute(query)
+                    result = cur.fetchone()
+                    stats[stat_key] = result[0] if result else 0
+                except Exception as e:
+                    app_logger.warning(f"{stat_key} statistikasini olishda xatolik: {str(e)}")
+                    stats[stat_key] = 0
+
+            # Bu oylik statistika
+            try:
+                current_month = get_current_time().strftime("%Y-%m")
+                cur.execute("SELECT COUNT(*) FROM orders WHERE created_at LIKE ?", (f"{current_month}%",))
+                result = cur.fetchone()
+                stats['month_orders'] = result[0] if result else 0
+            except Exception as e:
+                app_logger.warning(f"Oylik statistikani olishda xatolik: {str(e)}")
+                stats['month_orders'] = 0
+
+        except Exception as e:
+            app_logger.error(f"Statistikalarni hisoblashda xatolik: {str(e)}")
+
+        if conn:
+            conn.close()
+
+        return render_template("super_admin_dashboard.html", 
+                             staff_db=staff_db or [],
+                             couriers_db=couriers_db or [],
+                             users_db=users_db or [],
+                             users_json=users_json or [],
+                             questions=questions or [],
+                             branches=branches or [],
+                             stats=stats)
+
+    except Exception as e:
+        app_logger.error(f"Super admin dashboard xatoligi: {str(e)}")
+        if conn:
+            try:
+                conn.close()
+            except:
+                pass
         
-        rating_data = get_branch_average_rating(branch_dict['id'])
-        branch_dict['average_rating'] = rating_data['average_rating']
-        branch_dict['total_ratings'] = rating_data['total_ratings']
-        branches.append(branch_dict)
-
-    # Buyurtmalar statistikasi
-    cur.execute("SELECT COUNT(*) FROM orders")
-    result = cur.fetchone()
-    total_orders = result[0] if result else 0
-
-    cur.execute("SELECT COUNT(*) FROM orders WHERE status='waiting'")
-    result = cur.fetchone()
-    waiting_orders = result[0] if result else 0
-
-    cur.execute("SELECT COUNT(*) FROM orders WHERE status='ready'")
-    result = cur.fetchone()
-    ready_orders = result[0] if result else 0
-
-    cur.execute("SELECT COUNT(*) FROM orders WHERE status='served'")
-    result = cur.fetchone()
-    served_orders = result[0] if result else 0
-
-    # Bu oylik statistika
-    current_month = get_current_time().strftime("%Y-%m")
-    cur.execute("SELECT COUNT(*) FROM orders WHERE created_at LIKE ?", (f"{current_month}%",))
-    result = cur.fetchone()
-    month_orders = result[0] if result else 0
-
-    conn.close()
-
-    stats = {
-        'total_orders': total_orders,
-        'waiting_orders': waiting_orders,
-        'ready_orders': ready_orders,
-        'served_orders': served_orders,
-        'month_orders': month_orders,
-        'total_staff': len(staff_db),
-        'total_couriers': len(couriers_db),
-        'total_users': len(users_db),
-        'total_users_json': len(users_json)
-    }
-
-    return render_template("super_admin_dashboard.html", 
-                         staff_db=staff_db,
-                         couriers_db=couriers_db,
-                         users_db=users_db,
-                         users_json=users_json,
-                         questions=questions,
-                         branches=branches,
-                         stats=stats)
+        # Emergency fallback
+        try:
+            return render_template("super_admin_dashboard.html", 
+                                 staff_db=[],
+                                 couriers_db=[],
+                                 users_db=[],
+                                 users_json=[],
+                                 questions=[],
+                                 branches=[],
+                                 stats={'total_orders': 0, 'waiting_orders': 0, 'ready_orders': 0, 
+                                       'served_orders': 0, 'month_orders': 0, 'total_staff': 0, 
+                                       'total_couriers': 0, 'total_users': 0, 'total_users_json': 0})
+        except Exception as template_error:
+            app_logger.critical(f"Template render ham ishlamadi: {str(template_error)}")
+            return f"""
+            <h1>Super Admin Dashboard</h1>
+            <p>Dashboard yuklashda xatolik: {str(e)}</p>
+            <a href="{url_for('super_admin_login')}">Login sahifasiga qaytish</a>
+            """, 500
 
 @app.route("/super-admin/delete-staff/<int:staff_id>", methods=["POST"])
 def super_admin_delete_staff(staff_id):

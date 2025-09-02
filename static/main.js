@@ -314,12 +314,14 @@ function submitRating() {
     });
 }
 
-// Current path variable
-let currentPath = window.location.pathname || '/';
+// Current path variable - faqat bir marta e'lon qilish
+if (typeof currentPath === 'undefined') {
+    var currentPath = window.location.pathname || '/';
+}
 
 // Til o'zgartirish funksiyasi
 function applyLanguage(lang) {
-    const translationsObj = window.translations || translations;
+    const translationsObj = window.translations;
     if (!translationsObj || !translationsObj[lang]) {
         console.warn('Til topilmadi:', lang);
         return;
@@ -332,7 +334,7 @@ function applyLanguage(lang) {
         if (langData && langData[key]) {
             if (element.tagName === 'INPUT' && element.type === 'submit') {
                 element.value = langData[key];
-            } else if (element.placeholder !== undefinedi) {
+            } else if (element.placeholder !== undefinednedi) {
                 element.placeholder = langData[key];
             } else {
                 element.textContent = langData[key];
