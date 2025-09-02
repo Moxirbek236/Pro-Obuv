@@ -1,3 +1,4 @@
+
 // Savatcha sonini yangilash funksiyasi
 function updateCartCount(retryCount = 0) {
     const maxRetries = 3;
@@ -343,9 +344,6 @@ function addRoleToURL() {
         }
     }
 }
-
-// Current path variable declaration
-const currentPath = window.location.pathname;
 
 // To'liq tarjima lug'ati
 const translations = {
@@ -1258,5 +1256,3 @@ function showRatingForm(orderId) {
         }
     };
 }
-
-// User status check is handled in DOMContentLoaded event
