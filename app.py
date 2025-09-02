@@ -48,6 +48,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.middleware.profiler import ProfilerMiddleware
 from dotenv import load_dotenv
 import logging
+from logging.handlers import RotatingFileHandler
 
 # Redis import - optional
 try:
@@ -2928,27 +2929,8 @@ def courier_logout():
 # ---- CART COUNT API ----
 @app.route("/get_cart_count")
 def get_cart_count():
-    """Savatcha mahsulotlar sonini qaytarish"""
-    try:
-        session_id = get_session_id()
-        user_id = session.get("user_id")
-        
-        conn = get_db()
-        cur = conn.cursor()
-        
-        if user_id:
-            cur.execute("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE user_id = ?", (user_id,))
-        else:
-            cur.execute("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE session_id = ?", (session_id,))
-        
-        result = cur.fetchone()
-        count = result['total_count'] if result else 0
-        conn.close()
-        
-        return jsonify({"count": count})
-    except Exception as e:
-        app_logger.error(f"Cart count error: {str(e)}")
-        return jsonify({"count": 0})
+    """Legacy endpoint - redirect to new API"""
+    return redirect(url_for("api_cart_count_fixed"))
 
 # ---- STATIC FILE HANDLING ----
 @app.route('/static/<path:filename>')
@@ -4918,11 +4900,6 @@ def get_config():
             "minute": Config.RATE_LIMIT_MINUTE
         }
     })
-
-@app.route("/get_cart_count")
-def get_cart_count():
-    """Legacy endpoint - yangi API ga yo'naltirish"""
-    return redirect(url_for("api_cart_count_fixed"))
 
 # Asosiy savatcha count endpoint - buni saqlab qolamiz
 @app.route("/cart_count")
