@@ -314,6 +314,9 @@ function submitRating() {
     });
 }
 
+// Current path variable
+let currentPath = window.location.pathname || '/';
+
 // Til o'zgartirish funksiyasi
 function applyLanguage(lang) {
     const translationsObj = window.translations || translations;
@@ -329,7 +332,7 @@ function applyLanguage(lang) {
         if (langData && langData[key]) {
             if (element.tagName === 'INPUT' && element.type === 'submit') {
                 element.value = langData[key];
-            } else if (element.placeholder !== undefined) {
+            } else if (element.placeholder !== undefinedi) {
                 element.placeholder = langData[key];
             } else {
                 element.textContent = langData[key];
@@ -361,6 +364,318 @@ function initializeSuperAdminDashboard() {
     // Password reset funksiyalarini global qilish
     window.resetStaffPassword = resetStaffPassword;
     window.resetCourierPassword = resetCourierPassword;
+    window.resetUserPassword = resetUserPassword;
+}
+
+// Super Admin Dashboard tab functions
+function showTab(tabName) {
+    const contents = document.querySelectorAll('.tab-content');
+    contents.forEach(content => content.classList.remove('active'));
+    
+    const buttons = document.querySelectorAll('.tab-button');
+    buttons.forEach(button => button.classList.remove('active'));
+    
+    document.getElementById(tabName).classList.add('active');
+    
+    // Find and activate the correct button
+    buttons.forEach(button => {
+        if (button.textContent.includes(getTabText(tabName))) {
+            button.classList.add('active');
+        }
+    });
+    
+    if (tabName === 'orders') {
+        loadOrders();
+    } else if (tabName === 'menu') {
+        loadMenu();
+    } else if (tabName === 'receipts') {
+        loadReceipts();
+    } else if (tabName === 'ratings') {
+        loadRatings();
+    }
+}
+
+function getTabText(tabName) {
+    const tabTexts = {
+        'staff': 'Xodimlar',
+        'couriers': 'Kuryerlar', 
+        'users': 'Foydalanuvchilar',
+        'branches': 'Filiallar',
+        'orders': 'Buyurtmalar',
+        'menu': 'Menyu',
+        'receipts': 'Cheklar',
+        'ratings': 'Baholar'
+    };
+    return tabTexts[tabName] || tabName;
+}
+
+function loadOrders() {
+    fetch('/super-admin/get-orders')
+        .then(response => response.json())
+        .then(data => {
+            let html = '<div class="table-container"><table class="admin-table"><thead><tr>';
+            html += '<th>ID</th><th>Mijoz</th><th>Tiket</th><th>Turi</th><th>Status</th><th>Manzil</th><th>Kuryer</th><th>Vaqt</th>';
+            html += '</tr></thead><tbody>';
+            
+            data.forEach(order => {
+                html += '<tr>';
+                html += `<td>${order.id}</td>`;
+                html += `<td>${order.customer_name}</td>`;
+                html += `<td><strong>#${order.ticket_no}</strong></td>`;
+                html += `<td>${order.order_type}</td>`;
+                html += `<td><span class="badge ${getStatusClass(order.status)}">${getStatusText(order.status)}</span></td>`;
+                html += `<td>${order.delivery_address || 'N/A'}</td>`;
+                html += `<td>${order.courier_id || 'N/A'}</td>`;
+                html += `<td>${order.created_at.substring(0, 16).replace('T', ' ')}</td>`;
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table></div>';
+            document.getElementById('orders-data').innerHTML = html;
+        })
+        .catch(error => {
+            console.error('Orders yuklashda xatolik:', error);
+            document.getElementById('orders-data').innerHTML = '<p class="text-center">Orders yuklashda xatolik</p>';
+        });
+}
+
+function loadMenu() {
+    fetch('/super-admin/get-menu')
+        .then(response => response.json())
+        .then(data => {
+            let html = '<div class="table-container"><table class="admin-table"><thead><tr>';
+            html += '<th>ID</th><th>Nomi</th><th>Narxi</th><th>Kategoriya</th><th>Tavsif</th><th>Mavjud</th><th>Rasm</th>';
+            html += '</tr></thead><tbody>';
+            
+            data.forEach(item => {
+                html += '<tr>';
+                html += `<td>${item.id}</td>`;
+                html += `<td>${item.name}</td>`;
+                html += `<td>${item.price} so'm</td>`;
+                html += `<td>${item.category}</td>`;
+                html += `<td>${item.description || 'N/A'}</td>`;
+                html += `<td>${item.available ? '✅' : '❌'}</td>`;
+                html += `<td>${item.image_url ? '<img src="' + item.image_url + '" width="50">' : 'N/A'}</td>`;
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table></div>';
+            document.getElementById('menu-data').innerHTML = html;
+        })
+        .catch(error => {
+            console.error('Menu yuklashda xatolik:', error);
+            document.getElementById('menu-data').innerHTML = '<p class="text-center">Menu yuklashda xatolik</p>';
+        });
+}
+
+function loadReceipts() {
+    fetch('/super-admin/get-receipts')
+        .then(response => response.json())
+        .then(data => {
+            let html = '<div class="table-container"><table class="admin-table"><thead><tr>';
+            html += '<th>Chek raqami</th><th>Buyurtma ID</th><th>Summa</th><th>Cashback</th><th>Vaqt</th>';
+            html += '</tr></thead><tbody>';
+            
+            data.forEach(receipt => {
+                html += '<tr>';
+                html += `<td><strong>${receipt.receipt_number}</strong></td>`;
+                html += `<td>${receipt.order_id}</td>`;
+                html += `<td>${receipt.total_amount} so'm</td>`;
+                html += `<td>${receipt.cashback_amount} so'm</td>`;
+                html += `<td>${receipt.created_at.substring(0, 16).replace('T', ' ')}</td>`;
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table></div>';
+            document.getElementById('receipts-data').innerHTML = html;
+        })
+        .catch(error => {
+            console.error('Cheklar yuklashda xatolik:', error);
+            document.getElementById('receipts-data').innerHTML = '<p class="text-center">Cheklar yuklashda xatolik</p>';
+        });
+}
+
+function loadRatings() {
+    fetch('/super-admin/get-ratings')
+        .then(response => response.json())
+        .then(data => {
+            let html = '<div class="ratings-container">';
+            
+            // Mahsulot baholari
+            html += '<div class="ratings-section"><h4>📋 Mahsulot baholari</h4>';
+            if (data.menu_ratings && data.menu_ratings.length > 0) {
+                html += '<div class="table-container"><table class="admin-table"><thead><tr>';
+                html += '<th>Mahsulot</th><th>Foydalanuvchi</th><th>Baho</th><th>Sharh</th><th>Vaqt</th>';
+                html += '</tr></thead><tbody>';
+                
+                data.menu_ratings.forEach(rating => {
+                    html += '<tr>';
+                    html += `<td><strong>${rating.menu_item_name}</strong></td>`;
+                    html += `<td>${rating.user_name}</td>`;
+                    html += `<td>${'⭐'.repeat(rating.rating)}${'☆'.repeat(5 - rating.rating)} (${rating.rating}/5)</td>`;
+                    html += `<td>${rating.comment || 'Sharh yo\'q'}</td>`;
+                    html += `<td>${rating.created_at.substring(0, 16).replace('T', ' ')}</td>`;
+                    html += '</tr>';
+                });
+                
+                html += '</tbody></table></div>';
+            } else {
+                html += '<p class="text-center">Hali mahsulot baholari yo\'q.</p>';
+            }
+            html += '</div>';
+
+            // Filial baholari
+            html += '<div class="ratings-section"><h4>🏢 Filial baholari</h4>';
+            if (data.branch_ratings && data.branch_ratings.length > 0) {
+                html += '<div class="table-container"><table class="admin-table"><thead><tr>';
+                html += '<th>Filial</th><th>Foydalanuvchi</th><th>Baho</th><th>Sharh</th><th>Vaqt</th>';
+                html += '</tr></thead><tbody>';
+                
+                data.branch_ratings.forEach(rating => {
+                    html += '<tr>';
+                    html += `<td><strong>${rating.branch_name}</strong></td>`;
+                    html += `<td>${rating.user_name}</td>`;
+                    html += `<td>${'⭐'.repeat(rating.rating)}${'☆'.repeat(5 - rating.rating)} (${rating.rating}/5)</td>`;
+                    html += `<td>${rating.comment || 'Sharh yo\'q'}</td>`;
+                    html += `<td>${rating.created_at.substring(0, 16).replace('T', ' ')}</td>`;
+                    html += '</tr>';
+                });
+                
+                html += '</tbody></table></div>';
+            } else {
+                html += '<p class="text-center">Hali filial baholari yo\'q.</p>';
+            }
+            html += '</div>';
+            
+            html += '</div>';
+            document.getElementById('ratings-data').innerHTML = html;
+        })
+        .catch(error => {
+            console.error('Baholarni yuklashda xatolik:', error);
+            document.getElementById('ratings-data').innerHTML = '<p class="text-center">Baholarni yuklashda xatolik</p>';
+        });
+}
+
+function getStatusClass(status) {
+    switch(status) {
+        case 'waiting': return 'bg-warning';
+        case 'ready': return 'bg-info';
+        case 'served': return 'bg-success';
+        case 'cancelled': return 'bg-danger';
+        case 'on_way': return 'bg-primary';
+        case 'delivered': return 'bg-success';
+        default: return 'bg-secondary';
+    }
+}
+
+function getStatusText(status) {
+    switch(status) {
+        case 'waiting': return 'Kutilmoqda';
+        case 'ready': return 'Tayyor';
+        case 'served': return 'Berildi';
+        case 'cancelled': return 'Bekor qilindi';
+        case 'on_way': return 'Yo\'lda';
+        case 'delivered': return 'Yetkazildi';
+        default: return status;
+    }
+}
+
+// Modal functions
+function showAddStaffModal() {
+    document.getElementById('addStaffModal').style.display = 'block';
+}
+
+function showAddCourierModal() {
+    document.getElementById('addCourierModal').style.display = 'block';
+}
+
+function showAddMenuModal() {
+    document.getElementById('addMenuModal').style.display = 'block';
+}
+
+function showAddBranchModal() {
+    document.getElementById('addBranchModal').style.display = 'block';
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+}
+
+// Password reset functions
+function resetStaffPassword(staffId) {
+    const newPassword = prompt('Yangi parolni kiriting:');
+    if (newPassword && newPassword.length >= 6) {
+        fetch('/super-admin/reset-staff-password', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({staff_id: staffId, new_password: newPassword})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Parol muvaffaqiyatli yangilandi!');
+            } else {
+                alert('Xatolik: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Staff parol yangilashda xatolik:', error);
+            alert('Parol yangilashda xatolik');
+        });
+    } else if (newPassword !== null) {
+        alert('Parol kamida 6 ta belgidan iborat bo\'lishi kerak');
+    }
+}
+
+function resetCourierPassword(courierId) {
+    const newPassword = prompt('Yangi parolni kiriting:');
+    if (newPassword && newPassword.length >= 6) {
+        fetch('/super-admin/reset-courier-password', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({courier_id: courierId, new_password: newPassword})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Parol muvaffaqiyatli yangilandi!');
+            } else {
+                alert('Xatolik: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Courier parol yangilashda xatolik:', error);
+            alert('Parol yangilashda xatolik');
+        });
+    } else if (newPassword !== null) {
+        alert('Parol kamida 6 ta belgidan iborat bo\'lishi kerak');
+    }
+}
+
+function resetUserPassword(userId) {
+    const newPassword = prompt('Yangi parolni kiriting:');
+    if (newPassword && newPassword.length >= 6) {
+        fetch('/super-admin/reset-user-password', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({user_id: userId, new_password: newPassword})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Parol muvaffaqiyatli yangilandi!');
+            } else {
+                alert('Xatolik: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('User parol yangilashda xatolik:', error);
+            alert('Parol yangilashda xatolik');
+        });
+    } else if (newPassword !== null) {
+        alert('Parol kamida 6 ta belgidan iborat bo\'lishi kerak');
+    }
+};
     window.resetUserPassword = resetUserPassword;
     
     // Ilk tab ma'lumotlarini yuklash
