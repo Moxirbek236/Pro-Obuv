@@ -8,16 +8,19 @@ start_time = time.time()
 def cleanup_resources():
     """Resource cleanup on app shutdown"""
     try:
-        executor.shutdown(wait=True)
-        if hasattr(db_pool, 'connections'):
+        if 'executor' in globals():
+            executor.shutdown(wait=True)
+        if 'db_pool' in globals() and hasattr(db_pool, 'connections'):
             for conn in db_pool.connections:
                 try:
                     conn.close()
                 except:
                     pass
-        app_logger.info("Resources cleaned up successfully")
+        if 'app_logger' in globals():
+            app_logger.info("Resources cleaned up successfully")
     except Exception as e:
-        app_logger.error(f"Cleanup error: {str(e)}")
+        if 'app_logger' in globals():
+            app_logger.error(f"Cleanup error: {str(e)}")
 
 import atexit
 atexit.register(cleanup_resources)
