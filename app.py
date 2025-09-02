@@ -1618,9 +1618,12 @@ def place_order():
         flash("Buyurtma muvaffaqiyatli berildi!", "success")
 
     except Exception as e:
+        import traceback
+        error_details = traceback.format_exc()
         print(f"ERROR: Buyurtma berishda xatolik: {str(e)}")
-        logging.error(f"Buyurtma berishda xatolik: {str(e)}")
-        flash("Buyurtma berishda xatolik yuz berdi. Qaytadan urinib ko'ring.", "error")
+        print(f"ERROR DETAILS: {error_details}")
+        logging.error(f"Buyurtma berishda xatolik: {str(e)} - {error_details}")
+        flash(f"Buyurtma berishda xatolik yuz berdi: {str(e)}", "error")
         conn.rollback()
         return redirect(url_for("cart"))
     finally:

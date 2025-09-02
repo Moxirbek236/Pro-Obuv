@@ -150,7 +150,7 @@
                         <strong>Jami summa: <span id="total-amount">{{ "{:,.0f}".format(total) }} so'm</span></strong>
                     </div>
                 </div>
-                <button type="submit" class="btn checkout-btn" onclick="return handleFormSubmit(this.form) && validateOrder()">🛒 Buyurtma berish</button>
+                <button type="submit" class="btn checkout-btn" onclick="return validateOrder()">🛒 Buyurtma berish</button>
             </div>
         </form>
 
@@ -173,25 +173,27 @@ function handleFormSubmit(form) {
         const deliveryAddress = document.getElementById('delivery_address').value;
         const deliveryLatitude = document.getElementById('delivery_latitude').value;
         const deliveryLongitude = document.getElementById('delivery_longitude').value;
+        const branchId = document.getElementById('branch_id').value;
         
         console.log("Delivery ma'lumotlari:", {
             address: deliveryAddress,
             lat: deliveryLatitude,
-            lng: deliveryLongitude
+            lng: deliveryLongitude,
+            branchId: branchId
         });
 
-        if (!deliveryAddress || !deliveryLatitude || !deliveryLongitude) {
-            alert('Iltimos, xaritadan manzilni tanlang va yetkazib berish ma\'lumotlarini to\'ldiring!');
+        if (!deliveryAddress) {
+            alert('Iltimos, xaritadan yetkazib berish manzilini tanlang!');
             return false;
         }
-    }
 
-    // Form elementlarini tekshirish
-    const requiredFields = ['order_type'];
-    for (let field of requiredFields) {
-        const element = form.querySelector(`[name="${field}"]`);
-        if (!element || (element.type === 'radio' && !form.querySelector(`[name="${field}"]:checked`))) {
-            alert(`${field} maydoni to'ldirilmagan!`);
+        if (!deliveryLatitude || !deliveryLongitude) {
+            alert('Iltimos, xaritadan aniq joylashuvni tanlang!');
+            return false;
+        }
+
+        if (!branchId) {
+            alert('Filial aniqlanmadi. Iltimos, manzilni qaytadan tanlang!');
             return false;
         }
     }
@@ -298,6 +300,10 @@ function setUserLocation(coords) {
         setUserLocation(newCoords);
     });
 
+    // Koordinatalarni darhol saqlash
+    document.getElementById('delivery_latitude').value = coords[0];
+    document.getElementById('delivery_longitude').value = coords[1];
+
     // Manzilni olish
     ymaps.geocode(coords).then(function(res) {
         const firstGeoObject = res.geoObjects.get(0);
@@ -306,12 +312,15 @@ function setUserLocation(coords) {
         if (firstGeoObject) {
             address = firstGeoObject.getAddressLine();
         } else {
-            address = `${coords[0].toFixed(6)}, ${coords[1].toFixed(6)}`;
+            address = `Lat: ${coords[0].toFixed(6)}, Lng: ${coords[1].toFixed(6)}`;
         }
 
         document.getElementById('delivery_address').value = address;
-        document.getElementById('delivery_latitude').value = coords[0];
-        document.getElementById('delivery_longitude').value = coords[1];
+        console.log("Manzil saqlandi:", address);
+    }).catch(function(error) {
+        console.log("Manzil olishda xatolik:", error);
+        const fallbackAddress = `Lat: ${coords[0].toFixed(6)}, Lng: ${coords[1].toFixed(6)}`;
+        document.getElementById('delivery_address').value = fallbackAddress;
     });
 
     // Eng yaqin filialni topish
@@ -495,12 +504,14 @@ function validateOrder() {
 
     if (orderType.value === 'delivery') {
         const deliveryAddress = document.getElementById('delivery_address').value;
-        const deliveryDistance = document.getElementById('delivery_distance').value;
+        const deliveryLatitude = document.getElementById('delivery_latitude').value;
+        const deliveryLongitude = document.getElementById('delivery_longitude').value;
         const branchId = document.getElementById('branch_id').value;
 
         console.log("Delivery validation:", {
             address: deliveryAddress,
-            distance: deliveryDistance,
+            lat: deliveryLatitude,
+            lng: deliveryLongitude,
             branchId: branchId
         });
 
@@ -509,8 +520,8 @@ function validateOrder() {
             return false;
         }
 
-        if (!deliveryDistance || parseFloat(deliveryDistance) <= 0) {
-            alert('Iltimos, xaritadan manzilni tanlang va masofa hisoblanishini kuting!');
+        if (!deliveryLatitude || !deliveryLongitude) {
+            alert('Iltimos, xaritadan aniq joylashuvni tanlang!');
             return false;
         }
         
