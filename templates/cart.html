@@ -16,7 +16,7 @@
       <div class="cart-item">
         <div class="item-info">
           <h4>{{ item.name }}</h4>
-          {% set discount_percentage = item.get('discount_percentage', 0) or 0 %}
+          {% set discount_percentage = item['discount_percentage'] if item['discount_percentage'] else 0 %}
           {% if discount_percentage > 0 %}
             {% set discounted_price = item.price * (100 - discount_percentage) / 100 %}
             {% set discounted_total = discounted_price * item.quantity %}
