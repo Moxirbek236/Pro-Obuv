@@ -495,7 +495,7 @@ class PerformanceMonitor:
                 'total_requests': len(durations)
             }
 
-# Performance monitor instance yaratish
+# Performance monitor instance yaratish - to'g'ri e'lon qilish
 try:
     performance_monitor = PerformanceMonitor()
     app_logger.info("Performance monitor muvaffaqiyatli yaratildi")
@@ -503,7 +503,7 @@ except Exception as e:
     app_logger.warning(f"Performance monitor yaratishda xatolik: {str(e)}")
     # Fallback performance monitor yaratish
     class DummyPerformanceMonitor:
-        def record_request(self, duration, endpoint):
+        def record_request(self, duration, endpoint, status_code=200):
             pass
         def get_stats(self):
             return {}
@@ -539,17 +539,16 @@ def after_request(response):
     """So'rov tugagach xavfsizlik sarlavhalarini qo'shish"""
     try:
         # Performance monitoring (xavfsiz)
-        if hasattr(request, 'start_time') and 'performance_monitor' in globals():
+        if hasattr(request, 'start_time'):
             try:
                 duration = time.time() - request.start_time
-                # Performance monitor instance ekanligini tekshirish
-                if hasattr(performance_monitor, 'record_request') and callable(getattr(performance_monitor, 'record_request', None)):
+                # Performance monitor mavjudligini va metodini tekshirish
+                if globals().get('performance_monitor') and hasattr(performance_monitor, 'record_request'):
                     endpoint = getattr(request, 'endpoint', None) or 'unknown'
                     status_code = getattr(response, 'status_code', 200)
                     performance_monitor.record_request(duration, endpoint, status_code)
             except Exception as perf_error:
-                # Performance monitoring xatoligi ahamiyatsiz
-                app_logger.debug(f"Performance monitoring error: {str(perf_error)}")
+                # Performance monitoring xatoligi ahamiyatsiz - log qilmasdan o'tkazish
                 pass
 
         # Security headers qo'shish
@@ -2925,6 +2924,31 @@ def courier_logout():
     session.pop("courier_id", None)
     session.pop("courier_name", None)
     return redirect(url_for("index"))
+
+# ---- CART COUNT API ----
+@app.route("/get_cart_count")
+def get_cart_count():
+    """Savatcha mahsulotlar sonini qaytarish"""
+    try:
+        session_id = get_session_id()
+        user_id = session.get("user_id")
+        
+        conn = get_db()
+        cur = conn.cursor()
+        
+        if user_id:
+            cur.execute("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE user_id = ?", (user_id,))
+        else:
+            cur.execute("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE session_id = ?", (session_id,))
+        
+        result = cur.fetchone()
+        count = result['total_count'] if result else 0
+        conn.close()
+        
+        return jsonify({"count": count})
+    except Exception as e:
+        app_logger.error(f"Cart count error: {str(e)}")
+        return jsonify({"count": 0})
 
 # ---- STATIC FILE HANDLING ----
 @app.route('/static/<path:filename>')
