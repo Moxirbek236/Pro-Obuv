@@ -113,7 +113,7 @@ const currentPath = window.location.pathname;
 // Savatcha sonini yangilash funksiyasi
 function updateCartCount(retryCount = 0) {
     const maxRetries = 3;
-    
+
     fetch('/api/cart-count', {
         method: 'GET',
         headers: {
@@ -126,12 +126,12 @@ function updateCartCount(retryCount = 0) {
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
         }
-        
+
         const contentType = response.headers.get('content-type');
         if (!contentType || !contentType.includes('application/json')) {
             throw new Error('Server HTML qaytardi JSON o\'rniga');
         }
-        
+
         return response.json();
     })
     .then(data => {
@@ -143,7 +143,7 @@ function updateCartCount(retryCount = 0) {
     })
     .catch(error => {
         console.log('Savatcha sonini olishda xatolik:', error);
-        
+
         if (retryCount < maxRetries) {
             setTimeout(() => updateCartCount(retryCount + 1), 1000 * (retryCount + 1));
         } else {
@@ -164,11 +164,11 @@ function checkOrderStatus(ticketNo) {
             if (data.ok) {
                 const statusElement = document.getElementById('order-status');
                 const queueElement = document.getElementById('queue-position');
-                
+
                 if (statusElement) {
                     statusElement.textContent = data.status_text;
                 }
-                
+
                 if (queueElement && data.queue_position > 0) {
                     queueElement.textContent = `Navbatdagi o'rni: ${data.queue_position}`;
                     queueElement.style.display = 'block';
@@ -238,15 +238,15 @@ function showRatingModal(orderId) {
             </div>
         </div>
     `;
-    
+
     document.body.insertAdjacentHTML('beforeend', modalHtml);
-    
+
     // Star rating events
     document.querySelectorAll('.star').forEach(star => {
         star.addEventListener('click', function() {
             const rating = this.dataset.rating;
             const stars = this.parentElement.querySelectorAll('.star');
-            
+
             stars.forEach((s, index) => {
                 if (index < rating) {
                     s.style.color = '#ffc107';
@@ -254,11 +254,11 @@ function showRatingModal(orderId) {
                     s.style.color = '#ddd';
                 }
             });
-            
+
             this.parentElement.dataset.selectedRating = rating;
         });
     });
-    
+
     const modal = new bootstrap.Modal(document.getElementById('ratingModal'));
     modal.show();
 }
@@ -269,12 +269,12 @@ function submitRating() {
     const rating = ratingElement.dataset.selectedRating;
     const comment = document.getElementById('ratingComment').value;
     const orderId = ratingElement.dataset.orderId;
-    
+
     if (!rating) {
         alert('Iltimos, baho bering');
         return;
     }
-    
+
     fetch('/api/submit-rating', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -322,7 +322,7 @@ function applyLanguage(lang) {
 // Til sozlamasini saqlash
 function saveLanguage(language) {
     console.log('Til saqlanyapti:', language);
-    
+
     fetch('/api/set-language', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -366,18 +366,18 @@ function loadSettings() {
         fontSize: localStorage.getItem('fontSize') || 'medium',
         language: localStorage.getItem('language') || 'uz'
     };
-    
+
     console.log('DOMContentLoaded - Loading settings:', settings);
-    
+
     applyTheme(settings.darkMode);
     applyFontSize(settings.fontSize);
     applyLanguage(settings.language);
-    
+
     // Til classini qo'shish
     document.body.classList.remove('lang-uz', 'lang-ru', 'lang-en');
     document.body.classList.add(`lang-${settings.language}`);
     console.log('Language qo\'shildi:', `lang-${settings.language}`);
-    
+
     return settings;
 }
 
@@ -416,20 +416,20 @@ window.addEventListener('error', function(event) {
 document.addEventListener('DOMContentLoaded', function() {
     // Sozlamalarni yuklash
     loadSettings();
-    
+
     // Savatcha sonini yangilash
     updateCartCount();
-    
+
     // Buyurtma holati sahifasi uchun
     if (currentPath.includes('/user/success/')) {
         const ticketNo = currentPath.split('/').pop();
-        
+
         // Dastlabki holat tekshiruvi
         checkOrderStatus(ticketNo);
-        
+
         // Har 5 soniyada holat tekshiruvi
         setInterval(() => checkOrderStatus(ticketNo), 5000);
-        
+
         // Bekor qilish tugmasini qo'shish
         const orderInfo = document.querySelector('.order-info');
         if (orderInfo) {
@@ -440,29 +440,29 @@ document.addEventListener('DOMContentLoaded', function() {
             orderInfo.appendChild(cancelBtn);
         }
     }
-    
+
     // Til o'zgartirish event listenerlari
     const languageSelect = document.getElementById('languageSelect');
     if (languageSelect) {
         const currentLang = localStorage.getItem('language') || 'uz';
         languageSelect.value = currentLang;
-        
+
         languageSelect.addEventListener('change', function() {
             saveLanguage(this.value);
         });
     }
-    
+
     // Theme toggle
     const themeToggle = document.getElementById('themeToggle');
     if (themeToggle) {
         const isDark = localStorage.getItem('darkMode') === 'true';
         themeToggle.checked = isDark;
-        
+
         themeToggle.addEventListener('change', function() {
             const isDark = this.checked;
             localStorage.setItem('darkMode', isDark);
             applyTheme(isDark);
-            
+
             // Server ga yuborish
             fetch('/api/set-theme', {
                 method: 'POST',
@@ -471,13 +471,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }).catch(error => console.error('Theme saqlashda xatolik:', error));
         });
     }
-    
+
     // Font size selector
     const fontSizeSelect = document.getElementById('fontSizeSelect');
     if (fontSizeSelect) {
         const currentSize = localStorage.getItem('fontSize') || 'medium';
         fontSizeSelect.value = currentSize;
-        
+
         fontSizeSelect.addEventListener('change', function() {
             const size = this.value;
             localStorage.setItem('fontSize', size);
