@@ -4649,6 +4649,55 @@ def api_clear_logs():
         app_logger.error(f"Loglarni tozalashda xatolik: {str(e)}")
         return jsonify({"success": False, "message": str(e)}), 500
 
+@app.route("/api/super-admin/dashboard-stats")
+@login_required
+def api_dashboard_stats():
+    """Real-time dashboard statistikalarini olish"""
+    try:
+        conn = get_db()
+        cur = conn.cursor()
+
+        # Buyurtmalar statistikasi
+        cur.execute("SELECT COUNT(*) FROM orders")
+        total_orders = cur.fetchone()[0] or 0
+
+        cur.execute("SELECT COUNT(*) FROM orders WHERE status='waiting'")
+        waiting_orders = cur.fetchone()[0] or 0
+
+        cur.execute("SELECT COUNT(*) FROM orders WHERE status='ready'")
+        ready_orders = cur.fetchone()[0] or 0
+
+        cur.execute("SELECT COUNT(*) FROM orders WHERE status='served'")
+        served_orders = cur.fetchone()[0] or 0
+
+        # Xodimlar statistikasi
+        cur.execute("SELECT COUNT(*) FROM staff")
+        total_staff = cur.fetchone()[0] or 0
+
+        cur.execute("SELECT COUNT(*) FROM couriers")
+        total_couriers = cur.fetchone()[0] or 0
+
+        cur.execute("SELECT COUNT(*) FROM users")
+        total_users = cur.fetchone()[0] or 0
+
+        conn.close()
+
+        stats = {
+            'total_orders': total_orders,
+            'waiting_orders': waiting_orders,
+            'ready_orders': ready_orders,
+            'served_orders': served_orders,
+            'total_staff': total_staff,
+            'total_couriers': total_couriers,
+            'total_users': total_users
+        }
+
+        return jsonify({"success": True, "stats": stats})
+
+    except Exception as e:
+        app_logger.error(f"Dashboard stats API error: {str(e)}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
 @app.route("/super-admin/delete-courier/<int:courier_id>", methods=["POST"])
 def super_admin_delete_courier(courier_id):
     if not session.get("super_admin"):
