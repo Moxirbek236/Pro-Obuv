@@ -23,15 +23,19 @@ DB_PATH = os.path.join(os.path.dirname(__file__), "database.sqlite3")
 
 import logging
 
-# Log faylini sozlash
+# Log faylini sozlash - DEBUG darajasida barcha xabalarni yozish
 logging.basicConfig(
-    level=logging.ERROR,
+    level=logging.DEBUG,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
         logging.FileHandler('error.log'),
         logging.StreamHandler()
     ]
 )
+
+# Flask app uchun alohida logger
+app_logger = logging.getLogger('app')
+app_logger.setLevel(logging.DEBUG)
 
 
 
@@ -361,8 +365,10 @@ def ensure_orders_columns():
             conn.commit()
 
     except Exception as e:
-        pass
-    conn.close()
+        app_logger.error(f"Orders jadval migration xatoligi: {str(e)}")
+        logging.error(f"Orders jadval migration xatoligi: {str(e)}")
+    finally:
+        conn.close()
 
 def ensure_users_columns():
     """Users jadvaliga kerakli ustunlarni qo'shadi (migration)."""
@@ -3677,6 +3683,7 @@ def debug():
 if __name__ == '__main__':
     try:
         # Ma'lumotlar bazasini ishga tushirish
+        print("Ma'lumotlar bazasini ishga tushirish...")
         init_db()
         print("Ma'lumotlar bazasi muvaffaqiyatli ishga tushirildi")
         
@@ -3684,11 +3691,34 @@ if __name__ == '__main__':
         port = int(os.environ.get('PORT', 5000))
         print(f"Server {port} portda ishga tushmoqda...")
         
-        # Serverni ishga tushirish
-        app.run(debug=True, host='0.0.0.0', port=port)
+        # Flask app konfiguratsiyasi
+        app.config['DEBUG'] = True
+        app.config['TEMPLATES_AUTO_RELOAD'] = True
         
+        # Serverni ishga tushirish
+        print("Flask server ishga tushmoqda...")
+        app.run(debug=True, host='0.0.0.0', port=port, threaded=True)
+        
+    except KeyboardInterrupt:
+        print("\nServer to'xtatildi (Ctrl+C)")
     except Exception as e:
-        print(f"Server ishga tushirishda xatolik: {str(e)}")
+        print(f"XATOLIK: Server ishga tushirishda xatolik: {str(e)}")
         logging.error(f"Server startup error: {str(e)}")
         import traceback
+        print("To'liq xatolik ma'lumoti:")
         traceback.print_exc()
+        
+        # Qo'shimcha debug ma'lumotlari
+        print(f"Python versiya: {os.sys.version}")
+        print(f"Ishchi katalog: {os.getcwd()}")
+        print(f"Flask versiya: {app.__class__.__module__}")
+        
+        # Ma'lumotlar bazasi holatini tekshirish
+        try:
+            if os.path.exists(DB_PATH):
+                print(f"Ma'lumotlar bazasi mavjud: {DB_PATH}")
+                print(f"Fayl hajmi: {os.path.getsize(DB_PATH)} bytes")
+            else:
+                print(f"Ma'lumotlar bazasi topilmadi: {DB_PATH}")
+        except Exception as db_error:
+            print(f"Ma'lumotlar bazasini tekshirishda xatolik: {str(db_error)}")
