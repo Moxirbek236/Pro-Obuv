@@ -386,9 +386,16 @@ class PerformanceMonitor:
 # Performance monitor instance yaratish
 try:
     performance_monitor = PerformanceMonitor()
+    app_logger.info("Performance monitor muvaffaqiyatli yaratildi")
 except Exception as e:
     app_logger.warning(f"Performance monitor yaratishda xatolik: {str(e)}")
-    performance_monitor = None
+    # Fallback performance monitor yaratish
+    class DummyPerformanceMonitor:
+        def record_request(self, duration, endpoint):
+            pass
+        def get_stats(self):
+            return {}
+    performance_monitor = DummyPerformanceMonitor()
 
 @app.before_request
 def before_request():
@@ -403,21 +410,28 @@ def after_request(response):
             duration = time.time() - request.start_time
             
             # Performance monitor instance mavjudligini tekshirish
-            if hasattr(performance_monitor, 'record_request'):
-                performance_monitor.record_request(duration, request.endpoint)
+            if performance_monitor and hasattr(performance_monitor, 'record_request'):
+                try:
+                    performance_monitor.record_request(duration, request.endpoint)
+                except Exception as perf_error:
+                    pass  # Performance logging error ni ignore qilish
             
             # Sekin so'rovlarni log qilish
             if duration > 2.0:
                 app_logger.warning(f"Slow request: {request.endpoint} took {duration:.2f}s")
     except Exception as e:
         # Performance monitoring xatoligi uchun logga yozish, lekin javobni buzmaslik
-        app_logger.warning(f"Performance monitoring error: {str(e)}")
+        pass
 
     # Security headers qo'shish
-    response.headers['X-Content-Type-Options'] = 'nosniff'
-    response.headers['X-Frame-Options'] = 'DENY'
-    response.headers['X-XSS-Protection'] = '1; mode=block'
-    response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+    try:
+        response.headers['X-Content-Type-Options'] = 'nosniff'
+        response.headers['X-Frame-Options'] = 'DENY'
+        response.headers['X-XSS-Protection'] = '1; mode=block'
+        if Config.IS_PRODUCTION:
+            response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+    except Exception as header_error:
+        pass  # Header qo'shishda xatolik bo'lsa ham javobni buzmaslik
 
     return response
 
@@ -2696,23 +2710,6 @@ def courier_logout():
     return redirect(url_for("index"))
 
 # ---- STAFF AUTH ----
-@app.route("/login")
-@app.route("/login/<role>")
-def login_page(role=None):
-    # URL dan role parametrini tekshirish
-    role_param = request.args.get('role')
-    if role_param:
-        role = role_param
-
-    if role == 'staff':
-        return render_template("staff_login.html")
-    elif role == 'courier':
-        return render_template("courier_login.html") 
-    elif role == 'admin':
-        return render_template("super_admin_login.html")
-    else:
-        return render_template("login.html")
-
 @app.route("/staff-secure-login-w7m2k", methods=["GET", "POST"])
 def staff_login():
     if request.method == "POST":
@@ -3766,6 +3763,9 @@ def api_save_settings():
 @app.route("/api/cart-count", methods=["GET"])
 def api_cart_count():
     """Savatcha buyumlari sonini qaytarish"""
+    # Content-Type ni majburiy JSON qilib o'rnatish
+    from flask import make_response
+    
     try:
         # Session ID ni xavfsiz yaratish
         try:
@@ -3799,26 +3799,32 @@ def api_cart_count():
 
             conn.close()
 
-            return jsonify({
+            response = make_response(jsonify({
                 "count": int(count), 
                 "success": True
-            })
+            }))
+            response.headers['Content-Type'] = 'application/json'
+            return response
 
         except Exception as db_error:
             app_logger.error(f"Database xatoligi cart count da: {str(db_error)}")
-            return jsonify({
+            response = make_response(jsonify({
                 "count": 0, 
                 "success": False,
                 "error": "Database xatoligi"
-            })
+            }))
+            response.headers['Content-Type'] = 'application/json'
+            return response
 
     except Exception as e:
         app_logger.error(f"Savatcha sonini olishda umumiy xatolik: {str(e)}")
-        return jsonify({
+        response = make_response(jsonify({
             "count": 0, 
             "success": False, 
             "error": "Server xatoligi"
-        })
+        }))
+        response.headers['Content-Type'] = 'application/json'
+        return response
 
 @app.route("/api/set-theme", methods=["POST"])
 def api_set_theme():
