@@ -3392,8 +3392,19 @@ def super_admin_dashboard():
 
     branches = []
     for branch in branches_raw:
-        branch_dict = dict(branch)
-        rating_data = get_branch_average_rating(branch['id'])
+        # SQLite Row obyektini dict ga xavfsiz o'tkazish
+        if hasattr(branch, 'keys'):
+            branch_dict = dict(zip(branch.keys(), branch))
+        else:
+            # Agar tuple bo'lsa, manual dict yaratish
+            branch_dict = {
+                'id': branch[0], 'name': branch[1], 'address': branch[2],
+                'latitude': branch[3], 'longitude': branch[4], 'phone': branch[5],
+                'working_hours': branch[6], 'is_active': branch[7], 
+                'delivery_radius': branch[8], 'created_at': branch[9]
+            }
+        
+        rating_data = get_branch_average_rating(branch_dict['id'])
         branch_dict['average_rating'] = rating_data['average_rating']
         branch_dict['total_ratings'] = rating_data['total_ratings']
         branches.append(branch_dict)
@@ -3717,6 +3728,152 @@ def super_admin_delete_branch(branch_id):
 
     flash(f"Filial #{branch_id} o'chirildi.", "success")
     return redirect(url_for("super_admin_dashboard"))
+
+@app.route("/super-admin/get-orders")
+@login_required
+def super_admin_get_orders():
+    """Super admin uchun barcha buyurtmalar JSON formatida"""
+    try:
+        cleanup_expired_orders()
+        orders = execute_query("""
+            SELECT o.*, 
+                   GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
+            FROM orders o
+            LEFT JOIN order_details od ON o.id = od.order_id
+            LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
+            GROUP BY o.id
+            ORDER BY o.created_at DESC
+        """, fetch_all=True)
+        
+        return jsonify([dict(order) for order in orders])
+    except Exception as e:
+        app_logger.error(f"Super admin get orders error: {str(e)}")
+        return jsonify([]), 500
+
+@app.route("/super-admin/get-menu")
+@login_required 
+def super_admin_get_menu():
+    """Super admin uchun menyu ma'lumotlari JSON formatida"""
+    try:
+        menu_items = execute_query("""
+            SELECT m.*, COALESCE(AVG(r.rating), 0) as avg_rating, COUNT(r.rating) as rating_count
+            FROM menu_items m 
+            LEFT JOIN ratings r ON m.id = r.menu_item_id 
+            GROUP BY m.id 
+            ORDER BY m.category, m.name
+        """, fetch_all=True)
+        
+        return jsonify([dict(item) for item in menu_items])
+    except Exception as e:
+        app_logger.error(f"Super admin get menu error: {str(e)}")
+        return jsonify([]), 500
+
+@app.route("/super-admin/get-receipts")
+@login_required
+def super_admin_get_receipts():
+    """Super admin uchun cheklar JSON formatida"""
+    try:
+        receipts = execute_query("""
+            SELECT r.*, o.customer_name, o.ticket_no
+            FROM receipts r
+            JOIN orders o ON r.order_id = o.id
+            ORDER BY r.created_at DESC
+            LIMIT 100
+        """, fetch_all=True)
+        
+        return jsonify([dict(receipt) for receipt in receipts])
+    except Exception as e:
+        app_logger.error(f"Super admin get receipts error: {str(e)}")
+        return jsonify([]), 500
+
+@app.route("/super-admin/get-ratings")
+@login_required
+def super_admin_get_ratings():
+    """Super admin uchun baholar JSON formatida"""
+    try:
+        # Mahsulot baholari
+        menu_ratings = execute_query("""
+            SELECT r.rating, r.comment, r.created_at, 
+                   u.first_name, u.last_name,
+                   m.name as menu_item_name,
+                   (u.first_name || ' ' || u.last_name) as user_name
+            FROM ratings r
+            JOIN users u ON r.user_id = u.id
+            JOIN menu_items m ON r.menu_item_id = m.id
+            WHERE r.menu_item_id > 0
+            ORDER BY r.created_at DESC
+            LIMIT 50
+        """, fetch_all=True)
+
+        # Filial baholari
+        branch_ratings = execute_query("""
+            SELECT r.rating, r.comment, r.created_at,
+                   u.first_name, u.last_name,
+                   b.name as branch_name,
+                   (u.first_name || ' ' || u.last_name) as user_name
+            FROM ratings r
+            JOIN users u ON r.user_id = u.id
+            JOIN branches b ON r.menu_item_id = -b.id
+            WHERE r.menu_item_id < 0
+            ORDER BY r.created_at DESC
+            LIMIT 50
+        """, fetch_all=True)
+        
+        return jsonify({
+            "menu_ratings": [dict(rating) for rating in menu_ratings],
+            "branch_ratings": [dict(rating) for rating in branch_ratings]
+        })
+    except Exception as e:
+        app_logger.error(f"Super admin get ratings error: {str(e)}")
+        return jsonify({"menu_ratings": [], "branch_ratings": []}), 500
+
+@app.route("/super-admin/delete-courier/<int:courier_id>", methods=["POST"])
+def super_admin_delete_courier(courier_id):
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("DELETE FROM couriers WHERE id = ?", (courier_id,))
+    conn.commit()
+    conn.close()
+
+    flash(f"Kuryer #{courier_id} o'chirildi.", "success")
+    return redirect(url_for("super_admin_dashboard"))
+
+@app.route("/super-admin/delete-user-db/<int:user_id>", methods=["POST"])
+def super_admin_delete_user_db(user_id):
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+
+    conn = get_db()
+    cur = conn.cursor()
+    
+    # Foydalanuvchi buyurtmalarini ham o'chirish
+    cur.execute("SELECT id FROM orders WHERE user_id = ?", (user_id,))
+    order_ids = [row[0] for row in cur.fetchall()]
+    
+    for order_id in order_ids:
+        cur.execute("DELETE FROM order_details WHERE order_id = ?", (order_id,))
+        cur.execute("DELETE FROM receipts WHERE order_id = ?", (order_id,))
+    
+    cur.execute("DELETE FROM orders WHERE user_id = ?", (user_id,))
+    cur.execute("DELETE FROM cart_items WHERE user_id = ?", (user_id,))
+    cur.execute("DELETE FROM favorites WHERE user_id = ?", (user_id,))
+    cur.execute("DELETE FROM ratings WHERE user_id = ?", (user_id,))
+    cur.execute("DELETE FROM users WHERE id = ?", (user_id,))
+    
+    conn.commit()
+    conn.close()
+
+    flash(f"Foydalanuvchi #{user_id} va barcha ma'lumotlari o'chirildi.", "success")
+    return redirect(url_for("super_admin_dashboard"))
+
+@app.route("/super-admin/logout")
+def super_admin_logout():
+    session.pop("super_admin", None)
+    flash("Super admin panelidan chiqdingiz.", "info")
+    return redirect(url_for("index"))
 
 @app.route("/super-admin/toggle-branch/<int:branch_id>", methods=["POST"])
 def super_admin_toggle_branch(branch_id):
