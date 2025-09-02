@@ -1504,38 +1504,27 @@ def auto_calculate_courier_delivery_price(distance_km):
 def get_branch_average_rating(branch_id):
     """Filial uchun o'rtacha bahoni hisoblash"""
     try:
-        conn = get_db()
-        cur = conn.cursor()
+        with db_pool.get_connection() as conn:
+            cur = conn.cursor()
 
-        # Filial uchun berilgan baholarni olish (menu_item_id = -branch_id)
-        cur.execute("""
-            SELECT AVG(rating) as avg_rating, COUNT(*) as total_ratings
-            FROM ratings 
-            WHERE menu_item_id = ?
-        """, (-branch_id,))
+            # Filial uchun berilgan baholarni olish (menu_item_id = -branch_id)
+            cur.execute("""
+                SELECT AVG(CAST(rating AS FLOAT)) as avg_rating, COUNT(*) as total_ratings
+                FROM ratings 
+                WHERE menu_item_id = ?
+            """, (-branch_id,))
 
-        result = cur.fetchone()
-        conn.close()
+            result = cur.fetchone()
 
-        if result:
-            # SQLite Row obyektiga to'g'ri murojaat
-            try:
-                if hasattr(result, 'keys'):
-                    # Row obyekti
-                    avg_rating = result['avg_rating']
-                    total_ratings = result['total_ratings']
-                else:
-                    # Tuple
-                    avg_rating = result[0]
-                    total_ratings = result[1]
+            if result and result[0] is not None:
+                # Tuple access bilan xavfsiz
+                avg_rating = float(result[0]) if result[0] else 0.0
+                total_ratings = int(result[1]) if result[1] else 0
                     
-                if avg_rating:
-                    return {
-                        'average_rating': round(float(avg_rating), 1),
-                        'total_ratings': int(total_ratings)
-                    }
-            except (KeyError, IndexError, TypeError) as access_error:
-                app_logger.warning(f"Result access error: {str(access_error)}")
+                return {
+                    'average_rating': round(avg_rating, 1),
+                    'total_ratings': total_ratings
+                }
         
         return {
             'average_rating': 0.0,
@@ -4379,8 +4368,14 @@ def api_reports_data():
         
         # Filial baholarini qo'shish
         for branch in branches_data:
-            rating_data = get_branch_average_rating(branch['id'])
-            branch['average_rating'] = rating_data['average_rating']
+            try:
+                rating_data = get_branch_average_rating(branch['id'])
+                branch['average_rating'] = rating_data['average_rating']
+                branch['total_ratings'] = rating_data['total_ratings']
+            except Exception as rating_error:
+                app_logger.warning(f"Branch {branch['id']} rating olishda xatolik: {str(rating_error)}")
+                branch['average_rating'] = 0.0
+                branch['total_ratings'] = 0
         
         return jsonify({
             "summary": dict(summary) if summary else {},
@@ -4649,6 +4644,55 @@ def api_clear_logs():
         app_logger.error(f"Loglarni tozalashda xatolik: {str(e)}")
         return jsonify({"success": False, "message": str(e)}), 500
 
+@app.route("/api/super-admin/dashboard-stats")
+@login_required
+def api_dashboard_stats():
+    """Real-time dashboard statistikalarini olish"""
+    try:
+        conn = get_db()
+        cur = conn.cursor()
+
+        # Buyurtmalar statistikasi
+        cur.execute("SELECT COUNT(*) FROM orders")
+        total_orders = cur.fetchone()[0] or 0
+
+        cur.execute("SELECT COUNT(*) FROM orders WHERE status='waiting'")
+        waiting_orders = cur.fetchone()[0] or 0
+
+        cur.execute("SELECT COUNT(*) FROM orders WHERE status='ready'")
+        ready_orders = cur.fetchone()[0] or 0
+
+        cur.execute("SELECT COUNT(*) FROM orders WHERE status='served'")
+        served_orders = cur.fetchone()[0] or 0
+
+        # Xodimlar statistikasi
+        cur.execute("SELECT COUNT(*) FROM staff")
+        total_staff = cur.fetchone()[0] or 0
+
+        cur.execute("SELECT COUNT(*) FROM couriers")
+        total_couriers = cur.fetchone()[0] or 0
+
+        cur.execute("SELECT COUNT(*) FROM users")
+        total_users = cur.fetchone()[0] or 0
+
+        conn.close()
+
+        stats = {
+            'total_orders': total_orders,
+            'waiting_orders': waiting_orders,
+            'ready_orders': ready_orders,
+            'served_orders': served_orders,
+            'total_staff': total_staff,
+            'total_couriers': total_couriers,
+            'total_users': total_users
+        }
+
+        return jsonify({"success": True, "stats": stats})
+
+    except Exception as e:
+        app_logger.error(f"Dashboard stats API error: {str(e)}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
 @app.route("/super-admin/delete-courier/<int:courier_id>", methods=["POST"])
 def super_admin_delete_courier(courier_id):
     if not session.get("super_admin"):
@@ -4690,6 +4734,105 @@ def super_admin_delete_user_db(user_id):
 
     flash(f"Foydalanuvchi #{user_id} va barcha ma'lumotlari o'chirildi.", "success")
     return redirect(url_for("super_admin_dashboard"))
+
+@app.route("/super-admin/reset-all-data", methods=["POST"])
+def super_admin_reset_all_data():
+    """Barcha ma'lumotlarni o'chirish va test ma'lumotlarini yaratish"""
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+
+    try:
+        conn = get_db()
+        cur = conn.cursor()
+
+        # Barcha ma'lumotlarni o'chirish
+        tables_to_clear = [
+            'cart_items', 'favorites', 'ratings', 'order_details', 
+            'receipts', 'orders', 'questions', 'users', 'staff', 'couriers', 'branches'
+        ]
+
+        for table in tables_to_clear:
+            try:
+                cur.execute(f"DELETE FROM {table}")
+                app_logger.info(f"Jadval {table} tozalandi")
+            except Exception as e:
+                app_logger.warning(f"Jadval {table} tozalashda xatolik: {str(e)}")
+
+        # Counterlarni tiklash
+        cur.execute("UPDATE counters SET value = 10000 WHERE name = 'ticket'")
+
+        now = get_current_time().isoformat()
+        common_password = "123456"  # Bir xil parol
+        password_hash = generate_password_hash(common_password)
+
+        # 1 ta test foydalanuvchi yaratish
+        cur.execute("""
+            INSERT INTO users (id, first_name, last_name, email, phone, password_hash, address, created_at, interface_language, font_size, dark_theme)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (1001, "Test", "Foydalanuvchi", "user@test.com", "+998901234567", password_hash, "Toshkent, Chilonzor tumani", now, "uz", "medium", 0))
+
+        # 1 ta test xodim yaratish
+        cur.execute("""
+            INSERT INTO staff (id, first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, total_hours, orders_handled, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (20001, "Test", "Xodim", "1990-01-01", "+998901234568", "AA", "1234567", password_hash, 0, 0, now))
+
+        # 1 ta test kuryer yaratish
+        cur.execute("""
+            INSERT INTO couriers (id, first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, total_hours, deliveries_completed, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (30001, "Test", "Kuryer", "1995-01-01", "+998901234569", "BB", "7654321", password_hash, 0, 0, now))
+
+        # 1 ta test filial yaratish
+        cur.execute("""
+            INSERT INTO branches (id, name, address, latitude, longitude, phone, working_hours, is_active, delivery_radius, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (1, "Test Filial", "Toshkent, Amir Temur ko'chasi 1", 41.2995, 69.2401, "+998712345678", "09:00-23:00", 1, 20.0, now))
+
+        conn.commit()
+        conn.close()
+
+        # JSON fayllarni ham tozalash va yangilash
+        try:
+            # users.json ni tozalash
+            with open('users.json', 'w', encoding='utf-8') as f:
+                json.dump([], f, ensure_ascii=False, indent=2)
+
+            # employees.json ni tozalash
+            with open('employees.json', 'w', encoding='utf-8') as f:
+                json.dump([], f, ensure_ascii=False, indent=2)
+
+            # courier.json ni tozalash
+            if os.path.exists('courier.json'):
+                with open('courier.json', 'w', encoding='utf-8') as f:
+                    json.dump([], f, ensure_ascii=False, indent=2)
+
+        except Exception as json_error:
+            app_logger.warning(f"JSON fayllarni tozalashda xatolik: {str(json_error)}")
+
+        # Cache ni tozalash
+        cache_manager.memory_cache.clear()
+        cache_manager.cache_timestamps.clear()
+
+        app_logger.info("Barcha ma'lumotlar tozalandi va test ma'lumotlari yaratildi")
+        flash(f"""
+        ✅ Barcha ma'lumotlar muvaffaqiyatli tozalandi va test ma'lumotlari yaratildi!
+        
+        📋 Yaratilgan test ma'lumotlari:
+        👤 Foydalanuvchi: ID 1001, Email: user@test.com, Parol: {common_password}
+        👨‍💼 Xodim: ID 20001, Parol: {common_password}
+        🚚 Kuryer: ID 30001, Parol: {common_password}
+        🏢 Filial: Test Filial (ID: 1)
+        
+        ⚠️ Barcha parollar bir xil: {common_password}
+        """, "success")
+
+        return redirect(url_for("super_admin_dashboard"))
+
+    except Exception as e:
+        app_logger.error(f"Ma'lumotlarni tozalashda xatolik: {str(e)}")
+        flash(f"Ma'lumotlarni tozalashda xatolik yuz berdi: {str(e)}", "error")
+        return redirect(url_for("super_admin_dashboard"))
 
 @app.route("/super-admin/logout")
 def super_admin_logout():

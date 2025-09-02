@@ -6,77 +6,80 @@ let cartCount = 0;
 let currentPath = window.location.pathname;
 
 // Professional Translation System
-const globalTranslations = {
-    uz: {
-        menu: '📋 Menyu',
-        favorites: '❤️ Sevimlilar',
-        contact: '📞 Aloqa',
-        about: '❓ Savollar',
-        downloads: '📱 Yuklamalar',
-        cart: '🛒 Savatcha',
-        profile_info: '👤 Profil ma\'lumotlari',
-        profile_settings: '⚙️ Profil sozlamalari',
-        settings: '🔧 Sozlamalar',
-        logout: '🚪 Chiqish',
-        login: '🔐 Kirish',
-        register: '📝 Ro\'yxat',
-        user: '👤 Foydalanuvchi',
-        staff: '👨‍💼 Xodim',
-        courier: '🚚 Kuryer',
-        admin: '🔧 Admin',
-        dashboard: '🏠 Dashboard',
-        analytics: '📊 Analytics',
-        reports: '📈 Hisobotlar',
-        system: '⚙️ Tizim',
-        logs: '📝 Loglar'
-    },
-    ru: {
-        menu: '📋 Меню',
-        favorites: '❤️ Избранное',
-        contact: '📞 Контакты',
-        about: '❓ Вопросы',
-        downloads: '📱 Загрузки',
-        cart: '🛒 Корзина',
-        profile_info: '👤 Данные профиля',
-        profile_settings: '⚙️ Настройки профиля',
-        settings: '🔧 Настройки',
-        logout: '🚪 Выход',
-        login: '🔐 Вход',
-        register: '📝 Регистрация',
-        user: '👤 Пользователь',
-        staff: '👨‍💼 Сотрудник',
-        courier: '🚚 Курьер',
-        admin: '🔧 Админ',
-        dashboard: '🏠 Панель',
-        analytics: '📊 Аналитика',
-        reports: '📈 Отчеты',
-        system: '⚙️ Система',
-        logs: '📝 Логи'
-    },
-    en: {
-        menu: '📋 Menu',
-        favorites: '❤️ Favorites',
-        contact: '📞 Contact',
-        about: '❓ About',
-        downloads: '📱 Downloads',
-        cart: '🛒 Cart',
-        profile_info: '👤 Profile Info',
-        profile_settings: '⚙️ Profile Settings',
-        settings: '🔧 Settings',
-        logout: '🚪 Logout',
-        login: '🔐 Login',
-        register: '📝 Register',
-        user: '👤 User',
-        staff: '👨‍💼 Staff',
-        courier: '🚚 Courier',
-        admin: '🔧 Admin',
-        dashboard: '🏠 Dashboard',
-        analytics: '📊 Analytics',
-        reports: '📈 Reports',
-        system: '⚙️ System',
-        logs: '📝 Logs'
-    }
-};
+// Global translations object - check if already exists to prevent redeclaration
+if (typeof translations === 'undefined') {
+    var translations = {
+        uz: {
+            menu: '📋 Menyu',
+            favorites: '❤️ Sevimlilar',
+            contact: '📞 Aloqa',
+            about: '❓ Savollar',
+            downloads: '📱 Yuklamalar',
+            cart: '🛒 Savatcha',
+            profile_info: '👤 Profil ma\'lumotlari',
+            profile_settings: '⚙️ Profil sozlamalari',
+            settings: '🔧 Sozlamalar',
+            logout: '🚪 Chiqish',
+            login: '🔐 Kirish',
+            register: '📝 Ro\'yxat',
+            user: '👤 Foydalanuvchi',
+            staff: '👨‍💼 Xodim',
+            courier: '🚚 Kuryer',
+            admin: '🔧 Admin',
+            dashboard: '🏠 Dashboard',
+            analytics: '📊 Analytics',
+            reports: '📈 Hisobotlar',
+            system: '⚙️ Tizim',
+            logs: '📝 Loglar'
+        },
+        ru: {
+            menu: '📋 Меню',
+            favorites: '❤️ Избранное',
+            contact: '📞 Контакты',
+            about: '❓ Вопросы',
+            downloads: '📱 Загрузки',
+            cart: '🛒 Корзина',
+            profile_info: '👤 Данные профиля',
+            profile_settings: '⚙️ Настройки профиля',
+            settings: '🔧 Настройки',
+            logout: '🚪 Выход',
+            login: '🔐 Вход',
+            register: '📝 Регистрация',
+            user: '👤 Пользователь',
+            staff: '👨‍💼 Сотрудник',
+            courier: '🚚 Курьер',
+            admin: '🔧 Админ',
+            dashboard: '🏠 Панель',
+            analytics: '📊 Аналитика',
+            reports: '📈 Отчеты',
+            system: '⚙️ Система',
+            logs: '📝 Логи'
+        },
+        en: {
+            menu: '📋 Menu',
+            favorites: '❤️ Favorites',
+            contact: '📞 Contact',
+            about: '❓ About',
+            downloads: '📱 Downloads',
+            cart: '🛒 Cart',
+            profile_info: '👤 Profile Info',
+            profile_settings: '⚙️ Profile Settings',
+            settings: '🔧 Settings',
+            logout: '🚪 Logout',
+            login: '🔐 Login',
+            register: '📝 Register',
+            user: '👤 User',
+            staff: '👨‍💼 Staff',
+            courier: '🚚 Courier',
+            admin: '🔧 Admin',
+            dashboard: '🏠 Dashboard',
+            analytics: '📊 Analytics',
+            reports: '📈 Reports',
+            system: '⚙️ System',
+            logs: '📝 Logs'
+        }
+    };
+}
 
 // Universal Theme Management
 class UniversalThemeManager {
@@ -103,79 +106,79 @@ class UniversalThemeManager {
 
         // Clear theme classes
         body.classList.remove('dark-theme', 'light-theme');
-        
+
         if (isDark) {
             body.classList.add('dark-theme');
             body.setAttribute('data-theme', 'dark');
-            
+
             if (navbar) {
                 navbar.classList.remove('navbar-light', 'bg-light');
                 navbar.classList.add('navbar-dark', 'bg-dark');
             }
-            
+
             console.log('Universal Theme - Dark mode applied');
         } else {
             body.classList.add('light-theme');
             body.setAttribute('data-theme', 'light');
-            
+
             if (navbar) {
                 navbar.classList.remove('navbar-dark', 'bg-dark');
                 navbar.classList.add('navbar-light', 'bg-light');
             }
-            
+
             console.log('Universal Theme - Light mode applied');
         }
 
         // Save to localStorage
         localStorage.setItem('darkMode', isDark);
-        
+
         // Save to server
         this.saveToServer('theme', isDark ? 'dark' : 'light');
     }
 
     applyFontSize(size) {
         const body = document.body;
-        
+
         // Clear font classes
         body.classList.remove('font-small', 'font-medium', 'font-large', 'font-xlarge');
-        
+
         // Apply font size
         body.classList.add('font-' + size);
         body.setAttribute('data-font-size', size);
-        
+
         console.log('Universal Theme - Font size applied:', size);
-        
+
         // Save to localStorage
         localStorage.setItem('fontSize', size);
-        
+
         // Save to server
         this.saveToServer('font_size', size);
     }
 
     applyLanguage(language) {
         const body = document.body;
-        
+
         // Clear language classes
         body.classList.remove('lang-uz', 'lang-ru', 'lang-en');
-        
+
         // Apply language
         body.classList.add('lang-' + language);
         body.setAttribute('data-language', language);
-        
+
         console.log('Universal Theme - Language applied:', language);
-        
+
         // Save to localStorage
         localStorage.setItem('language', language);
-        
+
         // Translate page
         this.translatePage(language);
-        
+
         // Save to server
         this.saveToServer('language', language);
     }
 
     translatePage(language) {
-        const trans = globalTranslations[language] || globalTranslations.uz;
+        const trans = window.translations[language] || window.translations.uz;
 
         // Navbar links
         this.updateElementText('a[href*="menu"]', trans.menu);
@@ -289,18 +292,23 @@ class UniversalThemeManager {
 
 // Global functions
 window.changeTheme = function(isDark) {
-    universalTheme.applyTheme(isDark);
+    if (window.universalTheme) {
+        window.universalTheme.applyTheme(isDark);
+    }
 };
 
 window.changeFontSize = function(size) {
-    universalTheme.applyFontSize(size);
+    if (window.universalTheme) {
+        window.universalTheme.applyFontSize(size);
+    }
 };
 
 window.changeLanguage = function(language) {
-    universalTheme.applyLanguage(language);
-    
-    // Show notification
-    showNotification('Til muvaffaqiyatli o\'zgartirildi');
+    if (window.universalTheme) {
+        window.universalTheme.applyLanguage(language);
+        // Show notification
+        showNotification('Til muvaffaqiyatli o\'zgartirildi');
+    }
 };
 
 // Cart Management
@@ -372,21 +380,21 @@ class CartManager {
 function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
     notification.className = `toast-notification toast-${type}`;
-    
+
     notification.innerHTML = `
         <div class="toast-content">
             <span class="toast-icon">${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span>
             <span class="toast-message">${message}</span>
         </div>
     `;
-    
+
     document.body.appendChild(notification);
-    
+
     // Show notification
     setTimeout(() => {
         notification.classList.add('show');
     }, 100);
-    
+
     // Hide and remove notification
     setTimeout(() => {
         notification.classList.remove('show');
@@ -419,21 +427,23 @@ document.addEventListener('DOMContentLoaded', function() {
     try {
         // Initialize theme manager
         universalTheme = new UniversalThemeManager();
-        
+        window.universalTheme = universalTheme;
+
         // Initialize cart manager
         cartManager = new CartManager();
-        
+        window.cartManager = cartManager;
+
         // Register service worker
         registerServiceWorker();
-        
+
         // Setup menu item clicks
         setupMenuItemClicks();
-        
+
         // Setup form submissions
         setupFormSubmissions();
-        
+
         console.log('Universal System - Initialization complete');
-        
+
     } catch (error) {
         console.error('Initialization error:', error);
     }
@@ -447,16 +457,18 @@ function setupMenuItemClicks() {
             e.preventDefault();
             const itemId = e.target.getAttribute('data-item-id');
             const quantity = e.target.getAttribute('data-quantity') || 1;
-            if (itemId) {
-                cartManager.addToCart(itemId, quantity);
+            if (itemId && window.cartManager) {
+                window.cartManager.addToCart(itemId, quantity);
             }
         }
-        
+
         // Theme toggle buttons
         if (e.target.classList.contains('theme-toggle')) {
             e.preventDefault();
             const isDark = !document.body.classList.contains('dark-theme');
-            universalTheme.applyTheme(isDark);
+            if (window.universalTheme) {
+                window.universalTheme.applyTheme(isDark);
+            }
         }
     });
 }
@@ -468,21 +480,21 @@ function setupFormSubmissions() {
     if (settingsForm) {
         settingsForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            
+
             const formData = new FormData(settingsForm);
             const settings = Object.fromEntries(formData);
-            
+
             // Apply settings immediately
-            if (settings.theme_mode) {
-                universalTheme.applyTheme(settings.theme_mode === 'dark');
+            if (settings.theme_mode && window.universalTheme) {
+                window.universalTheme.applyTheme(settings.theme_mode === 'dark');
             }
-            if (settings.font_size) {
-                universalTheme.applyFontSize(settings.font_size);
+            if (settings.font_size && window.universalTheme) {
+                window.universalTheme.applyFontSize(settings.font_size);
             }
-            if (settings.language) {
-                universalTheme.applyLanguage(settings.language);
+            if (settings.language && window.universalTheme) {
+                window.universalTheme.applyLanguage(settings.language);
             }
-            
+
             showNotification('Sozlamalar saqlandi', 'success');
         });
     }
@@ -510,13 +522,15 @@ function formatDate(date) {
 // Global error handler
 window.addEventListener('error', function(e) {
     console.error('JavaScript xatosi:', e.error);
-    showNotification('Sahifada xatolik yuz berdi', 'error');
+    if (typeof showNotification === 'function') {
+        showNotification('Sahifada xatolik yuz berdi', 'error');
+    }
 });
 
 // Page visibility handler
 document.addEventListener('visibilitychange', function() {
-    if (!document.hidden && cartManager) {
-        cartManager.updateCartCount();
+    if (!document.hidden && window.cartManager) {
+        window.cartManager.updateCartCount();
     }
 });
 
@@ -528,6 +542,4 @@ window.addEventListener('resize', function() {
 });
 
 // Export for global use
-window.universalTheme = universalTheme;
-window.cartManager = cartManager;
 window.showNotification = showNotification;
