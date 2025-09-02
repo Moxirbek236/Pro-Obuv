@@ -1,4 +1,3 @@
-
 // To'liq tarjima lug'ati
 const translations = {
     'uz': {
@@ -143,7 +142,7 @@ function updateCartCount(retryCount = 0) {
         }
     })
     .catch(error => {
-        console.log('Savatcha sonini olishda xato:', error);
+        console.log('Savatcha sonini olishda xatolik:', error);
         
         if (retryCount < maxRetries) {
             setTimeout(() => updateCartCount(retryCount + 1), 1000 * (retryCount + 1));

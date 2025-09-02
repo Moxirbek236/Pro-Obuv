@@ -405,11 +405,28 @@ except Exception as e:
 
 @app.before_request
 def before_request():
-    """So'rov boshlanishida vaqtni yozib olish"""
+    """So'rov boshlanishida xavfsiz pre-processing"""
     try:
+        # Request time tracking
         request.start_time = time.time()
+        
+        # Session ni tekshirish va tuzatish
+        if not session.get('session_id'):
+            session['session_id'] = get_session_id()
+            
+        # Database connection test
+        if not hasattr(g, 'db_test_done'):
+            try:
+                test_conn = get_db()
+                test_conn.execute("SELECT 1")
+                test_conn.close()
+                g.db_test_done = True
+            except Exception as db_error:
+                app_logger.error(f"Database connection test failed: {str(db_error)}")
+                
     except Exception as e:
         app_logger.error(f"Before request error: {str(e)}")
+        # Error bo'lsa ham davom ettirish
 
 @app.after_request  
 def after_request(response):
@@ -1625,7 +1642,27 @@ def save_staff_to_json(first_name, last_name, birth_date, phone, staff_id, regis
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    """Bosh sahifa - xavfsiz error handling bilan"""
+    try:
+        # Session ID ni olish va tekshirish
+        session_id = get_session_id()
+        
+        # Asosiy sahifani render qilish
+        return render_template("index.html")
+    except Exception as e:
+        app_logger.error(f"Index sahifasida xatolik: {str(e)}")
+        # Emergency fallback
+        return f"""
+        <!DOCTYPE html>
+        <html>
+        <head><title>Restaurant</title></head>
+        <body>
+            <h1>O'zbek Milliy Taomlar Restorani</h1>
+            <p>Sahifa yuklashda xatolik yuz berdi.</p>
+            <a href="/menu">Menyu</a>
+        </body>
+        </html>
+        """, 500
 
 @app.route("/system-management-panel-x8k2m")
 def admin_index():
