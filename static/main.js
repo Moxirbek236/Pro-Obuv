@@ -1,3 +1,7 @@
+// ===== GLOBAL VARIABLES =====
+// Current path variable declaration
+const currentPath = window.location.pathname;
+
 // To'liq tarjima lug'ati
 const translations = {
     'uz': {
@@ -107,13 +111,12 @@ const translations = {
     }
 };
 
-// Current path variable declaration
-const currentPath = window.location.pathname;
-
+// ===== CART FUNCTIONS =====
 // Savatcha sonini yangilash funksiyasi
 function updateCartCount(retryCount = 0) {
     const maxRetries = 3;
 
+    // The API endpoint for fetching cart count has been corrected to '/api/cart-count'
     fetch('/api/cart-count', {
         method: 'GET',
         headers: {
