@@ -4,8 +4,9 @@ let currentLanguage = 'uz';
 let currentPath = window.location.pathname || '/';
 
 // Til tarjimalari - faqat bir marta e'lon qilish
-if (typeof translations === 'undefined') {
-    const translations = {
+let translations;
+if (typeof window.translations === 'undefined') {
+    translations = {
     'uz': {
         'menu': 'Menyu',
         'cart': 'Savatcha',
@@ -115,6 +116,8 @@ if (typeof translations === 'undefined') {
 
     // Global scope ga qo'shish
     window.translations = translations;
+} else {
+    translations = window.translations;
 }
 
 // ===== CART FUNCTIONS =====
@@ -313,7 +316,7 @@ function submitRating() {
 // Til o'zgartirish funksiyasi
 function applyLanguage(lang) {
     const translationsObj = window.translations || translations;
-    if (!translationsObj[lang]) {
+    if (!translationsObj || !translationsObj[lang]) {
         console.warn('Til topilmadi:', lang);
         return;
     }
@@ -332,6 +335,8 @@ function applyLanguage(lang) {
             }
         }
     });
+    
+    console.log('Til tarjimasi qo\'llandi:', lang);
 }
 
 // Til sozlamasini saqlash
