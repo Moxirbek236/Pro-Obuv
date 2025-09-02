@@ -1509,7 +1509,7 @@ def get_branch_average_rating(branch_id):
 
             # Filial uchun berilgan baholarni olish (menu_item_id = -branch_id)
             cur.execute("""
-                SELECT AVG(CAST(rating AS FLOAT)) as avg_rating, COUNT(*) as total_ratings
+                SELECT AVG(CAST(rating AS REAL)) as avg_rating, COUNT(*) as total_ratings
                 FROM ratings 
                 WHERE menu_item_id = ?
             """, (-branch_id,))
@@ -1517,9 +1517,13 @@ def get_branch_average_rating(branch_id):
             result = cur.fetchone()
 
             if result and result[0] is not None:
-                # Tuple access bilan xavfsiz
-                avg_rating = float(result[0]) if result[0] else 0.0
-                total_ratings = int(result[1]) if result[1] else 0
+                # Xavfsiz type conversion
+                try:
+                    avg_rating = float(str(result[0])) if result[0] is not None else 0.0
+                    total_ratings = int(str(result[1])) if result[1] is not None else 0
+                except (ValueError, TypeError):
+                    avg_rating = 0.0
+                    total_ratings = 0
                     
                 return {
                     'average_rating': round(avg_rating, 1),
@@ -3508,20 +3512,33 @@ def super_admin_dashboard():
                             'id': branch[0] if len(branch) > 0 else 0,
                             'name': branch[1] if len(branch) > 1 else 'N/A',
                             'address': branch[2] if len(branch) > 2 else 'N/A',
-                            'latitude': branch[3] if len(branch) > 3 else 0,
-                            'longitude': branch[4] if len(branch) > 4 else 0,
-                            'phone': branch[5] if len(branch) > 5 else 'N/A',
-                            'working_hours': branch[6] if len(branch) > 6 else '09:00-22:00',
-                            'is_active': branch[7] if len(branch) > 7 else 1,
-                            'delivery_radius': branch[8] if len(branch) > 8 else 15.0,
-                            'created_at': branch[9] if len(branch) > 9 else ''
+                            'latitude': float(str(branch[3])) if len(branch) > 3 and branch[3] is not None else 0.0,
+                            'longitude': float(str(branch[4])) if len(branch) > 4 and branch[4] is not None else 0.0,
+                            'phone': str(branch[5]) if len(branch) > 5 and branch[5] is not None else 'N/A',
+                            'working_hours': str(branch[6]) if len(branch) > 6 and branch[6] is not None else '09:00-22:00',
+                            'is_active': int(branch[7]) if len(branch) > 7 and branch[7] is not None else 1,
+                            'delivery_radius': float(str(branch[8])) if len(branch) > 8 and branch[8] is not None else 15.0,
+                            'created_at': str(branch[9]) if len(branch) > 9 and branch[9] is not None else ''
                         }
+                    
+                    # Numeric fields ni xavfsiz conversion
+                    try:
+                        if isinstance(branch_dict.get('latitude'), str):
+                            branch_dict['latitude'] = float(branch_dict['latitude'])
+                        if isinstance(branch_dict.get('longitude'), str):
+                            branch_dict['longitude'] = float(branch_dict['longitude'])
+                        if isinstance(branch_dict.get('delivery_radius'), str):
+                            branch_dict['delivery_radius'] = float(branch_dict['delivery_radius'])
+                    except (ValueError, TypeError):
+                        branch_dict['latitude'] = 0.0
+                        branch_dict['longitude'] = 0.0
+                        branch_dict['delivery_radius'] = 15.0
                     
                     # Baho ma'lumotlarini xavfsiz olish
                     try:
-                        rating_data = get_branch_average_rating(branch_dict['id'])
-                        branch_dict['average_rating'] = rating_data.get('average_rating', 0.0)
-                        branch_dict['total_ratings'] = rating_data.get('total_ratings', 0)
+                        rating_data = get_branch_average_rating(int(branch_dict['id']))
+                        branch_dict['average_rating'] = float(rating_data.get('average_rating', 0.0))
+                        branch_dict['total_ratings'] = int(rating_data.get('total_ratings', 0))
                     except Exception as rating_error:
                         app_logger.warning(f"Branch {branch_dict['id']} bahosini olishda xatolik: {str(rating_error)}")
                         branch_dict['average_rating'] = 0.0
