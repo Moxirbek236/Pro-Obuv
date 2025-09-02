@@ -3738,63 +3738,56 @@ def api_save_settings():
 # ---- CRITICAL API ENDPOINTS (eng yuqori prioritet) ----
 # Bu endpoint har doim JSON qaytarishi kerak
 
-@app.route("/api/cart-count", methods=["GET"], strict_slashes=False)
-def get_cart_count_api():
-    """Savatcha buyumlari sonini qaytarish - eng yuqori prioritet"""
-    
-    # Force JSON response
-    from flask import make_response
+@app.route("/api/cart-count")
+def api_cart_count_fixed():
+    """Savatcha buyumlari sonini qaytarish - majburiy JSON"""
+    response_headers = {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+    }
     
     try:
         session_id = get_session_id()
         user_id = session.get('user_id')
 
-        # Database connection bilan ishlaganda
-        conn = get_db()
-        cur = conn.cursor()
-        
-        if user_id:
-            cur.execute('SELECT COALESCE(SUM(quantity), 0) FROM cart_items WHERE user_id = ?', (user_id,))
-        else:
-            cur.execute('SELECT COALESCE(SUM(quantity), 0) FROM cart_items WHERE session_id = ?', (session_id,))
-        
-        result = cur.fetchone()
-        count = int(result[0]) if result and result[0] else 0
-        conn.close()
+        with db_pool.get_connection() as conn:
+            cur = conn.cursor()
+            
+            if user_id:
+                cur.execute('SELECT COALESCE(SUM(quantity), 0) FROM cart_items WHERE user_id = ?', (user_id,))
+            else:
+                cur.execute('SELECT COALESCE(SUM(quantity), 0) FROM cart_items WHERE session_id = ?', (session_id,))
+            
+            result = cur.fetchone()
+            count = int(result[0]) if result and result[0] else 0
 
-        # JSON response yaratish
-        json_data = {
+        json_response = jsonify({
             "count": count,
             "success": True,
             "session_id": session_id,
-            "user_id": user_id,
-            "timestamp": time.time()
-        }
+            "user_id": user_id
+        })
         
-        response = make_response(jsonify(json_data))
-        response.headers['Content-Type'] = 'application/json; charset=utf-8'
-        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-        response.headers['Pragma'] = 'no-cache'
-        response.headers['Expires'] = '0'
-        response.headers['Access-Control-Allow-Origin'] = '*'
-        response.status_code = 200
-        
-        return response
+        for key, value in response_headers.items():
+            json_response.headers[key] = value
+            
+        return json_response
 
     except Exception as e:
-        app_logger.error(f"Cart count API xatoligi: {str(e)}")
+        app_logger.error(f"Cart count API error: {str(e)}")
         
-        error_data = {
+        error_response = jsonify({
             "count": 0,
             "success": False,
-            "error": "Server error",
-            "timestamp": time.time()
-        }
+            "error": "Server error"
+        })
         
-        error_response = make_response(jsonify(error_data))
-        error_response.headers['Content-Type'] = 'application/json; charset=utf-8'
+        for key, value in response_headers.items():
+            error_response.headers[key] = value
+            
         error_response.status_code = 500
-        
         return error_response
 
 @app.route("/api/set-theme", methods=["POST"])
