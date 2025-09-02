@@ -539,19 +539,19 @@ def before_request():
 def after_request(response):
     """So'rov tugagach xavfsizlik sarlavhalarini qo'shish"""
     try:
-        # Performance monitoring (xavfsiz)
+        # Performance monitoring (xavfsiz) - faqat global o'zgaruvchi mavjud bo'lsa
         if hasattr(request, 'start_time'):
             try:
                 duration = time.time() - request.start_time
-                # Performance monitor mavjudligini va metodini tekshirish
-                if (globals().get('performance_monitor') and 
-                    hasattr(performance_monitor, 'record_request') and
-                    callable(getattr(performance_monitor, 'record_request', None))):
+                # Performance monitor faqat to'g'ri obyekt bo'lsa ishlatish
+                if ('performance_monitor' in globals() and 
+                    hasattr(globals()['performance_monitor'], 'record_request') and
+                    callable(getattr(globals()['performance_monitor'], 'record_request', None))):
                     endpoint = getattr(request, 'endpoint', None) or 'unknown'
                     status_code = getattr(response, 'status_code', 200)
-                    performance_monitor.record_request(duration, endpoint, status_code)
-            except Exception as perf_error:
-                # Performance monitoring xatoligi ahamiyatsiz
+                    globals()['performance_monitor'].record_request(duration, endpoint, status_code)
+            except Exception:
+                # Performance monitoring xatoligi - silent pass
                 pass
 
         # Security headers qo'shish
@@ -568,8 +568,8 @@ def after_request(response):
         if Config.IS_PRODUCTION:
             response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
 
-    except Exception as header_error:
-        # Log qilmasdan o'tkazish - xavfsizlik uchun
+    except Exception:
+        # Silent pass - xavfsizlik uchun
         pass
 
     return response
