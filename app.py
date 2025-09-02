@@ -3922,6 +3922,105 @@ def super_admin_reset_user_password():
         app_logger.error(f"User parolini yangilashda xatolik: {str(e)}")
         return jsonify({"success": False, "message": "Server xatoligi"}), 500
 
+@app.route("/api/super-admin/kpis")
+@login_required
+def super_admin_kpis():
+    """Super admin uchun KPI ma'lumotlari"""
+    try:
+        today = get_current_time().date().isoformat()
+        
+        # Bugungi daromad
+        today_revenue = execute_query("""
+            SELECT COALESCE(SUM(r.total_amount), 0) as revenue
+            FROM receipts r
+            JOIN orders o ON r.order_id = o.id
+            WHERE DATE(o.created_at) = ?
+        """, (today,), fetch_one=True)
+        
+        # Bugungi buyurtmalar
+        today_orders = execute_query("""
+            SELECT COUNT(*) as count
+            FROM orders
+            WHERE DATE(created_at) = ?
+        """, (today,), fetch_one=True)
+        
+        # Faol foydalanuvchilar (oxirgi 24 soatda)
+        yesterday = (get_current_time() - datetime.timedelta(days=1)).isoformat()
+        active_users = execute_query("""
+            SELECT COUNT(DISTINCT user_id) as count
+            FROM orders
+            WHERE created_at >= ?
+        """, (yesterday,), fetch_one=True)
+        
+        # O'rtacha baho
+        avg_rating = execute_query("""
+            SELECT COALESCE(AVG(rating), 0) as avg_rating
+            FROM ratings
+            WHERE created_at >= ?
+        """, (yesterday,), fetch_one=True)
+        
+        return jsonify({
+            "revenue": today_revenue['revenue'] if today_revenue else 0,
+            "orders": today_orders['count'] if today_orders else 0,
+            "activeUsers": active_users['count'] if active_users else 0,
+            "avgRating": round(avg_rating['avg_rating'] if avg_rating else 0, 1)
+        })
+        
+    except Exception as e:
+        app_logger.error(f"KPIs API error: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/super-admin/activity-feed")
+@login_required
+def super_admin_activity_feed():
+    """Super admin uchun real-time faollik feed"""
+    try:
+        # Oxirgi 1 soatdagi faolliklar
+        hour_ago = (get_current_time() - datetime.timedelta(hours=1)).isoformat()
+        
+        activities = []
+        
+        # Yangi buyurtmalar
+        new_orders = execute_query("""
+            SELECT customer_name, ticket_no, created_at
+            FROM orders
+            WHERE created_at >= ?
+            ORDER BY created_at DESC
+            LIMIT 5
+        """, (hour_ago,), fetch_all=True)
+        
+        for order in new_orders:
+            activities.append({
+                "icon": "🛒",
+                "text": f"Yangi buyurtma #{order['ticket_no']} - {order['customer_name']}",
+                "time": order['created_at'][:16].replace('T', ' ')
+            })
+        
+        # Yangi foydalanuvchilar
+        new_users = execute_query("""
+            SELECT first_name, last_name, created_at
+            FROM users
+            WHERE created_at >= ?
+            ORDER BY created_at DESC
+            LIMIT 3
+        """, (hour_ago,), fetch_all=True)
+        
+        for user in new_users:
+            activities.append({
+                "icon": "👤",
+                "text": f"Yangi foydalanuvchi ro'yxatdan o'tdi: {user['first_name']} {user['last_name']}",
+                "time": user['created_at'][:16].replace('T', ' ')
+            })
+        
+        # Vaqt bo'yicha saralash
+        activities.sort(key=lambda x: x['time'], reverse=True)
+        
+        return jsonify({"activities": activities[:10]})
+        
+    except Exception as e:
+        app_logger.error(f"Activity feed API error: {str(e)}")
+        return jsonify({"activities": []}), 500
+
 @app.route("/super-admin/delete-courier/<int:courier_id>", methods=["POST"])
 def super_admin_delete_courier(courier_id):
     if not session.get("super_admin"):

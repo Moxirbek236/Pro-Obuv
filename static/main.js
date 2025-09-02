@@ -1,24 +1,9 @@
 // ===== GLOBAL VARIABLES =====
 // Current path variable declaration
 let currentLanguage = 'uz';
-// Global o'zgaruvchilarni e'lon qilish
-let currentPath;
+// Global o'zgaruvchilarni xavfsiz e'lon qilish
+let currentPath = window.location.pathname || '/';
 let translations;
-
-// Sahifa yuklanganda o'rnatish
-document.addEventListener('DOMContentLoaded', function() {
-    // currentPath ni xavfsiz e'lon qilish
-    currentPath = window.location.pathname || '/';
-    
-    // Super admin sahifasi ekanligini tekshirish
-    const isSuperAdminPage = currentPath.includes('super-admin-dashboard');
-    
-    if (isSuperAdminPage) {
-        console.log('Super admin dashboard yuklandi');
-        // Super admin uchun maxsus JavaScript
-        initializeSuperAdminDashboard();
-    }
-});
 
 // Til tarjimalari - faqat bir marta e'lon qilish
 if (typeof window.translations === 'undefined') {
@@ -871,11 +856,23 @@ window.addEventListener('error', function(event) {
 
 // DOMContentLoaded event
 document.addEventListener('DOMContentLoaded', function() {
+    // currentPath ni yangilash
+    currentPath = window.location.pathname || '/';
+    
     // Sozlamalarni yuklash
     loadSettings();
 
     // Savatcha sonini yangilash
     updateCartCount();
+    
+    // Super admin sahifasi ekanligini tekshirish
+    const isSuperAdminPage = currentPath.includes('super-admin-dashboard');
+    
+    if (isSuperAdminPage) {
+        console.log('Super admin dashboard yuklandi');
+        // Super admin uchun maxsus JavaScript
+        initializeSuperAdminDashboard();
+    }
 
     // Buyurtma holati sahifasi uchun
     if (currentPath.includes('/user/success/')) {
