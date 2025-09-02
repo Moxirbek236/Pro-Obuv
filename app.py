@@ -873,7 +873,16 @@ def get_cart_items(conn, session_id, user_id=None):
     cur = conn.cursor()
 
     try:
+        # Debug logging
+        logging.info(f"get_cart_items chaqirildi: user_id={user_id}, session_id={session_id}")
+
         if user_id:
+            # Avval cart_items jadvalida user_id bo'yicha ma'lumot borligini tekshirish
+            cur.execute("SELECT COUNT(*) FROM cart_items WHERE user_id = ?", (user_id,))
+            user_count = cur.fetchone()[0]
+            logging.info(f"User {user_id} uchun cart_items soni: {user_count}")
+
+            # Asosiy so'rov
             cur.execute("""
                 SELECT ci.id, ci.menu_item_id, mi.name, mi.price, ci.quantity, 
                        COALESCE(mi.discount_percentage, 0) as discount_percentage,
@@ -888,6 +897,11 @@ def get_cart_items(conn, session_id, user_id=None):
                 ORDER BY ci.created_at DESC
             """, (user_id,))
         else:
+            # Session bo'yicha ham tekshirish
+            cur.execute("SELECT COUNT(*) FROM cart_items WHERE session_id = ?", (session_id,))
+            session_count = cur.fetchone()[0]
+            logging.info(f"Session {session_id} uchun cart_items soni: {session_count}")
+
             cur.execute("""
                 SELECT ci.id, ci.menu_item_id, mi.name, mi.price, ci.quantity, 
                        COALESCE(mi.discount_percentage, 0) as discount_percentage,
@@ -903,9 +917,11 @@ def get_cart_items(conn, session_id, user_id=None):
             """, (session_id,))
 
         results = cur.fetchall()
+        logging.info(f"So'rov natijasi: {len(results) if results else 0} ta element")
 
         # Agar natijalar bo'lmasa, bo'sh list qaytarish
         if not results:
+            logging.warning(f"Savatcha bo'sh: user_id={user_id}, session_id={session_id}")
             return []
 
         # Row obyektlarini dict formatiga o'tkazish
@@ -917,10 +933,12 @@ def get_cart_items(conn, session_id, user_id=None):
                 if item_dict.get('discount_percentage') is None:
                     item_dict['discount_percentage'] = 0
                 cart_items.append(item_dict)
+                logging.debug(f"Savatcha element qo'shildi: {item_dict.get('name', 'Unknown')}")
             except Exception as row_error:
                 logging.error(f"Savatcha element o'qishda xatolik: {str(row_error)}")
                 continue
 
+        logging.info(f"Savatcha ma'lumotlari muvaffaqiyatli olindi: {len(cart_items)} ta element")
         return cart_items
 
     except Exception as e:
@@ -1151,11 +1169,23 @@ def add_to_cart():
         if user_id:
             cur.execute("INSERT INTO cart_items (user_id, session_id, menu_item_id, quantity, created_at) VALUES (?, ?, ?, ?, ?)", 
                        (user_id, session_id, menu_item_id, quantity, now))
+            print(f"DEBUG: Savatcha qo'shildi - user_id: {user_id}, session_id: {session_id}, menu_item_id: {menu_item_id}, quantity: {quantity}")
         else:
             cur.execute("INSERT INTO cart_items (session_id, menu_item_id, quantity, created_at) VALUES (?, ?, ?, ?)", 
                        (session_id, menu_item_id, quantity, now))
+            print(f"DEBUG: Savatcha qo'shildi - session_id: {session_id}, menu_item_id: {menu_item_id}, quantity: {quantity}")
 
     conn.commit()
+    
+    # Qo'shgandan keyin tekshirish
+    if user_id:
+        cur.execute("SELECT COUNT(*) FROM cart_items WHERE user_id = ?", (user_id,))
+    else:
+        cur.execute("SELECT COUNT(*) FROM cart_items WHERE session_id = ?", (session_id,))
+    
+    count_after = cur.fetchone()[0]
+    print(f"DEBUG: Qo'shgandan keyin savatcha elementi soni: {count_after}")
+    
     conn.close()
     flash("Mahsulot savatchaga qo'shildi!", "success")
     return redirect(url_for("menu"))
@@ -1553,9 +1583,29 @@ def place_order():
     session_id = get_session_id()
     conn = get_db()
 
-    # Savatchani tekshirish
+    # Savatchani tekshirish va debug
     cart_items = get_cart_items(conn, session_id, user_id)
-    if not cart_items:
+    print(f"DEBUG: Savatcha tekshiruvi - cart_items: {len(cart_items) if cart_items else 0} ta element")
+    
+    # Qo'shimcha tekshiruv - to'g'ridan-to'g'ri jadvaldan ham tekshirish
+    cur_check = conn.cursor()
+    if user_id:
+        cur_check.execute("SELECT COUNT(*) FROM cart_items WHERE user_id = ?", (user_id,))
+        direct_count = cur_check.fetchone()[0]
+        print(f"DEBUG: To'g'ridan-to'g'ri jadvaldan user_id={user_id} uchun: {direct_count} ta element")
+    else:
+        cur_check.execute("SELECT COUNT(*) FROM cart_items WHERE session_id = ?", (session_id,))
+        direct_count = cur_check.fetchone()[0]
+        print(f"DEBUG: To'g'ridan-to'g'ri jadvaldan session_id={session_id} uchun: {direct_count} ta element")
+
+    if not cart_items or len(cart_items) == 0:
+        print(f"DEBUG: Savatcha bo'sh deb topildi")
+        
+        # Qo'shimcha debug - barcha cart_items ni ko'rsatish
+        cur_check.execute("SELECT * FROM cart_items LIMIT 10")
+        all_items = cur_check.fetchall()
+        print(f"DEBUG: Barcha cart_items (10 ta): {[dict(item) for item in all_items] if all_items else 'Bo\'sh'}")
+        
         flash("Savatchangiz bo'sh. Avval taom tanlang.", "error")
         conn.close()
         return redirect(url_for("menu"))
