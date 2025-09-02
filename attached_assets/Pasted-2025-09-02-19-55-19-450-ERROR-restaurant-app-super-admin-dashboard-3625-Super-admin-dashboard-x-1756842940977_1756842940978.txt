@@ -1,0 +1,48 @@
+2025-09-02 19:55:19,450
+ERROR
+restaurant_app
+super_admin_dashboard:3625 | Super admin dashboard xatoligi: must be real number, not str
+2025-09-02 19:55:19,450
+ERROR
+restaurant_app
+super_admin_dashboard:3625 | Super admin dashboard xatoligi: must be real number, not str
+2025-09-02 19:55:16,167
+ERROR
+restaurant_app
+handle_exception:424 | Unhandled exception: Unexpected end of template. Jinja was looking for the following tags: 'endblock'. The innermost block that needs to be closed is 'block'. - URL: https://be2efde8-2011-44ba-8349-63d8ec2924d2-00-2z8sl9ccrxfw8.janeway.replit.dev/super-admin/system
+2025-09-02 19:55:16,167
+ERROR
+restaurant_app
+handle_exception:424 | Unhandled exception: Unexpected end of template. Jinja was looking for the following tags: 'endblock'. The innermost block that needs to be closed is 'block'. - URL: https://be2efde8-2011-44ba-8349-63d8ec2924d2-00-2z8sl9ccrxfw8.janeway.replit.dev/super-admin/system
+2025-09-02 19:55:12,321
+ERROR
+restaurant_app
+super_admin_dashboard:3625 | Super admin dashboard xatoligi: must be real number, not str
+2025-09-02 19:55:12,321
+ERROR
+restaurant_app
+super_admin_dashboard:3625 | Super admin dashboard xatoligi: must be real number, not str
+2025-09-02 19:54:52,763
+ERROR
+restaurant_app
+handle_exception:424 | Unhandled exception: Could not build url for endpoint 'staff_register'. Did you mean 'register' instead? - URL: https://be2efde8-2011-44ba-8349-63d8ec2924d2-00-2z8sl9ccrxfw8.janeway.replit.dev/staff-secure-login-w7m2k
+2025-09-02 19:54:52,763
+ERROR
+restaurant_app
+handle_exception:424 | Unhandled exception: Could not build url for endpoint 'staff_register'. Did you mean 'register' instead? - URL: https://be2efde8-2011-44ba-8349-63d8ec2924d2-00-2z8sl9ccrxfw8.janeway.replit.dev/staff-secure-login-w7m2k
+2025-09-02 19:54:23,215
+ERROR
+restaurant_app
+handle_exception:424 | Unhandled exception: Could not build url for endpoint 'staff_register'. Did you mean 'register' instead? - URL: https://be2efde8-2011-44ba-8349-63d8ec2924d2-00-2z8sl9ccrxfw8.janeway.replit.dev/staff-secure-login-w7m2k
+2025-09-02 19:54:23,215
+ERROR
+restaurant_app
+handle_exception:424 | Unhandled exception: Could not build url for endpoint 'staff_register'. Did you mean 'register' instead? - URL: https://be2efde8-2011-44ba-8349-63d8ec2924d2-00-2z8sl9ccrxfw8.janeway.replit.dev/staff-secure-login-w7m2k
+2025-09-02 19:54:17,430
+ERROR
+restaurant_app
+handle_exception:424 | Unhandled exception: tuple indices must be integers or slices, not str - URL: https://be2efde8-2011-44ba-8349-63d8ec2924d2-00-2z8sl9ccrxfw8.janeway.replit.dev/courier-secure-login-k4m7p?role=admin
+2025-09-02 19:54:17,430
+ERROR
+restaurant_app
+handle_exception:424 | Unhandled exception: tuple indices must be integers or slices, not str - URL: https://be2efde8-2011-44ba-8349-63d8ec2924d2-00-2z8sl9ccrxfw8.janeway.replit.dev/courier-secure-login-k4m7p?role=admin

@@ -2,12 +2,14 @@
 
 // Global o'zgaruvchilar
 let cartCount = 0;
-let currentPath = window.location.pathname;
+// Global current path tracking
+window.currentPath = window.currentPath || window.location.pathname;
 
 // Professional Translation System
 // Global translations object - check if already exists to prevent redeclaration
+let translations;
 if (typeof translations === 'undefined') {
-    var translations = {
+    translations = {
         uz: {
             menu: '📋 Menyu',
             favorites: '❤️ Sevimlilar',
