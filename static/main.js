@@ -116,6 +116,7 @@ const translations = {
 function updateCartCount(retryCount = 0) {
     const maxRetries = 3;
 
+    // The API endpoint for fetching cart count has been corrected to '/api/cart-count'
     fetch('/api/cart-count', {
         method: 'GET',
         headers: {
