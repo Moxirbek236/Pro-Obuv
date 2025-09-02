@@ -269,7 +269,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Sozlamalarni darhol qo'llash
     const isDarkMode = sessionDarkMode === 'true';
-    
+
     // Klasslarni tozalash
     document.body.classList.remove('dark-theme', 'font-small', 'font-medium', 'font-large', 'font-xlarge');
     document.body.classList.remove('lang-uz', 'lang-ru', 'lang-en');
@@ -277,7 +277,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Mavzuni qo'llash
     if (isDarkMode) {
         document.body.classList.add('dark-theme');
-        
+
         // Navbar klasslarini o'zgartirish
         const navbar = document.querySelector('.navbar');
         if (navbar) {
@@ -400,7 +400,7 @@ const translations = {
 // Global Translation Function
 function translatePage(language) {
     const trans = translations[language] || translations.uz;
-    
+
     // Navbar links
     const menuLink = document.querySelector('a[href*="menu"]');
     if (menuLink) menuLink.innerHTML = trans.menu;
@@ -437,7 +437,7 @@ function translatePage(language) {
     const dropdownItems = document.querySelectorAll('.dropdown-item');
     dropdownItems.forEach(item => {
         const text = item.textContent.trim();
-        
+
         if (text.includes('Foydalanuvchi')) {
             item.innerHTML = trans.user;
         } else if (text.includes('Xodim')) {
@@ -462,14 +462,14 @@ function translatePage(language) {
     // Update body class for language-specific styling
     document.body.classList.remove('lang-uz', 'lang-ru', 'lang-en');
     document.body.classList.add('lang-' + language);
-    
+
     console.log('Translation applied:', language);
 }
 
 // Enhanced Language Change Function
 window.changeLanguage = function(language) {
     console.log('Changing language to:', language);
-    
+
     // Immediately apply translation
     translatePage(language);
     localStorage.setItem('language', language);
@@ -506,7 +506,7 @@ function showNotification(message) {
     notification.className = 'notification';
     notification.textContent = message;
     document.body.appendChild(notification);
-    
+
     setTimeout(() => {
         notification.remove();
     }, 3000);

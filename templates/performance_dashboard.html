@@ -1,0 +1,116 @@
+
+{% extends "base.html" %}
+
+{% block title %}Performance Dashboard - Restoran{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2>📊 Performance Dashboard</h2>
+            
+            <div class="row mt-4">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h5>Server Uptime</h5>
+                            <h3 id="uptime" class="text-primary">--</h3>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h5>Active Sessions</h5>
+                            <h3 id="active-sessions" class="text-success">--</h3>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h5>Cache Hit Rate</h5>
+                            <h3 id="cache-rate" class="text-info">--</h3>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h5>Response Time</h5>
+                            <h3 id="response-time" class="text-warning">--</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Database Statistics</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="db-stats">Loading...</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>System Health</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="health-status">Loading...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateDashboard() {
+        // Health check
+        fetch('/api/health')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('health-status').innerHTML = `
+                <div class="alert alert-${data.status === 'healthy' ? 'success' : 'danger'}">
+                    Status: ${data.status}<br>
+                    Database: ${data.services.database}<br>
+                    Cache: ${data.services.cache}<br>
+                    Redis: ${data.services.redis}
+                </div>
+            `;
+        });
+        
+        // Metrics
+        fetch('/api/metrics')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('active-sessions').textContent = data.active_sessions || 0;
+            document.getElementById('response-time').textContent = 
+                (data.performance_stats.avg_response_time || 0).toFixed(2) + 'ms';
+            
+            // Database statistics
+            const dbStats = data.database_stats;
+            let dbHtml = '<ul class="list-unstyled">';
+            for (const [table, count] of Object.entries(dbStats)) {
+                dbHtml += `<li><strong>${table}:</strong> ${count}</li>`;
+            }
+            dbHtml += '</ul>';
+            document.getElementById('db-stats').innerHTML = dbHtml;
+        });
+    }
+    
+    // Update every 30 seconds
+    setInterval(updateDashboard, 30000);
+    updateDashboard();
+</script>
+{% endblock %}
