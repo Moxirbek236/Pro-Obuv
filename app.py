@@ -495,7 +495,7 @@ class PerformanceMonitor:
                 'total_requests': len(durations)
             }
 
-# Performance monitor instance yaratish
+# Performance monitor instance yaratish - to'g'ri e'lon qilish
 try:
     performance_monitor = PerformanceMonitor()
     app_logger.info("Performance monitor muvaffaqiyatli yaratildi")
@@ -503,7 +503,7 @@ except Exception as e:
     app_logger.warning(f"Performance monitor yaratishda xatolik: {str(e)}")
     # Fallback performance monitor yaratish
     class DummyPerformanceMonitor:
-        def record_request(self, duration, endpoint):
+        def record_request(self, duration, endpoint, status_code=200):
             pass
         def get_stats(self):
             return {}
@@ -539,13 +539,16 @@ def after_request(response):
     """So'rov tugagach xavfsizlik sarlavhalarini qo'shish"""
     try:
         # Performance monitoring (xavfsiz)
-        if hasattr(request, 'start_time') and 'performance_monitor' in globals():
+        if hasattr(request, 'start_time'):
             try:
                 duration = time.time() - request.start_time
-                if hasattr(performance_monitor, 'record_request') and callable(performance_monitor.record_request):
-                    performance_monitor.record_request(duration, getattr(request, 'endpoint', None) or 'unknown')
+                # Performance monitor mavjudligini va metodini tekshirish
+                if globals().get('performance_monitor') and hasattr(performance_monitor, 'record_request'):
+                    endpoint = getattr(request, 'endpoint', None) or 'unknown'
+                    status_code = getattr(response, 'status_code', 200)
+                    performance_monitor.record_request(duration, endpoint, status_code)
             except Exception as perf_error:
-                # Performance monitoring xatoligi ahamiyatsiz
+                # Performance monitoring xatoligi ahamiyatsiz - log qilmasdan o'tkazish
                 pass
 
         # Security headers qo'shish
@@ -2922,6 +2925,41 @@ def courier_logout():
     session.pop("courier_name", None)
     return redirect(url_for("index"))
 
+# ---- CART COUNT API ----
+@app.route("/get_cart_count")
+def get_cart_count():
+    """Savatcha mahsulotlar sonini qaytarish"""
+    try:
+        session_id = get_session_id()
+        user_id = session.get("user_id")
+        
+        conn = get_db()
+        cur = conn.cursor()
+        
+        if user_id:
+            cur.execute("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE user_id = ?", (user_id,))
+        else:
+            cur.execute("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE session_id = ?", (session_id,))
+        
+        result = cur.fetchone()
+        count = result['total_count'] if result else 0
+        conn.close()
+        
+        return jsonify({"count": count})
+    except Exception as e:
+        app_logger.error(f"Cart count error: {str(e)}")
+        return jsonify({"count": 0})
+
+# ---- STATIC FILE HANDLING ----
+@app.route('/static/<path:filename>')
+def static_files(filename):
+    """Static fayllar uchun xavfsiz route"""
+    try:
+        return app.send_static_file(filename)
+    except Exception as e:
+        app_logger.error(f"Static file error for {filename}: {str(e)}")
+        return "File not found", 404
+
 # ---- LOGIN ROUTES ----
 @app.route("/login")
 def login():
@@ -3349,111 +3387,187 @@ def super_admin_dashboard():
     if not session.get("super_admin"):
         return redirect(url_for("super_admin_login"))
 
-    conn = get_db()
-    cur = conn.cursor()
+    conn = None
+    try:
+        conn = get_db()
+        cur = conn.cursor()
 
-    # Xodimlar ma'lumotlari (soatlar va buyurtmalar bilan)
-    cur.execute("""
-        SELECT s.*
-        FROM staff s
-        ORDER BY s.created_at DESC
-    """)
-    staff_db = cur.fetchall()
-
-    # Kuryerlar ma'lumotlari
-    cur.execute("""
-        SELECT c.*
-        FROM couriers c
-        ORDER BY c.created_at DESC
-    """)
-    couriers_db = cur.fetchall()
-
-    # Foydalanuvchilarni olish
-    cur.execute("SELECT * FROM users ORDER BY created_at DESC")
-    users_db = cur.fetchall()
-
-    # JSON fayldan ham foydalanuvchilarni olish
-    users_file = 'users.json'
-    users_json = []
-    if os.path.exists(users_file):
+        # Xodimlar ma'lumotlari - xavfsiz olish
         try:
-            with open(users_file, 'r', encoding='utf-8') as f:
-                users_json = json.load(f)
-        except (json.JSONDecodeError, FileNotFoundError):
-            users_json = []
+            cur.execute("SELECT * FROM staff ORDER BY created_at DESC")
+            staff_db = cur.fetchall() or []
+        except Exception as e:
+            app_logger.error(f"Staff ma'lumotlarini olishda xatolik: {str(e)}")
+            staff_db = []
 
-    # Savollarni olish
-    cur.execute("SELECT * FROM questions ORDER BY created_at DESC")
-    questions = cur.fetchall()
+        # Kuryerlar ma'lumotlari - xavfsiz olish
+        try:
+            cur.execute("SELECT * FROM couriers ORDER BY created_at DESC")
+            couriers_db = cur.fetchall() or []
+        except Exception as e:
+            app_logger.error(f"Couriers ma'lumotlarini olishda xatolik: {str(e)}")
+            couriers_db = []
 
-    # Filiallarni olish va har biriga baho qo'shish
-    cur.execute("SELECT * FROM branches ORDER BY created_at DESC")
-    branches_raw = cur.fetchall()
+        # Foydalanuvchilarni olish - xavfsiz
+        try:
+            cur.execute("SELECT * FROM users ORDER BY created_at DESC")
+            users_db = cur.fetchall() or []
+        except Exception as e:
+            app_logger.error(f"Users ma'lumotlarini olishda xatolik: {str(e)}")
+            users_db = []
 
-    branches = []
-    for branch in branches_raw:
-        # SQLite Row obyektini dict ga xavfsiz o'tkazish
-        if hasattr(branch, 'keys'):
-            branch_dict = dict(zip(branch.keys(), branch))
-        else:
-            # Agar tuple bo'lsa, manual dict yaratish
-            branch_dict = {
-                'id': branch[0], 'name': branch[1], 'address': branch[2],
-                'latitude': branch[3], 'longitude': branch[4], 'phone': branch[5],
-                'working_hours': branch[6], 'is_active': branch[7], 
-                'delivery_radius': branch[8], 'created_at': branch[9]
-            }
+        # JSON fayldan foydalanuvchilarni olish - xavfsiz
+        users_json = []
+        users_file = 'users.json'
+        if os.path.exists(users_file):
+            try:
+                with open(users_file, 'r', encoding='utf-8') as f:
+                    users_json = json.load(f) or []
+            except (json.JSONDecodeError, FileNotFoundError, Exception) as e:
+                app_logger.warning(f"Users JSON faylini o'qishda xatolik: {str(e)}")
+                users_json = []
+
+        # Savollarni olish - xavfsiz
+        try:
+            cur.execute("SELECT * FROM questions ORDER BY created_at DESC")
+            questions = cur.fetchall() or []
+        except Exception as e:
+            app_logger.error(f"Questions ma'lumotlarini olishda xatolik: {str(e)}")
+            questions = []
+
+        # Filiallarni olish - xavfsiz va baho qo'shish
+        branches = []
+        try:
+            cur.execute("SELECT * FROM branches ORDER BY created_at DESC")
+            branches_raw = cur.fetchall() or []
+
+            for branch in branches_raw:
+                try:
+                    # SQLite Row obyektini dict ga xavfsiz o'tkazish
+                    if hasattr(branch, 'keys'):
+                        branch_dict = dict(zip(branch.keys(), branch))
+                    else:
+                        # Agar tuple bo'lsa, xavfsiz dict yaratish
+                        branch_dict = {
+                            'id': branch[0] if len(branch) > 0 else 0,
+                            'name': branch[1] if len(branch) > 1 else 'N/A',
+                            'address': branch[2] if len(branch) > 2 else 'N/A',
+                            'latitude': branch[3] if len(branch) > 3 else 0,
+                            'longitude': branch[4] if len(branch) > 4 else 0,
+                            'phone': branch[5] if len(branch) > 5 else 'N/A',
+                            'working_hours': branch[6] if len(branch) > 6 else '09:00-22:00',
+                            'is_active': branch[7] if len(branch) > 7 else 1,
+                            'delivery_radius': branch[8] if len(branch) > 8 else 15.0,
+                            'created_at': branch[9] if len(branch) > 9 else ''
+                        }
+                    
+                    # Baho ma'lumotlarini xavfsiz olish
+                    try:
+                        rating_data = get_branch_average_rating(branch_dict['id'])
+                        branch_dict['average_rating'] = rating_data.get('average_rating', 0.0)
+                        branch_dict['total_ratings'] = rating_data.get('total_ratings', 0)
+                    except Exception as rating_error:
+                        app_logger.warning(f"Branch {branch_dict['id']} bahosini olishda xatolik: {str(rating_error)}")
+                        branch_dict['average_rating'] = 0.0
+                        branch_dict['total_ratings'] = 0
+                    
+                    branches.append(branch_dict)
+                    
+                except Exception as branch_error:
+                    app_logger.error(f"Branch ma'lumotini qayta ishlashda xatolik: {str(branch_error)}")
+                    continue
+
+        except Exception as e:
+            app_logger.error(f"Branches ma'lumotlarini olishda xatolik: {str(e)}")
+            branches = []
+
+        # Buyurtmalar statistikasi - xavfsiz hisoblash
+        stats = {
+            'total_orders': 0,
+            'waiting_orders': 0,
+            'ready_orders': 0,
+            'served_orders': 0,
+            'month_orders': 0,
+            'total_staff': len(staff_db),
+            'total_couriers': len(couriers_db),
+            'total_users': len(users_db),
+            'total_users_json': len(users_json)
+        }
+
+        try:
+            # Jami buyurtmalar
+            cur.execute("SELECT COUNT(*) FROM orders")
+            result = cur.fetchone()
+            stats['total_orders'] = result[0] if result else 0
+
+            # Status bo'yicha statistika
+            status_queries = [
+                ('waiting_orders', "SELECT COUNT(*) FROM orders WHERE status='waiting'"),
+                ('ready_orders', "SELECT COUNT(*) FROM orders WHERE status='ready'"),
+                ('served_orders', "SELECT COUNT(*) FROM orders WHERE status='served'")
+            ]
+
+            for stat_key, query in status_queries:
+                try:
+                    cur.execute(query)
+                    result = cur.fetchone()
+                    stats[stat_key] = result[0] if result else 0
+                except Exception as e:
+                    app_logger.warning(f"{stat_key} statistikasini olishda xatolik: {str(e)}")
+                    stats[stat_key] = 0
+
+            # Bu oylik statistika
+            try:
+                current_month = get_current_time().strftime("%Y-%m")
+                cur.execute("SELECT COUNT(*) FROM orders WHERE created_at LIKE ?", (f"{current_month}%",))
+                result = cur.fetchone()
+                stats['month_orders'] = result[0] if result else 0
+            except Exception as e:
+                app_logger.warning(f"Oylik statistikani olishda xatolik: {str(e)}")
+                stats['month_orders'] = 0
+
+        except Exception as e:
+            app_logger.error(f"Statistikalarni hisoblashda xatolik: {str(e)}")
+
+        if conn:
+            conn.close()
+
+        return render_template("super_admin_dashboard.html", 
+                             staff_db=staff_db or [],
+                             couriers_db=couriers_db or [],
+                             users_db=users_db or [],
+                             users_json=users_json or [],
+                             questions=questions or [],
+                             branches=branches or [],
+                             stats=stats)
+
+    except Exception as e:
+        app_logger.error(f"Super admin dashboard xatoligi: {str(e)}")
+        if conn:
+            try:
+                conn.close()
+            except:
+                pass
         
-        rating_data = get_branch_average_rating(branch_dict['id'])
-        branch_dict['average_rating'] = rating_data['average_rating']
-        branch_dict['total_ratings'] = rating_data['total_ratings']
-        branches.append(branch_dict)
-
-    # Buyurtmalar statistikasi
-    cur.execute("SELECT COUNT(*) FROM orders")
-    result = cur.fetchone()
-    total_orders = result[0] if result else 0
-
-    cur.execute("SELECT COUNT(*) FROM orders WHERE status='waiting'")
-    result = cur.fetchone()
-    waiting_orders = result[0] if result else 0
-
-    cur.execute("SELECT COUNT(*) FROM orders WHERE status='ready'")
-    result = cur.fetchone()
-    ready_orders = result[0] if result else 0
-
-    cur.execute("SELECT COUNT(*) FROM orders WHERE status='served'")
-    result = cur.fetchone()
-    served_orders = result[0] if result else 0
-
-    # Bu oylik statistika
-    current_month = get_current_time().strftime("%Y-%m")
-    cur.execute("SELECT COUNT(*) FROM orders WHERE created_at LIKE ?", (f"{current_month}%",))
-    result = cur.fetchone()
-    month_orders = result[0] if result else 0
-
-    conn.close()
-
-    stats = {
-        'total_orders': total_orders,
-        'waiting_orders': waiting_orders,
-        'ready_orders': ready_orders,
-        'served_orders': served_orders,
-        'month_orders': month_orders,
-        'total_staff': len(staff_db),
-        'total_couriers': len(couriers_db),
-        'total_users': len(users_db),
-        'total_users_json': len(users_json)
-    }
-
-    return render_template("super_admin_dashboard.html", 
-                         staff_db=staff_db,
-                         couriers_db=couriers_db,
-                         users_db=users_db,
-                         users_json=users_json,
-                         questions=questions,
-                         branches=branches,
-                         stats=stats)
+        # Emergency fallback
+        try:
+            return render_template("super_admin_dashboard.html", 
+                                 staff_db=[],
+                                 couriers_db=[],
+                                 users_db=[],
+                                 users_json=[],
+                                 questions=[],
+                                 branches=[],
+                                 stats={'total_orders': 0, 'waiting_orders': 0, 'ready_orders': 0, 
+                                       'served_orders': 0, 'month_orders': 0, 'total_staff': 0, 
+                                       'total_couriers': 0, 'total_users': 0, 'total_users_json': 0})
+        except Exception as template_error:
+            app_logger.critical(f"Template render ham ishlamadi: {str(template_error)}")
+            return f"""
+            <h1>Super Admin Dashboard</h1>
+            <p>Dashboard yuklashda xatolik: {str(e)}</p>
+            <a href="{url_for('super_admin_login')}">Login sahifasiga qaytish</a>
+            """, 500
 
 @app.route("/super-admin/delete-staff/<int:staff_id>", methods=["POST"])
 def super_admin_delete_staff(staff_id):
@@ -3826,6 +3940,186 @@ def super_admin_get_ratings():
     except Exception as e:
         app_logger.error(f"Super admin get ratings error: {str(e)}")
         return jsonify({"menu_ratings": [], "branch_ratings": []}), 500
+
+@app.route("/super-admin/reset-staff-password", methods=["POST"])
+def super_admin_reset_staff_password():
+    """Super admin tomonidan xodim parolini yangilash"""
+    if not session.get("super_admin"):
+        return jsonify({"success": False, "message": "Ruxsat yo'q"}), 403
+
+    try:
+        data = request.get_json()
+        staff_id = data.get("staff_id")
+        new_password = data.get("new_password")
+
+        if not staff_id or not new_password:
+            return jsonify({"success": False, "message": "Staff ID va yangi parol majburiy"})
+
+        if len(new_password) < 6:
+            return jsonify({"success": False, "message": "Parol kamida 6 ta belgidan iborat bo'lishi kerak"})
+
+        password_hash = generate_password_hash(new_password)
+        execute_query("UPDATE staff SET password_hash = ? WHERE id = ?", (password_hash, staff_id))
+
+        app_logger.info(f"Super admin tomonidan staff {staff_id} paroli yangilandi")
+        return jsonify({"success": True, "message": "Parol muvaffaqiyatli yangilandi"})
+
+    except Exception as e:
+        app_logger.error(f"Staff parolini yangilashda xatolik: {str(e)}")
+        return jsonify({"success": False, "message": "Server xatoligi"}), 500
+
+@app.route("/super-admin/reset-courier-password", methods=["POST"])
+def super_admin_reset_courier_password():
+    """Super admin tomonidan kuryer parolini yangilash"""
+    if not session.get("super_admin"):
+        return jsonify({"success": False, "message": "Ruxsat yo'q"}), 403
+
+    try:
+        data = request.get_json()
+        courier_id = data.get("courier_id")
+        new_password = data.get("new_password")
+
+        if not courier_id or not new_password:
+            return jsonify({"success": False, "message": "Courier ID va yangi parol majburiy"})
+
+        if len(new_password) < 6:
+            return jsonify({"success": False, "message": "Parol kamida 6 ta belgidan iborat bo'lishi kerak"})
+
+        password_hash = generate_password_hash(new_password)
+        execute_query("UPDATE couriers SET password_hash = ? WHERE id = ?", (password_hash, courier_id))
+
+        app_logger.info(f"Super admin tomonidan courier {courier_id} paroli yangilandi")
+        return jsonify({"success": True, "message": "Parol muvaffaqiyatli yangilandi"})
+
+    except Exception as e:
+        app_logger.error(f"Courier parolini yangilashda xatolik: {str(e)}")
+        return jsonify({"success": False, "message": "Server xatoligi"}), 500
+
+@app.route("/super-admin/reset-user-password", methods=["POST"])
+def super_admin_reset_user_password():
+    """Super admin tomonidan foydalanuvchi parolini yangilash"""
+    if not session.get("super_admin"):
+        return jsonify({"success": False, "message": "Ruxsat yo'q"}), 403
+
+    try:
+        data = request.get_json()
+        user_id = data.get("user_id")
+        new_password = data.get("new_password")
+
+        if not user_id or not new_password:
+            return jsonify({"success": False, "message": "User ID va yangi parol majburiy"})
+
+        if len(new_password) < 6:
+            return jsonify({"success": False, "message": "Parol kamida 6 ta belgidan iborat bo'lishi kerak"})
+
+        password_hash = generate_password_hash(new_password)
+        execute_query("UPDATE users SET password_hash = ? WHERE id = ?", (password_hash, user_id))
+
+        app_logger.info(f"Super admin tomonidan user {user_id} paroli yangilandi")
+        return jsonify({"success": True, "message": "Parol muvaffaqiyatli yangilandi"})
+
+    except Exception as e:
+        app_logger.error(f"User parolini yangilashda xatolik: {str(e)}")
+        return jsonify({"success": False, "message": "Server xatoligi"}), 500
+
+@app.route("/api/super-admin/kpis")
+@login_required
+def super_admin_kpis():
+    """Super admin uchun KPI ma'lumotlari"""
+    try:
+        today = get_current_time().date().isoformat()
+        
+        # Bugungi daromad
+        today_revenue = execute_query("""
+            SELECT COALESCE(SUM(r.total_amount), 0) as revenue
+            FROM receipts r
+            JOIN orders o ON r.order_id = o.id
+            WHERE DATE(o.created_at) = ?
+        """, (today,), fetch_one=True)
+        
+        # Bugungi buyurtmalar
+        today_orders = execute_query("""
+            SELECT COUNT(*) as count
+            FROM orders
+            WHERE DATE(created_at) = ?
+        """, (today,), fetch_one=True)
+        
+        # Faol foydalanuvchilar (oxirgi 24 soatda)
+        yesterday = (get_current_time() - datetime.timedelta(days=1)).isoformat()
+        active_users = execute_query("""
+            SELECT COUNT(DISTINCT user_id) as count
+            FROM orders
+            WHERE created_at >= ?
+        """, (yesterday,), fetch_one=True)
+        
+        # O'rtacha baho
+        avg_rating = execute_query("""
+            SELECT COALESCE(AVG(rating), 0) as avg_rating
+            FROM ratings
+            WHERE created_at >= ?
+        """, (yesterday,), fetch_one=True)
+        
+        return jsonify({
+            "revenue": today_revenue['revenue'] if today_revenue else 0,
+            "orders": today_orders['count'] if today_orders else 0,
+            "activeUsers": active_users['count'] if active_users else 0,
+            "avgRating": round(avg_rating['avg_rating'] if avg_rating else 0, 1)
+        })
+        
+    except Exception as e:
+        app_logger.error(f"KPIs API error: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/super-admin/activity-feed")
+@login_required
+def super_admin_activity_feed():
+    """Super admin uchun real-time faollik feed"""
+    try:
+        # Oxirgi 1 soatdagi faolliklar
+        hour_ago = (get_current_time() - datetime.timedelta(hours=1)).isoformat()
+        
+        activities = []
+        
+        # Yangi buyurtmalar
+        new_orders = execute_query("""
+            SELECT customer_name, ticket_no, created_at
+            FROM orders
+            WHERE created_at >= ?
+            ORDER BY created_at DESC
+            LIMIT 5
+        """, (hour_ago,), fetch_all=True)
+        
+        for order in new_orders:
+            activities.append({
+                "icon": "🛒",
+                "text": f"Yangi buyurtma #{order['ticket_no']} - {order['customer_name']}",
+                "time": order['created_at'][:16].replace('T', ' ')
+            })
+        
+        # Yangi foydalanuvchilar
+        new_users = execute_query("""
+            SELECT first_name, last_name, created_at
+            FROM users
+            WHERE created_at >= ?
+            ORDER BY created_at DESC
+            LIMIT 3
+        """, (hour_ago,), fetch_all=True)
+        
+        for user in new_users:
+            activities.append({
+                "icon": "👤",
+                "text": f"Yangi foydalanuvchi ro'yxatdan o'tdi: {user['first_name']} {user['last_name']}",
+                "time": user['created_at'][:16].replace('T', ' ')
+            })
+        
+        # Vaqt bo'yicha saralash
+        activities.sort(key=lambda x: x['time'], reverse=True)
+        
+        return jsonify({"activities": activities[:10]})
+        
+    except Exception as e:
+        app_logger.error(f"Activity feed API error: {str(e)}")
+        return jsonify({"activities": []}), 500
 
 @app.route("/super-admin/delete-courier/<int:courier_id>", methods=["POST"])
 def super_admin_delete_courier(courier_id):
