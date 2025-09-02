@@ -4189,7 +4189,7 @@ def get_config():
 
 @app.route("/get_cart_count")
 def get_cart_count():
-    """Savatcha sonini olish"""
+    """Savatcha sonini olish - majburiy JSON response"""
     try:
         session_id = get_session_id()
         user_id = session.get("user_id")
@@ -4205,10 +4205,28 @@ def get_cart_count():
         cart_count = cur.fetchone()['total_count']
         conn.close()
         
-        return jsonify({"count": cart_count})
+        # Majburiy JSON response headers bilan
+        response = jsonify({
+            "count": int(cart_count) if cart_count else 0,
+            "success": True
+        })
+        response.headers['Content-Type'] = 'application/json; charset=utf-8'
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+        
+        return response
+        
     except Exception as e:
         app_logger.error(f"Get cart count error: {str(e)}")
-        return jsonify({"count": 0})
+        
+        error_response = jsonify({
+            "count": 0,
+            "success": False,
+            "error": str(e)
+        })
+        error_response.headers['Content-Type'] = 'application/json; charset=utf-8'
+        return error_response
 
 @app.route("/api/health")
 def health_check():
