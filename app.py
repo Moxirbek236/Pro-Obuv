@@ -8,11 +8,15 @@ from io import BytesIO
 import base64
 import requests
 import json
+from location_service import LocationService
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///restaurant.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = os.environ.get("SECRET_KEY", "dev_secret_change_me")
+
+# Location service instance
+location_service = LocationService()
 
 # Database fayl yo'lini to'g'rilash
 DB_PATH = os.path.join(os.path.dirname(__file__), "database.sqlite3")
@@ -3205,26 +3209,35 @@ def api_validate_address():
 @app.route("/api/search-places", methods=["POST"])
 def api_search_places():
     """Joylarni qidirish API"""
-    data = request.get_json()
-    query = data.get("query", "").strip()
+    try:
+        data = request.get_json()
+        query = data.get("query", "").strip()
 
-    if not query:
-        return jsonify({"places": []})
+        if not query:
+            return jsonify({"places": []})
 
-    places_result = get_places_with_serper(f"{query} Toshkent")
+        # Location service orqali qidirish
+        result = location_service.search_places(query)
+        
+        if "error" in result:
+            logging.error(f"Location search error: {result['error']}")
+            return jsonify({"places": []})
 
-    if places_result and places_result.get('places'):
         places = []
-        for place in places_result['places'][:5]:  # Faqat birinchi 5 ta natija
-            places.append({
-                "title": place.get("title", ""),
-                "address": place.get("address", ""),
-                "position": place.get("position", {}),
-                "rating": place.get("rating", 0)
-            })
-        return jsonify({"places": places})
+        if "places" in result and result["places"]:
+            for place in result["places"][:5]:  # Faqat birinchi 5 ta natija
+                places.append({
+                    "title": place.get("title", ""),
+                    "address": place.get("address", ""),
+                    "position": place.get("gps_coordinates", {}),
+                    "rating": place.get("rating", 0)
+                })
 
-    return jsonify({"places": []})
+        return jsonify({"places": places})
+        
+    except Exception as e:
+        logging.error(f"API search places error: {str(e)}")
+        return jsonify({"places": []})
 
 @app.route("/api/find-nearest-branch", methods=["POST"])
 def api_find_nearest_branch():
@@ -3662,8 +3675,20 @@ def debug():
     }
 
 if __name__ == '__main__':
-    # Ma'lumotlar bazasini ishga tushirish
-    init_db()
-    import os
-    port = int(os.environ.get('PORT', 5000))
-    app.run(debug=True, host='0.0.0.0', port=port)
+    try:
+        # Ma'lumotlar bazasini ishga tushirish
+        init_db()
+        print("Ma'lumotlar bazasi muvaffaqiyatli ishga tushirildi")
+        
+        # Port konfiguratsiyasi
+        port = int(os.environ.get('PORT', 5000))
+        print(f"Server {port} portda ishga tushmoqda...")
+        
+        # Serverni ishga tushirish
+        app.run(debug=True, host='0.0.0.0', port=port)
+        
+    except Exception as e:
+        print(f"Server ishga tushirishda xatolik: {str(e)}")
+        logging.error(f"Server startup error: {str(e)}")
+        import traceback
+        traceback.print_exc()
