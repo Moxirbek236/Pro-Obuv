@@ -858,11 +858,27 @@ table td {
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   color: var(--text-primary);
   font-size: 0.875rem;
+  background: transparent;
 }
 
 body.dark-theme table td {
   color: var(--dark-text-primary) !important;
   border-bottom-color: rgba(255, 255, 255, 0.1);
+  background: rgba(45, 55, 72, 0.3) !important;
+}
+
+body.dark-theme table th {
+  background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%) !important;
+  color: #f8fafc !important;
+}
+
+body.dark-theme table {
+  background: rgba(26, 32, 44, 0.5) !important;
+}
+
+body.dark-theme .table-container {
+  background: rgba(26, 32, 44, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Status System */
@@ -1798,6 +1814,39 @@ body[data-theme="purple"] {
   --primary-color: #8b5cf6;
   --primary-dark: #7c3aed;
   --secondary-color: #6d28d9;
+}
+
+/* Tungi rejim uchun barcha oq fon elementlarini to'g'rilash */
+body.dark-theme .table,
+body.dark-theme .table-responsive,
+body.dark-theme tbody,
+body.dark-theme thead,
+body.dark-theme tr {
+  background: rgba(26, 32, 44, 0.5) !important;
+  color: var(--dark-text-primary) !important;
+}
+
+body.dark-theme .table-striped tbody tr:nth-of-type(odd) {
+  background: rgba(45, 55, 72, 0.3) !important;
+}
+
+body.dark-theme .table-striped tbody tr:nth-of-type(even) {
+  background: rgba(26, 32, 44, 0.3) !important;
+}
+
+body.dark-theme .table-hover tbody tr:hover {
+  background: rgba(71, 85, 105, 0.4) !important;
+}
+
+/* Bootstrap table klasslarini ham tungi rejimga moslashtirish */
+body.dark-theme .table-light {
+  background: rgba(45, 55, 72, 0.5) !important;
+  color: var(--dark-text-primary) !important;
+}
+
+body.dark-theme .table-secondary {
+  background: rgba(51, 65, 85, 0.5) !important;
+  color: var(--dark-text-primary) !important;
 }
 
 /* Enhanced component states */
