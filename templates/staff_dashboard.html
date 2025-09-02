@@ -1,121 +1,491 @@
 
-{% extends "base.html" %}
-{% block content %}
-<div class="container py-4">
-  <div class="card shadow-sm">
-    <div class="card-body">
-      <h2 class="card-title">🔧 Xodim paneli</h2>
-      <p class="text-muted">Bu sahifa avtomatik yangilanadi (10 soniya).</p>
-      <div class="mb-3">
-        <a href="{{ url_for('staff_menu') }}" class="btn btn-primary">📋 Menyu boshqaruvi</a>
-        <a href="{{ url_for('staff_employees') }}" class="btn btn-secondary">👥 Xodimlar ro'yxati</a>
-      </div>
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xodim Dashboard - Restaurant</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .dashboard-container {
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
 
-      <!-- Faol buyurtmalar -->
-      <div class="mb-4">
-        <h4 class="text-primary">📋 Faol Buyurtmalar</h4>
-        <div class="table-responsive">
-          <table class="table table-striped table-hover align-middle">
-            <thead class="table-dark">
-              <tr>
-                <th>Ticket</th>
-                <th>Mijoz</th>
-                <th>Buyurtma</th>
-                <th>Buyurtma vaqti</th>
-                <th>Tayyor bo'lish vaqti</th>
-                <th>Holat</th>
-                <th>Amallar</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for o in orders %}
-              {% if o['status'] in ['waiting', 'ready'] %}
-              <tr class="{% if o['status']=='ready' %}table-success{% else %}table-warning{% endif %}">
-                <td><strong>#{{ o['ticket_no'] }}</strong></td>
-                <td>{{ o['customer_name'] }}</td>
-                <td>
-                  {% if o['order_items'] %}
-                    <small>{{ o['order_items'] }}</small>
-                  {% else %}
-                    <em class="text-muted">—</em>
-                  {% endif %}
-                </td>
-                <td>{{ o['created_at'][:16].replace('T',' ') }}</td>
-                <td><strong>{{ o['eta_time'][:16].replace('T',' ') }}</strong></td>
-                <td>
-                  <span class="badge {% if o['status']=='ready' %}bg-success{% elif o['status']=='waiting' %}bg-warning{% endif %}">
-                    {% if o['status'] == 'ready' %}Tayyor{% elif o['status'] == 'waiting' %}Kutish{% else %}{{ o['status'] }}{% endif %}
-                  </span>
-                </td>
-                <td>
-                  {% if o['status'] == 'waiting' %}
-                    <form method="post" action="{{ url_for('staff_mark_ready', order_id=o['id']) }}" style="display:inline;">
-                      <button class="btn btn-sm btn-success" type="submit">✅ Tayyor</button>
-                    </form>
-                  {% elif o['status'] == 'ready' %}
-                    <form method="post" action="{{ url_for('staff_mark_served', order_id=o['id']) }}" style="display:inline;">
-                      <button class="btn btn-sm btn-primary" type="submit">🎯 Berildi</button>
-                    </form>
-                  {% endif %}
-                  <form method="post" action="{{ url_for('staff_mark_cancel', order_id=o['id']) }}" style="display:inline;">
-                    <button class="btn btn-sm btn-danger" type="submit" onclick="return confirm('Rostdan ham bekor qilmoqchimisiz?')">❌ Bekor qilish</button>
-                  </form>
-                </td>
-              </tr>
-              {% endif %}
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
+        .staff-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
 
-      <!-- Tugallangan buyurtmalar -->
-      <div class="mb-4">
-        <h4 class="text-success">✅ Tugallangan Buyurtmalar (Oxirgi 50 ta)</h4>
-        <div class="table-responsive">
-          <table class="table table-sm table-hover align-middle">
-            <thead class="table-secondary">
-              <tr>
-                <th>Ticket</th>
-                <th>Mijoz</th>
-                <th>Buyurtma</th>
-                <th>Buyurtma vaqti</th>
-                <th>Holat</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for o in orders %}
-              {% if o['status'] in ['served', 'cancelled'] %}
-              <tr class="{% if o['status']=='served' %}table-light{% else %}table-secondary{% endif %}">
-                <td>#{{ o['ticket_no'] }}</td>
-                <td>{{ o['customer_name'] }}</td>
-                <td>
-                  {% if o['order_items'] %}
-                    <small>{{ o['order_items'] }}</small>
-                  {% else %}
-                    <em class="text-muted">—</em>
-                  {% endif %}
-                </td>
-                <td>{{ o['created_at'][:16].replace('T',' ') }}</td>
-                <td>
-                  <span class="badge {% if o['status']=='served' %}bg-success{% else %}bg-secondary{% endif %}">
-                    {% if o['status'] == 'served' %}Berildi{% elif o['status'] == 'cancelled' %}Bekor qilindi{% else %}{{ o['status'] }}{% endif %}
-                  </span>
-                </td>
-              </tr>
-              {% endif %}
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
+        .staff-header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
 
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            border-left: 5px solid #007bff;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+
+        .orders-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .order-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .order-table th,
+        .order-table td {
+            padding: 15px 10px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .order-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .order-table tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .status-badge {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .status-waiting {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-ready {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-served {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-cancelled {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-ready {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-served {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-cancel {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .navigation-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px;
+            color: #6c757d;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .auto-refresh-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            z-index: 1000;
+        }
+
+        .order-items {
+            font-size: 0.9rem;
+            color: #6c757d;
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 15px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .navigation-buttons {
+                flex-direction: column;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .order-table {
+                font-size: 0.9rem;
+            }
+
+            .order-table th,
+            .order-table td {
+                padding: 10px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auto-refresh-indicator" id="refreshIndicator">
+        <span id="refreshTimer">Yangilanish: 10s</span>
     </div>
-  </div>
-</div>
 
-<script>
-  // Har 10 soniyada sahifani avtomatik yangilash
-  setInterval(function(){ location.reload(); }, 10000);
-</script>
-{% endblock %}
+    <div class="dashboard-container">
+        <!-- Header -->
+        <div class="staff-header">
+            <h1>🔧 Xodim Dashboard</h1>
+            <p>Salom, {{ session.get('staff_name', 'Xodim') }}!</p>
+            <small>Sahifa avtomatik yangilanadi</small>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="waitingCount">0</div>
+                <div class="stat-label">⏳ Kutilmoqda</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="readyCount">0</div>
+                <div class="stat-label">✅ Tayyor</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="servedCount">0</div>
+                <div class="stat-label">🍽️ Berildi</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalOrders">0</div>
+                <div class="stat-label">📊 Jami</div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation-buttons">
+            <a href="{{ url_for('staff_menu') }}" class="nav-btn">📋 Menyu boshqaruvi</a>
+            <a href="{{ url_for('staff_employees') }}" class="nav-btn">👥 Xodimlar ro'yxati</a>
+            <a href="{{ url_for('admin_monitor') }}" class="nav-btn">📺 Monitor</a>
+            <a href="{{ url_for('staff_logout') }}" class="nav-btn" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);">🚪 Chiqish</a>
+        </div>
+
+        <!-- Active Orders -->
+        <div class="orders-section">
+            <div class="section-header">
+                <h3>🔥 Faol Buyurtmalar</h3>
+                <button class="btn btn-primary" onclick="refreshOrders()">🔄 Yangilash</button>
+            </div>
+
+            <div class="table-responsive">
+                <table class="order-table">
+                    <thead>
+                        <tr>
+                            <th>№</th>
+                            <th>Ticket</th>
+                            <th>Mijoz</th>
+                            <th>Buyurtma</th>
+                            <th>Vaqt</th>
+                            <th>ETA</th>
+                            <th>Holat</th>
+                            <th>Amallar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="activeOrdersTable">
+                        {% for o in orders %}
+                        {% if o['status'] in ['waiting', 'ready'] %}
+                        <tr data-order-id="{{ o['id'] }}">
+                            <td>{{ loop.index }}</td>
+                            <td><strong>#{{ o['ticket_no'] }}</strong></td>
+                            <td>{{ o['customer_name'] }}</td>
+                            <td class="order-items">
+                                {% if o['order_items'] %}
+                                    {{ o['order_items'] }}
+                                {% else %}
+                                    <em>Ma'lumot yo'q</em>
+                                {% endif %}
+                            </td>
+                            <td>{{ o['created_at'][:16].replace('T',' ') }}</td>
+                            <td><strong>{{ o['eta_time'][:16].replace('T',' ') }}</strong></td>
+                            <td>
+                                <span class="status-badge status-{{ o['status'] }}">
+                                    {% if o['status'] == 'waiting' %}⏳ Kutilmoqda{% elif o['status'] == 'ready' %}✅ Tayyor{% endif %}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    {% if o['status'] == 'waiting' %}
+                                        <button class="btn-action btn-ready" onclick="markReady({{ o['id'] }})">
+                                            ✅ Tayyor
+                                        </button>
+                                    {% elif o['status'] == 'ready' %}
+                                        <button class="btn-action btn-served" onclick="markServed({{ o['id'] }})">
+                                            🍽️ Berildi
+                                        </button>
+                                    {% endif %}
+                                    <button class="btn-action btn-cancel" onclick="cancelOrder({{ o['id'] }})">
+                                        ❌ Bekor qilish
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% if not orders or orders|selectattr('status', 'in', ['waiting', 'ready'])|list|length == 0 %}
+            <div class="empty-state">
+                <div class="empty-state-icon">📭</div>
+                <h4>Faol buyurtmalar yo'q</h4>
+                <p>Yangi buyurtmalar kelganida bu yerda ko'rinadi</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Completed Orders -->
+        <div class="orders-section">
+            <div class="section-header">
+                <h3>✅ Tugallangan buyurtmalar (So'nggi 20 ta)</h3>
+            </div>
+
+            <div class="table-responsive">
+                <table class="order-table">
+                    <thead>
+                        <tr>
+                            <th>Ticket</th>
+                            <th>Mijoz</th>
+                            <th>Buyurtma</th>
+                            <th>Vaqt</th>
+                            <th>Holat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for o in orders %}
+                        {% if o['status'] in ['served', 'cancelled'] %}
+                        <tr>
+                            <td>#{{ o['ticket_no'] }}</td>
+                            <td>{{ o['customer_name'] }}</td>
+                            <td class="order-items">
+                                {% if o['order_items'] %}
+                                    {{ o['order_items'] }}
+                                {% else %}
+                                    <em>Ma'lumot yo'q</em>
+                                {% endif %}
+                            </td>
+                            <td>{{ o['created_at'][:16].replace('T',' ') }}</td>
+                            <td>
+                                <span class="status-badge status-{{ o['status'] }}">
+                                    {% if o['status'] == 'served' %}✅ Berildi{% elif o['status'] == 'cancelled' %}❌ Bekor qilindi{% endif %}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let refreshInterval;
+        let refreshCountdown = 10;
+
+        // Auto refresh countdown
+        function startRefreshCountdown() {
+            refreshCountdown = 10;
+            refreshInterval = setInterval(() => {
+                refreshCountdown--;
+                document.getElementById('refreshTimer').textContent = `Yangilanish: ${refreshCountdown}s`;
+                
+                if (refreshCountdown <= 0) {
+                    location.reload();
+                }
+            }, 1000);
+        }
+
+        // Manual refresh
+        function refreshOrders() {
+            clearInterval(refreshInterval);
+            location.reload();
+        }
+
+        // Mark order as ready
+        function markReady(orderId) {
+            if (confirm('Bu buyurtmani tayyor deb belgilamoqchimisiz?')) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/admin/order/${orderId}/ready`;
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        // Mark order as served
+        function markServed(orderId) {
+            if (confirm('Bu buyurtma mijozga berilganini tasdiqlaysizmi?')) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/admin/order/${orderId}/served`;
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        // Cancel order
+        function cancelOrder(orderId) {
+            if (confirm('Bu buyurtmani bekor qilmoqchimisiz?')) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/admin/order/${orderId}/cancel`;
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        // Update statistics
+        function updateStats() {
+            const waitingOrders = document.querySelectorAll('.status-waiting').length;
+            const readyOrders = document.querySelectorAll('.status-ready').length;
+            const servedOrders = document.querySelectorAll('.status-served').length;
+            const totalOrders = waitingOrders + readyOrders + servedOrders;
+
+            document.getElementById('waitingCount').textContent = waitingOrders;
+            document.getElementById('readyCount').textContent = readyOrders;
+            document.getElementById('servedCount').textContent = servedOrders;
+            document.getElementById('totalOrders').textContent = totalOrders;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStats();
+            startRefreshCountdown();
+        });
+
+        // Page visibility change handling
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                clearInterval(refreshInterval);
+            } else {
+                startRefreshCountdown();
+            }
+        });
+    </script>
+</body>
+</html>
