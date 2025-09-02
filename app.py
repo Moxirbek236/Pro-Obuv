@@ -1,4 +1,3 @@
-
 import time
 
 # Global start time tracking
@@ -59,17 +58,17 @@ app = Flask(__name__)
 # Universal configuration class
 class Config:
     """Universal dastur konfiguratsiyasi"""
-    
+
     # Environment detection
     ENVIRONMENT = os.environ.get('FLASK_ENV', 'production')
     IS_DEVELOPMENT = ENVIRONMENT == 'development'
     IS_PRODUCTION = ENVIRONMENT == 'production'
-    
+
     # Database configuration
     DATABASE_URL = os.environ.get('DATABASE_URL', 'sqlite:///database.sqlite3')
     SQLALCHEMY_DATABASE_URI = DATABASE_URL
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    
+
     # SQLite-specific engine options
     if DATABASE_URL.startswith('sqlite'):
         SQLALCHEMY_ENGINE_OPTIONS = {
@@ -85,7 +84,7 @@ class Config:
             'pool_recycle': 3600,
             'pool_pre_ping': True
         }
-    
+
     # Security configuration
     SECRET_KEY = os.environ.get("SECRET_KEY", secrets.token_urlsafe(32))
     SESSION_COOKIE_SECURE = IS_PRODUCTION
@@ -93,52 +92,52 @@ class Config:
     SESSION_COOKIE_SAMESITE = 'Lax'
     PERMANENT_SESSION_LIFETIME = 7200
     WTF_CSRF_ENABLED = True
-    
+
     # File upload configuration
     MAX_CONTENT_LENGTH = 32 * 1024 * 1024  # 32MB
     UPLOAD_FOLDER = 'static/uploads'
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
-    
+
     # JSON configuration
     JSON_SORT_KEYS = False
     JSONIFY_PRETTYPRINT_REGULAR = IS_DEVELOPMENT
-    
+
     # Cache configuration
     SEND_FILE_MAX_AGE_DEFAULT = 31536000 if IS_PRODUCTION else 300
     REDIS_URL = os.environ.get('REDIS_URL', 'memory://')
-    
+
     # External APIs
     YANDEX_GEOCODER_API = os.environ.get('YANDEX_GEOCODER_API', '')
     GOOGLE_MAPS_API = os.environ.get('GOOGLE_MAPS_API', '')
     SERPER_API_KEY = os.environ.get('SERPER_API_KEY', '1b077296f67499a12ee28ce232bb48221d29be14')
-    
+
     # Localization
     DEFAULT_LANGUAGE = os.environ.get('DEFAULT_LANGUAGE', 'uz')
     SUPPORTED_LANGUAGES = ['uz', 'ru', 'en', 'tr', 'ar']
     DEFAULT_CURRENCY = os.environ.get('DEFAULT_CURRENCY', 'UZS')
     TIMEZONE = os.environ.get('TIMEZONE', 'Asia/Tashkent')
-    
+
     # Business logic
     AVG_PREP_MINUTES = int(os.environ.get("AVG_PREP_MINUTES", "7"))
     DELIVERY_BASE_PRICE = int(os.environ.get("DELIVERY_BASE_PRICE", "10000"))
     COURIER_BASE_RATE = int(os.environ.get("COURIER_BASE_RATE", "8000"))
     CASHBACK_PERCENTAGE = float(os.environ.get("CASHBACK_PERCENTAGE", "1.0"))
     MAX_DELIVERY_DISTANCE = float(os.environ.get("MAX_DELIVERY_DISTANCE", "50.0"))
-    
+
     # Rate limiting
     RATE_LIMIT_DAILY = int(os.environ.get("RATE_LIMIT_DAILY", "1000"))
     RATE_LIMIT_HOURLY = int(os.environ.get("RATE_LIMIT_HOURLY", "200"))
     RATE_LIMIT_MINUTE = int(os.environ.get("RATE_LIMIT_MINUTE", "50"))
-    
+
     # Logging
     LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO')
     LOG_FILE_MAX_SIZE = int(os.environ.get('LOG_FILE_MAX_SIZE', '10485760'))  # 10MB
     LOG_BACKUP_COUNT = int(os.environ.get('LOG_BACKUP_COUNT', '5'))
-    
+
     # Performance
     THREAD_POOL_MAX_WORKERS = int(os.environ.get('THREAD_POOL_MAX_WORKERS', '10'))
     DB_POOL_MAX_CONNECTIONS = int(os.environ.get('DB_POOL_MAX_CONNECTIONS', '20'))
-    
+
     # Admin credentials
     SUPER_ADMIN_USERNAME = os.environ.get('SUPER_ADMIN_USERNAME', 'masteradmin')
     SUPER_ADMIN_PASSWORD = os.environ.get('SUPER_ADMIN_PASSWORD', 'SuperAdmin2025!@#$%')
@@ -185,7 +184,7 @@ class CacheManager:
         self.cache_lock = threading.Lock()
         self.redis_client = None
         self._init_redis()
-    
+
     def _init_redis(self):
         """Redis connection (agar mavjud bo'lsa)"""
         try:
@@ -197,7 +196,7 @@ class CacheManager:
                 app_logger.info("Redis cache tizimi ulandi")
         except Exception as e:
             app_logger.warning(f"Redis ulanmadi, memory cache ishlatiladi: {str(e)}")
-    
+
     def get(self, key, default=None):
         """Cache dan ma'lumot olish"""
         try:
@@ -205,7 +204,7 @@ class CacheManager:
                 value = self.redis_client.get(f"restaurant:{key}")
                 if value:
                     return json.loads(value.decode())
-            
+
             # Memory cache dan olish
             with self.cache_lock:
                 if key in self.memory_cache:
@@ -217,20 +216,20 @@ class CacheManager:
                         del self.cache_timestamps[key]
         except Exception as e:
             app_logger.error(f"Cache get error: {str(e)}")
-        
+
         return default
-    
+
     def set(self, key, value, ttl=300):
         """Cache ga ma'lumot saqlash"""
         try:
             if self.redis_client:
                 self.redis_client.setex(f"restaurant:{key}", ttl, json.dumps(value, default=str))
-            
+
             # Memory cache ga ham saqlash
             with self.cache_lock:
                 self.memory_cache[key] = value
                 self.cache_timestamps[key] = time.time()
-                
+
                 # Memory cache ni tozalash (maksimal 1000 ta element)
                 if len(self.memory_cache) > 1000:
                     oldest_key = min(self.cache_timestamps.keys(), key=lambda k: self.cache_timestamps[k])
@@ -238,13 +237,13 @@ class CacheManager:
                     del self.cache_timestamps[oldest_key]
         except Exception as e:
             app_logger.error(f"Cache set error: {str(e)}")
-    
+
     def delete(self, key):
         """Cache dan o'chirish"""
         try:
             if self.redis_client:
                 self.redis_client.delete(f"restaurant:{key}")
-            
+
             with self.cache_lock:
                 self.memory_cache.pop(key, None)
                 self.cache_timestamps.pop(key, None)
@@ -259,23 +258,23 @@ class RateLimiter:
     def __init__(self):
         self.requests = defaultdict(list)
         self.lock = threading.Lock()
-    
+
     def is_allowed(self, identifier, max_requests=100, window=3600):
         """Rate limiting tekshiruvi"""
         current_time = time.time()
-        
+
         with self.lock:
             # Eski so'rovlarni tozalash
             self.requests[identifier] = [
                 req_time for req_time in self.requests[identifier] 
                 if current_time - req_time < window
             ]
-            
+
             # Yangi so'rovni qo'shish
             if len(self.requests[identifier]) < max_requests:
                 self.requests[identifier].append(current_time)
                 return True
-            
+
             return False
 
 rate_limiter = RateLimiter()
@@ -295,36 +294,36 @@ def setup_logging():
     formatter = logging.Formatter(
         '%(asctime)s - %(levelname)s - %(message)s'
     )
-    
+
     # Rotating file handler (maksimal 10MB, 5 ta backup)
     file_handler = RotatingFileHandler('logs/restaurant.log', maxBytes=10485760, backupCount=5)
     file_handler.setFormatter(formatter)
     file_handler.setLevel(logging.INFO)
-    
+
     # Error file handler
     error_handler = RotatingFileHandler('logs/errors.log', maxBytes=10485760, backupCount=5)
     error_handler.setFormatter(formatter)
     error_handler.setLevel(logging.ERROR)
-    
+
     # Console handler - faqat xatoliklar uchun
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))
     console_handler.setLevel(logging.ERROR)
-    
+
     # Root logger konfiguratsiya
     root_logger = logging.getLogger()
     root_logger.setLevel(logging.WARNING)
     root_logger.addHandler(file_handler)
     root_logger.addHandler(error_handler)
     root_logger.addHandler(console_handler)
-    
+
     # Flask app logger - ortiqcha loglarni o'chirish
     app.logger.setLevel(logging.ERROR)
     app.logger.addHandler(error_handler)
-    
+
     # Werkzeug loglarni o'chirish
     logging.getLogger('werkzeug').setLevel(logging.ERROR)
-    
+
     return logging.getLogger('restaurant_app')
 
 # Logs papkasini yaratish
@@ -358,7 +357,7 @@ class PerformanceMonitor:
     def __init__(self):
         self.request_times = []
         self.lock = threading.Lock()
-    
+
     def record_request(self, duration, endpoint):
         with self.lock:
             self.request_times.append({
@@ -366,16 +365,16 @@ class PerformanceMonitor:
                 'endpoint': endpoint,
                 'timestamp': time.time()
             })
-            
+
             # Faqat so'nggi 1000 ta so'rovni saqlash
             if len(self.request_times) > 1000:
                 self.request_times = self.request_times[-1000:]
-    
+
     def get_stats(self):
         with self.lock:
             if not self.request_times:
                 return {}
-            
+
             durations = [req['duration'] for req in self.request_times]
             return {
                 'avg_response_time': sum(durations) / len(durations),
@@ -397,17 +396,17 @@ def after_request(response):
     if hasattr(request, 'start_time'):
         duration = time.time() - request.start_time
         performance_monitor.record_request(duration, request.endpoint)
-        
+
         # Sekin so'rovlarni log qilish
         if duration > 2.0:
             app_logger.warning(f"Slow request: {request.endpoint} took {duration:.2f}s")
-    
+
     # Security headers qo'shish
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'DENY'
     response.headers['X-XSS-Protection'] = '1; mode=block'
     response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
-    
+
     return response
 
 
@@ -435,14 +434,14 @@ class DatabasePool:
         self.connections = []
         self.lock = threading.Lock()
         self._init_pool()
-    
+
     def _init_pool(self):
         """Connection pool ni ishga tushirish"""
         for _ in range(5):  # Boshlang'ich 5 ta connection
             conn = self._create_connection()
             if conn:
                 self.connections.append(conn)
-    
+
     def _create_connection(self):
         """Yangi database connection yaratish"""
         try:
@@ -453,7 +452,7 @@ class DatabasePool:
                 isolation_level=None
             )
             conn.row_factory = sqlite3.Row
-            
+
             # SQLite optimizatsiya sozlamalari
             conn.execute("PRAGMA journal_mode=WAL")
             conn.execute("PRAGMA synchronous=NORMAL")
@@ -461,12 +460,12 @@ class DatabasePool:
             conn.execute("PRAGMA temp_store=MEMORY")
             conn.execute("PRAGMA mmap_size=268435456")  # 256MB
             conn.execute("PRAGMA foreign_keys=ON")
-            
+
             return conn
         except Exception as e:
             app_logger.error(f"Database connection yaratishda xatolik: {str(e)}")
             return None
-    
+
     @contextmanager
     def get_connection(self):
         """Context manager orqali connection olish"""
@@ -477,12 +476,12 @@ class DatabasePool:
                     conn = self.connections.pop()
                 else:
                     conn = self._create_connection()
-            
+
             if not conn:
                 raise Exception("Database connection olinmadi")
-            
+
             yield conn
-            
+
         except Exception as e:
             if conn:
                 try:
@@ -514,12 +513,12 @@ def execute_query(query, params=None, fetch_one=False, fetch_all=False):
     with db_pool.get_connection() as conn:
         try:
             cur = conn.cursor()
-            
+
             if params:
                 cur.execute(query, params)
             else:
                 cur.execute(query)
-            
+
             if fetch_one:
                 return cur.fetchone()
             elif fetch_all:
@@ -1627,12 +1626,12 @@ def cache_result(ttl=300):
         def wrapper(*args, **kwargs):
             # Cache key yaratish
             cache_key = f"{f.__name__}:{hashlib.md5(str(args + tuple(kwargs.items())).encode()).hexdigest()}"
-            
+
             # Cache dan olishga harakat qilish
             cached_result = cache_manager.get(cache_key)
             if cached_result is not None:
                 return cached_result
-            
+
             # Yangi natija hisoblash va cache ga saqlash
             result = f(*args, **kwargs)
             cache_manager.set(cache_key, result, ttl)
@@ -1654,16 +1653,16 @@ def validate_json(required_fields=None):
         def wrapper(*args, **kwargs):
             if not request.is_json:
                 return jsonify({"error": "JSON format required"}), 400
-            
+
             data = request.get_json()
             if not data:
                 return jsonify({"error": "Empty JSON"}), 400
-            
+
             if required_fields:
                 missing_fields = [field for field in required_fields if field not in data]
                 if missing_fields:
                     return jsonify({"error": f"Missing fields: {missing_fields}"}), 400
-            
+
             return f(*args, **kwargs)
         return wrapper
     return decorator
@@ -1676,11 +1675,11 @@ def performance_monitor(f):
         try:
             result = f(*args, **kwargs)
             execution_time = time.time() - start_time
-            
+
             # Sekin endpoint larni log qilish
             if execution_time > 1.0:
                 app_logger.warning(f"Slow endpoint: {f.__name__} took {execution_time:.2f}s")
-            
+
             return result
         except Exception as e:
             execution_time = time.time() - start_time
@@ -1698,7 +1697,7 @@ def menu():
     try:
         # Cache dan menu ma'lumotlarini olish
         cached_menu = cache_manager.get("menu_items_active")
-        
+
         if not cached_menu:
             menu_items = execute_query(
                 """SELECT m.*, COALESCE(AVG(r.rating), 0) as avg_rating, COUNT(r.rating) as rating_count
@@ -1709,16 +1708,16 @@ def menu():
                    ORDER BY m.category, m.orders_count DESC, m.name""",
                 fetch_all=True
             )
-            
+
             # Cache ga saqlash
             cache_manager.set("menu_items_active", [dict(item) for item in menu_items], 120)
         else:
             menu_items = cached_menu
-        
+
         # Kategoriyalar bo'yicha ajratish
         foods = [item for item in menu_items if item['category'] == 'food']
         drinks = [item for item in menu_items if item['category'] == 'drink']
-        
+
         # Foydalanuvchi sevimlilarini olish
         favorites = []
         if session.get('user_id'):
@@ -1728,13 +1727,13 @@ def menu():
                 fetch_all=True
             )
             favorites = [fav['menu_item_id'] for fav in favorites]
-        
+
         return render_template("menu.html", 
                              foods=foods, 
                              drinks=drinks, 
                              favorites=favorites,
                              current_page='menu')
-    
+
     except Exception as e:
         app_logger.error(f"Menu endpoint error: {str(e)}")
         # Fallback - oddiy menu
@@ -1764,10 +1763,10 @@ def add_to_cart():
 
         session_id = get_session_id()
         user_id = session.get("user_id")
-        
+
         # Cache dan savatchani tozalash
         cache_manager.delete(f"cart_count_{user_id}_{session_id}")
-        
+
         conn = get_db()
         cur = conn.cursor()
 
@@ -1793,22 +1792,22 @@ def add_to_cart():
                            (session_id, menu_item_id, quantity, now))
 
         conn.commit()
-        
+
         # Yangi cart count ni olish
         if user_id:
             cur.execute("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE user_id = ?", (user_id,))
         else:
             cur.execute("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE session_id = ?", (session_id,))
-        
+
         cart_count = cur.fetchone()['total_count']
         conn.close()
 
         if request.is_json or request.headers.get('Content-Type') == 'application/json':
             return jsonify({"success": True, "message": "Mahsulot qo'shildi", "cart_count": cart_count})
-        
+
         flash("Mahsulot savatchaga qo'shildi!", "success")
         return redirect(url_for("menu"))
-        
+
     except Exception as e:
         app_logger.error(f"Add to cart error: {str(e)}")
         if request.is_json or request.headers.get('Content-Type') == 'application/json':
@@ -2174,7 +2173,7 @@ def place_order():
         # Ma'lumotlar bazasi bilan ishash
         with db_pool.get_connection() as conn:
             cur = conn.cursor()
-            
+
             # Foydalanuvchi profilidan ma'lumotlarni olish
             cur.execute("SELECT phone, address, card_number FROM users WHERE id = ?", (user_id,))
             user_profile = cur.fetchone()
@@ -2270,7 +2269,7 @@ def place_order():
             # Savatchadagi mahsulotlarni order_details ga ko'chirish
             order_items_for_json = []
             total_amount = 0
-            
+
             for item in cart_items:
                 # Skidka narxini hisoblash
                 discount_percentage = item.get('discount_percentage', 0) or 0
@@ -2308,7 +2307,7 @@ def place_order():
 
             # Savatchani tozalash
             clear_cart(conn, session_id, user_id)
-            
+
             # Cache ni tozalash
             cache_manager.delete(f"cart_count_{user_id}_{session_id}")
 
@@ -2580,7 +2579,7 @@ def courier_take_order(order_id):
         return redirect(url_for("courier_login"))
 
     courier_id = session.get("courier_id")
-    
+
     try:
         with db_pool.get_connection() as conn:
             cur = conn.cursor()
@@ -3757,11 +3756,11 @@ def api_cart_count():
     """Savatcha buyumlari sonini qaytarish"""
     try:
         session_id = get_session_id()
-        user_id = session.get("user_id")
-        
+        user_id = session.get('user_id')
+
         conn = get_db()
         cur = conn.cursor()
-        
+
         # Foydalanuvchining savatcha buyumlari sonini hisoblash
         if user_id:
             cur.execute('''
@@ -3775,10 +3774,10 @@ def api_cart_count():
                 FROM cart_items 
                 WHERE session_id = ?
             ''', (session_id,))
-        
+
         result = cur.fetchone()
         count = result[0] if result else 0
-        
+
         conn.close()
         return jsonify({
             "count": count, 
@@ -3786,7 +3785,7 @@ def api_cart_count():
             "session_id": session_id,
             "user_id": user_id
         })
-        
+
     except Exception as e:
         app_logger.error(f"Savatcha sonini olishda xatolik: {str(e)}")
         return jsonify({"count": 0, "success": False, "error": str(e)})
@@ -3828,7 +3827,7 @@ def api_submit_rating():
         # Foydalanuvchi tizimga kirganligini tekshirish
         user_id = session.get('user_id')
         if not user_id:
-            return jsonify({"success": False, "message": "Tizimga kirishingiz kerak"})
+            return jsonify({"success": False, "message": "Tizimga kiringiz kerak"})
 
         data = request.get_json()
         if not data:
@@ -4151,7 +4150,7 @@ def health_check():
             execute_query("SELECT 1", fetch_one=True)
         except Exception as e:
             db_status = f"error: {str(e)}"
-        
+
         # Cache check
         cache_status = "ok"
         try:
@@ -4159,7 +4158,7 @@ def health_check():
             cache_manager.get("health_check")
         except Exception as e:
             cache_status = f"error: {str(e)}"
-        
+
         return jsonify({
             "status": "healthy",
             "timestamp": time.time(),
@@ -4192,11 +4191,11 @@ def system_metrics():
                 db_stats[table] = count['count'] if count else 0
         except Exception as e:
             db_stats = {"error": str(e)}
-        
+
         # Current active sessions
         active_sessions = len([s for s in ['user_id', 'staff_id', 'courier_id', 'super_admin'] 
                               if session.get(s)])
-        
+
         return jsonify({
             "database_stats": db_stats,
             "performance_stats": performance_monitor.get_stats(),
@@ -4219,35 +4218,35 @@ if __name__ == '__main__':
         print("🚀 Universal Restaurant System ishga tushmoqda...")
         print(f"Muhit: {Config.ENVIRONMENT}")
         print(f"Debug: {Config.IS_DEVELOPMENT}")
-        
+
         # Ma'lumotlar bazasini ishga tushirish
         print("📊 Ma'lumotlar bazasini ishga tushirish...")
         init_db()
         print("✅ Ma'lumotlar bazasi muvaffaqiyatli ishga tushirildi")
-        
+
         # Server portini belgilash
         port = int(os.environ.get('PORT', 5000))
         host = '0.0.0.0'  # Replit uchun 0.0.0.0 ishlatish kerak
         debug = Config.IS_DEVELOPMENT
-        
+
         print(f"🌐 Server {host}:{port} da ishga tushmoqda...")
         print(f"📋 Qo'llab-quvvatlanadigan tillar: {', '.join(Config.SUPPORTED_LANGUAGES)}")
         print(f"💰 Asosiy valyuta: {Config.DEFAULT_CURRENCY}")
         print(f"⏰ Vaqt zonasi: {Config.TIMEZONE}")
         print(f"🏪 O'rtacha tayyorlanish vaqti: {Config.AVG_PREP_MINUTES} daqiqa")
-        
+
         # Serverni ishga tushirish
         print("🎯 Flask server ishlamoqda...")
         app.run(host=host, port=port, debug=debug, threaded=True)
 
     except KeyboardInterrupt:
         print("\n🛑 Server to'xtatildi (Ctrl+C)")
-        
+
     except Exception as e:
         print(f"❌ XATOLIK: Server ishga tushirishda xatolik: {str(e)}")
         if 'app_logger' in globals():
             app_logger.error(f"Server startup error: {str(e)}")
-        
+
         # Debug ma'lumotlari
         print(f"🐍 Python versiya: {os.sys.version}")
         print(f"📁 Ishchi katalog: {os.getcwd()}")
@@ -4255,7 +4254,7 @@ if __name__ == '__main__':
         print(f"   FLASK_ENV: {os.environ.get('FLASK_ENV', 'None')}")
         print(f"   PORT: {os.environ.get('PORT', 'None')}")
         print(f"   DATABASE_URL: {os.environ.get('DATABASE_URL', 'None')}")
-        
+
         # Ma'lumotlar bazasi tekshiruvi
         try:
             if os.path.exists(DB_PATH):
@@ -4265,12 +4264,12 @@ if __name__ == '__main__':
                 print(f"❌ Ma'lumotlar bazasi topilmadi: {DB_PATH}")
         except Exception as db_error:
             print(f"❌ Ma'lumotlar bazasini tekshirishda xatolik: {str(db_error)}")
-        
+
         # Xatolik haqida batafsil ma'lumot
         import traceback
         print("\n📋 To'liq xatolik ma'lumoti:")
         traceback.print_exc()
-        
+
         # Fallback server (sodda konfiguratsiya)
         print("\n🔄 Fallback server ishga tushmoqda...")
         try:
