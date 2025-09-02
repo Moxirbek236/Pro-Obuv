@@ -400,31 +400,39 @@ except Exception as e:
 @app.before_request
 def before_request():
     """So'rov boshlanishida vaqtni yozib olish"""
-    request.start_time = time.time()
+    try:
+        request.start_time = time.time()
+    except Exception as e:
+        app_logger.error(f"Before request error: {str(e)}")
 
 @app.after_request  
 def after_request(response):
     """So'rov tugagach xavfsizlik sarlavhalarini qo'shish"""
     try:
-        # Performance monitoring (agar mavjud bo'lsa)
-        if hasattr(request, 'start_time'):
+        # Performance monitoring (xavfsiz)
+        if hasattr(request, 'start_time') and 'performance_monitor' in globals():
             try:
                 duration = time.time() - request.start_time
-                if hasattr(performance_monitor, 'record_request'):
-                    performance_monitor.record_request(duration, request.endpoint or 'unknown')
-            except Exception:
-                pass  # Performance monitoring xatoligi ahamiyatsiz
+                if hasattr(performance_monitor, 'record_request') and callable(performance_monitor.record_request):
+                    performance_monitor.record_request(duration, getattr(request, 'endpoint', None) or 'unknown')
+            except Exception as perf_error:
+                # Performance monitoring xatoligi ahamiyatsiz
+                pass
 
         # Security headers qo'shish
         response.headers['X-Content-Type-Options'] = 'nosniff'
         response.headers['X-Frame-Options'] = 'DENY' 
         response.headers['X-XSS-Protection'] = '1; mode=block'
-        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-        response.headers['Pragma'] = 'no-cache'
-        response.headers['Expires'] = '0'
+        
+        # Cache headers faqat static files uchun emas
+        if not request.path.startswith('/static/'):
+            response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+            response.headers['Pragma'] = 'no-cache'
+            response.headers['Expires'] = '0'
         
         if Config.IS_PRODUCTION:
             response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+            
     except Exception as header_error:
         app_logger.error(f"After request header error: {str(header_error)}")
 
@@ -991,43 +999,40 @@ def ensure_courier_columns():
 
 def ensure_menu_items_columns():
     """Menu_items jadvaliga kerakli ustunlarni qo'shadi (migration)."""
-    conn = get_db()
-    cur = conn.cursor()
+    conn = None
     try:
+        conn = get_db()
+        cur = conn.cursor()
+        
         cur.execute("PRAGMA table_info(menu_items);")
         cols = [r[1] for r in cur.fetchall()]
 
-        if 'description' not in cols:
-            cur.execute("ALTER TABLE menu_items ADD COLUMN description TEXT;")
-            conn.commit()
+        # Kerakli ustunlarni qo'shish
+        columns_to_add = [
+            ('description', 'TEXT'),
+            ('image_url', 'TEXT'),
+            ('available', 'BOOLEAN DEFAULT 1'),
+            ('stock_quantity', 'INTEGER DEFAULT 0'),
+            ('orders_count', 'INTEGER DEFAULT 0'),
+            ('rating', 'REAL DEFAULT 0.0'),
+            ('discount_percentage', 'REAL DEFAULT 0.0'),
+            ('created_at', 'TEXT')
+        ]
 
-        if 'image_url' not in cols:
-            cur.execute("ALTER TABLE menu_items ADD COLUMN image_url TEXT;")
-            conn.commit()
-
-        if 'available' not in cols:
-            cur.execute("ALTER TABLE menu_items ADD COLUMN available BOOLEAN DEFAULT 1;")
-            conn.commit()
-
-        if 'stock_quantity' not in cols:
-            cur.execute("ALTER TABLE menu_items ADD COLUMN stock_quantity INTEGER DEFAULT 0;")
-            conn.commit()
-
-        if 'orders_count' not in cols:
-            cur.execute("ALTER TABLE menu_items ADD COLUMN orders_count INTEGER DEFAULT 0;")
-            conn.commit()
-
-        if 'rating' not in cols:
-            cur.execute("ALTER TABLE menu_items ADD COLUMN rating REAL DEFAULT 0.0;")
-            conn.commit()
-
-        if 'discount_percentage' not in cols:
-            cur.execute("ALTER TABLE menu_items ADD COLUMN discount_percentage REAL DEFAULT 0.0;")
-            conn.commit()
+        for col_name, col_type in columns_to_add:
+            if col_name not in cols:
+                try:
+                    cur.execute(f"ALTER TABLE menu_items ADD COLUMN {col_name} {col_type};")
+                    conn.commit()
+                    app_logger.info(f"Menu_items jadvaliga {col_name} ustuni qo'shildi")
+                except Exception as col_error:
+                    app_logger.warning(f"Menu_items jadvaliga {col_name} ustunini qo'shishda xatolik: {str(col_error)}")
 
     except Exception as e:
-        pass
-    conn.close()
+        app_logger.error(f"Menu items migration xatoligi: {str(e)}")
+    finally:
+        if conn:
+            conn.close()
 
 def cleanup_expired_orders():
     """Waiting holatidagi, 30 daqiqadan oshgan buyurtmalarni cancelled ga o'tkazadi."""
@@ -1372,10 +1377,20 @@ def generate_qr_code(receipt_data):
 
 def get_session_id():
     """Session ID yaratish yoki olish"""
-    if 'session_id' not in session or session['session_id'] is None or session['session_id'] == 'None':
+    try:
+        # Session mavjudligini tekshirish
+        if not session or 'session_id' not in session or not session['session_id'] or session['session_id'] == 'None':
+            import uuid
+            session_id = str(uuid.uuid4())
+            session['session_id'] = session_id
+            session.permanent = True  # Session ni permanent qilish
+            return session_id
+        return session['session_id']
+    except Exception as e:
+        app_logger.error(f"Session ID yaratishda xatolik: {str(e)}")
+        # Fallback - oddiy UUID
         import uuid
-        session['session_id'] = str(uuid.uuid4())
-    return session['session_id']
+        return str(uuid.uuid4())
 
 def get_cart_items(conn, session_id, user_id=None):
     """Savatchadagi mahsulotlarni olish"""
@@ -1422,10 +1437,25 @@ def get_cart_items(conn, session_id, user_id=None):
         cart_items = []
         for row in results:
             try:
-                item_dict = dict(row)
+                # SQLite Row obyektini dict ga o'tkazish
+                if hasattr(row, 'keys'):
+                    item_dict = dict(zip(row.keys(), row))
+                else:
+                    # Tuple holatida bo'lsa
+                    item_dict = {
+                        'id': row[0],
+                        'menu_item_id': row[1],
+                        'name': row[2],
+                        'price': row[3],
+                        'quantity': row[4],
+                        'discount_percentage': row[5] if row[5] is not None else 0,
+                        'total': row[6] if len(row) > 6 else row[3] * row[4]
+                    }
+                
                 # discount_percentage ni tekshirish va None bo'lsa 0 qilib qo'yish
                 if item_dict.get('discount_percentage') is None:
                     item_dict['discount_percentage'] = 0
+                    
                 cart_items.append(item_dict)
             except Exception as row_error:
                 app_logger.error(f"Savatcha element o'qishda xatolik: {str(row_error)}")
@@ -3795,6 +3825,18 @@ def api_cart_count_fixed():
         error_response.headers['Content-Type'] = 'application/json; charset=utf-8'
         error_response.status_code = 500
         return error_response
+
+@app.route("/api/log-error", methods=["POST"])
+def api_log_error():
+    """JavaScript xatoliklarini log qilish"""
+    try:
+        data = request.get_json()
+        if data:
+            app_logger.error(f"JavaScript Error: {data.get('message')} at {data.get('source')}:{data.get('line')}")
+        return jsonify({"success": True})
+    except Exception as e:
+        app_logger.error(f"Error logging JS error: {str(e)}")
+        return jsonify({"success": False}), 500
 
 @app.route("/api/set-theme", methods=["POST"])
 def api_set_theme():
