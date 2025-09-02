@@ -1593,6 +1593,101 @@ def admin_monitor():
                              ready=[], 
                              served_recent=[])
 
+# Advanced decorators
+def login_required(f):
+    """Enhanced login decorator"""
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if not session.get("super_admin") and not session.get("staff_id"):
+            if request.is_json:
+                return jsonify({"error": "Authorization required"}), 401
+            return redirect(url_for("staff_login"))
+        return f(*args, **kwargs)
+    return wrapper
+
+def rate_limit(max_requests=100, window=3600):
+    """Rate limiting decorator"""
+    def decorator(f):
+        @wraps(f)
+        def wrapper(*args, **kwargs):
+            identifier = request.remote_addr
+            if not rate_limiter.is_allowed(identifier, max_requests, window):
+                if request.is_json:
+                    return jsonify({"error": "Rate limit exceeded"}), 429
+                flash("Juda ko'p so'rov yuborildi. Biroz kuting.", "error")
+                return redirect(url_for("index"))
+            return f(*args, **kwargs)
+        return wrapper
+    return decorator
+
+def cache_result(ttl=300):
+    """Result caching decorator"""
+    def decorator(f):
+        @wraps(f)
+        def wrapper(*args, **kwargs):
+            # Cache key yaratish
+            cache_key = f"{f.__name__}:{hashlib.md5(str(args + tuple(kwargs.items())).encode()).hexdigest()}"
+            
+            # Cache dan olishga harakat qilish
+            cached_result = cache_manager.get(cache_key)
+            if cached_result is not None:
+                return cached_result
+            
+            # Yangi natija hisoblash va cache ga saqlash
+            result = f(*args, **kwargs)
+            cache_manager.set(cache_key, result, ttl)
+            return result
+        return wrapper
+    return decorator
+
+def async_task(f):
+    """Asynchronous task decorator"""
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        return executor.submit(f, *args, **kwargs)
+    return wrapper
+
+def validate_json(required_fields=None):
+    """JSON validation decorator"""
+    def decorator(f):
+        @wraps(f)
+        def wrapper(*args, **kwargs):
+            if not request.is_json:
+                return jsonify({"error": "JSON format required"}), 400
+            
+            data = request.get_json()
+            if not data:
+                return jsonify({"error": "Empty JSON"}), 400
+            
+            if required_fields:
+                missing_fields = [field for field in required_fields if field not in data]
+                if missing_fields:
+                    return jsonify({"error": f"Missing fields: {missing_fields}"}), 400
+            
+            return f(*args, **kwargs)
+        return wrapper
+    return decorator
+
+def performance_monitor(f):
+    """Performance monitoring decorator"""
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        start_time = time.time()
+        try:
+            result = f(*args, **kwargs)
+            execution_time = time.time() - start_time
+            
+            # Sekin endpoint larni log qilish
+            if execution_time > 1.0:
+                app_logger.warning(f"Slow endpoint: {f.__name__} took {execution_time:.2f}s")
+            
+            return result
+        except Exception as e:
+            execution_time = time.time() - start_time
+            app_logger.error(f"Error in {f.__name__} after {execution_time:.2f}s: {str(e)}")
+            raise
+    return wrapper
+
 # ---- MENU ----
 @app.route("/menu")
 @rate_limit(max_requests=500, window=60)
@@ -2717,100 +2812,6 @@ def staff_logout():
     return redirect(url_for("index"))
 
 # ---- STAFF DASHBOARD ----
-# Advanced decorators
-def login_required(f):
-    """Enhanced login decorator"""
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        if not session.get("super_admin") and not session.get("staff_id"):
-            if request.is_json:
-                return jsonify({"error": "Authorization required"}), 401
-            return redirect(url_for("staff_login"))
-        return f(*args, **kwargs)
-    return wrapper
-
-def rate_limit(max_requests=100, window=3600):
-    """Rate limiting decorator"""
-    def decorator(f):
-        @wraps(f)
-        def wrapper(*args, **kwargs):
-            identifier = request.remote_addr
-            if not rate_limiter.is_allowed(identifier, max_requests, window):
-                if request.is_json:
-                    return jsonify({"error": "Rate limit exceeded"}), 429
-                flash("Juda ko'p so'rov yuborildi. Biroz kuting.", "error")
-                return redirect(url_for("index"))
-            return f(*args, **kwargs)
-        return wrapper
-    return decorator
-
-def cache_result(ttl=300):
-    """Result caching decorator"""
-    def decorator(f):
-        @wraps(f)
-        def wrapper(*args, **kwargs):
-            # Cache key yaratish
-            cache_key = f"{f.__name__}:{hashlib.md5(str(args + tuple(kwargs.items())).encode()).hexdigest()}"
-            
-            # Cache dan olishga harakat qilish
-            cached_result = cache_manager.get(cache_key)
-            if cached_result is not None:
-                return cached_result
-            
-            # Yangi natija hisoblash va cache ga saqlash
-            result = f(*args, **kwargs)
-            cache_manager.set(cache_key, result, ttl)
-            return result
-        return wrapper
-    return decorator
-
-def async_task(f):
-    """Asynchronous task decorator"""
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        return executor.submit(f, *args, **kwargs)
-    return wrapper
-
-def validate_json(required_fields=None):
-    """JSON validation decorator"""
-    def decorator(f):
-        @wraps(f)
-        def wrapper(*args, **kwargs):
-            if not request.is_json:
-                return jsonify({"error": "JSON format required"}), 400
-            
-            data = request.get_json()
-            if not data:
-                return jsonify({"error": "Empty JSON"}), 400
-            
-            if required_fields:
-                missing_fields = [field for field in required_fields if field not in data]
-                if missing_fields:
-                    return jsonify({"error": f"Missing fields: {missing_fields}"}), 400
-            
-            return f(*args, **kwargs)
-        return wrapper
-    return decorator
-
-def performance_monitor(f):
-    """Performance monitoring decorator"""
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        start_time = time.time()
-        try:
-            result = f(*args, **kwargs)
-            execution_time = time.time() - start_time
-            
-            # Sekin endpoint larni log qilish
-            if execution_time > 1.0:
-                app_logger.warning(f"Slow endpoint: {f.__name__} took {execution_time:.2f}s")
-            
-            return result
-        except Exception as e:
-            execution_time = time.time() - start_time
-            app_logger.error(f"Error in {f.__name__} after {execution_time:.2f}s: {str(e)}")
-            raise
-    return wrapper
 
 @app.route("/admin/dashboard")
 @login_required
