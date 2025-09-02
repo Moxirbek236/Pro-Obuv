@@ -44,10 +44,18 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 import hashlib
 from collections import defaultdict
-import redis
 from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.middleware.profiler import ProfilerMiddleware
 from dotenv import load_dotenv
+import logging
+
+# Redis import - optional
+try:
+    import redis
+    REDIS_AVAILABLE = True
+except ImportError:
+    REDIS_AVAILABLE = False
+    redis = None
 
 # Environment variables yuklash
 load_dotenv()
@@ -176,10 +184,11 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 try:
     from location_service import LocationService
     location_service = LocationService()
-except ImportError:
+    app_logger.info("Location service muvaffaqiyatli yuklandi")
+except (ImportError, Exception) as e:
+    app_logger.warning(f"Location service yuklanmadi: {str(e)}")
     class FallbackLocationService:
         def search_places(self, query):
-            app_logger.warning("Location service not found, returning empty results.")
             return {"places": [], "error": "Location service not available"}
     location_service = FallbackLocationService()
 
@@ -195,13 +204,17 @@ class CacheManager:
     def _init_redis(self):
         """Redis connection (agar mavjud bo'lsa)"""
         try:
+            if not REDIS_AVAILABLE:
+                return
+                
             redis_url = os.environ.get('REDIS_URL')
-            if redis_url and not redis_url.startswith('memory'): # Agar memory:// emasligini tekshirish
+            if redis_url and not redis_url.startswith('memory'):
                 self.redis_client = redis.from_url(redis_url)
                 self.redis_client.ping()
                 app_logger.info("Redis cache tizimi ulandi")
         except Exception as e:
             app_logger.warning(f"Redis ulanmadi, memory cache ishlatiladi: {str(e)}")
+            self.redis_client = None
 
     def get(self, key, default=None):
         """Cache dan ma'lumot olish"""
@@ -357,23 +370,71 @@ app_logger = setup_logging()
 @app.errorhandler(404)
 def not_found_error(error):
     app_logger.warning(f"404 Error: {request.url}")
-    if request.is_json:
+    if request.is_json or request.path.startswith('/api/'):
         return jsonify({"error": "Not found", "code": 404}), 404
-    return render_template('error.html', error_code=404, error_message="Sahifa topilmadi"), 404
+    
+    # Error template mavjudligini tekshirish
+    try:
+        return render_template('error.html', error_code=404, error_message="Sahifa topilmadi"), 404
+    except:
+        return f"""
+        <h1>404 - Sahifa topilmadi</h1>
+        <p>So'ralgan sahifa mavjud emas.</p>
+        <a href="/">Bosh sahifaga qaytish</a>
+        """, 404
 
 @app.errorhandler(500)
 def internal_error(error):
     app_logger.error(f"500 Error: {str(error)} - URL: {request.url}")
-    if request.is_json:
+    if request.is_json or request.path.startswith('/api/'):
         return jsonify({"error": "Internal server error", "code": 500}), 500
-    return render_template('error.html', error_code=500, error_message="Server xatoligi"), 500
+    
+    try:
+        return render_template('error.html', error_code=500, error_message="Server xatoligi"), 500
+    except:
+        return f"""
+        <h1>500 - Server xatoligi</h1>
+        <p>Ichki server xatoligi yuz berdi.</p>
+        <a href="/">Bosh sahifaga qaytish</a>
+        """, 500
 
 @app.errorhandler(429)
 def rate_limit_error(error):
     app_logger.warning(f"Rate limit exceeded: {request.remote_addr}")
-    if request.is_json:
+    if request.is_json or request.path.startswith('/api/'):
         return jsonify({"error": "Rate limit exceeded", "code": 429}), 429
-    return render_template('error.html', error_code=429, error_message="Juda ko'p so'rov"), 429
+    
+    try:
+        return render_template('error.html', error_code=429, error_message="Juda ko'p so'rov"), 429
+    except:
+        return f"""
+        <h1>429 - Juda ko'p so'rov</h1>
+        <p>Juda ko'p so'rov yuborildi. Biroz kuting.</p>
+        <a href="/">Bosh sahifaga qaytish</a>
+        """, 429
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    """Global exception handler"""
+    app_logger.error(f"Unhandled exception: {str(e)} - URL: {request.url}")
+    
+    if request.is_json or request.path.startswith('/api/'):
+        return jsonify({
+            "error": "Unexpected error occurred",
+            "code": 500,
+            "details": str(e) if Config.IS_DEVELOPMENT else "Internal server error"
+        }), 500
+    
+    try:
+        return render_template('error.html', 
+                             error_code=500, 
+                             error_message="Kutilmagan xatolik yuz berdi"), 500
+    except:
+        return f"""
+        <h1>Kutilmagan xatolik</h1>
+        <p>Dasturda kutilmagan xatolik yuz berdi.</p>
+        <a href="/">Bosh sahifaga qaytish</a>
+        """, 500
 
 # Performance monitoring
 class PerformanceMonitor:
@@ -543,19 +604,21 @@ class DatabasePool:
                 conn = sqlite3.connect(
                     self.db_path,
                     check_same_thread=False,
-                    timeout=60.0,  # Timeout ni oshirish
+                    timeout=30.0,
                     isolation_level=None
                 )
                 conn.row_factory = sqlite3.Row
 
-                # SQLite optimizatsiya sozlamalari
-                conn.execute("PRAGMA journal_mode=WAL")
-                conn.execute("PRAGMA synchronous=NORMAL")
-                conn.execute("PRAGMA cache_size=10000")
-                conn.execute("PRAGMA temp_store=MEMORY")
-                conn.execute("PRAGMA mmap_size=268435456")  # 256MB
-                conn.execute("PRAGMA foreign_keys=ON")
-                conn.execute("PRAGMA busy_timeout=30000")  # 30 soniya
+                # SQLite optimizatsiya sozlamalari - xavfsiz
+                try:
+                    conn.execute("PRAGMA journal_mode=WAL")
+                    conn.execute("PRAGMA synchronous=NORMAL")
+                    conn.execute("PRAGMA cache_size=5000")
+                    conn.execute("PRAGMA temp_store=MEMORY")
+                    conn.execute("PRAGMA foreign_keys=ON")
+                    conn.execute("PRAGMA busy_timeout=15000")
+                except Exception as pragma_error:
+                    app_logger.warning(f"PRAGMA settings failed: {str(pragma_error)}")
 
                 # Connection test
                 conn.execute("SELECT 1").fetchone()
@@ -564,9 +627,9 @@ class DatabasePool:
             except Exception as e:
                 app_logger.error(f"Database connection attempt {attempt + 1} failed: {str(e)}")
                 if attempt == max_retries - 1:
-                    app_logger.error(f"Database connection yaratishda xatolik (barcha urinishlar): {str(e)}")
+                    app_logger.critical(f"Database connection yaratishda XATOLIK: {str(e)}")
                     return None
-                time.sleep(1)  # Qayta urinishdan oldin kutish
+                time.sleep(0.5 * (attempt + 1))
 
     @contextmanager
     def get_connection(self):
@@ -4317,14 +4380,36 @@ def view_receipt(ticket_no):
 
 
 
-# Initialize database tables
-if db is not None:
-    # Using SQLAlchemy (PostgreSQL)
-    with app.app_context():
-        db.create_all()
-else:
-    # Using custom SQLite setup
-    init_db()
+# Database ni xavfsiz ishga tushirish
+def safe_init_database():
+    """Xavfsiz database initialization"""
+    try:
+        if db is not None:
+            # Using SQLAlchemy (PostgreSQL)
+            with app.app_context():
+                db.create_all()
+                app_logger.info("PostgreSQL database tables yaratildi")
+        else:
+            # Using custom SQLite setup
+            init_db()
+            app_logger.info("SQLite database tables yaratildi")
+        return True
+    except Exception as e:
+        app_logger.error(f"Database initialization failed: {str(e)}")
+        return False
+
+# Database ni ishga tushirish
+if not safe_init_database():
+    app_logger.critical("CRITICAL: Database ishga tushirilmadi!")
+    # Fallback database yaratish
+    try:
+        import sqlite3
+        fallback_db = sqlite3.connect('fallback.db')
+        fallback_db.execute("CREATE TABLE IF NOT EXISTS temp_table (id INTEGER)")
+        fallback_db.close()
+        app_logger.info("Fallback database yaratildi")
+    except Exception as fallback_error:
+        app_logger.critical(f"Fallback database ham yaratilmadi: {str(fallback_error)}")
 
 @app.route("/debug")
 @login_required
@@ -4493,66 +4578,134 @@ def system_metrics():
         app_logger.error(f"Metrics endpoint error: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
+def create_minimal_app():
+    """Minimal Flask app yaratish (fallback uchun)"""
+    minimal_app = Flask(__name__)
+    minimal_app.secret_key = 'fallback_secret_key'
+    
+    @minimal_app.route('/')
+    def minimal_home():
+        return '''
+        <h1>🚨 Restoran tizimi qisman ishlamoqda</h1>
+        <p>Ba'zi xizmatlarda xatolik bor, ammo asosiy funksiyalar ishlaydi.</p>
+        <a href="/menu">Menyu</a> | <a href="/contact">Bog'lanish</a>
+        '''
+    
+    @minimal_app.route('/menu')
+    def minimal_menu():
+        return '<h1>Menu sahifasi vaqtincha ishlamayapti</h1><a href="/">Bosh sahifa</a>'
+    
+    return minimal_app
+
 if __name__ == '__main__':
+    startup_success = False
+    
     try:
         print("🚀 Universal Restaurant System ishga tushmoqda...")
         print(f"Muhit: {Config.ENVIRONMENT}")
         print(f"Debug: {Config.IS_DEVELOPMENT}")
 
-        # Ma'lumotlar bazasini ishga tushirish
-        print("📊 Ma'lumotlar bazasini ishga tushirish...")
-        init_db()
-        print("✅ Ma'lumotlar bazasi muvaffaqiyatli ishga tushirildi")
+        # Critical dependencies check
+        print("🔍 Dependencies tekshirilmoqda...")
+        missing_deps = []
+        try:
+            import flask
+            print("✅ Flask - OK")
+        except ImportError:
+            missing_deps.append("flask")
+            
+        try:
+            import sqlite3
+            print("✅ SQLite3 - OK")
+        except ImportError:
+            missing_deps.append("sqlite3")
 
-        # Server portini belgilash
+        if missing_deps:
+            raise Exception(f"Muhim kutubxonalar topilmadi: {missing_deps}")
+
+        # Ma'lumotlar bazasini xavfsiz ishga tushirish
+        print("📊 Ma'lumotlar bazasini ishga tushirish...")
+        if safe_init_database():
+            print("✅ Ma'lumotlar bazasi muvaffaqiyatli ishga tushirildi")
+        else:
+            print("⚠️ Ma'lumotlar bazasi qisman ishga tushirildi")
+
+        # Server konfiguratsiyasi
         port = int(os.environ.get('PORT', 5000))
-        host = '0.0.0.0'  # Replit uchun 0.0.0.0 ishlatish kerak
-        debug = Config.IS_DEVELOPMENT
+        host = '0.0.0.0'
+        debug = Config.IS_DEVELOPMENT and os.environ.get('FLASK_DEBUG', '').lower() == 'true'
 
         print(f"🌐 Server {host}:{port} da ishga tushmoqda...")
+        print(f"🐛 Debug rejimi: {'ON' if debug else 'OFF'}")
         print(f"📋 Qo'llab-quvvatlanadigan tillar: {', '.join(Config.SUPPORTED_LANGUAGES)}")
         print(f"💰 Asosiy valyuta: {Config.DEFAULT_CURRENCY}")
         print(f"⏰ Vaqt zonasi: {Config.TIMEZONE}")
-        print(f"🏪 O'rtacha tayyorlanish vaqti: {Config.AVG_PREP_MINUTES} daqiqa")
+
+        # Database migratsiyalarini ishga tushirish
+        print("🔧 Database migratsiyalarni ishga tushirish...")
+        try:
+            ensure_orders_columns()
+            ensure_cart_items_columns()
+            ensure_staff_columns()
+            ensure_courier_columns()
+            ensure_menu_items_columns()
+            ensure_users_columns()
+            print("✅ Database migratsiyalar muvaffaqiyatli")
+        except Exception as migration_error:
+            print(f"⚠️ Migration xatoligi: {str(migration_error)}")
 
         # Serverni ishga tushirish
         print("🎯 Flask server ishlamoqda...")
-        app.run(host=host, port=port, debug=debug, threaded=True)
+        startup_success = True
+        app.run(host=host, port=port, debug=debug, threaded=True, use_reloader=False)
 
     except KeyboardInterrupt:
         print("\n🛑 Server to'xtatildi (Ctrl+C)")
+        startup_success = True  # Normal exit
 
     except Exception as e:
-        print(f"❌ XATOLIK: Server ishga tushirishda xatolik: {str(e)}")
+        print(f"❌ KRITIK XATOLIK: {str(e)}")
         if 'app_logger' in globals():
-            app_logger.error(f"Server startup error: {str(e)}")
+            app_logger.critical(f"Startup critical error: {str(e)}")
 
         # Debug ma'lumotlari
-        print(f"🐍 Python versiya: {os.sys.version}")
-        print(f"📁 Ishchi katalog: {os.getcwd()}")
-        print(f"🌍 Muhit o'zgaruvchilari:")
-        print(f"   FLASK_ENV: {os.environ.get('FLASK_ENV', 'None')}")
-        print(f"   PORT: {os.environ.get('PORT', 'None')}")
-        print(f"   DATABASE_URL: {os.environ.get('DATABASE_URL', 'None')}")
+        print(f"\n🔧 DIAGNOSTIKA:")
+        print(f"🐍 Python: {os.sys.version}")
+        print(f"📁 Directory: {os.getcwd()}")
+        print(f"🌍 ENV vars:")
+        print(f"   FLASK_ENV: {os.environ.get('FLASK_ENV', 'Not set')}")
+        print(f"   PORT: {os.environ.get('PORT', 'Not set')}")
+        print(f"   DATABASE_URL: {os.environ.get('DATABASE_URL', 'Not set')}")
 
-        # Ma'lumotlar bazasi tekshiruvi
+        # File system check
         try:
-            if os.path.exists(DB_PATH):
-                print(f"✅ Ma'lumotlar bazasi mavjud: {DB_PATH}")
-                print(f"📏 Fayl hajmi: {os.path.getsize(DB_PATH)} bytes")
-            else:
-                print(f"❌ Ma'lumotlar bazasi topilmadi: {DB_PATH}")
-        except Exception as db_error:
-            print(f"❌ Ma'lumotlar bazasini tekshirishda xatolik: {str(db_error)}")
+            print(f"\n📂 Fayllar tekshiruvi:")
+            if os.path.exists('app.py'):
+                print(f"✅ app.py - {os.path.getsize('app.py')} bytes")
+            if os.path.exists('templates'):
+                print(f"✅ templates/ - {len(os.listdir('templates'))} ta fayl")
+            if os.path.exists('static'):
+                print(f"✅ static/ - {len(os.listdir('static'))} ta fayl")
+        except Exception as fs_error:
+            print(f"❌ File system check failed: {str(fs_error)}")
 
-        # Xatolik haqida batafsil ma'lumot
-        import traceback
-        print("\n📋 To'liq xatolik ma'lumoti:")
-        traceback.print_exc()
-
-        # Fallback server (sodda konfiguratsiya)
-        print("\n🔄 Fallback server ishga tushmoqda...")
+        # Minimal fallback server
+        print("\n🆘 Minimal fallback server ishga tushmoqda...")
         try:
-            app.run(host='0.0.0.0', port=5000, debug=False)
+            minimal_app = create_minimal_app()
+            print("✅ Minimal app yaratildi")
+            minimal_app.run(host='0.0.0.0', port=5000, debug=False, threaded=True)
+            startup_success = True
         except Exception as fallback_error:
             print(f"❌ Fallback server ham ishlamadi: {str(fallback_error)}")
+
+    finally:
+        if not startup_success:
+            print("\n💔 SERVER ISHGA TUSHMADI!")
+            print("🔧 Iltimos, quyidagi tekshiruvlarni bajaring:")
+            print("1. Python dependencies o'rnatilganligini tekshiring")
+            print("2. Database fayli mavjudligini tekshiring")
+            print("3. Port 5000 bo'shligini tekshiring")
+            print("4. Replit console da xatolarni ko'ring")
+        else:
+            print("✅ Server muvaffaqiyatli ishga tushdi yoki to'xtatildi")
