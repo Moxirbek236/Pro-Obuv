@@ -262,14 +262,14 @@ def init_db():
     if cur.fetchone()[0] == 0:
         now = get_current_time().isoformat()
         sample_items = [
-            ('Osh', 25000, 'food', 'An\'anaviy o\'zbek taomi, guruch va go\'sht bilan', 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=300&h=200&fit=crop', 1, 50, 0, 4.5, 0.0, now),
-            ('Manti', 20000, 'food', 'Bug\'da pishirilgan go\'shtli manti', 'https://images.unsplash.com/photo-1534938665420-4193effeacc4?w=300&h=200&fit=crop', 1, 30, 0, 4.8, 5.0, now),
-            ('Shashlik', 30000, 'food', 'Mangalda pishirilgan mazali shashlik', 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=300&h=200&fit=crop', 1, 25, 0, 4.7, 0.0, now),
-            ('Lagmon', 22000, 'food', 'Qo\'l tortmasi bilan tayyorlangan lagmon', 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=300&h=200&fit=crop', 1, 40, 0, 4.6, 10.0, now),
-            ('Choy', 5000, 'drink', 'Issiq qora choy', 'https://images.unsplash.com/photo-1559056961-84c5ffc10e14?w=300&h=200&fit=crop', 1, 100, 0, 4.2, 0.0, now),
-            ('Qora choy', 6000, 'drink', 'O\'zbek an\'anaviy choy', 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=300&h=200&fit=crop', 1, 80, 0, 4.3, 0.0, now),
-            ('Kompot', 8000, 'drink', 'Mevali kompot', 'https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=300&h=200&fit=crop', 1, 60, 0, 4.1, 15.0, now),
-            ('Coca Cola', 10000, 'drink', 'Sovuq ichimlik', 'https://images.unsplash.com/photo-1581636625402-29b2a704ef13?w=300&h=200&fit=crop', 1, 70, 0, 4.0, 0.0, now),
+            ('Osh', 25000, 'food', 'An\'anaviy o\'zbek taomi, guruch va go\'sht bilan', '/static/images/default-food.jpg', 1, 50, 0, 4.5, 0.0, now),
+            ('Manti', 20000, 'food', 'Bug\'da pishirilgan go\'shtli manti', '/static/images/default-food.jpg', 1, 30, 0, 4.8, 5.0, now),
+            ('Shashlik', 30000, 'food', 'Mangalda pishirilgan mazali shashlik', '/static/images/default-food.jpg', 1, 25, 0, 4.7, 0.0, now),
+            ('Lagmon', 22000, 'food', 'Qo\'l tortmasi bilan tayyorlangan lagmon', '/static/images/default-food.jpg', 1, 40, 0, 4.6, 10.0, now),
+            ('Choy', 5000, 'drink', 'Issiq qora choy', '/static/images/default-drink.jpg', 1, 100, 0, 4.2, 0.0, now),
+            ('Qora choy', 6000, 'drink', 'O\'zbek an\'anaviy choy', '/static/images/default-drink.jpg', 1, 80, 0, 4.3, 0.0, now),
+            ('Kompot', 8000, 'drink', 'Mevali kompot', '/static/images/default-drink.jpg', 1, 60, 0, 4.1, 15.0, now),
+            ('Coca Cola', 10000, 'drink', 'Sovuq ichimlik', '/static/images/default-drink.jpg', 1, 70, 0, 4.0, 0.0, now),
         ]
         cur.executemany("INSERT INTO menu_items (name, price, category, description, image_url, available, stock_quantity, orders_count, rating, discount_percentage, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", sample_items)
 
@@ -1176,16 +1176,16 @@ def add_to_cart():
             print(f"DEBUG: Savatcha qo'shildi - session_id: {session_id}, menu_item_id: {menu_item_id}, quantity: {quantity}")
 
     conn.commit()
-    
+
     # Qo'shgandan keyin tekshirish
     if user_id:
         cur.execute("SELECT COUNT(*) FROM cart_items WHERE user_id = ?", (user_id,))
     else:
         cur.execute("SELECT COUNT(*) FROM cart_items WHERE session_id = ?", (session_id,))
-    
+
     count_after = cur.fetchone()[0]
     print(f"DEBUG: Qo'shgandan keyin savatcha elementi soni: {count_after}")
-    
+
     conn.close()
     flash("Mahsulot savatchaga qo'shildi!", "success")
     return redirect(url_for("menu"))
@@ -1586,7 +1586,7 @@ def place_order():
     # Savatchani tekshirish va debug
     cart_items = get_cart_items(conn, session_id, user_id)
     print(f"DEBUG: Savatcha tekshiruvi - cart_items: {len(cart_items) if cart_items else 0} ta element")
-    
+
     # Qo'shimcha tekshiruv - to'g'ridan-to'g'ri jadvaldan ham tekshirish
     cur_check = conn.cursor()
     if user_id:
@@ -1600,12 +1600,12 @@ def place_order():
 
     if not cart_items or len(cart_items) == 0:
         print(f"DEBUG: Savatcha bo'sh deb topildi")
-        
+
         # Qo'shimcha debug - barcha cart_items ni ko'rsatish
         cur_check.execute("SELECT * FROM cart_items LIMIT 10")
         all_items = cur_check.fetchall()
         print(f"DEBUG: Barcha cart_items (10 ta): {[dict(item) for item in all_items] if all_items else 'Bo\'sh'}")
-        
+
         flash("Savatchangiz bo'sh. Avval taom tanlang.", "error")
         conn.close()
         return redirect(url_for("menu"))
@@ -2202,47 +2202,6 @@ def staff_logout():
         flash("Staff sessiondan chiqildi, super admin sessioni saqlandi.", "info")
     return redirect(url_for("index"))
 
-@app.route("/staff-register-secure-k3x8p", methods=["GET", "POST"])
-def staff_register():
-    if request.method == "POST":
-        first_name = request.form.get("first_name", "").strip()
-        last_name = request.form.get("last_name", "").strip()
-        birth_date = request.form.get("birth_date", "").strip()
-        phone = request.form.get("phone", "").strip()
-        passport_series = request.form.get("passport_series", "").strip()
-        passport_number = request.form.get("passport_number", "").strip()
-        password = request.form.get("password", "")
-
-        if not all([first_name, last_name, birth_date, phone, passport_series, passport_number, password]):
-            flash("Barcha maydonlarni to'ldiring.", "error")
-            return redirect(url_for("staff_register"))
-
-        conn = get_db()
-        cur = conn.cursor()
-        password_hash = generate_password_hash(password)
-        now = get_current_time()
-        cur.execute("""
-            INSERT INTO staff (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?);
-        """, (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, now.isoformat()))
-
-        new_id = cur.lastrowid
-        # ID kamida 5 ta raqamdan iborat bo'lishi uchun
-        if new_id < 10000:
-            cur.execute("UPDATE staff SET id = ? WHERE id = ?", (10000 + new_id, new_id))
-            new_id = 10000 + new_id
-
-        conn.commit()
-        conn.close()
-
-        # Xodim ma'lumotlarini employees.json fayliga saqlash
-        save_staff_to_json(first_name, last_name, birth_date, phone, new_id, now)
-
-        flash(f"Ro'yxatdan o'tdingiz. Sizning ID raqamingiz: {new_id}", "success")
-        return redirect(url_for("staff_login"))
-
-    return render_template("staff_register.html")
-
 # ---- STAFF DASHBOARD ----
 def login_required(f):
     from functools import wraps
@@ -2817,209 +2776,6 @@ def super_admin_delete_user():
         flash(f"Buyurtma #{ticket_no} topilmadi.", "error")
 
     return redirect(url_for("super_admin_dashboard"))
-
-@app.route("/super-admin/logout")
-def super_admin_logout():
-    session.pop("super_admin", None)
-    flash("Super admin panelidan chiqildi.", "info")
-    return redirect(url_for("index"))
-
-@app.route("/super-admin/delete-courier/<int:courier_id>", methods=["POST"])
-def super_admin_delete_courier(courier_id):
-    if not session.get("super_admin"):
-        return redirect(url_for("super_admin_login"))
-
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute("DELETE FROM couriers WHERE id = ?", (courier_id,))
-    conn.commit()
-    conn.close()
-
-    flash(f"Kuryer #{courier_id} o'chirildi.", "success")
-    return redirect(url_for("super_admin_dashboard"))
-
-@app.route("/super-admin/delete-user-db/<int:user_id>", methods=["POST"])
-def super_admin_delete_user_db(user_id):
-    if not session.get("super_admin"):
-        return redirect(url_for("super_admin_login"))
-
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute("DELETE FROM users WHERE id = ?", (user_id,))
-    conn.commit()
-    conn.close()
-
-    flash(f"Foydalanuvchi #{user_id} o'chirildi.", "success")
-    return redirect(url_for("super_admin_dashboard"))
-
-@app.route("/super-admin/reset-staff-password", methods=["POST"])
-def super_admin_reset_staff_password():
-    if not session.get("super_admin"):
-        return jsonify({"success": False, "message": "Unauthorized"}), 401
-
-    data = request.json
-    staff_id = data.get("staff_id")
-    new_password = data.get("new_password")
-
-    if not staff_id or not new_password:
-        return jsonify({"success": False, "message": "Noto'g'ri ma'lumotlar"})
-
-    conn = get_db()
-    cur = conn.cursor()
-    password_hash = generate_password_hash(new_password)
-    cur.execute("UPDATE staff SET password_hash = ? WHERE id = ?", (password_hash, staff_id))
-    conn.commit()
-    conn.close()
-
-    return jsonify({"success": True, "message": "Parol yangilandi"})
-
-@app.route("/super-admin/reset-courier-password", methods=["POST"])
-def super_admin_reset_courier_password():
-    if not session.get("super_admin"):
-        return jsonify({"success": False, "message": "Unauthorized"}), 401
-
-    data = request.json
-    courier_id = data.get("courier_id")
-    new_password = data.get("new_password")
-
-    if not courier_id or not new_password:
-        return jsonify({"success": False, "message": "Noto'g'ri ma'lumotlar"})
-
-    conn = get_db()
-    cur = conn.cursor()
-    password_hash = generate_password_hash(new_password)
-    cur.execute("UPDATE couriers SET password_hash = ? WHERE id = ?", (password_hash, courier_id))
-    conn.commit()
-    conn.close()
-
-    return jsonify({"success": True, "message": "Parol yangilandi"})
-
-@app.route("/super-admin/reset-user-password", methods=["POST"])
-def super_admin_reset_user_password():
-    if not session.get("super_admin"):
-        return jsonify({"success": False, "message": "Unauthorized"}), 401
-
-    data = request.json
-    user_id = data.get("user_id")
-    new_password = data.get("new_password")
-
-    if not user_id or not new_password:
-        return jsonify({"success": False, "message": "Noto'g'ri ma'lumotlar"})
-
-    conn = get_db()
-    cur = conn.cursor()
-    password_hash = generate_password_hash(new_password)
-    cur.execute("UPDATE users SET password_hash = ? WHERE id = ?", (password_hash, user_id))
-    conn.commit()
-    conn.close()
-
-    return jsonify({"success": True, "message": "Parol yangilandi"})
-
-@app.route("/super-admin/get-orders")
-def super_admin_get_orders():
-    if not session.get("super_admin"):
-        return jsonify({"error": "Unauthorized"}), 401
-
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM orders ORDER BY created_at DESC")
-    orders = cur.fetchall()
-    conn.close()
-
-    return jsonify([dict(order) for order in orders])
-
-@app.route("/super-admin/get-menu")
-def super_admin_get_menu():
-    if not session.get("super_admin"):
-        return jsonify({"error": "Unauthorized"}), 401
-
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM menu_items ORDER BY category, name")
-    items = cur.fetchall()
-    conn.close()
-
-    return jsonify([dict(item) for item in items])
-
-@app.route("/super-admin/get-receipts")
-def super_admin_get_receipts():
-    if not session.get("super_admin"):
-        return jsonify({"error": "Unauthorized"}), 401
-
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM receipts ORDER BY created_at DESC LIMIT 100")
-    receipts = cur.fetchall()
-    conn.close()
-
-    return jsonify([dict(receipt) for receipt in receipts])
-
-@app.route("/super-admin/get-ratings")
-def super_admin_get_ratings():
-    """Super admin uchun barcha baholarni olish"""
-    if not session.get("super_admin"):
-        return jsonify({"error": "Unauthorized"}), 401
-
-    conn = get_db()
-    cur = conn.cursor()
-
-    try:
-        # Mahsulot baholari
-        cur.execute("""
-            SELECT r.rating, r.comment, r.created_at, 
-                   u.first_name, u.last_name, mi.name as menu_item_name
-            FROM ratings r
-            JOIN users u ON r.user_id = u.id
-            JOIN menu_items mi ON r.menu_item_id = mi.id
-            WHERE r.menu_item_id > 0
-            ORDER BY r.created_at DESC
-            LIMIT 100
-        """)
-        menu_ratings = cur.fetchall()
-
-        # Filial baholari
-        cur.execute("""
-            SELECT r.rating, r.comment, r.created_at, 
-                   u.first_name, u.last_name, b.name as branch_name
-            FROM ratings r
-            JOIN users u ON r.user_id = u.id
-            JOIN branches b ON -r.menu_item_id = b.id
-            WHERE r.menu_item_id < 0
-            ORDER BY r.created_at DESC
-            LIMIT 100
-        """)
-        branch_ratings = cur.fetchall()
-
-        conn.close()
-
-        # Ma'lumotlarni format qilish
-        menu_ratings_list = []
-        for rating in menu_ratings:
-            menu_ratings_list.append({
-                'rating': rating['rating'],
-                'comment': rating['comment'],
-                'created_at': rating['created_at'],
-                'user_name': f"{rating['first_name']} {rating['last_name'][0]}."
-            })
-
-        branch_ratings_list = []
-        for rating in branch_ratings:
-            branch_ratings_list.append({
-                'rating': rating['rating'],
-                'comment': rating['comment'],
-                'created_at': rating['created_at'],
-                'user_name': f"{rating['first_name']} {rating['last_name'][0]}."
-            })
-
-        return jsonify({
-            "menu_ratings": menu_ratings_list,
-            "branch_ratings": branch_ratings_list
-        })
-
-    except Exception as e:
-        conn.close()
-        logging.error(f"Baholarni olishda xatolik: {str(e)}")
-        return jsonify({"error": "Server xatoligi"}), 500
 
 @app.route("/super-admin/add-menu-item", methods=["POST"])
 def super_admin_add_menu_item():
