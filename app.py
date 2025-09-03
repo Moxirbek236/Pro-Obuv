@@ -4868,7 +4868,8 @@ def super_admin_toggle_branch(branch_id):
 
     conn = get_db()
     cur = conn.cursor()
-    cur.execute("UPDATE branches SET is_active = NOT is_active WHERE id = ?", (branch_id,))    conn.commit()
+    cur.execute("UPDATE branches SET is_active = NOT is_active WHERE id = ?", (branch_id,))
+    conn.commit()
     conn.close()
 
     flash("Filial holati o'zgartirildi.", "success")
