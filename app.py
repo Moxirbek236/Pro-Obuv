@@ -3724,11 +3724,33 @@ def super_admin_dashboard():
                             'passport_series': str(staff[5]) if len(staff) > 5 and staff[5] is not None else '',
                             'passport_number': str(staff[6]) if len(staff) > 6 and staff[6] is not None else '',
                             'password_hash': str(staff[7]) if len(staff) > 7 and staff[7] is not None else '',
-                            'total_hours': float(staff[8]) if len(staff) > 8 and staff[8] is not None else 0.0,
-                            'orders_handled': int(staff[9]) if len(staff) > 9 and staff[9] is not None else 0,
+                            'total_hours': 0.0,  # Will be safely converted below
+                            'orders_handled': 0,  # Will be safely converted below
                             'last_activity': str(staff[10]) if len(staff) > 10 and staff[10] is not None else '',
                             'created_at': str(staff[11]) if len(staff) > 11 and staff[11] is not None else ''
                         }
+                        
+                        # Safe conversion for total_hours
+                        try:
+                            if len(staff) > 8 and staff[8] is not None:
+                                hours_val = staff[8]
+                                if isinstance(hours_val, (int, float)):
+                                    staff_dict['total_hours'] = float(hours_val)
+                                elif isinstance(hours_val, str) and hours_val.replace('.', '').replace(',', '').isdigit():
+                                    staff_dict['total_hours'] = float(hours_val.replace(',', '.'))
+                        except (ValueError, TypeError):
+                            staff_dict['total_hours'] = 0.0
+                        
+                        # Safe conversion for orders_handled
+                        try:
+                            if len(staff) > 9 and staff[9] is not None:
+                                orders_val = staff[9]
+                                if isinstance(orders_val, int):
+                                    staff_dict['orders_handled'] = orders_val
+                                elif isinstance(orders_val, str) and orders_val.isdigit():
+                                    staff_dict['orders_handled'] = int(orders_val)
+                        except (ValueError, TypeError):
+                            staff_dict['orders_handled'] = 0
 
                     # Xavfsiz total_hours va orders_handled konversiyasi
                     try:
@@ -3809,11 +3831,33 @@ def super_admin_dashboard():
                             'passport_series': str(courier[5]) if len(courier) > 5 and courier[5] is not None else '',
                             'passport_number': str(courier[6]) if len(courier) > 6 and courier[6] is not None else '',
                             'password_hash': str(courier[7]) if len(courier) > 7 and courier[7] is not None else '',
-                            'total_hours': float(courier[8]) if len(courier) > 8 and courier[8] is not None else 0.0,
-                            'deliveries_completed': int(courier[9]) if len(courier) > 9 and courier[9] is not None else 0,
+                            'total_hours': 0.0,  # Will be safely converted below
+                            'deliveries_completed': 0,  # Will be safely converted below
                             'last_activity': str(courier[10]) if len(courier) > 10 and courier[10] is not None else '',
                             'created_at': str(courier[11]) if len(courier) > 11 and courier[11] is not None else ''
                         }
+                        
+                        # Safe conversion for total_hours
+                        try:
+                            if len(courier) > 8 and courier[8] is not None:
+                                hours_val = courier[8]
+                                if isinstance(hours_val, (int, float)):
+                                    courier_dict['total_hours'] = float(hours_val)
+                                elif isinstance(hours_val, str) and hours_val.replace('.', '').replace(',', '').isdigit():
+                                    courier_dict['total_hours'] = float(hours_val.replace(',', '.'))
+                        except (ValueError, TypeError):
+                            courier_dict['total_hours'] = 0.0
+                        
+                        # Safe conversion for deliveries_completed
+                        try:
+                            if len(courier) > 9 and courier[9] is not None:
+                                deliveries_val = courier[9]
+                                if isinstance(deliveries_val, int):
+                                    courier_dict['deliveries_completed'] = deliveries_val
+                                elif isinstance(deliveries_val, str) and deliveries_val.isdigit():
+                                    courier_dict['deliveries_completed'] = int(deliveries_val)
+                        except (ValueError, TypeError):
+                            courier_dict['deliveries_completed'] = 0
 
                     # Xavfsiz total_hours va deliveries_completed konversiyasi
                     try:
@@ -4722,4 +4766,126 @@ def api_super_admin_dashboard_stats():
     except Exception as e:
         app_logger.error(f"Super admin dashboard stats error: {str(e)}")
         return jsonify({"error": "Statistikalarni olishda xatolik"}), 500
+
+
+
+@app.route("/super-admin/analytics")
+def super_admin_analytics():
+    if not session.get("super_admin"):
+        flash("Super admin paneliga kirish talab qilinadi.", "error")
+        return redirect(url_for("super_admin_login"))
+    
+    try:
+        # Analytics ma'lumotlarini tayyorlash
+        conn = get_db()
+        cur = conn.cursor()
+        
+        # Oylik statistika
+        analytics_data = {}
+        
+        # So'nggi 12 oylik buyurtmalar statistikasi
+        monthly_orders = []
+        for i in range(12):
+            month_date = (get_current_time() - timedelta(days=30*i)).strftime("%Y-%m")
+            cur.execute("SELECT COUNT(*) FROM orders WHERE created_at LIKE ?", (f"{month_date}%",))
+            count = cur.fetchone()[0]
+            monthly_orders.append({
+                'month': month_date,
+                'orders': count
+            })
+        
+        analytics_data['monthly_orders'] = list(reversed(monthly_orders))
+        
+        # Mahsulotlar bo'yicha statistika
+        cur.execute("""
+            SELECT mi.name, SUM(od.quantity) as total_sold 
+            FROM order_details od 
+            JOIN menu_items mi ON od.menu_item_id = mi.id 
+            GROUP BY mi.id 
+            ORDER BY total_sold DESC 
+            LIMIT 10
+        """)
+        popular_items = [{'name': row[0], 'sold': row[1]} for row in cur.fetchall()]
+        analytics_data['popular_items'] = popular_items
+        
+        conn.close()
+        
+        return render_template("super_admin_analytics.html", analytics=analytics_data)
+    except Exception as e:
+        app_logger.error(f"Super admin analytics sahifasida xatolik: {str(e)}")
+        flash("Analytics sahifasini yuklashda xatolik yuz berdi.", "error")
+        return redirect(url_for("super_admin_dashboard"))
+
+@app.route("/super-admin/reports")
+def super_admin_reports():
+    if not session.get("super_admin"):
+        flash("Super admin paneliga kirish talab qilinadi.", "error")
+        return redirect(url_for("super_admin_login"))
+    
+    try:
+        conn = get_db()
+        cur = conn.cursor()
+        
+        # Hisobotlar ma'lumotlari
+        reports_data = {}
+        
+        # Kunlik hisobot
+        today = get_current_time().strftime("%Y-%m-%d")
+        cur.execute("SELECT COUNT(*), SUM(COALESCE(r.total_amount, 0)) FROM orders o LEFT JOIN receipts r ON o.id = r.order_id WHERE DATE(o.created_at) = ?", (today,))
+        daily_result = cur.fetchone()
+        reports_data['daily'] = {
+            'orders': daily_result[0] or 0,
+            'revenue': daily_result[1] or 0
+        }
+        
+        # Haftalik hisobot
+        week_ago = (get_current_time() - timedelta(days=7)).strftime("%Y-%m-%d")
+        cur.execute("SELECT COUNT(*), SUM(COALESCE(r.total_amount, 0)) FROM orders o LEFT JOIN receipts r ON o.id = r.order_id WHERE DATE(o.created_at) >= ?", (week_ago,))
+        weekly_result = cur.fetchone()
+        reports_data['weekly'] = {
+            'orders': weekly_result[0] or 0,
+            'revenue': weekly_result[1] or 0
+        }
+        
+        conn.close()
+        
+        return render_template("super_admin_reports.html", reports=reports_data)
+    except Exception as e:
+        app_logger.error(f"Super admin reports sahifasida xatolik: {str(e)}")
+        flash("Reports sahifasini yuklashda xatolik yuz berdi.", "error")
+        return redirect(url_for("super_admin_dashboard"))
+
+@app.route("/super-admin/system")
+def super_admin_system():
+    if not session.get("super_admin"):
+        flash("Super admin paneliga kirish talab qilinadi.", "error")
+        return redirect(url_for("super_admin_login"))
+    
+    try:
+        # Tizim ma'lumotlari
+        system_info = {}
+        
+        # Performance statistikasi
+        perf_stats = performance_monitor.get_stats()
+        system_info['performance'] = perf_stats
+        
+        # Database ma'lumotlari
+        conn = get_db()
+        cur = conn.cursor()
+        
+        # Jadvalar sonini hisoblash
+        cur.execute("SELECT name FROM sqlite_master WHERE type='table'")
+        tables = cur.fetchall()
+        system_info['database'] = {
+            'tables_count': len(tables),
+            'tables': [table[0] for table in tables]
+        }
+        
+        conn.close()
+        
+        return render_template("super_admin_system.html", system=system_info)
+    except Exception as e:
+        app_logger.error(f"Super admin system sahifasida xatolik: {str(e)}")
+        flash("System sahifasini yuklashda xatolik yuz berdi.", "error")
+        return redirect(url_for("super_admin_dashboard"))
 
