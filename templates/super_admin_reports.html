@@ -762,3 +762,96 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 </style>
 {% endblock %}
+{% extends "base.html" %}
+
+{% block content %}
+<div class="reports-container">
+    <h1>📈 Hisobotlar</h1>
+    
+    <div class="reports-grid">
+        <div class="report-card">
+            <h3>📊 Moliyaviy Hisobot</h3>
+            <p>Oylik va yillik daromad statistikasi</p>
+            <button class="btn btn-primary" onclick="generateFinancialReport()">Hisobot yaratish</button>
+        </div>
+        
+        <div class="report-card">
+            <h3>👥 Xodimlar Hisoboti</h3>
+            <p>Xodimlar faolligi va ishlash statistikasi</p>
+            <button class="btn btn-primary" onclick="generateStaffReport()">Hisobot yaratish</button>
+        </div>
+        
+        <div class="report-card">
+            <h3>🚚 Yetkazish Hisoboti</h3>
+            <p>Kuryerlar va yetkazish statistikasi</p>
+            <button class="btn btn-primary" onclick="generateDeliveryReport()">Hisobot yaratish</button>
+        </div>
+        
+        <div class="report-card">
+            <h3>🍽️ Menyu Hisoboti</h3>
+            <p>Mashhur mahsulotlar va sotuvlar tahlili</p>
+            <button class="btn btn-primary" onclick="generateMenuReport()">Hisobot yaratish</button>
+        </div>
+    </div>
+    
+    <div class="report-results" id="reportResults"></div>
+    
+    <div class="back-button">
+        <a href="{{ url_for('super_admin_dashboard') }}" class="btn btn-primary">⬅️ Dashboard ga qaytish</a>
+    </div>
+</div>
+
+<script>
+function generateFinancialReport() {
+    document.getElementById('reportResults').innerHTML = '<p>Moliyaviy hisobot yaratilmoqda...</p>';
+}
+
+function generateStaffReport() {
+    document.getElementById('reportResults').innerHTML = '<p>Xodimlar hisoboti yaratilmoqda...</p>';
+}
+
+function generateDeliveryReport() {
+    document.getElementById('reportResults').innerHTML = '<p>Yetkazish hisoboti yaratilmoqda...</p>';
+}
+
+function generateMenuReport() {
+    document.getElementById('reportResults').innerHTML = '<p>Menyu hisoboti yaratilmoqda...</p>';
+}
+</script>
+
+<style>
+.reports-container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.reports-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.report-card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.report-results {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    min-height: 100px;
+}
+
+.back-button {
+    text-align: center;
+}
+</style>
+{% endblock %}
