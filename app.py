@@ -5143,10 +5143,10 @@ def api_optimize_database_v2():
         app_logger.error(f"Database optimallashtirish xatoligi: {str(e)}")
         return jsonify({"success": False, "message": str(e)}), 500
 
-@app.route("/api/super-admin/health-report")
+@app.route("/api/super-admin/health-report-detailed")
 @login_required
-def api_health_report():
-    """Health report yaratish"""
+def api_health_report_detailed():
+    """Health report yaratish - detailed version"""
     try:
         # Database ma'lumotlari
         with db_pool.get_connection() as conn:
