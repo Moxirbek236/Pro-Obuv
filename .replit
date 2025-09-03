@@ -8,12 +8,8 @@ packages = ["cargo", "libiconv", "rustc"]
 localPort = 5000
 externalPort = 80
 
-[[ports]]
-localPort = 8080
-externalPort = 8080
-
 [workflows]
-runButton = "Restaurant Server Fixed"
+runButton = "Project"
 
 [[workflows.workflow]]
 name = "Run Flask App"
@@ -235,6 +231,27 @@ args = "echo \"🚀 Starting Restaurant Server (Fixed SQL and duplicates)...\""
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "python app.py"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Flask App"
+
+[[workflows.workflow]]
+name = "Flask App"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python app.py"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
 
 [agent]
 expertMode = true
