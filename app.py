@@ -544,17 +544,21 @@ def after_request(response):
     """Request tugagandan keyin ishlaydigan function"""
     try:
         end_time = time.time()
-        duration = end_time - getattr(g, 'start_time', end_time)
+        start_time = getattr(g, 'start_time', end_time)
+        duration = end_time - start_time
 
-        # Performance monitoring - xavfsiz tekshirish
+        # Performance monitoring - fixed to use function call
         try:
+            # Check if performance_monitor has the record_request method
             if hasattr(performance_monitor, 'record_request') and callable(performance_monitor.record_request):
                 performance_monitor.record_request(duration, request.endpoint or 'unknown', response.status_code)
-        except Exception:
-            # Performance monitoring xatolikni e'tiborsiz qoldirish
-            pass
+            else:
+                # Log a warning if the method is missing or not callable
+                app_logger.warning("performance_monitor object does not have a callable 'record_request' method.")
+        except Exception as pm_error:
+            app_logger.warning(f"Performance monitoring error: {str(pm_error)}")
 
-        # Security headers qo'shish
+        # Security headers
         response.headers['X-Content-Type-Options'] = 'nosniff'
         response.headers['X-Frame-Options'] = 'DENY'
         response.headers['X-XSS-Protection'] = '1; mode=block'
@@ -816,7 +820,7 @@ def init_db():
             created_at TEXT NOT NULL,
             eta_time TEXT NOT NULL,
             FOREIGN KEY (user_id) REFERENCES users (id),
-            FOREIGN KEY (courier_id) REFERENCES couriers (id)
+            FOREIGNKEY (courier_id) REFERENCES couriers (id)
         );
     """)
 
@@ -2286,10 +2290,10 @@ def favorites():
         if not user_id:
             flash("Sevimlilar ro'yxatini ko'rish uchun tizimga kiring.", "warning")
             return redirect(url_for("login_page"))
-        
+
         conn = get_db()
         cur = conn.cursor()
-        
+
         # Sevimli mahsulotlarni olish
         cur.execute("""
             SELECT m.*, f.created_at as favorite_added
@@ -2298,44 +2302,44 @@ def favorites():
             WHERE f.user_id = ?
             ORDER BY f.created_at DESC
         """, (user_id,))
-        
+
         favorite_items = [dict(row) for row in cur.fetchall()]
         conn.close()
-        
+
         return render_template("favorites.html", favorites=favorite_items, current_page='favorites')
-        
+
     except Exception as e:
         app_logger.error(f"Favorites sahifasida xatolik: {str(e)}")
         flash("Sevimlilar ro'yxatini yuklashda xatolik yuz berdi.", "error")
         return redirect(url_for("index"))
 
 @app.route("/add-to-favorites/<int:menu_item_id>", methods=["POST"])
-@login_required  
+@login_required
 def add_to_favorites(menu_item_id):
     """Mahsulotni sevimlilarga qo'shish"""
     try:
         user_id = session.get("user_id")
         if not user_id:
             return jsonify({"success": False, "message": "Tizimga kiring"})
-        
+
         conn = get_db()
         cur = conn.cursor()
-        
+
         # Allaqachon sevimli emasligini tekshirish
         cur.execute("SELECT id FROM favorites WHERE user_id = ? AND menu_item_id = ?", (user_id, menu_item_id))
         if cur.fetchone():
             conn.close()
             return jsonify({"success": False, "message": "Bu mahsulot allaqachon sevimlilarda"})
-        
+
         # Sevimlilarga qo'shish
         now = get_current_time().isoformat()
-        cur.execute("INSERT INTO favorites (user_id, menu_item_id, created_at) VALUES (?, ?, ?)", 
+        cur.execute("INSERT INTO favorites (user_id, menu_item_id, created_at) VALUES (?, ?, ?)",
                    (user_id, menu_item_id, now))
         conn.commit()
         conn.close()
-        
+
         return jsonify({"success": True, "message": "Sevimlilar ro'yxatiga qo'shildi"})
-        
+
     except Exception as e:
         app_logger.error(f"Add to favorites error: {str(e)}")
         return jsonify({"success": False, "message": "Xatolik yuz berdi"})
@@ -2348,15 +2352,15 @@ def remove_from_favorites(menu_item_id):
         user_id = session.get("user_id")
         if not user_id:
             return jsonify({"success": False, "message": "Tizimga kiring"})
-        
+
         conn = get_db()
         cur = conn.cursor()
         cur.execute("DELETE FROM favorites WHERE user_id = ? AND menu_item_id = ?", (user_id, menu_item_id))
         conn.commit()
         conn.close()
-        
+
         return jsonify({"success": True, "message": "Sevimlilardan olib tashlandi"})
-        
+
     except Exception as e:
         app_logger.error(f"Remove from favorites error: {str(e)}")
         return jsonify({"success": False, "message": "Xatolik yuz berdi"})
@@ -2857,7 +2861,7 @@ def courier_login():
                 else:
                     columns = ['id', 'first_name', 'last_name', 'birth_date', 'phone', 'passport_series', 'passport_number', 'password_hash', 'total_hours', 'deliveries_completed', 'last_activity', 'created_at']
                     row_dict = {columns[i]: row[i] if i < len(row) else None for i in range(len(columns))}
-                
+
                 # Agar avvalgi faollik vaqti mavjud bo'lsa, ishchi soatlarni yangilash
                 if row_dict.get("last_activity"):
                     try:
@@ -2915,52 +2919,6 @@ def courier_login():
         session["courier_name"] = f"{row_dict['first_name']} {row_dict['last_name']}"
         return redirect(url_for("courier_dashboard"))
     return render_template("courier_login.html")
-
-@app.route("/courier-register-secure-p8x3m", methods=["GET", "POST"])
-def courier_register():
-    if request.method == "POST":
-        first_name = request.form.get("first_name", "").strip()
-        last_name = request.form.get("last_name", "").strip()
-        birth_date = request.form.get("birth_date", "").strip()
-        phone = request.form.get("phone", "").strip()
-        passport_series = request.form.get("passport_series", "").strip()
-        passport_number = request.form.get("passport_number", "").strip()
-        password = request.form.get("password", "")
-
-        if not all([first_name, last_name, birth_date, phone, passport_series, passport_number, password]):
-            flash("Barcha maydonlarni to'ldiring.", "error")
-            return redirect(url_for("courier_register"))
-
-        conn = get_db()
-        cur = conn.cursor()
-        password_hash = generate_password_hash(password)
-        now = get_current_time()
-        try:
-            cur.execute("""
-                INSERT INTO couriers (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?);
-            """, (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, now.isoformat()))
-        except sqlite3.OperationalError:
-            # Agar birth_date ustuni mavjud bo'lmasa, uni qo'shish
-            cur.execute("ALTER TABLE couriers ADD COLUMN birth_date TEXT;")
-            cur.execute("""
-                INSERT INTO couriers (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?);
-            """, (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, now.isoformat()))
-
-        new_id = cur.lastrowid
-        # ID kamida 5 ta raqamdan iborat bo'lishi uchun
-        if new_id < 10000:
-            cur.execute("UPDATE couriers SET id = ? WHERE id = ?", (10000 + new_id, new_id))
-            new_id = 10000 + new_id
-
-        conn.commit()
-        conn.close()
-
-        flash(f"Kuryer sifatida ro'yxatdan o'tdingiz. Sizning ID raqamingiz: {new_id}", "success")
-        return redirect(url_for("courier_login"))
-
-    return render_template("courier_register.html")
 
 @app.route("/courier/dashboard")
 def courier_dashboard():
@@ -3137,21 +3095,21 @@ def api_cart_count():
     try:
         session_id = get_session_id()
         user_id = session.get("user_id")
-        
+
         conn = get_db()
         cur = conn.cursor()
-        
+
         if user_id:
             cur.execute("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE user_id = ?", (user_id,))
         else:
             cur.execute("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE session_id = ?", (session_id,))
-        
+
         result = cur.fetchone()
         cart_count = result[0] if result else 0
         conn.close()
-        
+
         return jsonify({"cart_count": cart_count})
-        
+
     except Exception as e:
         app_logger.error(f"Cart count API error: {str(e)}")
         return jsonify({"cart_count": 0})
@@ -3266,6 +3224,7 @@ def staff_login():
             cur = conn.cursor()
             cur.execute("SELECT * FROM staff WHERE id=?", (staff_id_int,))
             row = cur.fetchone()
+            conn.close() # Connectionni keyinroq ishlatish uchun yopamiz
 
             if row:
                 # SQLite Row obyektini xavfsiz dict ga aylantirish
@@ -3288,39 +3247,38 @@ def staff_login():
                         now = get_current_time()
                         now_iso = now.isoformat()
 
+                        # Yangi connection yaratish
+                        conn_update = get_db()
+                        cur_update = conn_update.cursor()
                         try:
-                            cur.execute("UPDATE staff SET last_activity = ? WHERE id = ?", (now_iso, staff_id_int))
-                            conn.commit()
+                            cur_update.execute("UPDATE staff SET last_activity = ? WHERE id = ?", (now_iso, staff_id_int))
+                            conn_update.commit()
                         except Exception as update_error:
                             app_logger.warning(f"Staff faollik yangilashda xatolik: {str(update_error)}")
+                        finally:
+                            conn_update.close()
 
                         # Session ma'lumotlarini saqlash
                         session["staff_id"] = row_dict["id"]
                         session["staff_name"] = f"{row_dict['first_name']} {row_dict['last_name']}"
 
-                        conn.close()
                         flash(f"Xush kelibsiz, {row_dict['first_name']}!", "success")
                         return redirect(url_for("staff_dashboard"))
                     else:
-                        conn.close()
                         flash("Noto'g'ri ID yoki parol.", "error")
                         app_logger.warning(f"Failed login attempt for staff ID: {staff_id_int}")
                         return redirect(url_for("staff_login"))
 
                 except Exception as dict_error:
                     app_logger.error(f"Staff row processing error: {str(dict_error)}")
-                    conn.close()
                     flash("Ma'lumotlarni qayta ishlashda xatolik.", "error")
                     return redirect(url_for("staff_login"))
             else:
-                conn.close()
                 flash("Noto'g'ri ID yoki parol.", "error")
                 app_logger.warning(f"Staff not found for ID: {staff_id_int}")
                 return redirect(url_for("staff_login"))
 
         except Exception as e:
-            if 'conn' in locals():
-                conn.close()
             app_logger.error(f"Staff login error: {str(e)}")
             flash("Tizimda xatolik yuz berdi.", "error")
             return redirect(url_for("staff_login"))
@@ -3347,7 +3305,7 @@ def staff_register():
         cur = conn.cursor()
         password_hash = generate_password_hash(password)
         now = get_current_time()
-        
+
         try:
             cur.execute("""
                 INSERT INTO staff (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, created_at)
@@ -3365,13 +3323,13 @@ def staff_register():
 
             flash(f"Xodim sifatida ro'yxatdan o'tdingiz. Sizning ID raqamingiz: {new_id}", "success")
             return redirect(url_for("staff_login"))
-            
+
         except Exception as e:
             conn.close()
             app_logger.error(f"Staff register error: {str(e)}")
             flash("Ro'yxatdan o'tishda xatolik yuz berdi.", "error")
             return redirect(url_for("staff_register"))
-    
+
     try:
         return render_template('staff_register.html')
     except Exception as e:
@@ -3730,7 +3688,7 @@ def super_admin_dashboard():
                             'last_activity': str(staff[10]) if len(staff) > 10 and staff[10] is not None else '',
                             'created_at': str(staff[11]) if len(staff) > 11 and staff[11] is not None else ''
                         }
-                        
+
                         # Safe conversion for total_hours
                         try:
                             if len(staff) > 8 and staff[8] is not None:
@@ -3741,7 +3699,7 @@ def super_admin_dashboard():
                                     staff_dict['total_hours'] = float(hours_val.replace(',', '.'))
                         except (ValueError, TypeError):
                             staff_dict['total_hours'] = 0.0
-                        
+
                         # Safe conversion for orders_handled
                         try:
                             if len(staff) > 9 and staff[9] is not None:
@@ -3837,7 +3795,7 @@ def super_admin_dashboard():
                             'last_activity': str(courier[10]) if len(courier) > 10 and courier[10] is not None else '',
                             'created_at': str(courier[11]) if len(courier) > 11 and courier[11] is not None else ''
                         }
-                        
+
                         # Safe conversion for total_hours
                         try:
                             if len(courier) > 8 and courier[8] is not None:
@@ -3848,7 +3806,7 @@ def super_admin_dashboard():
                                     courier_dict['total_hours'] = float(hours_val.replace(',', '.'))
                         except (ValueError, TypeError):
                             courier_dict['total_hours'] = 0.0
-                        
+
                         # Safe conversion for deliveries_completed
                         try:
                             if len(courier) > 9 and courier[9] is not None:
@@ -4374,32 +4332,41 @@ def api_dashboard_stats():
     try:
         conn = get_db()
         cur = conn.cursor()
-        
+
         # Asosiy statistikalar
         stats = {}
-        
+
         # Jami buyurtmalar
-        cur.execute("SELECT COUNT(*) FROM orders")
-        stats['total_orders'] = cur.fetchone()[0]
-        
+        result = execute_query("SELECT COUNT(*) FROM orders", fetch_one=True)
+        stats['total_orders'] = result[0] if result else 0
+
         # Status bo'yicha statistika
-        cur.execute("SELECT COUNT(*) FROM orders WHERE status='waiting'")
-        stats['waiting_orders'] = cur.fetchone()[0]
-        
-        cur.execute("SELECT COUNT(*) FROM orders WHERE status='ready'")
-        stats['ready_orders'] = cur.fetchone()[0]
-        
-        cur.execute("SELECT COUNT(*) FROM orders WHERE status='served'")
-        stats['served_orders'] = cur.fetchone()[0]
-        
+        result = execute_query("SELECT COUNT(*) FROM orders WHERE status='waiting'", fetch_one=True)
+        stats['waiting_orders'] = result[0] if result else 0
+
+        result = execute_query("SELECT COUNT(*) FROM orders WHERE status='ready'", fetch_one=True)
+        stats['ready_orders'] = result[0] if result else 0
+
+        result = execute_query("SELECT COUNT(*) FROM orders WHERE status='served'", fetch_one=True)
+        stats['served_orders'] = result[0] if result else 0
+
         # Bu oylik statistika
         current_month = get_current_time().strftime("%Y-%m")
-        cur.execute("SELECT COUNT(*) FROM orders WHERE created_at LIKE ?", (f"{current_month}%",))
-        stats['month_orders'] = cur.fetchone()[0]
-        
-        conn.close()
-        return jsonify(stats)
-        
+        result = execute_query("SELECT COUNT(*) FROM orders WHERE created_at LIKE ?", (f"{current_month}%",), fetch_one=True)
+        stats['month_orders'] = result[0] if result else 0
+
+        # Xodimlar statistikasi
+        result = execute_query("SELECT COUNT(*) FROM staff", fetch_one=True)
+        stats['total_staff'] = result[0] if result else 0
+
+        result = execute_query("SELECT COUNT(*) FROM couriers", fetch_one=True)
+        stats['total_couriers'] = result[0] if result else 0
+
+        result = execute_query("SELECT COUNT(*) FROM users", fetch_one=True)
+        stats['total_users'] = result[0] if result else 0
+
+        return jsonify({"stats": stats})
+
     except Exception as e:
         app_logger.error(f"Dashboard stats API error: {str(e)}")
         return jsonify({"error": "Statistikalarni olishda xatolik"}), 500
@@ -4429,7 +4396,7 @@ def super_admin_analytics():
     if not session.get("super_admin"):
         flash("Super admin paneliga kirish talab qilinadi.", "error")
         return redirect(url_for("super_admin_login"))
-    
+
     try:
         # Analytics ma'lumotlarini tayyorlash
         analytics_data = {
@@ -4438,10 +4405,10 @@ def super_admin_analytics():
             'total_revenue': 0,
             'growth_rate': 0
         }
-        
+
         with db_pool.get_connection() as conn:
             cur = conn.cursor()
-            
+
             # So'nggi 6 oylik buyurtmalar statistikasi
             for i in range(6):
                 month_date = (get_current_time() - datetime.timedelta(days=30*i)).strftime("%Y-%m")
@@ -4452,21 +4419,21 @@ def super_admin_analytics():
                     'month': month_date,
                     'orders': count
                 })
-            
+
             analytics_data['monthly_orders'].reverse()
-            
+
             # Eng ko'p sotilgan mahsulotlar
             cur.execute("""
-                SELECT mi.name, COALESCE(SUM(od.quantity), 0) as total_sold 
+                SELECT mi.name, COALESCE(SUM(od.quantity), 0) as total_sold
                 FROM menu_items mi
-                LEFT JOIN order_details od ON mi.id = od.menu_item_id 
+                LEFT JOIN order_details od ON mi.id = od.menu_item_id
                 GROUP BY mi.id, mi.name
-                ORDER BY total_sold DESC 
+                ORDER BY total_sold DESC
                 LIMIT 5
             """)
             popular_items = cur.fetchall()
             analytics_data['popular_items'] = [{'name': row[0], 'sold': row[1]} for row in popular_items]
-        
+
         # Template mavjudligini tekshirish
         template_path = os.path.join(app.template_folder, 'super_admin_analytics.html')
         if os.path.exists(template_path):
@@ -4503,7 +4470,7 @@ def super_admin_analytics():
             </html>
             """
             return html_content
-            
+
     except Exception as e:
         app_logger.error(f"Super admin analytics xatoligi: {str(e)}")
         return f"""
@@ -4519,35 +4486,35 @@ def super_admin_reports():
     if not session.get("super_admin"):
         flash("Super admin paneliga kirish talab qilinadi.", "error")
         return redirect(url_for("super_admin_login"))
-    
+
     try:
         reports_data = {
             'daily': {'orders': 0, 'revenue': 0},
             'weekly': {'orders': 0, 'revenue': 0},
             'monthly': {'orders': 0, 'revenue': 0}
         }
-        
+
         with db_pool.get_connection() as conn:
             cur = conn.cursor()
-            
+
             # Kunlik hisobot
             today = get_current_time().strftime("%Y-%m-%d")
             cur.execute("SELECT COUNT(*) FROM orders WHERE DATE(created_at) = ?", (today,))
             daily_orders = cur.fetchone()[0] if cur.fetchone() else 0
             reports_data['daily']['orders'] = daily_orders
-            
+
             # Haftalik hisobot
             week_ago = (get_current_time() - datetime.timedelta(days=7)).strftime("%Y-%m-%d")
             cur.execute("SELECT COUNT(*) FROM orders WHERE DATE(created_at) >= ?", (week_ago,))
             weekly_orders = cur.fetchone()[0] if cur.fetchone() else 0
             reports_data['weekly']['orders'] = weekly_orders
-            
+
             # Oylik hisobot
             month_ago = (get_current_time() - datetime.timedelta(days=30)).strftime("%Y-%m-%d")
             cur.execute("SELECT COUNT(*) FROM orders WHERE DATE(created_at) >= ?", (month_ago,))
             monthly_orders = cur.fetchone()[0] if cur.fetchone() else 0
             reports_data['monthly']['orders'] = monthly_orders
-        
+
         # Template fallback
         template_path = os.path.join(app.template_folder, 'super_admin_reports.html')
         if os.path.exists(template_path):
@@ -4595,7 +4562,7 @@ def super_admin_reports():
             </html>
             """
             return html_content
-        
+
     except Exception as e:
         app_logger.error(f"Super admin reports xatoligi: {str(e)}")
         return f"""
@@ -4611,7 +4578,7 @@ def super_admin_system():
     if not session.get("super_admin"):
         flash("Super admin paneliga kirish talab qilinadi.", "error")
         return redirect(url_for("super_admin_login"))
-    
+
     try:
         system_info = {
             'performance': {},
@@ -4619,14 +4586,14 @@ def super_admin_system():
             'server_info': {},
             'environment': os.environ.get('FLASK_ENV', 'production')
         }
-        
+
         # Performance statistikasi
         try:
             if hasattr(performance_monitor, 'get_stats'):
                 system_info['performance'] = performance_monitor.get_stats()
         except:
             system_info['performance'] = {'avg_response_time': 0, 'total_requests': 0}
-        
+
         # Database info
         try:
             with db_pool.get_connection() as conn:
@@ -4637,7 +4604,7 @@ def super_admin_system():
                 system_info['database']['tables'] = [table[0] for table in tables]
         except:
             pass
-        
+
         # Template fallback
         template_path = os.path.join(app.template_folder, 'super_admin_system.html')
         if os.path.exists(template_path):
@@ -4671,7 +4638,7 @@ def super_admin_system():
             </html>
             """
             return html_content
-        
+
     except Exception as e:
         app_logger.error(f"Super admin system xatoligi: {str(e)}")
         return f"""
@@ -4687,14 +4654,14 @@ def super_admin_logs():
     if not session.get("super_admin"):
         flash("Super admin paneliga kirish talab qilinadi.", "error")
         return redirect(url_for("super_admin_login"))
-    
+
     try:
         log_data = {
             'recent_logs': [],
             'error_logs': [],
             'system_logs': []
         }
-        
+
         # Log fayllarini xavfsiz o'qish
         try:
             if os.path.exists('logs/restaurant.log'):
@@ -4703,7 +4670,7 @@ def super_admin_logs():
                     log_data['recent_logs'] = [line.strip() for line in log_lines if line.strip()]
         except:
             log_data['recent_logs'] = ['Log faylini o\'qib bo\'lmadi']
-        
+
         try:
             if os.path.exists('logs/errors.log'):
                 with open('logs/errors.log', 'r', encoding='utf-8') as f:
@@ -4711,7 +4678,7 @@ def super_admin_logs():
                     log_data['error_logs'] = [line.strip() for line in error_lines if line.strip()]
         except:
             log_data['error_logs'] = ['Error log faylini o\'qib bo\'lmadi']
-        
+
         # Template fallback
         template_path = os.path.join(app.template_folder, 'super_admin_logs.html')
         if os.path.exists(template_path):
@@ -4747,7 +4714,7 @@ def super_admin_logs():
             </html>
             """
             return html_content
-        
+
     except Exception as e:
         app_logger.error(f"Super admin logs xatoligi: {str(e)}")
         return f"""
@@ -4769,7 +4736,7 @@ def super_admin_delete_courier(courier_id):
     except Exception as e:
         app_logger.error(f"Delete courier error: {str(e)}")
         flash("Kuryerni o'chirishda xatolik yuz berdi.", "error")
-    
+
     return redirect(url_for("super_admin_dashboard"))
 
 @app.route("/super-admin/add-courier", methods=["POST"])
@@ -4792,7 +4759,7 @@ def super_admin_add_courier():
     try:
         password_hash = generate_password_hash(password)
         now = get_current_time().isoformat()
-        
+
         new_id = execute_query("""
             INSERT INTO couriers (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, created_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
@@ -4807,7 +4774,7 @@ def super_admin_add_courier():
     except Exception as e:
         app_logger.error(f"Add courier error: {str(e)}")
         flash("Kuryer qo'shishda xatolik yuz berdi.", "error")
-    
+
     return redirect(url_for("super_admin_dashboard"))
 
 @app.route("/super-admin/delete-user-db/<int:user_id>", methods=["POST"])
@@ -4821,7 +4788,7 @@ def super_admin_delete_user_db(user_id):
     except Exception as e:
         app_logger.error(f"Delete user error: {str(e)}")
         flash("Foydalanuvchini o'chirishda xatolik yuz berdi.", "error")
-    
+
     return redirect(url_for("super_admin_dashboard"))
 
 @app.route("/super-admin/delete-user", methods=["POST"])
@@ -4845,12 +4812,12 @@ def super_admin_delete_user():
 
             with open(users_file, 'w', encoding='utf-8') as f:
                 json.dump(users, f, ensure_ascii=False, indent=2)
-                
+
             flash(f"Buyurtma #{ticket_no} o'chirildi.", "success")
         except Exception as e:
             app_logger.error(f"Delete user JSON error: {str(e)}")
             flash("Buyurtmani o'chirishda xatolik yuz berdi.", "error")
-    
+
     return redirect(url_for("super_admin_dashboard"))
 
 @app.route("/super-admin/toggle-branch/<int:branch_id>", methods=["POST"])
@@ -4864,7 +4831,7 @@ def super_admin_toggle_branch(branch_id):
     except Exception as e:
         app_logger.error(f"Toggle branch error: {str(e)}")
         flash("Filial holatini o'zgartirishda xatolik yuz berdi.", "error")
-    
+
     return redirect(url_for("super_admin_dashboard"))
 
 @app.route("/super-admin/reset-staff-password", methods=["POST"])
@@ -4932,47 +4899,1144 @@ def api_super_admin_dashboard_stats():
     """Super admin dashboard statistikalari"""
     if not session.get("super_admin"):
         return jsonify({"error": "Unauthorized"}), 401
-    
+
     try:
         # Asosiy statistikalar
         stats = {}
-        
+
         # Jami buyurtmalar
         result = execute_query("SELECT COUNT(*) FROM orders", fetch_one=True)
         stats['total_orders'] = result[0] if result else 0
-        
+
         # Status bo'yicha statistika
         result = execute_query("SELECT COUNT(*) FROM orders WHERE status='waiting'", fetch_one=True)
         stats['waiting_orders'] = result[0] if result else 0
-        
+
         result = execute_query("SELECT COUNT(*) FROM orders WHERE status='ready'", fetch_one=True)
         stats['ready_orders'] = result[0] if result else 0
-        
+
         result = execute_query("SELECT COUNT(*) FROM orders WHERE status='served'", fetch_one=True)
         stats['served_orders'] = result[0] if result else 0
-        
+
         # Bu oylik statistika
         current_month = get_current_time().strftime("%Y-%m")
         result = execute_query("SELECT COUNT(*) FROM orders WHERE created_at LIKE ?", (f"{current_month}%",), fetch_one=True)
         stats['month_orders'] = result[0] if result else 0
-        
+
         # Xodimlar statistikasi
         result = execute_query("SELECT COUNT(*) FROM staff", fetch_one=True)
         stats['total_staff'] = result[0] if result else 0
-        
+
         result = execute_query("SELECT COUNT(*) FROM couriers", fetch_one=True)
         stats['total_couriers'] = result[0] if result else 0
-        
+
         result = execute_query("SELECT COUNT(*) FROM users", fetch_one=True)
         stats['total_users'] = result[0] if result else 0
-        
+
         return jsonify({"stats": stats})
-        
+
     except Exception as e:
         app_logger.error(f"Super admin dashboard stats error: {str(e)}")
         return jsonify({"error": "Statistikalarni olishda xatolik"}), 500
 
+@app.route("/contact")
+def contact():
+    """Aloqa sahifasi"""
+    return render_template("contact.html", current_page='contact')
+
+@app.route("/about")
+def about():
+    """Biz haqimizda sahifasi"""
+    return render_template("about.html", current_page='about')
+
+@app.route("/downloads")
+def downloads():
+    """Yuklab olish sahifasi"""
+    return render_template("downloads.html", current_page='downloads')
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)
 
 
+# Super admin additional routes with proper fallback
+@app.route("/super-admin/analytics")
+def super_admin_analytics():
+    if not session.get("super_admin"):
+        flash("Super admin paneliga kirish talab qilinadi.", "error")
+        return redirect(url_for("super_admin_login"))
+
+    try:
+        # Analytics ma'lumotlarini tayyorlash
+        analytics_data = {
+            'monthly_orders': [],
+            'popular_items': [],
+            'total_revenue': 0,
+            'growth_rate': 0
+        }
+
+        with db_pool.get_connection() as conn:
+            cur = conn.cursor()
+
+            # So'nggi 6 oylik buyurtmalar statistikasi
+            for i in range(6):
+                month_date = (get_current_time() - datetime.timedelta(days=30*i)).strftime("%Y-%m")
+                cur.execute("SELECT COUNT(*) FROM orders WHERE created_at LIKE ?", (f"{month_date}%",))
+                result = cur.fetchone()
+                count = result[0] if result else 0
+                analytics_data['monthly_orders'].append({
+                    'month': month_date,
+                    'orders': count
+                })
+
+            analytics_data['monthly_orders'].reverse()
+
+            # Eng ko'p sotilgan mahsulotlar
+            cur.execute("""
+                SELECT mi.name, COALESCE(SUM(od.quantity), 0) as total_sold
+                FROM menu_items mi
+                LEFT JOIN order_details od ON mi.id = od.menu_item_id
+                GROUP BY mi.id, mi.name
+                ORDER BY total_sold DESC
+                LIMIT 5
+            """)
+            popular_items = cur.fetchall()
+            analytics_data['popular_items'] = [{'name': row[0], 'sold': row[1]} for row in popular_items]
+
+        # Template mavjudligini tekshirish
+        template_path = os.path.join(app.template_folder, 'super_admin_analytics.html')
+        if os.path.exists(template_path):
+            return render_template("super_admin_analytics.html", analytics=analytics_data)
+        else:
+            # Fallback HTML
+            html_content = f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Analytics - Super Admin</title>
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+            </head>
+            <body>
+                <div class="container mt-4">
+                    <h2>📊 Analytics</h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Oylik buyurtmalar</h4>
+                            <ul class="list-group">
+                                {''.join([f'<li class="list-group-item">{item["month"]}: {item["orders"]} ta</li>' for item in analytics_data["monthly_orders"]])}
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Mashhur mahsulotlar</h4>
+                            <ul class="list-group">
+                                {''.join([f'<li class="list-group-item">{item["name"]}: {item["sold"]} ta</li>' for item in analytics_data["popular_items"]])}
+                            </ul>
+                        </div>
+                    </div>
+                    <a href="{url_for('super_admin_dashboard')}" class="btn btn-primary mt-3">Dashboard ga qaytish</a>
+                </div>
+            </body>
+            </html>
+            """
+            return html_content
+
+    except Exception as e:
+        app_logger.error(f"Super admin analytics xatoligi: {str(e)}")
+        return f"""
+        <div class="container mt-4">
+            <h2>Analytics - Xatolik</h2>
+            <div class="alert alert-danger">Analytics ma'lumotlarini yuklashda xatolik: {str(e)}</div>
+            <a href="{url_for('super_admin_dashboard')}" class="btn btn-primary">Dashboard ga qaytish</a>
+        </div>
+        """, 500
+
+@app.route("/super-admin/reports")
+def super_admin_reports():
+    if not session.get("super_admin"):
+        flash("Super admin paneliga kirish talab qilinadi.", "error")
+        return redirect(url_for("super_admin_login"))
+
+    try:
+        reports_data = {
+            'daily': {'orders': 0, 'revenue': 0},
+            'weekly': {'orders': 0, 'revenue': 0},
+            'monthly': {'orders': 0, 'revenue': 0}
+        }
+
+        with db_pool.get_connection() as conn:
+            cur = conn.cursor()
+
+            # Kunlik hisobot
+            today = get_current_time().strftime("%Y-%m-%d")
+            cur.execute("SELECT COUNT(*) FROM orders WHERE DATE(created_at) = ?", (today,))
+            daily_orders = cur.fetchone()[0] if cur.fetchone() else 0
+            reports_data['daily']['orders'] = daily_orders
+
+            # Haftalik hisobot
+            week_ago = (get_current_time() - datetime.timedelta(days=7)).strftime("%Y-%m-%d")
+            cur.execute("SELECT COUNT(*) FROM orders WHERE DATE(created_at) >= ?", (week_ago,))
+            weekly_orders = cur.fetchone()[0] if cur.fetchone() else 0
+            reports_data['weekly']['orders'] = weekly_orders
+
+            # Oylik hisobot
+            month_ago = (get_current_time() - datetime.timedelta(days=30)).strftime("%Y-%m-%d")
+            cur.execute("SELECT COUNT(*) FROM orders WHERE DATE(created_at) >= ?", (month_ago,))
+            monthly_orders = cur.fetchone()[0] if cur.fetchone() else 0
+            reports_data['monthly']['orders'] = monthly_orders
+
+        # Template fallback
+        template_path = os.path.join(app.template_folder, 'super_admin_reports.html')
+        if os.path.exists(template_path):
+            return render_template("super_admin_reports.html", reports=reports_data)
+        else:
+            html_content = f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Reports - Super Admin</title>
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+            </head>
+            <body>
+                <div class="container mt-4">
+                    <h2>📈 Hisobotlar</h2>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Bugungi kun</h5>
+                                    <p class="card-text">Buyurtmalar: {reports_data['daily']['orders']}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Bu hafta</h5>
+                                    <p class="card-text">Buyurtmalar: {reports_data['weekly']['orders']}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Bu oy</h5>
+                                    <p class="card-text">Buyurtmalar: {reports_data['monthly']['orders']}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{url_for('super_admin_dashboard')}" class="btn btn-primary mt-3">Dashboard ga qaytish</a>
+                </div>
+            </body>
+            </html>
+            """
+            return html_content
+
+    except Exception as e:
+        app_logger.error(f"Super admin reports xatoligi: {str(e)}")
+        return f"""
+        <div class="container mt-4">
+            <h2>Reports - Xatolik</h2>
+            <div class="alert alert-danger">Hisobotlarni yuklashda xatolik: {str(e)}</div>
+            <a href="{url_for('super_admin_dashboard')}" class="btn btn-primary">Dashboard ga qaytish</a>
+        </div>
+        """, 500
+
+@app.route("/super-admin/system")
+def super_admin_system():
+    if not session.get("super_admin"):
+        flash("Super admin paneliga kirish talab qilinadi.", "error")
+        return redirect(url_for("super_admin_login"))
+
+    try:
+        system_info = {
+            'performance': {},
+            'database': {'tables_count': 0, 'tables': []},
+            'server_info': {},
+            'environment': os.environ.get('FLASK_ENV', 'production')
+        }
+
+        # Performance statistikasi
+        try:
+            if hasattr(performance_monitor, 'get_stats'):
+                system_info['performance'] = performance_monitor.get_stats()
+        except:
+            system_info['performance'] = {'avg_response_time': 0, 'total_requests': 0}
+
+        # Database info
+        try:
+            with db_pool.get_connection() as conn:
+                cur = conn.cursor()
+                cur.execute("SELECT name FROM sqlite_master WHERE type='table'")
+                tables = cur.fetchall()
+                system_info['database']['tables_count'] = len(tables)
+                system_info['database']['tables'] = [table[0] for table in tables]
+        except:
+            pass
+
+        # Template fallback
+        template_path = os.path.join(app.template_folder, 'super_admin_system.html')
+        if os.path.exists(template_path):
+            return render_template("super_admin_system.html", system=system_info)
+        else:
+            html_content = f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>System - Super Admin</title>
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+            </head>
+            <body>
+                <div class="container mt-4">
+                    <h2>⚙️ Tizim ma'lumotlari</h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Database</h4>
+                            <p>Jadvallar soni: {system_info['database']['tables_count']}</p>
+                            <p>Environment: {system_info['environment']}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Performance</h4>
+                            <p>Jami so'rovlar: {system_info['performance'].get('total_requests', 0)}</p>
+                            <p>O'rtacha javob vaqti: {system_info['performance'].get('avg_response_time', 0):.2f}s</p>
+                        </div>
+                    </div>
+                    <a href="{url_for('super_admin_dashboard')}" class="btn btn-primary mt-3">Dashboard ga qaytish</a>
+                </div>
+            </body>
+            </html>
+            """
+            return html_content
+
+    except Exception as e:
+        app_logger.error(f"Super admin system xatoligi: {str(e)}")
+        return f"""
+        <div class="container mt-4">
+            <h2>System - Xatolik</h2>
+            <div class="alert alert-danger">Tizim ma'lumotlarini yuklashda xatolik: {str(e)}</div>
+            <a href="{url_for('super_admin_dashboard')}" class="btn btn-primary">Dashboard ga qaytish</a>
+        </div>
+        """, 500
+
+@app.route("/super-admin/logs")
+def super_admin_logs():
+    if not session.get("super_admin"):
+        flash("Super admin paneliga kirish talab qilinadi.", "error")
+        return redirect(url_for("super_admin_login"))
+
+    try:
+        log_data = {
+            'recent_logs': [],
+            'error_logs': [],
+            'system_logs': []
+        }
+
+        # Log fayllarini xavfsiz o'qish
+        try:
+            if os.path.exists('logs/restaurant.log'):
+                with open('logs/restaurant.log', 'r', encoding='utf-8') as f:
+                    log_lines = f.readlines()[-20:]  # So'nggi 20 ta log
+                    log_data['recent_logs'] = [line.strip() for line in log_lines if line.strip()]
+        except:
+            log_data['recent_logs'] = ['Log faylini o\'qib bo\'lmadi']
+
+        try:
+            if os.path.exists('logs/errors.log'):
+                with open('logs/errors.log', 'r', encoding='utf-8') as f:
+                    error_lines = f.readlines()[-10:]  # So'nggi 10 ta error
+                    log_data['error_logs'] = [line.strip() for line in error_lines if line.strip()]
+        except:
+            log_data['error_logs'] = ['Error log faylini o\'qib bo\'lmadi']
+
+        # Template fallback
+        template_path = os.path.join(app.template_folder, 'super_admin_logs.html')
+        if os.path.exists(template_path):
+            return render_template("super_admin_logs.html", logs=log_data)
+        else:
+            html_content = f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Logs - Super Admin</title>
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+            </head>
+            <body>
+                <div class="container mt-4">
+                    <h2>📝 Loglar</h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>So'nggi loglar</h4>
+                            <div style="background-color: #f8f9fa; padding: 10px; border-radius: 5px; max-height: 400px; overflow-y: auto;">
+                                {'<br>'.join(log_data['recent_logs']) if log_data['recent_logs'] else 'Loglar mavjud emas'}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Xatolar</h4>
+                            <divstyle="background-color: #f8f9fa; padding: 10px; border-radius: 5px; max-height: 400px; overflow-y: auto;">
+                                {'<br>'.join(log_data['error_logs']) if log_data['error_logs'] else 'Xatolar mavjud emas'}
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{url_for('super_admin_dashboard')}" class="btn btn-primary mt-3">Dashboard ga qaytish</a>
+                </div>
+            </body>
+            </html>
+            """
+            return html_content
+
+    except Exception as e:
+        app_logger.error(f"Super admin logs xatoligi: {str(e)}")
+        return f"""
+        <div class="container mt-4">
+            <h2>Logs - Xatolik</h2>
+            <div class="alert alert-danger">Loglarni yuklashda xatolik: {str(e)}</div>
+            <a href="{url_for('super_admin_dashboard')}" class="btn btn-primary">Dashboard ga qaytish</a>
+        </div>
+        """, 500
+
+@app.route("/super-admin/delete-courier/<int:courier_id>", methods=["POST"])
+def super_admin_delete_courier(courier_id):
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+
+    try:
+        execute_query("DELETE FROM couriers WHERE id = ?", (courier_id,))
+        flash(f"Kuryer #{courier_id} o'chirildi.", "success")
+    except Exception as e:
+        app_logger.error(f"Delete courier error: {str(e)}")
+        flash("Kuryerni o'chirishda xatolik yuz berdi.", "error")
+
+    return redirect(url_for("super_admin_dashboard"))
+
+@app.route("/super-admin/add-courier", methods=["POST"])
+def super_admin_add_courier():
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+
+    first_name = request.form.get("first_name", "").strip()
+    last_name = request.form.get("last_name", "").strip()
+    birth_date = request.form.get("birth_date", "").strip()
+    phone = request.form.get("phone", "").strip()
+    passport_series = request.form.get("passport_series", "").strip()
+    passport_number = request.form.get("passport_number", "").strip()
+    password = request.form.get("password", "")
+
+    if not all([first_name, last_name, birth_date, phone, passport_series, passport_number, password]):
+        flash("Barcha maydonlarni to'ldiring.", "error")
+        return redirect(url_for("super_admin_dashboard"))
+
+    try:
+        password_hash = generate_password_hash(password)
+        now = get_current_time().isoformat()
+
+        new_id = execute_query("""
+            INSERT INTO couriers (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, now))
+
+        # ID kamida 5 ta raqamdan iborat bo'lishi uchun
+        if new_id < 10000:
+            execute_query("UPDATE couriers SET id = ? WHERE id = ?", (10000 + new_id, new_id))
+            new_id = 10000 + new_id
+
+        flash(f"Yangi kuryer qo'shildi. ID: {new_id}", "success")
+    except Exception as e:
+        app_logger.error(f"Add courier error: {str(e)}")
+        flash("Kuryer qo'shishda xatolik yuz berdi.", "error")
+
+    return redirect(url_for("super_admin_dashboard"))
+
+@app.route("/super-admin/delete-user-db/<int:user_id>", methods=["POST"])
+def super_admin_delete_user_db(user_id):
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+
+    try:
+        execute_query("DELETE FROM users WHERE id = ?", (user_id,))
+        flash(f"Foydalanuvchi #{user_id} o'chirildi.", "success")
+    except Exception as e:
+        app_logger.error(f"Delete user error: {str(e)}")
+        flash("Foydalanuvchini o'chirishda xatolik yuz berdi.", "error")
+
+    return redirect(url_for("super_admin_dashboard"))
+
+@app.route("/super-admin/delete-user", methods=["POST"])
+def super_admin_delete_user():
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+
+    ticket_no = request.form.get("ticket_no")
+    if not ticket_no:
+        flash("Ticket raqami topilmadi.", "error")
+        return redirect(url_for("super_admin_dashboard"))
+
+    # JSON fayldan o'chirish
+    users_file = 'users.json'
+    if os.path.exists(users_file):
+        try:
+            with open(users_file, 'r', encoding='utf-8') as f:
+                users = json.load(f)
+
+            users = [user for user in users if str(user.get('buyurtma_raqami')) != str(ticket_no)]
+
+            with open(users_file, 'w', encoding='utf-8') as f:
+                json.dump(users, f, ensure_ascii=False, indent=2)
+
+            flash(f"Buyurtma #{ticket_no} o'chirildi.", "success")
+        except Exception as e:
+            app_logger.error(f"Delete user JSON error: {str(e)}")
+            flash("Buyurtmani o'chirishda xatolik yuz berdi.", "error")
+
+    return redirect(url_for("super_admin_dashboard"))
+
+@app.route("/super-admin/toggle-branch/<int:branch_id>", methods=["POST"])
+def super_admin_toggle_branch(branch_id):
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+
+    try:
+        execute_query("UPDATE branches SET is_active = NOT is_active WHERE id = ?", (branch_id,))
+        flash(f"Filial #{branch_id} holati o'zgartirildi.", "success")
+    except Exception as e:
+        app_logger.error(f"Toggle branch error: {str(e)}")
+        flash("Filial holatini o'zgartirishda xatolik yuz berdi.", "error")
+
+    return redirect(url_for("super_admin_dashboard"))
+
+@app.route("/super-admin/reset-staff-password", methods=["POST"])
+def super_admin_reset_staff_password():
+    if not session.get("super_admin"):
+        return jsonify({"success": False, "message": "Unauthorized"}), 401
+
+    data = request.get_json()
+    staff_id = data.get("staff_id")
+    new_password = data.get("new_password")
+
+    if not staff_id or not new_password:
+        return jsonify({"success": False, "message": "Ma'lumotlar to'liq emas"})
+
+    try:
+        password_hash = generate_password_hash(new_password)
+        execute_query("UPDATE staff SET password_hash = ? WHERE id = ?", (password_hash, staff_id))
+        return jsonify({"success": True, "message": "Parol yangilandi"})
+    except Exception as e:
+        app_logger.error(f"Reset staff password error: {str(e)}")
+        return jsonify({"success": False, "message": "Xatolik yuz berdi"})
+
+@app.route("/super-admin/reset-courier-password", methods=["POST"])
+def super_admin_reset_courier_password():
+    if not session.get("super_admin"):
+        return jsonify({"success": False, "message": "Unauthorized"}), 401
+
+    data = request.get_json()
+    courier_id = data.get("courier_id")
+    new_password = data.get("new_password")
+
+    if not courier_id or not new_password:
+        return jsonify({"success": False, "message": "Ma'lumotlar to'liq emas"})
+
+    try:
+        password_hash = generate_password_hash(new_password)
+        execute_query("UPDATE couriers SET password_hash = ? WHERE id = ?", (password_hash, courier_id))
+        return jsonify({"success": True, "message": "Parol yangilandi"})
+    except Exception as e:
+        app_logger.error(f"Reset courier password error: {str(e)}")
+        return jsonify({"success": False, "message": "Xatolik yuz berdi"})
+
+@app.route("/super-admin/reset-user-password", methods=["POST"])
+def super_admin_reset_user_password():
+    if not session.get("super_admin"):
+        return jsonify({"success": False, "message": "Unauthorized"}), 401
+
+    data = request.get_json()
+    user_id = data.get("user_id")
+    new_password = data.get("new_password")
+
+    if not user_id or not new_password:
+        return jsonify({"success": False, "message": "Ma'lumotlar to'liq emas"})
+
+    try:
+        password_hash = generate_password_hash(new_password)
+        execute_query("UPDATE users SET password_hash = ? WHERE id = ?", (password_hash, user_id))
+        return jsonify({"success": True, "message": "Parol yangilandi"})
+    except Exception as e:
+        app_logger.error(f"Reset user password error: {str(e)}")
+        return jsonify({"success": False, "message": "Xatolik yuz berdi"})
+
+@app.route("/api/super-admin/dashboard-stats")
+def api_super_admin_dashboard_stats():
+    """Super admin dashboard statistikalari"""
+    if not session.get("super_admin"):
+        return jsonify({"error": "Unauthorized"}), 401
+
+    try:
+        # Asosiy statistikalar
+        stats = {}
+
+        # Jami buyurtmalar
+        result = execute_query("SELECT COUNT(*) FROM orders", fetch_one=True)
+        stats['total_orders'] = result[0] if result else 0
+
+        # Status bo'yicha statistika
+        result = execute_query("SELECT COUNT(*) FROM orders WHERE status='waiting'", fetch_one=True)
+        stats['waiting_orders'] = result[0] if result else 0
+
+        result = execute_query("SELECT COUNT(*) FROM orders WHERE status='ready'", fetch_one=True)
+        stats['ready_orders'] = result[0] if result else 0
+
+        result = execute_query("SELECT COUNT(*) FROM orders WHERE status='served'", fetch_one=True)
+        stats['served_orders'] = result[0] if result else 0
+
+        # Bu oylik statistika
+        current_month = get_current_time().strftime("%Y-%m")
+        result = execute_query("SELECT COUNT(*) FROM orders WHERE created_at LIKE ?", (f"{current_month}%",), fetch_one=True)
+        stats['month_orders'] = result[0] if result else 0
+
+        # Xodimlar statistikasi
+        result = execute_query("SELECT COUNT(*) FROM staff", fetch_one=True)
+        stats['total_staff'] = result[0] if result else 0
+
+        result = execute_query("SELECT COUNT(*) FROM couriers", fetch_one=True)
+        stats['total_couriers'] = result[0] if result else 0
+
+        result = execute_query("SELECT COUNT(*) FROM users", fetch_one=True)
+        stats['total_users'] = result[0] if result else 0
+
+        return jsonify({"stats": stats})
+
+    except Exception as e:
+        app_logger.error(f"Super admin dashboard stats error: {str(e)}")
+        return jsonify({"error": "Statistikalarni olishda xatolik"}), 500
+
+@app.route("/contact")
+def contact():
+    """Aloqa sahifasi"""
+    return render_template("contact.html", current_page='contact')
+
+@app.route("/about")
+def about():
+    """Biz haqimizda sahifasi"""
+    return render_template("about.html", current_page='about')
+
+@app.route("/downloads")
+def downloads():
+    """Yuklab olish sahifasi"""
+    return render_template("downloads.html", current_page='downloads')
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)
 
 
+# Super admin additional routes with proper fallback
+@app.route("/super-admin/analytics")
+def super_admin_analytics():
+    if not session.get("super_admin"):
+        flash("Super admin paneliga kirish talab qilinadi.", "error")
+        return redirect(url_for("super_admin_login"))
+
+    try:
+        # Analytics ma'lumotlarini tayyorlash
+        analytics_data = {
+            'monthly_orders': [],
+            'popular_items': [],
+            'total_revenue': 0,
+            'growth_rate': 0
+        }
+
+        with db_pool.get_connection() as conn:
+            cur = conn.cursor()
+
+            # So'nggi 6 oylik buyurtmalar statistikasi
+            for i in range(6):
+                month_date = (get_current_time() - datetime.timedelta(days=30*i)).strftime("%Y-%m")
+                cur.execute("SELECT COUNT(*) FROM orders WHERE created_at LIKE ?", (f"{month_date}%",))
+                result = cur.fetchone()
+                count = result[0] if result else 0
+                analytics_data['monthly_orders'].append({
+                    'month': month_date,
+                    'orders': count
+                })
+
+            analytics_data['monthly_orders'].reverse()
+
+            # Eng ko'p sotilgan mahsulotlar
+            cur.execute("""
+                SELECT mi.name, COALESCE(SUM(od.quantity), 0) as total_sold
+                FROM menu_items mi
+                LEFT JOIN order_details od ON mi.id = od.menu_item_id
+                GROUP BY mi.id, mi.name
+                ORDER BY total_sold DESC
+                LIMIT 5
+            """)
+            popular_items = cur.fetchall()
+            analytics_data['popular_items'] = [{'name': row[0], 'sold': row[1]} for row in popular_items]
+
+        # Template mavjudligini tekshirish
+        template_path = os.path.join(app.template_folder, 'super_admin_analytics.html')
+        if os.path.exists(template_path):
+            return render_template("super_admin_analytics.html", analytics=analytics_data)
+        else:
+            # Fallback HTML
+            html_content = f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Analytics - Super Admin</title>
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+            </head>
+            <body>
+                <div class="container mt-4">
+                    <h2>📊 Analytics</h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Oylik buyurtmalar</h4>
+                            <ul class="list-group">
+                                {''.join([f'<li class="list-group-item">{item["month"]}: {item["orders"]} ta</li>' for item in analytics_data["monthly_orders"]])}
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Mashhur mahsulotlar</h4>
+                            <ul class="list-group">
+                                {''.join([f'<li class="list-group-item">{item["name"]}: {item["sold"]} ta</li>' for item in analytics_data["popular_items"]])}
+                            </ul>
+                        </div>
+                    </div>
+                    <a href="{url_for('super_admin_dashboard')}" class="btn btn-primary mt-3">Dashboard ga qaytish</a>
+                </div>
+            </body>
+            </html>
+            """
+            return html_content
+
+    except Exception as e:
+        app_logger.error(f"Super admin analytics xatoligi: {str(e)}")
+        return f"""
+        <div class="container mt-4">
+            <h2>Analytics - Xatolik</h2>
+            <div class="alert alert-danger">Analytics ma'lumotlarini yuklashda xatolik: {str(e)}</div>
+            <a href="{url_for('super_admin_dashboard')}" class="btn btn-primary">Dashboard ga qaytish</a>
+        </div>
+        """, 500
+
+@app.route("/super-admin/reports")
+def super_admin_reports():
+    if not session.get("super_admin"):
+        flash("Super admin paneliga kirish talab qilinadi.", "error")
+        return redirect(url_for("super_admin_login"))
+
+    try:
+        reports_data = {
+            'daily': {'orders': 0, 'revenue': 0},
+            'weekly': {'orders': 0, 'revenue': 0},
+            'monthly': {'orders': 0, 'revenue': 0}
+        }
+
+        with db_pool.get_connection() as conn:
+            cur = conn.cursor()
+
+            # Kunlik hisobot
+            today = get_current_time().strftime("%Y-%m-%d")
+            cur.execute("SELECT COUNT(*) FROM orders WHERE DATE(created_at) = ?", (today,))
+            daily_orders = cur.fetchone()[0] if cur.fetchone() else 0
+            reports_data['daily']['orders'] = daily_orders
+
+            # Haftalik hisobot
+            week_ago = (get_current_time() - datetime.timedelta(days=7)).strftime("%Y-%m-%d")
+            cur.execute("SELECT COUNT(*) FROM orders WHERE DATE(created_at) >= ?", (week_ago,))
+            weekly_orders = cur.fetchone()[0] if cur.fetchone() else 0
+            reports_data['weekly']['orders'] = weekly_orders
+
+            # Oylik hisobot
+            month_ago = (get_current_time() - datetime.timedelta(days=30)).strftime("%Y-%m-%d")
+            cur.execute("SELECT COUNT(*) FROM orders WHERE DATE(created_at) >= ?", (month_ago,))
+            monthly_orders = cur.fetchone()[0] if cur.fetchone() else 0
+            reports_data['monthly']['orders'] = monthly_orders
+
+        # Template fallback
+        template_path = os.path.join(app.template_folder, 'super_admin_reports.html')
+        if os.path.exists(template_path):
+            return render_template("super_admin_reports.html", reports=reports_data)
+        else:
+            html_content = f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Reports - Super Admin</title>
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+            </head>
+            <body>
+                <div class="container mt-4">
+                    <h2>📈 Hisobotlar</h2>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Bugungi kun</h5>
+                                    <p class="card-text">Buyurtmalar: {reports_data['daily']['orders']}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Bu hafta</h5>
+                                    <p class="card-text">Buyurtmalar: {reports_data['weekly']['orders']}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Bu oy</h5>
+                                    <p class="card-text">Buyurtmalar: {reports_data['monthly']['orders']}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{url_for('super_admin_dashboard')}" class="btn btn-primary mt-3">Dashboard ga qaytish</a>
+                </div>
+            </body>
+            </html>
+            """
+            return html_content
+
+    except Exception as e:
+        app_logger.error(f"Super admin reports xatoligi: {str(e)}")
+        return f"""
+        <div class="container mt-4">
+            <h2>Reports - Xatolik</h2>
+            <div class="alert alert-danger">Hisobotlarni yuklashda xatolik: {str(e)}</div>
+            <a href="{url_for('super_admin_dashboard')}" class="btn btn-primary">Dashboard ga qaytish</a>
+        </div>
+        """, 500
+
+@app.route("/super-admin/system")
+def super_admin_system():
+    if not session.get("super_admin"):
+        flash("Super admin paneliga kirish talab qilinadi.", "error")
+        return redirect(url_for("super_admin_login"))
+
+    try:
+        system_info = {
+            'performance': {},
+            'database': {'tables_count': 0, 'tables': []},
+            'server_info': {},
+            'environment': os.environ.get('FLASK_ENV', 'production')
+        }
+
+        # Performance statistikasi
+        try:
+            if hasattr(performance_monitor, 'get_stats'):
+                system_info['performance'] = performance_monitor.get_stats()
+        except:
+            system_info['performance'] = {'avg_response_time': 0, 'total_requests': 0}
+
+        # Database info
+        try:
+            with db_pool.get_connection() as conn:
+                cur = conn.cursor()
+                cur.execute("SELECT name FROM sqlite_master WHERE type='table'")
+                tables = cur.fetchall()
+                system_info['database']['tables_count'] = len(tables)
+                system_info['database']['tables'] = [table[0] for table in tables]
+        except:
+            pass
+
+        # Template fallback
+        template_path = os.path.join(app.template_folder, 'super_admin_system.html')
+        if os.path.exists(template_path):
+            return render_template("super_admin_system.html", system=system_info)
+        else:
+            html_content = f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>System - Super Admin</title>
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+            </head>
+            <body>
+                <div class="container mt-4">
+                    <h2>⚙️ Tizim ma'lumotlari</h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Database</h4>
+                            <p>Jadvallar soni: {system_info['database']['tables_count']}</p>
+                            <p>Environment: {system_info['environment']}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Performance</h4>
+                            <p>Jami so'rovlar: {system_info['performance'].get('total_requests', 0)}</p>
+                            <p>O'rtacha javob vaqti: {system_info['performance'].get('avg_response_time', 0):.2f}s</p>
+                        </div>
+                    </div>
+                    <a href="{url_for('super_admin_dashboard')}" class="btn btn-primary mt-3">Dashboard ga qaytish</a>
+                </div>
+            </body>
+            </html>
+            """
+            return html_content
+
+    except Exception as e:
+        app_logger.error(f"Super admin system xatoligi: {str(e)}")
+        return f"""
+        <div class="container mt-4">
+            <h2>System - Xatolik</h2>
+            <div class="alert alert-danger">Tizim ma'lumotlarini yuklashda xatolik: {str(e)}</div>
+            <a href="{url_for('super_admin_dashboard')}" class="btn btn-primary">Dashboard ga qaytish</a>
+        </div>
+        """, 500
+
+@app.route("/super-admin/logs")
+def super_admin_logs():
+    if not session.get("super_admin"):
+        flash("Super admin paneliga kirish talab qilinadi.", "error")
+        return redirect(url_for("super_admin_login"))
+
+    try:
+        log_data = {
+            'recent_logs': [],
+            'error_logs': [],
+            'system_logs': []
+        }
+
+        # Log fayllarini xavfsiz o'qish
+        try:
+            if os.path.exists('logs/restaurant.log'):
+                with open('logs/restaurant.log', 'r', encoding='utf-8') as f:
+                    log_lines = f.readlines()[-20:]  # So'nggi 20 ta log
+                    log_data['recent_logs'] = [line.strip() for line in log_lines if line.strip()]
+        except:
+            log_data['recent_logs'] = ['Log faylini o\'qib bo\'lmadi']
+
+        try:
+            if os.path.exists('logs/errors.log'):
+                with open('logs/errors.log', 'r', encoding='utf-8') as f:
+                    error_lines = f.readlines()[-10:]  # So'nggi 10 ta error
+                    log_data['error_logs'] = [line.strip() for line in error_lines if line.strip()]
+        except:
+            log_data['error_logs'] = ['Error log faylini o\'qib bo\'lmadi']
+
+        # Template fallback
+        template_path = os.path.join(app.template_folder, 'super_admin_logs.html')
+        if os.path.exists(template_path):
+            return render_template("super_admin_logs.html", logs=log_data)
+        else:
+            html_content = f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Logs - Super Admin</title>
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+            </head>
+            <body>
+                <div class="container mt-4">
+                    <h2>📝 Loglar</h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>So'nggi loglar</h4>
+                            <div style="background-color: #f8f9fa; padding: 10px; border-radius: 5px; max-height: 400px; overflow-y: auto;">
+                                {'<br>'.join(log_data['recent_logs']) if log_data['recent_logs'] else 'Loglar mavjud emas'}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Xatolar</h4>
+                            <div style="background-color: #f8f9fa; padding: 10px; border-radius: 5px; max-height: 400px; overflow-y: auto;">
+                                {'<br>'.join(log_data['error_logs']) if log_data['error_logs'] else 'Xatolar mavjud emas'}
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{url_for('super_admin_dashboard')}" class="btn btn-primary mt-3">Dashboard ga qaytish</a>
+                </div>
+            </body>
+            </html>
+            """
+            return html_content
+
+    except Exception as e:
+        app_logger.error(f"Super admin logs xatoligi: {str(e)}")
+        return f"""
+        <div class="container mt-4">
+            <h2>Logs - Xatolik</h2>
+            <div class="alert alert-danger">Loglarni yuklashda xatolik: {str(e)}</div>
+            <a href="{url_for('super_admin_dashboard')}" class="btn btn-primary">Dashboard ga qaytish</a>
+        </div>
+        """, 500
+
+@app.route("/super-admin/delete-user-db/<int:user_id>", methods=["POST"])
+def super_admin_delete_user_db(user_id):
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+
+    try:
+        execute_query("DELETE FROM users WHERE id = ?", (user_id,))
+        flash(f"Foydalanuvchi #{user_id} o'chirildi.", "success")
+    except Exception as e:
+        app_logger.error(f"Delete user error: {str(e)}")
+        flash("Foydalanuvchini o'chirishda xatolik yuz berdi.", "error")
+
+    return redirect(url_for("super_admin_dashboard"))
+
+@app.route("/super-admin/delete-user", methods=["POST"])
+def super_admin_delete_user():
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+
+    ticket_no = request.form.get("ticket_no")
+    if not ticket_no:
+        flash("Ticket raqami topilmadi.", "error")
+        return redirect(url_for("super_admin_dashboard"))
+
+    # JSON fayldan o'chirish
+    users_file = 'users.json'
+    if os.path.exists(users_file):
+        try:
+            with open(users_file, 'r', encoding='utf-8') as f:
+                users = json.load(f)
+
+            users = [user for user in users if str(user.get('buyurtma_raqami')) != str(ticket_no)]
+
+            with open(users_file, 'w', encoding='utf-8') as f:
+                json.dump(users, f, ensure_ascii=False, indent=2)
+
+            flash(f"Buyurtma #{ticket_no} o'chirildi.", "success")
+        except Exception as e:
+            app_logger.error(f"Delete user JSON error: {str(e)}")
+            flash("Buyurtmani o'chirishda xatolik yuz berdi.", "error")
+
+    return redirect(url_for("super_admin_dashboard"))
+
+@app.route("/super-admin/toggle-branch/<int:branch_id>", methods=["POST"])
+def super_admin_toggle_branch(branch_id):
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+
+    try:
+        execute_query("UPDATE branches SET is_active = NOT is_active WHERE id = ?", (branch_id,))
+        flash(f"Filial #{branch_id} holati o'zgartirildi.", "success")
+    except Exception as e:
+        app_logger.error(f"Toggle branch error: {str(e)}")
+        flash("Filial holatini o'zgartirishda xatolik yuz berdi.", "error")
+
+    return redirect(url_for("super_admin_dashboard"))
+
+@app.route("/super-admin/reset-staff-password", methods=["POST"])
+def super_admin_reset_staff_password():
+    if not session.get("super_admin"):
+        return jsonify({"success": False, "message": "Unauthorized"}), 401
+
+    data = request.get_json()
+    staff_id = data.get("staff_id")
+    new_password = data.get("new_password")
+
+    if not staff_id or not new_password:
+        return jsonify({"success": False, "message": "Ma'lumotlar to'liq emas"})
+
+    try:
+        password_hash = generate_password_hash(new_password)
+        execute_query("UPDATE staff SET password_hash = ? WHERE id = ?", (password_hash, staff_id))
+        return jsonify({"success": True, "message": "Parol yangilandi"})
+    except Exception as e:
+        app_logger.error(f"Reset staff password error: {str(e)}")
+        return jsonify({"success": False, "message": "Xatolik yuz berdi"})
+
+@app.route("/super-admin/reset-courier-password", methods=["POST"])
+def super_admin_reset_courier_password():
+    if not session.get("super_admin"):
+        return jsonify({"success": False, "message": "Unauthorized"}), 401
+
+    data = request.get_json()
+    courier_id = data.get("courier_id")
+    new_password = data.get("new_password")
+
+    if not courier_id or not new_password:
+        return jsonify({"success": False, "message": "Ma'lumotlar to'liq emas"})
+
+    try:
+        password_hash = generate_password_hash(new_password)
+        execute_query("UPDATE couriers SET password_hash = ? WHERE id = ?", (password_hash, courier_id))
+        return jsonify({"success": True, "message": "Parol yangilandi"})
+    except Exception as e:
+        app_logger.error(f"Reset courier password error: {str(e)}")
+        return jsonify({"success": False, "message": "Xatolik yuz berdi"})
+
+@app.route("/super-admin/reset-user-password", methods=["POST"])
+def super_admin_reset_user_password():
+    if not session.get("super_admin"):
+        return jsonify({"success": False, "message": "Unauthorized"}), 401
+
+    data = request.get_json()
+    user_id = data.get("user_id")
+    new_password = data.get("new_password")
+
+    if not user_id or not new_password:
+        return jsonify({"success": False, "message": "Ma'lumotlar to'liq emas"})
+
+    try:
+        password_hash = generate_password_hash(new_password)
+        execute_query("UPDATE users SET password_hash = ? WHERE id = ?", (password_hash, user_id))
+        return jsonify({"success": True, "message": "Parol yangilandi"})
+    except Exception as e:
+        app_logger.error(f"Reset user password error: {str(e)}")
+        return jsonify({"success": False, "message": "Xatolik yuz berdi"})
+
+@app.route("/api/super-admin/dashboard-stats")
+def api_super_admin_dashboard_stats():
+    """Super admin dashboard statistikalari"""
+    if not session.get("super_admin"):
+        return jsonify({"error": "Unauthorized"}), 401
+
+    try:
+        # Asosiy statistikalar
+        stats = {}
+
+        # Jami buyurtmalar
+        result = execute_query("SELECT COUNT(*) FROM orders", fetch_one=True)
+        stats['total_orders'] = result[0] if result else 0
+
+        # Status bo'yicha statistika
+        result = execute_query("SELECT COUNT(*) FROM orders WHERE status='waiting'", fetch_one=True)
+        stats['waiting_orders'] = result[0] if result else 0
+
+        result = execute_query("SELECT COUNT(*) FROM orders WHERE status='ready'", fetch_one=True)
+        stats['ready_orders'] = result[0] if result else 0
+
+        result = execute_query("SELECT COUNT(*) FROM orders WHERE status='served'", fetch_one=True)
+        stats['served_orders'] = result[0] if result else 0
+
+        # Bu oylik statistika
+        current_month = get_current_time().strftime("%Y-%m")
+        result = execute_query("SELECT COUNT(*) FROM orders WHERE created_at LIKE ?", (f"{current_month}%",), fetch_one=True)
+        stats['month_orders'] = result[0] if result else 0
+
+        # Xodimlar statistikasi
+        result = execute_query("SELECT COUNT(*) FROM staff", fetch_one=True)
+        stats['total_staff'] = result[0] if result else 0
+
+        result = execute_query("SELECT COUNT(*) FROM couriers", fetch_one=True)
+        stats['total_couriers'] = result[0] if result else 0
+
+        result = execute_query("SELECT COUNT(*) FROM users", fetch_one=True)
+        stats['total_users'] = result[0] if result else 0
+
+        return jsonify({"stats": stats})
+
+    except Exception as e:
+        app_logger.error(f"Super admin dashboard stats error: {str(e)}")
+        return jsonify({"error": "Statistikalarni olishda xatolik"}), 500
+
+@app.route("/contact")
+def contact():
+    """Aloqa sahifasi"""
+    return render_template("contact.html", current_page='contact')
+
+@app.route("/about")
+def about():
+    """Biz haqimizda sahifasi"""
+    return render_template("about.html", current_page='about')
+
+@app.route("/downloads")
+def downloads():
+    """Yuklab olish sahifasi"""
+    return render_template("downloads.html", current_page='downloads')
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)
