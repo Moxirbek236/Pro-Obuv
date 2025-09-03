@@ -3184,19 +3184,20 @@ def staff_login():
                     print(f"Staff faollik yangilashda xatolik: {e}")
                     pass
 
-            # SQLite Row obyektini xavfsiz dict ga aylantirish
-            row_dict = dict(row) if hasattr(row, 'keys') else row
-            
-            # Session ma'lumotlarini alohida saqlash
-            staff_id = row_dict["id"]
-            staff_first_name = row_dict["first_name"]
-            staff_last_name = row_dict["last_name"]
-            
-            session["staff_id"] = staff_id
-            session["staff_name"] = f"{staff_first_name} {staff_last_name}"
-            flash(f"Xush kelibsiz, {staff_first_name}!", "success")
-            conn.close()
-            return redirect(url_for("staff_dashboard"))
+                # Session ma'lumotlarini alohida saqlash (row_dict dan)
+                staff_id = row_dict["id"]
+                staff_first_name = row_dict["first_name"]
+                staff_last_name = row_dict["last_name"]
+                
+                session["staff_id"] = staff_id
+                session["staff_name"] = f"{staff_first_name} {staff_last_name}"
+                flash(f"Xush kelibsiz, {staff_first_name}!", "success")
+                conn.close()
+                return redirect(url_for("staff_dashboard"))
+            else:
+                conn.close()
+                flash("Noto'g'ri ID yoki parol.", "error")
+                return redirect(url_for("staff_login"))
         else:
             conn.close()
             flash("Noto'g'ri ID yoki parol.", "error")
