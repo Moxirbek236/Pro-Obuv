@@ -685,7 +685,9 @@ db_pool = DatabasePool(DB_PATH, Config.DB_POOL_MAX_CONNECTIONS)
 
 def get_db():
     """Legacy support uchun"""
-    return sqlite3.connect(DB_PATH, check_same_thread=False)
+    conn = sqlite3.connect(DB_PATH, check_same_thread=False)
+    conn.row_factory = sqlite3.Row
+    return conn
 
 # Optimized database operations
 def execute_query(query, params=None, fetch_one=False, fetch_all=False):
@@ -1732,6 +1734,8 @@ def get_cart_items(conn, session_id, user_id=None):
         app_logger.error("Database connection not available in get_cart_items")
         return []
 
+    # Set row_factory to return Row objects
+    conn.row_factory = sqlite3.Row
     cur = conn.cursor()
 
     try:
@@ -1781,28 +1785,33 @@ def get_cart_items(conn, session_id, user_id=None):
         for row in results:
             try:
                 # SQLite Row obyektini dict ga o'tkazish
-                if hasattr(row, 'keys'):
-                    item_dict = dict(zip(row.keys(), row))
-                else:
-                    # Tuple holatida bo'lsa
-                    item_dict = {
-                        'id': row[0],
-                        'menu_item_id': row[1],
-                        'name': row[2],
-                        'price': row[3],
-                        'quantity': row[4],
-                        'discount_percentage': row[5] if row[5] is not None else 0,
-                        'total': row[6] if len(row) > 6 else row[3] * row[4]
-                    }
-
-                # discount_percentage ni tekshirish va None bo'lsa 0 qilib qo'yish
-                if item_dict.get('discount_percentage') is None:
-                    item_dict['discount_percentage'] = 0
+                item_dict = {
+                    'id': row['id'],
+                    'menu_item_id': row['menu_item_id'], 
+                    'name': row['name'],
+                    'price': row['price'],
+                    'quantity': row['quantity'],
+                    'discount_percentage': row['discount_percentage'] if row['discount_percentage'] is not None else 0,
+                    'total': row['total'] if row['total'] is not None else (row['price'] * row['quantity'])
+                }
 
                 cart_items.append(item_dict)
             except Exception as row_error:
                 app_logger.error(f"Savatcha element o'qishda xatolik: {str(row_error)}")
-                continue
+                # Fallback: manual tuple access
+                try:
+                    item_dict = {
+                        'id': row[0] if len(row) > 0 else 0,
+                        'menu_item_id': row[1] if len(row) > 1 else 0,
+                        'name': row[2] if len(row) > 2 else '',
+                        'price': row[3] if len(row) > 3 else 0,
+                        'quantity': row[4] if len(row) > 4 else 1,
+                        'discount_percentage': row[5] if len(row) > 5 and row[5] is not None else 0,
+                        'total': row[6] if len(row) > 6 and row[6] is not None else (row[3] * row[4])
+                    }
+                    cart_items.append(item_dict)
+                except:
+                    continue
 
         return cart_items
 
