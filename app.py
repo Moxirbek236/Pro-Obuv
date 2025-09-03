@@ -820,7 +820,7 @@ def init_db():
             created_at TEXT NOT NULL,
             eta_time TEXT NOT NULL,
             FOREIGN KEY (user_id) REFERENCES users (id),
-            FOREIGNKEY (courier_id) REFERENCES couriers (id)
+            FOREIGN KEY (courier_id) REFERENCES couriers (id)
         );
     """)
 
