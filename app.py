@@ -3075,54 +3075,73 @@ def courier_login():
 @app.route("/courier/dashboard")
 def courier_dashboard():
     if "courier_id" not in session:
+        flash("Kuryer tizimiga kirish talab qilinadi.", "error")
         return redirect(url_for("courier_login"))
 
     courier_id = session.get("courier_id")
 
-    # Barcha ready delivery buyurtmalar va kuryerga tegishli buyurtmalarni olish
-    delivery_orders_raw = execute_query("""
-        SELECT o.*,
-               GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
-        FROM orders o
-        LEFT JOIN order_details od ON o.id = od.order_id
-        LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
-        WHERE (o.order_type = 'delivery' AND o.status = 'ready')
-           OR (o.courier_id = ? AND o.status IN ('on_way', 'delivered'))
-        GROUP BY o.id
-        ORDER BY
-            CASE
-                WHEN o.status = 'ready' THEN 1
-                WHEN o.status = 'on_way' THEN 2
-                WHEN o.status = 'delivered' THEN 3
-                ELSE 4
-            END,
-            o.created_at ASC
-    """, (courier_id,), fetch_all=True)
-    delivery_orders = [dict(row) for row in delivery_orders_raw] if delivery_orders_raw else []
+    try:
+        # Barcha ready delivery buyurtmalar va kuryerga tegishli buyurtmalarni olish
+        delivery_orders_raw = execute_query("""
+            SELECT o.*,
+                   GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
+            FROM orders o
+            LEFT JOIN order_details od ON o.id = od.order_id
+            LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
+            WHERE (o.order_type = 'delivery' AND o.status = 'ready')
+               OR (o.courier_id = ? AND o.status IN ('on_way', 'delivered'))
+            GROUP BY o.id
+            ORDER BY
+                CASE
+                    WHEN o.status = 'ready' THEN 1
+                    WHEN o.status = 'on_way' THEN 2
+                    WHEN o.status = 'delivered' THEN 3
+                    ELSE 4
+                END,
+                o.created_at ASC
+        """, (courier_id,), fetch_all=True)
+        delivery_orders = [dict(row) for row in delivery_orders_raw] if delivery_orders_raw else []
 
+        # Kuryer statistikasini olish
+        courier_stats = execute_query("SELECT deliveries_completed, total_hours FROM couriers WHERE id = ?", (courier_id,), fetch_one=True)
 
-    # Kuryer statistikasini olish
-    courier_stats = execute_query("SELECT deliveries_completed, total_hours FROM couriers WHERE id = ?", (courier_id,), fetch_one=True)
+        # Faol buyurtmalar sonini olish
+        active_orders_result = execute_query("SELECT COUNT(*) FROM orders WHERE courier_id = ? AND status = 'on_way'", (courier_id,), fetch_one=True)
+        active_orders = active_orders_result[0] if active_orders_result else 0
 
-    # Faol buyurtmalar sonini olish
-    active_orders_result = execute_query("SELECT COUNT(*) FROM orders WHERE courier_id = ? AND status = 'on_way'", (courier_id,), fetch_one=True)
-    active_orders = active_orders_result[0] if active_orders_result else 0
-
-    # Session ga statistikani saqlash
-    if courier_stats:
-        try:
-            session['courier_deliveries'] = courier_stats.get('deliveries_completed', 0) or 0
-            session['courier_hours'] = round(float(str(courier_stats.get('total_hours', 0) or 0)), 1)
-        except (TypeError, ValueError) as e:
-            app_logger.error(f"Kuryer statistikasini o'qishda xatolik: {str(e)}")
+        # Session ga statistikani saqlash
+        if courier_stats:
+            try:
+                session['courier_deliveries'] = courier_stats.get('deliveries_completed', 0) or 0
+                session['courier_hours'] = round(float(str(courier_stats.get('total_hours', 0) or 0)), 1)
+            except (TypeError, ValueError) as e:
+                app_logger.error(f"Kuryer statistikasini o'qishda xatolik: {str(e)}")
+                session['courier_deliveries'] = 0
+                session['courier_hours'] = 0
+        else:
             session['courier_deliveries'] = 0
             session['courier_hours'] = 0
-    else:
-        session['courier_deliveries'] = 0
-        session['courier_hours'] = 0
-    session['courier_active_orders'] = active_orders
+        session['courier_active_orders'] = active_orders
 
-    return render_template("courier_dashboard.html", orders=delivery_orders)
+        app_logger.info(f"Courier dashboard loaded for courier_id: {courier_id}")
+        return render_template("courier_dashboard.html", orders=delivery_orders)
+
+    except Exception as e:
+        app_logger.error(f"Courier dashboard error: {str(e)}")
+        flash("Dashboard yuklashda xatolik yuz berdi.", "error")
+        try:
+            return render_template("courier_dashboard.html", orders=[])
+        except Exception as template_error:
+            app_logger.error(f"Courier dashboard template error: {str(template_error)}")
+            return """
+            <!DOCTYPE html>
+            <html><head><title>Courier Dashboard - Error</title></head>
+            <body>
+                <h1>Kuryer Dashboard - Xatolik</h1>
+                <p>Dashboard yuklashda xatolik yuz berdi.</p>
+                <a href="/courier-secure-login-k4m7p">Login sahifasiga qaytish</a>
+            </body></html>
+            """, 500
 
 @app.route("/courier/order/<int:order_id>/take", methods=["POST"])
 def courier_take_order(order_id):
@@ -3235,32 +3254,52 @@ def api_cart_count():
         cache_key = f"cart_count_{user_id}_{session_id}"
         cached_count = cache_manager.get(cache_key)
         if cached_count is not None:
-            return jsonify({"cart_count": cached_count})
+            return jsonify({"success": True, "cart_count": cached_count})
 
         # Hisoblash
-        if user_id:
-            cart_count_result = execute_query("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE user_id = ?", (user_id,), fetch_one=True)
-        else:
-            cart_count_result = execute_query("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE session_id = ?", (session_id,), fetch_one=True)
-
-        # Extract count from result - handle both dict and tuple formats
         cart_count = 0
-        if cart_count_result:
-            if isinstance(cart_count_result, dict):
-                cart_count = cart_count_result.get('total_count', 0) or 0
-            elif isinstance(cart_count_result, (list, tuple)) and len(cart_count_result) > 0:
-                cart_count = cart_count_result[0] or 0
+        
+        try:
+            if user_id:
+                cart_count_result = execute_query("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE user_id = ?", (user_id,), fetch_one=True)
             else:
-                cart_count = cart_count_result if isinstance(cart_count_result, int) else 0
+                cart_count_result = execute_query("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE session_id = ?", (session_id,), fetch_one=True)
+
+            # Extract count from result - handle both dict and tuple formats
+            if cart_count_result:
+                if isinstance(cart_count_result, dict):
+                    cart_count = cart_count_result.get('total_count', 0) or 0
+                elif isinstance(cart_count_result, (list, tuple)) and len(cart_count_result) > 0:
+                    cart_count = cart_count_result[0] or 0
+                elif isinstance(cart_count_result, (int, float)):
+                    cart_count = int(cart_count_result)
+                else:
+                    cart_count = 0
+            
+            # Type validation
+            cart_count = max(0, int(cart_count)) if cart_count is not None else 0
+            
+        except Exception as query_error:
+            app_logger.error(f"Cart count query error: {str(query_error)}")
+            cart_count = 0
 
         # Cache ga saqlash
-        cache_manager.set(cache_key, cart_count, ttl=60) # Cache for 1 minute
+        cache_manager.set(cache_key, cart_count, ttl=60)
 
-        return jsonify({"cart_count": cart_count})
+        return jsonify({
+            "success": True, 
+            "cart_count": cart_count,
+            "user_id": user_id,
+            "session_id": session_id[:8] if session_id else None
+        })
 
     except Exception as e:
         app_logger.error(f"Cart count API error: {str(e)}")
-        return jsonify({"cart_count": 0})
+        return jsonify({
+            "success": False, 
+            "cart_count": 0, 
+            "error": "API xatoligi"
+        }), 500
 
 # Cart count endpoint moved to top priority section
 
@@ -3409,6 +3448,7 @@ def staff_login():
 @app.route("/staff/dashboard")
 def staff_dashboard():
     if "staff_id" not in session:
+        flash("Xodim tizimiga kirish talab qilinadi.", "error")
         return redirect(url_for("staff_login"))
 
     cleanup_expired_orders()
@@ -3421,14 +3461,16 @@ def staff_dashboard():
             FROM orders o
             LEFT JOIN order_details od ON o.id = od.order_id
             LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
-            WHERE o.status IN ('waiting', 'ready')
+            WHERE o.status IN ('waiting', 'ready', 'served', 'cancelled')
             GROUP BY o.id
             ORDER BY 
                 CASE 
                     WHEN o.status = 'waiting' THEN 1
                     WHEN o.status = 'ready' THEN 2
+                    WHEN o.status = 'served' THEN 3
+                    WHEN o.status = 'cancelled' THEN 4
                 END,
-                o.created_at ASC
+                o.created_at DESC
         """, fetch_all=True)
         orders = [dict(row) for row in orders_raw] if orders_raw else []
 
@@ -3443,11 +3485,25 @@ def staff_dashboard():
             session['staff_orders_handled'] = 0
             session['staff_hours'] = 0
 
+        app_logger.info(f"Staff dashboard loaded for staff_id: {staff_id}")
         return render_template("staff_dashboard.html", orders=orders)
 
     except Exception as e:
         app_logger.error(f"Staff dashboard error: {str(e)}")
-        return render_template("staff_dashboard.html", orders=[])
+        flash("Dashboard yuklashda xatolik yuz berdi.", "error")
+        try:
+            return render_template("staff_dashboard.html", orders=[])
+        except Exception as template_error:
+            app_logger.error(f"Staff dashboard template error: {str(template_error)}")
+            return """
+            <!DOCTYPE html>
+            <html><head><title>Staff Dashboard - Error</title></head>
+            <body>
+                <h1>Xodim Dashboard - Xatolik</h1>
+                <p>Dashboard yuklashda xatolik yuz berdi.</p>
+                <a href="/staff-secure-login-j7h3n">Login sahifasiga qaytish</a>
+            </body></html>
+            """, 500
 
 @app.route("/staff/order/<int:order_id>/ready", methods=["POST"])
 @app.route("/admin/order/<int:order_id>/ready", methods=["POST"])
@@ -4694,3 +4750,76 @@ def downloads():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
+
+
+# ---- DEBUG ROUTES ----
+@app.route("/debug/routes")
+def debug_routes():
+    """Debug route listing all available routes"""
+    if not session.get("super_admin"):
+        return "Unauthorized", 401
+    
+    routes = []
+    for rule in app.url_map.iter_rules():
+        routes.append({
+            'endpoint': rule.endpoint,
+            'methods': list(rule.methods),
+            'rule': str(rule)
+        })
+    
+    routes_html = "<h1>Available Routes</h1><table border='1'><tr><th>Rule</th><th>Endpoint</th><th>Methods</th></tr>"
+    for route in routes:
+        routes_html += f"<tr><td>{route['rule']}</td><td>{route['endpoint']}</td><td>{', '.join(route['methods'])}</td></tr>"
+    routes_html += "</table>"
+    
+    return routes_html
+
+@app.route("/debug/session")
+def debug_session():
+    """Debug session information"""
+    if not session.get("super_admin"):
+        return "Unauthorized", 401
+    
+    return f"<h1>Session Debug</h1><pre>{dict(session)}</pre>"
+
+@app.route("/debug/staff-test")
+def debug_staff_test():
+    """Test staff dashboard without login"""
+    if not session.get("super_admin"):
+        return "Unauthorized", 401
+    
+    try:
+        # Test query
+        staff_count = execute_query("SELECT COUNT(*) FROM staff", fetch_one=True)
+        orders_count = execute_query("SELECT COUNT(*) FROM orders", fetch_one=True)
+        
+        return f"""
+        <h1>Staff Test Results</h1>
+        <p>Staff count: {staff_count[0] if staff_count else 0}</p>
+        <p>Orders count: {orders_count[0] if orders_count else 0}</p>
+        <p>Template exists: {os.path.exists('templates/staff_dashboard.html')}</p>
+        <a href="/staff-secure-login-j7h3n">Staff Login</a>
+        """
+    except Exception as e:
+        return f"<h1>Staff Test Error</h1><p>{str(e)}</p>"
+
+@app.route("/debug/courier-test")
+def debug_courier_test():
+    """Test courier dashboard without login"""
+    if not session.get("super_admin"):
+        return "Unauthorized", 401
+    
+    try:
+        # Test query
+        courier_count = execute_query("SELECT COUNT(*) FROM couriers", fetch_one=True)
+        delivery_orders_count = execute_query("SELECT COUNT(*) FROM orders WHERE order_type = 'delivery'", fetch_one=True)
+        
+        return f"""
+        <h1>Courier Test Results</h1>
+        <p>Courier count: {courier_count[0] if courier_count else 0}</p>
+        <p>Delivery orders count: {delivery_orders_count[0] if delivery_orders_count else 0}</p>
+        <p>Template exists: {os.path.exists('templates/courier_dashboard.html')}</p>
+        <a href="/courier-secure-login-k4m7p">Courier Login</a>
+        """
+    except Exception as e:
+        return f"<h1>Courier Test Error</h1><p>{str(e)}</p>"
