@@ -8,40 +8,40 @@
     <!-- Dashboard Grid -->
     <div class="dashboard-grid">
         <!-- Analytics Block -->
-        <div class="dashboard-card" onclick="navigateToAnalytics()">
+        <a href="/super-admin/analytics" class="dashboard-card">
             <div class="dashboard-icon">📊</div>
             <div class="dashboard-title">Analytics</div>
             <div class="dashboard-description">
                 Biznes statistikasi, daromad tahlili va mijozlar faolligi
             </div>
-        </div>
+        </a>
 
         <!-- Reports Block -->
-        <div class="dashboard-card" onclick="navigateToReports()">
+        <a href="/super-admin/reports" class="dashboard-card">
             <div class="dashboard-icon">📈</div>
             <div class="dashboard-title">Hisobotlar</div>
             <div class="dashboard-description">
                 Moliyaviy hisobotlar, sotuvlar statistikasi va performans tahlili
             </div>
-        </div>
+        </a>
 
         <!-- System Block -->
-        <div class="dashboard-card" onclick="navigateToSystem()">
+        <a href="/super-admin/system" class="dashboard-card">
             <div class="dashboard-icon">⚙️</div>
             <div class="dashboard-title">Tizim</div>
             <div class="dashboard-description">
                 Server monitoring, tizim sozlamalari va texnik ma'lumotlar
             </div>
-        </div>
+        </a>
 
         <!-- Logs Block -->
-        <div class="dashboard-card" onclick="navigateToLogs()">
+        <a href="/super-admin/logs" class="dashboard-card">
             <div class="dashboard-icon">📝</div>
             <div class="dashboard-title">Loglar</div>
             <div class="dashboard-description">
-                Tizim loglari, xatoliklar va foydalanuvchi faolligi
+                Tizim loglari, xatoliklar va faollik monitoring
             </div>
-        </div>
+        </a>
     </div>
 
     <!-- Statistika kartlari -->
@@ -885,7 +885,7 @@ function refreshStats() {
                 document.getElementById('total-staff').textContent = data.stats.total_staff || 0;
                 document.getElementById('total-couriers').textContent = data.stats.total_couriers || 0;
                 document.getElementById('total-users').textContent = data.stats.total_users || 0;
-                
+
                 // Show success message
                 showSuccessMessage('Statistikalar yangilandi');
             }
@@ -902,11 +902,11 @@ function showSuccessMessage(message) {
     notification.className = 'notification success';
     notification.textContent = message;
     document.body.appendChild(notification);
-    
+
     setTimeout(() => {
         notification.classList.add('show');
     }, 100);
-    
+
     setTimeout(() => {
         notification.remove();
     }, 3000);
@@ -917,11 +917,11 @@ function showErrorMessage(message) {
     notification.className = 'notification error';
     notification.textContent = message;
     document.body.appendChild(notification);
-    
+
     setTimeout(() => {
         notification.classList.add('show');
     }, 100);
-    
+
     setTimeout(() => {
         notification.remove();
     }, 3000);
