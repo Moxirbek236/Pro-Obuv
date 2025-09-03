@@ -3545,29 +3545,83 @@ def super_admin_dashboard():
             staff_raw = cur.fetchall() or []
             for staff in staff_raw:
                 try:
+                    # SQLite Row obyektini xavfsiz dict ga aylantirish
                     if hasattr(staff, 'keys'):
-                        staff_db.append(dict(zip(staff.keys(), staff)))
+                        staff_dict = dict(staff)
                     else:
                         # Tuple format uchun manual dict yaratish
-                        staff_db.append({
-                            'id': staff[0],
-                            'first_name': staff[1] if len(staff) > 1 else '',
-                            'last_name': staff[2] if len(staff) > 2 else '',
-                            'birth_date': staff[3] if len(staff) > 3 else '',
-                            'phone': staff[4] if len(staff) > 4 else '',
-                            'passport_series': staff[5] if len(staff) > 5 else '',
-                            'passport_number': staff[6] if len(staff) > 6 else '',
-                            'password_hash': staff[7] if len(staff) > 7 else '',
-                            'total_hours': staff[8] if len(staff) > 8 else 0,
-                            'orders_handled': staff[9] if len(staff) > 9 else 0,
-                            'last_activity': staff[10] if len(staff) > 10 else '',
-                            'created_at': staff[11] if len(staff) > 11 else ''
-                        })
+                        staff_dict = {
+                            'id': int(staff[0]) if staff[0] is not None else 0,
+                            'first_name': str(staff[1]) if len(staff) > 1 and staff[1] is not None else '',
+                            'last_name': str(staff[2]) if len(staff) > 2 and staff[2] is not None else '',
+                            'birth_date': str(staff[3]) if len(staff) > 3 and staff[3] is not None else '',
+                            'phone': str(staff[4]) if len(staff) > 4 and staff[4] is not None else '',
+                            'passport_series': str(staff[5]) if len(staff) > 5 and staff[5] is not None else '',
+                            'passport_number': str(staff[6]) if len(staff) > 6 and staff[6] is not None else '',
+                            'password_hash': str(staff[7]) if len(staff) > 7 and staff[7] is not None else '',
+                            'total_hours': float(staff[8]) if len(staff) > 8 and staff[8] is not None else 0.0,
+                            'orders_handled': int(staff[9]) if len(staff) > 9 and staff[9] is not None else 0,
+                            'last_activity': str(staff[10]) if len(staff) > 10 and staff[10] is not None else '',
+                            'created_at': str(staff[11]) if len(staff) > 11 and staff[11] is not None else ''
+                        }
+                    
+                    # Xavfsiz total_hours va orders_handled konversiyasi
+                    try:
+                        if 'total_hours' in staff_dict:
+                            total_hours_val = staff_dict['total_hours']
+                            if isinstance(total_hours_val, str):
+                                if total_hours_val.replace('.', '').replace(',', '').isdigit():
+                                    staff_dict['total_hours'] = float(total_hours_val.replace(',', '.'))
+                                else:
+                                    staff_dict['total_hours'] = 0.0
+                            elif total_hours_val is None:
+                                staff_dict['total_hours'] = 0.0
+                            else:
+                                staff_dict['total_hours'] = float(total_hours_val)
+                    except (ValueError, TypeError):
+                        staff_dict['total_hours'] = 0.0
+                    
+                    try:
+                        if 'orders_handled' in staff_dict:
+                            orders_val = staff_dict['orders_handled']
+                            if isinstance(orders_val, str):
+                                if orders_val.isdigit():
+                                    staff_dict['orders_handled'] = int(orders_val)
+                                else:
+                                    staff_dict['orders_handled'] = 0
+                            elif orders_val is None:
+                                staff_dict['orders_handled'] = 0
+                            else:
+                                staff_dict['orders_handled'] = int(orders_val)
+                    except (ValueError, TypeError):
+                        staff_dict['orders_handled'] = 0
+
+                    staff_db.append(staff_dict)
+                    
                 except Exception as staff_error:
-                    app_logger.error(f"Staff {staff} qayta ishlashda xatolik: {str(staff_error)}")
-                    continue
+                    app_logger.error(f"Staff {staff[0] if staff and len(staff) > 0 else 'N/A'} qayta ishlashda xatolik: {str(staff_error)}")
+                    # Xatolik bo'lsa ham minimal ma'lumot bilan davom etish
+                    try:
+                        staff_db.append({
+                            'id': int(staff[0]) if staff and len(staff) > 0 and staff[0] is not None else 0,
+                            'first_name': str(staff[1]) if staff and len(staff) > 1 and staff[1] is not None else 'N/A',
+                            'last_name': str(staff[2]) if staff and len(staff) > 2 and staff[2] is not None else 'N/A',
+                            'birth_date': str(staff[3]) if staff and len(staff) > 3 and staff[3] is not None else 'N/A',
+                            'phone': str(staff[4]) if staff and len(staff) > 4 and staff[4] is not None else 'N/A',
+                            'passport_series': 'N/A',
+                            'passport_number': 'N/A',
+                            'password_hash': '',
+                            'total_hours': 0.0,
+                            'orders_handled': 0,
+                            'last_activity': '',
+                            'created_at': str(staff[11]) if staff and len(staff) > 11 and staff[11] is not None else ''
+                        })
+                    except:
+                        continue
+                        
         except Exception as e:
             app_logger.error(f"Staff ma'lumotlarini olishda xatolik: {str(e)}")
+            staff_db = []  # Bo'sh list bilan davom etish
 
         # Kuryerlar ma'lumotlari - xavfsiz olish va dict ga aylantirish
         couriers_db = []
@@ -3576,29 +3630,83 @@ def super_admin_dashboard():
             couriers_raw = cur.fetchall() or []
             for courier in couriers_raw:
                 try:
+                    # SQLite Row obyektini xavfsiz dict ga aylantirish
                     if hasattr(courier, 'keys'):
-                        couriers_db.append(dict(zip(courier.keys(), courier)))
+                        courier_dict = dict(courier)
                     else:
                         # Tuple format uchun manual dict yaratish
-                        couriers_db.append({
-                            'id': courier[0],
-                            'first_name': courier[1] if len(courier) > 1 else '',
-                            'last_name': courier[2] if len(courier) > 2 else '',
-                            'birth_date': courier[3] if len(courier) > 3 else '',
-                            'phone': courier[4] if len(courier) > 4 else '',
-                            'passport_series': courier[5] if len(courier) > 5 else '',
-                            'passport_number': courier[6] if len(courier) > 6 else '',
-                            'password_hash': courier[7] if len(courier) > 7 else '',
-                            'total_hours': courier[8] if len(courier) > 8 else 0,
-                            'deliveries_completed': courier[9] if len(courier) > 9 else 0,
-                            'last_activity': courier[10] if len(courier) > 10 else '',
-                            'created_at': courier[11] if len(courier) > 11 else ''
-                        })
+                        courier_dict = {
+                            'id': int(courier[0]) if courier[0] is not None else 0,
+                            'first_name': str(courier[1]) if len(courier) > 1 and courier[1] is not None else '',
+                            'last_name': str(courier[2]) if len(courier) > 2 and courier[2] is not None else '',
+                            'birth_date': str(courier[3]) if len(courier) > 3 and courier[3] is not None else '',
+                            'phone': str(courier[4]) if len(courier) > 4 and courier[4] is not None else '',
+                            'passport_series': str(courier[5]) if len(courier) > 5 and courier[5] is not None else '',
+                            'passport_number': str(courier[6]) if len(courier) > 6 and courier[6] is not None else '',
+                            'password_hash': str(courier[7]) if len(courier) > 7 and courier[7] is not None else '',
+                            'total_hours': float(courier[8]) if len(courier) > 8 and courier[8] is not None else 0.0,
+                            'deliveries_completed': int(courier[9]) if len(courier) > 9 and courier[9] is not None else 0,
+                            'last_activity': str(courier[10]) if len(courier) > 10 and courier[10] is not None else '',
+                            'created_at': str(courier[11]) if len(courier) > 11 and courier[11] is not None else ''
+                        }
+
+                    # Xavfsiz total_hours va deliveries_completed konversiyasi
+                    try:
+                        if 'total_hours' in courier_dict:
+                            total_hours_val = courier_dict['total_hours']
+                            if isinstance(total_hours_val, str):
+                                if total_hours_val.replace('.', '').replace(',', '').isdigit():
+                                    courier_dict['total_hours'] = float(total_hours_val.replace(',', '.'))
+                                else:
+                                    courier_dict['total_hours'] = 0.0
+                            elif total_hours_val is None:
+                                courier_dict['total_hours'] = 0.0
+                            else:
+                                courier_dict['total_hours'] = float(total_hours_val)
+                    except (ValueError, TypeError):
+                        courier_dict['total_hours'] = 0.0
+
+                    try:
+                        if 'deliveries_completed' in courier_dict:
+                            deliveries_val = courier_dict['deliveries_completed']
+                            if isinstance(deliveries_val, str):
+                                if deliveries_val.isdigit():
+                                    courier_dict['deliveries_completed'] = int(deliveries_val)
+                                else:
+                                    courier_dict['deliveries_completed'] = 0
+                            elif deliveries_val is None:
+                                courier_dict['deliveries_completed'] = 0
+                            else:
+                                courier_dict['deliveries_completed'] = int(deliveries_val)
+                    except (ValueError, TypeError):
+                        courier_dict['deliveries_completed'] = 0
+
+                    couriers_db.append(courier_dict)
+                    
                 except Exception as courier_error:
-                    app_logger.error(f"Courier {courier} qayta ishlashda xatolik: {str(courier_error)}")
-                    continue
+                    app_logger.error(f"Courier {courier[0] if courier and len(courier) > 0 else 'N/A'} qayta ishlashda xatolik: {str(courier_error)}")
+                    # Xatolik bo'lsa ham minimal ma'lumot bilan davom etish
+                    try:
+                        couriers_db.append({
+                            'id': int(courier[0]) if courier and len(courier) > 0 and courier[0] is not None else 0,
+                            'first_name': str(courier[1]) if courier and len(courier) > 1 and courier[1] is not None else 'N/A',
+                            'last_name': str(courier[2]) if courier and len(courier) > 2 and courier[2] is not None else 'N/A',
+                            'birth_date': str(courier[3]) if courier and len(courier) > 3 and courier[3] is not None else 'N/A',
+                            'phone': str(courier[4]) if courier and len(courier) > 4 and courier[4] is not None else 'N/A',
+                            'passport_series': 'N/A',
+                            'passport_number': 'N/A',
+                            'password_hash': '',
+                            'total_hours': 0.0,
+                            'deliveries_completed': 0,
+                            'last_activity': '',
+                            'created_at': str(courier[11]) if courier and len(courier) > 11 and courier[11] is not None else ''
+                        })
+                    except:
+                        continue
+                        
         except Exception as e:
             app_logger.error(f"Couriers ma'lumotlarini olishda xatolik: {str(e)}")
+            couriers_db = []  # Bo'sh list bilan davom etish
 
         # Foydalanuvchilarni olish - xavfsiz va dict ga aylantirish
         users_db = []
@@ -3607,27 +3715,48 @@ def super_admin_dashboard():
             users_raw = cur.fetchall() or []
             for user in users_raw:
                 try:
+                    # SQLite Row obyektini xavfsiz dict ga aylantirish
                     if hasattr(user, 'keys'):
-                        users_db.append(dict(zip(user.keys(), user)))
+                        user_dict = dict(user)
                     else:
                         # Tuple format uchun manual dict yaratish
-                        users_db.append({
-                            'id': user[0],
-                            'first_name': user[1] if len(user) > 1 else '',
-                            'last_name': user[2] if len(user) > 2 else '',
-                            'email': user[3] if len(user) > 3 else '',
-                            'phone': user[4] if len(user) > 4 else '',
-                            'password_hash': user[5] if len(user) > 5 else '',
-                            'address': user[6] if len(user) > 6 else '',
-                            'card_number': user[7] if len(user) > 7 else '',
-                            'card_expiry': user[8] if len(user) > 8 else '',
-                            'created_at': user[9] if len(user) > 9 else ''
-                        })
+                        user_dict = {
+                            'id': int(user[0]) if user[0] is not None else 0,
+                            'first_name': str(user[1]) if len(user) > 1 and user[1] is not None else '',
+                            'last_name': str(user[2]) if len(user) > 2 and user[2] is not None else '',
+                            'email': str(user[3]) if len(user) > 3 and user[3] is not None else '',
+                            'phone': str(user[4]) if len(user) > 4 and user[4] is not None else '',
+                            'password_hash': str(user[5]) if len(user) > 5 and user[5] is not None else '',
+                            'address': str(user[6]) if len(user) > 6 and user[6] is not None else '',
+                            'card_number': str(user[7]) if len(user) > 7 and user[7] is not None else '',
+                            'card_expiry': str(user[8]) if len(user) > 8 and user[8] is not None else '',
+                            'created_at': str(user[9]) if len(user) > 9 and user[9] is not None else ''
+                        }
+                    
+                    users_db.append(user_dict)
+                    
                 except Exception as user_error:
-                    app_logger.error(f"User {user} qayta ishlashda xatolik: {str(user_error)}")
-                    continue
+                    app_logger.error(f"User {user[0] if user and len(user) > 0 else 'N/A'} qayta ishlashda xatolik: {str(user_error)}")
+                    # Xatolik bo'lsa ham minimal ma'lumot bilan davom etish
+                    try:
+                        users_db.append({
+                            'id': int(user[0]) if user and len(user) > 0 and user[0] is not None else 0,
+                            'first_name': str(user[1]) if user and len(user) > 1 and user[1] is not None else 'N/A',
+                            'last_name': str(user[2]) if user and len(user) > 2 and user[2] is not None else 'N/A',
+                            'email': str(user[3]) if user and len(user) > 3 and user[3] is not None else 'N/A',
+                            'phone': 'N/A',
+                            'password_hash': '',
+                            'address': 'N/A',
+                            'card_number': 'N/A',
+                            'card_expiry': 'N/A',
+                            'created_at': str(user[9]) if user and len(user) > 9 and user[9] is not None else ''
+                        })
+                    except:
+                        continue
+                        
         except Exception as e:
             app_logger.error(f"Users ma'lumotlarini olishda xatolik: {str(e)}")
+            users_db = []  # Bo'sh list bilan davom etish
 
         # JSON fayldan foydalanuvchilarni olish - xavfsiz
         users_json = []
