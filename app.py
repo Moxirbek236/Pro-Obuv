@@ -4962,7 +4962,7 @@ def api_reports_data():
 
 @app.route("/api/super-admin/system-info")
 @login_required
-def api_system_info():
+def api_system_info_detailed():
     """Tizim ma'lumotlarini olish"""
     try:
         import sys
