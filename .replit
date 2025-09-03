@@ -9,7 +9,7 @@ localPort = 5000
 externalPort = 80
 
 [workflows]
-runButton = "Start Restaurant App"
+runButton = "Debug Restaurant Server"
 
 [[workflows.workflow]]
 name = "Run Flask App"
@@ -298,6 +298,39 @@ args = "export FLASK_APP=app.py"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "echo \"🚀 Starting Restaurant Management System...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python app.py"
+
+[[workflows.workflow]]
+name = "Debug Restaurant Server"
+author = 45556560
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "export FLASK_ENV=development"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "export FLASK_APP=app.py"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "export PYTHONPATH=$PYTHONPATH:$(pwd)"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"🔧 Debug mode: checking for errors...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python -c \"import app; print('✅ Import successful')\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"🚀 Starting server in debug mode...\""
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
