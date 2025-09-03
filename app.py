@@ -3162,27 +3162,27 @@ def staff_login():
                 try:
                     # Agar avvalgi faollik vaqti mavjud bo'lsa, ishchi soatlarni yangilash
                     if row_dict.get("last_activity"):
-                    try:
-                        last_activity = datetime.datetime.fromisoformat(row["last_activity"])
-                        time_diff = now - last_activity
+                        try:
+                            last_activity = datetime.datetime.fromisoformat(row_dict["last_activity"])
+                            time_diff = now - last_activity
 
-                        # Agar 8 soatdan kam bo'lsa, ishchi vaqtga qo'shish
-                        if time_diff.total_seconds() < 28800:  # 8 soat
-                            additional_hours = time_diff.total_seconds() / 3600
-                            cur.execute("UPDATE staff SET total_hours = COALESCE(total_hours, 0) + ?, last_activity = ? WHERE id = ?",
-                                       (additional_hours, now_iso, staff_id_int))
-                        else:
+                            # Agar 8 soatdan kam bo'lsa, ishchi vaqtga qo'shish
+                            if time_diff.total_seconds() < 28800:  # 8 soat
+                                additional_hours = time_diff.total_seconds() / 3600
+                                cur.execute("UPDATE staff SET total_hours = COALESCE(total_hours, 0) + ?, last_activity = ? WHERE id = ?",
+                                           (additional_hours, now_iso, staff_id_int))
+                            else:
+                                cur.execute("UPDATE staff SET last_activity = ? WHERE id = ?", (now_iso, staff_id_int))
+                        except Exception as time_error:
+                            print(f"Vaqt hisoblashda xatolik: {time_error}")
                             cur.execute("UPDATE staff SET last_activity = ? WHERE id = ?", (now_iso, staff_id_int))
-                    except Exception as time_error:
-                        print(f"Vaqt hisoblashda xatolik: {time_error}")
+                    else:
                         cur.execute("UPDATE staff SET last_activity = ? WHERE id = ?", (now_iso, staff_id_int))
-                else:
-                    cur.execute("UPDATE staff SET last_activity = ? WHERE id = ?", (now_iso, staff_id_int))
 
-                conn.commit()
-            except Exception as e:
-                print(f"Staff faollik yangilashda xatolik: {e}")
-                pass
+                    conn.commit()
+                except Exception as e:
+                    print(f"Staff faollik yangilashda xatolik: {e}")
+                    pass
 
             # SQLite Row obyektini xavfsiz dict ga aylantirish
             row_dict = dict(row) if hasattr(row, 'keys') else row
