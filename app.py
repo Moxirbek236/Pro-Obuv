@@ -2272,6 +2272,90 @@ def remove_from_cart(cart_item_id):
     flash("Mahsulot savatchadan olib tashlandi.", "success")
     return redirect(url_for("cart"))
 
+@app.route("/favorites")
+@login_required
+def favorites():
+    """Foydalanuvchi sevimli mahsulotlari"""
+    try:
+        user_id = session.get("user_id")
+        if not user_id:
+            flash("Sevimlilar ro'yxatini ko'rish uchun tizimga kiring.", "warning")
+            return redirect(url_for("login_page"))
+        
+        conn = get_db()
+        cur = conn.cursor()
+        
+        # Sevimli mahsulotlarni olish
+        cur.execute("""
+            SELECT m.*, f.created_at as favorite_added
+            FROM menu_items m
+            JOIN favorites f ON m.id = f.menu_item_id
+            WHERE f.user_id = ?
+            ORDER BY f.created_at DESC
+        """, (user_id,))
+        
+        favorite_items = [dict(row) for row in cur.fetchall()]
+        conn.close()
+        
+        return render_template("favorites.html", favorites=favorite_items, current_page='favorites')
+        
+    except Exception as e:
+        app_logger.error(f"Favorites sahifasida xatolik: {str(e)}")
+        flash("Sevimlilar ro'yxatini yuklashda xatolik yuz berdi.", "error")
+        return redirect(url_for("index"))
+
+@app.route("/add-to-favorites/<int:menu_item_id>", methods=["POST"])
+@login_required  
+def add_to_favorites(menu_item_id):
+    """Mahsulotni sevimlilarga qo'shish"""
+    try:
+        user_id = session.get("user_id")
+        if not user_id:
+            return jsonify({"success": False, "message": "Tizimga kiring"})
+        
+        conn = get_db()
+        cur = conn.cursor()
+        
+        # Allaqachon sevimli emasligini tekshirish
+        cur.execute("SELECT id FROM favorites WHERE user_id = ? AND menu_item_id = ?", (user_id, menu_item_id))
+        if cur.fetchone():
+            conn.close()
+            return jsonify({"success": False, "message": "Bu mahsulot allaqachon sevimlilarda"})
+        
+        # Sevimlilarga qo'shish
+        now = get_current_time().isoformat()
+        cur.execute("INSERT INTO favorites (user_id, menu_item_id, created_at) VALUES (?, ?, ?)", 
+                   (user_id, menu_item_id, now))
+        conn.commit()
+        conn.close()
+        
+        return jsonify({"success": True, "message": "Sevimlilar ro'yxatiga qo'shildi"})
+        
+    except Exception as e:
+        app_logger.error(f"Add to favorites error: {str(e)}")
+        return jsonify({"success": False, "message": "Xatolik yuz berdi"})
+
+@app.route("/remove-from-favorites/<int:menu_item_id>", methods=["POST"])
+@login_required
+def remove_from_favorites(menu_item_id):
+    """Mahsulotni sevimlilardan olib tashlash"""
+    try:
+        user_id = session.get("user_id")
+        if not user_id:
+            return jsonify({"success": False, "message": "Tizimga kiring"})
+        
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute("DELETE FROM favorites WHERE user_id = ? AND menu_item_id = ?", (user_id, menu_item_id))
+        conn.commit()
+        conn.close()
+        
+        return jsonify({"success": True, "message": "Sevimlilardan olib tashlandi"})
+        
+    except Exception as e:
+        app_logger.error(f"Remove from favorites error: {str(e)}")
+        return jsonify({"success": False, "message": "Xatolik yuz berdi"})
+
 # ---- USER LOGIN & REGISTER ----
 
 @app.route("/register", methods=["GET", "POST"])
@@ -2761,24 +2845,35 @@ def courier_login():
             conn_update = get_db()
             cur_update = conn_update.cursor()
 
-            # Agar avvalgi faollik vaqti mavjud bo'lsa, ishchi soatlarni yangilash
-            if row["last_activity"]:
-                try:
-                    last_activity = datetime.datetime.fromisoformat(row["last_activity"])
-                    current_time = get_current_time()
-                    time_diff = current_time - last_activity
+            # Row obyektini dict ga aylantirish
+            try:
+                if hasattr(row, 'keys'):
+                    row_dict = dict(row)
+                else:
+                    columns = ['id', 'first_name', 'last_name', 'birth_date', 'phone', 'passport_series', 'passport_number', 'password_hash', 'total_hours', 'deliveries_completed', 'last_activity', 'created_at']
+                    row_dict = {columns[i]: row[i] if i < len(row) else None for i in range(len(columns))}
+                
+                # Agar avvalgi faollik vaqti mavjud bo'lsa, ishchi soatlarni yangilash
+                if row_dict.get("last_activity"):
+                    try:
+                        last_activity = datetime.datetime.fromisoformat(row_dict["last_activity"])
+                        current_time = get_current_time()
+                        time_diff = current_time - last_activity
 
-                    # Agar 8 soatdan kam bo'lsa, ishchi vaqtga qo'shish
-                    if time_diff.total_seconds() < 28800:  # 8 soat
-                        additional_hours = time_diff.total_seconds() / 3600
-                        cur_update.execute("UPDATE couriers SET total_hours = COALESCE(total_hours, 0) + ?, last_activity = ? WHERE id = ?",
-                                   (additional_hours, now, courier_id))
-                    else:
+                        # Agar 8 soatdan kam bo'lsa, ishchi vaqtga qo'shish
+                        if time_diff.total_seconds() < 28800:  # 8 soat
+                            additional_hours = time_diff.total_seconds() / 3600
+                            cur_update.execute("UPDATE couriers SET total_hours = COALESCE(total_hours, 0) + ?, last_activity = ? WHERE id = ?",
+                                       (additional_hours, now, courier_id))
+                        else:
+                            cur_update.execute("UPDATE couriers SET last_activity = ? WHERE id = ?", (now, courier_id))
+                    except:
                         cur_update.execute("UPDATE couriers SET last_activity = ? WHERE id = ?", (now, courier_id))
-                except:
+                else:
                     cur_update.execute("UPDATE couriers SET last_activity = ? WHERE id = ?", (now, courier_id))
-            else:
-                cur.execute("UPDATE couriers SET last_activity = ? WHERE id = ?", (now, courier_id))
+            except Exception as dict_error:
+                app_logger.error(f"Courier row dict conversion error: {str(dict_error)}")
+                row_dict = None
 
             conn_update.commit()
             conn_update.close()
@@ -4155,6 +4250,21 @@ def super_admin_logout():
     session.pop("super_admin", None)
     flash("Super admin panelidan chiqdingiz.", "info")
     return redirect(url_for("index"))
+
+@app.route("/contact")
+def contact():
+    """Aloqa sahifasi"""
+    return render_template("contact.html", current_page='contact')
+
+@app.route("/about")
+def about():
+    """Biz haqimizda sahifasi"""
+    return render_template("about.html", current_page='about')
+
+@app.route("/downloads")
+def downloads():
+    """Yuklab olish sahifasi"""
+    return render_template("downloads.html", current_page='downloads')
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
