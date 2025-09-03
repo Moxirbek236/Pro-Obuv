@@ -4378,30 +4378,58 @@ if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
 
 
-# Missing super admin routes
+# Super admin additional routes
 @app.route("/super-admin/analytics")
 def super_admin_analytics():
     if not session.get("super_admin"):
+        flash("Super admin paneliga kirish talab qilinadi.", "error")
         return redirect(url_for("super_admin_login"))
-    return render_template("super_admin_analytics.html")
+    
+    try:
+        return render_template("super_admin_analytics.html")
+    except Exception as e:
+        app_logger.error(f"Super admin analytics sahifasida xatolik: {str(e)}")
+        flash("Analytics sahifasini yuklashda xatolik yuz berdi.", "error")
+        return redirect(url_for("super_admin_dashboard"))
 
 @app.route("/super-admin/reports")
 def super_admin_reports():
     if not session.get("super_admin"):
+        flash("Super admin paneliga kirish talab qilinadi.", "error")
         return redirect(url_for("super_admin_login"))
-    return render_template("super_admin_reports.html")
+    
+    try:
+        return render_template("super_admin_reports.html")
+    except Exception as e:
+        app_logger.error(f"Super admin reports sahifasida xatolik: {str(e)}")
+        flash("Reports sahifasini yuklashda xatolik yuz berdi.", "error")
+        return redirect(url_for("super_admin_dashboard"))
 
 @app.route("/super-admin/system")
 def super_admin_system():
     if not session.get("super_admin"):
+        flash("Super admin paneliga kirish talab qilinadi.", "error")
         return redirect(url_for("super_admin_login"))
-    return render_template("super_admin_system.html")
+    
+    try:
+        return render_template("super_admin_system.html")
+    except Exception as e:
+        app_logger.error(f"Super admin system sahifasida xatolik: {str(e)}")
+        flash("System sahifasini yuklashda xatolik yuz berdi.", "error")
+        return redirect(url_for("super_admin_dashboard"))
 
 @app.route("/super-admin/logs")
 def super_admin_logs():
     if not session.get("super_admin"):
+        flash("Super admin paneliga kirish talab qilinadi.", "error")
         return redirect(url_for("super_admin_login"))
-    return render_template("super_admin_logs.html")
+    
+    try:
+        return render_template("super_admin_logs.html")
+    except Exception as e:
+        app_logger.error(f"Super admin logs sahifasida xatolik: {str(e)}")
+        flash("Logs sahifasini yuklashda xatolik yuz berdi.", "error")
+        return redirect(url_for("super_admin_dashboard"))
 
 @app.route("/super-admin/get-orders")
 def super_admin_get_orders():
