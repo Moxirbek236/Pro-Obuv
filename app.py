@@ -1,4 +1,6 @@
 import time
+import string
+import secrets as secrets_module
 
 # Global start time tracking
 start_time = time.time()
@@ -94,7 +96,7 @@ class Config:
         }
 
     # Security configuration
-    SECRET_KEY = os.environ.get("SECRET_KEY", secrets.token_urlsafe(32))
+    SECRET_KEY = os.environ.get("SECRET_KEY", secrets_module.token_urlsafe(32))
     SESSION_COOKIE_SECURE = IS_PRODUCTION
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = 'Lax'
@@ -1680,8 +1682,8 @@ def get_session_id():
     try:
         # Session mavjudligini tekshirish
         if not session or 'session_id' not in session or not session['session_id'] or session['session_id'] == 'None':
-            import uuid
-            session_id = str(uuid.uuid4())
+            import uuid as uuid_module
+            session_id = str(uuid_module.uuid4())
             session['session_id'] = session_id
             session.permanent = True  # Session ni permanent qilish
 
@@ -1694,8 +1696,8 @@ def get_session_id():
         # Mavjud session ID ni validatsiya qilish
         session_id = session['session_id']
         if len(session_id) < 10:  # UUID minimal uzunlik tekshiruvi
-            import uuid
-            new_session_id = str(uuid.uuid4())
+            import uuid as uuid_module
+            new_session_id = str(uuid_module.uuid4())
             session['session_id'] = new_session_id
             app_logger.warning(f"Noto'g'ri session ID tuzatildi: {session_id} -> {new_session_id[:8]}...")
             return new_session_id
@@ -1705,8 +1707,8 @@ def get_session_id():
     except Exception as e:
         app_logger.error(f"Session ID yaratishda xatolik: {str(e)}")
         # Fallback - oddiy UUID
-        import uuid
-        fallback_id = str(uuid.uuid4())
+        import uuid as uuid_module
+        fallback_id = str(uuid_module.uuid4())
         try:
             session['session_id'] = fallback_id
             session.permanent = True
@@ -4613,7 +4615,7 @@ def api_system_info():
 
 @app.route("/api/super-admin/clear-cache", methods=["POST"])
 @login_required
-def api_clear_cache():
+def api_clear_cache_admin():
     """Cache tozalash API"""
     try:
         # Global cache manager orqali cache tozalash
@@ -5101,10 +5103,10 @@ def api_logs_data():
         app_logger.error(f"Logs API error: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
-@app.route("/api/super-admin/clear-cache", methods=["POST"])
+@app.route("/api/super-admin/clear-cache-v2", methods=["POST"])
 @login_required
-def api_clear_cache():
-    """Cache tozalash"""
+def api_clear_cache_v2():
+    """Cache tozalash v2"""
     try:
         # Memory cache tozalash
         cache_manager.memory_cache.clear()
@@ -5121,10 +5123,10 @@ def api_clear_cache():
         app_logger.error(f"Cache tozalashda xatolik: {str(e)}")
         return jsonify({"success": False, "message": str(e)}), 500
 
-@app.route("/api/super-admin/optimize-database", methods=["POST"])
+@app.route("/api/super-admin/optimize-database-v2", methods=["POST"])
 @login_required
-def api_optimize_database():
-    """Database optimallashtirish"""
+def api_optimize_database_v2():
+    """Database optimallashtirish v2"""
     try:
         with db_pool.get_connection() as conn:
             cur = conn.cursor()
