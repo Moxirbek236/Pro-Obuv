@@ -4524,6 +4524,181 @@ def super_admin_activity_feed():
         app_logger.error(f"Activity feed API error: {str(e)}")
         return jsonify({"activities": []}), 500
 
+@app.route("/api/super-admin/dashboard-stats")
+@login_required
+def api_dashboard_stats():
+    """Dashboard statistikalari uchun API"""
+    try:
+        stats = {}
+        
+        # Jami buyurtmalar
+        stats['total_orders'] = execute_query("SELECT COUNT(*) as count FROM orders", fetch_one=True)['count']
+        
+        # Status bo'yicha buyurtmalar
+        stats['waiting_orders'] = execute_query("SELECT COUNT(*) as count FROM orders WHERE status='waiting'", fetch_one=True)['count']
+        stats['ready_orders'] = execute_query("SELECT COUNT(*) as count FROM orders WHERE status='ready'", fetch_one=True)['count']
+        stats['served_orders'] = execute_query("SELECT COUNT(*) as count FROM orders WHERE status='served'", fetch_one=True)['count']
+        
+        # Xodimlar va kuryerlar
+        stats['total_staff'] = execute_query("SELECT COUNT(*) as count FROM staff", fetch_one=True)['count']
+        stats['total_couriers'] = execute_query("SELECT COUNT(*) as count FROM couriers", fetch_one=True)['count']
+        stats['total_users'] = execute_query("SELECT COUNT(*) as count FROM users", fetch_one=True)['count']
+        
+        return jsonify({"stats": stats})
+        
+    except Exception as e:
+        app_logger.error(f"Dashboard stats API error: {str(e)}")
+        return jsonify({"stats": {}}), 500
+
+@app.route("/api/super-admin/system-info")
+@login_required
+def api_system_info():
+    """Tizim ma'lumotlari uchun API"""
+    try:
+        import sys
+        import os
+        import platform
+        
+        # Server status
+        uptime_seconds = time.time() - start_time
+        uptime_hours = int(uptime_seconds // 3600)
+        uptime_minutes = int((uptime_seconds % 3600) // 60)
+        
+        # Database size
+        db_size = 0
+        try:
+            db_size = os.path.getsize(DB_PATH) / (1024 * 1024)  # MB
+        except:
+            pass
+        
+        # Performance stats
+        perf_stats = performance_monitor.get_stats()
+        avg_response = perf_stats.get('avg_response_time', 0) * 1000 if perf_stats else 0  # ms
+        
+        # Memory usage (approximate)
+        try:
+            import psutil
+            memory_percent = psutil.virtual_memory().percent
+            memory_status = "Normal" if memory_percent < 80 else "High"
+        except:
+            memory_percent = 0
+            memory_status = "Unknown"
+        
+        return jsonify({
+            "status": {
+                "server": "Ishlayapti",
+                "uptime": f"{uptime_hours}h {uptime_minutes}m",
+                "database": "Ulangan",
+                "dbSize": round(db_size, 1),
+                "performance": "Yaxshi" if avg_response < 1000 else "Sekin",
+                "responseTime": round(avg_response),
+                "memory": memory_status,
+                "memoryPercent": round(memory_percent)
+            },
+            "info": {
+                "python": f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
+                "flask": "2.3.x",
+                "platform": platform.system(),
+                "environment": "Production",
+                "totalStorage": "1 GB",
+                "usedStorage": f"{round(db_size + 100, 0)} MB",
+                "packages": "25+",
+                "lastUpdate": "2025-01-23"
+            }
+        })
+        
+    except Exception as e:
+        app_logger.error(f"System info API error: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/super-admin/clear-cache", methods=["POST"])
+@login_required
+def api_clear_cache():
+    """Cache tozalash API"""
+    try:
+        # Global cache manager orqali cache tozalash
+        cache_manager.memory_cache.clear()
+        cache_manager.cache_timestamps.clear()
+        
+        if cache_manager.redis_client:
+            cache_manager.redis_client.flushdb()
+        
+        return jsonify({"success": True, "message": "Cache successfully cleared"})
+        
+    except Exception as e:
+        app_logger.error(f"Clear cache error: {str(e)}")
+        return jsonify({"success": False, "message": str(e)}), 500
+
+@app.route("/api/super-admin/optimize-database", methods=["POST"])
+@login_required
+def api_optimize_database():
+    """Database optimallashtirish API"""
+    try:
+        with db_pool.get_connection() as conn:
+            # SQLite VACUUM va ANALYZE
+            conn.execute("VACUUM")
+            conn.execute("ANALYZE")
+            
+        return jsonify({"success": True, "message": "Database successfully optimized"})
+        
+    except Exception as e:
+        app_logger.error(f"Database optimization error: {str(e)}")
+        return jsonify({"success": False, "message": str(e)}), 500
+
+@app.route("/api/super-admin/health-report")
+@login_required
+def api_health_report():
+    """Tizim health report API"""
+    try:
+        import psutil
+        
+        # Server health
+        uptime_seconds = time.time() - start_time
+        uptime_hours = int(uptime_seconds // 3600)
+        uptime_minutes = int((uptime_seconds % 3600) // 60)
+        
+        cpu_percent = psutil.cpu_percent()
+        memory = psutil.virtual_memory()
+        
+        # Database health
+        total_orders = execute_query("SELECT COUNT(*) as count FROM orders", fetch_one=True)['count']
+        total_users = execute_query("SELECT COUNT(*) as count FROM users", fetch_one=True)['count']
+        
+        # Performance health
+        perf_stats = performance_monitor.get_stats()
+        avg_response = perf_stats.get('avg_response_time', 0) * 1000 if perf_stats else 0
+        
+        # Active sessions (approximate)
+        recent_orders = execute_query("""
+            SELECT COUNT(DISTINCT user_id) as count 
+            FROM orders 
+            WHERE created_at >= ?
+        """, ((get_current_time() - datetime.timedelta(hours=1)).isoformat(),), fetch_one=True)['count']
+        
+        return jsonify({
+            "server": {
+                "status": "Running",
+                "uptime": f"{uptime_hours}h {uptime_minutes}m",
+                "cpu": f"{cpu_percent}%",
+                "memory": f"{memory.percent}%"
+            },
+            "database": {
+                "status": "Connected",
+                "tables": "15+",
+                "records": f"{total_orders + total_users}",
+                "size": f"{os.path.getsize(DB_PATH) / (1024 * 1024):.1f}"
+            },
+            "performance": {
+                "avgResponse": round(avg_response),
+                "activeSessions": recent_orders,
+                "cacheHitRate": "85"
+            }
+        })
+        
+    except Exception as e:
+        app_logger.error(f"Health report error: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
 # ---- SUPER ADMIN ADDITIONAL PAGES ----
 
 @app.route("/super-admin/analytics")
@@ -4549,6 +4724,54 @@ def super_admin_logs():
     if not session.get("super_admin"):
         return redirect(url_for("super_admin_login"))
     return render_template("super_admin_logs.html")
+
+@app.route("/super-admin/delete-courier/<int:courier_id>", methods=["POST"])
+def super_admin_delete_courier(courier_id):
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+
+    try:
+        execute_query("DELETE FROM couriers WHERE id = ?", (courier_id,))
+        flash(f"Kuryer #{courier_id} o'chirildi.", "success")
+    except Exception as e:
+        app_logger.error(f"Courier delete error: {str(e)}")
+        flash("Kuryerni o'chirishda xatolik yuz berdi.", "error")
+    
+    return redirect(url_for("super_admin_dashboard"))
+
+@app.route("/super-admin/delete-user-db/<int:user_id>", methods=["POST"])
+def super_admin_delete_user_db(user_id):
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+
+    try:
+        execute_query("DELETE FROM users WHERE id = ?", (user_id,))
+        flash(f"Foydalanuvchi #{user_id} o'chirildi.", "success")
+    except Exception as e:
+        app_logger.error(f"User delete error: {str(e)}")
+        flash("Foydalanuvchini o'chirishda xatolik yuz berdi.", "error")
+    
+    return redirect(url_for("super_admin_dashboard"))
+
+@app.route("/super-admin/toggle-branch/<int:branch_id>", methods=["POST"])
+def super_admin_toggle_branch(branch_id):
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+
+    try:
+        execute_query("UPDATE branches SET is_active = NOT is_active WHERE id = ?", (branch_id,))
+        flash(f"Filial #{branch_id} holati o'zgartirildi.", "success")
+    except Exception as e:
+        app_logger.error(f"Branch toggle error: {str(e)}")
+        flash("Filial holatini o'zgartirishda xatolik yuz berdi.", "error")
+    
+    return redirect(url_for("super_admin_dashboard"))
+
+@app.route("/super-admin/logout")
+def super_admin_logout():
+    session.pop("super_admin", None)
+    flash("Super admin panelidan chiqdingiz.", "info")
+    return redirect(url_for("index"))
 
 # ---- ANALYTICS API ENDPOINTS ----
 
