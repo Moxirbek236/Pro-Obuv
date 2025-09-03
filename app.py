@@ -697,11 +697,12 @@ def execute_query(query, params=None, fetch_one=False, fetch_all=False):
                     return result
                 return None
             elif fetch_all:
-                # Ensure results are dictionary-like objects
-                if result and hasattr(result, 'keys'):
-                    return [dict(zip(row.keys(), row)) for row in cur.fetchall()]
+                # fetch_all uchun alohida result olish
+                all_results = cur.fetchall()
+                if all_results and hasattr(all_results[0], 'keys'):
+                    return [dict(zip(row.keys(), row)) for row in all_results]
                 else:
-                    return cur.fetchall()
+                    return all_results or []
             else:
                 conn.commit()
                 return cur.lastrowid
@@ -2758,11 +2759,14 @@ def courier_login():
             conn_update.close()
 
         conn.close()
-        if not row or not check_password_hash(row["password_hash"], password):
+        if not row or not check_password_hash(dict(row)["password_hash"], password):
             flash("Noto'g'ri ID yoki parol.", "error")
             return redirect(url_for("courier_login"))
-        session["courier_id"] = row["id"]
-        session["courier_name"] = f"{row['first_name']} {row['last_name']}"
+        # SQLite Row obyektini xavfsiz dict ga aylantirish
+        row_dict = dict(row) if hasattr(row, 'keys') else row
+        
+        session["courier_id"] = row_dict["id"]
+        session["courier_name"] = f"{row_dict['first_name']} {row_dict['last_name']}"
         return redirect(url_for("courier_dashboard"))
     return render_template("courier_login.html")
 
@@ -3027,12 +3031,15 @@ def login_page():
             conn.close()
 
             if user and check_password_hash(user["password_hash"], password):
-                session["user_id"] = user["id"]
-                session["user_name"] = f"{user['first_name']} {user['last_name']}"
-                session["user_email"] = user["email"]
-                session['interface_language'] = user.get('interface_language') or 'uz'
-                session['font_size'] = user.get('font_size') or 'medium'
-                session['dark_theme'] = bool(user.get('dark_theme', 0))
+                # SQLite Row obyektini dict ga xavfsiz aylantirish
+                user_dict = dict(user) if hasattr(user, 'keys') else user
+                
+                session["user_id"] = user_dict["id"]
+                session["user_name"] = f"{user_dict['first_name']} {user_dict['last_name']}"
+                session["user_email"] = user_dict["email"]
+                session['interface_language'] = user_dict.get('interface_language') or 'uz'
+                session['font_size'] = user_dict.get('font_size') or 'medium'
+                session['dark_theme'] = bool(user_dict.get('dark_theme', 0))
                 flash(f"Xush kelibsiz, {user['first_name']}!", "success")
                 return redirect(url_for("index"))
             else:
@@ -3067,7 +3074,7 @@ def staff_login():
         cur.execute("SELECT * FROM staff WHERE id=?;", (staff_id_int,))
         row = cur.fetchone()
 
-        if row and check_password_hash(row["password_hash"], password):
+        if row and check_password_hash(dict(row)["password_hash"], password):
             # Faollik vaqtini yangilash va ishchi soatlarini hisoblash
             now = get_current_time()
             now_iso = now.isoformat()
@@ -3097,9 +3104,12 @@ def staff_login():
                 print(f"Staff faollik yangilashda xatolik: {e}")
                 pass
 
-            session["staff_id"] = row["id"]
-            session["staff_name"] = f"{row['first_name']} {row['last_name']}"
-            flash(f"Xush kelibsiz, {row['first_name']}!", "success")
+            # SQLite Row obyektini xavfsiz dict ga aylantirish
+            row_dict = dict(row) if hasattr(row, 'keys') else row
+            
+            session["staff_id"] = row_dict["id"]
+            session["staff_name"] = f"{row_dict['first_name']} {row_dict['last_name']}"
+            flash(f"Xush kelibsiz, {row_dict['first_name']}!", "success")
             conn.close()
             return redirect(url_for("staff_dashboard"))
         else:
@@ -3585,8 +3595,13 @@ def super_admin_dashboard():
                                 lat_val = branch_row[3]
                                 if isinstance(lat_val, (int, float)):
                                     branch_dict['latitude'] = float(lat_val)
-                                elif isinstance(lat_val, str) and lat_val.replace('.', '').replace('-', '').isdigit():
-                                    branch_dict['latitude'] = float(lat_val)
+                                elif isinstance(lat_val, str):
+                                    # String dan float ga xavfsiz aylantirish
+                                    clean_lat = lat_val.replace(',', '.').strip()
+                                    try:
+                                        branch_dict['latitude'] = float(clean_lat)
+                                    except ValueError:
+                                        branch_dict['latitude'] = 0.0
                                 else:
                                     branch_dict['latitude'] = 0.0
                             else:
@@ -3599,8 +3614,13 @@ def super_admin_dashboard():
                                 lng_val = branch_row[4]
                                 if isinstance(lng_val, (int, float)):
                                     branch_dict['longitude'] = float(lng_val)
-                                elif isinstance(lng_val, str) and lng_val.replace('.', '').replace('-', '').isdigit():
-                                    branch_dict['longitude'] = float(lng_val)
+                                elif isinstance(lng_val, str):
+                                    # String dan float ga xavfsiz aylantirish
+                                    clean_lng = lng_val.replace(',', '.').strip()
+                                    try:
+                                        branch_dict['longitude'] = float(clean_lng)
+                                    except ValueError:
+                                        branch_dict['longitude'] = 0.0
                                 else:
                                     branch_dict['longitude'] = 0.0
                             else:
@@ -4020,6 +4040,10 @@ def super_admin_get_orders():
             GROUP BY o.id
             ORDER BY created_at DESC
         """, fetch_all=True)
+
+        # orders None bo'lsa bo'sh list qaytarish
+        if not orders:
+            orders = []
 
         return jsonify([dict(order) for order in orders])
     except Exception as e:
@@ -4951,6 +4975,13 @@ def super_admin_toggle_branch(branch_id):
 
     flash("Filial holati o'zgartirildi.", "success")
     return redirect(url_for("super_admin_dashboard"))
+
+@app.route("/super-admin/logout")
+def super_admin_logout():
+    """Super admin panelidan chiqish"""
+    session.pop("super_admin", None)
+    flash("Super admin panelidan chiqdingiz.", "info")
+    return redirect(url_for("index"))
 
 # ---- YANGI SAHIFALAR ----
 @app.route("/add_to_favorites/<int:menu_item_id>", methods=["POST"])
