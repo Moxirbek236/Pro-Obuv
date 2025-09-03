@@ -108,7 +108,7 @@ class Config:
     # File upload configuration
     MAX_CONTENT_LENGTH = 32 * 1024 * 1024  # 32MB
     UPLOAD_FOLDER = 'static/uploads'
-    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
 
     # JSON configuration
     JSON_SORT_KEYS = False
@@ -1889,7 +1889,7 @@ def get_cart_total(conn, session_id, user_id=None):
         close_conn = True
     else:
         close_conn = False
-    
+
     try:
         cur = conn.cursor()
         if user_id:
@@ -2256,8 +2256,6 @@ def validate_json(required_fields=None):
             return f(*args, **kwargs)
         return wrapper
     return decorator
-
-# Performance monitoring decorator ni olib tashlaymiz - conflict keltiryapti
 
 # ---- MENU ----
 @app.route("/menu")
@@ -2987,7 +2985,7 @@ def user_status(ticket_no):
         order = execute_query("SELECT * FROM orders WHERE ticket_no = ?", (ticket_no,), fetch_one=True)
         if not order:
             return jsonify({"error": "Buyurtma topilmadi", "status": "not_found"}), 404
-        
+
         return jsonify({
             "ticket_no": order['ticket_no'],
             "status": order['status'],
@@ -3006,7 +3004,7 @@ def user_cancel_order(ticket_no):
         if not order:
             flash("Buyurtma topilmadi yoki bekor qilib bo'lmaydi.", "error")
             return redirect(url_for("index"))
-        
+
         execute_query("UPDATE orders SET status = 'cancelled' WHERE ticket_no = ?", (ticket_no,))
         flash("Buyurtma bekor qilindi.", "success")
         return redirect(url_for("index"))
@@ -3192,7 +3190,7 @@ def courier_dashboard():
         flash("Kuryer tizimiga kirish talab qilinadi.", "error")
         return redirect(url_for("courier_login"))
 
-    courier_id = session.get("courier_id")
+    cleanup_expired_orders()
 
     try:
         # Barcha ready delivery buyurtmalar va kuryerga tegishli buyurtmalarni olish
@@ -3213,14 +3211,14 @@ def courier_dashboard():
                     ELSE 4
                 END,
                 o.created_at ASC
-        """, (courier_id,), fetch_all=True)
+        """, (session.get("courier_id"),), fetch_all=True)
         delivery_orders = [dict(row) for row in delivery_orders_raw] if delivery_orders_raw else []
 
         # Kuryer statistikasini olish
-        courier_stats = execute_query("SELECT deliveries_completed, total_hours FROM couriers WHERE id = ?", (courier_id,), fetch_one=True)
+        courier_stats = execute_query("SELECT deliveries_completed, total_hours FROM couriers WHERE id = ?", (session.get("courier_id"),), fetch_one=True)
 
         # Faol buyurtmalar sonini olish
-        active_orders_result = execute_query("SELECT COUNT(*) FROM orders WHERE courier_id = ? AND status = 'on_way'", (courier_id,), fetch_one=True)
+        active_orders_result = execute_query("SELECT COUNT(*) FROM orders WHERE courier_id = ? AND status = 'on_way'", (session.get("courier_id"),), fetch_one=True)
         active_orders = active_orders_result[0] if active_orders_result else 0
 
         # Session ga statistikani saqlash
@@ -3237,7 +3235,7 @@ def courier_dashboard():
             session['courier_hours'] = 0
         session['courier_active_orders'] = active_orders
 
-        app_logger.info(f"Courier dashboard loaded for courier_id: {courier_id}")
+        app_logger.info(f"Courier dashboard loaded for courier_id: {session.get('courier_id')}")
         return render_template("courier_dashboard.html", orders=delivery_orders)
 
     except Exception as e:
@@ -3397,7 +3395,7 @@ def api_cart_count():
 
         # Hisoblash
         cart_count = 0
-        
+
         try:
             if user_id:
                 cart_count_result = execute_query("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE user_id = ?", (user_id,), fetch_one=True)
@@ -3414,10 +3412,10 @@ def api_cart_count():
                     cart_count = int(cart_count_result)
                 else:
                     cart_count = 0
-            
+
             # Type validation
             cart_count = max(0, int(cart_count)) if cart_count is not None else 0
-            
+
         except Exception as query_error:
             app_logger.error(f"Cart count query error: {str(query_error)}")
             cart_count = 0
@@ -3426,7 +3424,7 @@ def api_cart_count():
         cache_manager.set(cache_key, cart_count, ttl=60)
 
         return jsonify({
-            "success": True, 
+            "success": True,
             "cart_count": cart_count,
             "user_id": user_id,
             "session_id": session_id[:8] if session_id else None
@@ -3435,8 +3433,8 @@ def api_cart_count():
     except Exception as e:
         app_logger.error(f"Cart count API error: {str(e)}")
         return jsonify({
-            "success": False, 
-            "cart_count": 0, 
+            "success": False,
+            "cart_count": 0,
             "error": "API xatoligi"
         }), 500
 
@@ -3458,11 +3456,11 @@ def track_order(ticket_no):
     """Buyurtma holatini kuzatish"""
     try:
         order = execute_query("SELECT * FROM orders WHERE ticket_no = ?", (ticket_no,), fetch_one=True)
-        
+
         if not order:
             flash("Buyurtma topilmadi.", "error")
             return redirect(url_for("index"))
-            
+
         # Buyurtma tafsilotlarini olish
         order_items_raw = execute_query("""
             SELECT od.quantity, mi.name, od.price
@@ -3471,9 +3469,9 @@ def track_order(ticket_no):
             WHERE od.order_id = ?
         """, (order['id'],), fetch_all=True)
         order_items = [dict(row) for row in order_items_raw] if order_items_raw else []
-        
+
         return render_template("user_success.html", order=order, order_items=order_items)
-        
+
     except Exception as e:
         app_logger.error(f"Track order error: {str(e)}")
         flash("Buyurtma ma'lumotlarini yuklashda xatolik.", "error")
@@ -3630,8 +3628,8 @@ def staff_dashboard():
             LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
             WHERE o.status IN ('waiting', 'ready', 'served', 'cancelled')
             GROUP BY o.id
-            ORDER BY 
-                CASE 
+            ORDER BY
+                CASE
                     WHEN o.status = 'waiting' THEN 1
                     WHEN o.status = 'ready' THEN 2
                     WHEN o.status = 'served' THEN 3
@@ -3732,11 +3730,11 @@ def staff_menu():
     """Xodim menu boshqaruvi"""
     if "staff_id" not in session and not session.get("super_admin"):
         return redirect(url_for("staff_login"))
-    
+
     try:
         menu_items_raw = execute_query("SELECT * FROM menu_items ORDER BY category, name", fetch_all=True)
         menu_items = [dict(row) for row in menu_items_raw] if menu_items_raw else []
-        
+
         return render_template("staff_menu.html", menu_items=menu_items)
     except Exception as e:
         app_logger.error(f"Staff menu error: {str(e)}")
@@ -3759,11 +3757,11 @@ def staff_employees():
     """Xodimlar ro'yxati"""
     if "staff_id" not in session and not session.get("super_admin"):
         return redirect(url_for("staff_login"))
-    
+
     try:
         staff_raw = execute_query("SELECT * FROM staff ORDER BY created_at DESC", fetch_all=True)
         staff_list = [dict(row) for row in staff_raw] if staff_raw else []
-        
+
         return render_template("staff_employees.html", staff_list=staff_list)
     except Exception as e:
         app_logger.error(f"Staff employees error: {str(e)}")
@@ -4184,17 +4182,18 @@ def super_admin_analytics():
 
     except Exception as e:
         app_logger.error(f"Super admin analytics xatoligi: {str(e)}")
-        return render_template('error.html',
-                             error_code=500,
-                             error_message="Analytics ma'lumotlarini yuklashda xatolik"), 500
+        flash("Analytics ma'lumotlarini yuklashda xatolik yuz berdi.", "error")
+        return redirect(url_for("super_admin_dashboard"))
 
 @app.route("/super-admin/reports")
 def super_admin_reports():
+    """Super admin reports sahifasi"""
     if not session.get("super_admin"):
         flash("Super admin paneliga kirish talab qilinadi.", "error")
         return redirect(url_for("super_admin_login"))
 
     try:
+        # Hisobotlar ma'lumotlarini hisoblash
         reports_data = {
             'daily': {'orders': 0, 'revenue': 0},
             'weekly': {'orders': 0, 'revenue': 0},
@@ -4236,7 +4235,7 @@ def super_admin_reports():
             </head>
             <body>
                 <div class="container mt-4">
-                    <h2>📈 Hisobotlar</h2>
+                    <h2>Hisobotlar</h2>
                     <div class="row">
                         <div class="col-md-4">
                             <div class="card">
@@ -4282,16 +4281,24 @@ def super_admin_reports():
 
 @app.route("/super-admin/system")
 def super_admin_system():
+    """Super admin system sahifasi"""
     if not session.get("super_admin"):
         flash("Super admin paneliga kirish talab qilinadi.", "error")
         return redirect(url_for("super_admin_login"))
 
     try:
         system_info = {
-            'performance': {},
-            'database': {'tables_count': 0, 'tables': []},
-            'server_info': {},
-            'environment': os.environ.get('FLASK_ENV', 'production')
+            'database': {
+                'tables_count': execute_query("SELECT COUNT(*) FROM sqlite_master WHERE type='table'", fetch_one=True)[0] or 0,
+                'tables': [row[0] for row in execute_query("SELECT name FROM sqlite_master WHERE type='table'", fetch_all=True) or []]
+            },
+            'performance': {
+                'total_requests': 0,
+                'avg_response_time': 0.0,
+                'max_response_time': 0.0,
+                'min_response_time': 0.0
+            },
+            'environment': 'production'
         }
 
         # Performance statistikasi
@@ -4301,18 +4308,6 @@ def super_admin_system():
         except Exception as perf_error:
             app_logger.warning(f"Performance stats retrieval failed: {str(perf_error)}")
             system_info['performance'] = {'avg_response_time': 0, 'total_requests': 0}
-
-        # Database info
-        try:
-            with db_pool.get_connection() as conn:
-                cur = conn.cursor()
-                cur.execute("SELECT name FROM sqlite_master WHERE type='table'")
-                tables_raw = cur.fetchall() or []
-                tables = [table[0] for table in tables_raw]
-                system_info['database']['tables_count'] = len(tables)
-                system_info['database']['tables'] = tables
-        except Exception as db_info_error:
-            app_logger.warning(f"Database info retrieval failed: {str(db_info_error)}")
 
         # Template fallback
         template_path = os.path.join(app.template_folder, 'super_admin_system.html')
@@ -4328,7 +4323,7 @@ def super_admin_system():
             </head>
             <body>
                 <div class="container mt-4">
-                    <h2>⚙️ Tizim ma'lumotlari</h2>
+                    <h2>Tizim ma'lumotlari</h2>
                     <div class="row">
                         <div class="col-md-6">
                             <h4>Database</h4>
@@ -4360,40 +4355,52 @@ def super_admin_system():
 
 @app.route("/super-admin/logs")
 def super_admin_logs():
+    """Super admin logs sahifasi"""
     if not session.get("super_admin"):
         flash("Super admin paneliga kirish talab qilinadi.", "error")
         return redirect(url_for("super_admin_login"))
 
     try:
-        log_data = {
+        # Log fayllarini o'qish
+        logs = {
             'recent_logs': [],
             'error_logs': [],
             'system_logs': []
         }
 
-        # Log fayllarini xavfsiz o'qish
+        # Recent logs
         try:
-            if os.path.exists('logs/restaurant.log'):
-                with open('logs/restaurant.log', 'r', encoding='utf-8') as f:
-                    log_lines = f.readlines()[-20:]  # So'nggi 20 ta log
-                    log_data['recent_logs'] = [line.strip() for line in log_lines if line.strip()]
+            with open('logs/restaurant.log', 'r', encoding='utf-8') as f:
+                lines = f.readlines()[-50:]  # So'nggi 50 ta log
+                logs['recent_logs'] = [line.strip() for line in lines if line.strip()]
+        except FileNotFoundError:
+            logs['recent_logs'] = ['Log fayli topilmadi']
         except Exception as e:
             app_logger.warning(f"Restaurant log faylini o'qishda xatolik: {str(e)}")
-            log_data['recent_logs'] = ['Log faylini o\'qib bo\'lmadi']
+            logs['recent_logs'] = ['Log faylini o\'qib bo\'lmadi']
 
+        # Error logs
         try:
-            if os.path.exists('logs/errors.log'):
-                with open('logs/errors.log', 'r', encoding='utf-8') as f:
-                    error_lines = f.readlines()[-10:]  # So'nggi 10 ta error
-                    log_data['error_logs'] = [line.strip() for line in error_lines if line.strip()]
+            with open('logs/errors.log', 'r', encoding='utf-8') as f:
+                lines = f.readlines()[-30:]  # So'nggi 30 ta error
+                logs['error_logs'] = [line.strip() for line in lines if line.strip()]
+        except FileNotFoundError:
+            logs['error_logs'] = ['Error log fayli topilmadi']
         except Exception as e:
             app_logger.warning(f"Error log faylini o'qishda xatolik: {str(e)}")
-            log_data['error_logs'] = ['Error log faylini o\'qib bo\'lmadi']
+            logs['error_logs'] = ['Error log faylini o\'qib bo\'lmadi']
+
+        # System logs - mock data
+        logs['system_logs'] = [
+            f"{get_current_time().strftime('%Y-%m-%d %H:%M:%S')} - System started successfully",
+            f"{get_current_time().strftime('%Y-%m-%d %H:%M:%S')} - Database connection established",
+            f"{get_current_time().strftime('%Y-%m-%d %H:%M:%S')} - Super admin panel accessed"
+        ]
 
         # Template fallback
         template_path = os.path.join(app.template_folder, 'super_admin_logs.html')
         if os.path.exists(template_path):
-            return render_template("super_admin_logs.html", logs=log_data)
+            return render_template("super_admin_logs.html", logs=logs)
         else:
             html_content = f"""
             <!DOCTYPE html>
@@ -4404,18 +4411,18 @@ def super_admin_logs():
             </head>
             <body>
                 <div class="container mt-4">
-                    <h2>📝 Loglar</h2>
+                    <h2>Loglar</h2>
                     <div class="row">
                         <div class="col-md-6">
                             <h4>So'nggi loglar</h4>
                             <div style="background-color: #f8f9fa; padding: 10px; border-radius: 5px; max-height: 400px; overflow-y: auto;">
-                                {'<br>'.join(log_data['recent_logs']) if log_data['recent_logs'] else 'Loglar mavjud emas'}
+                                {'<br>'.join(logs['recent_logs']) if logs['recent_logs'] else 'Loglar mavjud emas'}
                             </div>
                         </div>
                         <div class="col-md-6">
                             <h4>Xatolar</h4>
                             <div style="background-color: #f8f9fa; padding: 10px; border-radius: 5px; max-height: 400px; overflow-y: auto;">
-                                {'<br>'.join(log_data['error_logs']) if log_data['error_logs'] else 'Xatolar mavjud emas'}
+                                {'<br>'.join(logs['error_logs']) if logs['error_logs'] else 'Xatolar mavjud emas'}
                             </div>
                         </div>
                     </div>
@@ -4663,9 +4670,7 @@ def super_admin_delete_user():
     if os.path.exists(users_file):
         try:
             with open(users_file, 'r', encoding='utf-8') as f:
-                users = json.load(f)
-
-            users = [user for user in users if str(user.get('buyurtma_raqami')) != str(ticket_no)]
+                users = json.load(f)users = [user for user in users if str(user.get('buyurtma_raqami')) != str(ticket_no)]
 
             with open(users_file, 'w', encoding='utf-8') as f:
                 json.dump(users, f, ensure_ascii=False, indent=2)
@@ -4807,7 +4812,7 @@ def super_admin_add_branch():
         lat = float(latitude)
         lng = float(longitude)
         radius = float(delivery_radius)
-        
+
         now = get_current_time().isoformat()
 
         branch_id = execute_query("""
@@ -4832,11 +4837,11 @@ def super_admin_add_menu_item():
         price = float(request.form.get("price", 0))
         category = request.form.get("category", "food")
         description = request.form.get("description", "").strip()
-        
+
         if not name or price <= 0:
             flash("Mahsulot nomi va narxi to'g'ri bo'lishi kerak.", "error")
             return redirect(url_for("super_admin_dashboard"))
-        
+
         # Image upload handling
         image_url = ""
         if 'image' in request.files:
@@ -4848,18 +4853,18 @@ def super_admin_add_menu_item():
                 file_path = os.path.join('static/images', filename)
                 file.save(file_path)
                 image_url = f"/static/images/{filename}"
-        
+
         now = get_current_time().isoformat()
         execute_query("""
             INSERT INTO menu_items (name, price, category, description, image_url, available, created_at)
             VALUES (?, ?, ?, ?, ?, 1, ?)
         """, (name, price, category, description, image_url, now))
-        
+
         flash("Yangi mahsulot qo'shildi!", "success")
     except Exception as e:
         app_logger.error(f"Super admin add menu item error: {str(e)}")
         flash("Mahsulot qo'shishda xatolik.", "error")
-    
+
     return redirect(url_for("super_admin_dashboard"))
 
 @app.route("/super-admin/logout")
@@ -4878,7 +4883,7 @@ def super_admin_get_orders():
 
     try:
         orders_raw = execute_query("""
-            SELECT o.*, 
+            SELECT o.*,
                    GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
             FROM orders o
             LEFT JOIN order_details od ON o.id = od.order_id
@@ -4887,7 +4892,7 @@ def super_admin_get_orders():
             ORDER BY o.created_at DESC
             LIMIT 50
         """, fetch_all=True)
-        
+
         orders = [dict(row) for row in orders_raw] if orders_raw else []
         return jsonify(orders)
     except Exception as e:
@@ -4916,11 +4921,11 @@ def super_admin_get_receipts():
 
     try:
         receipts_raw = execute_query("""
-            SELECT * FROM receipts 
-            ORDER BY created_at DESC 
+            SELECT * FROM receipts
+            ORDER BY created_at DESC
             LIMIT 50
         """, fetch_all=True)
-        
+
         receipts = [dict(row) for row in receipts_raw] if receipts_raw else []
         return jsonify(receipts)
     except Exception as e:
@@ -4932,28 +4937,28 @@ def admin_add_menu_item():
     """Admin menu item qo'shish"""
     if not session.get("staff_id") and not session.get("super_admin"):
         return redirect(url_for("staff_login"))
-    
+
     try:
         name = request.form.get("name", "").strip()
         price = float(request.form.get("price", 0))
         category = request.form.get("category", "food")
         description = request.form.get("description", "").strip()
-        
+
         if not name or price <= 0:
             flash("Mahsulot nomi va narxi to'g'ri bo'lishi kerak.", "error")
             return redirect(url_for("staff_menu"))
-        
+
         now = get_current_time().isoformat()
         execute_query("""
             INSERT INTO menu_items (name, price, category, description, available, created_at)
             VALUES (?, ?, ?, ?, 1, ?)
         """, (name, price, category, description, now))
-        
+
         flash("Yangi mahsulot qo'shildi!", "success")
     except Exception as e:
         app_logger.error(f"Add menu item error: {str(e)}")
         flash("Mahsulot qo'shishda xatolik.", "error")
-    
+
     return redirect(url_for("staff_menu"))
 
 @app.route("/admin/toggle_menu_item/<int:item_id>", methods=["POST"])
@@ -4961,7 +4966,7 @@ def admin_toggle_menu_item(item_id):
     """Menu item holatini o'zgartirish"""
     if not session.get("staff_id") and not session.get("super_admin"):
         return redirect(url_for("staff_login"))
-    
+
     try:
         item = execute_query("SELECT available FROM menu_items WHERE id = ?", (item_id,), fetch_one=True)
         if item:
@@ -4974,7 +4979,7 @@ def admin_toggle_menu_item(item_id):
     except Exception as e:
         app_logger.error(f"Toggle menu item error: {str(e)}")
         flash("Mahsulot holatini o'zgartirishda xatolik.", "error")
-    
+
     return redirect(url_for("staff_menu"))
 
 @app.route("/admin/orders.json")
@@ -4982,10 +4987,10 @@ def admin_orders_json():
     """Barcha buyurtmalarni JSON formatda qaytarish"""
     if not session.get("staff_id") and not session.get("super_admin"):
         return jsonify({"error": "Unauthorized"}), 401
-    
+
     try:
         orders_raw = execute_query("""
-            SELECT o.*, 
+            SELECT o.*,
                    GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
             FROM orders o
             LEFT JOIN order_details od ON o.id = od.order_id
@@ -4994,7 +4999,7 @@ def admin_orders_json():
             ORDER BY o.created_at DESC
             LIMIT 100
         """, fetch_all=True)
-        
+
         orders = [dict(row) for row in orders_raw] if orders_raw else []
         return jsonify(orders)
     except Exception as e:
@@ -5010,7 +5015,7 @@ def super_admin_get_ratings():
     try:
         # Menu item ratings
         menu_ratings_raw = execute_query("""
-            SELECT r.*, mi.name as menu_item_name, 
+            SELECT r.*, mi.name as menu_item_name,
                    u.first_name || ' ' || u.last_name as user_name
             FROM ratings r
             JOIN menu_items mi ON r.menu_item_id = mi.id
@@ -5018,7 +5023,7 @@ def super_admin_get_ratings():
             WHERE r.menu_item_id > 0
             ORDER BY r.created_at DESC
         """, fetch_all=True)
-        
+
         # Branch ratings (negative menu_item_id)
         branch_ratings_raw = execute_query("""
             SELECT r.*, b.name as branch_name,
@@ -5029,10 +5034,10 @@ def super_admin_get_ratings():
             WHERE r.menu_item_id < 0
             ORDER BY r.created_at DESC
         """, fetch_all=True)
-        
+
         menu_ratings = [dict(row) for row in menu_ratings_raw] if menu_ratings_raw else []
         branch_ratings = [dict(row) for row in branch_ratings_raw] if branch_ratings_raw else []
-        
+
         return jsonify({
             "menu_ratings": menu_ratings,
             "branch_ratings": branch_ratings
@@ -5116,7 +5121,7 @@ def debug_routes():
     """Debug route listing all available routes"""
     if not session.get("super_admin"):
         return "Unauthorized", 401
-    
+
     routes = []
     for rule in app.url_map.iter_rules():
         routes.append({
@@ -5124,12 +5129,12 @@ def debug_routes():
             'methods': list(rule.methods),
             'rule': str(rule)
         })
-    
+
     routes_html = "<h1>Available Routes</h1><table border='1'><tr><th>Rule</th><th>Endpoint</th><th>Methods</th></tr>"
     for route in routes:
         routes_html += f"<tr><td>{route['rule']}</td><td>{route['endpoint']}</td><td>{', '.join(route['methods'])}</td></tr>"
     routes_html += "</table>"
-    
+
     return routes_html
 
 @app.route("/debug/session")
@@ -5137,7 +5142,7 @@ def debug_session():
     """Debug session information"""
     if not session.get("super_admin"):
         return "Unauthorized", 401
-    
+
     return f"<h1>Session Debug</h1><pre>{dict(session)}</pre>"
 
 @app.route("/debug/staff-test")
@@ -5145,12 +5150,12 @@ def debug_staff_test():
     """Test staff dashboard without login"""
     if not session.get("super_admin"):
         return "Unauthorized", 401
-    
+
     try:
         # Test query
         staff_count = execute_query("SELECT COUNT(*) FROM staff", fetch_one=True)
         orders_count = execute_query("SELECT COUNT(*) FROM orders", fetch_one=True)
-        
+
         return f"""
         <h1>Staff Test Results</h1>
         <p>Staff count: {staff_count[0] if staff_count else 0}</p>
@@ -5166,12 +5171,12 @@ def debug_courier_test():
     """Test courier dashboard without login"""
     if not session.get("super_admin"):
         return "Unauthorized", 401
-    
+
     try:
         # Test query
         courier_count = execute_query("SELECT COUNT(*) FROM couriers", fetch_one=True)
         delivery_orders_count = execute_query("SELECT COUNT(*) FROM orders WHERE order_type = 'delivery'", fetch_one=True)
-        
+
         return f"""
         <h1>Courier Test Results</h1>
         <p>Courier count: {courier_count[0] if courier_count else 0}</p>
