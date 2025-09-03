@@ -2163,9 +2163,25 @@ def add_to_cart():
         now = get_current_time().isoformat()
 
         if existing:
-            # Mavjud bo'lsa miqdorni oshirish - SQLite Row obyektini dict ga aylantirish
-            existing_dict = dict(zip(existing.keys(), existing)) if hasattr(existing, 'keys') else {'id': existing[0]}
-            cur.execute("UPDATE cart_items SET quantity = quantity + ? WHERE id = ?", (quantity, existing_dict['id']))
+            # Mavjud bo'lsa miqdorni oshirish - SQLite Row obyektini xavfsiz dict ga aylantirish
+            try:
+                if hasattr(existing, 'keys'):
+                    existing_dict = dict(existing)
+                elif isinstance(existing, (tuple, list)) and len(existing) > 0:
+                    existing_dict = {'id': existing[0]}
+                else:
+                    existing_dict = {'id': 1}  # Fallback
+                
+                cur.execute("UPDATE cart_items SET quantity = quantity + ? WHERE id = ?", (quantity, existing_dict['id']))
+            except Exception as cart_error:
+                app_logger.error(f"Cart update error: {str(cart_error)}")
+                # Yangi element qo'shish
+                if user_id:
+                    cur.execute("INSERT INTO cart_items (user_id, session_id, menu_item_id, quantity, created_at) VALUES (?, ?, ?, ?, ?)",
+                               (user_id, session_id, menu_item_id, quantity, now))
+                else:
+                    cur.execute("INSERT INTO cart_items (session_id, menu_item_id, quantity, created_at) VALUES (?, ?, ?, ?)",
+                               (session_id, menu_item_id, quantity, now))
         else:
             # Yangi qo'shish - har doim session_id ni ham berish
             if user_id:
@@ -2764,18 +2780,32 @@ def courier_login():
             conn_update.close()
 
         conn.close()
-        if not row or not check_password_hash(dict(row)["password_hash"], password):
-            flash("Noto'g'ri ID yoki parol.", "error")
-            return redirect(url_for("courier_login"))
-        # SQLite Row obyektini xavfsiz dict ga aylantirish
-        if hasattr(row, 'keys'):
-            row_dict = dict(zip(row.keys(), row))
+        if row:
+            # SQLite Row obyektini xavfsiz dict ga aylantirish
+            try:
+                if hasattr(row, 'keys'):
+                    row_dict = dict(row)
+                else:
+                    # Tuple format uchun manual dict yaratish
+                    columns = ['id', 'first_name', 'last_name', 'birth_date', 'phone', 'passport_series', 'passport_number', 'password_hash', 'total_hours', 'deliveries_completed', 'last_activity', 'created_at']
+                    row_dict = {columns[i]: row[i] if i < len(row) else None for i in range(len(columns))}
+            except Exception as dict_error:
+                app_logger.error(f"Courier row dict conversion error: {str(dict_error)}")
+                conn.close()
+                flash("Database xatoligi yuz berdi.", "error")
+                return redirect(url_for("courier_login"))
+
+            if check_password_hash(row_dict.get("password_hash", ""), password):
+                # Login muvaffaqiyatli
+                pass
+            else:
+                conn.close()
+                flash("Noto'g'ri ID yoki parol.", "error")
+                return redirect(url_for("courier_login"))
         else:
-            row_dict = {
-                'id': row[0],
-                'first_name': row[1],
-                'last_name': row[2]
-            }
+            conn.close()
+            flash("Kuryer topilmadi.", "error")
+            return redirect(url_for("courier_login"))
         
         session["courier_id"] = row_dict["id"]
         session["courier_name"] = f"{row_dict['first_name']} {row_dict['last_name']}"
@@ -3042,26 +3072,43 @@ def login_page():
             user = cur.fetchone()
             conn.close()
 
-            if user and check_password_hash(user["password_hash"], password):
-                # SQLite Row obyektini dict ga xavfsiz aylantirish
-                user_dict = dict(user) if hasattr(user, 'keys') else user
-                
-                # User ma'lumotlarini alohida o'zgaruvchilarga saqlash
-                user_id = user_dict["id"]
-                user_first_name = user_dict["first_name"]
-                user_last_name = user_dict["last_name"]
-                user_email = user_dict["email"]
-                
-                session["user_id"] = user_id
-                session["user_name"] = f"{user_first_name} {user_last_name}"
-                session["user_email"] = user_email
-                session['interface_language'] = user_dict.get('interface_language') or 'uz'
-                session['font_size'] = user_dict.get('font_size') or 'medium'
-                session['dark_theme'] = bool(user_dict.get('dark_theme', 0))
-                flash(f"Xush kelibsiz, {user_first_name}!", "success")
-                return redirect(url_for("index"))
+            if user:
+                try:
+                    # SQLite Row obyektini xavfsiz dict ga aylantirish
+                    if hasattr(user, 'keys'):
+                        user_dict = dict(user)
+                    elif isinstance(user, (tuple, list)) and len(user) >= 4:
+                        # Tuple format uchun manual dict yaratish
+                        columns = ['id', 'first_name', 'last_name', 'email', 'phone', 'password_hash', 'address', 'card_number', 'card_expiry', 'created_at', 'address_latitude', 'address_longitude', 'interface_language', 'font_size', 'dark_theme']
+                        user_dict = {columns[i]: user[i] if i < len(user) else None for i in range(len(columns))}
+                    else:
+                        flash("Foydalanuvchi ma'lumotlari noto'g'ri formatda.", "error")
+                        return redirect(url_for("login_page"))
+
+                    if check_password_hash(user_dict.get("password_hash", ""), password):
+                        # User ma'lumotlarini alohida o'zgaruvchilarga saqlash
+                        user_id = user_dict.get("id")
+                        user_first_name = user_dict.get("first_name", "")
+                        user_last_name = user_dict.get("last_name", "")
+                        user_email = user_dict.get("email", "")
+                        
+                        session["user_id"] = user_id
+                        session["user_name"] = f"{user_first_name} {user_last_name}".strip()
+                        session["user_email"] = user_email
+                        session['interface_language'] = user_dict.get('interface_language') or 'uz'
+                        session['font_size'] = user_dict.get('font_size') or 'medium'
+                        session['dark_theme'] = bool(user_dict.get('dark_theme', 0))
+                        flash(f"Xush kelibsiz, {user_first_name}!", "success")
+                        return redirect(url_for("index"))
+                    else:
+                        flash("Noto'g'ri email yoki parol.", "error")
+                        return redirect(url_for("login_page"))
+                except Exception as login_error:
+                    app_logger.error(f"User login processing error: {str(login_error)}")
+                    flash("Login jarayonida xatolik yuz berdi.", "error")
+                    return redirect(url_for("login_page"))
             else:
-                flash("Noto'g'ri email yoki parol.", "error")
+                flash("Foydalanuvchi topilmadi.", "error")
                 return redirect(url_for("login_page"))
 
         return render_template("login.html")
@@ -3092,14 +3139,29 @@ def staff_login():
         cur.execute("SELECT * FROM staff WHERE id=?;", (staff_id_int,))
         row = cur.fetchone()
 
-        if row and check_password_hash(dict(row)["password_hash"], password):
-            # Faollik vaqtini yangilash va ishchi soatlarini hisoblash
-            now = get_current_time()
-            now_iso = now.isoformat()
-
+        if row:
+            # SQLite Row obyektini xavfsiz dict ga aylantirish
             try:
-                # Agar avvalgi faollik vaqti mavjud bo'lsa, ishchi soatlarni yangilash
-                if row["last_activity"]:
+                if hasattr(row, 'keys'):
+                    row_dict = dict(row)
+                else:
+                    # Tuple format uchun manual dict yaratish
+                    columns = ['id', 'first_name', 'last_name', 'birth_date', 'phone', 'passport_series', 'passport_number', 'password_hash', 'total_hours', 'orders_handled', 'last_activity', 'created_at']
+                    row_dict = {columns[i]: row[i] if i < len(row) else None for i in range(len(columns))}
+            except Exception as dict_error:
+                app_logger.error(f"Staff row dict conversion error: {str(dict_error)}")
+                conn.close()
+                flash("Database xatoligi yuz berdi.", "error")
+                return redirect(url_for("staff_login"))
+
+            if check_password_hash(row_dict.get("password_hash", ""), password):
+                # Faollik vaqtini yangilash va ishchi soatlarini hisoblash
+                now = get_current_time()
+                now_iso = now.isoformat()
+
+                try:
+                    # Agar avvalgi faollik vaqti mavjud bo'lsa, ishchi soatlarni yangilash
+                    if row_dict.get("last_activity"):
                     try:
                         last_activity = datetime.datetime.fromisoformat(row["last_activity"])
                         time_diff = now - last_activity
@@ -3616,24 +3678,26 @@ def super_admin_dashboard():
                         try:
                             if len(branch_row) > 3 and branch_row[3] is not None:
                                 lat_val = branch_row[3]
-                                if isinstance(lat_val, (int, float)):
-                                    branch_dict['latitude'] = float(lat_val)
-                                elif isinstance(lat_val, str) and lat_val.strip():
-                                    # String dan float ga xavfsiz aylantirish
-                                    clean_lat = lat_val.replace(',', '.').strip()
-                                    if clean_lat and clean_lat != '':
-                                        try:
+                                try:
+                                    if isinstance(lat_val, str):
+                                        # String bo'lsa, raqamga aylantirish
+                                        clean_lat = str(lat_val).replace(',', '.').strip()
+                                        if clean_lat and clean_lat.replace('.', '').replace('-', '').isdigit():
                                             branch_dict['latitude'] = float(clean_lat)
-                                        except (ValueError, TypeError):
-                                            branch_dict['latitude'] = 0.0
+                                        else:
+                                            branch_dict['latitude'] = 41.2995  # Default Toshkent koordinatasi
+                                    elif isinstance(lat_val, (int, float)):
+                                        branch_dict['latitude'] = float(lat_val)
                                     else:
-                                        branch_dict['latitude'] = 0.0
-                                else:
-                                    branch_dict['latitude'] = 0.0
+                                        branch_dict['latitude'] = 41.2995
+                                except (ValueError, TypeError) as coord_error:
+                                    app_logger.warning(f"Latitude conversion error: {str(coord_error)}")
+                                    branch_dict['latitude'] = 41.2995
                             else:
-                                branch_dict['latitude'] = 0.0
-                        except (ValueError, TypeError):
-                            branch_dict['latitude'] = 0.0
+                                branch_dict['latitude'] = 41.2995
+                        except Exception as lat_error:
+                            app_logger.error(f"Latitude processing error: {str(lat_error)}")
+                            branch_dict['latitude'] = 41.2995
 
                         try:
                             if len(branch_row) > 4 and branch_row[4] is not None:
