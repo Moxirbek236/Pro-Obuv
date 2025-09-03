@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="uz">
 <head>
@@ -472,7 +471,7 @@
         function updateDateTime() {
             const now = new Date();
             const tashkentOptions = { timeZone: 'Asia/Tashkent' };
-            
+
             const year = now.toLocaleDateString('uz-UZ', { ...tashkentOptions, year: 'numeric' });
             const dateOptions = { 
                 ...tashkentOptions,
@@ -507,7 +506,7 @@
                     const description = data.weather[0].description;
                     const humidity = data.main.humidity;
                     const windSpeed = Math.round(data.wind.speed);
-                    
+
                     document.getElementById('temperature').textContent = `${temp}°C`;
                     document.getElementById('weatherDesc').textContent = `${getWeatherIcon(data.weather[0].main)} ${description}`;
                     document.getElementById('weatherDetails').innerHTML = `💧 ${humidity}% | 💨 ${windSpeed} m/s`;
@@ -541,20 +540,20 @@
                 summer: { temp: [25, 40], conditions: ['☀️ Quyoshli', '🌤️ Issiq', '⛅ Qisman bulutli'] },
                 autumn: { temp: [10, 20], conditions: ['🍂 Kuzgi', '☁️ Bulutli', '🌧️ Yomg\'irli'] }
             };
-            
+
             const month = new Date().getMonth();
             let season = 'spring';
             if (month >= 11 || month <= 1) season = 'winter';
             else if (month >= 2 && month <= 4) season = 'spring';
             else if (month >= 5 && month <= 7) season = 'summer';
             else season = 'autumn';
-            
+
             const seasonData = seasons[season];
             const temp = Math.floor(Math.random() * (seasonData.temp[1] - seasonData.temp[0] + 1)) + seasonData.temp[0];
             const condition = seasonData.conditions[Math.floor(Math.random() * seasonData.conditions.length)];
             const humidity = Math.floor(Math.random() * 40) + 30;
             const windSpeed = Math.floor(Math.random() * 10) + 1;
-            
+
             document.getElementById('temperature').textContent = `${temp}°C`;
             document.getElementById('weatherDesc').textContent = condition;
             document.getElementById('weatherDetails').innerHTML = `💧 ${humidity}% | 💨 ${windSpeed} m/s`;
@@ -566,7 +565,7 @@
             refreshInterval = setInterval(() => {
                 refreshCountdown--;
                 document.getElementById('refreshTimer').textContent = `Yangilanish: ${refreshCountdown}s`;
-                
+
                 if (refreshCountdown <= 0) {
                     console.log('Monitor sahifasi yangilanmoqda...');
                     location.reload();
@@ -579,7 +578,7 @@
             updateDateTime();
             updateTashkentWeather();
             startRefreshCountdown();
-            
+
             console.log('TV Monitor yuklandi:', new Date().toLocaleString('uz-UZ', {timeZone: 'Asia/Tashkent'}));
             console.log('Kutayotgan buyurtmalar:', {{ waiting|length }});
             console.log('Tayyor buyurtmalar:', {{ ready|length }});
@@ -592,6 +591,11 @@
         // Update intervals
         setInterval(updateDateTime, 1000);
         setInterval(updateTashkentWeather, 600000); // 10 minutes
+
+        // Sahifani har 5 sekunda yangilash
+        setInterval(function() {
+            location.reload();
+        }, 5000);
 
         // Keyboard shortcuts
         document.addEventListener('keydown', function(e) {
