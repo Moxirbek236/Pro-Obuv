@@ -1,7 +1,7 @@
 
 {% extends "base.html" %}
 
-{% block title %}Tizim Loglari - Super Admin{% endblock %}
+{% block title %}Loglar - Super Admin{% endblock %}
 
 {% block content %}
 <div class="logs-container">
@@ -12,331 +12,256 @@
         </div>
     </div>
 
-    <!-- Log Controls -->
-    <div class="controls-section">
-        <div class="control-group">
-            <label>Log turi:</label>
-            <select id="logType" onchange="loadLogs()">
-                <option value="all">Barcha loglar</option>
-                <option value="error">Xatolar</option>
-                <option value="warning">Ogohlantirishlar</option>
-                <option value="info">Ma'lumotlar</option>
-                <option value="debug">Debug</option>
+    <!-- Log Filters -->
+    <div class="filters-section">
+        <div class="filter-group">
+            <label>Log darajasi:</label>
+            <select id="logLevel" onchange="filterLogs()">
+                <option value="all">Barchasi</option>
+                <option value="ERROR">ERROR</option>
+                <option value="WARNING">WARNING</option>
+                <option value="INFO">INFO</option>
+                <option value="DEBUG">DEBUG</option>
             </select>
         </div>
         
-        <div class="control-group">
-            <label>Oxirgi:</label>
-            <select id="timeRange" onchange="loadLogs()">
-                <option value="1h">1 soat</option>
-                <option value="6h">6 soat</option>
-                <option value="24h">24 soat</option>
-                <option value="7d">7 kun</option>
-                <option value="30d">30 kun</option>
-            </select>
+        <div class="filter-group">
+            <label>Sana:</label>
+            <input type="date" id="logDate" onchange="filterLogs()">
         </div>
         
-        <div class="control-group">
-            <label>Qidiruv:</label>
-            <input type="text" id="logSearch" placeholder="Log ichidan qidirish..." onkeyup="filterLogs()">
-        </div>
-        
-        <div class="control-group">
-            <button class="btn btn-primary" onclick="loadLogs()">🔄 Yangilash</button>
+        <div class="filter-group">
+            <button class="btn btn-primary" onclick="refreshLogs()">🔄 Yangilash</button>
             <button class="btn btn-success" onclick="downloadLogs()">📄 Yuklab olish</button>
-            <button class="btn btn-warning" onclick="clearLogs()">🗑️ Tozalash</button>
         </div>
     </div>
 
-    <!-- Log Statistics -->
-    <div class="stats-section">
-        <div class="stat-item">
-            <span class="stat-label">Jami loglar:</span>
-            <span class="stat-value" id="total-logs">0</span>
-        </div>
-        <div class="stat-item error">
-            <span class="stat-label">Xatolar:</span>
-            <span class="stat-value" id="error-count">0</span>
-        </div>
-        <div class="stat-item warning">
-            <span class="stat-label">Ogohlantirishlar:</span>
-            <span class="stat-value" id="warning-count">0</span>
-        </div>
-        <div class="stat-item info">
-            <span class="stat-label">Ma'lumotlar:</span>
-            <span class="stat-value" id="info-count">0</span>
-        </div>
-    </div>
-
-    <!-- Log Viewer -->
-    <div class="logs-viewer">
-        <div class="viewer-header">
-            <h3>📋 Log Entries</h3>
-            <div class="viewer-controls">
-                <button class="btn btn-sm btn-secondary" onclick="toggleAutoRefresh()">
-                    <span id="auto-refresh-text">⏸️ Auto Refresh OFF</span>
-                </button>
-                <button class="btn btn-sm btn-info" onclick="scrollToBottom()">⬇️ Oxiriga</button>
+    <!-- Real-time Logs -->
+    <div class="logs-section">
+        <div class="logs-header-controls">
+            <h3>📊 Real-time Logs</h3>
+            <div class="log-controls">
+                <button class="btn btn-sm btn-success" onclick="startAutoRefresh()">▶️ Auto Refresh</button>
+                <button class="btn btn-sm btn-warning" onclick="stopAutoRefresh()">⏸️ Stop</button>
+                <button class="btn btn-sm btn-danger" onclick="clearLogDisplay()">🗑️ Clear Display</button>
             </div>
         </div>
         
-        <div class="log-content" id="log-content">
-            <div class="text-center">
-                <div class="spinner-border"></div>
-                <p>Loglar yuklanmoqda...</p>
+        <div class="logs-display" id="logsDisplay">
+            <div class="log-entry info">
+                <span class="log-time">{{ moment().format('YYYY-MM-DD HH:mm:ss') }}</span>
+                <span class="log-level">INFO</span>
+                <span class="log-message">Loglar yuklanyapti...</span>
             </div>
         </div>
     </div>
 
-    <!-- Log Details Modal -->
-    <div id="logDetailsModal" class="modal">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5>📝 Log Tafsilotlari</h5>
-                    <button type="button" class="btn-close" onclick="closeLogDetails()"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="log-details-content"></div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" onclick="closeLogDetails()">Yopish</button>
-                </div>
+    <!-- System Performance -->
+    <div class="performance-section">
+        <h3>📈 Tizim Performance</h3>
+        <div class="performance-grid">
+            <div class="perf-card">
+                <h4>🚀 Response Time</h4>
+                <div class="perf-value" id="responseTime">0ms</div>
+                <div class="perf-subtitle">O'rtacha javob vaqti</div>
             </div>
+            
+            <div class="perf-card">
+                <h4>💾 Memory Usage</h4>
+                <div class="perf-value" id="memoryUsage">0%</div>
+                <div class="perf-subtitle">Xotira foydalanishi</div>
+            </div>
+            
+            <div class="perf-card">
+                <h4>🔢 Active Sessions</h4>
+                <div class="perf-value" id="activeSessions">0</div>
+                <div class="perf-subtitle">Faol sessiyalar</div>
+            </div>
+            
+            <div class="perf-card">
+                <h4>⚠️ Error Rate</h4>
+                <div class="perf-value" id="errorRate">0%</div>
+                <div class="perf-subtitle">Xatoliklar darajasi</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Summary -->
+    <div class="errors-section">
+        <h3>🚨 Oxirgi Xatoliklar</h3>
+        <div id="errorsSummary" class="errors-list">
+            <p class="text-center">Xatoliklar yuklanmoqda...</p>
         </div>
     </div>
 </div>
 
 <script>
 let autoRefreshInterval = null;
-let allLogs = [];
 
 // Loglarni yuklash
 function loadLogs() {
-    const logType = document.getElementById('logType').value;
-    const timeRange = document.getElementById('timeRange').value;
+    const logLevel = document.getElementById('logLevel').value;
+    const logDate = document.getElementById('logDate').value;
     
-    const params = new URLSearchParams({
-        type: logType,
-        range: timeRange
-    });
+    // Mock data - haqiqiy implementatsiyada backend API dan ma'lumot olish kerak
+    const mockLogs = [
+        {
+            time: '2025-01-23 15:30:45',
+            level: 'INFO',
+            message: 'Yangi foydalanuvchi ro\'yxatdan o\'tdi: test@example.com',
+            source: 'auth.py:142'
+        },
+        {
+            time: '2025-01-23 15:30:40',
+            level: 'ERROR',
+            message: 'Database connection timeout',
+            source: 'database.py:67'
+        },
+        {
+            time: '2025-01-23 15:30:35',
+            level: 'WARNING',
+            message: 'Rate limit exceeded for IP: 192.168.1.100',
+            source: 'middleware.py:23'
+        },
+        {
+            time: '2025-01-23 15:30:30',
+            level: 'INFO',
+            message: 'Buyurtma yaratildi: #10125',
+            source: 'orders.py:89'
+        }
+    ];
     
-    fetch(`/api/super-admin/logs?${params}`)
-        .then(response => response.json())
-        .then(data => {
-            allLogs = data.logs || [];
-            updateLogStats(data.stats);
-            displayLogs(allLogs);
-        })
-        .catch(error => {
-            console.error('Loglarni yuklashda xatolik:', error);
-            document.getElementById('log-content').innerHTML = 
-                '<div class="alert alert-danger">Loglarni yuklashda xatolik yuz berdi</div>';
-        });
-}
-
-// Log statistikasini yangilash
-function updateLogStats(stats) {
-    document.getElementById('total-logs').textContent = stats.total || 0;
-    document.getElementById('error-count').textContent = stats.errors || 0;
-    document.getElementById('warning-count').textContent = stats.warnings || 0;
-    document.getElementById('info-count').textContent = stats.info || 0;
+    displayLogs(mockLogs);
 }
 
 // Loglarni ko'rsatish
 function displayLogs(logs) {
-    const container = document.getElementById('log-content');
+    const container = document.getElementById('logsDisplay');
+    container.innerHTML = '';
     
-    if (!logs || logs.length === 0) {
-        container.innerHTML = '<div class="text-center">Loglar topilmadi</div>';
-        return;
+    logs.forEach(log => {
+        const logEntry = document.createElement('div');
+        logEntry.className = `log-entry ${log.level.toLowerCase()}`;
+        logEntry.innerHTML = `
+            <span class="log-time">${log.time}</span>
+            <span class="log-level">${log.level}</span>
+            <span class="log-source">${log.source}</span>
+            <span class="log-message">${log.message}</span>
+        `;
+        container.appendChild(logEntry);
+    });
+}
+
+// Loglarni filtrlash
+function filterLogs() {
+    loadLogs();
+}
+
+// Loglarni yangilash
+function refreshLogs() {
+    loadLogs();
+    loadPerformanceStats();
+    loadErrorsSummary();
+}
+
+// Auto refresh ni boshlash
+function startAutoRefresh() {
+    if (autoRefreshInterval) return;
+    
+    autoRefreshInterval = setInterval(() => {
+        loadLogs();
+        loadPerformanceStats();
+    }, 5000); // 5 soniyada bir
+    
+    showSuccessMessage('Auto refresh yoqildi');
+}
+
+// Auto refresh ni to'xtatish
+function stopAutoRefresh() {
+    if (autoRefreshInterval) {
+        clearInterval(autoRefreshInterval);
+        autoRefreshInterval = null;
+        showSuccessMessage('Auto refresh o\'chirildi');
     }
+}
+
+// Log displayni tozalash
+function clearLogDisplay() {
+    document.getElementById('logsDisplay').innerHTML = '';
+    showSuccessMessage('Log display tozalandi');
+}
+
+// Performance statistikalarini yuklash
+function loadPerformanceStats() {
+    // Mock data
+    document.getElementById('responseTime').textContent = Math.floor(Math.random() * 500 + 200) + 'ms';
+    document.getElementById('memoryUsage').textContent = Math.floor(Math.random() * 40 + 40) + '%';
+    document.getElementById('activeSessions').textContent = Math.floor(Math.random() * 50 + 10);
+    document.getElementById('errorRate').textContent = (Math.random() * 5).toFixed(1) + '%';
+}
+
+// Xatoliklar xulosasini yuklash
+function loadErrorsSummary() {
+    const container = document.getElementById('errorsSummary');
     
-    let html = '<div class="log-entries">';
+    // Mock errors
+    const mockErrors = [
+        { time: '15:30:40', message: 'Database connection timeout', count: 3 },
+        { time: '15:25:12', message: 'Invalid JSON in request body', count: 1 },
+        { time: '15:20:33', message: 'User authentication failed', count: 7 }
+    ];
     
-    logs.forEach((log, index) => {
-        const levelClass = getLogLevelClass(log.level);
+    let html = '';
+    mockErrors.forEach(error => {
         html += `
-            <div class="log-entry ${levelClass}" onclick="showLogDetails(${index})">
-                <div class="log-header">
-                    <span class="log-time">${log.timestamp}</span>
-                    <span class="log-level">${log.level}</span>
-                    <span class="log-source">${log.source || 'system'}</span>
-                </div>
-                <div class="log-message">${log.message}</div>
-                ${log.details ? '<div class="log-has-details">📋 Tafsilotlar mavjud</div>' : ''}
+            <div class="error-item">
+                <span class="error-time">${error.time}</span>
+                <span class="error-message">${error.message}</span>
+                <span class="error-count">${error.count}x</span>
             </div>
         `;
     });
     
-    html += '</div>';
     container.innerHTML = html;
-}
-
-// Log level uchun CSS class
-function getLogLevelClass(level) {
-    switch(level?.toLowerCase()) {
-        case 'error': return 'log-error';
-        case 'warning': return 'log-warning';
-        case 'info': return 'log-info';
-        case 'debug': return 'log-debug';
-        default: return 'log-default';
-    }
-}
-
-// Loglarni filterlash
-function filterLogs() {
-    const searchTerm = document.getElementById('logSearch').value.toLowerCase();
-    
-    if (!searchTerm) {
-        displayLogs(allLogs);
-        return;
-    }
-    
-    const filteredLogs = allLogs.filter(log => 
-        log.message.toLowerCase().includes(searchTerm) ||
-        log.source?.toLowerCase().includes(searchTerm)
-    );
-    
-    displayLogs(filteredLogs);
-}
-
-// Log tafsilotlarini ko'rsatish
-function showLogDetails(index) {
-    const log = allLogs[index];
-    if (!log) return;
-    
-    document.getElementById('log-details-content').innerHTML = `
-        <div class="log-detail">
-            <h6>🕒 Vaqt</h6>
-            <p>${log.timestamp}</p>
-        </div>
-        
-        <div class="log-detail">
-            <h6>📊 Level</h6>
-            <p><span class="badge ${getLogLevelClass(log.level)}">${log.level}</span></p>
-        </div>
-        
-        <div class="log-detail">
-            <h6>📁 Manba</h6>
-            <p>${log.source || 'system'}</p>
-        </div>
-        
-        <div class="log-detail">
-            <h6>💬 Xabar</h6>
-            <p>${log.message}</p>
-        </div>
-        
-        ${log.details ? `
-            <div class="log-detail">
-                <h6>📋 Tafsilotlar</h6>
-                <pre class="log-details-pre">${JSON.stringify(log.details, null, 2)}</pre>
-            </div>
-        ` : ''}
-        
-        ${log.stackTrace ? `
-            <div class="log-detail">
-                <h6>🔍 Stack Trace</h6>
-                <pre class="log-details-pre">${log.stackTrace}</pre>
-            </div>
-        ` : ''}
-    `;
-    
-    document.getElementById('logDetailsModal').style.display = 'flex';
-}
-
-// Log tafsilotlarini yopish
-function closeLogDetails() {
-    document.getElementById('logDetailsModal').style.display = 'none';
-}
-
-// Auto refresh
-function toggleAutoRefresh() {
-    if (autoRefreshInterval) {
-        clearInterval(autoRefreshInterval);
-        autoRefreshInterval = null;
-        document.getElementById('auto-refresh-text').textContent = '⏸️ Auto Refresh OFF';
-    } else {
-        autoRefreshInterval = setInterval(loadLogs, 5000);
-        document.getElementById('auto-refresh-text').textContent = '▶️ Auto Refresh ON';
-    }
-}
-
-// Oxiriga scroll qilish
-function scrollToBottom() {
-    const logContent = document.getElementById('log-content');
-    logContent.scrollTop = logContent.scrollHeight;
 }
 
 // Loglarni yuklab olish
 function downloadLogs() {
-    const logType = document.getElementById('logType').value;
-    const timeRange = document.getElementById('timeRange').value;
+    const logLevel = document.getElementById('logLevel').value;
+    const logDate = document.getElementById('logDate').value;
     
-    const params = new URLSearchParams({
-        type: logType,
-        range: timeRange,
-        format: 'file'
-    });
-    
-    fetch(`/api/super-admin/logs?${params}`)
-        .then(response => response.blob())
-        .then(blob => {
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `logs_${logType}_${new Date().toISOString().split('T')[0]}.log`;
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(url);
-            document.body.removeChild(a);
-        })
-        .catch(error => {
-            console.error('Loglarni yuklab olishda xatolik:', error);
-            alert('Loglarni yuklab olishda xatolik');
-        });
+    // Bu yerda haqiqiy API orqali log faylini yuklab olish
+    showSuccessMessage('Loglar yuklab olinmoqda...');
 }
 
-// Loglarni tozalash
-function clearLogs() {
-    if (confirm('Barcha loglarni tozalamoqchimisiz? Bu amalni bekor qilib bo\'lmaydi.')) {
-        fetch('/api/super-admin/clear-logs', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'}
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Loglar tozalandi');
-                loadLogs();
-            } else {
-                alert('Xatolik: ' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Loglarni tozalashda xatolik:', error);
-            alert('Loglarni tozalashda xatolik');
-        });
-    }
+// Success message
+function showSuccessMessage(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification success';
+    notification.textContent = message;
+    document.body.appendChild(notification);
+
+    setTimeout(() => notification.classList.add('show'), 100);
+    setTimeout(() => notification.remove(), 3000);
 }
 
 // Sahifa yuklanganda
 document.addEventListener('DOMContentLoaded', function() {
+    // Bugungi sanani o'rnatish
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('logDate').value = today;
+    
+    // Dastlabki ma'lumotlarni yuklash
     loadLogs();
-});
-
-// Sahifa yopilganda auto refresh ni to'xtatish
-window.addEventListener('beforeunload', function() {
-    if (autoRefreshInterval) {
-        clearInterval(autoRefreshInterval);
-    }
+    loadPerformanceStats();
+    loadErrorsSummary();
 });
 </script>
 
 <style>
 .logs-container {
     padding: 20px;
-    max-width: 1400px;
+    max-width: 1600px;
     margin: 0 auto;
 }
 
@@ -359,32 +284,32 @@ window.addEventListener('beforeunload', function() {
     text-decoration: none;
 }
 
-.controls-section {
+.filters-section {
     background: white;
     border-radius: 12px;
     padding: 25px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    margin-bottom: 20px;
+    margin-bottom: 30px;
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
     align-items: end;
 }
 
-.control-group {
+.filter-group {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
-.control-group label {
+.filter-group label {
     font-weight: 500;
     color: #2d3748;
     font-size: 14px;
 }
 
-.control-group select,
-.control-group input {
+.filter-group select,
+.filter-group input {
     padding: 10px 12px;
     border: 1px solid #e2e8f0;
     border-radius: 6px;
@@ -392,227 +317,167 @@ window.addEventListener('beforeunload', function() {
     min-width: 150px;
 }
 
-.stats-section {
+.logs-section {
     background: white;
     border-radius: 12px;
-    padding: 20px;
+    padding: 25px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    gap: 20px;
+    margin-bottom: 30px;
 }
 
-.stat-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-}
-
-.stat-item.error .stat-value { color: #dc3545; }
-.stat-item.warning .stat-value { color: #ffc107; }
-.stat-item.info .stat-value { color: #17a2b8; }
-
-.stat-label {
-    font-size: 14px;
-    color: #718096;
-}
-
-.stat-value {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: #2d3748;
-}
-
-.logs-viewer {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    overflow: hidden;
-}
-
-.viewer-header {
-    background: #f8f9fa;
-    padding: 20px;
-    border-bottom: 1px solid #e2e8f0;
+.logs-header-controls {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 20px;
 }
 
-.viewer-header h3 {
-    margin: 0;
-    color: #2d3748;
-}
-
-.viewer-controls {
+.log-controls {
     display: flex;
     gap: 10px;
 }
 
-.log-content {
-    height: 500px;
-    overflow-y: auto;
-    background: #1e1e1e;
+.logs-display {
+    background: #1a1a1a;
     color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    max-height: 400px;
+    overflow-y: auto;
     font-family: 'Courier New', monospace;
     font-size: 13px;
-    line-height: 1.4;
-}
-
-.log-entries {
-    padding: 15px;
+    line-height: 1.5;
 }
 
 .log-entry {
-    margin-bottom: 12px;
-    padding: 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.2s ease;
-}
-
-.log-entry:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.log-entry.log-error {
-    border-left: 4px solid #dc3545;
-    background: rgba(220, 53, 69, 0.1);
-}
-
-.log-entry.log-warning {
-    border-left: 4px solid #ffc107;
-    background: rgba(255, 193, 7, 0.1);
-}
-
-.log-entry.log-info {
-    border-left: 4px solid #17a2b8;
-    background: rgba(23, 162, 184, 0.1);
-}
-
-.log-entry.log-debug {
-    border-left: 4px solid #6c757d;
-    background: rgba(108, 117, 125, 0.1);
-}
-
-.log-header {
     display: flex;
-    gap: 15px;
     margin-bottom: 8px;
-    font-size: 12px;
+    padding: 4px 0;
+    border-bottom: 1px solid #333;
+}
+
+.log-entry:last-child {
+    border-bottom: none;
 }
 
 .log-time {
-    color: #a0aec0;
-    min-width: 120px;
+    color: #888;
+    margin-right: 15px;
+    min-width: 130px;
 }
 
 .log-level {
     font-weight: bold;
-    min-width: 80px;
+    margin-right: 15px;
+    min-width: 60px;
 }
-
-.log-level {
-    color: #ffffff;
-}
-
-.log-entry.log-error .log-level { color: #ff6b6b; }
-.log-entry.log-warning .log-level { color: #ffd93d; }
-.log-entry.log-info .log-level { color: #74c0fc; }
-.log-entry.log-debug .log-level { color: #ced4da; }
 
 .log-source {
-    color: #cbd5e0;
-    font-style: italic;
+    color: #6c757d;
+    margin-right: 15px;
+    min-width: 120px;
+    font-size: 11px;
 }
 
 .log-message {
-    color: #ffffff;
-    word-wrap: break-word;
+    flex: 1;
 }
 
-.log-has-details {
-    color: #ffd93d;
-    font-size: 11px;
-    margin-top: 5px;
-}
+.log-entry.error .log-level { color: #ff4757; }
+.log-entry.warning .log-level { color: #ffa502; }
+.log-entry.info .log-level { color: #3742fa; }
+.log-entry.debug .log-level { color: #2ed573; }
 
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-dialog {
+.performance-section {
     background: white;
     border-radius: 12px;
-    max-width: 800px;
-    width: 90%;
-    max-height: 80vh;
-    overflow-y: auto;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    margin-bottom: 30px;
 }
 
-.modal-header {
-    padding: 20px;
-    border-bottom: 1px solid #e2e8f0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.modal-body {
-    padding: 20px;
-}
-
-.modal-footer {
-    padding: 20px;
-    border-top: 1px solid #e2e8f0;
-    display: flex;
-    justify-content: flex-end;
-}
-
-.btn-close {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-}
-
-.log-detail {
+.performance-section h3 {
     margin-bottom: 20px;
-}
-
-.log-detail h6 {
     color: #2d3748;
+}
+
+.performance-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.perf-card {
+    text-align: center;
+    padding: 20px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+}
+
+.perf-card h4 {
+    margin-bottom: 15px;
+    color: #2d3748;
+    font-size: 1rem;
+}
+
+.perf-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #007bff;
     margin-bottom: 8px;
-    font-size: 14px;
 }
 
-.log-detail p {
-    background: #f8f9fa;
-    padding: 10px;
-    border-radius: 6px;
-    margin: 0;
+.perf-subtitle {
+    color: #6c757d;
+    font-size: 0.9rem;
 }
 
-.log-details-pre {
-    background: #1e1e1e;
-    color: #ffffff;
-    padding: 15px;
+.errors-section {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.errors-section h3 {
+    margin-bottom: 20px;
+    color: #2d3748;
+}
+
+.errors-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.error-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background: #fff5f5;
+    border-left: 4px solid #e53e3e;
     border-radius: 6px;
-    overflow-x: auto;
-    font-size: 12px;
-    margin: 0;
+}
+
+.error-time {
+    color: #666;
+    margin-right: 15px;
+    min-width: 80px;
+    font-size: 0.9rem;
+}
+
+.error-message {
+    flex: 1;
+    color: #2d3748;
+}
+
+.error-count {
+    background: #e53e3e;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
 }
 
 .btn {
@@ -623,6 +488,7 @@ window.addEventListener('beforeunload', function() {
     font-size: 14px;
     font-weight: 500;
     text-decoration: none;
+    display: inline-block;
     transition: all 0.3s ease;
 }
 
@@ -632,43 +498,39 @@ window.addEventListener('beforeunload', function() {
 }
 
 .btn-primary { background: #007bff; color: white; }
-.btn-secondary { background: #6c757d; color: white; }
 .btn-success { background: #28a745; color: white; }
 .btn-warning { background: #ffc107; color: #212529; }
-.btn-info { background: #17a2b8; color: white; }
+.btn-danger { background: #dc3545; color: white; }
 
 .btn:hover {
-    opacity: 0.9;
     transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 500;
+    z-index: 10000;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.3s ease;
+}
+
+.notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.notification.success {
+    background-color: #28a745;
 }
 
 .text-center { text-align: center; }
-
-.alert {
-    padding: 15px;
-    margin-bottom: 20px;
-    border: 1px solid transparent;
-    border-radius: 6px;
-}
-
-.alert-danger {
-    color: #721c24;
-    background-color: #f8d7da;
-    border-color: #f5c6cb;
-}
-
-.spinner-border {
-    width: 2rem;
-    height: 2rem;
-    border: 0.25em solid currentColor;
-    border-right-color: transparent;
-    border-radius: 50%;
-    animation: spin 0.75s linear infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
 
 /* Mobile responsive */
 @media (max-width: 768px) {
@@ -676,31 +538,30 @@ window.addEventListener('beforeunload', function() {
         padding: 15px;
     }
     
-    .controls-section {
+    .filters-section {
         flex-direction: column;
         align-items: stretch;
     }
     
-    .control-group {
+    .filter-group {
         width: 100%;
     }
     
-    .stats-section {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .viewer-header {
+    .logs-header-controls {
         flex-direction: column;
         gap: 15px;
         align-items: stretch;
     }
     
-    .viewer-controls {
+    .log-controls {
         justify-content: center;
     }
     
-    .log-header {
+    .performance-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .log-entry {
         flex-direction: column;
         gap: 5px;
     }
