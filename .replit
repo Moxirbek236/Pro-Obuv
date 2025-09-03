@@ -13,7 +13,7 @@ localPort = 8080
 externalPort = 8080
 
 [workflows]
-runButton = "Restaurant Server Final"
+runButton = "Restaurant Server Fixed"
 
 [[workflows.workflow]]
 name = "Run Flask App"
@@ -231,31 +231,6 @@ args = "export PYTHONPATH=$PYTHONPATH:$(pwd)"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "echo \"🚀 Starting Restaurant Server (Fixed SQL and duplicates)...\""
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "python app.py"
-
-[[workflows.workflow]]
-name = "Restaurant Server Final"
-author = 45556560
-mode = "sequential"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "export FLASK_ENV=production"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "export FLASK_APP=app.py"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "export PYTHONPATH=$PYTHONPATH:$(pwd)"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "echo \"🚀 Starting Restaurant Server (SQL and duplicate functions fixed)...\""
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
