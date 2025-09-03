@@ -4669,9 +4669,28 @@ def staff_login():
                         last_activity = datetime.datetime.fromisoformat(row_dict["last_activity"])
                         current_time = get_current_time()
                         time_diff = current_time - last_activity
-            import platform
-            try:
-                import psutil
+
+                        # Agar 8 soatdan kam bo'lsa, ishchi vaqtga qo'shish
+                        if time_diff.total_seconds() < 28800:  # 8 soat
+                            additional_hours = time_diff.total_seconds() / 3600
+                            execute_query("UPDATE staff SET total_hours = COALESCE(total_hours, 0) + ?, last_activity = ? WHERE id = ?",
+                                       (additional_hours, now_iso, staff_id))
+                        else:
+                            execute_query("UPDATE staff SET last_activity = ? WHERE id = ?", (now_iso, staff_id))
+                    except Exception as update_error:
+                        app_logger.warning(f"Staff faollik yangilashda xatolik: {str(update_error)}")
+                        execute_query("UPDATE staff SET last_activity = ? WHERE id = ?", (now_iso, staff_id))
+                else:
+                    execute_query("UPDATE staff SET last_activity = ? WHERE id = ?", (now_iso, staff_id))
+
+            except Exception as dict_error:
+                app_logger.error(f"Staff row dict conversion error: {str(dict_error)}")
+                flash("Ma'lumotlarni qayta ishlashda xatolik.", "error")
+                return redirect(url_for("staff_login"))
+
+        import platform
+        try:
+            import psutil
             except ImportError:
                 psutil = None
 
