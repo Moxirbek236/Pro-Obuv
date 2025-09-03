@@ -2038,6 +2038,85 @@ def admin_index():
         return redirect(url_for("index"))
     return render_template("admin_index.html")
 
+# Monitor routes
+@app.route("/monitor")
+def monitor():
+    """Monitor sahifasi - TV uchun"""
+    return redirect(url_for("admin_monitor"))
+
+@app.route("/admin/monitor")
+def admin_monitor_alt():
+    """Alternative monitor route"""
+    return redirect(url_for("admin_monitor"))
+
+# Staff dashboard routes
+@app.route("/admin")
+def admin_redirect():
+    """Admin redirects"""
+    if session.get("super_admin"):
+        return redirect(url_for("super_admin_dashboard"))
+    elif session.get("staff_id"):
+        return redirect(url_for("staff_dashboard"))
+    elif session.get("courier_id"):
+        return redirect(url_for("courier_dashboard"))
+    else:
+        return redirect(url_for("staff_login"))
+
+@app.route("/admin/dashboard")
+def admin_dashboard_redirect():
+    """Admin dashboard redirect"""
+    return redirect(url_for("admin_redirect"))
+
+# Staff routes
+@app.route("/staff")
+def staff_redirect():
+    """Staff redirect"""
+    if session.get("staff_id"):
+        return redirect(url_for("staff_dashboard"))
+    else:
+        return redirect(url_for("staff_login"))
+
+@app.route("/staff/login")
+def staff_login_alt():
+    """Alternative staff login route"""
+    return redirect(url_for("staff_login"))
+
+# Courier routes  
+@app.route("/courier")
+def courier_redirect():
+    """Courier redirect"""
+    if session.get("courier_id"):
+        return redirect(url_for("courier_dashboard"))
+    else:
+        return redirect(url_for("courier_login"))
+
+@app.route("/courier/login")
+def courier_login_alt():
+    """Alternative courier login route"""
+    return redirect(url_for("courier_login"))
+
+# Super admin routes
+@app.route("/superadmin")
+@app.route("/super-admin")
+@app.route("/admin/super")
+def superadmin_redirect():
+    """Super admin redirect"""
+    if session.get("super_admin"):
+        return redirect(url_for("super_admin_dashboard"))
+    else:
+        return redirect(url_for("super_admin_login"))
+
+@app.route("/admin/login")
+def admin_login_redirect():
+    """Admin login redirect"""
+    return redirect(url_for("super_admin_login"))
+
+# Dashboard routes
+@app.route("/dashboard")
+def dashboard_redirect():
+    """General dashboard redirect"""
+    return redirect(url_for("admin_redirect"))
+
 @app.route("/display-monitor-tv-screen-z9p4n")
 def admin_monitor():
     """TV Monitor - autentifikatsiyasiz kirish mumkin"""
@@ -3243,6 +3322,30 @@ def courier_logout():
     flash("Kuryer tizimidan chiqdingiz.", "info")
     return redirect(url_for("index"))
 
+# API routes
+@app.route("/api")
+def api_home():
+    """API home page"""
+    return jsonify({
+        "message": "Restaurant API",
+        "version": "1.0",
+        "endpoints": [
+            "/api/cart-count",
+            "/api/menu",
+            "/api/orders",
+            "/api/status"
+        ]
+    })
+
+@app.route("/api/status")
+def api_status():
+    """API status endpoint"""
+    return jsonify({
+        "status": "OK",
+        "timestamp": get_current_time().isoformat(),
+        "version": "1.0"
+    })
+
 @app.route("/api/cart-count")
 def api_cart_count():
     """Savatchadagi mahsulotlar sonini qaytarish - API endpoint"""
@@ -3312,6 +3415,33 @@ def static_files(filename):
     except Exception as e:
         app_logger.error(f"Static file error for {filename}: {str(e)}")
         return "File not found", 404
+
+# Order tracking route
+@app.route("/order/<int:ticket_no>")
+def track_order(ticket_no):
+    """Buyurtma holatini kuzatish"""
+    try:
+        order = execute_query("SELECT * FROM orders WHERE ticket_no = ?", (ticket_no,), fetch_one=True)
+        
+        if not order:
+            flash("Buyurtma topilmadi.", "error")
+            return redirect(url_for("index"))
+            
+        # Buyurtma tafsilotlarini olish
+        order_items_raw = execute_query("""
+            SELECT od.quantity, mi.name, od.price
+            FROM order_details od
+            JOIN menu_items mi ON od.menu_item_id = mi.id
+            WHERE od.order_id = ?
+        """, (order['id'],), fetch_all=True)
+        order_items = [dict(row) for row in order_items_raw] if order_items_raw else []
+        
+        return render_template("user_success.html", order=order, order_items=order_items)
+        
+    except Exception as e:
+        app_logger.error(f"Track order error: {str(e)}")
+        flash("Buyurtma ma'lumotlarini yuklashda xatolik.", "error")
+        return redirect(url_for("index"))
 
 # ---- LOGIN ROUTES ----
 @app.route("/login")
