@@ -9,7 +9,7 @@ localPort = 5000
 externalPort = 80
 
 [workflows]
-runButton = "Project"
+runButton = "Fixed Restaurant Server Final"
 
 [[workflows.workflow]]
 name = "Run Flask App"
@@ -252,6 +252,35 @@ waitForPort = 5000
 
 [workflows.workflow.metadata]
 outputType = "webview"
+
+[[workflows.workflow]]
+name = "Fixed Restaurant Server Final"
+author = 45556560
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "export FLASK_ENV=production"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "export FLASK_APP=app.py"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "export PYTHONPATH=$PYTHONPATH:$(pwd)"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"🔧 Fixing SQL syntax and duplicate routes...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"🚀 Starting Fixed Restaurant Server...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python app.py"
 
 [agent]
 expertMode = true
