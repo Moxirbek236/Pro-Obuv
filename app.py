@@ -1238,7 +1238,7 @@ def ensure_menu_items_columns():
             ('created_at', 'TEXT')
         ]
 
-        for col_name, col_type in columns_toAdd:
+        for col_name, col_type in columns_to_add:
             if col_name not in cols:
                 try:
                     cur.execute(f"ALTER TABLE menu_items ADD COLUMN {col_name} {col_type};")
@@ -3743,7 +3743,7 @@ def staff_menu():
 def admin_menu():
     return staff_menu()
 
-@app.route("/admin/employees")  
+@app.route("/admin/employees")
 def admin_employees():
     return staff_employees()
 
@@ -4107,11 +4107,11 @@ def super_admin_dashboard():
                                        'total_couriers': 0, 'total_users': 0, 'total_users_json': 0})
         except Exception as template_error:
             app_logger.critical(f"Template render ham ishlamadi: {str(template_error)}")
-            return f"""
+            return """
             <h1>Super Admin Dashboard</h1>
             <p>Dashboard yuklashda xatolik: {str(e)}</p>
             <a href="{url_for('super_admin_login')}">Login sahifasiga qaytish</a>
-            """, 500
+            """.format(url_for=url_for, str=str), 500
 
 @app.route("/super-admin/analytics")
 def super_admin_analytics():
@@ -4412,7 +4412,7 @@ def super_admin_logs():
         return f"""
         <div class="container mt-4">
             <h2>Logs - Xatolik</h2>
-            <div class="alert alert-danger">Loglarni yuklashda xatolik: {str(e)}</div>
+            <div class="alert alert-danger">Loglarniyuklashda xatolik: {str(e)}</div>
             <a href="{url_for('super_admin_dashboard')}" class="btn btn-primary">Dashboard ga qaytish</a>
         </div>
         """, 500
