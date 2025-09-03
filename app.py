@@ -2163,8 +2163,9 @@ def add_to_cart():
         now = get_current_time().isoformat()
 
         if existing:
-            # Mavjud bo'lsa miqdorni oshirish
-            cur.execute("UPDATE cart_items SET quantity = quantity + ? WHERE id = ?", (quantity, existing['id']))
+            # Mavjud bo'lsa miqdorni oshirish - SQLite Row obyektini dict ga aylantirish
+            existing_dict = dict(zip(existing.keys(), existing)) if hasattr(existing, 'keys') else {'id': existing[0]}
+            cur.execute("UPDATE cart_items SET quantity = quantity + ? WHERE id = ?", (quantity, existing_dict['id']))
         else:
             # Yangi qo'shish - har doim session_id ni ham berish
             if user_id:
@@ -2182,7 +2183,11 @@ def add_to_cart():
         else:
             cur.execute("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE session_id = ?", (session_id,))
 
-        cart_count = cur.fetchone()['total_count']
+        cart_result = cur.fetchone()
+        if hasattr(cart_result, 'keys'):
+            cart_count = cart_result['total_count']
+        else:
+            cart_count = cart_result[0] if cart_result else 0
         conn.close()
 
         if request.is_json or request.headers.get('Content-Type') == 'application/json':
@@ -2763,7 +2768,14 @@ def courier_login():
             flash("Noto'g'ri ID yoki parol.", "error")
             return redirect(url_for("courier_login"))
         # SQLite Row obyektini xavfsiz dict ga aylantirish
-        row_dict = dict(row) if hasattr(row, 'keys') else row
+        if hasattr(row, 'keys'):
+            row_dict = dict(zip(row.keys(), row))
+        else:
+            row_dict = {
+                'id': row[0],
+                'first_name': row[1],
+                'last_name': row[2]
+            }
         
         session["courier_id"] = row_dict["id"]
         session["courier_name"] = f"{row_dict['first_name']} {row_dict['last_name']}"
@@ -3034,13 +3046,19 @@ def login_page():
                 # SQLite Row obyektini dict ga xavfsiz aylantirish
                 user_dict = dict(user) if hasattr(user, 'keys') else user
                 
-                session["user_id"] = user_dict["id"]
-                session["user_name"] = f"{user_dict['first_name']} {user_dict['last_name']}"
-                session["user_email"] = user_dict["email"]
+                # User ma'lumotlarini alohida o'zgaruvchilarga saqlash
+                user_id = user_dict["id"]
+                user_first_name = user_dict["first_name"]
+                user_last_name = user_dict["last_name"]
+                user_email = user_dict["email"]
+                
+                session["user_id"] = user_id
+                session["user_name"] = f"{user_first_name} {user_last_name}"
+                session["user_email"] = user_email
                 session['interface_language'] = user_dict.get('interface_language') or 'uz'
                 session['font_size'] = user_dict.get('font_size') or 'medium'
                 session['dark_theme'] = bool(user_dict.get('dark_theme', 0))
-                flash(f"Xush kelibsiz, {user['first_name']}!", "success")
+                flash(f"Xush kelibsiz, {user_first_name}!", "success")
                 return redirect(url_for("index"))
             else:
                 flash("Noto'g'ri email yoki parol.", "error")
@@ -3107,9 +3125,14 @@ def staff_login():
             # SQLite Row obyektini xavfsiz dict ga aylantirish
             row_dict = dict(row) if hasattr(row, 'keys') else row
             
-            session["staff_id"] = row_dict["id"]
-            session["staff_name"] = f"{row_dict['first_name']} {row_dict['last_name']}"
-            flash(f"Xush kelibsiz, {row_dict['first_name']}!", "success")
+            # Session ma'lumotlarini alohida saqlash
+            staff_id = row_dict["id"]
+            staff_first_name = row_dict["first_name"]
+            staff_last_name = row_dict["last_name"]
+            
+            session["staff_id"] = staff_id
+            session["staff_name"] = f"{staff_first_name} {staff_last_name}"
+            flash(f"Xush kelibsiz, {staff_first_name}!", "success")
             conn.close()
             return redirect(url_for("staff_dashboard"))
         else:
@@ -3595,12 +3618,15 @@ def super_admin_dashboard():
                                 lat_val = branch_row[3]
                                 if isinstance(lat_val, (int, float)):
                                     branch_dict['latitude'] = float(lat_val)
-                                elif isinstance(lat_val, str):
+                                elif isinstance(lat_val, str) and lat_val.strip():
                                     # String dan float ga xavfsiz aylantirish
                                     clean_lat = lat_val.replace(',', '.').strip()
-                                    try:
-                                        branch_dict['latitude'] = float(clean_lat)
-                                    except ValueError:
+                                    if clean_lat and clean_lat != '':
+                                        try:
+                                            branch_dict['latitude'] = float(clean_lat)
+                                        except (ValueError, TypeError):
+                                            branch_dict['latitude'] = 0.0
+                                    else:
                                         branch_dict['latitude'] = 0.0
                                 else:
                                     branch_dict['latitude'] = 0.0
@@ -3614,12 +3640,15 @@ def super_admin_dashboard():
                                 lng_val = branch_row[4]
                                 if isinstance(lng_val, (int, float)):
                                     branch_dict['longitude'] = float(lng_val)
-                                elif isinstance(lng_val, str):
+                                elif isinstance(lng_val, str) and lng_val.strip():
                                     # String dan float ga xavfsiz aylantirish
                                     clean_lng = lng_val.replace(',', '.').strip()
-                                    try:
-                                        branch_dict['longitude'] = float(clean_lng)
-                                    except ValueError:
+                                    if clean_lng and clean_lng != '':
+                                        try:
+                                            branch_dict['longitude'] = float(clean_lng)
+                                        except (ValueError, TypeError):
+                                            branch_dict['longitude'] = 0.0
+                                    else:
                                         branch_dict['longitude'] = 0.0
                                 else:
                                     branch_dict['longitude'] = 0.0
