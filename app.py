@@ -4878,4 +4878,3 @@ def super_admin_system():
         app_logger.error(f"Super admin system sahifasida xatolik: {str(e)}")
         flash("System sahifasini yuklashda xatolik yuz berdi.", "error")
         return redirect(url_for("super_admin_dashboard"))
-
