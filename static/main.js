@@ -323,10 +323,11 @@ class CartManager {
         fetch('/api/cart-count')
             .then(response => response.json())
             .then(data => {
-                const cartCountElements = document.querySelectorAll('#cart-count, .cart-badge');
+                const cartCountElements = document.querySelectorAll('#cart-count, .cart-badge, .cart-badge-floating');
                 cartCountElements.forEach(element => {
-                    if (data.count > 0) {
-                        element.textContent = data.count;
+                    const count = data.cart_count || data.count || 0;
+                    if (count > 0) {
+                        element.textContent = count;
                         element.style.display = 'inline-block';
                         if (element.classList.contains('cart-badge-floating')) {
                             element.classList.add('show');
@@ -338,7 +339,7 @@ class CartManager {
                         }
                     }
                 });
-                cartCount = data.count;
+                cartCount = data.cart_count || data.count || 0;
             })
             .catch(error => console.log('Cart count error:', error));
     }
@@ -351,13 +352,13 @@ class CartManager {
     }
 
     addToCart(itemId, quantity = 1) {
-        fetch('/api/add-to-cart', {
+        fetch('/add_to_cart', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                item_id: itemId,
+                menu_item_id: itemId,
                 quantity: quantity
             })
         })
@@ -365,14 +366,26 @@ class CartManager {
         .then(data => {
             if (data.success) {
                 this.updateCartCount();
-                showNotification('Mahsulot savatga qo\'shildi', 'success');
+                showNotification('Mahsulot savatchaga qo\'shildi', 'success');
+                
+                // Update cart count display
+                if (data.cart_count !== undefined) {
+                    const cartCountElements = document.querySelectorAll('#cart-count, .cart-badge, .cart-badge-floating');
+                    cartCountElements.forEach(element => {
+                        element.textContent = data.cart_count;
+                        if (data.cart_count > 0) {
+                            element.style.display = 'inline-block';
+                            element.classList.add('show');
+                        }
+                    });
+                }
             } else {
                 showNotification(data.message || 'Xatolik yuz berdi', 'error');
             }
         })
         .catch(error => {
             console.log('Add to cart error:', error);
-            showNotification('Savatga qo\'shishda xatolik', 'error');
+            showNotification('Savatchaga qo\'shishda xatolik', 'error');
         });
     }
 }
