@@ -1786,9 +1786,12 @@ def get_session_id():
 
 def get_cart_items(conn, session_id, user_id=None):
     """Savatchadagi mahsulotlarni olish - xavfsizligi yuqori"""
-    if not conn:
-        app_logger.error("Database connection not available in get_cart_items")
-        return []
+    # If no connection passed, create new one
+    if conn is None:
+        conn = get_db()
+        close_conn = True
+    else:
+        close_conn = False
 
     # Set row_factory to return Row objects
     conn.row_factory = sqlite3.Row
@@ -1874,9 +1877,19 @@ def get_cart_items(conn, session_id, user_id=None):
     except Exception as e:
         app_logger.error(f"Savatcha ma'lumotlarini olishda xatolik: {str(e)}")
         return []
+    finally:
+        if close_conn and conn:
+            conn.close()
 
 def get_cart_total(conn, session_id, user_id=None):
     """Savatchaning umumiy summasini hisoblash"""
+    # If no connection passed, create new one
+    if conn is None:
+        conn = get_db()
+        close_conn = True
+    else:
+        close_conn = False
+    
     try:
         cur = conn.cursor()
         if user_id:
@@ -1910,6 +1923,9 @@ def get_cart_total(conn, session_id, user_id=None):
     except Exception as e:
         app_logger.error(f"Get cart total error: {str(e)}")
         return 0
+    finally:
+        if close_conn and conn:
+            conn.close()
 
 def clear_cart(conn, session_id, user_id=None):
     """Savatchani tozalash"""
@@ -3227,7 +3243,15 @@ def api_cart_count():
         else:
             cart_count_result = execute_query("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE session_id = ?", (session_id,), fetch_one=True)
 
-        cart_count = cart_count_result[0] if cart_count_result else 0
+        # Extract count from result - handle both dict and tuple formats
+        cart_count = 0
+        if cart_count_result:
+            if isinstance(cart_count_result, dict):
+                cart_count = cart_count_result.get('total_count', 0) or 0
+            elif isinstance(cart_count_result, (list, tuple)) and len(cart_count_result) > 0:
+                cart_count = cart_count_result[0] or 0
+            else:
+                cart_count = cart_count_result if isinstance(cart_count_result, int) else 0
 
         # Cache ga saqlash
         cache_manager.set(cache_key, cart_count, ttl=60) # Cache for 1 minute
@@ -3322,7 +3346,184 @@ def login_page():
 SUPER_ADMIN_USERNAME = Config.SUPER_ADMIN_USERNAME
 SUPER_ADMIN_PASSWORD = Config.SUPER_ADMIN_PASSWORD
 
-@app.route("/super-admin-control-panel-master-z8x9k")
+# ---- STAFF AUTH ----
+@app.route("/staff-secure-login-j7h3n", methods=["GET", "POST"])
+def staff_login():
+    if request.method == "POST":
+        staff_id_str = request.form.get("staff_id", "").strip()
+        password = request.form.get("password", "")
+
+        if not staff_id_str or not password:
+            flash("ID va parolni kiriting.", "error")
+            return redirect(url_for("staff_login"))
+
+        # ID raqam ekanligini tekshirish
+        try:
+            staff_id = int(staff_id_str)
+        except ValueError:
+            flash("ID raqam bo'lishi kerak.", "error")
+            return redirect(url_for("staff_login"))
+
+        # Staff ma'lumotlarini olish
+        row = execute_query("SELECT * FROM staff WHERE id=?", (staff_id,), fetch_one=True)
+
+        if row:
+            # Faollik vaqtini yangilash va ishchi soatlarini hisoblash
+            now = get_current_time()
+            now_iso = now.isoformat()
+
+            try:
+                # Row obyektini dict ga aylantirish
+                if hasattr(row, 'keys'):
+                    row_dict = dict(row)
+                else:
+                    # Tuple format uchun manual dict yaratish
+                    columns = ['id', 'first_name', 'last_name', 'birth_date', 'phone', 'passport_series', 'passport_number', 'password_hash', 'total_hours', 'orders_handled', 'last_activity', 'created_at']
+                    row_dict = {columns[i]: row[i] if i < len(row) else None for i in range(len(columns))}
+
+                # Password hash ni tekshirish
+                password_hash = row_dict.get("password_hash", "")
+                if password_hash and check_password_hash(password_hash, password):
+                    # Login muvaffaqiyatli
+                    session["staff_id"] = row_dict["id"]
+                    session["staff_name"] = f"{row_dict['first_name']} {row_dict['last_name']}"
+
+                    # Faollik vaqtini yangilash
+                    execute_query("UPDATE staff SET last_activity = ? WHERE id = ?", (now_iso, staff_id))
+
+                    flash(f"Xush kelibsiz, {row_dict['first_name']}!", "success")
+                    return redirect(url_for("staff_dashboard"))
+                else:
+                    flash("Noto'g'ri ID yoki parol.", "error")
+                    app_logger.warning(f"Failed staff login attempt for ID: {staff_id}")
+
+            except Exception as dict_error:
+                app_logger.error(f"Staff row dict conversion error: {str(dict_error)}")
+                flash("Ma'lumotlarni qayta ishlashda xatolik.", "error")
+                return redirect(url_for("staff_login"))
+        else:
+            flash("Xodim topilmadi.", "error")
+
+    return render_template("staff_login.html")
+
+@app.route("/staff/dashboard")
+def staff_dashboard():
+    if "staff_id" not in session:
+        return redirect(url_for("staff_login"))
+
+    cleanup_expired_orders()
+
+    try:
+        # Barcha buyurtmalarni olish
+        orders_raw = execute_query("""
+            SELECT o.*,
+                   GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
+            FROM orders o
+            LEFT JOIN order_details od ON o.id = od.order_id
+            LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
+            WHERE o.status IN ('waiting', 'ready')
+            GROUP BY o.id
+            ORDER BY 
+                CASE 
+                    WHEN o.status = 'waiting' THEN 1
+                    WHEN o.status = 'ready' THEN 2
+                END,
+                o.created_at ASC
+        """, fetch_all=True)
+        orders = [dict(row) for row in orders_raw] if orders_raw else []
+
+        # Staff statistikasini olish
+        staff_id = session.get("staff_id")
+        staff_stats = execute_query("SELECT orders_handled, total_hours FROM staff WHERE id = ?", (staff_id,), fetch_one=True)
+
+        if staff_stats:
+            session['staff_orders_handled'] = staff_stats.get('orders_handled', 0) or 0
+            session['staff_hours'] = round(float(str(staff_stats.get('total_hours', 0) or 0)), 1)
+        else:
+            session['staff_orders_handled'] = 0
+            session['staff_hours'] = 0
+
+        return render_template("staff_dashboard.html", orders=orders)
+
+    except Exception as e:
+        app_logger.error(f"Staff dashboard error: {str(e)}")
+        return render_template("staff_dashboard.html", orders=[])
+
+@app.route("/staff/order/<int:order_id>/ready", methods=["POST"])
+def staff_mark_order_ready(order_id):
+    if "staff_id" not in session:
+        return redirect(url_for("staff_login"))
+
+    staff_id = session.get("staff_id")
+
+    try:
+        # Buyurtmani 'ready' qilib belgilash
+        execute_query("UPDATE orders SET status='ready' WHERE id=? AND status='waiting'", (order_id,))
+
+        # Xodimning ko'rib chiqgan buyurtmalar sonini oshirish
+        execute_query("UPDATE staff SET orders_handled = COALESCE(orders_handled, 0) + 1 WHERE id = ?", (staff_id,))
+
+        flash("Buyurtma tayyor!", "success")
+    except Exception as e:
+        app_logger.error(f"Staff mark order ready error: {str(e)}")
+        flash("Buyurtmani tayyor qilishda xatolik.", "error")
+
+    return redirect(url_for("staff_dashboard"))
+
+@app.route("/staff/order/<int:order_id>/served", methods=["POST"])
+def staff_mark_order_served(order_id):
+    if "staff_id" not in session:
+        return redirect(url_for("staff_login"))
+
+    try:
+        # Buyurtmani 'served' qilib belgilash
+        execute_query("UPDATE orders SET status='served' WHERE id=? AND status='ready'", (order_id,))
+
+        flash("Buyurtma berildi!", "success")
+    except Exception as e:
+        app_logger.error(f"Staff mark order served error: {str(e)}")
+        flash("Buyurtmani berildi deb belgilashda xatolik.", "error")
+
+    return redirect(url_for("staff_dashboard"))
+
+@app.route("/staff/menu")
+def staff_menu():
+    """Xodim menu boshqaruvi"""
+    if "staff_id" not in session and not session.get("super_admin"):
+        return redirect(url_for("staff_login"))
+    
+    try:
+        menu_items_raw = execute_query("SELECT * FROM menu_items ORDER BY category, name", fetch_all=True)
+        menu_items = [dict(row) for row in menu_items_raw] if menu_items_raw else []
+        
+        return render_template("staff_menu.html", menu_items=menu_items)
+    except Exception as e:
+        app_logger.error(f"Staff menu error: {str(e)}")
+        return render_template("staff_menu.html", menu_items=[])
+
+@app.route("/staff/employees")
+def staff_employees():
+    """Xodimlar ro'yxati"""
+    if "staff_id" not in session and not session.get("super_admin"):
+        return redirect(url_for("staff_login"))
+    
+    try:
+        staff_raw = execute_query("SELECT * FROM staff ORDER BY created_at DESC", fetch_all=True)
+        staff_list = [dict(row) for row in staff_raw] if staff_raw else []
+        
+        return render_template("staff_employees.html", staff_list=staff_list)
+    except Exception as e:
+        app_logger.error(f"Staff employees error: {str(e)}")
+        return render_template("staff_employees.html", staff_list=[])
+
+@app.route("/staff/logout")
+def staff_logout():
+    session.pop("staff_id", None)
+    session.pop("staff_name", None)
+    flash("Xodim tizimidan chiqdingiz.", "info")
+    return redirect(url_for("index"))
+
+@app.route("/super-admin-control-panel-master-z8x9k", methods=["GET", "POST"])
 def super_admin_login():
     """Super admin kirish sahifasi"""
     if request.method == "POST":
@@ -3998,6 +4199,130 @@ def super_admin_delete_courier(courier_id):
     except Exception as e:
         app_logger.error(f"Delete courier error: {str(e)}")
         flash("Kuryerni o'chirishda xatolik yuz berdi.", "error")
+
+    return redirect(url_for("super_admin_dashboard"))
+
+@app.route("/staff/register", methods=["GET", "POST"])
+def staff_register():
+    """Xodim ro'yxatdan o'tish"""
+    if request.method == "POST":
+        first_name = request.form.get("first_name", "").strip()
+        last_name = request.form.get("last_name", "").strip()
+        birth_date = request.form.get("birth_date", "").strip()
+        phone = request.form.get("phone", "").strip()
+        passport_series = request.form.get("passport_series", "").strip()
+        passport_number = request.form.get("passport_number", "").strip()
+        password = request.form.get("password", "")
+
+        if not all([first_name, last_name, birth_date, phone, passport_series, passport_number, password]):
+            flash("Barcha maydonlarni to'ldiring.", "error")
+            return redirect(url_for("staff_register"))
+
+        try:
+            password_hash = generate_password_hash(password)
+            now = get_current_time().isoformat()
+
+            staff_id = execute_query("""
+                INSERT INTO staff (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, now))
+
+            # JSON fayliga saqlash
+            executor.submit(save_staff_to_json, first_name, last_name, birth_date, phone, staff_id, get_current_time())
+
+            flash(f"Muvaffaqiyatli ro'yxatdan o'tdingiz! ID: {staff_id}", "success")
+            return redirect(url_for("staff_login"))
+
+        except Exception as e:
+            app_logger.error(f"Staff registration error: {str(e)}")
+            flash("Ro'yxatdan o'tishda xatolik yuz berdi.", "error")
+
+    return render_template("staff_register.html")
+
+@app.route("/courier/register", methods=["GET", "POST"])
+def courier_register():
+    """Kuryer ro'yxatdan o'tish"""
+    if request.method == "POST":
+        first_name = request.form.get("first_name", "").strip()
+        last_name = request.form.get("last_name", "").strip()
+        birth_date = request.form.get("birth_date", "").strip()
+        phone = request.form.get("phone", "").strip()
+        passport_series = request.form.get("passport_series", "").strip()
+        passport_number = request.form.get("passport_number", "").strip()
+        password = request.form.get("password", "")
+
+        if not all([first_name, last_name, birth_date, phone, passport_series, passport_number, password]):
+            flash("Barcha maydonlarni to'ldiring.", "error")
+            return redirect(url_for("courier_register"))
+
+        try:
+            password_hash = generate_password_hash(password)
+            now = get_current_time().isoformat()
+
+            courier_id = execute_query("""
+                INSERT INTO couriers (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, now))
+
+            flash(f"Muvaffaqiyatli ro'yxatdan o'tdingiz! ID: {courier_id}", "success")
+            return redirect(url_for("courier_login"))
+
+        except Exception as e:
+            app_logger.error(f"Courier registration error: {str(e)}")
+            flash("Ro'yxatdan o'tishda xatolik yuz berdi.", "error")
+
+    return render_template("courier_register.html")
+
+@app.route("/super-admin/add-staff", methods=["POST"])
+def super_admin_add_staff():
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+
+    first_name = request.form.get("first_name", "").strip()
+    last_name = request.form.get("last_name", "").strip()
+    birth_date = request.form.get("birth_date", "").strip()
+    phone = request.form.get("phone", "").strip()
+    passport_series = request.form.get("passport_series", "").strip()
+    passport_number = request.form.get("passport_number", "").strip()
+    password = request.form.get("password", "")
+
+    if not all([first_name, last_name, birth_date, phone, passport_series, passport_number, password]):
+        flash("Barcha maydonlarni to'ldiring.", "error")
+        return redirect(url_for("super_admin_dashboard"))
+
+    try:
+        password_hash = generate_password_hash(password)
+        now = get_current_time().isoformat()
+
+        staff_id = execute_query("""
+            INSERT INTO staff (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, now))
+
+        flash(f"Yangi xodim qo'shildi. ID: {staff_id}", "success")
+    except Exception as e:
+        app_logger.error(f"Add staff error: {str(e)}")
+        flash("Xodim qo'shishda xatolik yuz berdi.", "error")
+
+    return redirect(url_for("super_admin_dashboard"))
+
+@app.route("/super-admin/delete-staff/<int:staff_id>", methods=["POST"])
+def super_admin_delete_staff(staff_id):
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+
+    try:
+        staff_data = execute_query("SELECT first_name, last_name FROM staff WHERE id = ?", (staff_id,), fetch_one=True)
+        if not staff_data:
+            flash("Xodim topilmadi.", "error")
+        else:
+            execute_query("DELETE FROM staff WHERE id = ?", (staff_id,))
+            app_logger.info(f"Super admin xodimni o'chirdi: {staff_data.get('first_name')} {staff_data.get('last_name')} (ID: {staff_id})")
+            flash(f"Xodim {staff_data.get('first_name', 'N/A')} {staff_data.get('last_name', 'N/A')} muvaffaqiyatli o'chirildi.", "success")
+
+    except Exception as e:
+        app_logger.error(f"Delete staff error: {str(e)}")
+        flash("Xodimni o'chirishda xatolik yuz berdi.", "error")
 
     return redirect(url_for("super_admin_dashboard"))
 
