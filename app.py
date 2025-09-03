@@ -2980,6 +2980,41 @@ def user_page():
         return place_order()
     return redirect(url_for("menu"))
 
+@app.route("/user/status/<int:ticket_no>")
+def user_status(ticket_no):
+    """Buyurtma holatini JSON formatda qaytarish"""
+    try:
+        order = execute_query("SELECT * FROM orders WHERE ticket_no = ?", (ticket_no,), fetch_one=True)
+        if not order:
+            return jsonify({"error": "Buyurtma topilmadi", "status": "not_found"}), 404
+        
+        return jsonify({
+            "ticket_no": order['ticket_no'],
+            "status": order['status'],
+            "created_at": order['created_at'],
+            "eta_time": order['eta_time']
+        })
+    except Exception as e:
+        app_logger.error(f"User status error: {str(e)}")
+        return jsonify({"error": "Server xatoligi"}), 500
+
+@app.route("/user/cancel/<int:ticket_no>", methods=["POST"])
+def user_cancel_order(ticket_no):
+    """Foydalanuvchi buyurtmasini bekor qilish"""
+    try:
+        order = execute_query("SELECT * FROM orders WHERE ticket_no = ? AND status IN ('waiting', 'ready')", (ticket_no,), fetch_one=True)
+        if not order:
+            flash("Buyurtma topilmadi yoki bekor qilib bo'lmaydi.", "error")
+            return redirect(url_for("index"))
+        
+        execute_query("UPDATE orders SET status = 'cancelled' WHERE ticket_no = ?", (ticket_no,))
+        flash("Buyurtma bekor qilindi.", "success")
+        return redirect(url_for("index"))
+    except Exception as e:
+        app_logger.error(f"User cancel order error: {str(e)}")
+        flash("Buyurtmani bekor qilishda xatolik.", "error")
+        return redirect(url_for("index"))
+
 @app.route("/user/success/<int:ticket_no>")
 def user_success(ticket_no):
     conn = get_db()
@@ -3346,6 +3381,7 @@ def api_status():
         "version": "1.0"
     })
 
+@app.route("/get_cart_count")
 @app.route("/api/cart-count")
 def api_cart_count():
     """Savatchadagi mahsulotlar sonini qaytarish - API endpoint"""
@@ -3516,6 +3552,7 @@ SUPER_ADMIN_USERNAME = Config.SUPER_ADMIN_USERNAME
 SUPER_ADMIN_PASSWORD = Config.SUPER_ADMIN_PASSWORD
 
 # ---- STAFF AUTH ----
+@app.route("/staff-secure-login-w7m2k", methods=["GET", "POST"])
 @app.route("/staff-secure-login-j7h3n", methods=["GET", "POST"])
 def staff_login():
     if request.method == "POST":
@@ -3705,6 +3742,18 @@ def staff_menu():
         app_logger.error(f"Staff menu error: {str(e)}")
         return render_template("staff_menu.html", menu_items=[])
 
+@app.route("/admin/menu")
+def admin_menu():
+    return staff_menu()
+
+@app.route("/admin/employees")  
+def admin_employees():
+    return staff_employees()
+
+@app.route("/admin/logout")
+def admin_logout():
+    return staff_logout()
+
 @app.route("/staff/employees")
 def staff_employees():
     """Xodimlar ro'yxati"""
@@ -3746,6 +3795,7 @@ def super_admin_login():
 
     return render_template("super_admin_login.html")
 
+@app.route("/super-admin-dashboard-ultimate-m4st3r")
 @app.route("/super-admin/dashboard-ultimate-m4st3r")
 def super_admin_dashboard():
     """Super admin dashboard"""
@@ -4443,6 +4493,11 @@ def staff_register():
 
     return render_template("staff_register.html")
 
+@app.route("/staff-register-secure-k3x8p", methods=["GET", "POST"])
+@app.route("/staff/register", methods=["GET", "POST"])
+def staff_register_new():
+    return staff_register()
+
 @app.route("/courier/register", methods=["GET", "POST"])
 def courier_register():
     """Kuryer ro'yxatdan o'tish"""
@@ -4771,6 +4826,80 @@ def super_admin_get_receipts():
         return jsonify(receipts)
     except Exception as e:
         app_logger.error(f"Get receipts error: {str(e)}")
+        return jsonify([])
+
+@app.route("/admin/add_menu_item", methods=["POST"])
+def admin_add_menu_item():
+    """Admin menu item qo'shish"""
+    if not session.get("staff_id") and not session.get("super_admin"):
+        return redirect(url_for("staff_login"))
+    
+    try:
+        name = request.form.get("name", "").strip()
+        price = float(request.form.get("price", 0))
+        category = request.form.get("category", "food")
+        description = request.form.get("description", "").strip()
+        
+        if not name or price <= 0:
+            flash("Mahsulot nomi va narxi to'g'ri bo'lishi kerak.", "error")
+            return redirect(url_for("staff_menu"))
+        
+        now = get_current_time().isoformat()
+        execute_query("""
+            INSERT INTO menu_items (name, price, category, description, available, created_at)
+            VALUES (?, ?, ?, ?, 1, ?)
+        """, (name, price, category, description, now))
+        
+        flash("Yangi mahsulot qo'shildi!", "success")
+    except Exception as e:
+        app_logger.error(f"Add menu item error: {str(e)}")
+        flash("Mahsulot qo'shishda xatolik.", "error")
+    
+    return redirect(url_for("staff_menu"))
+
+@app.route("/admin/toggle_menu_item/<int:item_id>", methods=["POST"])
+def admin_toggle_menu_item(item_id):
+    """Menu item holatini o'zgartirish"""
+    if not session.get("staff_id") and not session.get("super_admin"):
+        return redirect(url_for("staff_login"))
+    
+    try:
+        item = execute_query("SELECT available FROM menu_items WHERE id = ?", (item_id,), fetch_one=True)
+        if item:
+            new_status = 0 if item['available'] else 1
+            execute_query("UPDATE menu_items SET available = ? WHERE id = ?", (new_status, item_id))
+            status_text = "faollashtirildi" if new_status else "o'chirildi"
+            flash(f"Mahsulot {status_text}.", "success")
+        else:
+            flash("Mahsulot topilmadi.", "error")
+    except Exception as e:
+        app_logger.error(f"Toggle menu item error: {str(e)}")
+        flash("Mahsulot holatini o'zgartirishda xatolik.", "error")
+    
+    return redirect(url_for("staff_menu"))
+
+@app.route("/admin/orders.json")
+def admin_orders_json():
+    """Barcha buyurtmalarni JSON formatda qaytarish"""
+    if not session.get("staff_id") and not session.get("super_admin"):
+        return jsonify({"error": "Unauthorized"}), 401
+    
+    try:
+        orders_raw = execute_query("""
+            SELECT o.*, 
+                   GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
+            FROM orders o
+            LEFT JOIN order_details od ON o.id = od.order_id
+            LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
+            GROUP BY o.id
+            ORDER BY o.created_at DESC
+            LIMIT 100
+        """, fetch_all=True)
+        
+        orders = [dict(row) for row in orders_raw] if orders_raw else []
+        return jsonify(orders)
+    except Exception as e:
+        app_logger.error(f"Admin orders JSON error: {str(e)}")
         return jsonify([])
 
 @app.route("/super-admin/get-ratings")
