@@ -4424,7 +4424,7 @@ if __name__ == "__main__":
 
 
 # Super admin additional routes
-@app.route("/super-admin/analytics")
+@app.route("/super-admin-analytics-ultimate-m4st3r")
 def super_admin_analytics():
     if not session.get("super_admin"):
         flash("Super admin paneliga kirish talab qilinadi.", "error")
@@ -4441,7 +4441,7 @@ def super_admin_analytics():
         # So'nggi 12 oylik buyurtmalar statistikasi
         monthly_orders = []
         for i in range(12):
-            month_date = (get_current_time() - timedelta(days=30*i)).strftime("%Y-%m")
+            month_date = (get_current_time() - datetime.timedelta(days=30*i)).strftime("%Y-%m")
             cur.execute("SELECT COUNT(*) FROM orders WHERE created_at LIKE ?", (f"{month_date}%",))
             count = cur.fetchone()[0]
             monthly_orders.append({
@@ -4471,7 +4471,7 @@ def super_admin_analytics():
         flash("Analytics sahifasini yuklashda xatolik yuz berdi.", "error")
         return redirect(url_for("super_admin_dashboard"))
 
-@app.route("/super-admin/reports")
+@app.route("/super-admin-reports-ultimate-m4st3r")
 def super_admin_reports():
     if not session.get("super_admin"):
         flash("Super admin paneliga kirish talab qilinadi.", "error")
@@ -4484,7 +4484,7 @@ def super_admin_reports():
         flash("Reports sahifasini yuklashda xatolik yuz berdi.", "error")
         return redirect(url_for("super_admin_dashboard"))
 
-@app.route("/super-admin/system")
+@app.route("/super-admin-system-ultimate-m4st3r")
 def super_admin_system():
     if not session.get("super_admin"):
         flash("Super admin paneliga kirish talab qilinadi.", "error")
@@ -4497,7 +4497,7 @@ def super_admin_system():
         flash("System sahifasini yuklashda xatolik yuz berdi.", "error")
         return redirect(url_for("super_admin_dashboard"))
 
-@app.route("/super-admin/logs")
+@app.route("/super-admin-logs-ultimate-m4st3r")
 def super_admin_logs():
     if not session.get("super_admin"):
         flash("Super admin paneliga kirish talab qilinadi.", "error")
