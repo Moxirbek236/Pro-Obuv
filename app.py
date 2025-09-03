@@ -4668,7 +4668,7 @@ def staff_login():
                     try:
                         last_activity = datetime.datetime.fromisoformat(row_dict["last_activity"])
                         current_time = get_current_time()
-                        time_diff = current_time - lasttry:
+                        time_diff = current_time - last_activity
             import platform
             try:
                 import psutil
