@@ -4670,7 +4670,8 @@ def super_admin_delete_user():
     if os.path.exists(users_file):
         try:
             with open(users_file, 'r', encoding='utf-8') as f:
-                users = json.load(f)users = [user for user in users if str(user.get('buyurtma_raqami')) != str(ticket_no)]
+                users = json.load(f)
+                users = [user for user in users if str(user.get('buyurtma_raqami')) != str(ticket_no)]
 
             with open(users_file, 'w', encoding='utf-8') as f:
                 json.dump(users, f, ensure_ascii=False, indent=2)
