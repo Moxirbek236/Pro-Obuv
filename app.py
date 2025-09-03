@@ -2758,7 +2758,7 @@ def courier_login():
             conn_update.close()
 
         conn.close()
-        if not row or not check_password_hash(row["password_hash"], password):
+        if not row or not check_password_hash(dict(row)["password_hash"], password):
             flash("Noto'g'ri ID yoki parol.", "error")
             return redirect(url_for("courier_login"))
         session["courier_id"] = row["id"]
@@ -3027,12 +3027,15 @@ def login_page():
             conn.close()
 
             if user and check_password_hash(user["password_hash"], password):
-                session["user_id"] = user["id"]
-                session["user_name"] = f"{user['first_name']} {user['last_name']}"
-                session["user_email"] = user["email"]
-                session['interface_language'] = user.get('interface_language') or 'uz'
-                session['font_size'] = user.get('font_size') or 'medium'
-                session['dark_theme'] = bool(user.get('dark_theme', 0))
+                # SQLite Row obyektini dict ga xavfsiz aylantirish
+                user_dict = dict(user) if hasattr(user, 'keys') else user
+                
+                session["user_id"] = user_dict["id"]
+                session["user_name"] = f"{user_dict['first_name']} {user_dict['last_name']}"
+                session["user_email"] = user_dict["email"]
+                session['interface_language'] = user_dict.get('interface_language') or 'uz'
+                session['font_size'] = user_dict.get('font_size') or 'medium'
+                session['dark_theme'] = bool(user_dict.get('dark_theme', 0))
                 flash(f"Xush kelibsiz, {user['first_name']}!", "success")
                 return redirect(url_for("index"))
             else:
@@ -3067,7 +3070,7 @@ def staff_login():
         cur.execute("SELECT * FROM staff WHERE id=?;", (staff_id_int,))
         row = cur.fetchone()
 
-        if row and check_password_hash(row["password_hash"], password):
+        if row and check_password_hash(dict(row)["password_hash"], password):
             # Faollik vaqtini yangilash va ishchi soatlarini hisoblash
             now = get_current_time()
             now_iso = now.isoformat()
@@ -4951,6 +4954,13 @@ def super_admin_toggle_branch(branch_id):
 
     flash("Filial holati o'zgartirildi.", "success")
     return redirect(url_for("super_admin_dashboard"))
+
+@app.route("/super-admin/logout")
+def super_admin_logout():
+    """Super admin panelidan chiqish"""
+    session.pop("super_admin", None)
+    flash("Super admin panelidan chiqdingiz.", "info")
+    return redirect(url_for("index"))
 
 # ---- YANGI SAHIFALAR ----
 @app.route("/add_to_favorites/<int:menu_item_id>", methods=["POST"])
