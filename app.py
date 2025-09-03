@@ -4691,8 +4691,8 @@ def staff_login():
         import platform
         try:
             import psutil
-            except ImportError:
-                psutil = None
+        except ImportError:
+            psutil = None
 
         # Uptime hisoblash
         uptime_seconds = time.time() - start_time
