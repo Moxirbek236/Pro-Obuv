@@ -779,3 +779,62 @@ function loadMockAnalytics() {
 }
 </style>
 {% endblock %}</new_str>
+{% extends "base.html" %}
+
+{% block content %}
+<div class="analytics-container">
+    <h1>📊 Analytics Dashboard</h1>
+    
+    <div class="analytics-grid">
+        <div class="analytics-card">
+            <h3>📈 Sotuvlar Statistikasi</h3>
+            <canvas id="salesChart"></canvas>
+        </div>
+        
+        <div class="analytics-card">
+            <h3>👥 Foydalanuvchilar Faolligi</h3>
+            <canvas id="usersChart"></canvas>
+        </div>
+        
+        <div class="analytics-card">
+            <h3>🍽️ Mashhur Mahsulotlar</h3>
+            <canvas id="productsChart"></canvas>
+        </div>
+        
+        <div class="analytics-card">
+            <h3>💰 Daromad Tahlili</h3>
+            <canvas id="revenueChart"></canvas>
+        </div>
+    </div>
+    
+    <div class="back-button">
+        <a href="{{ url_for('super_admin_dashboard') }}" class="btn btn-primary">⬅️ Dashboard ga qaytish</a>
+    </div>
+</div>
+
+<style>
+.analytics-container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.analytics-card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.back-button {
+    text-align: center;
+}
+</style>
+{% endblock %}
