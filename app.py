@@ -3120,88 +3120,82 @@ def staff_login():
     if request.method == "POST":
         staff_id = request.form.get("staff_id", "").strip()
         password = request.form.get("password", "")
+        
         if not staff_id or not password:
             flash("ID va parolni kiriting.", "error")
             return redirect(url_for("staff_login"))
 
-        # ID raqam ekanligini va kamida 5 ta raqamdan iborat ekanligini tekshirish
+        # ID raqam ekanligini tekshirish
         try:
             staff_id_int = int(staff_id)
-            if staff_id_int < 10000:
-                flash("ID kamida 5 ta raqamdan iborat bo'lishi kerak.", "error")
-                return redirect(url_for("staff_login"))
         except ValueError:
             flash("ID raqam bo'lishi kerak.", "error")
             return redirect(url_for("staff_login"))
 
-        conn = get_db()
-        cur = conn.cursor()
-        cur.execute("SELECT * FROM staff WHERE id=?;", (staff_id_int,))
-        row = cur.fetchone()
+        try:
+            conn = get_db()
+            cur = conn.cursor()
+            cur.execute("SELECT * FROM staff WHERE id=?", (staff_id_int,))
+            row = cur.fetchone()
 
-        if row:
-            # SQLite Row obyektini xavfsiz dict ga aylantirish
-            try:
-                if hasattr(row, 'keys'):
-                    row_dict = dict(row)
-                else:
-                    # Tuple format uchun manual dict yaratish
-                    columns = ['id', 'first_name', 'last_name', 'birth_date', 'phone', 'passport_series', 'passport_number', 'password_hash', 'total_hours', 'orders_handled', 'last_activity', 'created_at']
-                    row_dict = {columns[i]: row[i] if i < len(row) else None for i in range(len(columns))}
-            except Exception as dict_error:
-                app_logger.error(f"Staff row dict conversion error: {str(dict_error)}")
-                conn.close()
-                flash("Database xatoligi yuz berdi.", "error")
-                return redirect(url_for("staff_login"))
-
-            if check_password_hash(row_dict.get("password_hash", ""), password):
-                # Faollik vaqtini yangilash va ishchi soatlarini hisoblash
-                now = get_current_time()
-                now_iso = now.isoformat()
-
+            if row:
+                # SQLite Row obyektini xavfsiz dict ga aylantirish
                 try:
-                    # Agar avvalgi faollik vaqti mavjud bo'lsa, ishchi soatlarni yangilash
-                    if row_dict.get("last_activity"):
-                        try:
-                            last_activity = datetime.datetime.fromisoformat(row_dict["last_activity"])
-                            time_diff = now - last_activity
-
-                            # Agar 8 soatdan kam bo'lsa, ishchi vaqtga qo'shish
-                            if time_diff.total_seconds() < 28800:  # 8 soat
-                                additional_hours = time_diff.total_seconds() / 3600
-                                cur.execute("UPDATE staff SET total_hours = COALESCE(total_hours, 0) + ?, last_activity = ? WHERE id = ?",
-                                           (additional_hours, now_iso, staff_id_int))
-                            else:
-                                cur.execute("UPDATE staff SET last_activity = ? WHERE id = ?", (now_iso, staff_id_int))
-                        except Exception as time_error:
-                            print(f"Vaqt hisoblashda xatolik: {time_error}")
-                            cur.execute("UPDATE staff SET last_activity = ? WHERE id = ?", (now_iso, staff_id_int))
+                    if hasattr(row, 'keys'):
+                        row_dict = dict(row)
                     else:
-                        cur.execute("UPDATE staff SET last_activity = ? WHERE id = ?", (now_iso, staff_id_int))
+                        # Tuple format uchun manual dict yaratish
+                        columns = ['id', 'first_name', 'last_name', 'birth_date', 'phone', 'passport_series', 'passport_number', 'password_hash', 'total_hours', 'orders_handled', 'last_activity', 'created_at']
+                        row_dict = {columns[i]: row[i] if i < len(row) else None for i in range(len(columns))}
+                        
+                    # Password hash ni tekshirish
+                    password_hash = row_dict.get("password_hash", "")
+                    
+                    # Debug uchun
+                    app_logger.info(f"Staff login attempt: ID={staff_id_int}, has_hash={bool(password_hash)}")
+                    
+                    if password_hash and check_password_hash(password_hash, password):
+                        # Faollik vaqtini yangilash
+                        now = get_current_time()
+                        now_iso = now.isoformat()
+                        
+                        try:
+                            cur.execute("UPDATE staff SET last_activity = ? WHERE id = ?", (now_iso, staff_id_int))
+                            conn.commit()
+                        except Exception as update_error:
+                            app_logger.warning(f"Staff faollik yangilashda xatolik: {str(update_error)}")
 
-                    conn.commit()
-                except Exception as e:
-                    print(f"Staff faollik yangilashda xatolik: {e}")
-                    pass
-
-                # Session ma'lumotlarini alohida saqlash (row_dict dan)
-                staff_id = row_dict["id"]
-                staff_first_name = row_dict["first_name"]
-                staff_last_name = row_dict["last_name"]
-                
-                session["staff_id"] = staff_id
-                session["staff_name"] = f"{staff_first_name} {staff_last_name}"
-                flash(f"Xush kelibsiz, {staff_first_name}!", "success")
-                conn.close()
-                return redirect(url_for("staff_dashboard"))
+                        # Session ma'lumotlarini saqlash
+                        session["staff_id"] = row_dict["id"]
+                        session["staff_name"] = f"{row_dict['first_name']} {row_dict['last_name']}"
+                        
+                        conn.close()
+                        flash(f"Xush kelibsiz, {row_dict['first_name']}!", "success")
+                        return redirect(url_for("staff_dashboard"))
+                    else:
+                        conn.close()
+                        flash("Noto'g'ri ID yoki parol.", "error")
+                        app_logger.warning(f"Failed login attempt for staff ID: {staff_id_int}")
+                        return redirect(url_for("staff_login"))
+                        
+                except Exception as dict_error:
+                    app_logger.error(f"Staff row processing error: {str(dict_error)}")
+                    conn.close()
+                    flash("Ma'lumotlarni qayta ishlashda xatolik.", "error")
+                    return redirect(url_for("staff_login"))
             else:
                 conn.close()
                 flash("Noto'g'ri ID yoki parol.", "error")
+                app_logger.warning(f"Staff not found for ID: {staff_id_int}")
                 return redirect(url_for("staff_login"))
-        else:
-            conn.close()
-            flash("Noto'g'ri ID yoki parol.", "error")
+                
+        except Exception as e:
+            if 'conn' in locals():
+                conn.close()
+            app_logger.error(f"Staff login error: {str(e)}")
+            flash("Tizimda xatolik yuz berdi.", "error")
             return redirect(url_for("staff_login"))
+    
     return render_template("staff_login.html")
 
 @app.route('/staff-register-secure-x9n5k')
