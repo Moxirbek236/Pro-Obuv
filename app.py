@@ -3450,6 +3450,7 @@ def staff_dashboard():
         return render_template("staff_dashboard.html", orders=[])
 
 @app.route("/staff/order/<int:order_id>/ready", methods=["POST"])
+@app.route("/admin/order/<int:order_id>/ready", methods=["POST"])
 def staff_mark_order_ready(order_id):
     if "staff_id" not in session:
         return redirect(url_for("staff_login"))
@@ -3471,6 +3472,7 @@ def staff_mark_order_ready(order_id):
     return redirect(url_for("staff_dashboard"))
 
 @app.route("/staff/order/<int:order_id>/served", methods=["POST"])
+@app.route("/admin/order/<int:order_id>/served", methods=["POST"])
 def staff_mark_order_served(order_id):
     if "staff_id" not in session:
         return redirect(url_for("staff_login"))
@@ -3483,6 +3485,22 @@ def staff_mark_order_served(order_id):
     except Exception as e:
         app_logger.error(f"Staff mark order served error: {str(e)}")
         flash("Buyurtmani berildi deb belgilashda xatolik.", "error")
+
+    return redirect(url_for("staff_dashboard"))
+
+@app.route("/admin/order/<int:order_id>/cancel", methods=["POST"])
+@app.route("/staff/order/<int:order_id>/cancel", methods=["POST"])
+def staff_cancel_order(order_id):
+    if "staff_id" not in session:
+        return redirect(url_for("staff_login"))
+
+    try:
+        # Buyurtmani 'cancelled' qilib belgilash
+        execute_query("UPDATE orders SET status='cancelled' WHERE id=?", (order_id,))
+        flash("Buyurtma bekor qilindi!", "success")
+    except Exception as e:
+        app_logger.error(f"Staff cancel order error: {str(e)}")
+        flash("Buyurtmani bekor qilishda xatolik.", "error")
 
     return redirect(url_for("staff_dashboard"))
 
@@ -4503,6 +4521,111 @@ def super_admin_reset_user_password():
     except Exception as e:
         app_logger.error(f"Reset user password error: {str(e)}")
         return jsonify({"success": False, "message": "Xatolik yuz berdi"})
+
+@app.route("/super-admin/logout")
+def super_admin_logout():
+    """Super admin logout"""
+    session.pop("super_admin", None)
+    session.pop("admin_username", None)
+    flash("Super admin panelidan chiqdingiz.", "info")
+    return redirect(url_for("index"))
+
+@app.route("/super-admin/get-orders")
+def super_admin_get_orders():
+    """API endpoint for getting orders"""
+    if not session.get("super_admin"):
+        return jsonify({"error": "Unauthorized"}), 401
+
+    try:
+        orders_raw = execute_query("""
+            SELECT o.*, 
+                   GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
+            FROM orders o
+            LEFT JOIN order_details od ON o.id = od.order_id
+            LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
+            GROUP BY o.id
+            ORDER BY o.created_at DESC
+            LIMIT 50
+        """, fetch_all=True)
+        
+        orders = [dict(row) for row in orders_raw] if orders_raw else []
+        return jsonify(orders)
+    except Exception as e:
+        app_logger.error(f"Get orders error: {str(e)}")
+        return jsonify([])
+
+@app.route("/super-admin/get-menu")
+def super_admin_get_menu():
+    """API endpoint for getting menu items"""
+    if not session.get("super_admin"):
+        return jsonify({"error": "Unauthorized"}), 401
+
+    try:
+        menu_items_raw = execute_query("SELECT * FROM menu_items ORDER BY category, name", fetch_all=True)
+        menu_items = [dict(row) for row in menu_items_raw] if menu_items_raw else []
+        return jsonify(menu_items)
+    except Exception as e:
+        app_logger.error(f"Get menu error: {str(e)}")
+        return jsonify([])
+
+@app.route("/super-admin/get-receipts")
+def super_admin_get_receipts():
+    """API endpoint for getting receipts"""
+    if not session.get("super_admin"):
+        return jsonify({"error": "Unauthorized"}), 401
+
+    try:
+        receipts_raw = execute_query("""
+            SELECT * FROM receipts 
+            ORDER BY created_at DESC 
+            LIMIT 50
+        """, fetch_all=True)
+        
+        receipts = [dict(row) for row in receipts_raw] if receipts_raw else []
+        return jsonify(receipts)
+    except Exception as e:
+        app_logger.error(f"Get receipts error: {str(e)}")
+        return jsonify([])
+
+@app.route("/super-admin/get-ratings")
+def super_admin_get_ratings():
+    """API endpoint for getting ratings"""
+    if not session.get("super_admin"):
+        return jsonify({"error": "Unauthorized"}), 401
+
+    try:
+        # Menu item ratings
+        menu_ratings_raw = execute_query("""
+            SELECT r.*, mi.name as menu_item_name, 
+                   u.first_name || ' ' || u.last_name as user_name
+            FROM ratings r
+            JOIN menu_items mi ON r.menu_item_id = mi.id
+            LEFT JOIN users u ON r.user_id = u.id
+            WHERE r.menu_item_id > 0
+            ORDER BY r.created_at DESC
+        """, fetch_all=True)
+        
+        # Branch ratings (negative menu_item_id)
+        branch_ratings_raw = execute_query("""
+            SELECT r.*, b.name as branch_name,
+                   u.first_name || ' ' || u.last_name as user_name
+            FROM ratings r
+            JOIN branches b ON (-r.menu_item_id) = b.id
+            LEFT JOIN users u ON r.user_id = u.id
+            WHERE r.menu_item_id < 0
+            ORDER BY r.created_at DESC
+        """, fetch_all=True)
+        
+        menu_ratings = [dict(row) for row in menu_ratings_raw] if menu_ratings_raw else []
+        branch_ratings = [dict(row) for row in branch_ratings_raw] if branch_ratings_raw else []
+        
+        return jsonify({
+            "menu_ratings": menu_ratings,
+            "branch_ratings": branch_ratings
+        })
+    except Exception as e:
+        app_logger.error(f"Get ratings error: {str(e)}")
+        return jsonify({"menu_ratings": [], "branch_ratings": []})
 
 @app.route("/api/super-admin/dashboard-stats")
 def api_super_admin_dashboard_stats():
