@@ -4423,7 +4423,7 @@ if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
 
 
-# Super admin additional routes
+# Super admin additional routes - to'liq ta'mirlangan
 @app.route("/super-admin/analytics")
 def super_admin_analytics():
     if not session.get("super_admin"):
@@ -4432,38 +4432,36 @@ def super_admin_analytics():
     
     try:
         # Analytics ma'lumotlarini tayyorlash
-        conn = get_db()
-        cur = conn.cursor()
-        
-        # Oylik statistika
-        analytics_data = {}
-        
-        # So'nggi 12 oylik buyurtmalar statistikasi
-        monthly_orders = []
-        for i in range(12):
-            month_date = (get_current_time() - datetime.timedelta(days=30*i)).strftime("%Y-%m")
-            cur.execute("SELECT COUNT(*) FROM orders WHERE created_at LIKE ?", (f"{month_date}%",))
-            count = cur.fetchone()[0]
-            monthly_orders.append({
-                'month': month_date,
-                'orders': count
-            })
-        
-        analytics_data['monthly_orders'] = list(reversed(monthly_orders))
-        
-        # Mahsulotlar bo'yicha statistika
-        cur.execute("""
-            SELECT mi.name, SUM(od.quantity) as total_sold 
-            FROM order_details od 
-            JOIN menu_items mi ON od.menu_item_id = mi.id 
-            GROUP BY mi.id 
-            ORDER BY total_sold DESC 
-            LIMIT 10
-        """)
-        popular_items = [{'name': row[0], 'sold': row[1]} for row in cur.fetchall()]
-        analytics_data['popular_items'] = popular_items
-        
-        conn.close()
+        with db_pool.get_connection() as conn:
+            cur = conn.cursor()
+            
+            # Oylik statistika
+            analytics_data = {}
+            
+            # So'nggi 12 oylik buyurtmalar statistikasi
+            monthly_orders = []
+            for i in range(12):
+                month_date = (get_current_time() - datetime.timedelta(days=30*i)).strftime("%Y-%m")
+                cur.execute("SELECT COUNT(*) FROM orders WHERE created_at LIKE ?", (f"{month_date}%",))
+                count = cur.fetchone()[0] if cur.fetchone() else 0
+                monthly_orders.append({
+                    'month': month_date,
+                    'orders': count
+                })
+            
+            analytics_data['monthly_orders'] = list(reversed(monthly_orders))
+            
+            # Mahsulotlar bo'yicha statistika
+            cur.execute("""
+                SELECT mi.name, COALESCE(SUM(od.quantity), 0) as total_sold 
+                FROM order_details od 
+                JOIN menu_items mi ON od.menu_item_id = mi.id 
+                GROUP BY mi.id, mi.name
+                ORDER BY total_sold DESC 
+                LIMIT 10
+            """)
+            popular_items = [{'name': row[0], 'sold': row[1]} for row in cur.fetchall()]
+            analytics_data['popular_items'] = popular_items
         
         return render_template("super_admin_analytics.html", analytics=analytics_data)
     except Exception as e:
@@ -4478,7 +4476,31 @@ def super_admin_reports():
         return redirect(url_for("super_admin_login"))
     
     try:
-        return render_template("super_admin_reports.html")
+        with db_pool.get_connection() as conn:
+            cur = conn.cursor()
+            
+            # Hisobotlar ma'lumotlari
+            reports_data = {}
+            
+            # Kunlik hisobot
+            today = get_current_time().strftime("%Y-%m-%d")
+            cur.execute("SELECT COUNT(*), COALESCE(SUM(r.total_amount), 0) FROM orders o LEFT JOIN receipts r ON o.id = r.order_id WHERE DATE(o.created_at) = ?", (today,))
+            daily_result = cur.fetchone()
+            reports_data['daily'] = {
+                'orders': daily_result[0] if daily_result else 0,
+                'revenue': daily_result[1] if daily_result else 0
+            }
+            
+            # Haftalik hisobot
+            week_ago = (get_current_time() - datetime.timedelta(days=7)).strftime("%Y-%m-%d")
+            cur.execute("SELECT COUNT(*), COALESCE(SUM(r.total_amount), 0) FROM orders o LEFT JOIN receipts r ON o.id = r.order_id WHERE DATE(o.created_at) >= ?", (week_ago,))
+            weekly_result = cur.fetchone()
+            reports_data['weekly'] = {
+                'orders': weekly_result[0] if weekly_result else 0,
+                'revenue': weekly_result[1] if weekly_result else 0
+            }
+        
+        return render_template("super_admin_reports.html", reports=reports_data)
     except Exception as e:
         app_logger.error(f"Super admin reports sahifasida xatolik: {str(e)}")
         flash("Reports sahifasini yuklashda xatolik yuz berdi.", "error")
@@ -4491,7 +4513,29 @@ def super_admin_system():
         return redirect(url_for("super_admin_login"))
     
     try:
-        return render_template("super_admin_system.html")
+        # Tizim ma'lumotlari
+        system_info = {}
+        
+        # Performance statistikasi
+        try:
+            perf_stats = performance_monitor.get_stats()
+            system_info['performance'] = perf_stats
+        except:
+            system_info['performance'] = {}
+        
+        # Database ma'lumotlari
+        with db_pool.get_connection() as conn:
+            cur = conn.cursor()
+            
+            # Jadvalar sonini hisoblash
+            cur.execute("SELECT name FROM sqlite_master WHERE type='table'")
+            tables = cur.fetchall()
+            system_info['database'] = {
+                'tables_count': len(tables),
+                'tables': [table[0] for table in tables]
+            }
+        
+        return render_template("super_admin_system.html", system=system_info)
     except Exception as e:
         app_logger.error(f"Super admin system sahifasida xatolik: {str(e)}")
         flash("System sahifasini yuklashda xatolik yuz berdi.", "error")
@@ -4504,290 +4548,35 @@ def super_admin_logs():
         return redirect(url_for("super_admin_login"))
     
     try:
-        return render_template("super_admin_logs.html")
+        # Log ma'lumotlarini olish
+        log_data = {
+            'recent_logs': [],
+            'error_logs': [],
+            'system_logs': []
+        }
+        
+        # Log fayllarini o'qish
+        try:
+            if os.path.exists('logs/restaurant.log'):
+                with open('logs/restaurant.log', 'r', encoding='utf-8') as f:
+                    log_lines = f.readlines()[-50:]  # So'nggi 50 ta log
+                    log_data['recent_logs'] = [line.strip() for line in log_lines]
+        except Exception as log_error:
+            app_logger.warning(f"Log faylini o'qishda xatolik: {str(log_error)}")
+        
+        try:
+            if os.path.exists('logs/errors.log'):
+                with open('logs/errors.log', 'r', encoding='utf-8') as f:
+                    error_lines = f.readlines()[-30:]  # So'nggi 30 ta error
+                    log_data['error_logs'] = [line.strip() for line in error_lines]
+        except Exception as error_log_error:
+            app_logger.warning(f"Error log faylini o'qishda xatolik: {str(error_log_error)}")
+        
+        return render_template("super_admin_logs.html", logs=log_data)
     except Exception as e:
         app_logger.error(f"Super admin logs sahifasida xatolik: {str(e)}")
         flash("Logs sahifasini yuklashda xatolik yuz berdi.", "error")
         return redirect(url_for("super_admin_dashboard"))
-
-@app.route("/super-admin/get-orders")
-def super_admin_get_orders():
-    if not session.get("super_admin"):
-        return jsonify([]), 401
-    
-    try:
-        orders = execute_query("""
-            SELECT o.*,
-                   GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
-            FROM orders o
-            LEFT JOIN order_details od ON o.id = od.order_id
-            LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
-            GROUP BY o.id
-            ORDER BY o.created_at DESC
-        """, fetch_all=True)
-        return jsonify([dict(order) for order in orders])
-    except Exception as e:
-        app_logger.error(f"Get orders error: {str(e)}")
-        return jsonify([]), 500
-
-@app.route("/super-admin/get-menu")
-def super_admin_get_menu():
-    if not session.get("super_admin"):
-        return jsonify([]), 401
-    
-    try:
-        menu_items = execute_query("SELECT * FROM menu_items ORDER BY category, name", fetch_all=True)
-        return jsonify([dict(item) for item in menu_items])
-    except Exception as e:
-        app_logger.error(f"Get menu error: {str(e)}")
-        return jsonify([]), 500
-
-@app.route("/super-admin/get-receipts")
-def super_admin_get_receipts():
-    if not session.get("super_admin"):
-        return jsonify([]), 401
-    
-    try:
-        receipts = execute_query("SELECT * FROM receipts ORDER BY created_at DESC", fetch_all=True)
-        return jsonify([dict(receipt) for receipt in receipts])
-    except Exception as e:
-        app_logger.error(f"Get receipts error: {str(e)}")
-        return jsonify([]), 500
-
-@app.route("/super-admin/get-ratings")
-def super_admin_get_ratings():
-    if not session.get("super_admin"):
-        return jsonify({"menu_ratings": [], "branch_ratings": []}), 401
-    
-    try:
-        # Mahsulot baholari
-        menu_ratings = execute_query("""
-            SELECT r.*, u.first_name || ' ' || u.last_name as user_name, m.name as menu_item_name
-            FROM ratings r
-            JOIN users u ON r.user_id = u.id
-            JOIN menu_items m ON r.menu_item_id = m.id
-            WHERE r.menu_item_id > 0
-            ORDER BY r.created_at DESC
-        """, fetch_all=True)
-        
-        # Filial baholari (menu_item_id manfiy bo'lganlar)
-        branch_ratings = execute_query("""
-            SELECT r.*, u.first_name || ' ' || u.last_name as user_name, b.name as branch_name
-            FROM ratings r
-            JOIN users u ON r.user_id = u.id
-            JOIN branches b ON b.id = ABS(r.menu_item_id)
-            WHERE r.menu_item_id < 0
-            ORDER BY r.created_at DESC
-        """, fetch_all=True)
-        
-        return jsonify({
-            "menu_ratings": [dict(rating) for rating in menu_ratings],
-            "branch_ratings": [dict(rating) for rating in branch_ratings]
-        })
-    except Exception as e:
-        app_logger.error(f"Get ratings error: {str(e)}")
-        return jsonify({"menu_ratings": [], "branch_ratings": []}), 500
-
-@app.route("/api/super-admin/dashboard-stats")
-def api_super_admin_dashboard_stats():
-    """Super admin dashboard statistikalari"""
-    if not session.get("super_admin"):
-        return jsonify({"error": "Unauthorized"}), 401
-    
-    try:
-        conn = get_db()
-        cur = conn.cursor()
-        
-        stats = {}
-        
-        # Asosiy statistikalar
-        cur.execute("SELECT COUNT(*) FROM orders")
-        stats['total_orders'] = cur.fetchone()[0]
-        
-        cur.execute("SELECT COUNT(*) FROM orders WHERE status='waiting'")
-        stats['waiting_orders'] = cur.fetchone()[0]
-        
-        cur.execute("SELECT COUNT(*) FROM orders WHERE status='ready'")
-        stats['ready_orders'] = cur.fetchone()[0]
-        
-        cur.execute("SELECT COUNT(*) FROM orders WHERE status='served'")
-        stats['served_orders'] = cur.fetchone()[0]
-        
-        # Bu oylik statistika
-        current_month = get_current_time().strftime("%Y-%m")
-        cur.execute("SELECT COUNT(*) FROM orders WHERE created_at LIKE ?", (f"{current_month}%",))
-        stats['month_orders'] = cur.fetchone()[0]
-        
-        # Staff va courier hisoblar
-        cur.execute("SELECT COUNT(*) FROM staff")
-        stats['total_staff'] = cur.fetchone()[0]
-        
-        cur.execute("SELECT COUNT(*) FROM couriers")
-        stats['total_couriers'] = cur.fetchone()[0]
-        
-        cur.execute("SELECT COUNT(*) FROM users")
-        stats['total_users'] = cur.fetchone()[0]
-        
-        conn.close()
-        
-        return jsonify({"success": True, "stats": stats})
-        
-    except Exception as e:
-        app_logger.error(f"Super admin dashboard stats error: {str(e)}")
-        return jsonify({"error": "Statistikalarni olishda xatolik"}), 500
-
-@app.route("/api/super-admin/reports")
-def api_super_admin_reports():
-    """Super admin hisobotlar API"""
-    if not session.get("super_admin"):
-        return jsonify({"error": "Unauthorized"}), 401
-        
-    report_type = request.args.get('type', 'daily')
-    start_date = request.args.get('start_date', '')
-    end_date = request.args.get('end_date', '')
-    
-    try:
-        # Mock data - haqiqiy implementation keyin qo'shiladi
-        return jsonify({
-            "summary": {
-                "total_revenue": 5000000,
-                "total_orders": 234,
-                "new_customers": 45,
-                "growth_rate": 12.5
-            },
-            "sales": [],
-            "products": [],
-            "customers": [],
-            "staff": [],
-            "branches": []
-        })
-    except Exception as e:
-        app_logger.error(f"Reports API error: {str(e)}")
-        return jsonify({"error": "Hisobotlarni olishda xatolik"}), 500
-
-@app.route("/api/super-admin/system-info")
-def api_super_admin_system_info():
-    """Super admin tizim ma'lumotlari API"""
-    if not session.get("super_admin"):
-        return jsonify({"error": "Unauthorized"}), 401
-    
-    try:
-        import platform
-        import psutil
-        
-        # System information
-        info_data = {
-            "status": {
-                "server": "Ishlayapti",
-                "uptime": "2 kun 14 soat",
-                "database": "Ulangan", 
-                "dbSize": "15.7",
-                "performance": "Yaxshi",
-                "responseTime": "45",
-                "memory": "Normal",
-                "memoryPercent": "67"
-            },
-            "info": {
-                "python": platform.python_version(),
-                "flask": "2.3.x",
-                "platform": platform.system(),
-                "environment": Config.ENVIRONMENT,
-                "totalStorage": "1 GB",
-                "usedStorage": "234 MB",
-                "packages": "25+",
-                "lastUpdate": "2025-01-23"
-            }
-        }
-        
-        return jsonify(info_data)
-        
-    except Exception as e:
-        app_logger.error(f"System info API error: {str(e)}")
-        return jsonify({"error": "Tizim ma'lumotlarini olishda xatolik"}), 500
-
-@app.route("/api/super-admin/clear-cache-v1", methods=["POST"])
-def api_super_admin_clear_cache():
-    """Cache tozalash API"""
-    if not session.get("super_admin"):
-        return jsonify({"error": "Unauthorized"}), 401
-    
-    try:
-        # Global cache manager orqali cache tozalash
-        if hasattr(cache_manager, 'redis_client') and cache_manager.redis_client:
-            cache_manager.redis_client.flushall()
-        
-        # Memory cache tozalash
-        cache_manager.memory_cache.clear()
-        cache_manager.cache_timestamps.clear()
-        
-        app_logger.info("Cache successfully cleared by super admin")
-        return jsonify({"success": True, "message": "Cache tozalandi"})
-        
-    except Exception as e:
-        app_logger.error(f"Clear cache error: {str(e)}")
-        return jsonify({"success": False, "message": "Cache tozalashda xatolik"}), 500
-
-@app.route("/api/super-admin/optimize-database-v1", methods=["POST"])
-def api_super_admin_optimize_database():
-    """Database optimallashtirish API"""
-    if not session.get("super_admin"):
-        return jsonify({"error": "Unauthorized"}), 401
-    
-    try:
-        conn = get_db()
-        cur = conn.cursor()
-        
-        # VACUUM va REINDEX operatsiyalari
-        cur.execute("VACUUM")
-        cur.execute("REINDEX")
-        
-        # Eski ma'lumotlarni tozalash (30 kundan eski cancelled orderlar)
-        cutoff_date = (get_current_time() - datetime.timedelta(days=30)).isoformat()
-        cur.execute("DELETE FROM orders WHERE status='cancelled' AND created_at < ?", (cutoff_date,))
-        
-        conn.commit()
-        conn.close()
-        
-        app_logger.info("Database optimized by super admin")
-        return jsonify({"success": True, "message": "Database optimallashtirildi"})
-        
-    except Exception as e:
-        app_logger.error(f"Database optimization error: {str(e)}")
-        return jsonify({"success": False, "message": "Database optimallashtirish xatoligi"}), 500
-
-@app.route("/api/super-admin/health-report-detailed")
-def api_super_admin_health_report():
-    """Batafsil health report API"""
-    if not session.get("super_admin"):
-        return jsonify({"error": "Unauthorized"}), 401
-    
-    try:
-        # Mock health data
-        health_data = {
-            "server": {
-                "status": "Ishlayapti",
-                "uptime": "2 kun 14 soat",
-                "cpu": "23%",
-                "memory": "67%"
-            },
-            "database": {
-                "status": "Ulangan",
-                "tables": "12",
-                "records": "2,456",
-                "size": "15.7"
-            },
-            "performance": {
-                "avgResponse": "45",
-                "activeSessions": "23",
-                "cacheHitRate": "87"
-            }
-        }
-        
-        return jsonify(health_data)
-        
-    except Exception as e:
-        app_logger.error(f"Health report error: {str(e)}")
-        return jsonify({"error": "Health report xatoligi"}), 500
 
 @app.route("/super-admin/delete-courier/<int:courier_id>", methods=["POST"])
 def super_admin_delete_courier(courier_id):
@@ -5007,75 +4796,3 @@ def api_super_admin_dashboard_stats():
 
 
 
-@app.route("/super-admin/reports")
-def super_admin_reports():
-    if not session.get("super_admin"):
-        flash("Super admin paneliga kirish talab qilinadi.", "error")
-        return redirect(url_for("super_admin_login"))
-    
-    try:
-        conn = get_db()
-        cur = conn.cursor()
-        
-        # Hisobotlar ma'lumotlari
-        reports_data = {}
-        
-        # Kunlik hisobot
-        today = get_current_time().strftime("%Y-%m-%d")
-        cur.execute("SELECT COUNT(*), SUM(COALESCE(r.total_amount, 0)) FROM orders o LEFT JOIN receipts r ON o.id = r.order_id WHERE DATE(o.created_at) = ?", (today,))
-        daily_result = cur.fetchone()
-        reports_data['daily'] = {
-            'orders': daily_result[0] or 0,
-            'revenue': daily_result[1] or 0
-        }
-        
-        # Haftalik hisobot
-        week_ago = (get_current_time() - timedelta(days=7)).strftime("%Y-%m-%d")
-        cur.execute("SELECT COUNT(*), SUM(COALESCE(r.total_amount, 0)) FROM orders o LEFT JOIN receipts r ON o.id = r.order_id WHERE DATE(o.created_at) >= ?", (week_ago,))
-        weekly_result = cur.fetchone()
-        reports_data['weekly'] = {
-            'orders': weekly_result[0] or 0,
-            'revenue': weekly_result[1] or 0
-        }
-        
-        conn.close()
-        
-        return render_template("super_admin_reports.html", reports=reports_data)
-    except Exception as e:
-        app_logger.error(f"Super admin reports sahifasida xatolik: {str(e)}")
-        flash("Reports sahifasini yuklashda xatolik yuz berdi.", "error")
-        return redirect(url_for("super_admin_dashboard"))
-
-@app.route("/super-admin/system")
-def super_admin_system():
-    if not session.get("super_admin"):
-        flash("Super admin paneliga kirish talab qilinadi.", "error")
-        return redirect(url_for("super_admin_login"))
-    
-    try:
-        # Tizim ma'lumotlari
-        system_info = {}
-        
-        # Performance statistikasi
-        perf_stats = performance_monitor.get_stats()
-        system_info['performance'] = perf_stats
-        
-        # Database ma'lumotlari
-        conn = get_db()
-        cur = conn.cursor()
-        
-        # Jadvalar sonini hisoblash
-        cur.execute("SELECT name FROM sqlite_master WHERE type='table'")
-        tables = cur.fetchall()
-        system_info['database'] = {
-            'tables_count': len(tables),
-            'tables': [table[0] for table in tables]
-        }
-        
-        conn.close()
-        
-        return render_template("super_admin_system.html", system=system_info)
-    except Exception as e:
-        app_logger.error(f"Super admin system sahifasida xatolik: {str(e)}")
-        flash("System sahifasini yuklashda xatolik yuz berdi.", "error")
-        return redirect(url_for("super_admin_dashboard"))

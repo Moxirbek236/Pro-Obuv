@@ -8,7 +8,7 @@
     <!-- Dashboard Grid -->
     <div class="dashboard-grid">
         <!-- Analytics Block -->
-        <div class="dashboard-card" onclick="window.location.href='{{ url_for('super_admin_analytics') }}'">
+        <div class="dashboard-card" onclick="navigateToAnalytics()">
             <div class="dashboard-icon">📊</div>
             <div class="dashboard-title">Analytics</div>
             <div class="dashboard-description">
@@ -17,7 +17,7 @@
         </div>
 
         <!-- Reports Block -->
-        <div class="dashboard-card" onclick="window.location.href='{{ url_for('super_admin_reports') }}'">
+        <div class="dashboard-card" onclick="navigateToReports()">
             <div class="dashboard-icon">📈</div>
             <div class="dashboard-title">Hisobotlar</div>
             <div class="dashboard-description">
@@ -26,7 +26,7 @@
         </div>
 
         <!-- System Block -->
-        <div class="dashboard-card" onclick="window.location.href='{{ url_for('super_admin_system') }}'">
+        <div class="dashboard-card" onclick="navigateToSystem()">
             <div class="dashboard-icon">⚙️</div>
             <div class="dashboard-title">Tizim</div>
             <div class="dashboard-description">
@@ -35,7 +35,7 @@
         </div>
 
         <!-- Logs Block -->
-        <div class="dashboard-card" onclick="window.location.href='{{ url_for('super_admin_logs') }}'">
+        <div class="dashboard-card" onclick="navigateToLogs()">
             <div class="dashboard-icon">📝</div>
             <div class="dashboard-title">Loglar</div>
             <div class="dashboard-description">
@@ -925,6 +925,23 @@ function showErrorMessage(message) {
     setTimeout(() => {
         notification.remove();
     }, 3000);
+}
+
+// Navigation functions
+function navigateToAnalytics() {
+    window.location.href = '/super-admin/analytics';
+}
+
+function navigateToReports() {
+    window.location.href = '/super-admin/reports';
+}
+
+function navigateToSystem() {
+    window.location.href = '/super-admin/system';
+}
+
+function navigateToLogs() {
+    window.location.href = '/super-admin/logs';
 }
 
 // Auto refresh every 30 seconds
