@@ -126,7 +126,7 @@ args = "echo \"📊 Database setup...\""
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python -c \"import app; print('Database initialized')\""
+args = "python -c \"from app import safe_init_database; safe_init_database()\""
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
