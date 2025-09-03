@@ -517,8 +517,8 @@ except Exception as e:
 def before_request():
     """So'rov boshlanishida xavfsiz pre-processing"""
     try:
-        # Request time tracking
-        request.start_time = time.time()
+        # Request time tracking - g obyektiga saqlash
+        g.start_time = time.time()
 
         # Session ni tekshirish va tuzatish
         if not session.get('session_id') or session.get('session_id') == 'None':
@@ -543,11 +543,15 @@ def after_request(response):
     """Request tugagandan keyin ishlaydigan function"""
     try:
         end_time = time.time()
-        duration = end_time - getattr(request, 'start_time', end_time)
+        duration = end_time - getattr(g, 'start_time', end_time)
 
-        # Performance monitoring - check if it's a proper instance
-        if hasattr(performance_monitor, 'record_request') and callable(getattr(performance_monitor, 'record_request', None)):
-            performance_monitor.record_request(duration, request.endpoint, response.status_code)
+        # Performance monitoring - xavfsiz tekshirish
+        try:
+            if hasattr(performance_monitor, 'record_request') and callable(performance_monitor.record_request):
+                performance_monitor.record_request(duration, request.endpoint or 'unknown', response.status_code)
+        except Exception:
+            # Performance monitoring xatolikni e'tiborsiz qoldirish
+            pass
 
         # Security headers qo'shish
         response.headers['X-Content-Type-Options'] = 'nosniff'
