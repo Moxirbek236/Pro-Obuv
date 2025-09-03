@@ -543,7 +543,7 @@ def after_request(response):
     """Request tugagandan keyin ishlaydigan function"""
     try:
         end_time = time.time()
-        duration = end_time - getattr(g, 'start_time', end_time)
+        duration = end_time - getattr(request, 'start_time', end_time)
 
         # Performance monitoring - check if it's a proper instance
         if hasattr(performance_monitor, 'record_request') and callable(getattr(performance_monitor, 'record_request', None)):
@@ -3126,6 +3126,31 @@ def courier_logout():
     session.pop("courier_name", None)
     return redirect(url_for("index"))
 
+@app.route("/api/cart-count")
+def api_cart_count():
+    """Savatchadagi mahsulotlar sonini qaytarish - API endpoint"""
+    try:
+        session_id = get_session_id()
+        user_id = session.get("user_id")
+        
+        conn = get_db()
+        cur = conn.cursor()
+        
+        if user_id:
+            cur.execute("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE user_id = ?", (user_id,))
+        else:
+            cur.execute("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE session_id = ?", (session_id,))
+        
+        result = cur.fetchone()
+        cart_count = result[0] if result else 0
+        conn.close()
+        
+        return jsonify({"cart_count": cart_count})
+        
+    except Exception as e:
+        app_logger.error(f"Cart count API error: {str(e)}")
+        return jsonify({"cart_count": 0})
+
 # Cart count endpoint moved to top priority section
 
 # ---- STATIC FILE HANDLING ----
@@ -3297,9 +3322,51 @@ def staff_login():
 
     return render_template("staff_login.html")
 
-@app.route('/staff-register-secure-x9n5k')
+@app.route('/staff-register-secure-x9n5k', methods=["GET", "POST"])
 def staff_register():
     """Xodim ro'yxatdan o'tish sahifasi"""
+    if request.method == "POST":
+        first_name = request.form.get("first_name", "").strip()
+        last_name = request.form.get("last_name", "").strip()
+        birth_date = request.form.get("birth_date", "").strip()
+        phone = request.form.get("phone", "").strip()
+        passport_series = request.form.get("passport_series", "").strip()
+        passport_number = request.form.get("passport_number", "").strip()
+        password = request.form.get("password", "")
+
+        if not all([first_name, last_name, birth_date, phone, passport_series, passport_number, password]):
+            flash("Barcha maydonlarni to'ldiring.", "error")
+            return redirect(url_for("staff_register"))
+
+        conn = get_db()
+        cur = conn.cursor()
+        password_hash = generate_password_hash(password)
+        now = get_current_time()
+        
+        try:
+            cur.execute("""
+                INSERT INTO staff (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+            """, (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, now.isoformat()))
+
+            new_id = cur.lastrowid
+            # ID kamida 5 ta raqamdan iborat bo'lishi uchun
+            if new_id < 10000:
+                cur.execute("UPDATE staff SET id = ? WHERE id = ?", (10000 + new_id, new_id))
+                new_id = 10000 + new_id
+
+            conn.commit()
+            conn.close()
+
+            flash(f"Xodim sifatida ro'yxatdan o'tdingiz. Sizning ID raqamingiz: {new_id}", "success")
+            return redirect(url_for("staff_login"))
+            
+        except Exception as e:
+            conn.close()
+            app_logger.error(f"Staff register error: {str(e)}")
+            flash("Ro'yxatdan o'tishda xatolik yuz berdi.", "error")
+            return redirect(url_for("staff_register"))
+    
     try:
         return render_template('staff_register.html')
     except Exception as e:
@@ -4250,6 +4317,43 @@ def super_admin_logout():
     session.pop("super_admin", None)
     flash("Super admin panelidan chiqdingiz.", "info")
     return redirect(url_for("index"))
+
+@app.route("/api/dashboard-stats")
+@login_required
+def api_dashboard_stats():
+    """Dashboard statistikalarini JSON formatida qaytarish"""
+    try:
+        conn = get_db()
+        cur = conn.cursor()
+        
+        # Asosiy statistikalar
+        stats = {}
+        
+        # Jami buyurtmalar
+        cur.execute("SELECT COUNT(*) FROM orders")
+        stats['total_orders'] = cur.fetchone()[0]
+        
+        # Status bo'yicha statistika
+        cur.execute("SELECT COUNT(*) FROM orders WHERE status='waiting'")
+        stats['waiting_orders'] = cur.fetchone()[0]
+        
+        cur.execute("SELECT COUNT(*) FROM orders WHERE status='ready'")
+        stats['ready_orders'] = cur.fetchone()[0]
+        
+        cur.execute("SELECT COUNT(*) FROM orders WHERE status='served'")
+        stats['served_orders'] = cur.fetchone()[0]
+        
+        # Bu oylik statistika
+        current_month = get_current_time().strftime("%Y-%m")
+        cur.execute("SELECT COUNT(*) FROM orders WHERE created_at LIKE ?", (f"{current_month}%",))
+        stats['month_orders'] = cur.fetchone()[0]
+        
+        conn.close()
+        return jsonify(stats)
+        
+    except Exception as e:
+        app_logger.error(f"Dashboard stats API error: {str(e)}")
+        return jsonify({"error": "Statistikalarni olishda xatolik"}), 500
 
 @app.route("/contact")
 def contact():
