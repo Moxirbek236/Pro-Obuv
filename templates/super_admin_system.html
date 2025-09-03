@@ -1,48 +1,4 @@
-
-<old_str>{% extends "base.html" %}
-
-{% block title %}Tizim Boshqaruvi - Super Admin{% endblock %}
-
-{% block content %}
-<div class="system-container">
-    <div class="system-header">
-        <h1>⚙️ Tizim Boshqaruvi</h1>
-        <div class="breadcrumb">
-            <a href="{{ url_for('super_admin_dashboard') }}">Dashboard</a> / Tizim
-        </div>
-    </div>
-
-    <!-- System Status Cards -->
-    <div class="status-grid">
-        <div class="status-card">
-            <div class="status-icon">🖥️</div>
-            <div class="status-content">
-                <h4>Server Holati</h4>
-                <div class="status-value" id="server-status">Ishlayapti</div>
-                <div class="status-uptime" id="uptime">Uptime: 0h 0m</div>
-            </div>
-        </div>
-        
-        <div class="status-card">
-            <div class="status-icon">💾</div>
-            <div class="status-content">
-                <h4>Database</h4>
-                <div class="status-value" id="db-status">Ulangan</div>
-                <div class="status-uptime" id="db-size">Hajm: 0 MB</div>
-            </div>
-        </div>
-        
-        <div class="status-card">
-            <div class="status-icon">🚀</div>
-            <div class="status-content">
-                <h4>Performance</h4>
-                <div class="status-value" id="performance">Yaxshi</div>
-                <div class="status-uptime" id="response-time">Response: 0ms</div>
-            </div>
-        </div>
-        
-        <div class</old_str>
-<new_str>{% extends "base.html" %}
+{% extends "base.html" %}
 
 {% block title %}Tizim Boshqaruvi - Super Admin{% endblock %}
 
@@ -65,7 +21,7 @@
                 <div class="status-uptime" id="uptime">Uptime: 0h 0m</div>
             </div>
         </div>
-        
+
         <div class="status-card">
             <div class="status-icon">💾</div>
             <div class="status-content">
@@ -74,7 +30,7 @@
                 <div class="status-uptime" id="db-size">Hajm: 0 MB</div>
             </div>
         </div>
-        
+
         <div class="status-card">
             <div class="status-icon">🚀</div>
             <div class="status-content">
@@ -83,7 +39,7 @@
                 <div class="status-uptime" id="response-time">Response: 0ms</div>
             </div>
         </div>
-        
+
         <div class="status-card">
             <div class="status-icon">💰</div>
             <div class="status-content">
@@ -105,7 +61,7 @@
                 <button class="btn btn-danger" onclick="emergencyShutdown()">🚨 Emergency Shutdown</button>
             </div>
         </div>
-        
+
         <div class="action-group">
             <h3>📊 Monitoring</h3>
             <div class="action-buttons">
@@ -308,7 +264,7 @@ function generateHealthReport() {
         .then(response => response.json())
         .then(data => {
             let reportHtml = '<div class="health-report">';
-            
+
             // Server health
             reportHtml += '<div class="health-section"><h6>🖥️ Server Status</h6><ul>';
             reportHtml += `<li>Status: ${data.server.status}</li>`;
@@ -333,7 +289,7 @@ function generateHealthReport() {
             reportHtml += '</ul></div>';
 
             reportHtml += '</div>';
-            
+
             document.getElementById('health-report-content').innerHTML = reportHtml;
             document.getElementById('healthModal').style.display = 'block';
         })
@@ -418,7 +374,7 @@ function showSuccessMessage(message) {
     notification.className = 'notification success';
     notification.textContent = message;
     document.body.appendChild(notification);
-    
+
     setTimeout(() => notification.classList.add('show'), 100);
     setTimeout(() => notification.remove(), 3000);
 }
@@ -429,7 +385,7 @@ function showErrorMessage(message) {
     notification.className = 'notification error';
     notification.textContent = message;
     document.body.appendChild(notification);
-    
+
     setTimeout(() => notification.classList.add('show'), 100);
     setTimeout(() => notification.remove(), 3000);
 }
@@ -437,7 +393,7 @@ function showErrorMessage(message) {
 // Sahifa yuklanganda system info ni yuklash
 document.addEventListener('DOMContentLoaded', function() {
     loadSystemInfo();
-    
+
     // 30 soniyada bir marta status yangilanishi
     setInterval(loadSystemInfo, 30000);
 });
@@ -740,26 +696,26 @@ document.addEventListener('DOMContentLoaded', function() {
     .system-container {
         padding: 15px;
     }
-    
+
     .status-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .actions-section {
         grid-template-columns: 1fr;
     }
-    
+
     .config-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .config-actions {
         flex-direction: column;
     }
-    
+
     .info-grid {
         grid-template-columns: 1fr;
     }
 }
 </style>
-{% endblock %}</new_str>
+{% endblock %}

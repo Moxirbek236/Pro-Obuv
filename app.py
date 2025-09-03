@@ -167,8 +167,8 @@ limiter = Limiter(
     key_func=get_remote_address,
     app=app,
     default_limits=[
-        f"{Config.RATE_LIMIT_DAILY} per day", 
-        f"{Config.RATE_LIMIT_HOURLY} per hour", 
+        f"{Config.RATE_LIMIT_DAILY} per day",
+        f"{Config.RATE_LIMIT_HOURLY} per hour",
         f"{Config.RATE_LIMIT_MINUTE} per minute"
     ],
     storage_uri=Config.REDIS_URL
@@ -191,7 +191,7 @@ def setup_logging():
     detailed_formatter = logging.Formatter(
         '%(asctime)s | %(levelname)s | %(name)s | %(funcName)s:%(lineno)d | %(message)s'
     )
-    
+
     # Simple formatter
     simple_formatter = logging.Formatter(
         '%(asctime)s - %(levelname)s - %(message)s'
@@ -233,7 +233,7 @@ def setup_logging():
         werkzeug_logger.setLevel(logging.WARNING)
 
         return logging.getLogger('restaurant_app')
-        
+
     except Exception as e:
         # Fallback logging
         print(f"Logging setup failed: {e}")
@@ -268,7 +268,7 @@ class CacheManager:
         try:
             if not REDIS_AVAILABLE:
                 return
-                
+
             redis_url = os.environ.get('REDIS_URL')
             if redis_url and not redis_url.startswith('memory'):
                 self.redis_client = redis.from_url(redis_url)
@@ -347,7 +347,7 @@ class RateLimiter:
         with self.lock:
             # Eski so'rovlarni tozalash
             self.requests[identifier] = [
-                req_time for req_time in self.requests[identifier] 
+                req_time for req_time in self.requests[identifier]
                 if current_time - req_time < window
             ]
 
@@ -377,7 +377,7 @@ def not_found_error(error):
     app_logger.warning(f"404 Error: {request.url}")
     if request.is_json or request.path.startswith('/api/'):
         return jsonify({"error": "Not found", "code": 404}), 404
-    
+
     # Error template mavjudligini tekshirish
     try:
         return render_template('error.html', error_code=404, error_message="Sahifa topilmadi"), 404
@@ -393,7 +393,7 @@ def internal_error(error):
     app_logger.error(f"500 Error: {str(error)} - URL: {request.url}")
     if request.is_json or request.path.startswith('/api/'):
         return jsonify({"error": "Internal server error", "code": 500}), 500
-    
+
     try:
         return render_template('error.html', error_code=500, error_message="Server xatoligi"), 500
     except:
@@ -408,7 +408,7 @@ def rate_limit_error(error):
     app_logger.warning(f"Rate limit exceeded: {request.remote_addr}")
     if request.is_json or request.path.startswith('/api/'):
         return jsonify({"error": "Rate limit exceeded", "code": 429}), 429
-    
+
     try:
         return render_template('error.html', error_code=429, error_message="Juda ko'p so'rov"), 429
     except:
@@ -422,17 +422,17 @@ def rate_limit_error(error):
 def handle_exception(e):
     """Global exception handler"""
     app_logger.error(f"Unhandled exception: {str(e)} - URL: {request.url}")
-    
+
     if request.is_json or request.path.startswith('/api/'):
         return jsonify({
             "error": "Unexpected error occurred",
             "code": 500,
             "details": str(e) if Config.IS_DEVELOPMENT else "Internal server error"
         }), 500
-    
+
     try:
-        return render_template('error.html', 
-                             error_code=500, 
+        return render_template('error.html',
+                             error_code=500,
                              error_message="Kutilmagan xatolik yuz berdi"), 500
     except:
         return f"""
@@ -471,7 +471,7 @@ class PerformanceMonitor:
                 if current_time - self.last_cleanup > 600:  # 10 daqiqa
                     cutoff_time = current_time - 3600  # 1 soat
                     self.request_times = [
-                        req for req in self.request_times 
+                        req for req in self.request_times
                         if req['timestamp'] > cutoff_time
                     ]
                     self.last_cleanup = current_time
@@ -479,7 +479,7 @@ class PerformanceMonitor:
                 # Faqat so'nggi 1000 ta so'rovni saqlash
                 if len(self.request_times) > 1000:
                     self.request_times = self.request_times[-1000:]
-                    
+
             except Exception as e:
                 app_logger.error(f"Performance monitoring xatoligi: {str(e)}")
 
@@ -516,11 +516,11 @@ def before_request():
     try:
         # Request time tracking
         request.start_time = time.time()
-        
+
         # Session ni tekshirish va tuzatish
-        if not session.get('session_id'):
+        if not session.get('session_id') or session.get('session_id') == 'None':
             session['session_id'] = get_session_id()
-            
+
         # Database connection test
         if not hasattr(g, 'db_test_done'):
             try:
@@ -530,33 +530,25 @@ def before_request():
                 g.db_test_done = True
             except Exception as db_error:
                 app_logger.error(f"Database connection test failed: {str(db_error)}")
-                
+
     except Exception as e:
         app_logger.error(f"Before request error: {str(e)}")
         # Error bo'lsa ham davom ettirish
 
-@app.after_request  
+@app.after_request
 def after_request(response):
-    """So'rov tugagach xavfsizlik sarlavhalarini qo'shish"""
+    """Request tugagandan keyin ishlaydigan function"""
     try:
-        # Performance monitoring (xavfsiz) - faqat global o'zgaruvchi mavjud bo'lsa
-        if hasattr(request, 'start_time'):
-            try:
-                duration = time.time() - request.start_time
-                # Performance monitor faqat to'g'ri obyekt bo'lsa ishlatish
-                if ('performance_monitor' in globals() and 
-                    hasattr(globals()['performance_monitor'], 'record_request') and
-                    callable(getattr(globals()['performance_monitor'], 'record_request', None))):
-                    endpoint = getattr(request, 'endpoint', None) or 'unknown'
-                    status_code = getattr(response, 'status_code', 200)
-                    globals()['performance_monitor'].record_request(duration, endpoint, status_code)
-            except Exception:
-                # Performance monitoring xatoligi - silent pass
-                pass
+        end_time = time.time()
+        duration = end_time - getattr(g, 'start_time', end_time)
+
+        # Performance monitoring - check if it's a proper instance
+        if hasattr(performance_monitor, 'record_request') and callable(getattr(performance_monitor, 'record_request', None)):
+            performance_monitor.record_request(duration, request.endpoint, response.status_code)
 
         # Security headers qo'shish
         response.headers['X-Content-Type-Options'] = 'nosniff'
-        response.headers['X-Frame-Options'] = 'DENY' 
+        response.headers['X-Frame-Options'] = 'DENY'
         response.headers['X-XSS-Protection'] = '1; mode=block'
 
         # Cache headers faqat static files uchun emas
@@ -568,7 +560,7 @@ def after_request(response):
         if Config.IS_PRODUCTION:
             response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
 
-    except Exception:
+    except Exception as e:
         # Silent pass - xavfsizlik uchun
         pass
 
@@ -620,7 +612,7 @@ class DatabasePool:
                 )
                 conn.row_factory = sqlite3.Row
 
-                # SQLite optimizatsiya sozlamalari - xavfsiz
+                # SQLite optimallashtirish sozlamalari - xavfsiz
                 try:
                     conn.execute("PRAGMA journal_mode=WAL")
                     conn.execute("PRAGMA synchronous=NORMAL")
@@ -634,7 +626,7 @@ class DatabasePool:
                 # Connection test
                 conn.execute("SELECT 1").fetchone()
                 return conn
-                
+
             except Exception as e:
                 app_logger.error(f"Database connection attempt {attempt + 1} failed: {str(e)}")
                 if attempt == max_retries - 1:
@@ -696,9 +688,20 @@ def execute_query(query, params=None, fetch_one=False, fetch_all=False):
                 cur.execute(query)
 
             if fetch_one:
-                return cur.fetchone()
+                result = cur.fetchone()
+                # Ensure result is a dictionary-like object for easier access
+                if result and hasattr(result, 'keys'):
+                    return dict(zip(result.keys(), result))
+                elif result:
+                    # Fallback for tuple results if row_factory is not set correctly
+                    return result
+                return None
             elif fetch_all:
-                return cur.fetchall()
+                # Ensure results are dictionary-like objects
+                if result and hasattr(result, 'keys'):
+                    return [dict(zip(row.keys(), row)) for row in cur.fetchall()]
+                else:
+                    return cur.fetchall()
             else:
                 conn.commit()
                 return cur.lastrowid
@@ -754,7 +757,7 @@ def init_db():
             passport_series TEXT NOT NULL,
             passport_number TEXT NOT NULL,
             password_hash TEXT NOT NULL,
-            total_hours INTEGER DEFAULT 0,
+            total_hours REAL DEFAULT 0,
             orders_handled INTEGER DEFAULT 0,
             last_activity TEXT,
             created_at TEXT NOT NULL
@@ -1240,7 +1243,7 @@ def get_user_queue_position(conn, ticket_no):
     # Foydalanuvchining navbatdagi o'rni
     cur = conn.cursor()
     cur.execute("""
-        SELECT COUNT(*) FROM orders 
+        SELECT COUNT(*) FROM orders
         WHERE status='waiting' AND created_at < (
             SELECT created_at FROM orders WHERE ticket_no=? AND status='waiting'
         )
@@ -1438,33 +1441,48 @@ def find_nearest_branch(user_latitude, user_longitude):
     conn = get_db()
     cur = conn.cursor()
     cur.execute("SELECT * FROM branches WHERE is_active = 1")
-    branches = cur.fetchall()
+    branches_raw = cur.fetchall() or [] # Ensure branches_raw is a list
     conn.close()
 
-    if not branches:
+    if not branches_raw:
         return None
 
     nearest_branch = None
     min_distance = float('inf')
 
-    for branch in branches:
-        # Haversine formula bilan masofa hisoblash
-        lat1, lng1 = math.radians(user_latitude), math.radians(user_longitude)
-        lat2, lng2 = math.radians(branch['latitude']), math.radians(branch['longitude'])
+    for branch_row in branches_raw:
+        try:
+            # Safe access to branch data, assuming branch_row is a dictionary-like object from fetchall
+            branch = dict(branch_row)
 
-        dlat = lat2 - lat1
-        dlng = lng2 - lng1
+            # Ensure coordinates and radius are valid numbers
+            branch_lat = float(branch.get('latitude', 0)) if branch.get('latitude') is not None else 0
+            branch_lng = float(branch.get('longitude', 0)) if branch.get('longitude') is not None else 0
+            delivery_radius = float(branch.get('delivery_radius', 15.0)) if branch.get('delivery_radius') is not None else 15.0
 
-        a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlng/2)**2
-        c = 2 * math.asin(math.sqrt(a))
-        distance = 6371 * c  # Yer radiusi 6371 km
+            if not branch_lat or not branch_lng:
+                continue # Skip if coordinates are missing or invalid
 
-        if distance < min_distance and distance <= branch['delivery_radius']:
-            min_distance = distance
-            nearest_branch = {
-                'branch': dict(branch),
-                'distance': round(distance, 2)
-            }
+            # Haversine formula bilan masofa hisoblash
+            lat1, lng1 = math.radians(user_latitude), math.radians(user_longitude)
+            lat2, lng2 = math.radians(branch_lat), math.radians(branch_lng)
+
+            dlat = lat2 - lat1
+            dlng = lng2 - lng1
+
+            a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlng/2)**2
+            c = 2 * math.asin(math.sqrt(a))
+            distance = 6371 * c  # Yer radiusi 6371 km
+
+            if distance < min_distance and distance <= delivery_radius:
+                min_distance = distance
+                nearest_branch = {
+                    'branch': branch,
+                    'distance': round(distance, 2)
+                }
+        except (ValueError, TypeError, KeyError, IndexError) as e:
+            app_logger.warning(f"Filial ma'lumotlarini qayta ishlashda xatolik (ID: {branch_row.get('id', 'N/A')}): {str(e)}")
+            continue # Skip this branch if error occurs
 
     return nearest_branch
 
@@ -1510,7 +1528,7 @@ def get_branch_average_rating(branch_id):
             # Filial uchun berilgan baholarni olish (menu_item_id = -branch_id)
             cur.execute("""
                 SELECT AVG(CAST(rating AS REAL)) as avg_rating, COUNT(*) as total_ratings
-                FROM ratings 
+                FROM ratings
                 WHERE menu_item_id = ?
             """, (-branch_id,))
 
@@ -1524,17 +1542,17 @@ def get_branch_average_rating(branch_id):
                 except (ValueError, TypeError):
                     avg_rating = 0.0
                     total_ratings = 0
-                    
+
                 return {
                     'average_rating': round(avg_rating, 1),
                     'total_ratings': total_ratings
                 }
-        
+
         return {
             'average_rating': 0.0,
             'total_ratings': 0
         }
-        
+
     except Exception as e:
         app_logger.error(f"Filial bahosini hisoblashda xatolik: {str(e)}")
         return {
@@ -1588,13 +1606,13 @@ def get_session_id():
             session_id = str(uuid.uuid4())
             session['session_id'] = session_id
             session.permanent = True  # Session ni permanent qilish
-            
+
             # Session timeout belgilash
             session.permanent_session_lifetime = datetime.timedelta(days=30)
-            
+
             app_logger.info(f"Yangi session yaratildi: {session_id[:8]}...")
             return session_id
-            
+
         # Mavjud session ID ni validatsiya qilish
         session_id = session['session_id']
         if len(session_id) < 10:  # UUID minimal uzunlik tekshiruvi
@@ -1603,9 +1621,9 @@ def get_session_id():
             session['session_id'] = new_session_id
             app_logger.warning(f"Noto'g'ri session ID tuzatildi: {session_id} -> {new_session_id[:8]}...")
             return new_session_id
-            
+
         return session_id
-        
+
     except Exception as e:
         app_logger.error(f"Session ID yaratishda xatolik: {str(e)}")
         # Fallback - oddiy UUID
@@ -1623,7 +1641,7 @@ def get_cart_items(conn, session_id, user_id=None):
     if not conn:
         app_logger.error("Database connection not available in get_cart_items")
         return []
-    
+
     cur = conn.cursor()
 
     try:
@@ -1635,10 +1653,10 @@ def get_cart_items(conn, session_id, user_id=None):
         if user_id:
             # Asosiy so'rov
             cur.execute("""
-                SELECT ci.id, ci.menu_item_id, mi.name, mi.price, ci.quantity, 
+                SELECT ci.id, ci.menu_item_id, mi.name, mi.price, ci.quantity,
                        COALESCE(mi.discount_percentage, 0) as discount_percentage,
-                       CASE 
-                           WHEN COALESCE(mi.discount_percentage, 0) > 0 
+                       CASE
+                           WHEN COALESCE(mi.discount_percentage, 0) > 0
                            THEN (mi.price * (100 - COALESCE(mi.discount_percentage, 0)) / 100) * ci.quantity
                            ELSE mi.price * ci.quantity
                        END as total
@@ -1649,10 +1667,10 @@ def get_cart_items(conn, session_id, user_id=None):
             """, (user_id,))
         else:
             cur.execute("""
-                SELECT ci.id, ci.menu_item_id, mi.name, mi.price, ci.quantity, 
+                SELECT ci.id, ci.menu_item_id, mi.name, mi.price, ci.quantity,
                        COALESCE(mi.discount_percentage, 0) as discount_percentage,
-                       CASE 
-                           WHEN COALESCE(mi.discount_percentage, 0) > 0 
+                       CASE
+                           WHEN COALESCE(mi.discount_percentage, 0) > 0
                            THEN (mi.price * (100 - COALESCE(mi.discount_percentage, 0)) / 100) * ci.quantity
                            ELSE mi.price * ci.quantity
                        END as total
@@ -1708,8 +1726,8 @@ def get_cart_total(conn, session_id, user_id=None):
     if user_id:
         cur.execute("""
             SELECT SUM(
-                CASE 
-                    WHEN COALESCE(mi.discount_percentage, 0) > 0 
+                CASE
+                    WHEN COALESCE(mi.discount_percentage, 0) > 0
                     THEN (mi.price * (100 - COALESCE(mi.discount_percentage, 0)) / 100) * ci.quantity
                     ELSE mi.price * ci.quantity
                 END
@@ -1721,8 +1739,8 @@ def get_cart_total(conn, session_id, user_id=None):
     else:
         cur.execute("""
             SELECT SUM(
-                CASE 
-                    WHEN COALESCE(mi.discount_percentage, 0) > 0 
+                CASE
+                    WHEN COALESCE(mi.discount_percentage, 0) > 0
                     THEN (mi.price * (100 - COALESCE(mi.discount_percentage, 0)) / 100) * ci.quantity
                     ELSE mi.price * ci.quantity
                 END
@@ -1809,7 +1827,7 @@ def index():
     try:
         # Session ID ni olish va tekshirish
         session_id = get_session_id()
-        
+
         # Asosiy sahifani render qilish
         return render_template("index.html")
     except Exception as e:
@@ -1843,13 +1861,13 @@ def admin_monitor():
         return redirect(url_for("index"))
 
     cleanup_expired_orders()
-    
+
     try:
         with db_pool.get_connection() as conn:
             cur = conn.cursor()
 
             # Waiting orders - kutayotgan buyurtmalar
-            cur.execute("""SELECT o.*, 
+            cur.execute("""SELECT o.*,
                        GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
                 FROM orders o
                 LEFT JOIN order_details od ON o.id = od.order_id
@@ -1861,7 +1879,7 @@ def admin_monitor():
             waiting = cur.fetchall() or []
 
             # Ready orders - tayyor buyurtmalar
-            cur.execute("""SELECT o.*, 
+            cur.execute("""SELECT o.*,
                        GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
                 FROM orders o
                 LEFT JOIN order_details od ON o.id = od.order_id
@@ -1874,7 +1892,7 @@ def admin_monitor():
 
             # Served orders in last 5 minutes - so'nggi 5 daqiqada berilgan buyurtmalar
             five_min_ago = (get_current_time() - datetime.timedelta(minutes=5)).isoformat()
-            cur.execute("""SELECT o.*, 
+            cur.execute("""SELECT o.*,
                        GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
                 FROM orders o
                 LEFT JOIN order_details od ON o.id = od.order_id
@@ -1885,16 +1903,16 @@ def admin_monitor():
             """, (five_min_ago,))
             served_recent = cur.fetchall() or []
 
-            return render_template('admin_monitor.html', 
-                                 waiting=[dict(w) for w in waiting], 
-                                 ready=[dict(r) for r in ready], 
+            return render_template('admin_monitor.html',
+                                 waiting=[dict(w) for w in waiting],
+                                 ready=[dict(r) for r in ready],
                                  served_recent=[dict(s) for s in served_recent])
 
     except Exception as e:
         app_logger.error(f"Monitor sahifasida xatolik: {str(e)}")
-        return render_template('admin_monitor.html', 
-                             waiting=[], 
-                             ready=[], 
+        return render_template('admin_monitor.html',
+                             waiting=[],
+                             ready=[],
                              served_recent=[])
 
 # Advanced decorators
@@ -1987,16 +2005,16 @@ def menu():
         if not cached_menu:
             menu_items = execute_query(
                 """SELECT m.*, COALESCE(AVG(r.rating), 0) as avg_rating, COUNT(r.rating) as rating_count
-                   FROM menu_items m 
-                   LEFT JOIN ratings r ON m.id = r.menu_item_id 
-                   WHERE m.available = 1 
-                   GROUP BY m.id 
+                   FROM menu_items m
+                   LEFT JOIN ratings r ON m.id = r.menu_item_id
+                   WHERE m.available = 1
+                   GROUP BY m.id
                    ORDER BY m.category, m.orders_count DESC, m.name""",
                 fetch_all=True
             )
 
             # Cache ga saqlash
-            cache_manager.set("menu_items_active", [dict(item) for item in menu_items], 120)
+            cache_manager.set("menu_items_active", menu_items, 120)
         else:
             menu_items = cached_menu
 
@@ -2007,16 +2025,17 @@ def menu():
         # Foydalanuvchi sevimlilarini olish
         favorites = []
         if session.get('user_id'):
-            favorites = execute_query(
+            favorites_raw = execute_query(
                 "SELECT menu_item_id FROM favorites WHERE user_id = ?",
                 (session['user_id'],),
                 fetch_all=True
             )
-            favorites = [fav['menu_item_id'] for fav in favorites]
+            favorites = [fav['menu_item_id'] for fav in favorites_raw] if favorites_raw else []
 
-        return render_template("menu.html", 
-                             foods=foods, 
-                             drinks=drinks, 
+
+        return render_template("menu.html",
+                             foods=foods,
+                             drinks=drinks,
                              favorites=favorites,
                              current_page='menu')
 
@@ -2071,10 +2090,10 @@ def add_to_cart():
         else:
             # Yangi qo'shish - har doim session_id ni ham berish
             if user_id:
-                cur.execute("INSERT INTO cart_items (user_id, session_id, menu_item_id, quantity, created_at) VALUES (?, ?, ?, ?, ?)", 
+                cur.execute("INSERT INTO cart_items (user_id, session_id, menu_item_id, quantity, created_at) VALUES (?, ?, ?, ?, ?)",
                            (user_id, session_id, menu_item_id, quantity, now))
             else:
-                cur.execute("INSERT INTO cart_items (session_id, menu_item_id, quantity, created_at) VALUES (?, ?, ?, ?)", 
+                cur.execute("INSERT INTO cart_items (session_id, menu_item_id, quantity, created_at) VALUES (?, ?, ?, ?)",
                            (session_id, menu_item_id, quantity, now))
 
         conn.commit()
@@ -2234,7 +2253,7 @@ def profile():
 
         # Foydalanuvchi buyurtmalar tarixi va umumiy summa
         cur.execute("""
-            SELECT o.*, COALESCE(r.total_amount, 0) as total_amount, 
+            SELECT o.*, COALESCE(r.total_amount, 0) as total_amount,
                    GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
             FROM orders o
             LEFT JOIN receipts r ON o.id = r.order_id
@@ -2285,7 +2304,7 @@ def update_profile():
 
     # Ma'lumotlarni yangilash
     cur.execute("""
-        UPDATE users 
+        UPDATE users
         SET first_name = ?, last_name = ?, email = ?, phone = ?
         WHERE id = ?
     """, (first_name, last_name, email, phone, user_id))
@@ -2320,10 +2339,10 @@ def update_address():
 
     # Manzilni yangilash
     cur.execute("""
-        UPDATE users 
+        UPDATE users
         SET address = ?, address_latitude = ?, address_longitude = ?
         WHERE id = ?
-    """, (address, address_latitude if address_latitude else None, 
+    """, (address, address_latitude if address_latitude else None,
           address_longitude if address_longitude else None, user_id))
 
     conn.commit()
@@ -2600,7 +2619,7 @@ def user_success(ticket_no):
 
     # Buyurtma tafsilotlarini olish
     cur.execute("""
-        SELECT od.*, mi.name 
+        SELECT od.*, mi.name
         FROM order_details od
         JOIN menu_items mi ON od.menu_item_id = mi.id
         WHERE od.order_id = ?
@@ -2612,8 +2631,8 @@ def user_success(ticket_no):
     # ETA vaqtini formatlash
     eta_time = datetime.datetime.fromisoformat(order["eta_time"])
 
-    return render_template("user_success.html", 
-                         order=order, 
+    return render_template("user_success.html",
+                         order=order,
                          order_items=order_items,
                          eta_hhmm=eta_time.strftime("%H:%M"))
 
@@ -2699,14 +2718,14 @@ def courier_login():
                     # Agar 8 soatdan kam bo'lsa, ishchi vaqtga qo'shish
                     if time_diff.total_seconds() < 28800:  # 8 soat
                         additional_hours = time_diff.total_seconds() / 3600
-                        cur_update.execute("UPDATE couriers SET total_hours = COALESCE(total_hours, 0) + ?, last_activity = ? WHERE id = ?", 
+                        cur_update.execute("UPDATE couriers SET total_hours = COALESCE(total_hours, 0) + ?, last_activity = ? WHERE id = ?",
                                    (additional_hours, now, courier_id))
                     else:
                         cur_update.execute("UPDATE couriers SET last_activity = ? WHERE id = ?", (now, courier_id))
                 except:
                     cur_update.execute("UPDATE couriers SET last_activity = ? WHERE id = ?", (now, courier_id))
             else:
-                cur_update.execute("UPDATE couriers SET last_activity = ? WHERE id = ?", (now, courier_id))
+                cur.execute("UPDATE couriers SET last_activity = ? WHERE id = ?", (now, courier_id))
 
             conn_update.commit()
             conn_update.close()
@@ -2777,16 +2796,16 @@ def courier_dashboard():
 
     # Barcha ready delivery buyurtmalar va kuryerga tegishli buyurtmalarni olish
     cur.execute("""
-        SELECT o.*, 
+        SELECT o.*,
                GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
         FROM orders o
         LEFT JOIN order_details od ON o.id = od.order_id
         LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
-        WHERE (o.order_type = 'delivery' AND o.status = 'ready') 
+        WHERE (o.order_type = 'delivery' AND o.status = 'ready')
            OR (o.courier_id = ? AND o.status IN ('on_way', 'delivered'))
         GROUP BY o.id
-        ORDER BY 
-            CASE 
+        ORDER BY
+            CASE
                 WHEN o.status = 'ready' THEN 1
                 WHEN o.status = 'on_way' THEN 2
                 WHEN o.status = 'delivered' THEN 3
@@ -2848,7 +2867,7 @@ def courier_take_order(order_id):
 
                 # Buyurtmani yangilash
                 cur.execute("""
-                    UPDATE orders 
+                    UPDATE orders
                     SET status='on_way', courier_id=?, courier_price=?, courier_delivery_minutes=?, delivery_price=?
                     WHERE id=? AND status='ready'
                 """, (courier_id, auto_price, auto_delivery_time, auto_price, order_id))
@@ -2879,7 +2898,6 @@ def courier_mark_delivered(order_id):
 
     conn.commit()
     conn.close()
-
     flash("Buyurtma yetkazib berildi!", "success")
     return redirect(url_for("courier_dashboard"))
 
@@ -2916,7 +2934,7 @@ def courier_set_price_time():
 
         # Narx va vaqtni yangilash
         cur.execute("""
-            UPDATE orders 
+            UPDATE orders
             SET courier_price = ?, courier_delivery_minutes = ?, delivery_price = ?
             WHERE id = ?
         """, (price, delivery_time, price, order_id))
@@ -3001,8 +3019,9 @@ def login_page():
         return render_template("login.html")
 
 # ---- STAFF AUTH ----
-@app.route("/staff-secure-login-w7m2k", methods=["GET", "POST"])
+@app.route('/staff-secure-login-w7m2k', methods=["GET", "POST"])
 def staff_login():
+    """Xodim kirish sahifasi"""
     if request.method == "POST":
         staff_id = request.form.get("staff_id", "").strip()
         password = request.form.get("password", "")
@@ -3040,7 +3059,7 @@ def staff_login():
                         # Agar 8 soatdan kam bo'lsa, ishchi vaqtga qo'shish
                         if time_diff.total_seconds() < 28800:  # 8 soat
                             additional_hours = time_diff.total_seconds() / 3600
-                            cur.execute("UPDATE staff SET total_hours = COALESCE(total_hours, 0) + ?, last_activity = ? WHERE id = ?", 
+                            cur.execute("UPDATE staff SET total_hours = COALESCE(total_hours, 0) + ?, last_activity = ? WHERE id = ?",
                                        (additional_hours, now_iso, staff_id_int))
                         else:
                             cur.execute("UPDATE staff SET last_activity = ? WHERE id = ?", (now_iso, staff_id_int))
@@ -3066,6 +3085,15 @@ def staff_login():
             return redirect(url_for("staff_login"))
     return render_template("staff_login.html")
 
+@app.route('/staff-register-secure-x9n5k')
+def staff_register():
+    """Xodim ro'yxatdan o'tish sahifasi"""
+    try:
+        return render_template('staff_register.html')
+    except Exception as e:
+        app_logger.error(f"Staff register error: {str(e)}")
+        return render_template('error.html', error="Sahifa yuklanmadi"), 500
+
 @app.route("/admin/logout")
 def staff_logout():
     # Super admin bo'lsa, super admin sessionni saqlash
@@ -3085,14 +3113,14 @@ def staff_dashboard():
     conn = get_db()
     cur = conn.cursor()
     cur.execute("""
-        SELECT o.*, 
+        SELECT o.*,
                GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
         FROM orders o
         LEFT JOIN order_details od ON o.id = od.order_id
         LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
         GROUP BY o.id
-        ORDER BY 
-            CASE 
+        ORDER BY
+            CASE
                 WHEN o.status = 'ready' THEN 1
                 WHEN o.status = 'waiting' THEN 2
                 WHEN o.status = 'served' THEN 3
@@ -3245,13 +3273,13 @@ def edit_menu_item(item_id):
 
     if image_url:
         cur.execute("""
-            UPDATE menu_items 
+            UPDATE menu_items
             SET name = ?, price = ?, description = ?, discount_percentage = ?, image_url = ?
             WHERE id = ?
         """, (name, price, description, discount_percentage, image_url, item_id))
     else:
         cur.execute("""
-            UPDATE menu_items 
+            UPDATE menu_items
             SET name = ?, price = ?, description = ?, discount_percentage = ?
             WHERE id = ?
         """, (name, price, description, discount_percentage, item_id))
@@ -3327,14 +3355,22 @@ def user_cancel(ticket_no):
 @app.route("/admin/orders.json")
 @login_required
 def staff_orders_json():
-    cleanup_expired_orders()
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM orders ORDER BY created_at ASC;")
-    rows = cur.fetchall()
-    conn.close()
-    data = [dict(row) for row in rows]
-    return jsonify(data)
+    """Super admin uchun barcha buyurtmalar JSON formatida"""
+    try:
+        cleanup_expired_orders()
+        orders = execute_query("""
+            SELECT o.*,
+                   GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
+            FROM orders o
+            LEFT JOIN order_details od ON o.id = od.order_id
+            LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
+            GROUP BY o.id
+            ORDER BY created_at ASC
+        """, fetch_all=True)
+        return jsonify([dict(order) for order in orders])
+    except Exception as e:
+        app_logger.error(f"Staff orders.json error: {str(e)}")
+        return jsonify([]), 500
 
 @app.route("/admin/employees")
 @login_required
@@ -3500,47 +3536,70 @@ def super_admin_dashboard():
             cur.execute("SELECT * FROM branches ORDER BY created_at DESC")
             branches_raw = cur.fetchall() or []
 
-            for branch in branches_raw:
+            for branch_row in branches_raw:
                 try:
-                    # SQLite Row obyektini dict ga xavfsiz o'tkazish
-                    if hasattr(branch, 'keys'):
-                        branch_dict = dict(zip(branch.keys(), branch))
+                    # Safe access to branch data, assuming branch_row is a dictionary-like object from fetchall
+                    if hasattr(branch_row, 'keys'):
+                        branch_dict = dict(zip(branch_row.keys(), branch_row))
                     else:
-                        # Agar tuple bo'lsa, xavfsiz dict yaratish
+                        # Tuple format uchun manual dict yaratish
                         branch_dict = {
-                            'id': int(branch[0]) if len(branch) > 0 and branch[0] is not None else 0,
-                            'name': str(branch[1]) if len(branch) > 1 and branch[1] is not None else 'N/A',
-                            'address': str(branch[2]) if len(branch) > 2 and branch[2] is not None else 'N/A',
+                            'id': int(branch_row[0]) if len(branch_row) > 0 and branch_row[0] is not None else 0,
+                            'name': str(branch_row[1]) if len(branch_row) > 1 and branch_row[1] is not None else 'N/A',
+                            'address': str(branch_row[2]) if len(branch_row) > 2 and branch_row[2] is not None else 'N/A',
                             'latitude': 0.0,
                             'longitude': 0.0,
-                            'phone': str(branch[5]) if len(branch) > 5 and branch[5] is not None else 'N/A',
-                            'working_hours': str(branch[6]) if len(branch) > 6 and branch[6] is not None else '09:00-22:00',
-                            'is_active': int(branch[7]) if len(branch) > 7 and branch[7] is not None else 1,
+                            'phone': str(branch_row[5]) if len(branch_row) > 5 and branch_row[5] is not None else 'N/A',
+                            'working_hours': str(branch_row[6]) if len(branch_row) > 6 and branch_row[6] is not None else '09:00-22:00',
+                            'is_active': int(branch_row[7]) if len(branch_row) > 7 and branch_row[7] is not None else 1,
                             'delivery_radius': 15.0,
-                            'created_at': str(branch[9]) if len(branch) > 9 and branch[9] is not None else ''
+                            'created_at': str(branch_row[9]) if len(branch_row) > 9 and branch_row[9] is not None else ''
                         }
-                        
-                        # Coordinate conversion with proper error handling
+
+                        # Safe coordinate conversion
                         try:
-                            if len(branch) > 3 and branch[3] is not None:
-                                branch_dict['latitude'] = float(branch[3])
+                            if len(branch_row) > 3 and branch_row[3] is not None:
+                                lat_val = branch_row[3]
+                                if isinstance(lat_val, (int, float)):
+                                    branch_dict['latitude'] = float(lat_val)
+                                elif isinstance(lat_val, str) and lat_val.replace('.', '').replace('-', '').isdigit():
+                                    branch_dict['latitude'] = float(lat_val)
+                                else:
+                                    branch_dict['latitude'] = 0.0
+                            else:
+                                branch_dict['latitude'] = 0.0
                         except (ValueError, TypeError):
                             branch_dict['latitude'] = 0.0
-                            
+
                         try:
-                            if len(branch) > 4 and branch[4] is not None:
-                                branch_dict['longitude'] = float(branch[4])
+                            if len(branch_row) > 4 and branch_row[4] is not None:
+                                lng_val = branch_row[4]
+                                if isinstance(lng_val, (int, float)):
+                                    branch_dict['longitude'] = float(lng_val)
+                                elif isinstance(lng_val, str) and lng_val.replace('.', '').replace('-', '').isdigit():
+                                    branch_dict['longitude'] = float(lng_val)
+                                else:
+                                    branch_dict['longitude'] = 0.0
+                            else:
+                                branch_dict['longitude'] = 0.0
                         except (ValueError, TypeError):
                             branch_dict['longitude'] = 0.0
-                            
+
                         try:
-                            if len(branch) > 8 and branch[8] is not None:
-                                branch_dict['delivery_radius'] = float(branch[8])
+                            if len(branch_row) > 8 and branch_row[8] is not None:
+                                radius_val = branch_row[8]
+                                if isinstance(radius_val, (int, float)):
+                                    branch_dict['delivery_radius'] = float(radius_val)
+                                elif isinstance(radius_val, str) and radius_val.replace('.', '').isdigit():
+                                    branch_dict['delivery_radius'] = float(radius_val)
+                                else:
+                                    branch_dict['delivery_radius'] = 15.0
+                            else:
+                                branch_dict['delivery_radius'] = 15.0
                         except (ValueError, TypeError):
                             branch_dict['delivery_radius'] = 15.0
-                    
-                    # Coordinates are already converted above
-                    
+
+
                     # Baho ma'lumotlarini xavfsiz olish
                     try:
                         rating_data = get_branch_average_rating(int(branch_dict['id']))
@@ -3550,9 +3609,9 @@ def super_admin_dashboard():
                         app_logger.warning(f"Branch {branch_dict['id']} bahosini olishda xatolik: {str(rating_error)}")
                         branch_dict['average_rating'] = 0.0
                         branch_dict['total_ratings'] = 0
-                    
+
                     branches.append(branch_dict)
-                    
+
                 except Exception as branch_error:
                     app_logger.error(f"Branch ma'lumotini qayta ishlashda xatolik: {str(branch_error)}")
                     continue
@@ -3612,7 +3671,7 @@ def super_admin_dashboard():
         if conn:
             conn.close()
 
-        return render_template("super_admin_dashboard.html", 
+        return render_template("super_admin_dashboard.html",
                              staff_db=staff_db or [],
                              couriers_db=couriers_db or [],
                              users_db=users_db or [],
@@ -3628,18 +3687,18 @@ def super_admin_dashboard():
                 conn.close()
             except:
                 pass
-        
+
         # Emergency fallback
         try:
-            return render_template("super_admin_dashboard.html", 
+            return render_template("super_admin_dashboard.html",
                                  staff_db=[],
                                  couriers_db=[],
                                  users_db=[],
                                  users_json=[],
                                  questions=[],
                                  branches=[],
-                                 stats={'total_orders': 0, 'waiting_orders': 0, 'ready_orders': 0, 
-                                       'served_orders': 0, 'month_orders': 0, 'total_staff': 0, 
+                                 stats={'total_orders': 0, 'waiting_orders': 0, 'ready_orders': 0,
+                                       'served_orders': 0, 'month_orders': 0, 'total_staff': 0,
                                        'total_couriers': 0, 'total_users': 0, 'total_users_json': 0})
         except Exception as template_error:
             app_logger.critical(f"Template render ham ishlamadi: {str(template_error)}")
@@ -3930,33 +3989,33 @@ def super_admin_get_orders():
     try:
         cleanup_expired_orders()
         orders = execute_query("""
-            SELECT o.*, 
+            SELECT o.*,
                    GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
             FROM orders o
             LEFT JOIN order_details od ON o.id = od.order_id
             LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
             GROUP BY o.id
-            ORDER BY o.created_at DESC
+            ORDER BY created_at DESC
         """, fetch_all=True)
-        
+
         return jsonify([dict(order) for order in orders])
     except Exception as e:
         app_logger.error(f"Super admin get orders error: {str(e)}")
         return jsonify([]), 500
 
 @app.route("/super-admin/get-menu")
-@login_required 
+@login_required
 def super_admin_get_menu():
     """Super admin uchun menyu ma'lumotlari JSON formatida"""
     try:
         menu_items = execute_query("""
             SELECT m.*, COALESCE(AVG(r.rating), 0) as avg_rating, COUNT(r.rating) as rating_count
-            FROM menu_items m 
-            LEFT JOIN ratings r ON m.id = r.menu_item_id 
-            GROUP BY m.id 
+            FROM menu_items m
+            LEFT JOIN ratings r ON m.id = r.menu_item_id
+            GROUP BY m.id
             ORDER BY m.category, m.name
         """, fetch_all=True)
-        
+
         return jsonify([dict(item) for item in menu_items])
     except Exception as e:
         app_logger.error(f"Super admin get menu error: {str(e)}")
@@ -3974,7 +4033,7 @@ def super_admin_get_receipts():
             ORDER BY r.created_at DESC
             LIMIT 100
         """, fetch_all=True)
-        
+
         return jsonify([dict(receipt) for receipt in receipts])
     except Exception as e:
         app_logger.error(f"Super admin get receipts error: {str(e)}")
@@ -3987,7 +4046,7 @@ def super_admin_get_ratings():
     try:
         # Mahsulot baholari
         menu_ratings = execute_query("""
-            SELECT r.rating, r.comment, r.created_at, 
+            SELECT r.rating, r.comment, r.created_at,
                    u.first_name, u.last_name,
                    m.name as menu_item_name,
                    (u.first_name || ' ' || u.last_name) as user_name
@@ -4012,7 +4071,7 @@ def super_admin_get_ratings():
             ORDER BY r.created_at DESC
             LIMIT 50
         """, fetch_all=True)
-        
+
         return jsonify({
             "menu_ratings": [dict(rating) for rating in menu_ratings],
             "branch_ratings": [dict(rating) for rating in branch_ratings]
@@ -4108,7 +4167,7 @@ def super_admin_kpis():
     """Super admin uchun KPI ma'lumotlari"""
     try:
         today = get_current_time().date().isoformat()
-        
+
         # Bugungi daromad
         today_revenue = execute_query("""
             SELECT COALESCE(SUM(r.total_amount), 0) as revenue
@@ -4116,14 +4175,14 @@ def super_admin_kpis():
             JOIN orders o ON r.order_id = o.id
             WHERE DATE(o.created_at) = ?
         """, (today,), fetch_one=True)
-        
+
         # Bugungi buyurtmalar
         today_orders = execute_query("""
             SELECT COUNT(*) as count
             FROM orders
             WHERE DATE(created_at) = ?
         """, (today,), fetch_one=True)
-        
+
         # Faol foydalanuvchilar (oxirgi 24 soatda)
         yesterday = (get_current_time() - datetime.timedelta(days=1)).isoformat()
         active_users = execute_query("""
@@ -4131,21 +4190,21 @@ def super_admin_kpis():
             FROM orders
             WHERE created_at >= ?
         """, (yesterday,), fetch_one=True)
-        
+
         # O'rtacha baho
         avg_rating = execute_query("""
             SELECT COALESCE(AVG(rating), 0) as avg_rating
             FROM ratings
             WHERE created_at >= ?
         """, (yesterday,), fetch_one=True)
-        
+
         return jsonify({
             "revenue": today_revenue['revenue'] if today_revenue else 0,
             "orders": today_orders['count'] if today_orders else 0,
             "activeUsers": active_users['count'] if active_users else 0,
             "avgRating": round(avg_rating['avg_rating'] if avg_rating else 0, 1)
         })
-        
+
     except Exception as e:
         app_logger.error(f"KPIs API error: {str(e)}")
         return jsonify({"error": str(e)}), 500
@@ -4157,9 +4216,9 @@ def super_admin_activity_feed():
     try:
         # Oxirgi 1 soatdagi faolliklar
         hour_ago = (get_current_time() - datetime.timedelta(hours=1)).isoformat()
-        
+
         activities = []
-        
+
         # Yangi buyurtmalar
         new_orders = execute_query("""
             SELECT customer_name, ticket_no, created_at
@@ -4168,14 +4227,14 @@ def super_admin_activity_feed():
             ORDER BY created_at DESC
             LIMIT 5
         """, (hour_ago,), fetch_all=True)
-        
+
         for order in new_orders:
             activities.append({
                 "icon": "🛒",
                 "text": f"Yangi buyurtma #{order['ticket_no']} - {order['customer_name']}",
                 "time": order['created_at'][:16].replace('T', ' ')
             })
-        
+
         # Yangi foydalanuvchilar
         new_users = execute_query("""
             SELECT first_name, last_name, created_at
@@ -4184,19 +4243,19 @@ def super_admin_activity_feed():
             ORDER BY created_at DESC
             LIMIT 3
         """, (hour_ago,), fetch_all=True)
-        
+
         for user in new_users:
             activities.append({
                 "icon": "👤",
                 "text": f"Yangi foydalanuvchi ro'yxatdan o'tdi: {user['first_name']} {user['last_name']}",
                 "time": user['created_at'][:16].replace('T', ' ')
             })
-        
+
         # Vaqt bo'yicha saralash
         activities.sort(key=lambda x: x['time'], reverse=True)
-        
+
         return jsonify({"activities": activities[:10]})
-        
+
     except Exception as e:
         app_logger.error(f"Activity feed API error: {str(e)}")
         return jsonify({"activities": []}), 500
@@ -4235,7 +4294,7 @@ def api_analytics_data():
     """Analytics ma'lumotlarini olish"""
     try:
         period = request.args.get('period', 'today')
-        
+
         if period == 'today':
             start_date = get_current_time().date()
             end_date = start_date
@@ -4248,7 +4307,7 @@ def api_analytics_data():
         else:
             end_date = get_current_time().date()
             start_date = end_date - datetime.timedelta(days=365)
-        
+
         # KPI ma'lumotlari
         kpis = {
             "revenue": 0,
@@ -4260,7 +4319,7 @@ def api_analytics_data():
             "usersChange": 0,
             "ratingChange": 0
         }
-        
+
         # Bugungi/davr daromadi
         revenue_result = execute_query("""
             SELECT COALESCE(SUM(r.total_amount), 0) as revenue
@@ -4269,14 +4328,14 @@ def api_analytics_data():
             WHERE DATE(o.created_at) BETWEEN ? AND ?
         """, (start_date.isoformat(), end_date.isoformat()), fetch_one=True)
         kpis["revenue"] = revenue_result["revenue"] if revenue_result else 0
-        
+
         # Chart ma'lumotlari
         charts = {
             "revenue": {"labels": [], "data": []},
             "orders": {"data": [0, 0, 0, 0]},
             "hourly": {"labels": [], "data": []}
         }
-        
+
         # Statistika ma'lumotlari
         stats = {
             "cardPayments": 75,
@@ -4287,13 +4346,13 @@ def api_analytics_data():
             "tashkentOrders": 150,
             "otherRegions": 50
         }
-        
+
         return jsonify({
             "kpis": kpis,
             "charts": charts,
             "stats": stats
         })
-        
+
     except Exception as e:
         app_logger.error(f"Analytics API error: {str(e)}")
         return jsonify({"error": str(e)}), 500
@@ -4306,15 +4365,15 @@ def api_reports_data():
         report_type = request.args.get('type', 'daily')
         start_date = request.args.get('start_date', '')
         end_date = request.args.get('end_date', '')
-        
+
         if not start_date:
             start_date = (get_current_time() - datetime.timedelta(days=7)).date().isoformat()
         if not end_date:
             end_date = get_current_time().date().isoformat()
-        
+
         # Summary ma'lumotlari
         summary = execute_query("""
-            SELECT 
+            SELECT
                 COALESCE(SUM(r.total_amount), 0) as total_revenue,
                 COUNT(DISTINCT o.id) as total_orders,
                 COUNT(DISTINCT o.user_id) as new_customers
@@ -4322,10 +4381,10 @@ def api_reports_data():
             LEFT JOIN receipts r ON o.id = r.order_id
             WHERE DATE(o.created_at) BETWEEN ? AND ?
         """, (start_date, end_date), fetch_one=True)
-        
+
         # Sotuvlar ma'lumotlari
         sales_data = execute_query("""
-            SELECT 
+            SELECT
                 DATE(o.created_at) as date,
                 COUNT(o.id) as orders_count,
                 COALESCE(SUM(r.total_amount), 0) as revenue,
@@ -4337,10 +4396,10 @@ def api_reports_data():
             GROUP BY DATE(o.created_at)
             ORDER BY date DESC
         """, (start_date, end_date), fetch_all=True)
-        
+
         # Mahsulotlar ma'lumotlari
         products_data = execute_query("""
-            SELECT 
+            SELECT
                 m.name,
                 m.category,
                 COUNT(od.id) as orders_count,
@@ -4353,10 +4412,10 @@ def api_reports_data():
             GROUP BY m.id
             ORDER BY orders_count DESC
         """, (start_date, end_date), fetch_all=True)
-        
+
         # Mijozlar ma'lumotlari
         customers_data = execute_query("""
-            SELECT 
+            SELECT
                 u.first_name,
                 u.last_name,
                 u.email,
@@ -4371,15 +4430,15 @@ def api_reports_data():
             HAVING orders_count > 0
             ORDER BY total_spent DESC
         """, (start_date, end_date), fetch_all=True)
-        
+
         # Xodimlar ma'lumotlari
         staff_data = execute_query("""
             SELECT * FROM staff ORDER BY orders_handled DESC
         """, fetch_all=True)
-        
+
         # Filiallar ma'lumotlari
         branches_data = execute_query("""
-            SELECT 
+            SELECT
                 b.*,
                 COUNT(o.id) as orders_count,
                 COALESCE(SUM(r.total_amount), 0) as revenue
@@ -4389,7 +4448,7 @@ def api_reports_data():
             GROUP BY b.id
             ORDER BY orders_count DESC
         """, (start_date, end_date), fetch_all=True)
-        
+
         # Filial baholarini qo'shish
         for branch in branches_data:
             try:
@@ -4397,10 +4456,10 @@ def api_reports_data():
                 branch['average_rating'] = rating_data['average_rating']
                 branch['total_ratings'] = rating_data['total_ratings']
             except Exception as rating_error:
-                app_logger.warning(f"Branch {branch['id']} rating olishda xatolik: {str(rating_error)}")
+                app_logger.warning(f"Branch {branch['id']} bahosini olishda xatolik: {str(rating_error)}")
                 branch['average_rating'] = 0.0
                 branch['total_ratings'] = 0
-        
+
         return jsonify({
             "summary": dict(summary) if summary else {},
             "sales": [dict(sale) for sale in sales_data],
@@ -4409,7 +4468,7 @@ def api_reports_data():
             "staff": [dict(staff) for staff in staff_data],
             "branches": [dict(branch) for branch in branches_data]
         })
-        
+
     except Exception as e:
         app_logger.error(f"Reports API error: {str(e)}")
         return jsonify({"error": str(e)}), 500
@@ -4422,7 +4481,7 @@ def api_system_info():
         import sys
         import psutil
         import os
-        
+
         # Server status
         status = {
             "server": "Ishlayapti",
@@ -4434,7 +4493,7 @@ def api_system_info():
             "responseTime": 50,
             "memoryPercent": int(psutil.virtual_memory().percent) if 'psutil' in sys.modules else 0
         }
-        
+
         # System info
         info = {
             "python": sys.version.split()[0],
@@ -4446,12 +4505,12 @@ def api_system_info():
             "packages": "25+",
             "lastUpdate": get_current_time().strftime("%Y-%m-%d")
         }
-        
+
         return jsonify({
             "status": status,
             "info": info
         })
-        
+
     except Exception as e:
         app_logger.error(f"System info API error: {str(e)}")
         return jsonify({"error": str(e)}), 500
@@ -4464,7 +4523,7 @@ def api_logs_data():
         log_type = request.args.get('type', 'all')
         time_range = request.args.get('range', '24h')
         format_type = request.args.get('format', 'json')
-        
+
         # Vaqt oralig'ini hisoblash
         now = get_current_time()
         if time_range == '1h':
@@ -4477,19 +4536,19 @@ def api_logs_data():
             start_time_filter = now - datetime.timedelta(days=30)
         else:  # 24h
             start_time_filter = now - datetime.timedelta(hours=24)
-        
+
         # Log fayllarini o'qish
         logs = []
         stats = {"total": 0, "errors": 0, "warnings": 0, "info": 0}
-        
+
         log_files = ['logs/restaurant.log', 'logs/errors.log']
-        
+
         for log_file in log_files:
             if os.path.exists(log_file):
                 try:
                     with open(log_file, 'r', encoding='utf-8') as f:
                         lines = f.readlines()[-1000:]  # Oxirgi 1000 ta log
-                        
+
                     for line in lines:
                         if line.strip():
                             # Log formatini parse qilish
@@ -4499,7 +4558,7 @@ def api_logs_data():
                                 level = parts[1]
                                 source = parts[2]
                                 message = ' | '.join(parts[3:])
-                                
+
                                 # Vaqt filtri
                                 try:
                                     log_time = datetime.datetime.fromisoformat(timestamp.replace(',', '.'))
@@ -4507,11 +4566,11 @@ def api_logs_data():
                                         continue
                                 except:
                                     pass
-                                
+
                                 # Type filtri
                                 if log_type != 'all' and level.lower() != log_type.lower():
                                     continue
-                                
+
                                 logs.append({
                                     "timestamp": timestamp,
                                     "level": level,
@@ -4519,7 +4578,7 @@ def api_logs_data():
                                     "message": message,
                                     "details": None
                                 })
-                                
+
                                 # Statistika
                                 stats["total"] += 1
                                 if level.lower() == 'error':
@@ -4528,13 +4587,13 @@ def api_logs_data():
                                     stats["warnings"] += 1
                                 elif level.lower() == 'info':
                                     stats["info"] += 1
-                                
+
                 except Exception as file_error:
                     app_logger.error(f"Log file {log_file} o'qishda xatolik: {str(file_error)}")
-        
+
         # Vaqt bo'yicha saralash
         logs.sort(key=lambda x: x['timestamp'], reverse=True)
-        
+
         # Format bo'yicha qaytarish
         if format_type == 'file':
             # Fayl formatida qaytarish
@@ -4545,12 +4604,12 @@ def api_logs_data():
                 headers={"Content-Disposition": f"attachment; filename=logs_{log_type}_{time_range}.log"}
             )
             return response
-        
+
         return jsonify({
             "logs": logs[:500],  # Faqat oxirgi 500 ta log
             "stats": stats
         })
-        
+
     except Exception as e:
         app_logger.error(f"Logs API error: {str(e)}")
         return jsonify({"error": str(e)}), 500
@@ -4563,14 +4622,14 @@ def api_clear_cache():
         # Memory cache tozalash
         cache_manager.memory_cache.clear()
         cache_manager.cache_timestamps.clear()
-        
+
         # Redis cache tozalash
         if cache_manager.redis_client:
             cache_manager.redis_client.flushdb()
-        
+
         app_logger.info("Cache muvaffaqiyatli tozalandi")
         return jsonify({"success": True, "message": "Cache tozalandi"})
-        
+
     except Exception as e:
         app_logger.error(f"Cache tozalashda xatolik: {str(e)}")
         return jsonify({"success": False, "message": str(e)}), 500
@@ -4582,15 +4641,15 @@ def api_optimize_database():
     try:
         with db_pool.get_connection() as conn:
             cur = conn.cursor()
-            
+
             # SQLite optimallashtirish komandlari
             cur.execute("VACUUM")
             cur.execute("REINDEX")
             cur.execute("ANALYZE")
-            
+
         app_logger.info("Database muvaffaqiyatli optimallashtirildi")
         return jsonify({"success": True, "message": "Database optimallashtirildi"})
-        
+
     except Exception as e:
         app_logger.error(f"Database optimallashtirish xatoligi: {str(e)}")
         return jsonify({"success": False, "message": str(e)}), 500
@@ -4600,16 +4659,14 @@ def api_optimize_database():
 def api_health_report():
     """Health report yaratish"""
     try:
-        import sys
-        
         # Database ma'lumotlari
         with db_pool.get_connection() as conn:
             cur = conn.cursor()
-            
+
             # Jadvallar sonini hisoblash
             cur.execute("SELECT name FROM sqlite_master WHERE type='table'")
             tables = cur.fetchall()
-            
+
             # Jami yozuvlar
             total_records = 0
             for table in tables:
@@ -4619,10 +4676,10 @@ def api_health_report():
                     total_records += count
                 except:
                     pass
-        
+
         # Database hajmi
         db_size = round(os.path.getsize(DB_PATH) / (1024 * 1024), 2) if os.path.exists(DB_PATH) else 0
-        
+
         health_data = {
             "server": {
                 "status": "Ishlayapti",
@@ -4642,9 +4699,9 @@ def api_health_report():
                 "cacheHitRate": 85
             }
         }
-        
+
         return jsonify(health_data)
-        
+
     except Exception as e:
         app_logger.error(f"Health report API error: {str(e)}")
         return jsonify({"error": str(e)}), 500
@@ -4655,15 +4712,15 @@ def api_clear_logs():
     """Loglarni tozalash"""
     try:
         log_files = ['logs/restaurant.log', 'logs/errors.log']
-        
+
         for log_file in log_files:
             if os.path.exists(log_file):
                 with open(log_file, 'w') as f:
                     f.write("")
-        
+
         app_logger.info("Loglar muvaffaqiyatli tozalandi")
         return jsonify({"success": True, "message": "Loglar tozalandi"})
-        
+
     except Exception as e:
         app_logger.error(f"Loglarni tozalashda xatolik: {str(e)}")
         return jsonify({"success": False, "message": str(e)}), 500
@@ -4738,21 +4795,21 @@ def super_admin_delete_user_db(user_id):
 
     conn = get_db()
     cur = conn.cursor()
-    
+
     # Foydalanuvchi buyurtmalarini ham o'chirish
     cur.execute("SELECT id FROM orders WHERE user_id = ?", (user_id,))
     order_ids = [row[0] for row in cur.fetchall()]
-    
+
     for order_id in order_ids:
         cur.execute("DELETE FROM order_details WHERE order_id = ?", (order_id,))
         cur.execute("DELETE FROM receipts WHERE order_id = ?", (order_id,))
-    
+
     cur.execute("DELETE FROM orders WHERE user_id = ?", (user_id,))
     cur.execute("DELETE FROM cart_items WHERE user_id = ?", (user_id,))
     cur.execute("DELETE FROM favorites WHERE user_id = ?", (user_id,))
     cur.execute("DELETE FROM ratings WHERE user_id = ?", (user_id,))
     cur.execute("DELETE FROM users WHERE id = ?", (user_id,))
-    
+
     conn.commit()
     conn.close()
 
@@ -4771,7 +4828,7 @@ def super_admin_reset_all_data():
 
         # Barcha ma'lumotlarni o'chirish
         tables_to_clear = [
-            'cart_items', 'favorites', 'ratings', 'order_details', 
+            'cart_items', 'favorites', 'ratings', 'order_details',
             'receipts', 'orders', 'questions', 'users', 'staff', 'couriers', 'branches'
         ]
 
@@ -4841,13 +4898,13 @@ def super_admin_reset_all_data():
         app_logger.info("Barcha ma'lumotlar tozalandi va test ma'lumotlari yaratildi")
         flash(f"""
         ✅ Barcha ma'lumotlar muvaffaqiyatli tozalandi va test ma'lumotlari yaratildi!
-        
+
         📋 Yaratilgan test ma'lumotlari:
         👤 Foydalanuvchi: ID 1001, Email: user@test.com, Parol: {common_password}
         👨‍💼 Xodim: ID 20001, Parol: {common_password}
         🚚 Kuryer: ID 30001, Parol: {common_password}
         🏢 Filial: Test Filial (ID: 1)
-        
+
         ⚠️ Barcha parollar bir xil: {common_password}
         """, "success")
 
@@ -4857,12 +4914,6 @@ def super_admin_reset_all_data():
         app_logger.error(f"Ma'lumotlarni tozalashda xatolik: {str(e)}")
         flash(f"Ma'lumotlarni tozalashda xatolik yuz berdi: {str(e)}", "error")
         return redirect(url_for("super_admin_dashboard"))
-
-@app.route("/super-admin/logout")
-def super_admin_logout():
-    session.pop("super_admin", None)
-    flash("Super admin panelidan chiqdingiz.", "info")
-    return redirect(url_for("index"))
 
 @app.route("/super-admin/toggle-branch/<int:branch_id>", methods=["POST"])
 def super_admin_toggle_branch(branch_id):
@@ -5056,7 +5107,7 @@ def api_find_nearest_branch():
             })
         else:
             return jsonify({
-                "success": False, 
+                "success": False,
                 "message": "Yaqin atrofda faol filial topilmadi"
             })
 
@@ -5108,7 +5159,7 @@ def api_set_language():
             message = "Til o'zbek tiliga o'zgartirildi"
 
         return jsonify({
-            "success": True, 
+            "success": True,
             "message": message,
             "language": language,
             "session_language": session.get('interface_language')
@@ -5153,7 +5204,7 @@ def api_save_settings():
             message = "Sozlamalar muvaffaqiyatli saqlandi!"
 
         return jsonify({
-            "success": True, 
+            "success": True,
             "message": message,
             "settings": {
                 "language": session.get('interface_language'),
@@ -5323,14 +5374,14 @@ def api_submit_rating():
             now = get_current_time().isoformat()
 
             # Avval bu foydalanuvchi ushbu filialga baho berganligini tekshirish
-            cur.execute("SELECT id FROM ratings WHERE user_id = ? AND menu_item_id = ?", 
+            cur.execute("SELECT id FROM ratings WHERE user_id = ? AND menu_item_id = ?",
                        (user_id, -branch_id))
             existing_rating = cur.fetchone()
 
             if existing_rating:
                 # Mavjud bahoni yangilash
                 cur.execute("""
-                    UPDATE ratings 
+                    UPDATE ratings
                     SET rating = ?, comment = ?, created_at = ?
                     WHERE user_id = ? AND menu_item_id = ?
                 """, (rating, comment, now, user_id, -branch_id))
@@ -5361,7 +5412,7 @@ def api_submit_rating():
 
 @app.route("/api/submit-menu-rating", methods=["POST"])
 def api_submit_menu_rating():
-    """Menyu mahsuloti uchun baho berish"""
+    """Mahsulot uchun baho berish"""
     try:
         # Foydalanuvchi tizimga kirganligini tekshirish
         user_id = session.get('user_id')
@@ -5403,14 +5454,14 @@ def api_submit_menu_rating():
             now = get_current_time().isoformat()
 
             # Avval bu foydalanuvchi ushbu mahsulotga baho berganligini tekshirish
-            cur.execute("SELECT id FROM ratings WHERE user_id = ? AND menu_item_id = ?", 
+            cur.execute("SELECT id FROM ratings WHERE user_id = ? AND menu_item_id = ?",
                        (user_id, menu_item_id))
             existing_rating = cur.fetchone()
 
             if existing_rating:
                 # Mavjud bahoni yangilash
                 cur.execute("""
-                    UPDATE ratings 
+                    UPDATE ratings
                     SET rating = ?, comment = ?, created_at = ?
                     WHERE user_id = ? AND menu_item_id = ?
                 """, (rating, comment, now, user_id, menu_item_id))
@@ -5424,7 +5475,7 @@ def api_submit_menu_rating():
             # Mahsulotning o'rtacha bahosini yangilash
             cur.execute("""
                 SELECT AVG(rating) as avg_rating, COUNT(*) as total_ratings
-                FROM ratings 
+                FROM ratings
                 WHERE menu_item_id = ?
             """, (menu_item_id,))
 
@@ -5470,7 +5521,7 @@ def api_get_menu_ratings(menu_item_id):
         # O'rtacha bahoni hisoblash
         cur.execute("""
             SELECT AVG(rating) as avg_rating, COUNT(*) as total_ratings
-            FROM ratings 
+            FROM ratings
             WHERE menu_item_id = ?
         """, (menu_item_id,))
 
@@ -5614,46 +5665,68 @@ def get_config():
         }
     })
 
-# Asosiy savatcha count endpoint - buni saqlab qolamiz
-@app.route("/cart_count")
-def cart_count_endpoint():
-    """Savatcha sonini olish - asosiy endpoint"""
+# ---- CRITICAL API ENDPOINTS (eng yuqori prioritet) ----
+# Bu endpoint har doim JSON response qaytarishi kerak
+
+@app.route("/api/cart-count")
+def api_cart_count_fixed():
+    """Savatcha buyumlari sonini qaytarish - xavfsiz JSON"""
+    conn = None
     try:
         session_id = get_session_id()
-        user_id = session.get("user_id")
+        user_id = session.get('user_id')
 
-        conn = get_db()
-        cur = conn.cursor()
+        # Cache dan tekshirish
+        cache_key = f"cart_count_{user_id}_{session_id}"
+        cached_count = cache_manager.get(cache_key)
+        if cached_count is not None:
+            return jsonify({
+                "count": cached_count,
+                "success": True,
+                "cached": True
+            })
 
-        if user_id:
-            cur.execute("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE user_id = ?", (user_id,))
-        else:
-            cur.execute("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE session_id = ?", (session_id,))
+        # Database dan olish
+        with db_pool.get_connection() as conn:
+            cur = conn.cursor()
 
-        cart_count = cur.fetchone()['total_count']
-        conn.close()
+            if user_id:
+                cur.execute('SELECT COALESCE(SUM(quantity), 0) FROM cart_items WHERE user_id = ?', (user_id,))
+            else:
+                cur.execute('SELECT COALESCE(SUM(quantity), 0) FROM cart_items WHERE session_id = ?', (session_id,))
 
-        # Majburiy JSON response headers bilan
-        response = jsonify({
-            "count": int(cart_count) if cart_count else 0,
-            "success": True
-        })
-        response.headers['Content-Type'] = 'application/json; charset=utf-8'
-        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-        response.headers['Pragma'] = 'no-cache'
-        response.headers['Expires'] = '0'
+            result = cur.fetchone()
+            count = int(result[0]) if result and result[0] else 0
 
-        return response
+            # Cache ga saqlash (5 daqiqa)
+            cache_manager.set(cache_key, count, 300)
+
+            response = jsonify({
+                "count": count,
+                "success": True,
+                "cached": False
+            })
+
+            # JSON headers
+            response.headers['Content-Type'] = 'application/json; charset=utf-8'
+            response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+            response.headers['Pragma'] = 'no-cache'
+            response.headers['Expires'] = '0'
+
+            return response
 
     except Exception as e:
-        app_logger.error(f"Cart count endpoint error: {str(e)}")
+        app_logger.error(f"Cart count API error: {str(e)}")
 
         error_response = jsonify({
             "count": 0,
             "success": False,
-            "error": str(e)
+            "error": "Server error",
+            "message": str(e) if Config.IS_DEVELOPMENT else "Internal error"
         })
+
         error_response.headers['Content-Type'] = 'application/json; charset=utf-8'
+        error_response.status_code = 500
         return error_response
 
 @app.route("/api/health")
@@ -5709,7 +5782,7 @@ def system_metrics():
             db_stats = {"error": str(e)}
 
         # Current active sessions
-        active_sessions = len([s for s in ['user_id', 'staff_id', 'courier_id', 'super_admin'] 
+        active_sessions = len([s for s in ['user_id', 'staff_id', 'courier_id', 'super_admin']
                               if session.get(s)])
 
         return jsonify({
@@ -5729,28 +5802,12 @@ def system_metrics():
         app_logger.error(f"Metrics endpoint error: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
-def create_minimal_app():
-    """Minimal Flask app yaratish (fallback uchun)"""
-    minimal_app = Flask(__name__)
-    minimal_app.secret_key = 'fallback_secret_key'
-    
-    @minimal_app.route('/')
-    def minimal_home():
-        return '''
-        <h1>🚨 Restoran tizimi qisman ishlamoqda</h1>
-        <p>Ba'zi xizmatlarda xatolik bor, ammo asosiy funksiyalar ishlaydi.</p>
-        <a href="/menu">Menyu</a> | <a href="/contact">Bog'lanish</a>
-        '''
-    
-    @minimal_app.route('/menu')
-    def minimal_menu():
-        return '<h1>Menu sahifasi vaqtincha ishlamayapti</h1><a href="/">Bosh sahifa</a>'
-    
-    return minimal_app
+# Ma'lumotlar bazasi migratsiyalarini ishga tushirish (agar kerak bo'lsa)
+# ensure_orders_columns() # Bu funksiyalar create_all() ichida chaqiriladi
 
 if __name__ == '__main__':
     startup_success = False
-    
+
     try:
         print("🚀 Universal Restaurant System ishga tushmoqda...")
         print(f"Muhit: {Config.ENVIRONMENT}")
@@ -5764,7 +5821,7 @@ if __name__ == '__main__':
             print("✅ Flask - OK")
         except ImportError:
             missing_deps.append("flask")
-            
+
         try:
             import sqlite3
             print("✅ SQLite3 - OK")
