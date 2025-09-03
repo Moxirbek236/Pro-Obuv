@@ -244,3 +244,128 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 {% endblock %}
+{% extends "base.html" %}
+
+{% block title %}Analytics - Super Admin Panel{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>📊 Analytics Dashboard</h2>
+                <a href="{{ url_for('super_admin_dashboard') }}" class="btn btn-outline-primary">
+                    ← Dashboard ga qaytish
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Oylik statistika -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">📈 Oylik buyurtmalar statistikasi</h5>
+                </div>
+                <div class="card-body">
+                    {% if analytics.monthly_orders %}
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Oy</th>
+                                        <th>Buyurtmalar</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in analytics.monthly_orders %}
+                                    <tr>
+                                        <td>{{ item.month }}</td>
+                                        <td><span class="badge bg-primary">{{ item.orders }}</span></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">Ma'lumotlar mavjud emas</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Mashhur mahsulotlar -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">🏆 Eng mashhur mahsulotlar</h5>
+                </div>
+                <div class="card-body">
+                    {% if analytics.popular_items %}
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Mahsulot</th>
+                                        <th>Sotilgan</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in analytics.popular_items %}
+                                    <tr>
+                                        <td>{{ item.name }}</td>
+                                        <td><span class="badge bg-success">{{ item.sold }}</span></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">Ma'lumotlar mavjud emas</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Qo'shimcha statistikalar -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">📊 Umumiy ko'rsatkichlar</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <div class="border p-3 rounded">
+                                <h4 class="text-primary">{{ analytics.total_revenue or 0 }}</h4>
+                                <small class="text-muted">Umumiy daromad</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="border p-3 rounded">
+                                <h4 class="text-success">{{ analytics.growth_rate or 0 }}%</h4>
+                                <small class="text-muted">O'sish sur'ati</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="border p-3 rounded">
+                                <h4 class="text-info">{{ analytics.monthly_orders|length or 0 }}</h4>
+                                <small class="text-muted">Faol oylar</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="border p-3 rounded">
+                                <h4 class="text-warning">{{ analytics.popular_items|length or 0 }}</h4>
+                                <small class="text-muted">TOP mahsulotlar</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
