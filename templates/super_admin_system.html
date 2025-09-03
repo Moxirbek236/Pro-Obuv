@@ -260,7 +260,7 @@ function optimizeDatabase() {
 
 // Health report yaratish
 function generateHealthReport() {
-    fetch('/api/super-admin/health-report')
+    fetch('/api/super-admin/health-report-detailed')
         .then(response => response.json())
         .then(data => {
             let reportHtml = '<div class="health-report">';
