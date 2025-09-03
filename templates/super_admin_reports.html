@@ -1118,3 +1118,138 @@ function displayReportResults(data) {
 }
 </style>
 {% endblock %}
+{% extends "base.html" %}
+
+{% block title %}Reports - Super Admin Panel{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>📈 Hisobotlar</h2>
+                <a href="{{ url_for('super_admin_dashboard') }}" class="btn btn-outline-primary">
+                    ← Dashboard ga qaytish
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vaqt bo'yicha hisobotlar -->
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">📅 Bugungi kun</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center">
+                        <h3 class="text-primary">{{ reports.daily.orders }}</h3>
+                        <p class="mb-1">Buyurtmalar</p>
+                        <hr>
+                        <h4 class="text-success">{{ "{:,}".format(reports.daily.revenue) }} so'm</h4>
+                        <small class="text-muted">Daromad</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card border-success">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">📊 Bu hafta</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center">
+                        <h3 class="text-success">{{ reports.weekly.orders }}</h3>
+                        <p class="mb-1">Buyurtmalar</p>
+                        <hr>
+                        <h4 class="text-primary">{{ "{:,}".format(reports.weekly.revenue) }} so'm</h4>
+                        <small class="text-muted">Daromad</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">📈 Bu oy</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center">
+                        <h3 class="text-warning">{{ reports.monthly.orders }}</h3>
+                        <p class="mb-1">Buyurtmalar</p>
+                        <hr>
+                        <h4 class="text-info">{{ "{:,}".format(reports.monthly.revenue) }} so'm</h4>
+                        <small class="text-muted">Daromad</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Batafsil hisobotlar -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">📋 Batafsil hisobot</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Davr</th>
+                                    <th>Buyurtmalar soni</th>
+                                    <th>Daromad</th>
+                                    <th>O'rtacha check</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="badge bg-primary">Bugun</span></td>
+                                    <td>{{ reports.daily.orders }}</td>
+                                    <td>{{ "{:,}".format(reports.daily.revenue) }} so'm</td>
+                                    <td>
+                                        {% if reports.daily.orders > 0 %}
+                                            {{ "{:,}".format((reports.daily.revenue / reports.daily.orders)|round|int) }} so'm
+                                        {% else %}
+                                            0 so'm
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-success">Bu hafta</span></td>
+                                    <td>{{ reports.weekly.orders }}</td>
+                                    <td>{{ "{:,}".format(reports.weekly.revenue) }} so'm</td>
+                                    <td>
+                                        {% if reports.weekly.orders > 0 %}
+                                            {{ "{:,}".format((reports.weekly.revenue / reports.weekly.orders)|round|int) }} so'm
+                                        {% else %}
+                                            0 so'm
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-warning text-dark">Bu oy</span></td>
+                                    <td>{{ reports.monthly.orders }}</td>
+                                    <td>{{ "{:,}".format(reports.monthly.revenue) }} so'm</td>
+                                    <td>
+                                        {% if reports.monthly.orders > 0 %}
+                                            {{ "{:,}".format((reports.monthly.revenue / reports.monthly.orders)|round|int) }} so'm
+                                        {% else %}
+                                            0 so'm
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

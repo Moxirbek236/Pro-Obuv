@@ -1052,3 +1052,125 @@ window.addEventListener('beforeunload', function() {
 }
 </style>
 {% endblock %}
+{% extends "base.html" %}
+
+{% block title %}Logs - Super Admin Panel{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>📝 Tizim loglari</h2>
+                <a href="{{ url_for('super_admin_dashboard') }}" class="btn btn-outline-primary">
+                    ← Dashboard ga qaytish
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- So'nggi loglar -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">📄 So'nggi loglar</h5>
+                </div>
+                <div class="card-body">
+                    <div class="log-container" style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; max-height: 400px; overflow-y: auto; font-family: monospace; font-size: 12px;">
+                        {% if logs.recent_logs %}
+                            {% for log in logs.recent_logs %}
+                                <div class="log-line mb-1">{{ log }}</div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted">Loglar mavjud emas</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Xatolar logi -->
+        <div class="col-md-6 mb-4">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">🚨 Xatolar logi</h5>
+                </div>
+                <div class="card-body">
+                    <div class="log-container" style="background-color: #fff5f5; padding: 15px; border-radius: 5px; max-height: 400px; overflow-y: auto; font-family: monospace; font-size: 12px;">
+                        {% if logs.error_logs %}
+                            {% for error in logs.error_logs %}
+                                <div class="log-line mb-1 text-danger">{{ error }}</div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted">Xatolar mavjud emas</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tizim loglari -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">🖥️ Tizim loglari</h5>
+                </div>
+                <div class="card-body">
+                    <div class="log-container" style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; max-height: 300px; overflow-y: auto; font-family: monospace; font-size: 12px;">
+                        {% if logs.system_logs %}
+                            {% for log in logs.system_logs %}
+                                <div class="log-line mb-1">{{ log }}</div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted">Tizim loglari mavjud emas</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Log statistikasi -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">📊 Log statistikasi</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <div class="border p-3 rounded">
+                                <h4 class="text-primary">{{ logs.recent_logs|length }}</h4>
+                                <small class="text-muted">So'nggi loglar</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="border p-3 rounded">
+                                <h4 class="text-danger">{{ logs.error_logs|length }}</h4>
+                                <small class="text-muted">Xatolar soni</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="border p-3 rounded">
+                                <h4 class="text-info">{{ logs.system_logs|length }}</h4>
+                                <small class="text-muted">Tizim loglari</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.log-line {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+</style>
+{% endblock %}
