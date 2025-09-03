@@ -135,3 +135,6 @@ args = "echo \"🎯 Starting server...\""
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "python app.py"
+
+[agent]
+expertMode = true
