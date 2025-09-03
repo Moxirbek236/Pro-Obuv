@@ -29,6 +29,7 @@ atexit.register(cleanup_resources)
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify, g
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3, os, datetime, json, uuid, secrets
+from datetime import timedelta
 from flask_sqlalchemy import SQLAlchemy
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -4430,7 +4431,41 @@ def super_admin_analytics():
         return redirect(url_for("super_admin_login"))
     
     try:
-        return render_template("super_admin_analytics.html")
+        # Analytics ma'lumotlarini tayyorlash
+        conn = get_db()
+        cur = conn.cursor()
+        
+        # Oylik statistika
+        analytics_data = {}
+        
+        # So'nggi 12 oylik buyurtmalar statistikasi
+        monthly_orders = []
+        for i in range(12):
+            month_date = (get_current_time() - timedelta(days=30*i)).strftime("%Y-%m")
+            cur.execute("SELECT COUNT(*) FROM orders WHERE created_at LIKE ?", (f"{month_date}%",))
+            count = cur.fetchone()[0]
+            monthly_orders.append({
+                'month': month_date,
+                'orders': count
+            })
+        
+        analytics_data['monthly_orders'] = list(reversed(monthly_orders))
+        
+        # Mahsulotlar bo'yicha statistika
+        cur.execute("""
+            SELECT mi.name, SUM(od.quantity) as total_sold 
+            FROM order_details od 
+            JOIN menu_items mi ON od.menu_item_id = mi.id 
+            GROUP BY mi.id 
+            ORDER BY total_sold DESC 
+            LIMIT 10
+        """)
+        popular_items = [{'name': row[0], 'sold': row[1]} for row in cur.fetchall()]
+        analytics_data['popular_items'] = popular_items
+        
+        conn.close()
+        
+        return render_template("super_admin_analytics.html", analytics=analytics_data)
     except Exception as e:
         app_logger.error(f"Super admin analytics sahifasida xatolik: {str(e)}")
         flash("Analytics sahifasini yuklashda xatolik yuz berdi.", "error")
@@ -4769,52 +4804,7 @@ def api_super_admin_dashboard_stats():
 
 
 
-@app.route("/super-admin/analytics")
-def super_admin_analytics():
-    if not session.get("super_admin"):
-        flash("Super admin paneliga kirish talab qilinadi.", "error")
-        return redirect(url_for("super_admin_login"))
-    
-    try:
-        # Analytics ma'lumotlarini tayyorlash
-        conn = get_db()
-        cur = conn.cursor()
-        
-        # Oylik statistika
-        analytics_data = {}
-        
-        # So'nggi 12 oylik buyurtmalar statistikasi
-        monthly_orders = []
-        for i in range(12):
-            month_date = (get_current_time() - timedelta(days=30*i)).strftime("%Y-%m")
-            cur.execute("SELECT COUNT(*) FROM orders WHERE created_at LIKE ?", (f"{month_date}%",))
-            count = cur.fetchone()[0]
-            monthly_orders.append({
-                'month': month_date,
-                'orders': count
-            })
-        
-        analytics_data['monthly_orders'] = list(reversed(monthly_orders))
-        
-        # Mahsulotlar bo'yicha statistika
-        cur.execute("""
-            SELECT mi.name, SUM(od.quantity) as total_sold 
-            FROM order_details od 
-            JOIN menu_items mi ON od.menu_item_id = mi.id 
-            GROUP BY mi.id 
-            ORDER BY total_sold DESC 
-            LIMIT 10
-        """)
-        popular_items = [{'name': row[0], 'sold': row[1]} for row in cur.fetchall()]
-        analytics_data['popular_items'] = popular_items
-        
-        conn.close()
-        
-        return render_template("super_admin_analytics.html", analytics=analytics_data)
-    except Exception as e:
-        app_logger.error(f"Super admin analytics sahifasida xatolik: {str(e)}")
-        flash("Analytics sahifasini yuklashda xatolik yuz berdi.", "error")
-        return redirect(url_for("super_admin_dashboard"))
+
 
 @app.route("/super-admin/reports")
 def super_admin_reports():
