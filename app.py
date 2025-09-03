@@ -4763,6 +4763,105 @@ def super_admin_reset_user_password():
         app_logger.error(f"Reset user password error: {str(e)}")
         return jsonify({"success": False, "message": "Xatolik yuz berdi"})
 
+@app.route("/super-admin/delete-branch/<int:branch_id>", methods=["POST"])
+def super_admin_delete_branch(branch_id):
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+
+    try:
+        branch_data = execute_query("SELECT name FROM branches WHERE id = ?", (branch_id,), fetch_one=True)
+        if not branch_data:
+            flash("Filial topilmadi.", "error")
+        else:
+            # Bog'liq ma'lumotlarni o'chirish
+            execute_query("UPDATE orders SET branch_id = 1 WHERE branch_id = ?", (branch_id,))
+            execute_query("DELETE FROM ratings WHERE menu_item_id = ?", (-branch_id,))
+            execute_query("DELETE FROM branches WHERE id = ?", (branch_id,))
+            app_logger.info(f"Super admin filialni o'chirdi: {branch_data.get('name', 'N/A')} (ID: {branch_id})")
+            flash(f"Filial '{branch_data.get('name', 'N/A')}' muvaffaqiyatli o'chirildi.", "success")
+
+    except Exception as e:
+        app_logger.error(f"Delete branch error: {str(e)}")
+        flash("Filialni o'chirishda xatolik yuz berdi.", "error")
+
+    return redirect(url_for("super_admin_dashboard"))
+
+@app.route("/super-admin/add-branch", methods=["POST"])
+def super_admin_add_branch():
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+
+    name = request.form.get("name", "").strip()
+    address = request.form.get("address", "").strip()
+    latitude = request.form.get("latitude", "")
+    longitude = request.form.get("longitude", "")
+    phone = request.form.get("phone", "").strip()
+    working_hours = request.form.get("working_hours", "09:00-22:00").strip()
+    delivery_radius = request.form.get("delivery_radius", "15")
+
+    if not all([name, address, latitude, longitude]):
+        flash("Filial nomi, manzil va koordinatalar majburiy.", "error")
+        return redirect(url_for("super_admin_dashboard"))
+
+    try:
+        lat = float(latitude)
+        lng = float(longitude)
+        radius = float(delivery_radius)
+        
+        now = get_current_time().isoformat()
+
+        branch_id = execute_query("""
+            INSERT INTO branches (name, address, latitude, longitude, phone, working_hours, is_active, delivery_radius, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?)
+        """, (name, address, lat, lng, phone, working_hours, radius, now))
+
+        flash(f"Yangi filial '{name}' qo'shildi. ID: {branch_id}", "success")
+    except Exception as e:
+        app_logger.error(f"Add branch error: {str(e)}")
+        flash("Filial qo'shishda xatolik yuz berdi.", "error")
+
+    return redirect(url_for("super_admin_dashboard"))
+
+@app.route("/super-admin/add-menu-item", methods=["POST"])
+def super_admin_add_menu_item():
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+
+    try:
+        name = request.form.get("name", "").strip()
+        price = float(request.form.get("price", 0))
+        category = request.form.get("category", "food")
+        description = request.form.get("description", "").strip()
+        
+        if not name or price <= 0:
+            flash("Mahsulot nomi va narxi to'g'ri bo'lishi kerak.", "error")
+            return redirect(url_for("super_admin_dashboard"))
+        
+        # Image upload handling
+        image_url = ""
+        if 'image' in request.files:
+            file = request.files['image']
+            if file and file.filename:
+                import uuid
+                import os
+                filename = str(uuid.uuid4()) + "_" + file.filename
+                file_path = os.path.join('static/images', filename)
+                file.save(file_path)
+                image_url = f"/static/images/{filename}"
+        
+        now = get_current_time().isoformat()
+        execute_query("""
+            INSERT INTO menu_items (name, price, category, description, image_url, available, created_at)
+            VALUES (?, ?, ?, ?, ?, 1, ?)
+        """, (name, price, category, description, image_url, now))
+        
+        flash("Yangi mahsulot qo'shildi!", "success")
+    except Exception as e:
+        app_logger.error(f"Super admin add menu item error: {str(e)}")
+        flash("Mahsulot qo'shishda xatolik.", "error")
+    
+    return redirect(url_for("super_admin_dashboard"))
+
 @app.route("/super-admin/logout")
 def super_admin_logout():
     """Super admin logout"""
