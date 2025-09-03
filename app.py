@@ -2837,6 +2837,69 @@ def user_success(ticket_no):
                          order_items=order_items,
                          eta_hhmm=eta_time.strftime("%H:%M"))
 
+@app.route("/receipt/<int:ticket_no>")
+def view_receipt(ticket_no):
+    """Chekni ko'rish sahifasi"""
+    try:
+        conn = get_db()
+        cur = conn.cursor()
+
+        # Buyurtma va chek ma'lumotlarini olish
+        cur.execute("""
+            SELECT o.*, r.receipt_number, r.total_amount, r.cashback_amount, r.cashback_percentage, r.created_at as receipt_created
+            FROM orders o
+            LEFT JOIN receipts r ON o.id = r.order_id
+            WHERE o.ticket_no = ?
+            ORDER BY o.id DESC LIMIT 1
+        """, (ticket_no,))
+        order = cur.fetchone()
+
+        if not order:
+            conn.close()
+            flash("Buyurtma yoki chek topilmadi.", "error")
+            return redirect(url_for("menu"))
+
+        # Buyurtma tafsilotlarini olish
+        cur.execute("""
+            SELECT od.quantity, mi.name, od.price
+            FROM order_details od
+            JOIN menu_items mi ON od.menu_item_id = mi.id
+            WHERE od.order_id = ?
+        """, (order['id'],))
+        order_items = cur.fetchall()
+
+        # Order items ni string formatiga o'tkazish
+        order_items_str = []
+        for item in order_items:
+            order_items_str.append(f"{item['name']} x{item['quantity']}")
+
+        conn.close()
+
+        # QR kod yaratish
+        qr_code = None
+        if order['receipt_number']:
+            try:
+                receipt_data = {
+                    'receipt_number': order['receipt_number'],
+                    'total_amount': order['total_amount'],
+                    'cashback_amount': order['cashback_amount'],
+                    'cashback_percentage': order['cashback_percentage'],
+                    'receipt_created': order['receipt_created']
+                }
+                qr_code = generate_qr_code(receipt_data)
+            except Exception as qr_error:
+                app_logger.warning(f"QR kod yaratishda xatolik: {str(qr_error)}")
+
+        return render_template("receipt.html",
+                             order=order,
+                             order_items=order_items_str,
+                             qr_code=qr_code)
+
+    except Exception as e:
+        app_logger.error(f"Receipt view error: {str(e)}")
+        flash("Chekni yuklashda xatolik yuz berdi.", "error")
+        return redirect(url_for("menu"))
+
 # ---- COURIER AUTH ----
 @app.route("/courier-secure-login-k4m7p", methods=["GET", "POST"])
 def courier_login():
