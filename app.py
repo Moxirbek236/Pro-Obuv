@@ -1209,6 +1209,78 @@ def cleanup_expired_orders():
         pass
     conn.close()
 
+def safe_init_database():
+    """Xavfsiz ma'lumotlar bazasini ishga tushirish"""
+    try:
+        app_logger.info("Ma'lumotlar bazasini ishga tushirish boshlandi...")
+        init_db()
+        app_logger.info("Ma'lumotlar bazasi muvaffaqiyatli ishga tushirildi")
+        return True
+    except Exception as e:
+        app_logger.error(f"Ma'lumotlar bazasini ishga tushirishda xatolik: {str(e)}")
+        try:
+            # Fallback - basic initialization
+            conn = sqlite3.connect(DB_PATH)
+            conn.execute("CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY)")
+            conn.close()
+            app_logger.warning("Ma'lumotlar bazasi qisman ishga tushirildi")
+            return False
+        except Exception as fallback_error:
+            app_logger.critical(f"Ma'lumotlar bazasi fallback ham ishlamadi: {str(fallback_error)}")
+            return False
+
+def create_minimal_app():
+    """Minimal Flask app yaratish (emergency fallback)"""
+    from flask import Flask as MinimalFlask
+    
+    minimal_app = MinimalFlask(__name__)
+    minimal_app.secret_key = 'emergency-fallback-key'
+    
+    @minimal_app.route('/')
+    def emergency_home():
+        return """
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Restaurant System - Emergency Mode</title>
+            <meta charset="utf-8">
+            <style>
+                body { font-family: Arial, sans-serif; margin: 50px; background: #f5f5f5; }
+                .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; }
+                .error { color: #d32f2f; background: #ffebee; padding: 15px; border-radius: 5px; margin: 20px 0; }
+                .info { color: #1976d2; background: #e3f2fd; padding: 15px; border-radius: 5px; margin: 20px 0; }
+                h1 { color: #333; }
+                .btn { background: #1976d2; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h1>🆘 Restaurant System - Emergency Mode</h1>
+                <div class="error">
+                    <strong>Server xatoligi:</strong> Asosiy tizim ishga tushmadi.
+                </div>
+                <div class="info">
+                    <strong>Status:</strong> Emergency fallback server ishlayapti.
+                </div>
+                <p>Iltimos, quyidagi amallarni bajaring:</p>
+                <ul>
+                    <li>Server loglarini tekshiring</li>
+                    <li>Dependencies o'rnatilganligini tekshiring</li>
+                    <li>Database fayli mavjudligini tekshiring</li>
+                    <li>Replit console da xatolarni ko'ring</li>
+                </ul>
+                <a href="/" class="btn">Qayta urinish</a>
+            </div>
+        </body>
+        </html>
+        """
+    
+    @minimal_app.route('/health')
+    def emergency_health():
+        return {"status": "emergency", "message": "Minimal fallback server"}
+    
+    return minimal_app
+
 # Ensure columns exist on startup
 ensure_orders_columns()
 ensure_cart_items_columns()
@@ -1218,7 +1290,12 @@ ensure_menu_items_columns()
 ensure_users_columns()
 
 
-# O'rniga buni app context ichida chaqiramiz
+# Database ni xavfsiz ishga tushirish
+with app.app_context():
+    try:
+        safe_init_database()
+    except Exception as init_error:
+        app_logger.error(f"App context da database initialization xatoligi: {str(init_error)}")
 
 # ---------- Helpers ----------
 
