@@ -216,7 +216,12 @@ function clearCache() {
     btn.disabled = true;
     btn.textContent = '🔄 Tozalanmoqda...';
 
-    fetch('/api/super-admin/clear-cache', { method: 'POST' })
+    fetch('/api/super-admin/clear-cache-v1', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -240,27 +245,32 @@ function optimizeDatabase() {
     btn.disabled = true;
     btn.textContent = '⚡ Optimallashtirilmoqda...';
 
-    fetch('/api/super-admin/optimize-database', { method: 'POST' })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showSuccessMessage('Database muvaffaqiyatli optimallashtirildi!');
-            } else {
-                showErrorMessage('Database optimallashtirish xatoligi: ' + data.message);
-            }
-        })
-        .catch(error => {
-            showErrorMessage('Database optimallashtirish xatoligi');
-        })
-        .finally(() => {
-            btn.disabled = false;
-            btn.textContent = '⚡ Database optimallashtirish';
-        });
+    fetch('/api/super-admin/optimize-database-v1', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showSuccessMessage('Database muvaffaqiyatli optimallashtirildi!');
+        } else {
+            showErrorMessage('Database optimallashtirish xatoligi: ' + data.message);
+        }
+    })
+    .catch(error => {
+        showErrorMessage('Database optimallashtirish xatoligi');
+    })
+    .finally(() => {
+        btn.disabled = false;
+        btn.textContent = '⚡ Database optimallashtirish';
+    });
 }
 
 // Health report yaratish
 function generateHealthReport() {
-    fetch('/api/super-admin/health-report')
+    fetch('/api/super-admin/health-report-detailed')
         .then(response => response.json())
         .then(data => {
             let reportHtml = '<div class="health-report">';
