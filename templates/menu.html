@@ -156,7 +156,7 @@
 {% if current_page == 'menu' %}
 <a href="{{ url_for('cart') }}" class="floating-cart-icon" id="floating-cart">
     <span class="cart-icon">🛒</span>
-    <span class="cart-badge-floating" id="cart-badge">0</span>
+    <span class="cart-badge-floating" id="cart-badge-floating">0</span>
 </a>
 {% endif %}
 
@@ -1146,7 +1146,7 @@ document.addEventListener('keydown', function(event) {
 // Sahifa yuklangandan keyin cart sonini yangilash
     window.addEventListener('DOMContentLoaded', function() {
         try {
-            updateCartCount();
+            updateCartCountDisplay();
             updateFloatingCartIcon();
         } catch (error) {
             console.error('DOMContentLoaded da xatolik:', error);
@@ -1192,15 +1192,34 @@ document.addEventListener('keydown', function(event) {
                 'X-Requested-With': 'XMLHttpRequest'
             }
         })
-        .then(response => response.json())
+        .then(response => {
+            if (response.headers.get('content-type')?.includes('application/json')) {
+                return response.json();
+            } else {
+                // HTML response bo'lsa, muvaffaqiyatli deb hisoblaymiz
+                return { success: true, message: 'Mahsulot qo\'shildi' };
+            }
+        })
         .then(data => {
             if (data.success) {
-                // Cart count ni yangilash
-                updateCartCount();
-                updateFloatingCartIcon();
+                showToast('Mahsulot savatchaga qo\'shildi! 🛒', 'success');
+                updateCartCountDisplay();
 
-                // Success animatsiyasi
-                showToast(data.message || 'Mahsulot qo\'shildi!', 'success');
+                // Update cart count if provided
+                if (data.cart_count !== undefined) {
+                    const cartCountElements = document.querySelectorAll('#cart-count, #cart-badge-floating, .cart-badge');
+                    cartCountElements.forEach(element => {
+                        element.textContent = data.cart_count;
+                        if (data.cart_count > 0) {
+                            element.style.display = 'inline-block';
+                            element.classList.add('show');
+                        } else {
+                            element.style.display = 'none'; // Hide badge if count is 0
+                            element.classList.remove('show');
+                        }
+                    });
+                }
+
 
                 // Floating cart animation
                 const floatingCart = document.getElementById('floating-cart');
@@ -1216,7 +1235,7 @@ document.addEventListener('keydown', function(event) {
         })
         .catch(error => {
             console.error('Add to cart error:', error);
-            showToast('Savatchaga qo\'shishda xatolik', 'error');
+            showToast('Savatchaga qo\'shishda xatolik yuz berdi', 'error');
         });
     }
 
@@ -1226,7 +1245,7 @@ document.addEventListener('keydown', function(event) {
         toast.className = `toast-notification toast-${type}`;
         toast.innerHTML = `
             <div class="toast-content">
-                <span class="toast-icon">${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span>
+                <span class="toast-icon">${type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'info' ? 'ℹ️' : '⚠️'}</span>
                 <span class="toast-message">${message}</span>
             </div>
         `;
@@ -1244,17 +1263,19 @@ document.addEventListener('keydown', function(event) {
     }
 
 // Savatcha badge-ni yangilash
-function updateCartCount() {
+function updateCartCountDisplay() {
     fetch('/api/cart-count')
         .then(response => response.json())
         .then(data => {
-            const badge = document.getElementById('cart-badge');
+            const badge = document.getElementById('cart-badge-floating'); // Ensure correct ID
             if (badge) {
                 if (data.count > 0) {
                     badge.textContent = data.count;
                     badge.classList.add('show');
+                    badge.style.display = 'flex'; // Make sure it's visible
                 } else {
                     badge.classList.remove('show');
+                    badge.style.display = 'none'; // Hide if count is 0
                 }
             }
         })
@@ -1263,13 +1284,71 @@ function updateCartCount() {
         });
 }
 
+// Handle form submission for add to cart
+function handleAddToCart(event, itemId) {
+    event.preventDefault();
+
+    const form = event.target;
+    const quantityInput = form.querySelector('input[name="quantity"]');
+    const quantity = quantityInput ? quantityInput.value : 1;
+
+    addToCartAjax(itemId, quantity);
+    return false; // Prevent default form submission
+}
+
+
+// AJAX orqali savatchaga qo'shish
+function addToCartAjax(menuItemId, quantity = 1) {
+    console.log('Adding to cart:', menuItemId, 'Quantity:', quantity);
+
+    fetch('/add_to_cart', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            menu_item_id: menuItemId,
+            quantity: parseInt(quantity)
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showToast('Mahsulot savatchaga qo\'shildi! 🛒', 'success');
+            updateCartCountDisplay();
+
+            // Update cart count if provided
+            if (data.cart_count !== undefined) {
+                const cartCountElements = document.querySelectorAll('#cart-count, #cart-badge-floating, .cart-badge');
+                cartCountElements.forEach(element => {
+                    element.textContent = data.cart_count;
+                    if (data.cart_count > 0) {
+                        element.style.display = 'inline-block';
+                        element.classList.add('show');
+                    } else {
+                        element.style.display = 'none'; // Hide badge if count is 0
+                        element.classList.remove('show');
+                    }
+                });
+            }
+        } else {
+            showToast(data.message || 'Xatolik yuz berdi', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Add to cart error:', error);
+        showToast('Savatchaga qo\'shishda xatolik yuz berdi', 'error');
+    });
+}
+
 // Savatcha qo'shilganda badge-ni yangilash
 // Form submit eventni tinglash va AJAX chaqiruvini o'rash
 document.querySelectorAll('form[action*="/add_to_cart"]').forEach(form => {
     form.addEventListener('submit', function(e) {
         e.preventDefault(); // Default submitni oldini olish
         const menuItemId = this.querySelector('input[name="menu_item_id"]').value;
-        const quantity = this.querySelector('input[name="quantity"]').value || 1;
+        const quantityInput = this.querySelector('input[name="quantity"]');
+        const quantity = quantityInput ? quantityInput.value : 1;
         addToCartAjax(menuItemId, quantity);
     });
 });

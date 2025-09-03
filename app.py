@@ -2147,55 +2147,51 @@ def menu():
 @app.route("/add_to_cart", methods=["POST"])
 def add_to_cart():
     try:
-        menu_item_id = request.form.get("menu_item_id")
-        quantity = int(request.form.get("quantity", 1))
+        # Check if request is JSON or form data
+        if request.is_json:
+            data = request.get_json()
+            menu_item_id = data.get("menu_item_id") or data.get("item_id")
+            quantity = int(data.get("quantity", 1))
+        else:
+            menu_item_id = request.form.get("menu_item_id")
+            quantity = int(request.form.get("quantity", 1))
 
         if not menu_item_id:
-            if request.is_json or request.headers.get('Content-Type') == 'application/json':
+            if request.is_json:
                 return jsonify({"success": False, "message": "Mahsulot tanlanmadi"})
             flash("Mahsulot tanlanmadi.", "error")
+            return redirect(url_for("menu"))
+
+        # Validate menu item exists
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute("SELECT id FROM menu_items WHERE id = ? AND available = 1", (menu_item_id,))
+        if not cur.fetchone():
+            conn.close()
+            if request.is_json:
+                return jsonify({"success": False, "message": "Mahsulot mavjud emas"})
+            flash("Mahsulot mavjud emas.", "error")
             return redirect(url_for("menu"))
 
         session_id = get_session_id()
         user_id = session.get("user_id")
 
-        # Cache dan savatchani tozalash
-        cache_manager.delete(f"cart_count_{user_id}_{session_id}")
-
-        conn = get_db()
-        cur = conn.cursor()
-
-        # Mavjudligini tekshirish
+        # Check if item already exists in cart
         if user_id:
-            cur.execute("SELECT * FROM cart_items WHERE user_id = ? AND menu_item_id = ?", (user_id, menu_item_id))
+            cur.execute("SELECT id, quantity FROM cart_items WHERE user_id = ? AND menu_item_id = ?", (user_id, menu_item_id))
         else:
-            cur.execute("SELECT * FROM cart_items WHERE session_id = ? AND menu_item_id = ?", (session_id, menu_item_id))
+            cur.execute("SELECT id, quantity FROM cart_items WHERE session_id = ? AND menu_item_id = ?", (session_id, menu_item_id))
 
         existing = cur.fetchone()
         now = get_current_time().isoformat()
 
         if existing:
-            # Mavjud bo'lsa miqdorni oshirish - SQLite Row obyektini xavfsiz dict ga aylantirish
-            try:
-                if hasattr(existing, 'keys'):
-                    existing_dict = dict(existing)
-                elif isinstance(existing, (tuple, list)) and len(existing) > 0:
-                    existing_dict = {'id': existing[0]}
-                else:
-                    existing_dict = {'id': 1}  # Fallback
-
-                cur.execute("UPDATE cart_items SET quantity = quantity + ? WHERE id = ?", (quantity, existing_dict['id']))
-            except Exception as cart_error:
-                app_logger.error(f"Cart update error: {str(cart_error)}")
-                # Yangi element qo'shish
-                if user_id:
-                    cur.execute("INSERT INTO cart_items (user_id, session_id, menu_item_id, quantity, created_at) VALUES (?, ?, ?, ?, ?)",
-                               (user_id, session_id, menu_item_id, quantity, now))
-                else:
-                    cur.execute("INSERT INTO cart_items (session_id, menu_item_id, quantity, created_at) VALUES (?, ?, ?, ?)",
-                               (session_id, menu_item_id, quantity, now))
+            # Update existing item
+            existing_id = existing[0] if existing else None
+            if existing_id:
+                cur.execute("UPDATE cart_items SET quantity = quantity + ? WHERE id = ?", (quantity, existing_id))
         else:
-            # Yangi qo'shish - har doim session_id ni ham berish
+            # Add new item
             if user_id:
                 cur.execute("INSERT INTO cart_items (user_id, session_id, menu_item_id, quantity, created_at) VALUES (?, ?, ?, ?, ?)",
                            (user_id, session_id, menu_item_id, quantity, now))
@@ -2205,28 +2201,28 @@ def add_to_cart():
 
         conn.commit()
 
-        # Yangi cart count ni olish
+        # Get updated cart count
         if user_id:
-            cur.execute("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE user_id = ?", (user_id,))
+            cur.execute("SELECT COALESCE(SUM(quantity), 0) FROM cart_items WHERE user_id = ?", (user_id,))
         else:
-            cur.execute("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE session_id = ?", (session_id,))
+            cur.execute("SELECT COALESCE(SUM(quantity), 0) FROM cart_items WHERE session_id = ?", (session_id,))
 
-        cart_result = cur.fetchone()
-        if hasattr(cart_result, 'keys'):
-            cart_count = cart_result['total_count']
-        else:
-            cart_count = cart_result[0] if cart_result else 0
+        cart_count = cur.fetchone()[0] or 0
         conn.close()
 
-        if request.is_json or request.headers.get('Content-Type') == 'application/json':
-            return jsonify({"success": True, "message": "Mahsulot qo'shildi", "cart_count": cart_count})
+        if request.is_json:
+            return jsonify({
+                "success": True, 
+                "message": "Mahsulot savatchaga qo'shildi", 
+                "cart_count": cart_count
+            })
 
         flash("Mahsulot savatchaga qo'shildi!", "success")
         return redirect(url_for("menu"))
 
     except Exception as e:
         app_logger.error(f"Add to cart error: {str(e)}")
-        if request.is_json or request.headers.get('Content-Type') == 'application/json':
+        if request.is_json:
             return jsonify({"success": False, "message": "Xatolik yuz berdi"})
         flash("Savatchaga qo'shishda xatolik yuz berdi.", "error")
         return redirect(url_for("menu"))
