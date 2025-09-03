@@ -920,7 +920,7 @@ def init_db():
     # Buyurtma tafsilotlari jadvali
     cur.execute("""
         CREATE TABLE IF NOT EXISTS order_details (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id INTEGER PRIMARYKEY AUTOINCREMENT,
             order_id INTEGER NOT NULL,
             menu_item_id INTEGER NOT NULL,
             quantity INTEGER NOT NULL,
@@ -3774,29 +3774,11 @@ def staff_logout():
     return redirect(url_for("index"))
 
 @app.route("/super-admin-control-panel-master-z8x9k", methods=["GET", "POST"])
-def super_admin_login():
-    """Super admin kirish sahifasi"""
-    if request.method == "POST":
-        username = request.form.get("username", "").strip()
-        password = request.form.get("password", "")
-
-        if username == SUPER_ADMIN_USERNAME and password == SUPER_ADMIN_PASSWORD:
-            session["super_admin"] = True
-            session["admin_username"] = username
-            app_logger.info(f"Super admin muvaffaqiyatli kirdi: {username}")
-            flash("Super admin paneliga xush kelibsiz!", "success")
-            return redirect(url_for("super_admin_dashboard"))
-        else:
-            app_logger.warning(f"Super admin login xatoligi: username={username}")
-            flash("Noto'g'ri login yoki parol!", "error")
-
-    return render_template("super_admin_login.html")
-
-@app.route("/super-admin-dashboard-ultimate-m4st3r")
 @app.route("/super-admin/dashboard-ultimate-m4st3r")
 def super_admin_dashboard():
     """Super admin dashboard"""
     if not session.get("super_admin"):
+        flash("Super admin paneliga kirish talab qilinadi.", "error")
         return redirect(url_for("super_admin_login"))
 
     conn = None
@@ -4615,4 +4597,10 @@ def super_admin_add_courier():
             # ID raqamini kattaroq qilish uchun offset qo'shish
             execute_query("UPDATE couriers SET id = ? WHERE id = ?", (new_id + 10000, new_id))
             new_id = new_id + 10000
-            flash(f"Yangi kuryer qo'shildi. ID: {new_id}", "success")
+
+        flash(f"Yangi kuryer qo'shildi. ID: {new_id}", "success")
+    except Exception as e:
+        app_logger.error(f"Add courier error: {str(e)}")
+        flash("Kuryer qo'shishda xatolik yuz berdi.", "error")
+
+    return redirect(url_for("super_admin_dashboard"))
