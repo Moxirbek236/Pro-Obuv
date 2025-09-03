@@ -1502,3 +1502,122 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 </style>
 {% endblock %}
+{% extends "base.html" %}
+
+{% block title %}System - Super Admin Panel{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>⚙️ Tizim ma'lumotlari</h2>
+                <a href="{{ url_for('super_admin_dashboard') }}" class="btn btn-outline-primary">
+                    ← Dashboard ga qaytish
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tizim holati -->
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">🗄️ Ma'lumotlar bazasi</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <p><strong>Jadvallar soni:</strong></p>
+                            <h4 class="text-primary">{{ system.database.tables_count }}</h4>
+                        </div>
+                        <div class="col-6">
+                            <p><strong>Environment:</strong></p>
+                            <span class="badge bg-{{ 'success' if system.environment == 'production' else 'warning' }}">
+                                {{ system.environment }}
+                            </span>
+                        </div>
+                    </div>
+                    <hr>
+                    <p><strong>Jadvallar ro'yxati:</strong></p>
+                    <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
+                        <ul class="list-group list-group-flush">
+                            {% for table in system.database.tables %}
+                            <li class="list-group-item py-1">{{ table }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">📊 Performance</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6 mb-3">
+                            <h4 class="text-info">{{ system.performance.total_requests or 0 }}</h4>
+                            <small class="text-muted">Jami so'rovlar</small>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <h4 class="text-success">{{ "%.2f"|format(system.performance.avg_response_time or 0) }}s</h4>
+                            <small class="text-muted">O'rtacha javob vaqti</small>
+                        </div>
+                        <div class="col-6">
+                            <h4 class="text-warning">{{ "%.2f"|format(system.performance.max_response_time or 0) }}s</h4>
+                            <small class="text-muted">Maksimal vaqt</small>
+                        </div>
+                        <div class="col-6">
+                            <h4 class="text-primary">{{ "%.2f"|format(system.performance.min_response_time or 0) }}s</h4>
+                            <small class="text-muted">Minimal vaqt</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Server ma'lumotlari -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">🖥️ Server ma'lumotlari</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="text-center border p-3 rounded">
+                                <h5 class="text-primary">Flask</h5>
+                                <small class="text-muted">Web Framework</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center border p-3 rounded">
+                                <h5 class="text-success">SQLite</h5>
+                                <small class="text-muted">Database</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center border p-3 rounded">
+                                <h5 class="text-info">Python 3.12</h5>
+                                <small class="text-muted">Runtime</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center border p-3 rounded">
+                                <h5 class="text-warning">Replit</h5>
+                                <small class="text-muted">Platform</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
