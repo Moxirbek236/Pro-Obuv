@@ -920,7 +920,7 @@ def init_db():
     # Buyurtma tafsilotlari jadvali
     cur.execute("""
         CREATE TABLE IF NOT EXISTS order_details (
-            id INTEGER PRIMARYKEY AUTOINCREMENT,
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
             order_id INTEGER NOT NULL,
             menu_item_id INTEGER NOT NULL,
             quantity INTEGER NOT NULL,
