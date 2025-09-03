@@ -8,40 +8,40 @@
     <!-- Dashboard Grid -->
     <div class="dashboard-grid">
         <!-- Analytics Block -->
-        <a href="{{ url_for('super_admin_analytics') }}" class="dashboard-card">
+        <div class="dashboard-card" onclick="window.location.href='{{ url_for('super_admin_analytics') }}'">
             <div class="dashboard-icon">📊</div>
             <div class="dashboard-title">Analytics</div>
             <div class="dashboard-description">
                 Biznes statistikasi, daromad tahlili va mijozlar faolligi
             </div>
-        </a>
+        </div>
 
         <!-- Reports Block -->
-        <a href="{{ url_for('super_admin_reports') }}" class="dashboard-card">
+        <div class="dashboard-card" onclick="window.location.href='{{ url_for('super_admin_reports') }}'">
             <div class="dashboard-icon">📈</div>
             <div class="dashboard-title">Hisobotlar</div>
             <div class="dashboard-description">
                 Moliyaviy hisobotlar, sotuvlar statistikasi va performans tahlili
             </div>
-        </a>
+        </div>
 
         <!-- System Block -->
-        <a href="{{ url_for('super_admin_system') }}" class="dashboard-card">
+        <div class="dashboard-card" onclick="window.location.href='{{ url_for('super_admin_system') }}'">
             <div class="dashboard-icon">⚙️</div>
             <div class="dashboard-title">Tizim</div>
             <div class="dashboard-description">
                 Server monitoring, tizim sozlamalari va texnik ma'lumotlar
             </div>
-        </a>
+        </div>
 
         <!-- Logs Block -->
-        <a href="{{ url_for('super_admin_logs') }}" class="dashboard-card">
+        <div class="dashboard-card" onclick="window.location.href='{{ url_for('super_admin_logs') }}'">
             <div class="dashboard-icon">📝</div>
             <div class="dashboard-title">Loglar</div>
             <div class="dashboard-description">
                 Tizim loglari, xatoliklar va foydalanuvchi faolligi
             </div>
-        </a>
+        </div>
     </div>
 
     <!-- Statistika kartlari -->
@@ -1329,11 +1329,16 @@ document.addEventListener('DOMContentLoaded', function() {
     justify-content: center;
     align-items: center;
     height: 150px; /* Fixed height for consistency */
+    cursor: pointer;
+    border: 2px solid transparent;
 }
 
 .dashboard-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    border-color: #007bff;
+    color: #333;
+    text-decoration: none;
 }
 
 .dashboard-icon {
