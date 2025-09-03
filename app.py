@@ -4611,13 +4611,8 @@ def super_admin_add_courier():
         """, (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, now))
 
         # ID kamida 5 ta raqamdan iborat bo'lishi uchun
-        if new_id and new_id < 10000:# The following code is the result of merging the original code with the provided changes.
-# The intention was to add missing Super Admin API routes for analytics, reports, system, and logs,
-# along with the necessary backend logic and template rendering for these sections.
-
-# New API routes have been added for `/super-admin/analytics`, `/super-admin/reports`, and `/super-admin/system`.
-# These routes now include logic to fetch and display relevant data, along with fallback template rendering
-# if the actual template files are not found. The `/super-admin/logs` route has also been added to display log content.
-# Several helper functions and data fetching logic have been refined to ensure data is retrieved safely and correctly,
-# including robust error handling and type conversions for database results.
-# The core functionality of the existing routes remains intact.
+        if new_id and new_id < 10000:
+            # ID raqamini kattaroq qilish uchun offset qo'shish
+            execute_query("UPDATE couriers SET id = ? WHERE id = ?", (new_id + 10000, new_id))
+            new_id = new_id + 10000
+            flash(f"Yangi kuryer qo'shildi. ID: {new_id}", "success")
