@@ -2039,6 +2039,14 @@ def admin_index():
         return redirect(url_for("index"))
     return render_template("admin_index.html")
 
+@app.route("/system-management-panel-master-z8x9k")
+def system_management_panel():
+    "System management panel"
+    if not session.get("super_admin"):
+        flash("Super admin huquqi kerak.", "error")
+        return redirect(url_for("super_admin_login"))
+    return redirect(url_for("super_admin_dashboard"))
+
 # Monitor routes
 @app.route("/monitor")
 def monitor():
@@ -2797,6 +2805,7 @@ def logout():
 
 # ---- PLACE ORDER ----
 @app.route("/place_order", methods=["POST"])
+@app.route("/place-order", methods=["POST"])
 def place_order():
     "Buyurtma berish funksiyasi - to'liq qayta ishlangan"
     try:
@@ -2978,10 +2987,21 @@ def place_order():
 
 @app.route("/user", methods=["GET", "POST"])
 def user_page():
-    # Eski user route ni redirect qilish
+    "User page - buyurtma berish"
     if request.method == "POST":
         return place_order()
-    return redirect(url_for("menu"))
+    
+    # GET request uchun cart sahifasini ko'rsatish
+    session_id = get_session_id()
+    user_id = session.get("user_id")
+
+    try:
+        cart_items = get_cart_items(None, session_id, user_id)
+        total = get_cart_total(None, session_id, user_id)
+        return render_template("cart.html", cart_items=cart_items or [], total=total or 0)
+    except Exception as e:
+        app_logger.error(f"User page error: {str(e)}")
+        return redirect(url_for("menu"))
 
 @app.route("/user/status/<int:ticket_no>")
 def user_status(ticket_no):
@@ -3504,6 +3524,59 @@ def api_status():
         "version": "1.0"
     })
 
+@app.route("/api/set-language", methods=["POST"])
+def api_set_language():
+    "Set user language preference"
+    try:
+        data = request.get_json()
+        language = data.get('language', 'uz')
+        
+        # Validate language
+        if language not in ['uz', 'ru', 'en']:
+            language = 'uz'
+        
+        # Save to session
+        session['interface_language'] = language
+        
+        # If user is logged in, save to database
+        user_id = session.get('user_id')
+        if user_id:
+            try:
+                execute_query("UPDATE users SET interface_language = ? WHERE id = ?", (language, user_id))
+            except Exception as db_error:
+                app_logger.error(f"Error saving language to database: {str(db_error)}")
+        
+        return jsonify({
+            "success": True,
+            "message": "Til muvaffaqiyatli o'zgartirildi",
+            "language": language
+        })
+    except Exception as e:
+        app_logger.error(f"Set language error: {str(e)}")
+        return jsonify({
+            "success": False,
+            "message": "Til o'zgartirishda xatolik"
+        }), 500
+
+@app.route("/api/health")
+def api_health():
+    "Health check endpoint"
+    try:
+        # Database connection test
+        execute_query("SELECT 1", fetch_one=True)
+        
+        return jsonify({
+            "status": "healthy",
+            "database": "connected",
+            "timestamp": get_current_time().isoformat()
+        })
+    except Exception as e:
+        return jsonify({
+            "status": "unhealthy",
+            "error": str(e),
+            "timestamp": get_current_time().isoformat()
+        }), 500
+
 @app.route("/get_cart_count")
 @app.route("/api/cart-count")
 def api_cart_count():
@@ -3564,6 +3637,36 @@ def api_cart_count():
         }), 500
 
 # Cart count endpoint moved to top priority section
+
+# Admin panel redirects
+@app.route("/admin-panel")
+@app.route("/admin-panel-secure")
+@app.route("/admin-dashboard")
+def admin_panel_redirect():
+    "Admin panel redirects"
+    if session.get("super_admin"):
+        return redirect(url_for("super_admin_dashboard"))
+    elif session.get("staff_id"):
+        return redirect(url_for("staff_dashboard"))
+    else:
+        return redirect(url_for("staff_login"))
+
+@app.route("/staff-panel")
+@app.route("/employee-panel")
+def staff_panel_redirect():
+    "Staff panel redirects"
+    if session.get("staff_id"):
+        return redirect(url_for("staff_dashboard"))
+    else:
+        return redirect(url_for("staff_login"))
+
+@app.route("/courier-panel")
+def courier_panel_redirect():
+    "Courier panel redirects"
+    if session.get("courier_id"):
+        return redirect(url_for("courier_dashboard"))
+    else:
+        return redirect(url_for("courier_login"))
 
 # ---- STATIC FILE HANDLING ----
 @app.route('/static/<path:filename>')
@@ -3940,6 +4043,7 @@ def staff_logout():
     return redirect(url_for("index"))
 
 @app.route("/super-admin-control-panel-master-z8x9k")
+@app.route("/super-admin-dashboard-ultimate-m4st3r")
 @app.route("/super-admin/dashboard-ultimate-m4st3r")
 def super_admin_dashboard():
     "Super admin dashboard"
