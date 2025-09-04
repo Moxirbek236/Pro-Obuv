@@ -2923,6 +2923,9 @@ def place_order():
 
             if not order_id:
                 raise Exception("Buyurtma yaratilmadi.")
+            
+            # Log yangi buyurtma yaratilganini
+            app_logger.info(f"Yangi buyurtma yaratildi: ID={order_id}, Ticket={tno}, User={name}, Type={order_type}, Status=waiting")
 
             # Savatchadagi mahsulotlarni order_details ga ko'chirish
             order_items_for_json = []
@@ -4164,25 +4167,44 @@ def staff_dashboard():
     cleanup_expired_orders()
 
     try:
-        # Barcha buyurtmalarni olish
-        orders_raw = execute_query("""
-            SELECT o.*,
-                   GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
-            FROM orders o
-            LEFT JOIN order_details od ON o.id = od.order_id
-            LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
-            WHERE o.status IN ('waiting', 'ready', 'served', 'cancelled')
-            GROUP BY o.id
-            ORDER BY
-                CASE
-                    WHEN o.status = 'waiting' THEN 1
-                    WHEN o.status = 'ready' THEN 2
-                    WHEN o.status = 'served' THEN 3
-                    WHEN o.status = 'cancelled' THEN 4
-                END,
-                o.created_at DESC
-        """, fetch_all=True)
-        orders = [dict(row) for row in orders_raw] if orders_raw else []
+        # Barcha buyurtmalarni olish - to'g'ridan-to'g'ri SQL so'rov
+        with db_pool.get_connection() as conn:
+            cur = conn.cursor()
+            
+            # Barcha buyurtmalarni olish
+            cur.execute("""
+                SELECT o.id, o.user_id, o.customer_name, o.ticket_no, o.order_type, 
+                       o.status, o.delivery_address, o.delivery_distance, o.customer_phone, 
+                       o.created_at, o.eta_time, o.branch_id,
+                       GROUP_CONCAT(mi.name || ' x' || od.quantity, ', ') as order_items
+                FROM orders o
+                LEFT JOIN order_details od ON o.id = od.order_id
+                LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
+                GROUP BY o.id, o.user_id, o.customer_name, o.ticket_no, o.order_type, 
+                         o.status, o.delivery_address, o.delivery_distance, o.customer_phone, 
+                         o.created_at, o.eta_time, o.branch_id
+                ORDER BY
+                    CASE
+                        WHEN o.status = 'waiting' THEN 1
+                        WHEN o.status = 'ready' THEN 2
+                        WHEN o.status = 'served' THEN 3
+                        WHEN o.status = 'cancelled' THEN 4
+                        WHEN o.status = 'on_way' THEN 5
+                        WHEN o.status = 'delivered' THEN 6
+                        ELSE 7
+                    END,
+                    o.created_at DESC
+            """)
+            
+            orders_raw = cur.fetchall()
+            
+            # Ma'lumotlarni dict formatiga o'tkazish
+            orders = []
+            if orders_raw:
+                columns = [description[0] for description in cur.description]
+                for row in orders_raw:
+                    order_dict = dict(zip(columns, row))
+                    orders.append(order_dict)
 
         # Staff statistikasini olish
         staff_id = session.get("staff_id")
@@ -4195,7 +4217,7 @@ def staff_dashboard():
             session['staff_orders_handled'] = 0
             session['staff_hours'] = 0
 
-        app_logger.info(f"Staff dashboard loaded for staff_id: {staff_id}")
+        app_logger.info(f"Staff dashboard loaded for staff_id: {staff_id}, found {len(orders)} orders")
         return render_template("staff_dashboard.html", orders=orders)
 
     except Exception as e:
