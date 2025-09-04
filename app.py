@@ -4468,38 +4468,28 @@ def super_admin_dashboard():
         except Exception as e:
             app_logger.error(f"Statistikalarni hisoblashda xatolik: {str(e)}")
 
-        try:
-            return render_template("super_admin_dashboard.html",
-                                 staff_db=staff_db or [],
-                                 couriers_db=couriers_db or [],
-                                 users_db=users_db or [],
-                                 users_json=users_json or [],
-                                 questions=questions or [],
-                                 branches=branches or [],
-                                 stats=stats)
-        except Exception as template_error:
-            app_logger.warning(f"Main template failed, using simple template: {str(template_error)}")
-            return render_template("super_admin_dashboard_simple.html", stats=stats)
+        return render_template("super_admin_dashboard.html",
+                             staff_db=staff_db or [],
+                             couriers_db=couriers_db or [],
+                             users_db=users_db or [],
+                             users_json=users_json or [],
+                             questions=questions or [],
+                             branches=branches or [],
+                             stats=stats,
+                             ats=stats)
 
     except Exception as e:
         app_logger.error(f"Super admin dashboard xatoligi: {str(e)}")
-        # Emergency fallback with simple template
-        try:
-            simple_stats = {'total_orders': 0, 'waiting_orders': 0, 'ready_orders': 0,
-                           'served_orders': 0, 'month_orders': 0, 'total_staff': 0,
-                           'total_couriers': 0, 'total_users': 0, 'total_users_json': 0}
-            return render_template("super_admin_dashboard_simple.html", stats=simple_stats)
-        except Exception as template_error:
-            app_logger.critical(f"Simple template ham ishlamadi: {str(template_error)}")
-            return f"""
-            <!DOCTYPE html>
-            <html><head><title>Super Admin Dashboard - Error</title></head>
-            <body>
-                <h1>Super Admin Dashboard</h1>
-                <div style="color: red;">Dashboard yuklashda xatolik: {str(e)}</div>
-                <p><a href="{url_for('super_admin_login')}">Login sahifasiga qaytish</a></p>
-            </body></html>
-            """, 500
+        # Emergency HTML fallback
+        return f"""
+        <!DOCTYPE html>
+        <html><head><title>Super Admin Dashboard - Error</title></head>
+        <body>
+            <h1>Super Admin Dashboard</h1>
+            <div style="color: red;">Dashboard yuklashda xatolik: {str(e)}</div>
+            <p><a href="{url_for('super_admin_login')}">Login sahifasiga qaytish</a></p>
+        </body></html>
+        """, 500
 
 @app.route("/super-admin/analytics")
 def super_admin_analytics():
