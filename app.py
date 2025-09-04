@@ -4662,23 +4662,79 @@ def api_super_admin_dashboard_stats():
         return jsonify({"error": "Super admin huquqi kerak"}), 401
     
     try:
-        stats = {}
+        stats = {
+            'total_orders': 0,
+            'waiting_orders': 0,
+            'ready_orders': 0,
+            'served_orders': 0,
+            'total_staff': 0,
+            'total_couriers': 0,
+            'total_users': 0
+        }
         
-        # Orders statistics
-        stats['total_orders'] = execute_query("SELECT COUNT(*) FROM orders", fetch_one=True)[0] or 0
-        stats['waiting_orders'] = execute_query("SELECT COUNT(*) FROM orders WHERE status='waiting'", fetch_one=True)[0] or 0
-        stats['ready_orders'] = execute_query("SELECT COUNT(*) FROM orders WHERE status='ready'", fetch_one=True)[0] or 0
-        stats['served_orders'] = execute_query("SELECT COUNT(*) FROM orders WHERE status='served'", fetch_one=True)[0] or 0
+        # Orders statistics - safe execution
+        try:
+            result = execute_query("SELECT COUNT(*) FROM orders", fetch_one=True)
+            stats['total_orders'] = int(result[0]) if result and result[0] is not None else 0
+        except Exception as e:
+            app_logger.warning(f"Total orders query error: {str(e)}")
+            stats['total_orders'] = 0
         
-        # Staff statistics
-        stats['total_staff'] = execute_query("SELECT COUNT(*) FROM staff", fetch_one=True)[0] or 0
-        stats['total_couriers'] = execute_query("SELECT COUNT(*) FROM couriers", fetch_one=True)[0] or 0
-        stats['total_users'] = execute_query("SELECT COUNT(*) FROM users", fetch_one=True)[0] or 0
+        try:
+            result = execute_query("SELECT COUNT(*) FROM orders WHERE status='waiting'", fetch_one=True)
+            stats['waiting_orders'] = int(result[0]) if result and result[0] is not None else 0
+        except Exception as e:
+            app_logger.warning(f"Waiting orders query error: {str(e)}")
+            stats['waiting_orders'] = 0
+        
+        try:
+            result = execute_query("SELECT COUNT(*) FROM orders WHERE status='ready'", fetch_one=True)
+            stats['ready_orders'] = int(result[0]) if result and result[0] is not None else 0
+        except Exception as e:
+            app_logger.warning(f"Ready orders query error: {str(e)}")
+            stats['ready_orders'] = 0
+        
+        try:
+            result = execute_query("SELECT COUNT(*) FROM orders WHERE status='served'", fetch_one=True)
+            stats['served_orders'] = int(result[0]) if result and result[0] is not None else 0
+        except Exception as e:
+            app_logger.warning(f"Served orders query error: {str(e)}")
+            stats['served_orders'] = 0
+        
+        # Staff statistics - safe execution
+        try:
+            result = execute_query("SELECT COUNT(*) FROM staff", fetch_one=True)
+            stats['total_staff'] = int(result[0]) if result and result[0] is not None else 0
+        except Exception as e:
+            app_logger.warning(f"Total staff query error: {str(e)}")
+            stats['total_staff'] = 0
+        
+        try:
+            result = execute_query("SELECT COUNT(*) FROM couriers", fetch_one=True)
+            stats['total_couriers'] = int(result[0]) if result and result[0] is not None else 0
+        except Exception as e:
+            app_logger.warning(f"Total couriers query error: {str(e)}")
+            stats['total_couriers'] = 0
+        
+        try:
+            result = execute_query("SELECT COUNT(*) FROM users", fetch_one=True)
+            stats['total_users'] = int(result[0]) if result and result[0] is not None else 0
+        except Exception as e:
+            app_logger.warning(f"Total users query error: {str(e)}")
+            stats['total_users'] = 0
         
         return jsonify({"success": True, "stats": stats})
     except Exception as e:
         app_logger.error(f"Super admin dashboard stats error: {str(e)}")
-        return jsonify({"success": False, "stats": {}})
+        return jsonify({"success": False, "stats": {
+            'total_orders': 0,
+            'waiting_orders': 0,
+            'ready_orders': 0,
+            'served_orders': 0,
+            'total_staff': 0,
+            'total_couriers': 0,
+            'total_users': 0
+        }})
 
 # ---- STAFF AUTH ----
 @app.route("/staff-secure-login-w7m2k", methods=["GET", "POST"])
