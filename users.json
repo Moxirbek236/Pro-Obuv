@@ -858,5 +858,19 @@
         "jami": 50000.0
       }
     ]
+  },
+  {
+    "ism": "Moxirbek Solijonov",
+    "buyurtma_raqami": 67,
+    "buyurtma_vaqti": "2025-09-04 17:30:07",
+    "buyurtma_mahsulotlari": [
+      {
+        "nomi": "Baklava",
+        "miqdori": 1,
+        "asl_narxi": 50000.0,
+        "skidka_foizi": 0,
+        "jami": 50000.0
+      }
+    ]
   }
 ]
