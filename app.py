@@ -3108,6 +3108,38 @@ def view_receipt(ticket_no):
         flash("Chekni yuklashda xatolik yuz berdi.", "error")
         return redirect(url_for("menu"))
 
+@app.route("/contact", methods=["GET", "POST"])
+def contact():
+    "Aloqa sahifasi"
+    if request.method == "POST":
+        try:
+            name = request.form.get("name", "").strip()
+            email = request.form.get("email", "").strip()
+            phone = request.form.get("phone", "").strip()
+            subject = request.form.get("subject", "").strip()
+            message = request.form.get("message", "").strip()
+
+            if not all([name, subject, message]):
+                flash("Ism, mavzu va xabar majburiy maydonlar.", "error")
+                return redirect(url_for("contact"))
+
+            # Savolni ma'lumotlar bazasiga saqlash
+            now = get_current_time().isoformat()
+            execute_query("""
+                INSERT INTO questions (user_name, email, phone, subject, message, created_at)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (name, email, phone, subject, message, now))
+
+            flash("Savolingiz muvaffaqiyatli yuborildi! Tez orada javob beramiz.", "success")
+            return redirect(url_for("contact"))
+
+        except Exception as e:
+            app_logger.error(f"Contact form error: {str(e)}")
+            flash("Xabar yuborishda xatolik yuz berdi.", "error")
+            return redirect(url_for("contact"))
+
+    return render_template("contact.html", current_page='contact')
+
 # ---- COURIER AUTH ----
 @app.route("/courier-secure-login-k4m7p", methods=["GET", "POST"])
 def courier_login():
