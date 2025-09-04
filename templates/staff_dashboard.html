@@ -122,6 +122,21 @@
             color: #721c24;
         }
 
+        .status-delivered {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-on_way {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-unknown {
+            background-color: #e2e3e5;
+            color: #383d41;
+        }
+
         .action-buttons {
             display: flex;
             gap: 10px;
@@ -305,38 +320,57 @@
                         </tr>
                     </thead>
                     <tbody id="activeOrdersTable">
+                        {% set active_orders_exist = false %}
                         {% for o in orders %}
-                        {% if o['status'] in ['waiting', 'ready'] %}
-                        <tr data-order-id="{{ o['id'] }}">
+                        {% if o.get('status') in ['waiting', 'ready'] %}
+                        {% set active_orders_exist = true %}
+                        <tr data-order-id="{{ o.get('id', '') }}">
                             <td>{{ loop.index }}</td>
-                            <td><strong>#{{ o['ticket_no'] }}</strong></td>
-                            <td>{{ o['customer_name'] }}</td>
+                            <td><strong>#{{ o.get('ticket_no', 'N/A') }}</strong></td>
+                            <td>{{ o.get('customer_name', 'N/A') }}</td>
                             <td class="order-items">
-                                {% if o['order_items'] %}
-                                    {{ o['order_items'] }}
+                                {% if o.get('order_items') %}
+                                    {{ o.get('order_items') }}
                                 {% else %}
                                     <em>Ma'lumot yo'q</em>
                                 {% endif %}
                             </td>
-                            <td>{{ o['created_at'][:16].replace('T',' ') }}</td>
-                            <td><strong>{{ o['eta_time'][:16].replace('T',' ') }}</strong></td>
                             <td>
-                                <span class="status-badge status-{{ o['status'] }}">
-                                    {% if o['status'] == 'waiting' %}⏳ Kutilmoqda{% elif o['status'] == 'ready' %}✅ Tayyor{% endif %}
+                                {% if o.get('created_at') %}
+                                    {{ o.get('created_at')[:16].replace('T', ' ') }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+                            <td>
+                                <strong>
+                                {% if o.get('eta_time') %}
+                                    {{ o.get('eta_time')[:16].replace('T', ' ') }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                                </strong>
+                            </td>
+                            <td>
+                                <span class="status-badge status-{{ o.get('status', 'unknown') }}">
+                                    {% if o.get('status') == 'waiting' %}⏳ Kutilmoqda
+                                    {% elif o.get('status') == 'ready' %}✅ Tayyor
+                                    {% else %}❓ Noma'lum
+                                    {% endif %}
                                 </span>
                             </td>
                             <td>
                                 <div class="action-buttons">
-                                    {% if o['status'] == 'waiting' %}
-                                        <button class="btn-action btn-ready" onclick="markReady({{ o['id'] }})">
+                                    {% if o.get('status') == 'waiting' %}
+                                        <button class="btn-action btn-ready" onclick="markReady({{ o.get('id', 0) }})">
                                             ✅ Tayyor
                                         </button>
-                                    {% elif o['status'] == 'ready' %}
-                                        <button class="btn-action btn-served" onclick="markServed({{ o['id'] }})">
+                                    {% elif o.get('status') == 'ready' %}
+                                        <button class="btn-action btn-served" onclick="markServed({{ o.get('id', 0) }})">
                                             🍽️ Berildi
                                         </button>
                                     {% endif %}
-                                    <button class="btn-action btn-cancel" onclick="cancelOrder({{ o['id'] }})">
+                                    <button class="btn-action btn-cancel" onclick="cancelOrder({{ o.get('id', 0) }})">
                                         ❌ Bekor qilish
                                     </button>
                                 </div>
@@ -344,6 +378,14 @@
                         </tr>
                         {% endif %}
                         {% endfor %}
+                        
+                        {% if not active_orders_exist %}
+                        <tr>
+                            <td colspan="8" class="text-center py-4">
+                                <em>Faol buyurtmalar yo'q</em>
+                            </td>
+                        </tr>
+                        {% endif %}
                     </tbody>
                 </table>
             </div>
@@ -375,27 +417,47 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {% set completed_orders_exist = false %}
                         {% for o in orders %}
-                        {% if o['status'] in ['served', 'cancelled'] %}
+                        {% if o.get('status') in ['served', 'cancelled', 'delivered'] %}
+                        {% set completed_orders_exist = true %}
                         <tr>
-                            <td>#{{ o['ticket_no'] }}</td>
-                            <td>{{ o['customer_name'] }}</td>
+                            <td>#{{ o.get('ticket_no', 'N/A') }}</td>
+                            <td>{{ o.get('customer_name', 'N/A') }}</td>
                             <td class="order-items">
-                                {% if o['order_items'] %}
-                                    {{ o['order_items'] }}
+                                {% if o.get('order_items') %}
+                                    {{ o.get('order_items') }}
                                 {% else %}
                                     <em>Ma'lumot yo'q</em>
                                 {% endif %}
                             </td>
-                            <td>{{ o['created_at'][:16].replace('T',' ') }}</td>
                             <td>
-                                <span class="status-badge status-{{ o['status'] }}">
-                                    {% if o['status'] == 'served' %}✅ Berildi{% elif o['status'] == 'cancelled' %}❌ Bekor qilindi{% endif %}
+                                {% if o.get('created_at') %}
+                                    {{ o.get('created_at')[:16].replace('T', ' ') }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="status-badge status-{{ o.get('status', 'unknown') }}">
+                                    {% if o.get('status') == 'served' %}✅ Berildi
+                                    {% elif o.get('status') == 'cancelled' %}❌ Bekor qilindi
+                                    {% elif o.get('status') == 'delivered' %}🚚 Yetkazildi
+                                    {% else %}❓ Noma'lum
+                                    {% endif %}
                                 </span>
                             </td>
                         </tr>
                         {% endif %}
                         {% endfor %}
+                        
+                        {% if not completed_orders_exist %}
+                        <tr>
+                            <td colspan="5" class="text-center py-4">
+                                <em>Tugallangan buyurtmalar yo'q</em>
+                            </td>
+                        </tr>
+                        {% endif %}
                     </tbody>
                 </table>
             </div>
