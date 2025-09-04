@@ -1,455 +1,479 @@
-<!DOCTYPE html>
-<html lang="uz">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Umumi sozlamalar - Restoran</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <style>
-        body {
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-            min-height: 100vh;
-            padding: 20px 0;
-        }
-        .settings-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .settings-section {
-            margin-bottom: 30px;
-            padding: 20px;
-            background: rgba(248, 250, 252, 0.8);
-            border-radius: 15px;
-        }
-        .setting-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        .setting-item:last-child {
-            border-bottom: none;
-        }
-        .setting-label {
-            font-weight: 600;
-            color: #2d3748;
-        }
-        .btn-setting {
-            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-            border: none;
-            color: white;
-            padding: 8px 20px;
-            border-radius: 10px;
-            font-weight: 600;
-        }
 
-        /* Theme selector styles */
-        .theme-selector {
-            display: flex;
-            gap: 15px;
-        }
-        .radio-option {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            background: #e2e8f0;
-            padding: 8px 15px;
-            border-radius: 8px;
-            transition: background 0.3s ease;
-        }
-        .radio-option input[type="radio"] {
-            margin-right: 8px;
-            accent-color: #4CAF50; /* Bootstrap success color */
-        }
-        .radio-option .radio-text {
-            font-weight: 500;
-            color: #4a5568;
-        }
-        .radio-option:hover {
-            background: #cbd5e0;
-        }
-        .radio-option input[type="radio"]:checked + .radio-text {
-            color: #276749; /* Darker green */
-            font-weight: 700;
-        }
-        .dark-theme .radio-option input[type="radio"]:checked + .radio-text {
-             color: #81e6d9; /* Lighter green for dark mode */
-        }
+{% extends "base.html" %}
 
-        /* Dark mode styles */
-        .dark-theme {
-            background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
-            color: #e2e8f0;
-        }
-        .dark-theme .settings-card {
-            background: rgba(43, 55, 71, 0.95);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-        }
-        .dark-theme .settings-section {
-            background: rgba(43, 55, 71, 0.8);
-        }
-        .dark-theme .setting-label {
-            color: #e2e8f0;
-        }
-        .dark-theme .radio-option {
-            background: #4a5568;
-        }
-        .dark-theme .radio-option:hover {
-            background: #667280;
-        }
+{% block title %}Umumi sozlamalar{% endblock %}
 
-        /* Font size styles */
-        .font-small body { font-size: 0.875rem; }
-        .font-medium body { font-size: 1rem; }
-        .font-large body { font-size: 1.125rem; }
-        .font-xlarge body { font-size: 1.25rem; }
-
-        /* Notification styles */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1060;
-            max-width: 350px;
-            padding: 15px 20px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            backdrop-filter: blur(10px);
-            animation: slideIn 0.3s ease-out;
-        }
-        .notification.alert-success { background-color: #d4edda; color: #155724; border-color: #c3e6cb; }
-        .notification.alert-error { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; }
-        .notification.alert-info { background-color: #d1ecf1; color: #0c5460; border-color: #bee5eb; }
-
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
-        }
-    </style>
-</head>
-<body>
-    <div class="settings-card">
-        <div class="text-center mb-4">
-            <h2>🔧 Umumi sozlamalar</h2>
-            <p class="text-muted">Interface va tizim sozlamalarini boshqaring</p>
-        </div>
-
-        {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            {% for category, message in messages %}
-              <div class="alert alert-{{ 'danger' if category=='error' else 'success' if category=='success' else category }} alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-              </div>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
-
-        <!-- Til sozlamalari -->
-        <div class="settings-section">
-            <h4>🌐 Til sozlamalari</h4>
-            <div class="setting-item">
-                <div>
-                    <div class="setting-label">Interface tili</div>
-                    <small class="text-muted">Tizim tilini tanlang</small>
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3>🔧 Umumi sozlamalar</h3>
+                    <p class="mb-0 text-muted">Interfeys va ko'rinish sozlamalari</p>
                 </div>
-                <select class="form-select" id="languageSelect" name="language" style="width: auto;">
-                    <option value="uz">🇺🇿 O'zbek tili</option>
-                    <option value="ru">🇷🇺 Русский язык</option>
-                    <option value="en">🇺🇸 English</option>
-                </select>
-            </div>
-        </div>
+                <div class="card-body">
+                    <!-- Til sozlamalari -->
+                    <div class="settings-section">
+                        <h5>🌐 Til sozlamalari</h5>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="languageSelect" class="form-label">Interface tili:</label>
+                                <select class="form-select" id="languageSelect" onchange="changeLanguage(this.value)">
+                                    <option value="uz" {{ 'selected' if session.get('interface_language', 'uz') == 'uz' }}>🇺🇿 O'zbekcha</option>
+                                    <option value="ru" {{ 'selected' if session.get('interface_language', 'uz') == 'ru' }}>🇷🇺 Русский</option>
+                                    <option value="en" {{ 'selected' if session.get('interface_language', 'uz') == 'en' }}>🇬🇧 English</option>
+                                </select>
+                                <div class="form-text">Interface tili o'zgarishi darhol qo'llaniladi</div>
+                            </div>
+                        </div>
+                    </div>
 
-        <!-- Ko'rinish sozlamalari -->
-        <div class="settings-section">
-            <h4>🎨 Ko'rinish sozlamalari</h4>
-            <div class="setting-item">
-                <div>
-                    <div class="setting-label">Tungi rejim</div>
-                    <small class="text-muted">Qorong'u mavzuni yoqish</small>
-                </div>
-                <div class="theme-selector">
-                    <label class="radio-option">
-                        <input type="radio" name="theme_mode" value="light" {{ 'checked' if not session.get('dark_theme') else '' }}>
-                        <span class="radio-text">☀️ Kunduzgi rejim</span>
-                    </label>
-                    <label class="radio-option">
-                        <input type="radio" name="theme_mode" value="dark" {{ 'checked' if session.get('dark_theme') else '' }}>
-                        <span class="radio-text">🌙 Tungi rejim</span>
-                    </label>
-                </div>
-            </div>
-            <div class="setting-item">
-                <div>
-                    <div class="setting-label">Shrift kattaligi</div>
-                    <small class="text-muted">Matn o'lchamini sozlang</small>
-                </div>
-                <select class="form-select" id="fontSizeSelect" name="font_size" style="width: auto;">
-                    <option value="small">Kichik</option>
-                    <option value="medium" selected>O'rtacha</option>
-                    <option value="large">Katta</option>
-                    <option value="xlarge">Juda katta</option>
-                </select>
-            </div>
-        </div>
+                    <hr class="my-4">
 
-        <!-- Tizim sozlamalari -->
-        <div class="settings-section">
-            <h4>⚙️ Tizim sozlamalari</h4>
-            <div class="setting-item">
-                <div>
-                    <div class="setting-label">Avtomatik saqlash</div>
-                    <small class="text-muted">Sozlamalarni avtomatik saqlash</small>
-                </div>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="autoSave" name="auto_save" checked>
-                    <label class="form-check-label" for="autoSave"></label>
+                    <!-- Mavzu sozlamalari -->
+                    <div class="settings-section">
+                        <h5>🎨 Ko'rinish sozlamalari</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="themeSelect" class="form-label">Mavzu:</label>
+                                <div class="theme-options">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="theme" id="lightTheme" value="light" 
+                                               {{ 'checked' if not session.get('dark_theme', False) }} 
+                                               onchange="changeTheme(false)">
+                                        <label class="form-check-label" for="lightTheme">
+                                            ☀️ Yorug' mavzu
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="theme" id="darkTheme" value="dark" 
+                                               {{ 'checked' if session.get('dark_theme', False) }} 
+                                               onchange="changeTheme(true)">
+                                        <label class="form-check-label" for="darkTheme">
+                                            🌙 Qora mavzu
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="fontSizeSelect" class="form-label">Shrift o'lchami:</label>
+                                <select class="form-select" id="fontSizeSelect" onchange="changeFontSize(this.value)">
+                                    <option value="small" {{ 'selected' if session.get('font_size', 'medium') == 'small' }}>📝 Kichik</option>
+                                    <option value="medium" {{ 'selected' if session.get('font_size', 'medium') == 'medium' }}>📄 O'rtacha</option>
+                                    <option value="large" {{ 'selected' if session.get('font_size', 'medium') == 'large' }}>📋 Katta</option>
+                                    <option value="xlarge" {{ 'selected' if session.get('font_size', 'medium') == 'xlarge' }}>📊 Juda katta</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Bildirishnoma sozlamalari -->
+                    <div class="settings-section">
+                        <h5>🔔 Bildirishnoma sozlamalari</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="soundSwitch" checked>
+                                    <label class="form-check-label" for="soundSwitch">
+                                        🔊 Ovozli bildirishnomalar
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="notificationSwitch" checked>
+                                    <label class="form-check-label" for="notificationSwitch">
+                                        📱 Push bildirishnomalar
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Interfeys sozlamalari -->
+                    <div class="settings-section">
+                        <h5>🎛️ Interfeys sozlamalari</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="autoRefreshSwitch" checked>
+                                    <label class="form-check-label" for="autoRefreshSwitch">
+                                        🔄 Avtomatik yangilanish
+                                    </label>
+                                </div>
+                                <small class="text-muted">Sahifalar avtomatik yangilanadi</small>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="animationsSwitch" checked>
+                                    <label class="form-check-label" for="animationsSwitch">
+                                        ✨ Animatsiyalar
+                                    </label>
+                                </div>
+                                <small class="text-muted">Interface animatsiyalari</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Foydalanuvchi uchun qo'shimcha sozlamalar -->
+                    {% if session.get('user_id') %}
+                    <div class="settings-section">
+                        <h5>🛒 Xarid sozlamalari</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="saveCartSwitch" checked>
+                                    <label class="form-check-label" for="saveCartSwitch">
+                                        💾 Savatchani saqlash
+                                    </label>
+                                </div>
+                                <small class="text-muted">Savatcha mahsulotlarini eslab qolish</small>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="quickOrderSwitch">
+                                    <label class="form-check-label" for="quickOrderSwitch">
+                                        ⚡ Tezkor buyurtma
+                                    </label>
+                                </div>
+                                <small class="text-muted">Bir click bilan buyurtma berish</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+                    {% endif %}
+
+                    <!-- Xavfsizlik sozlamalari -->
+                    <div class="settings-section">
+                        <h5>🔐 Xavfsizlik sozlamalari</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="rememberMeSwitch" checked>
+                                    <label class="form-check-label" for="rememberMeSwitch">
+                                        🧠 Meni eslab qol
+                                    </label>
+                                </div>
+                                <small class="text-muted">Login ma'lumotlarini saqlash</small>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="twoFactorSwitch">
+                                    <label class="form-check-label" for="twoFactorSwitch">
+                                        🔒 Ikki bosqichli autentifikatsiya
+                                    </label>
+                                </div>
+                                <small class="text-muted">Qo'shimcha xavfsizlik</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Amallar -->
+                    <div class="settings-section">
+                        <h5>⚡ Tezkor amallar</h5>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                            <button type="button" class="btn btn-primary" onclick="resetToDefaults()">
+                                🔄 Standart sozlamalarga qaytarish
+                            </button>
+                            <button type="button" class="btn btn-success" onclick="saveSettings()">
+                                💾 Sozlamalarni saqlash
+                            </button>
+                            <button type="button" class="btn btn-info" onclick="exportSettings()">
+                                📤 Sozlamalarni eksport qilish
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="setting-item">
-                <div>
-                    <div class="setting-label">Animatsiyalar</div>
-                    <small class="text-muted">Sahifa animatsiyalarini yoqish</small>
-                </div>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="animationsSwitch" name="animations" checked>
-                    <label class="form-check-label" for="animationsSwitch"></label>
-                </div>
-            </div>
-        </div>
-
-        <!-- Navigatsiya -->
-        <div class="text-center">
-            <button class="btn btn-success me-2" onclick="saveSettings()">💾 Sozlamalarni saqlash</button>
-            <a href="{{ url_for('profile_settings') }}" class="btn btn-outline-primary me-2">⚙️ Profil sozlamalari</a>
-            {% if session.get('super_admin') %}
-                <a href="{{ url_for('super_admin_dashboard') }}" class="btn btn-outline-secondary">🔙 Super Admin Dashboard</a>
-            {% elif session.get('staff_id') %}
-                <a href="{{ url_for('staff_dashboard') }}" class="btn btn-outline-secondary">🔙 Xodim Dashboard</a>
-            {% elif session.get('courier_id') %}
-                <a href="{{ url_for('courier_dashboard') }}" class="btn btn-outline-secondary">🔙 Kuryer Dashboard</a>
-            {% elif session.get('user_id') %}
-                <a href="{{ url_for('profile') }}" class="btn btn-outline-secondary">🔙 Profilga qaytish</a>
-            {% else %}
-                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">🔙 Bosh sahifa</a>
-            {% endif %}
         </div>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<style>
+.settings-section {
+    margin-bottom: 2rem;
+}
 
-    <script>
-    // Notification funksiyasi
-    function showNotification(message, type = 'info') {
-        const existingNotifications = document.querySelectorAll('.notification');
-        existingNotifications.forEach(notif => notif.remove());
+.settings-section h5 {
+    color: #495057;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 0.5rem;
+}
 
-        const notification = document.createElement('div');
-        notification.className = `notification alert alert-${type}`;
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1060;
-            max-width: 350px;
-            padding: 15px 20px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            backdrop-filter: blur(10px);
-            animation: slideIn 0.3s ease-out;
-        `;
+.card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 1px solid #dee2e6;
+}
 
-        notification.innerHTML = `
-            <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
-                <span style="flex: 1;">${message}</span>
-                <button onclick="this.parentElement.parentElement.remove()" 
-                        style="background: none; border: none; color: inherit; font-size: 1.5rem; cursor: pointer; padding: 0; opacity: 0.7; transition: opacity 0.2s;">&times;</button>
-            </div>
-        `;
+.form-check {
+    margin-bottom: 0.75rem;
+}
 
-        document.body.appendChild(notification);
+.form-check-label {
+    font-weight: 500;
+}
 
-        setTimeout(() => {
-            if (notification.parentElement) {
-                notification.style.animation = 'fadeOut 0.3s ease-out forwards';
-                setTimeout(() => notification.remove(), 300);
-            }
-        }, 5000);
+.theme-options .form-check {
+    padding: 0.75rem;
+    border: 1px solid #e9ecef;
+    border-radius: 0.375rem;
+    margin-bottom: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.theme-options .form-check:hover {
+    background-color: #f8f9fa;
+}
+
+.theme-options .form-check-input:checked + .form-check-label {
+    color: #0d6efd;
+    font-weight: 600;
+}
+
+.btn {
+    border-radius: 0.375rem;
+    font-weight: 500;
+}
+
+/* Font size classes */
+.font-small { font-size: 14px !important; }
+.font-medium { font-size: 16px !important; }
+.font-large { font-size: 18px !important; }
+.font-xlarge { font-size: 20px !important; }
+</style>
+
+<script>
+// Til o'zgartirish
+function changeLanguage(language) {
+    console.log('Changing language to:', language);
+    
+    // Darhol tarjima qo'llash
+    if (typeof translatePage === 'function') {
+        translatePage(language);
     }
-
-    // Sozlamalarni darhol qo'llash funksiyasi
-    function applySettings(settings) {
-        // Tilni o'zgartirish
-        if (settings.language) {
-            document.documentElement.lang = settings.language;
-            updateInterfaceLanguage(settings.language);
+    
+    // LocalStorage ga saqlash
+    localStorage.setItem('language', language);
+    
+    // Server ga yuborish
+    fetch('/api/set-language', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ language: language })
+    }).then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification('success', data.message || 'Til muvaffaqiyatli o\'zgartirildi');
         }
-
-        // Shrift o'lchamini o'zgartirish
-        if (settings.font_size) {
-            document.body.className = document.body.className.replace(/font-(small|medium|large|xlarge)/g, '');
-            document.body.classList.add(`font-${settings.font_size}`);
-        }
-
-        // Mavzuni o'zgartirish
-        if (settings.dark_theme !== undefined) {
-            if (settings.dark_theme) {
-                document.body.classList.add('dark-theme');
-            } else {
-                document.body.classList.remove('dark-theme');
-            }
-        }
-    }
-
-    // Interface tilini yangilash
-    function updateInterfaceLanguage(language) {
-        const translations = {
-            'uz': {
-                'menu': 'Menyu',
-                'cart': 'Savatcha',
-                'profile': 'Profil',
-                'downloads': 'Yuklamalar',
-                'logout': 'Chiqish'
-            },
-            'ru': {
-                'menu': 'Меню',
-                'cart': 'Корзина', 
-                'profile': 'Профиль',
-                'downloads': 'Загрузки',
-                'logout': 'Выход'
-            },
-            'en': {
-                'menu': 'Menu',
-                'cart': 'Cart',
-                'profile': 'Profile', 
-                'downloads': 'Downloads',
-                'logout': 'Logout'
-            }
-        };
-
-        const lang = translations[language] || translations['uz'];
-
-        // Navbar linkalarini yangilash
-        document.querySelectorAll('[data-translate]').forEach(element => {
-            const key = element.getAttribute('data-translate');
-            if (lang[key]) {
-                element.textContent = lang[key];
-            }
-        });
-    }
-
-    function saveSettings() {
-        const form = document.createElement('form');
-        form.innerHTML = `
-            <select name="language">${document.getElementById('languageSelect').innerHTML}</select>
-            <input type="radio" name="theme_mode" value="light" ${document.querySelector('input[name="theme_mode"][value="light"]').checked ? 'checked' : ''}>
-            <input type="radio" name="theme_mode" value="dark" ${document.querySelector('input[name="theme_mode"][value="dark"]').checked ? 'checked' : ''}>
-            <select name="font_size">${document.getElementById('fontSizeSelect').innerHTML}</select>
-            <input type="checkbox" name="auto_save" ${document.getElementById('autoSave').checked ? 'checked' : ''}>
-            <input type="checkbox" name="animations" ${document.getElementById('animationsSwitch').checked ? 'checked' : ''}>
-        `;
-
-        const formData = new FormData(form);
-        const settings = {
-            language: formData.get('language'),
-            font_size: formData.get('font_size'),
-            dark_theme: formData.get('theme_mode') === 'dark',
-            auto_save: formData.get('auto_save') === 'on',
-            animations: formData.get('animations') === 'on'
-        };
-
-        // Darhol UI ni yangilash
-        applySettings(settings);
-
-        // Serverga saqlash
-        fetch('/api/save-settings', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(settings)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showNotification(data.message, 'success');
-
-                // Sozlamalarni localStorage ga ham saqlash
-                localStorage.setItem('userSettings', JSON.stringify(settings));
-
-                // Sahifani 2 soniyadan keyin qayta yuklash
-                setTimeout(() => {
-                    location.reload();
-                }, 2000);
-            } else {
-                showNotification('Xatolik: ' + data.message, 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Sozlamalarni saqlashda xatolik:', error);
-            showNotification('Server bilan bog\'lanishda xatolik!', 'error');
-        });
-    }
-
-    // Sahifa yuklanganda sozlamalarni yuklash
-    document.addEventListener('DOMContentLoaded', function() {
-        // localStorage dan sozlamalarni yuklash
-        const savedSettings = localStorage.getItem('userSettings');
-        if (savedSettings) {
-            try {
-                const settings = JSON.parse(savedSettings);
-                applySettings(settings);
-
-                // Form elementlarini yangilash
-                if (settings.language) {
-                    const languageSelect = document.getElementById('languageSelect');
-                    if (languageSelect) languageSelect.value = settings.language;
-                }
-
-                if (settings.font_size) {
-                    const fontSizeSelect = document.getElementById('fontSizeSelect');
-                    if (fontSizeSelect) fontSizeSelect.value = settings.font_size;
-                }
-
-                if (settings.dark_theme !== undefined) {
-                    const themeRadio = document.querySelector(`input[name="theme_mode"][value="${settings.dark_theme ? 'dark' : 'light'}"]`);
-                    if (themeRadio) themeRadio.checked = true;
-                }
-                
-                if (document.getElementById('autoSave')) {
-                    document.getElementById('autoSave').checked = settings.auto_save !== undefined ? settings.auto_save : true;
-                }
-                if (document.getElementById('animationsSwitch')) {
-                    document.getElementById('animationsSwitch').checked = settings.animations !== undefined ? settings.animations : true;
-                }
-
-            } catch (e) {
-                console.error('Sozlamalarni yuklashda xatolik:', e);
-            }
-        } else {
-            // Agar localStorage da sozlamalar bo'lmasa, serverdan olingan sozlamalarni qo'llash
-            const initialLanguage = document.getElementById('languageSelect').value;
-            const initialDarkMode = document.querySelector('input[name="theme_mode"]:checked')?.value === 'dark';
-            const initialFontSize = document.getElementById('fontSizeSelect').value;
-            
-            applySettings({
-                language: initialLanguage,
-                dark_theme: initialDarkMode,
-                font_size: initialFontSize
-            });
-        }
+    }).catch(error => {
+        console.log('Til sozlamasini saqlashda xato:', error);
+        showNotification('error', 'Til mahalliy o\'zgartirildi');
     });
-    </script>
-</body>
-</html>
+}
+
+// Mavzuni o'zgartirish
+function changeTheme(isDark) {
+    console.log('Changing theme to:', isDark ? 'dark' : 'light');
+    
+    // Darhol qo'llash
+    if (isDark) {
+        document.body.classList.add('dark-theme');
+    } else {
+        document.body.classList.remove('dark-theme');
+    }
+    
+    // LocalStorage ga saqlash
+    localStorage.setItem('darkMode', isDark);
+    
+    // Server ga yuborish
+    fetch('/api/set-theme', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ dark_theme: isDark })
+    }).then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification('success', 'Mavzu muvaffaqiyatli o\'zgartirildi');
+        }
+    }).catch(error => {
+        console.log('Mavzu sozlamasini saqlashda xato:', error);
+        showNotification('info', 'Mavzu mahalliy o\'zgartirildi');
+    });
+}
+
+// Font o'lchamini o'zgartirish
+function changeFontSize(fontSize) {
+    console.log('Changing font size to:', fontSize);
+    
+    // Klasslarni tozalash
+    document.body.classList.remove('font-small', 'font-medium', 'font-large', 'font-xlarge');
+    
+    // Yangi klassni qo'shish
+    document.body.classList.add('font-' + fontSize);
+    
+    // LocalStorage ga saqlash
+    localStorage.setItem('fontSize', fontSize);
+    
+    // Server ga yuborish
+    fetch('/api/set-font-size', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ font_size: fontSize })
+    }).then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification('success', 'Shrift o\'lchami muvaffaqiyatli o\'zgartirildi');
+        }
+    }).catch(error => {
+        console.log('Font size sozlamasini saqlashda xato:', error);
+        showNotification('info', 'Shrift o\'lchami mahalliy o\'zgartirildi');
+    });
+}
+
+// Standart sozlamalarga qaytarish
+function resetToDefaults() {
+    if (confirm('Barcha sozlamalarni standart holatga qaytarishni xohlaysizmi?')) {
+        // Standart qiymatlar
+        document.getElementById('languageSelect').value = 'uz';
+        document.getElementById('lightTheme').checked = true;
+        document.getElementById('fontSizeSelect').value = 'medium';
+        
+        // Qo'llash
+        changeLanguage('uz');
+        changeTheme(false);
+        changeFontSize('medium');
+        
+        // Switch'larni qayta tiklash
+        document.getElementById('soundSwitch').checked = true;
+        document.getElementById('notificationSwitch').checked = true;
+        document.getElementById('autoRefreshSwitch').checked = true;
+        document.getElementById('animationsSwitch').checked = true;
+        document.getElementById('rememberMeSwitch').checked = true;
+        
+        showNotification('success', 'Sozlamalar standart holatga qaytarildi');
+    }
+}
+
+// Sozlamalarni saqlash
+function saveSettings() {
+    const settings = {
+        language: document.getElementById('languageSelect').value,
+        theme: document.querySelector('input[name="theme"]:checked').value,
+        fontSize: document.getElementById('fontSizeSelect').value,
+        sound: document.getElementById('soundSwitch').checked,
+        notifications: document.getElementById('notificationSwitch').checked,
+        autoRefresh: document.getElementById('autoRefreshSwitch').checked,
+        animations: document.getElementById('animationsSwitch').checked,
+        rememberMe: document.getElementById('rememberMeSwitch').checked
+    };
+    
+    // LocalStorage ga saqlash
+    localStorage.setItem('userSettings', JSON.stringify(settings));
+    
+    showNotification('success', 'Barcha sozlamalar saqlandi');
+}
+
+// Sozlamalarni eksport qilish
+function exportSettings() {
+    const settings = {
+        language: document.getElementById('languageSelect').value,
+        theme: document.querySelector('input[name="theme"]:checked').value,
+        fontSize: document.getElementById('fontSizeSelect').value,
+        sound: document.getElementById('soundSwitch').checked,
+        notifications: document.getElementById('notificationSwitch').checked,
+        autoRefresh: document.getElementById('autoRefreshSwitch').checked,
+        animations: document.getElementById('animationsSwitch').checked,
+        rememberMe: document.getElementById('rememberMeSwitch').checked,
+        exportDate: new Date().toISOString()
+    };
+    
+    const dataStr = JSON.stringify(settings, null, 2);
+    const dataBlob = new Blob([dataStr], {type: 'application/json'});
+    
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(dataBlob);
+    link.download = 'restaurant_settings.json';
+    link.click();
+    
+    showNotification('success', 'Sozlamalar faylga eksport qilindi');
+}
+
+// Bildirishnoma ko'rsatish
+function showNotification(type, message) {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type} notification`;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1050;
+        min-width: 300px;
+        opacity: 0;
+        transform: translateX(100%);
+        transition: all 0.3s ease;
+    `;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.opacity = '1';
+        notification.style.transform = 'translateX(0)';
+    }, 100);
+    
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    }, 3000);
+}
+
+// Sahifa yuklanganda joriy sozlamalarni qo'llash
+document.addEventListener('DOMContentLoaded', function() {
+    // LocalStorage dan sozlamalarni yuklab olish
+    const savedSettings = localStorage.getItem('userSettings');
+    if (savedSettings) {
+        const settings = JSON.parse(savedSettings);
+        
+        // Switch'larni to'g'ri holatga keltirish
+        if (settings.sound !== undefined) {
+            document.getElementById('soundSwitch').checked = settings.sound;
+        }
+        if (settings.notifications !== undefined) {
+            document.getElementById('notificationSwitch').checked = settings.notifications;
+        }
+        if (settings.autoRefresh !== undefined) {
+            document.getElementById('autoRefreshSwitch').checked = settings.autoRefresh;
+        }
+        if (settings.animations !== undefined) {
+            document.getElementById('animationsSwitch').checked = settings.animations;
+        }
+        if (settings.rememberMe !== undefined) {
+            document.getElementById('rememberMeSwitch').checked = settings.rememberMe;
+        }
+    }
+    
+    console.log('General settings sahifasi yuklandi');
+});
+</script>
+{% endblock %}

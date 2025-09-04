@@ -1,277 +1,261 @@
 
-<!DOCTYPE html>
-<html lang="uz">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil sozlamalari - Restoran</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px 0;
-        }
-        .settings-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .settings-section {
-            margin-bottom: 30px;
-            padding: 20px;
-            background: rgba(248, 250, 252, 0.8);
-            border-radius: 15px;
-        }
-        .setting-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        .setting-item:last-child {
-            border-bottom: none;
-        }
-        .setting-label {
-            font-weight: 600;
-            color: #2d3748;
-        }
-        .btn-setting {
-            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-            border: none;
-            color: white;
-            padding: 8px 20px;
-            border-radius: 10px;
-            font-weight: 600;
-        }
-    </style>
-</head>
-<body>
-    <div class="settings-card">
-        <div class="text-center mb-4">
-            <h2>⚙️ Profil sozlamalari</h2>
-            <p class="text-muted">Profilingiz va xavfsizlik sozlamalarini boshqaring</p>
-        </div>
+{% extends "base.html" %}
 
-        {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            {% for category, message in messages %}
-              <div class="alert alert-{{ 'danger' if category=='error' else 'success' if category=='success' else category }} alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-              </div>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
+{% block title %}Profil sozlamalari{% endblock %}
 
-        <!-- Xavfsizlik sozlamalari -->
-        <div class="settings-section">
-            <h4>🔐 Xavfsizlik</h4>
-            <div class="setting-item">
-                <div>
-                    <div class="setting-label">Parolni o'zgartirish</div>
-                    <small class="text-muted">Hisobingiz xavfsizligini ta'minlash uchun</small>
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3>⚙️ Profil sozlamalari</h3>
+                    <p class="mb-0 text-muted">
+                        {% if session.get('super_admin') %}
+                            Super Admin profil sozlamalari
+                        {% elif session.get('staff_id') %}
+                            Xodim profil sozlamalari
+                        {% elif session.get('courier_id') %}
+                            Kuryer profil sozlamalari
+                        {% elif session.get('user_id') %}
+                            Foydalanuvchi profil sozlamalari
+                        {% endif %}
+                    </p>
                 </div>
-                <button class="btn btn-setting" data-bs-toggle="modal" data-bs-target="#passwordModal">O'zgartirish</button>
-            </div>
-            <div class="setting-item">
-                <div>
-                    <div class="setting-label">Ikki bosqichli autentifikatsiya</div>
-                    <small class="text-muted">Qo'shimcha xavfsizlik qatlami</small>
-                </div>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="twoFactorAuth">
-                    <label class="form-check-label" for="twoFactorAuth"></label>
-                </div>
-            </div>
-        </div>
+                <div class="card-body">
+                    <!-- Parol o'zgartirish bo'limi -->
+                    <div class="settings-section">
+                        <h5>🔐 Parolni o'zgartirish</h5>
+                        <form method="POST" action="{{ url_for('change_password') }}">
+                            <div class="mb-3">
+                                <label for="current_password" class="form-label">Joriy parol</label>
+                                <input type="password" class="form-control" id="current_password" name="current_password" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="new_password" class="form-label">Yangi parol</label>
+                                <input type="password" class="form-control" id="new_password" name="new_password" required minlength="6">
+                            </div>
+                            <div class="mb-3">
+                                <label for="confirm_password" class="form-label">Yangi parolni tasdiqlash</label>
+                                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required minlength="6">
+                            </div>
+                            <button type="submit" class="btn btn-primary">🔒 Parolni o'zgartirish</button>
+                        </form>
+                    </div>
 
-        <!-- Shaxsiy ma'lumotlar -->
-        <div class="settings-section">
-            <h4>👤 Shaxsiy ma'lumotlar</h4>
-            <div class="setting-item">
-                <div>
-                    <div class="setting-label">Ma'lumotlarni tahrirlash</div>
-                    <small class="text-muted">Ism, familiya, telefon va email</small>
-                </div>
-                <a href="{{ url_for('profile') }}" class="btn btn-setting">Tahrirlash</a>
-            </div>
-            <div class="setting-item">
-                <div>
-                    <div class="setting-label">Manzilni yangilash</div>
-                    <small class="text-muted">Yetkazib berish manzili</small>
-                </div>
-                <a href="{{ url_for('profile') }}#address" class="btn btn-setting">Yangilash</a>
-            </div>
-        </div>
+                    <hr class="my-4">
 
-        <!-- Bildirishnomalar -->
-        <div class="settings-section">
-            <h4>🔔 Bildirishnomalar</h4>
-            <div class="setting-item">
-                <div>
-                    <div class="setting-label">Email bildirishnomalari</div>
-                    <small class="text-muted">Buyurtma holati haqida email olish</small>
-                </div>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
-                    <label class="form-check-label" for="emailNotifications"></label>
-                </div>
-            </div>
-            <div class="setting-item">
-                <div>
-                    <div class="setting-label">SMS bildirishnomalar</div>
-                    <small class="text-muted">Buyurtma tayyor bo'lganda SMS</small>
-                </div>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="smsNotifications">
-                    <label class="form-check-label" for="smsNotifications"></label>
-                </div>
-            </div>
-        </div>
+                    <!-- Foydalanuvchi uchun qo'shimcha ma'lumotlar -->
+                    {% if session.get('user_id') %}
+                    <div class="settings-section">
+                        <h5>👤 Shaxsiy ma'lumotlar</h5>
+                        <form method="POST" action="{{ url_for('update_profile') }}">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="first_name" class="form-label">Ism</label>
+                                    <input type="text" class="form-control" id="first_name" name="first_name" 
+                                           value="{{ session.get('user_name', '').split()[0] if session.get('user_name') else '' }}" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="last_name" class="form-label">Familiya</label>
+                                    <input type="text" class="form-control" id="last_name" name="last_name" 
+                                           value="{{ session.get('user_name', '').split()[1] if session.get('user_name') and session.get('user_name').split()|length > 1 else '' }}" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       value="{{ session.get('user_email', '') }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">Telefon raqami</label>
+                                <input type="tel" class="form-control" id="phone" name="phone" 
+                                       value="{{ session.get('user_phone', '') }}">
+                            </div>
+                            <button type="submit" class="btn btn-success">💾 Ma'lumotlarni yangilash</button>
+                        </form>
+                    </div>
 
-        <!-- Hisobot -->
-        <div class="settings-section">
-            <h4>📊 Hisobot va Ma'lumotlar</h4>
-            <div class="setting-item">
-                <div>
-                    <div class="setting-label">Ma'lumotlarni yuklab olish</div>
-                    <small class="text-muted">Barcha shaxsiy ma'lumotlaringizni yuklab oling</small>
-                </div>
-                <button class="btn btn-setting">Yuklab olish</button>
-            </div>
-            <div class="setting-item">
-                <div>
-                    <div class="setting-label">Hisobni o'chirish</div>
-                    <small class="text-muted text-danger">Bu amal qaytarib bo'lmaydi</small>
-                </div>
-                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">O'chirish</button>
-            </div>
-        </div>
+                    <hr class="my-4">
+                    {% endif %}
 
-        <!-- Navigatsiya -->
-        <div class="text-center">
-            <button class="btn btn-success me-2" onclick="saveProfileSettings()">💾 Sozlamalarni saqlash</button>
-            <a href="{{ url_for('general_settings') }}" class="btn btn-outline-primary me-2">🔧 Umumi sozlamalar</a>
-            {% if session.get('super_admin') %}
-                <a href="{{ url_for('super_admin_dashboard') }}" class="btn btn-outline-secondary">🔙 Super Admin Dashboard</a>
-            {% elif session.get('staff_id') %}
-                <a href="{{ url_for('staff_dashboard') }}" class="btn btn-outline-secondary">🔙 Xodim Dashboard</a>
-            {% elif session.get('courier_id') %}
-                <a href="{{ url_for('courier_dashboard') }}" class="btn btn-outline-secondary">🔙 Kuryer Dashboard</a>
-            {% elif session.get('user_id') %}
-                <a href="{{ url_for('profile') }}" class="btn btn-outline-secondary">🔙 Profilga qaytish</a>
-            {% else %}
-                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">🔙 Bosh sahifa</a>
-            {% endif %}
-        </div>
-    </div>
-
-    <!-- Parol o'zgartirish modali -->
-    <div class="modal fade" id="passwordModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">🔐 Parolni o'zgartirish</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <form method="POST" action="{{ url_for('change_password') }}">
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="current_password" class="form-label">Joriy parol</label>
-                            <input type="password" class="form-control" id="current_password" name="current_password" required>
+                    <!-- Super Admin uchun maxsus sozlamalar -->
+                    {% if session.get('super_admin') %}
+                    <div class="settings-section">
+                        <h5>🔧 Administrator sozlamalari</h5>
+                        <div class="alert alert-info">
+                            <strong>Admin huquqlari:</strong>
+                            <ul class="mb-0">
+                                <li>Tizim boshqaruvi</li>
+                                <li>Barcha ma'lumotlarni ko'rish</li>
+                                <li>Xodim va kuryerlarni boshqarish</li>
+                                <li>Tizim loglarini ko'rish</li>
+                                <li>Hisobotlar yaratish</li>
+                            </ul>
                         </div>
-                        <div class="mb-3">
-                            <label for="new_password" class="form-label">Yangi parol</label>
-                            <input type="password" class="form-control" id="new_password" name="new_password" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="confirm_password" class="form-label">Yangi parolni tasdiqlash</label>
-                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label">Admin ID:</label>
+                                <p class="form-control-plaintext">Super Administrator</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Kirish vaqti:</label>
+                                <p class="form-control-plaintext" id="currentDateTime"></p>
+                            </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
-                        <button type="submit" class="btn btn-primary">Saqlash</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
 
-    <!-- Hisobni o'chirish modali -->
-    <div class="modal fade" id="deleteAccountModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-danger">⚠️ Hisobni o'chirish</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Hisobingizni o'chirish istaysizmi? Bu amal qaytarib bo'lmaydi va barcha ma'lumotlaringiz yo'qoladi.</p>
-                    <div class="mb-3">
-                        <label for="delete_password" class="form-label">Tasdiqlash uchun parolingizni kiriting</label>
-                        <input type="password" class="form-control" id="delete_password" required>
+                    <hr class="my-4">
+                    {% endif %}
+
+                    <!-- Staff uchun maxsus sozlamalar -->
+                    {% if session.get('staff_id') %}
+                    <div class="settings-section">
+                        <h5>👨‍💼 Xodim sozlamalari</h5>
+                        <div class="alert alert-success">
+                            <strong>Xodim huquqlari:</strong>
+                            <ul class="mb-0">
+                                <li>Buyurtmalarni boshqarish</li>
+                                <li>Menyu mahsulotlarini tahrirlash</li>
+                                <li>Mijozlar bilan ishlash</li>
+                                <li>Monitor ko'rish</li>
+                            </ul>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label">Xodim ID:</label>
+                                <p class="form-control-plaintext">#{{ session.get('staff_id') }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Ish soatlari:</label>
+                                <p class="form-control-plaintext">{{ session.get('staff_hours', 0) }}h</p>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
-                    <button type="button" class="btn btn-danger">Hisobni o'chirish</button>
+
+                    <hr class="my-4">
+                    {% endif %}
+
+                    <!-- Courier uchun maxsus sozlamalar -->
+                    {% if session.get('courier_id') %}
+                    <div class="settings-section">
+                        <h5>🚚 Kuryer sozlamalari</h5>
+                        <div class="alert alert-info">
+                            <strong>Kuryer huquqlari:</strong>
+                            <ul class="mb-0">
+                                <li>Yetkazib berish buyurtmalarini ko'rish</li>
+                                <li>Buyurtma holat o'zgartirish</li>
+                                <li>Mijozlar bilan bog'lanish</li>
+                                <li>Masofa va vaqt hisoblash</li>
+                            </ul>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="form-label">Kuryer ID:</label>
+                                <p class="form-control-plaintext">#{{ session.get('courier_id') }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Yetkazishlar:</label>
+                                <p class="form-control-plaintext">{{ session.get('courier_deliveries', 0) }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Ish soatlari:</label>
+                                <p class="form-control-plaintext">{{ session.get('courier_hours', 0) }}h</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+                    {% endif %}
+
+                    <!-- Havfsizlik sozlamalari -->
+                    <div class="settings-section">
+                        <h5>🛡️ Havfsizlik</h5>
+                        <div class="d-grid gap-2">
+                            {% if session.get('super_admin') %}
+                                <a href="{{ url_for('super_admin_logout') }}" class="btn btn-danger">
+                                    🚪 Super Admin tizimidan chiqish
+                                </a>
+                            {% elif session.get('staff_id') %}
+                                <a href="{{ url_for('staff_logout') }}" class="btn btn-danger">
+                                    🚪 Xodim tizimidan chiqish
+                                </a>
+                            {% elif session.get('courier_id') %}
+                                <a href="{{ url_for('courier_logout') }}" class="btn btn-danger">
+                                    🚪 Kuryer tizimidan chiqish
+                                </a>
+                            {% elif session.get('user_id') %}
+                                <a href="{{ url_for('logout') }}" class="btn btn-danger">
+                                    🚪 Foydalanuvchi tizimidan chiqish
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script>
-    function saveProfileSettings() {
-        // Sozlamalarni saqlash funksiyasi
-        const twoFactorAuth = document.getElementById('twoFactorAuth').checked;
-        const emailNotifications = document.getElementById('emailNotifications').checked;
-        const smsNotifications = document.getElementById('smsNotifications').checked;
-        
-        // LocalStorage ga saqlash
-        localStorage.setItem('twoFactorAuth', twoFactorAuth);
-        localStorage.setItem('emailNotifications', emailNotifications);
-        localStorage.setItem('smsNotifications', smsNotifications);
-        
-        // Muvaffaqiyatli xabarni ko'rsatish
-        const alertDiv = document.createElement('div');
-        alertDiv.className = 'alert alert-success alert-dismissible fade show';
-        alertDiv.innerHTML = `
-            Profil sozlamalari muvaffaqiyatli saqlandi! ✅
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        `;
-        
-        // Sahifaning yuqorisiga qo'shish
-        const container = document.querySelector('.settings-card');
-        container.insertBefore(alertDiv, container.firstChild);
-        
-        // 3 soniyadan keyin xabarni o'chirish
-        setTimeout(() => {
-            if (alertDiv && alertDiv.parentNode) {
-                alertDiv.remove();
-            }
-        }, 3000);
+<style>
+.settings-section {
+    margin-bottom: 2rem;
+}
+
+.settings-section h5 {
+    color: #495057;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 1px solid #dee2e6;
+}
+
+.form-control-plaintext {
+    background-color: #f8f9fa;
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.375rem;
+    border: 1px solid #e9ecef;
+    margin-bottom: 0;
+}
+
+.alert {
+    border-radius: 0.5rem;
+}
+
+.btn {
+    border-radius: 0.375rem;
+    font-weight: 500;
+}
+</style>
+
+<script>
+// Joriy sana va vaqtni ko'rsatish
+document.addEventListener('DOMContentLoaded', function() {
+    const dateTimeElement = document.getElementById('currentDateTime');
+    if (dateTimeElement) {
+        const now = new Date();
+        dateTimeElement.textContent = now.toLocaleString('uz-UZ');
     }
+
+    // Parol tasdiqlashni tekshirish
+    const newPasswordInput = document.getElementById('new_password');
+    const confirmPasswordInput = document.getElementById('confirm_password');
     
-    // Sahifa yuklanganda oldingi sozlamalarni yuklash
-    document.addEventListener('DOMContentLoaded', function() {
-        // Oldingi sozlamalarni yuklash
-        const twoFactorAuth = localStorage.getItem('twoFactorAuth') === 'true';
-        const emailNotifications = localStorage.getItem('emailNotifications') !== 'false'; // default true
-        const smsNotifications = localStorage.getItem('smsNotifications') === 'true';
+    if (newPasswordInput && confirmPasswordInput) {
+        function validatePassword() {
+            if (newPasswordInput.value !== confirmPasswordInput.value) {
+                confirmPasswordInput.setCustomValidity('Parollar mos kelmaydi');
+            } else {
+                confirmPasswordInput.setCustomValidity('');
+            }
+        }
         
-        document.getElementById('twoFactorAuth').checked = twoFactorAuth;
-        document.getElementById('emailNotifications').checked = emailNotifications;
-        document.getElementById('smsNotifications').checked = smsNotifications;
-    });
-    </script>
-</body>
-</html>
+        newPasswordInput.addEventListener('change', validatePassword);
+        confirmPasswordInput.addEventListener('keyup', validatePassword);
+    }
+});
+</script>
+{% endblock %}
