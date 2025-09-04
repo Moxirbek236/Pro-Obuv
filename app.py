@@ -1365,6 +1365,31 @@ def fix_staff_table():
     except Exception as e:
         app_logger.error(f"Failed to fix staff table: {str(e)}")
 
+# Manual fix for courier table
+def fix_courier_table():
+    "Manual fix for courier table missing columns"
+    try:
+        conn = get_db()
+        cur = conn.cursor()
+        
+        # Check courier table columns
+        cur.execute("PRAGMA table_info(couriers);")
+        cols = [r[1] for r in cur.fetchall()]
+        
+        if 'total_hours' not in cols:
+            cur.execute("ALTER TABLE couriers ADD COLUMN total_hours REAL DEFAULT 0.0;")
+            conn.commit()
+            app_logger.info("Added missing total_hours column to couriers table")
+            
+        if 'deliveries_completed' not in cols:
+            cur.execute("ALTER TABLE couriers ADD COLUMN deliveries_completed INTEGER DEFAULT 0;")
+            conn.commit()
+            app_logger.info("Added missing deliveries_completed column to couriers table")
+        
+        conn.close()
+    except Exception as e:
+        app_logger.error(f"Failed to fix courier table: {str(e)}")
+
 # Ensure columns exist on startup
 ensure_orders_columns()
 ensure_cart_items_columns()
@@ -1373,8 +1398,9 @@ ensure_courier_columns()
 ensure_menu_items_columns()
 ensure_users_columns()
 
-# Apply manual fix
+# Apply manual fixes
 fix_staff_table()
+fix_courier_table()
 
 
 # Database ni xavfsiz ishga tushirish
@@ -3313,29 +3339,53 @@ def courier_dashboard():
         """, (session.get("courier_id"),), fetch_all=True)
         delivery_orders = [dict(row) for row in delivery_orders_raw] if delivery_orders_raw else []
 
-        # Kuryer statistikasini olish
-        courier_stats = execute_query("SELECT deliveries_completed, total_hours FROM couriers WHERE id = ?", (session.get("courier_id"),), fetch_one=True)
+        # Kuryer statistikasini olish - xavfsiz usul
+        try:
+            courier_stats = execute_query("SELECT COALESCE(deliveries_completed, 0) as deliveries_completed, COALESCE(total_hours, 0.0) as total_hours FROM couriers WHERE id = ?", (session.get("courier_id"),), fetch_one=True)
 
-        # Faol buyurtmalar sonini olish
-        active_orders_result = execute_query("SELECT COUNT(*) FROM orders WHERE courier_id = ? AND status = 'on_way'", (session.get("courier_id"),), fetch_one=True)
-        active_orders = active_orders_result[0] if active_orders_result else 0
+            # Faol buyurtmalar sonini olish
+            active_orders_result = execute_query("SELECT COUNT(*) FROM orders WHERE courier_id = ? AND status = 'on_way'", (session.get("courier_id"),), fetch_one=True)
+            active_orders = active_orders_result[0] if active_orders_result else 0
 
-        # Session ga statistikani saqlash
-        if courier_stats:
-            try:
-                session['courier_deliveries'] = courier_stats.get('deliveries_completed', 0) or 0
-                session['courier_hours'] = round(float(str(courier_stats.get('total_hours', 0) or 0)), 1)
-            except (TypeError, ValueError) as e:
-                app_logger.error(f"Kuryer statistikasini o'qishda xatolik: {str(e)}")
+            # Session ga statistikani saqlash - xavfsiz usul
+            if courier_stats:
+                try:
+                    # Deliveries statistikasi
+                    deliveries = courier_stats.get('deliveries_completed', 0)
+                    session['courier_deliveries'] = int(deliveries) if deliveries is not None else 0
+                    
+                    # Hours statistikasi
+                    hours = courier_stats.get('total_hours', 0.0)
+                    if hours is None or hours == 0:
+                        session['courier_hours'] = 0.0
+                    else:
+                        session['courier_hours'] = round(float(str(hours)), 1)
+                        
+                except (TypeError, ValueError, AttributeError) as e:
+                    app_logger.warning(f"Kuryer statistikasini o'qishda xatolik: {str(e)}")
+                    session['courier_deliveries'] = 0
+                    session['courier_hours'] = 0.0
+            else:
                 session['courier_deliveries'] = 0
-                session['courier_hours'] = 0
-        else:
+                session['courier_hours'] = 0.0
+                
+            session['courier_active_orders'] = int(active_orders) if active_orders is not None else 0
+            
+        except Exception as stats_error:
+            app_logger.error(f"Kuryer statistikasini olishda umumiy xatolik: {str(stats_error)}")
             session['courier_deliveries'] = 0
-            session['courier_hours'] = 0
-        session['courier_active_orders'] = active_orders
+            session['courier_hours'] = 0.0
+            session['courier_active_orders'] = 0
 
-        app_logger.info(f"Courier dashboard loaded for courier_id: {session.get('courier_id')}")
-        return render_template("courier_dashboard.html", orders=delivery_orders)
+        app_logger.info(f"Courier dashboard loaded for courier_id: {session.get('courier_id')}, found {len(delivery_orders)} orders")
+        
+        # Template ni xavfsiz render qilish
+        try:
+            return render_template("courier_dashboard.html", orders=delivery_orders or [])
+        except Exception as template_error:
+            app_logger.error(f"Courier dashboard template render error: {str(template_error)}")
+            # Fallback template
+            return render_template("courier_dashboard.html", orders=[])
 
     except Exception as e:
         app_logger.error(f"Courier dashboard error: {str(e)}")
