@@ -1171,6 +1171,10 @@ def ensure_staff_columns():
             cur.execute("ALTER TABLE staff ADD COLUMN passport_number TEXT;")
             conn.commit()
 
+        if 'total_hours' not in cols:
+            cur.execute("ALTER TABLE staff ADD COLUMN total_hours REAL DEFAULT 0;")
+            conn.commit()
+
         if 'orders_handled' not in cols:
             cur.execute("ALTER TABLE staff ADD COLUMN orders_handled INTEGER DEFAULT 0;")
             conn.commit()
@@ -1178,6 +1182,8 @@ def ensure_staff_columns():
         if 'last_activity' not in cols:
             cur.execute("ALTER TABLE staff ADD COLUMN last_activity TEXT;")
             conn.commit()
+
+        app_logger.info("Staff table migration completed successfully")
 
     except Exception as e:
         app_logger.warning(f"Staff jadval migratsiyasi xatoligi: {str(e)}")
@@ -1339,6 +1345,26 @@ def create_minimal_app():
 
     return minimal_app
 
+# Manual fix for missing staff total_hours column
+def fix_staff_table():
+    "Manual fix for staff table missing columns"
+    try:
+        conn = get_db()
+        cur = conn.cursor()
+        
+        # Check if total_hours exists
+        cur.execute("PRAGMA table_info(staff);")
+        cols = [r[1] for r in cur.fetchall()]
+        
+        if 'total_hours' not in cols:
+            cur.execute("ALTER TABLE staff ADD COLUMN total_hours REAL DEFAULT 0.0;")
+            conn.commit()
+            app_logger.info("Added missing total_hours column to staff table")
+        
+        conn.close()
+    except Exception as e:
+        app_logger.error(f"Failed to fix staff table: {str(e)}")
+
 # Ensure columns exist on startup
 ensure_orders_columns()
 ensure_cart_items_columns()
@@ -1346,6 +1372,9 @@ ensure_staff_columns()
 ensure_courier_columns()
 ensure_menu_items_columns()
 ensure_users_columns()
+
+# Apply manual fix
+fix_staff_table()
 
 
 # Database ni xavfsiz ishga tushirish
@@ -4636,17 +4665,22 @@ def staff_dashboard():
                     app_logger.warning(f"Order row processing error: {str(row_error)}")
                     continue
 
-        # Staff statistikasini olish
-        staff_stats = execute_query("SELECT orders_handled, total_hours FROM staff WHERE id = ?", (staff_id,), fetch_one=True)
+        # Staff statistikasini olish - xavfsiz usul
+        try:
+            staff_stats = execute_query("SELECT orders_handled, COALESCE(total_hours, 0) as total_hours FROM staff WHERE id = ?", (staff_id,), fetch_one=True)
 
-        if staff_stats:
-            try:
-                session['staff_orders_handled'] = int(staff_stats.get('orders_handled', 0) or 0)
-                session['staff_hours'] = round(float(str(staff_stats.get('total_hours', 0) or 0)), 1)
-            except (ValueError, TypeError):
+            if staff_stats:
+                try:
+                    session['staff_orders_handled'] = int(staff_stats.get('orders_handled', 0) or 0)
+                    session['staff_hours'] = round(float(str(staff_stats.get('total_hours', 0) or 0)), 1)
+                except (ValueError, TypeError):
+                    session['staff_orders_handled'] = 0
+                    session['staff_hours'] = 0.0
+            else:
                 session['staff_orders_handled'] = 0
                 session['staff_hours'] = 0.0
-        else:
+        except Exception as stats_error:
+            app_logger.warning(f"Staff stats error, using defaults: {str(stats_error)}")
             session['staff_orders_handled'] = 0
             session['staff_hours'] = 0.0
 
