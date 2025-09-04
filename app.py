@@ -3399,38 +3399,65 @@ def courier_dashboard():
 
         # Kuryer statistikasini olish - xavfsiz usul
         try:
-            courier_stats = execute_query("SELECT COALESCE(deliveries_completed, 0) as deliveries_completed, COALESCE(total_hours, 0.0) as total_hours FROM couriers WHERE id = ?", (session.get("courier_id"),), fetch_one=True)
+            courier_id = session.get("courier_id")
+            if not courier_id:
+                raise ValueError("Courier ID topilmadi sessionda")
+
+            # Kuryer ma'lumotlarini olish
+            courier_stats = execute_query(
+                "SELECT COALESCE(deliveries_completed, 0) as deliveries_completed, COALESCE(total_hours, 0.0) as total_hours FROM couriers WHERE id = ?", 
+                (courier_id,), 
+                fetch_one=True
+            )
 
             # Faol buyurtmalar sonini olish
-            active_orders_result = execute_query("SELECT COUNT(*) FROM orders WHERE courier_id = ? AND status = 'on_way'", (session.get("courier_id"),), fetch_one=True)
-            active_orders = active_orders_result[0] if active_orders_result else 0
+            active_orders_result = execute_query(
+                "SELECT COUNT(*) FROM orders WHERE courier_id = ? AND status = 'on_way'", 
+                (courier_id,), 
+                fetch_one=True
+            )
 
             # Session ga statistikani saqlash - xavfsiz usul
             if courier_stats:
                 try:
-                    # Deliveries statistikasi
+                    # Deliveries statistikasi - safe conversion
                     deliveries = courier_stats.get('deliveries_completed', 0)
-                    session['courier_deliveries'] = int(deliveries) if deliveries is not None else 0
+                    if deliveries is None:
+                        deliveries = 0
+                    session['courier_deliveries'] = max(0, int(deliveries))
                     
-                    # Hours statistikasi
+                    # Hours statistikasi - safe conversion
                     hours = courier_stats.get('total_hours', 0.0)
                     if hours is None or hours == 0:
                         session['courier_hours'] = 0.0
                     else:
-                        session['courier_hours'] = round(float(str(hours)), 1)
+                        try:
+                            hours_float = float(hours)
+                            session['courier_hours'] = max(0.0, round(hours_float, 1))
+                        except (ValueError, TypeError):
+                            session['courier_hours'] = 0.0
                         
-                except (TypeError, ValueError, AttributeError) as e:
-                    app_logger.warning(f"Kuryer statistikasini o'qishda xatolik: {str(e)}")
+                except (TypeError, ValueError, AttributeError) as conversion_error:
+                    app_logger.warning(f"Kuryer statistikasini conversion xatoligi: {str(conversion_error)}")
                     session['courier_deliveries'] = 0
                     session['courier_hours'] = 0.0
             else:
+                app_logger.warning(f"Kuryer ma'lumotlari topilmadi ID: {courier_id}")
                 session['courier_deliveries'] = 0
                 session['courier_hours'] = 0.0
                 
-            session['courier_active_orders'] = int(active_orders) if active_orders is not None else 0
+            # Active orders - safe conversion
+            active_orders = 0
+            if active_orders_result:
+                try:
+                    active_orders = max(0, int(active_orders_result[0]) if active_orders_result[0] is not None else 0)
+                except (ValueError, TypeError):
+                    active_orders = 0
+            session['courier_active_orders'] = active_orders
             
         except Exception as stats_error:
             app_logger.error(f"Kuryer statistikasini olishda umumiy xatolik: {str(stats_error)}")
+            # Set all stats to safe defaults
             session['courier_deliveries'] = 0
             session['courier_hours'] = 0.0
             session['courier_active_orders'] = 0
@@ -5293,33 +5320,50 @@ def super_admin_dashboard():
             'ready_orders': 0,
             'served_orders': 0,
             'month_orders': 0,
-            'total_staff': len(staff_db),
-            'total_couriers': len(couriers_db),
-            'total_users': len(users_db),
-            'total_users_json': len(users_json)
+            'total_staff': max(0, len(staff_db) if staff_db else 0),
+            'total_couriers': max(0, len(couriers_db) if couriers_db else 0),
+            'total_users': max(0, len(users_db) if users_db else 0),
+            'total_users_json': max(0, len(users_json) if users_json else 0)
         }
 
         try:
-            # Jami buyurtmalar
-            result = execute_query("SELECT COUNT(*) FROM orders", fetch_one=True)
-            stats['total_orders'] = result[0] if result else 0
+            # Jami buyurtmalar - safe query
+            try:
+                result = execute_query("SELECT COUNT(*) FROM orders", fetch_one=True)
+                if result and len(result) > 0 and result[0] is not None:
+                    stats['total_orders'] = max(0, int(result[0]))
+                else:
+                    stats['total_orders'] = 0
+            except Exception as total_error:
+                app_logger.warning(f"Total orders statistikasini olishda xatolik: {str(total_error)}")
+                stats['total_orders'] = 0
 
-            # Status bo'yicha statistika
+            # Status bo'yicha statistika - safe queries
             for status in ['waiting', 'ready', 'served']:
                 try:
-                    result = execute_query(f"SELECT COUNT(*) FROM orders WHERE status='{status}'", fetch_one=True)
-                    stats[f'{status}_orders'] = result[0] if result else 0
-                except Exception as e:
-                    app_logger.warning(f"{status} orders statistikasini olishda xatolik: {str(e)}")
+                    result = execute_query("SELECT COUNT(*) FROM orders WHERE status = ?", (status,), fetch_one=True)
+                    if result and len(result) > 0 and result[0] is not None:
+                        stats[f'{status}_orders'] = max(0, int(result[0]))
+                    else:
+                        stats[f'{status}_orders'] = 0
+                except Exception as status_error:
+                    app_logger.warning(f"{status} orders statistikasini olishda xatolik: {str(status_error)}")
                     stats[f'{status}_orders'] = 0
 
-            # Bu oylik statistika
-            current_month = get_current_time().strftime("%Y-%m")
-            result = execute_query("SELECT COUNT(*) FROM orders WHERE created_at LIKE ?", (f"{current_month}%",), fetch_one=True)
-            stats['month_orders'] = result[0] if result else 0
+            # Bu oylik statistika - safe query
+            try:
+                current_month = get_current_time().strftime("%Y-%m")
+                result = execute_query("SELECT COUNT(*) FROM orders WHERE created_at LIKE ?", (f"{current_month}%",), fetch_one=True)
+                if result and len(result) > 0 and result[0] is not None:
+                    stats['month_orders'] = max(0, int(result[0]))
+                else:
+                    stats['month_orders'] = 0
+            except Exception as month_error:
+                app_logger.warning(f"Bu oylik statistikani olishda xatolik: {str(month_error)}")
+                stats['month_orders'] = 0
 
         except Exception as e:
-            app_logger.error(f"Statistikalarni hisoblashda xatolik: {str(e)}")
+            app_logger.error(f"Statistikalarni hisoblashda umumiy xatolik: {str(e)}")
 
         return render_template("super_admin_dashboard.html",
                              staff_db=staff_db or [],
