@@ -9,7 +9,7 @@ localPort = 5000
 externalPort = 80
 
 [workflows]
-runButton = "Debug Restaurant Server"
+runButton = "Simple Python App"
 
 [[workflows.workflow]]
 name = "Run Flask App"
@@ -331,6 +331,47 @@ args = "python -c \"import app; print('✅ Import successful')\""
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "echo \"🚀 Starting server in debug mode...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python app.py"
+
+[[workflows.workflow]]
+name = "Simple Python App"
+author = 45556560
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"🔍 Checking Python and dependencies...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python --version"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"📂 Current directory: $(pwd)\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"📋 Files in directory:\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "ls -la"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"🧪 Testing import...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python -c \"import app; print('✅ Import successful')\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"🚀 Starting Restaurant Management System...\""
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
