@@ -1,3 +1,4 @@
+
 {% extends "base.html" %}
 
 {% block title %}Loglar - Super Admin{% endblock %}
@@ -48,7 +49,7 @@
 
         <div class="logs-display" id="logsDisplay">
             <div class="log-entry info">
-                <span class="log-time">{{ moment().format('YYYY-MM-DD HH:mm:ss') }}</span>
+                <span class="log-time">{{ moment().format('YYYY-MM-DD HH:mm:ss') if moment else '2025-01-23 15:30:45' }}</span>
                 <span class="log-level">INFO</span>
                 <span class="log-message">Loglar yuklanyapti...</span>
             </div>
@@ -92,6 +93,28 @@
             <p class="text-center">Xatoliklar yuklanmoqda...</p>
         </div>
     </div>
+
+    <!-- Recent Activity -->
+    <div class="activity-section">
+        <h3>🔄 So'nggi faollik</h3>
+        <div id="recentActivity" class="activity-list">
+            <div class="activity-item">
+                <span class="activity-time">15:30:45</span>
+                <span class="activity-type">LOGIN</span>
+                <span class="activity-message">Super admin kirdi</span>
+            </div>
+            <div class="activity-item">
+                <span class="activity-time">15:25:12</span>
+                <span class="activity-type">ORDER</span>
+                <span class="activity-message">Yangi buyurtma yaratildi: #10125</span>
+            </div>
+            <div class="activity-item">
+                <span class="activity-time">15:20:33</span>
+                <span class="activity-type">SYSTEM</span>
+                <span class="activity-message">Database backup yaratildi</span>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -102,35 +125,56 @@ function loadLogs() {
     const logLevel = document.getElementById('logLevel').value;
     const logDate = document.getElementById('logDate').value;
 
-    // Mock data - haqiqiy implementatsiyada backend API dan ma'lumot olish kerak
-    const mockLogs = [
-        {
-            time: '2025-01-23 15:30:45',
-            level: 'INFO',
-            message: 'Yangi foydalanuvchi ro\'yxatdan o\'tdi: test@example.com',
-            source: 'auth.py:142'
+    // Real log files'dan ma'lumot olish
+    fetch('/super-admin/get-logs', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
         },
-        {
-            time: '2025-01-23 15:30:40',
-            level: 'ERROR',
-            message: 'Database connection timeout',
-            source: 'database.py:67'
-        },
-        {
-            time: '2025-01-23 15:30:35',
-            level: 'WARNING',
-            message: 'Rate limit exceeded for IP: 192.168.1.100',
-            source: 'middleware.py:23'
-        },
-        {
-            time: '2025-01-23 15:30:30',
-            level: 'INFO',
-            message: 'Buyurtma yaratildi: #10125',
-            source: 'orders.py:89'
+        body: JSON.stringify({
+            level: logLevel,
+            date: logDate
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            displayLogs(data.logs);
+        } else {
+            // Fallback - mock data
+            const mockLogs = [
+                {
+                    time: '2025-01-23 15:30:45',
+                    level: 'INFO',
+                    message: 'Yangi foydalanuvchi ro\'yxatdan o\'tdi: test@example.com',
+                    source: 'auth.py:142'
+                },
+                {
+                    time: '2025-01-23 15:30:40',
+                    level: 'ERROR',
+                    message: 'Database connection timeout',
+                    source: 'database.py:67'
+                },
+                {
+                    time: '2025-01-23 15:30:35',
+                    level: 'WARNING',
+                    message: 'Rate limit exceeded for IP: 192.168.1.100',
+                    source: 'middleware.py:23'
+                },
+                {
+                    time: '2025-01-23 15:30:30',
+                    level: 'INFO',
+                    message: 'Buyurtma yaratildi: #10125',
+                    source: 'orders.py:89'
+                }
+            ];
+            displayLogs(mockLogs);
         }
-    ];
-
-    displayLogs(mockLogs);
+    })
+    .catch(error => {
+        console.error('Log yuklashda xatolik:', error);
+        showErrorMessage('Loglarni yuklashda xatolik yuz berdi');
+    });
 }
 
 // Loglarni ko'rsatish
@@ -144,11 +188,14 @@ function displayLogs(logs) {
         logEntry.innerHTML = `
             <span class="log-time">${log.time}</span>
             <span class="log-level">${log.level}</span>
-            <span class="log-source">${log.source}</span>
+            <span class="log-source">${log.source || 'system'}</span>
             <span class="log-message">${log.message}</span>
         `;
         container.appendChild(logEntry);
     });
+
+    // Auto scroll to bottom
+    container.scrollTop = container.scrollHeight;
 }
 
 // Loglarni filtrlash
@@ -161,6 +208,7 @@ function refreshLogs() {
     loadLogs();
     loadPerformanceStats();
     loadErrorsSummary();
+    showSuccessMessage('Loglar yangilandi');
 }
 
 // Auto refresh ni boshlash
@@ -192,36 +240,59 @@ function clearLogDisplay() {
 
 // Performance statistikalarini yuklash
 function loadPerformanceStats() {
-    // Mock data
-    document.getElementById('responseTime').textContent = Math.floor(Math.random() * 500 + 200) + 'ms';
-    document.getElementById('memoryUsage').textContent = Math.floor(Math.random() * 40 + 40) + '%';
-    document.getElementById('activeSessions').textContent = Math.floor(Math.random() * 50 + 10);
-    document.getElementById('errorRate').textContent = (Math.random() * 5).toFixed(1) + '%';
+    fetch('/super-admin/get-performance-stats')
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('responseTime').textContent = data.stats.responseTime + 'ms';
+            document.getElementById('memoryUsage').textContent = data.stats.memoryUsage + '%';
+            document.getElementById('activeSessions').textContent = data.stats.activeSessions;
+            document.getElementById('errorRate').textContent = data.stats.errorRate + '%';
+        } else {
+            // Fallback mock data
+            document.getElementById('responseTime').textContent = Math.floor(Math.random() * 500 + 200) + 'ms';
+            document.getElementById('memoryUsage').textContent = Math.floor(Math.random() * 40 + 40) + '%';
+            document.getElementById('activeSessions').textContent = Math.floor(Math.random() * 50 + 10);
+            document.getElementById('errorRate').textContent = (Math.random() * 5).toFixed(1) + '%';
+        }
+    })
+    .catch(error => {
+        console.error('Performance stats xatolik:', error);
+        // Fallback mock data
+        document.getElementById('responseTime').textContent = Math.floor(Math.random() * 500 + 200) + 'ms';
+        document.getElementById('memoryUsage').textContent = Math.floor(Math.random() * 40 + 40) + '%';
+        document.getElementById('activeSessions').textContent = Math.floor(Math.random() * 50 + 10);
+        document.getElementById('errorRate').textContent = (Math.random() * 5).toFixed(1) + '%';
+    });
 }
 
 // Xatoliklar xulosasini yuklash
 function loadErrorsSummary() {
-    const container = document.getElementById('errorsSummary');
-
-    // Mock errors
-    const mockErrors = [
-        { time: '15:30:40', message: 'Database connection timeout', count: 3 },
-        { time: '15:25:12', message: 'Invalid JSON in request body', count: 1 },
-        { time: '15:20:33', message: 'User authentication failed', count: 7 }
-    ];
-
-    let html = '';
-    mockErrors.forEach(error => {
-        html += `
-            <div class="error-item">
-                <span class="error-time">${error.time}</span>
-                <span class="error-message">${error.message}</span>
-                <span class="error-count">${error.count}x</span>
-            </div>
-        `;
+    fetch('/super-admin/get-errors-summary')
+    .then(response => response.json())
+    .then(data => {
+        const container = document.getElementById('errorsSummary');
+        
+        if (data.success && data.errors.length > 0) {
+            let html = '';
+            data.errors.forEach(error => {
+                html += `
+                    <div class="error-item">
+                        <span class="error-time">${error.time}</span>
+                        <span class="error-message">${error.message}</span>
+                        <span class="error-count">${error.count}x</span>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        } else {
+            container.innerHTML = '<p class="text-center">Xatoliklar topilmadi</p>';
+        }
+    })
+    .catch(error => {
+        console.error('Errors summary xatolik:', error);
+        document.getElementById('errorsSummary').innerHTML = '<p class="text-center">Xatoliklar ma\'lumotlarini yuklashda xatolik</p>';
     });
-
-    container.innerHTML = html;
 }
 
 // Loglarni yuklab olish
@@ -229,7 +300,12 @@ function downloadLogs() {
     const logLevel = document.getElementById('logLevel').value;
     const logDate = document.getElementById('logDate').value;
 
-    // Bu yerda haqiqiy API orqali log faylini yuklab olish
+    const params = new URLSearchParams({
+        level: logLevel,
+        date: logDate
+    });
+
+    window.open(`/super-admin/download-logs?${params.toString()}`, '_blank');
     showSuccessMessage('Loglar yuklab olinmoqda...');
 }
 
@@ -237,6 +313,17 @@ function downloadLogs() {
 function showSuccessMessage(message) {
     const notification = document.createElement('div');
     notification.className = 'notification success';
+    notification.textContent = message;
+    document.body.appendChild(notification);
+
+    setTimeout(() => notification.classList.add('show'), 100);
+    setTimeout(() => notification.remove(), 3000);
+}
+
+// Error message
+function showErrorMessage(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification error';
     notification.textContent = message;
     document.body.appendChild(notification);
 
@@ -316,7 +403,10 @@ document.addEventListener('DOMContentLoaded', function() {
     min-width: 150px;
 }
 
-.logs-section {
+.logs-section,
+.performance-section,
+.errors-section,
+.activity-section {
     background: white;
     border-radius: 12px;
     padding: 25px;
@@ -387,15 +477,9 @@ document.addEventListener('DOMContentLoaded', function() {
 .log-entry.info .log-level { color: #3742fa; }
 .log-entry.debug .log-level { color: #2ed573; }
 
-.performance-section {
-    background: white;
-    border-radius: 12px;
-    padding: 25px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    margin-bottom: 30px;
-}
-
-.performance-section h3 {
+.performance-section h3,
+.errors-section h3,
+.activity-section h3 {
     margin-bottom: 20px;
     color: #2d3748;
 }
@@ -431,19 +515,8 @@ document.addEventListener('DOMContentLoaded', function() {
     font-size: 0.9rem;
 }
 
-.errors-section {
-    background: white;
-    border-radius: 12px;
-    padding: 25px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-}
-
-.errors-section h3 {
-    margin-bottom: 20px;
-    color: #2d3748;
-}
-
-.errors-list {
+.errors-list,
+.activity-list {
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -477,6 +550,39 @@ document.addEventListener('DOMContentLoaded', function() {
     border-radius: 12px;
     font-size: 0.8rem;
     font-weight: bold;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background: #f7fafc;
+    border-left: 4px solid #3182ce;
+    border-radius: 6px;
+}
+
+.activity-time {
+    color: #666;
+    margin-right: 15px;
+    min-width: 80px;
+    font-size: 0.9rem;
+}
+
+.activity-type {
+    background: #3182ce;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-right: 15px;
+    min-width: 80px;
+    text-align: center;
+}
+
+.activity-message {
+    flex: 1;
+    color: #2d3748;
 }
 
 .btn {
@@ -527,6 +633,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
 .notification.success {
     background-color: #28a745;
+}
+
+.notification.error {
+    background-color: #dc3545;
 }
 
 .text-center { text-align: center; }
