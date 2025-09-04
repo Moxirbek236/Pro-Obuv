@@ -1,287 +1,393 @@
 
-<!DOCTYPE html>
-<html lang="uz">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yuklamalar - O'zbek Milliy Taomlar</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
-</head>
-<body>
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <h1>🍽️ O'zbek Milliy Taomlar</h1>
+{% extends "base.html" %}
+
+{% block title %}Yuklamalar - Restoran{% endblock %}
+
+{% block content %}
+<div class="downloads-container">
+    <div class="downloads-header">
+        <h1>📱 Mobil Ilovalar</h1>
+        <p>Restoran xizmatlaridan yanada qulay foydalanish uchun mobil ilovalarni yuklab oling</p>
+    </div>
+
+    <div class="apps-grid">
+        <!-- Foydalanuvchilar uchun asosiy ilova -->
+        <div class="app-card featured">
+            <div class="app-icon">📱</div>
+            <div class="app-info">
+                <h3>Restaurant App</h3>
+                <p class="app-description">Buyurtma berish, menyu ko'rish va yetkazib berish xizmatlari</p>
+                <div class="app-features">
+                    <span class="feature">🛒 Buyurtma</span>
+                    <span class="feature">📋 Menyu</span>
+                    <span class="feature">🚚 Yetkazib berish</span>
+                    <span class="feature">❤️ Sevimlilar</span>
                 </div>
-                <nav class="nav">
-                    <a href="{{ url_for('index') }}" class="nav-link">🏠 Bosh sahifa</a>
-                    <a href="{{ url_for('menu') }}" class="nav-link">🍕 Menyu</a>
-                    <a href="{{ url_for('about') }}" class="nav-link">ℹ️ Biz haqimizda</a>
-                    <a href="{{ url_for('contact') }}" class="nav-link">📞 Aloqa</a>
-                </nav>
+                <div class="app-stats">
+                    <span>⭐ 4.8</span>
+                    <span>📥 10K+</span>
+                    <span>💾 15 MB</span>
+                </div>
+            </div>
+            <div class="download-actions">
+                <a href="/static/downloads/restaurant.apk" class="download-btn primary" download>
+                    <span>📥 Android yuklab olish</span>
+                </a>
+                <div class="qr-code">
+                    <div class="qr-placeholder">QR</div>
+                    <small>QR kod bilan yuklab olish</small>
+                </div>
             </div>
         </div>
-    </header>
 
-    <main class="main">
-        <div class="container">
-            <section class="downloads-section">
-                <div class="downloads-header">
-                    <h1>📱 Mobil Ilovalar</h1>
-                    <p class="downloads-subtitle">Bizning restoranlar tizimi uchun maxsus ilovalarni yuklab oling</p>
+        <!-- Professional/Pro versiya -->
+        <div class="app-card">
+            <div class="app-icon">💼</div>
+            <div class="app-info">
+                <h3>Restaurant Pro</h3>
+                <p class="app-description">Biznes mijozlar uchun maxsus imkoniyatlar bilan</p>
+                <div class="app-features">
+                    <span class="feature">📊 Hisobotlar</span>
+                    <span class="feature">💰 Chegirmalar</span>
+                    <span class="feature">⚡ Tez buyurtma</span>
+                    <span class="feature">🔔 SMS xabarnomalar</span>
                 </div>
-
-                <div class="downloads-grid">
-                    <!-- Foydalanuvchi ilovasi -->
-                    <div class="download-card">
-                        <div class="app-icon">📱</div>
-                        <h3>Restaurant - Mijozlar uchun</h3>
-                        <p class="app-description">Taomlar buyurtma qilish, menyuni ko'rish va buyurtma holatini kuzatish uchun</p>
-                        <div class="app-features">
-                            <ul>
-                                <li>✅ Taomlar menyusi</li>
-                                <li>✅ Buyurtma berish</li>
-                                <li>✅ Savatcha</li>
-                                <li>✅ Buyurtma holati</li>
-                                <li>✅ Yetkazish xizmati</li>
-                            </ul>
-                        </div>
-                        <div class="download-buttons">
-                            <a href="{{ url_for('static', filename='downloads/restaurant.apk') }}" class="btn btn-download android" download>
-                                📱 Android APK
-                            </a>
-                            <a href="javascript:void(0)" class="btn btn-download ios" onclick="showIOSInstructions('user')">
-                                🍎 iOS (PWA)
-                            </a>
-                            <a href="javascript:void(0)" class="btn btn-download windows" onclick="showWebAppInfo('user')">
-                                💻 Windows
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Xodim ilovasi -->
-                    <div class="download-card">
-                        <div class="app-icon">👨‍🍳</div>
-                        <h3>Restaurant Pro - Xodimlar uchun</h3>
-                        <p class="app-description">Xodimlar va kuryerlar uchun ish jarayonlarini boshqarish</p>
-                        <div class="app-features">
-                            <ul>
-                                <li>✅ Buyurtmalar boshqaruvi</li>
-                                <li>✅ Menyu tahrirlash</li>
-                                <li>✅ Kuryer paneli</li>
-                                <li>✅ Statistika</li>
-                                <li>✅ Yetkazish xizmati</li>
-                            </ul>
-                        </div>
-                        <div class="download-buttons">
-                            <a href="{{ url_for('static', filename='downloads/restaurant-pro.apk') }}" class="btn btn-download android" download>
-                                📱 Android APK
-                            </a>
-                            <a href="javascript:void(0)" class="btn btn-download ios" onclick="showIOSInstructions('staff')">
-                                🍎 iOS (PWA)
-                            </a>
-                            <a href="javascript:void(0)" class="btn btn-download windows" onclick="showWebAppInfo('staff')">
-                                💻 Windows
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Admin ilovasi -->
-                    <div class="download-card">
-                        <div class="app-icon">👑</div>
-                        <h3>Restaurant Admin - Boshqaruvchilar uchun</h3>
-                        <p class="app-description">Super admin va boshqaruvchilar uchun to'liq nazorat paneli</p>
-                        <div class="app-features">
-                            <ul>
-                                <li>✅ Barcha buyurtmalar</li>
-                                <li>✅ Xodimlar boshqaruvi</li>
-                                <li>✅ Hisobotlar</li>
-                                <li>✅ Sozlamalar</li>
-                                <li>✅ Moliyaviy hisoblar</li>
-                            </ul>
-                        </div>
-                        <div class="download-buttons">
-                            <a href="{{ url_for('static', filename='downloads/restaurant-admin.apk') }}" class="btn btn-download android" download>
-                                📱 Android APK
-                            </a>
-                            <a href="javascript:void(0)" class="btn btn-download ios" onclick="showIOSInstructions('admin')">
-                                🍎 iOS (PWA)
-                            </a>
-                            <a href="javascript:void(0)" class="btn btn-download windows" onclick="showWebAppInfo('admin')">
-                                💻 Windows
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Monitor ilovasi -->
-                    <div class="download-card">
-                        <div class="app-icon">📺</div>
-                        <h3>Restaurant Monitor - Ekran ko'rsatish uchun</h3>
-                        <p class="app-description">TV ekranlar va monitorlar uchun buyurtmalar ko'rsatish</p>
-                        <div class="app-features">
-                            <ul>
-                                <li>✅ Buyurtmalar ro'yxati</li>
-                                <li>✅ Realtime yangilanish</li>
-                                <li>✅ Katta shrift</li>
-                                <li>✅ TV uchun optimallashtirilgan</li>
-                                <li>✅ Avtomatik yangilanish</li>
-                            </ul>
-                        </div>
-                        <div class="download-buttons">
-                            <a href="{{ url_for('static', filename='downloads/restaurant-monitor.apk') }}" class="btn btn-download android" download>
-                                📱 Android APK
-                            </a>
-                            <a href="javascript:void(0)" class="btn btn-download ios" onclick="showIOSInstructions('monitor')">
-                                🍎 iOS (PWA)
-                            </a>
-                            <a href="javascript:void(0)" class="btn btn-download windows" onclick="showWebAppInfo('monitor')">
-                                💻 Windows
-                            </a>
-                        </div>
-                    </div>
+                <div class="app-stats">
+                    <span>⭐ 4.9</span>
+                    <span>📥 2K+</span>
+                    <span>💾 18 MB</span>
                 </div>
-
-                <!-- Yo'riqnomalar bo'limi -->
-                <div class="instructions-section">
-                    <h2>📋 O'rnatish yo'riqnomalari</h2>
-                    
-                    <div class="instruction-card">
-                        <h3>📱 Android uchun</h3>
-                        <ol>
-                            <li>APK faylni yuklab oling</li>
-                            <li>Telefonningizda "Noma'lum manbalardan o'rnatishga ruxsat" berish</li>
-                            <li>APK faylni oching va o'rnating</li>
-                            <li>Ilovani ishga tushiring</li>
-                        </ol>
-                    </div>
-
-                    <div class="instruction-card">
-                        <h3>🍎 iOS uchun (PWA)</h3>
-                        <ol>
-                            <li>Safari brauzerida saytni oching</li>
-                            <li>Pastki qismidagi "Ulashish" tugmasini bosing</li>
-                            <li>"Bosh ekranga qo'shish" ni tanlang</li>
-                            <li>Tasdiqlang va ilova bosh ekranga qo'shiladi</li>
-                        </ol>
-                    </div>
-
-                    <div class="instruction-card">
-                        <h3>💻 Windows uchun</h3>
-                        <ol>
-                            <li>Chrome yoki Edge brauzerida saytni oching</li>
-                            <li>Manzil satridagi "O'rnatish" tugmasini bosing</li>
-                            <li>Yoki saytni sevimlilar qatoriga qo'shing</li>
-                            <li>Desktop yorliq yaratish mumkin</li>
-                        </ol>
-                    </div>
-                </div>
-
-                <!-- Texnik ma'lumotlar -->
-                <div class="tech-info">
-                    <h2>🔧 Texnik ma'lumotlar</h2>
-                    <div class="tech-grid">
-                        <div class="tech-item">
-                            <h4>Platforma</h4>
-                            <p>Progressive Web App (PWA)</p>
-                        </div>
-                        <div class="tech-item">
-                            <h4>Qo'llab-quvvatlash</h4>
-                            <p>Android 5.0+, iOS 11.3+, Windows 10+</p>
-                        </div>
-                        <div class="tech-item">
-                            <h4>Hajmi</h4>
-                            <p>~2-5 MB (APK), ~100KB (PWA)</p>
-                        </div>
-                        <div class="tech-item">
-                            <h4>Internet</h4>
-                            <p>Ishlash uchun internet aloqasi talab qilinadi</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            </div>
+            <div class="download-actions">
+                <a href="/static/downloads/restaurant-pro.apk" class="download-btn" download>
+                    <span>📥 Pro yuklab olish</span>
+                </a>
+            </div>
         </div>
-    </main>
 
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2025 O'zbek Milliy Taomlar. Barcha huquqlar himoyalangan.</p>
+        <!-- Admin/Xodimlar uchun -->
+        <div class="app-card">
+            <div class="app-icon">👨‍💼</div>
+            <div class="app-info">
+                <h3>Restaurant Admin</h3>
+                <p class="app-description">Xodimlar va adminlar uchun boshqaruv tizimi</p>
+                <div class="app-features">
+                    <span class="feature">📋 Buyurtmalar</span>
+                    <span class="feature">👥 Xodimlar</span>
+                    <span class="feature">📊 Statistika</span>
+                    <span class="feature">🔧 Sozlamalar</span>
+                </div>
+                <div class="app-stats">
+                    <span>⭐ 4.7</span>
+                    <span>📥 500+</span>
+                    <span>💾 22 MB</span>
+                </div>
+            </div>
+            <div class="download-actions">
+                <a href="/static/downloads/restaurant-admin.apk" class="download-btn" download>
+                    <span>📥 Admin yuklab olish</span>
+                </a>
+            </div>
         </div>
-    </footer>
 
-    <!-- Modal oynalar -->
-    <div id="instructionModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <div id="modalContent"></div>
+        <!-- Monitor/TV uchun -->
+        <div class="app-card">
+            <div class="app-icon">📺</div>
+            <div class="app-info">
+                <h3>Restaurant Monitor</h3>
+                <p class="app-description">TV ekranlari uchun buyurtmalar monitori</p>
+                <div class="app-features">
+                    <span class="feature">📺 Katta ekran</span>
+                    <span class="feature">⏱️ Real-time</span>
+                    <span class="feature">🔔 Ovozli signal</span>
+                    <span class="feature">🎨 Ranglar</span>
+                </div>
+                <div class="app-stats">
+                    <span>⭐ 4.6</span>
+                    <span>📥 200+</span>
+                    <span>💾 12 MB</span>
+                </div>
+            </div>
+            <div class="download-actions">
+                <a href="/static/downloads/restaurant-monitor.apk" class="download-btn" download>
+                    <span>📥 Monitor yuklab olish</span>
+                </a>
+            </div>
         </div>
     </div>
 
-    <script>
-        function showIOSInstructions(appType) {
-            const modal = document.getElementById('instructionModal');
-            const content = document.getElementById('modalContent');
-            
-            const instructions = {
-                user: "Mijozlar uchun iOS qo'llanma",
-                staff: "Xodimlar uchun iOS qo'llanma", 
-                admin: "Admin uchun iOS qo'llanma",
-                monitor: "Monitor uchun iOS qo'llanma"
-            };
-            
-            content.innerHTML = `
-                <h3>🍎 ${instructions[appType]}</h3>
-                <p>iOS qurilmalarda web ilova sifatida o'rnating:</p>
-                <ol>
-                    <li>Safari brauzerida bu saytni oching</li>
-                    <li>Pastki qismidagi ulashish tugmasini bosing</li>
-                    <li>"Bosh ekranga qo'shish" ni tanlang</li>
-                    <li>Tasdiqlang va ilova tayyor!</li>
-                </ol>
-                <p><strong>Foydali:</strong> PWA sifatida to'liq mobil ilova kabi ishlaydi!</p>
-            `;
-            
-            modal.style.display = 'block';
-        }
-        
-        function showWebAppInfo(appType) {
-            const modal = document.getElementById('instructionModal');
-            const content = document.getElementById('modalContent');
-            
-            const appNames = {
-                user: "Mijozlar",
-                staff: "Xodimlar", 
-                admin: "Admin",
-                monitor: "Monitor"
-            };
-            
-            content.innerHTML = `
-                <h3>💻 ${appNames[appType]} uchun Windows qo'llanma</h3>
-                <p>Windows kompyuterida web ilova sifatida o'rnating:</p>
-                <ol>
-                    <li>Chrome yoki Edge brauzerida bu saytni oching</li>
-                    <li>Manzil satridagi o'rnatish tugmasini bosing</li>
-                    <li>Yoki desktop yorliq yarating</li>
-                    <li>To'liq ekran rejimida ishlatish mumkin</li>
-                </ol>
-                <p><strong>Foydali:</strong> Browserdan mustaqil ravishda ishlaydi!</p>
-            `;
-            
-            modal.style.display = 'block';
-        }
-        
-        function closeModal() {
-            document.getElementById('instructionModal').style.display = 'none';
-        }
-        
-        // Modal tashqarisiga bosilganda yopish
-        window.onclick = function(event) {
-            const modal = document.getElementById('instructionModal');
-            if (event.target == modal) {
-                modal.style.display = 'none';
-            }
-        }
-    </script>
-</body>
-</html>
+    <!-- Qo'shimcha ma'lumotlar -->
+    <div class="additional-info">
+        <div class="info-section">
+            <h3>💡 Foydalanish bo'yicha maslahatlar</h3>
+            <ul>
+                <li>📱 Ilovani Android 7.0 va undan yuqori versiyalarda ishlatishingiz mumkin</li>
+                <li>🌐 Internet aloqasi talab qilinadi</li>
+                <li>🔄 Ilovalar muntazam yangilanib turadi</li>
+                <li>🛡️ Barcha ma'lumotlar himoyalangan</li>
+            </ul>
+        </div>
+
+        <div class="info-section">
+            <h3>🆘 Yordam kerakmi?</h3>
+            <p>Ilovalarni o'rnatishda muammo bo'lsa, bizga murojaat qiling:</p>
+            <div class="contact-buttons">
+                <a href="{{ url_for('contact') }}" class="contact-btn">📞 Aloqa</a>
+                <a href="tel:+998712345678" class="contact-btn">📱 Qo'ng'iroq</a>
+                <a href="mailto:support@restaurant.uz" class="contact-btn">📧 Email</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.downloads-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.downloads-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 40px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+}
+
+.downloads-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.downloads-header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin: 0;
+}
+
+.apps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 25px;
+    margin-bottom: 40px;
+}
+
+.app-card {
+    background: white;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    position: relative;
+}
+
+.app-card.featured {
+    border-color: #4CAF50;
+    transform: scale(1.02);
+}
+
+.app-card.featured::before {
+    content: "⭐ Tavsiya qilinadi";
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    background: #4CAF50;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.app-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.app-icon {
+    font-size: 3rem;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.app-info h3 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #2d3748;
+}
+
+.app-description {
+    color: #4a5568;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.app-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.feature {
+    background: #f7fafc;
+    color: #4a5568;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border: 1px solid #e2e8f0;
+}
+
+.app-stats {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    color: #718096;
+}
+
+.download-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.download-btn {
+    flex: 1;
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    text-align: center;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.download-btn.primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.download-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    text-decoration: none;
+    color: white;
+}
+
+.qr-code {
+    text-align: center;
+}
+
+.qr-placeholder {
+    width: 50px;
+    height: 50px;
+    background: #f7fafc;
+    border: 2px dashed #cbd5e0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #a0aec0;
+    margin-bottom: 5px;
+}
+
+.qr-code small {
+    display: block;
+    color: #718096;
+    font-size: 0.75rem;
+}
+
+.additional-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.info-section {
+    background: #f8f9fa;
+    padding: 25px;
+    border-radius: 15px;
+    border-left: 4px solid #667eea;
+}
+
+.info-section h3 {
+    color: #2d3748;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.info-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.info-section ul li {
+    padding: 8px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.info-section ul li:last-child {
+    border-bottom: none;
+}
+
+.contact-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+.contact-btn {
+    background: white;
+    color: #667eea;
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    border: 2px solid #667eea;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.contact-btn:hover {
+    background: #667eea;
+    color: white;
+    text-decoration: none;
+}
+
+@media (max-width: 768px) {
+    .apps-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .app-card.featured {
+        transform: none;
+    }
+    
+    .download-actions {
+        flex-direction: column;
+    }
+    
+    .additional-info {
+        grid-template-columns: 1fr;
+    }
+    
+    .contact-buttons {
+        justify-content: center;
+    }
+}
+</style>
+{% endblock %}
