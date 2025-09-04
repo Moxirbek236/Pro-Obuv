@@ -40,7 +40,7 @@
         background: rgba(71, 85, 105, 0.8) !important;
         color: #ffffff !important;
     }
-    body.dark-theme .card, 
+    body.dark-theme .card,
     body.dark-theme .modal-content,
     body.dark-theme .hero-section,
     body.dark-theme .service-card {
@@ -66,6 +66,35 @@
     .font-medium { font-size: 16px !important; }
     .font-large { font-size: 18px !important; }
     .font-xlarge { font-size: 20px !important; }
+
+    /* Cart badge styling */
+    .cart-badge {
+        background: #dc3545;
+        color: white;
+        border-radius: 50%;
+        padding: 2px 6px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        margin-left: 5px;
+        min-width: 18px;
+        height: 18px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Navigation improvements */
+    .nav-link {
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        margin: 0 2px;
+        padding: 8px 12px !important;
+    }
+
+    .nav-link:hover {
+        background: rgba(255,255,255,0.1);
+        transform: translateY(-1px);
+    }
   </style>
 
   {% block head %}
@@ -73,8 +102,8 @@
   {% endblock %}
   {% block extra_head %}{% endblock %}
 </head>
-<body data-dark-mode="{{ session.get('dark_theme', False) | lower }}" 
-      data-font-size="{{ session.get('font_size', 'medium') }}" 
+<body data-dark-mode="{{ session.get('dark_theme', False) | lower }}"
+      data-font-size="{{ session.get('font_size', 'medium') }}"
       data-language="{{ session.get('interface_language', 'uz') }}">
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -90,9 +119,11 @@
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('menu') }}">📋 Menyu</a>
         </li>
+        {% if session.get('user_id') %}
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('favorites') }}">❤️ Sevimlilar</a>
         </li>
+        {% endif %}
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('contact') }}">📞 Aloqa</a>
         </li>
@@ -113,13 +144,13 @@
       <ul class="navbar-nav">
         {% if session.get('user_id') %}
           <li class="nav-item">
-            <span class="navbar-text text-white me-3">👤 {{ session.get('user_first_name') }} {{ session.get('user_last_name') }}</span>
+            <span class="navbar-text text-white me-3">👤 {{ session.get('user_name', 'Foydalanuvchi') }}</span>
           </li>
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
-              👤 {{ session.get('user_name', 'Profil') }}
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+              ⚙️ Profil
             </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+            <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{{ url_for('profile') }}">👤 Profil ma'lumotlari</a></li>
               <li><a class="dropdown-item" href="{{ url_for('profile_settings') }}">⚙️ Profil sozlamalari</a></li>
               <li><a class="dropdown-item" href="{{ url_for('general_settings') }}">🔧 Sozlamalar</a></li>
@@ -177,18 +208,17 @@
           </li>
         {% else %}
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
               🔐 Kirish
             </a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="/login?role=user">👤 Foydalanuvchi</a></li>
-              <li><a class="dropdown-item" href="/login?role=staff">👨‍💼 Xodim</a></li>
-              <li><a class="dropdown-item" href="/login?role=courier">🚚 Kuryer</a></li>
-              <li><a class="dropdown-item" href="/login?role=admin">🔧 Admin</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('login_page') }}">👤 Foydalanuvchi</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('register') }}">📝 Ro'yxatdan o'tish</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="{{ url_for('staff_login') }}">👨‍💼 Xodim</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('courier_login') }}">🚚 Kuryer</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('super_admin_login') }}">🔧 Admin</a></li>
             </ul>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('register') }}">📝 Ro'yxat</a>
           </li>
         {% endif %}
       </ul>
@@ -417,53 +447,15 @@ function translatePage(language) {
     const downloadsLink = document.querySelector('a[href*="downloads"]');
     if (downloadsLink) downloadsLink.innerHTML = trans.downloads;
 
-    const cartLink = document.querySelector('a[href*="cart"]');
-    if (cartLink && cartLink.innerHTML.includes('Savatcha')) {
-        cartLink.innerHTML = cartLink.innerHTML.replace(/🛒.*?<span/, trans.cart + ' <span');
+    const cartLink = document.querySelector('.cart-btn');
+    if (cartLink) {
+        const badge = cartLink.querySelector('.cart-badge');
+        const badgeHtml = badge ? badge.outerHTML : '';
+        cartLink.innerHTML = trans.cart + ' ' + badgeHtml;
     }
 
-    // Login/Register links
-    const loginLink = document.querySelector('a[href*="login"]');
-    if (loginLink && loginLink.textContent.includes('Kirish')) {
-        loginLink.innerHTML = trans.login;
-    }
-
-    const registerLink = document.querySelector('a[href*="register"]');
-    if (registerLink && registerLink.textContent.includes('Ro\'yxat')) {
-        registerLink.innerHTML = trans.register;
-    }
-
-    // Dropdown items
-    const dropdownItems = document.querySelectorAll('.dropdown-item');
-    dropdownItems.forEach(item => {
-        const text = item.textContent.trim();
-
-        if (text.includes('Foydalanuvchi')) {
-            item.innerHTML = trans.user;
-        } else if (text.includes('Xodim')) {
-            item.innerHTML = trans.staff;
-        } else if (text.includes('Kuryer')) {
-            item.innerHTML = trans.courier;
-        } else if (text.includes('Admin')) {
-            item.innerHTML = trans.admin;
-        } else if (text.includes('Profil ma\'lumotlari')) {
-            item.innerHTML = trans.profile_info;
-        } else if (text.includes('Profil sozlamalari')) {
-            item.innerHTML = trans.profile_settings;
-        } else if (text.includes('Sozlamalar')) {
-            item.innerHTML = trans.settings;
-        } else if (text.includes('Dashboard')) {
-            item.innerHTML = trans.dashboard;
-        } else if (text.includes('Chiqish')) {
-            item.innerHTML = trans.logout;
-        }
-    });
-
-    // Update body class for language-specific styling
-    document.body.classList.remove('lang-uz', 'lang-ru', 'lang-en');
-    document.body.classList.add('lang-' + language);
-
-    console.log('Translation applied:', language);
+    const logoutLink = document.querySelector('a[href*="logout"]');
+    if (logoutLink) logoutLink.innerHTML = trans.logout;
 }
 
 // Enhanced Language Change Function
@@ -533,13 +525,14 @@ function updateCartCount() {
     fetch('/api/cart-count')
         .then(response => response.json())
         .then(data => {
-            const cartCountElement = document.getElementById('cart-count');
-            if (cartCountElement) {
-                if (data.count > 0) {
-                    cartCountElement.textContent = data.count;
-                    cartCountElement.style.display = 'inline-block';
+            const cartBadge = document.getElementById('cart-count');
+            if (cartBadge && data.success) {
+                const count = data.cart_count || 0;
+                if (count > 0) {
+                    cartBadge.textContent = count;
+                    cartBadge.style.display = 'inline-flex';
                 } else {
-                    cartCountElement.style.display = 'none';
+                    cartBadge.style.display = 'none';
                 }
             }
         })
