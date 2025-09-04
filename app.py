@@ -628,48 +628,62 @@ def get_current_time():
 
 # Database connection pool
 class DatabasePool:
-    def __init__(self, db_path, max_connections=20):
+    def __init__(self, db_path, max_connections=10):
         self.db_path = db_path
         self.max_connections = max_connections
         self.connections = []
         self.lock = threading.Lock()
+        self.connection_count = 0
         self._init_pool()
 
     def _init_pool(self):
         "Connection pool ni ishga tushirish"
-        for _ in range(5):  # Boshlang'ich 5 ta connection
+        for _ in range(3):  # Boshlang'ich 3 ta connection (kamaytirildi)
             conn = self._create_connection()
             if conn:
                 self.connections.append(conn)
 
     def _create_connection(self):
-        "Yangi database connection yaratish"
-        max_retries = 3
+        "Yangi database connection yaratish - timeout fix bilan"
+        max_retries = 5
         for attempt in range(max_retries):
             try:
+                # Timeout ni oshirish va retry logic yaxshilash
                 conn = sqlite3.connect(
                     self.db_path,
                     check_same_thread=False,
-                    timeout=30.0,
+                    timeout=60.0,  # 60 soniya timeout
                     isolation_level=None
                 )
                 conn.row_factory = sqlite3.Row
 
-                # SQLite optimallashtirish sozlamalari - xavfsiz
+                # SQLite optimallashtirish sozlamalari - timeout uchun
                 try:
                     conn.execute("PRAGMA journal_mode=WAL")
                     conn.execute("PRAGMA synchronous=NORMAL")
-                    conn.execute("PRAGMA cache_size=5000")
+                    conn.execute("PRAGMA cache_size=10000")
                     conn.execute("PRAGMA temp_store=MEMORY")
                     conn.execute("PRAGMA foreign_keys=ON")
-                    conn.execute("PRAGMA busy_timeout=15000")
+                    conn.execute("PRAGMA busy_timeout=30000")  # 30 soniya busy timeout
+                    conn.execute("PRAGMA wal_autocheckpoint=1000")
+                    conn.execute("PRAGMA optimize")
                 except Exception as pragma_error:
                     app_logger.warning(f"PRAGMA settings failed: {str(pragma_error)}")
 
-                # Connection test
+                # Connection test with timeout
                 conn.execute("SELECT 1").fetchone()
                 return conn
 
+            except sqlite3.OperationalError as e:
+                if "database is locked" in str(e).lower() or "timeout" in str(e).lower():
+                    wait_time = min(5.0, 0.5 * (2 ** attempt))  # Exponential backoff
+                    app_logger.warning(f"Database locked/timeout, retrying in {wait_time}s (attempt {attempt + 1})")
+                    time.sleep(wait_time)
+                    continue
+                else:
+                    app_logger.error(f"Database connection error: {str(e)}")
+                    if attempt == max_retries - 1:
+                        return None
             except Exception as e:
                 app_logger.error(f"Database connection attempt {attempt + 1} failed: {str(e)}")
                 if attempt == max_retries - 1:
@@ -677,28 +691,64 @@ class DatabasePool:
                     return None
                 time.sleep(0.5 * (attempt + 1))
 
+        return None
+
     @contextmanager
     def get_connection(self):
-        "Context manager orqali connection olish"
+        "Context manager orqali connection olish - timeout fix bilan"
         conn = None
+        start_time = time.time()
+        
         try:
-            with self.lock:
-                if self.connections:
-                    conn = self.connections.pop()
-                else:
-                    conn = self._create_connection()
-
+            # Connection olish - timeout bilan
+            timeout_duration = 30  # 30 soniya timeout
+            
+            while time.time() - start_time < timeout_duration:
+                with self.lock:
+                    if self.connections:
+                        conn = self.connections.pop()
+                        break
+                    elif self.connection_count < self.max_connections:
+                        self.connection_count += 1
+                        break
+                
+                # Agar connection mavjud bo'lmasa, biroz kutish
+                time.sleep(0.1)
+            
             if not conn:
-                raise Exception("Database connection olinmadi")
+                # Yangi connection yaratish
+                conn = self._create_connection()
+                if not conn:
+                    raise Exception("Database connection timeout - yangi connection yaratib bo'lmadi")
+
+            # Connection ni test qilish
+            try:
+                conn.execute("SELECT 1").fetchone()
+            except Exception as test_error:
+                app_logger.warning(f"Connection test failed, creating new one: {str(test_error)}")
+                try:
+                    conn.close()
+                except:
+                    pass
+                conn = self._create_connection()
+                if not conn:
+                    raise Exception("Database connection timeout")
 
             yield conn
 
+        except sqlite3.OperationalError as e:
+            if "timeout" in str(e).lower() or "locked" in str(e).lower():
+                app_logger.error(f"Database timeout error: {str(e)}")
+                raise Exception("Database connection timeout")
+            else:
+                raise e
         except Exception as e:
             if conn:
                 try:
                     conn.rollback()
                 except:
                     pass
+            app_logger.error(f"Database pool error: {str(e)}")
             raise e
         finally:
             if conn:
@@ -707,59 +757,117 @@ class DatabasePool:
                         if len(self.connections) < self.max_connections:
                             self.connections.append(conn)
                         else:
-                            conn.close()
-                except:
-                    pass
+                            try:
+                                conn.close()
+                            except:
+                                pass
+                        if self.connection_count > 0:
+                            self.connection_count -= 1
+                except Exception as cleanup_error:
+                    app_logger.warning(f"Connection cleanup error: {str(cleanup_error)}")
+                    try:
+                        conn.close()
+                    except:
+                        pass
 
 # Global database pool with configurable max connections
 db_pool = DatabasePool(DB_PATH, Config.DB_POOL_MAX_CONNECTIONS)
 
 def get_db():
-    "Legacy support uchun"
-    conn = sqlite3.connect(DB_PATH, check_same_thread=False)
-    conn.row_factory = sqlite3.Row
-    return conn
+    "Legacy support uchun - timeout fix bilan"
+    try:
+        conn = sqlite3.connect(
+            DB_PATH, 
+            check_same_thread=False, 
+            timeout=60.0  # 60 soniya timeout
+        )
+        conn.row_factory = sqlite3.Row
+        
+        # Basic connection test
+        conn.execute("SELECT 1").fetchone()
+        return conn
+    except Exception as e:
+        app_logger.error(f"get_db connection error: {str(e)}")
+        raise Exception("Database connection timeout")
 
-# Optimized database operations
-def execute_query(query, params=None, fetch_one=False, fetch_all=False):
-    "Optimizatsiya qilingan database so'rovi"
-    with db_pool.get_connection() as conn:
+def check_database_health():
+    "Database connection holatini tekshirish"
+    try:
+        result = execute_query("SELECT 1", fetch_one=True)
+        return result is not None
+    except Exception as e:
+        app_logger.error(f"Database health check failed: {str(e)}")
+        return False
+
+# Optimized database operations with timeout handling
+def execute_query(query, params=None, fetch_one=False, fetch_all=False, max_retries=3):
+    "Optimizatsiya qilingan database so'rovi - timeout fix bilan"
+    last_error = None
+    
+    for attempt in range(max_retries):
         try:
-            cur = conn.cursor()
+            with db_pool.get_connection() as conn:
+                cur = conn.cursor()
 
-            if params:
-                cur.execute(query, params)
-            else:
-                cur.execute(query)
-
-            if fetch_one:
-                result = cur.fetchone()
-                # Ensure result is a dictionary-like object for easier access
-                if result and hasattr(result, 'keys'):
-                    return dict(zip(result.keys(), result))
-                elif result:
-                    # Fallback for tuple results if row_factory is not set correctly
-                    return result
-                return None
-            elif fetch_all:
-                # fetch_all uchun alohida result olish
-                all_results = cur.fetchall()
-                if all_results and hasattr(all_results[0], 'keys'):
-                    return [dict(zip(row.keys(), row)) for row in all_results]
+                # Query ni timeout bilan bajarish
+                if params:
+                    cur.execute(query, params)
                 else:
-                    return all_results or []
-            else:
-                conn.commit()
-                # Try to return lastrowid if available, else None
-                try:
-                    return cur.lastrowid
-                except:
+                    cur.execute(query)
+
+                if fetch_one:
+                    result = cur.fetchone()
+                    # Ensure result is a dictionary-like object for easier access
+                    if result and hasattr(result, 'keys'):
+                        return dict(zip(result.keys(), result))
+                    elif result:
+                        # Fallback for tuple results if row_factory is not set correctly
+                        return result
                     return None
+                elif fetch_all:
+                    # fetch_all uchun alohida result olish
+                    all_results = cur.fetchall()
+                    if all_results and hasattr(all_results[0], 'keys'):
+                        return [dict(zip(row.keys(), row)) for row in all_results]
+                    else:
+                        return all_results or []
+                else:
+                    conn.commit()
+                    # Try to return lastrowid if available, else None
+                    try:
+                        return cur.lastrowid
+                    except:
+                        return None
+                        
+        except sqlite3.OperationalError as e:
+            last_error = e
+            if "timeout" in str(e).lower() or "locked" in str(e).lower():
+                if attempt < max_retries - 1:
+                    wait_time = 0.5 * (2 ** attempt)  # Exponential backoff
+                    app_logger.warning(f"Database timeout, retrying in {wait_time}s (attempt {attempt + 1})")
+                    time.sleep(wait_time)
+                    continue
+                else:
+                    app_logger.error(f"Database timeout after {max_retries} attempts: {str(e)}")
+                    raise Exception("Database connection timeout")
+            else:
+                app_logger.error(f"Database operational error: {str(e)}")
+                raise e
         except Exception as e:
-            conn.rollback()
-            # Log the error and re-raise
-            app_logger.error(f"execute_query error: {str(e)} - Query: {query[:100]}...") # Log first 100 chars of query
-            raise e
+            last_error = e
+            if attempt < max_retries - 1:
+                app_logger.warning(f"Query execution failed, retrying (attempt {attempt + 1}): {str(e)}")
+                time.sleep(0.5)
+                continue
+            else:
+                app_logger.error(f"execute_query error after {max_retries} attempts: {str(e)} - Query: {query[:100]}...")
+                raise e
+    
+    # Agar barcha attempts muvaffaqiyatsiz bo'lsa
+    if last_error:
+        raise last_error
+    else:
+        raise Exception("Unknown database error")
 
 def execute_many(query, params_list):
     "Bulk operations uchun optimizatsiya"
