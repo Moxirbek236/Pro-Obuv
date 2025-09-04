@@ -2814,11 +2814,11 @@ def update_address():
 
 @app.route("/change_password", methods=["POST"])
 def change_password():
-    if not session.get("user_id"):
+    # Har qanday turdagi foydalanuvchi parolini o'zgartirishi mumkin
+    if not (session.get("user_id") or session.get("staff_id") or session.get("courier_id") or session.get("super_admin")):
         flash("Tizimga kiring.", "error")
-        return redirect(url_for("login"))
+        return redirect(url_for("index"))
 
-    user_id = session.get("user_id")
     current_password = request.form.get("current_password", "")
     new_password = request.form.get("new_password", "")
     confirm_password = request.form.get("confirm_password", "")
@@ -2835,19 +2835,56 @@ def change_password():
         flash("Yangi parol kamida 6 ta belgidan iborat bo'lishi kerak.", "error")
         return redirect(url_for("profile_settings"))
 
-    # Joriy parolni tekshirish
-    user_hash_data = execute_query("SELECT password_hash FROM users WHERE id = ?", (user_id,), fetch_one=True)
-    user_hash = user_hash_data['password_hash'] if user_hash_data else None
-
-    if not user_hash or not check_password_hash(user_hash, current_password):
-        flash("Joriy parol noto'g'ri.", "error")
-        return redirect(url_for("profile_settings"))
-
-    # Yangi parolni saqlash
-    new_password_hash = generate_password_hash(new_password)
     try:
-        execute_query("UPDATE users SET password_hash = ? WHERE id = ?", (new_password_hash, user_id))
+        # Foydalanuvchi turiga qarab parol hash ni olish va yangilash
+        current_hash = None
+        
+        if session.get("user_id"):
+            # Oddiy foydalanuvchi
+            user_data = execute_query("SELECT password_hash FROM users WHERE id = ?", (session.get("user_id"),), fetch_one=True)
+            current_hash = user_data.get('password_hash') if user_data else None
+            table = "users"
+            user_id = session.get("user_id")
+            
+        elif session.get("staff_id"):
+            # Xodim
+            staff_data = execute_query("SELECT password_hash FROM staff WHERE id = ?", (session.get("staff_id"),), fetch_one=True)
+            current_hash = staff_data.get('password_hash') if staff_data else None
+            table = "staff"
+            user_id = session.get("staff_id")
+            
+        elif session.get("courier_id"):
+            # Kuryer
+            courier_data = execute_query("SELECT password_hash FROM couriers WHERE id = ?", (session.get("courier_id"),), fetch_one=True)
+            current_hash = courier_data.get('password_hash') if courier_data else None
+            table = "couriers"
+            user_id = session.get("courier_id")
+            
+        elif session.get("super_admin"):
+            # Super admin - faqat session uchun parolni tekshirish
+            if current_password == Config.SUPER_ADMIN_PASSWORD:
+                flash("Super admin paroli tizim sozlamalari orqali o'zgartiriladi.", "warning")
+                return redirect(url_for("profile_settings"))
+            else:
+                flash("Joriy super admin paroli noto'g'ri.", "error")
+                return redirect(url_for("profile_settings"))
+
+        if not current_hash:
+            flash("Foydalanuvchi ma'lumotlari topilmadi.", "error")
+            return redirect(url_for("profile_settings"))
+
+        # Joriy parolni tekshirish
+        if not check_password_hash(current_hash, current_password):
+            flash("Joriy parol noto'g'ri.", "error")
+            return redirect(url_for("profile_settings"))
+
+        # Yangi parolni saqlash
+        new_password_hash = generate_password_hash(new_password)
+        execute_query(f"UPDATE {table} SET password_hash = ? WHERE id = ?", (new_password_hash, user_id))
+        
         flash("Parol muvaffaqiyatli o'zgartirildi!", "success")
+        app_logger.info(f"Password changed for {table} user ID: {user_id}")
+
     except Exception as e:
         app_logger.error(f"Change password error: {str(e)}")
         flash("Parolni o'zgartirishda xatolik yuz berdi.", "error")
@@ -3731,6 +3768,70 @@ def api_set_language():
         return jsonify({
             "success": False,
             "message": "Til o'zgartirishda xatolik"
+        }), 500
+
+@app.route("/api/set-theme", methods=["POST"])
+def api_set_theme():
+    "Set user theme preference"
+    try:
+        data = request.get_json()
+        dark_theme = data.get('dark_theme', False)
+        
+        # Save to session
+        session['dark_theme'] = bool(dark_theme)
+        
+        # If user is logged in, save to database
+        user_id = session.get('user_id')
+        if user_id:
+            try:
+                execute_query("UPDATE users SET dark_theme = ? WHERE id = ?", (1 if dark_theme else 0, user_id))
+            except Exception as db_error:
+                app_logger.error(f"Error saving theme to database: {str(db_error)}")
+        
+        return jsonify({
+            "success": True,
+            "message": "Mavzu muvaffaqiyatli o'zgartirildi",
+            "dark_theme": dark_theme
+        })
+    except Exception as e:
+        app_logger.error(f"Set theme error: {str(e)}")
+        return jsonify({
+            "success": False,
+            "message": "Mavzu o'zgartirishda xatolik"
+        }), 500
+
+@app.route("/api/set-font-size", methods=["POST"])
+def api_set_font_size():
+    "Set user font size preference"
+    try:
+        data = request.get_json()
+        font_size = data.get('font_size', 'medium')
+        
+        # Validate font size
+        if font_size not in ['small', 'medium', 'large', 'xlarge']:
+            font_size = 'medium'
+        
+        # Save to session
+        session['font_size'] = font_size
+        
+        # If user is logged in, save to database
+        user_id = session.get('user_id')
+        if user_id:
+            try:
+                execute_query("UPDATE users SET font_size = ? WHERE id = ?", (font_size, user_id))
+            except Exception as db_error:
+                app_logger.error(f"Error saving font size to database: {str(db_error)}")
+        
+        return jsonify({
+            "success": True,
+            "message": "Shrift o'lchami muvaffaqiyatli o'zgartirildi",
+            "font_size": font_size
+        })
+    except Exception as e:
+        app_logger.error(f"Set font size error: {str(e)}")
+        return jsonify({
+            "success": False,
+            "message": "Shrift o'lchamini o'zgartirishda xatolik"
         }), 500
 
 @app.route("/api/health")
