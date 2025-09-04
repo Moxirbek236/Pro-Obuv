@@ -779,7 +779,7 @@ def init_db():
     cur = conn.cursor()
 
     # Foydalanuvchilar jadvali
-    cur.execute("
+    cur.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             first_name TEXT NOT NULL,
@@ -797,10 +797,10 @@ def init_db():
             font_size TEXT DEFAULT 'medium',
             dark_theme BOOLEAN DEFAULT 0
         );
-    ")
+    """)
 
     # Xodimlar jadvali
-    cur.execute("
+    cur.execute("""
         CREATE TABLE IF NOT EXISTS staff (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             first_name TEXT NOT NULL,
@@ -815,10 +815,10 @@ def init_db():
             last_activity TEXT,
             created_at TEXT NOT NULL
         );
-    ")
+    """)
 
     # Kuryerlar jadvali
-    cur.execute("
+    cur.execute("""
         CREATE TABLE IF NOT EXISTS couriers (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             first_name TEXT NOT NULL,
@@ -833,10 +833,10 @@ def init_db():
             last_activity TEXT,
             created_at TEXT NOT NULL
         );
-    ")
+    """)
 
     # Buyurtmalar jadvali (yangilangan)
-    cur.execute("
+    cur.execute("""
         CREATE TABLE IF NOT EXISTS orders (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER,
@@ -860,9 +860,9 @@ def init_db():
             created_at TEXT NOT NULL,
             eta_time TEXT NOT NULL,
             FOREIGN KEY (user_id) REFERENCES users (id),
-            FOREIGNKEY (courier_id) REFERENCES couriers (id)
+            FOREIGN KEY (courier_id) REFERENCES couriers (id)
         );
-    ")
+    """)
 
     # Tikketlar hisoblagich
     cur.execute("
@@ -874,7 +874,7 @@ def init_db():
     cur.execute("INSERT OR IGNORE INTO counters (name, value) VALUES ('ticket', 10000);")
 
     # Menyu mahsulotlari (yangilangan)
-    cur.execute("
+    cur.execute("""
         CREATE TABLE IF NOT EXISTS menu_items (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
@@ -889,10 +889,10 @@ def init_db():
             discount_percentage REAL DEFAULT 0.0,
             created_at TEXT NOT NULL
         );
-    ")
+    """)
 
     # Sevimlilar jadvali
-    cur.execute("
+    cur.execute("""
         CREATE TABLE IF NOT EXISTS favorites (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
@@ -902,10 +902,10 @@ def init_db():
             FOREIGN KEY (menu_item_id) REFERENCES menu_items (id),
             UNIQUE(user_id, menu_item_id)
         );
-    ")
+    """)
 
     # Savatcha jadvali (yangilangan)
-    cur.execute("
+    cur.execute("""
         CREATE TABLE IF NOT EXISTS cart_items (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER,
@@ -916,10 +916,10 @@ def init_db():
             FOREIGN KEY (user_id) REFERENCES users (id),
             FOREIGN KEY (menu_item_id) REFERENCES menu_items (id)
         );
-    ")
+    """)
 
     # Buyurtma tafsilotlari jadvali
-    cur.execute("
+    cur.execute("""
         CREATE TABLE IF NOT EXISTS order_details (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             order_id INTEGER NOT NULL,
@@ -929,10 +929,10 @@ def init_db():
             FOREIGN KEY (order_id) REFERENCES orders (id),
             FOREIGN KEY (menu_item_id) REFERENCES menu_items (id)
         );
-    ")
+    """)
 
     # Baholar jadvali
-    cur.execute("
+    cur.execute("""
         CREATE TABLE IF NOT EXISTS ratings (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
@@ -944,10 +944,10 @@ def init_db():
             FOREIGN KEY (menu_item_id) REFERENCES menu_items (id),
             UNIQUE(user_id, menu_item_id)
         );
-    ")
+    """)
 
     # Savollar jadvali
-    cur.execute("
+    cur.execute("""
         CREATE TABLE IF NOT EXISTS questions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_name TEXT NOT NULL,
@@ -958,10 +958,10 @@ def init_db():
             status TEXT DEFAULT 'pending',
             created_at TEXT NOT NULL
         );
-    ")
+    """)
 
     # Cheklar jadvali
-    cur.execute("
+    cur.execute("""
         CREATE TABLE IF NOT EXISTS receipts (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             order_id INTEGER NOT NULL,
@@ -972,10 +972,10 @@ def init_db():
             created_at TEXT NOT NULL,
             FOREIGN KEY (order_id) REFERENCES orders (id)
         );
-    ")
+    """)
 
     # Filiallar jadvali
-    cur.execute("
+    cur.execute("""
         CREATE TABLE IF NOT EXISTS branches (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
@@ -988,7 +988,7 @@ def init_db():
             delivery_radius REAL DEFAULT 15.0,
             created_at TEXT NOT NULL
         );
-    ")
+    """)
 
     # Boshlang'ich taomlar qo'shish
     cur.execute("SELECT COUNT(*) FROM menu_items")
