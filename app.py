@@ -2497,8 +2497,13 @@ def cart():
     user_id = session.get("user_id")
 
     try:
+        # Agar xodim, kuryer yoki admin cart sahifasiga kirishga harakat qilsa
+        if session.get("staff_id") or session.get("courier_id") or session.get("super_admin"):
+            flash("Savatcha faqat foydalanuvchilar uchun mo'ljallangan.", "warning")
+            return redirect(url_for("menu"))
+
         # Foydalanuvchi ma'lumotlarini olish va session ga yuklash
-        if user_id:
+        if user_id and not session.get("staff_id") and not session.get("courier_id") and not session.get("super_admin"):
             user_profile = execute_query("SELECT phone, address, address_latitude, address_longitude, first_name, last_name FROM users WHERE id = ?", (user_id,), fetch_one=True)
 
             if user_profile:
@@ -2544,14 +2549,20 @@ def remove_from_cart(cart_item_id):
     return redirect(url_for("cart"))
 
 @app.route("/favorites")
-@login_required
 def favorites():
-    "Foydalanuvchi sevimli mahsulotlari"
+    "Foydalanuvchi sevimli mahsulotlari - faqat foydalanuvchilar uchun"
+    # Faqat oddiy foydalanuvchilar kirishi mumkin
+    if not session.get("user_id"):
+        flash("Sevimlilar ro'yxatini ko'rish uchun foydalanuvchi sifatida tizimga kiring.", "warning")
+        return redirect(url_for("login_page"))
+    
+    # Xodim, kuryer yoki super admin kirishini bloklash
+    if session.get("staff_id") or session.get("courier_id") or session.get("super_admin"):
+        flash("Sevimlilar faqat foydalanuvchilar uchun mo'ljallangan.", "error")
+        return redirect(url_for("index"))
+    
     try:
         user_id = session.get("user_id")
-        if not user_id:
-            flash("Sevimlilar ro'yxatini ko'rish uchun tizimga kiring.", "warning")
-            return redirect(url_for("login_page"))
 
         # Sevimli mahsulotlarni olish
         favorite_items_raw = execute_query(
@@ -2575,13 +2586,18 @@ def favorites():
         return redirect(url_for("index"))
 
 @app.route("/add-to-favorites/<int:menu_item_id>", methods=["POST"])
-@login_required
 def add_to_favorites(menu_item_id):
-    "Mahsulotni sevimlilarga qo'shish"
+    "Mahsulotni sevimlilarga qo'shish - faqat foydalanuvchilar uchun"
+    # Faqat oddiy foydalanuvchilar sevimli qo'sha oladi
+    if not session.get("user_id"):
+        return jsonify({"success": False, "message": "Foydalanuvchi sifatida tizimga kiring"})
+    
+    # Xodim, kuryer yoki admin kirishini bloklash
+    if session.get("staff_id") or session.get("courier_id") or session.get("super_admin"):
+        return jsonify({"success": False, "message": "Sevimlilar faqat foydalanuvchilar uchun"})
+    
     try:
         user_id = session.get("user_id")
-        if not user_id:
-            return jsonify({"success": False, "message": "Tizimga kiring"})
 
         # Allaqachon sevimli emasligini tekshirish
         existing_favorite = execute_query("SELECT id FROM favorites WHERE user_id = ? AND menu_item_id = ?", (user_id, menu_item_id), fetch_one=True)
@@ -2600,13 +2616,18 @@ def add_to_favorites(menu_item_id):
         return jsonify({"success": False, "message": "Xatolik yuz berdi"})
 
 @app.route("/remove-from-favorites/<int:menu_item_id>", methods=["POST"])
-@login_required
 def remove_from_favorites(menu_item_id):
-    "Mahsulotni sevimlilardan olib tashlash"
+    "Mahsulotni sevimlilardan olib tashlash - faqat foydalanuvchilar uchun"
+    # Faqat oddiy foydalanuvchilar sevimli olib tashlashi mumkin
+    if not session.get("user_id"):
+        return jsonify({"success": False, "message": "Foydalanuvchi sifatida tizimga kiring"})
+    
+    # Xodim, kuryer yoki admin kirishini bloklash
+    if session.get("staff_id") or session.get("courier_id") or session.get("super_admin"):
+        return jsonify({"success": False, "message": "Sevimlilar faqat foydalanuvchilar uchun"})
+    
     try:
         user_id = session.get("user_id")
-        if not user_id:
-            return jsonify({"success": False, "message": "Tizimga kiring"})
 
         execute_query("DELETE FROM favorites WHERE user_id = ? AND menu_item_id = ?", (user_id, menu_item_id))
 
