@@ -2066,7 +2066,12 @@ def admin_redirect():
 @app.route("/admin/dashboard")
 def admin_dashboard_redirect():
     "Admin dashboard redirect"
-    return redirect(url_for("admin_redirect"))
+    if session.get("staff_id"):
+        return redirect(url_for("staff_dashboard"))
+    elif session.get("super_admin"):
+        return redirect(url_for("super_admin_dashboard"))
+    else:
+        return redirect(url_for("staff_login"))
 
 # Staff routes
 @app.route("/staff")
@@ -2078,8 +2083,8 @@ def staff_redirect():
         return redirect(url_for("staff_login"))
 
 @app.route("/staff/login")
-def staff_login_alt():
-    "Alternative staff login route"
+def staff_login_redirect():
+    "Staff login redirect"
     return redirect(url_for("staff_login"))
 
 # Courier routes  
@@ -2092,8 +2097,8 @@ def courier_redirect():
         return redirect(url_for("courier_login"))
 
 @app.route("/courier/login")
-def courier_login_alt():
-    "Alternative courier login route"
+def courier_login_redirect():
+    "Courier login redirect"
     return redirect(url_for("courier_login"))
 
 # Super admin routes
@@ -3387,6 +3392,84 @@ def courier_logout():
     flash("Kuryer tizimidan chiqdingiz.", "info")
     return redirect(url_for("index"))
 
+# Admin JSON API routes
+@app.route("/admin/orders.json")
+def admin_orders_json():
+    "Get all orders in JSON format"
+    if not session.get("staff_id") and not session.get("super_admin"):
+        return jsonify({"error": "Authentication required"}), 401
+    
+    try:
+        orders_raw = execute_query("""
+            SELECT o.*,
+                   GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
+            FROM orders o
+            LEFT JOIN order_details od ON o.id = od.order_id
+            LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
+            GROUP BY o.id
+            ORDER BY o.created_at DESC
+            LIMIT 100
+        """, fetch_all=True)
+        
+        orders = [dict(row) for row in orders_raw] if orders_raw else []
+        
+        return jsonify({
+            "success": True,
+            "orders": orders,
+            "total": len(orders)
+        })
+    except Exception as e:
+        app_logger.error(f"Admin orders JSON error: {str(e)}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/admin/add_menu_item", methods=["POST"])
+def admin_add_menu_item():
+    "Add new menu item"
+    if not session.get("staff_id") and not session.get("super_admin"):
+        flash("Xodim huquqi kerak.", "error")
+        return redirect(url_for("staff_login"))
+    
+    try:
+        name = request.form.get("name", "").strip()
+        price = float(request.form.get("price", 0))
+        category = request.form.get("category", "food")
+        description = request.form.get("description", "").strip()
+        
+        if not name or price <= 0:
+            flash("Nomi va narxi to'g'ri bo'lishi kerak.", "error")
+            return redirect(url_for("staff_menu"))
+        
+        now = get_current_time().isoformat()
+        execute_query("""
+            INSERT INTO menu_items (name, price, category, description, created_at, available)
+            VALUES (?, ?, ?, ?, ?, 1)
+        """, (name, price, category, description, now))
+        
+        flash("Yangi mahsulot qo'shildi!", "success")
+    except Exception as e:
+        app_logger.error(f"Add menu item error: {str(e)}")
+        flash("Mahsulot qo'shishda xatolik yuz berdi.", "error")
+    
+    return redirect(url_for("staff_menu"))
+
+@app.route("/admin/toggle_menu_item/<int:item_id>", methods=["POST"])
+def admin_toggle_menu_item(item_id):
+    "Toggle menu item availability"
+    if not session.get("staff_id") and not session.get("super_admin"):
+        return jsonify({"error": "Authentication required"}), 401
+    
+    try:
+        execute_query("""
+            UPDATE menu_items 
+            SET available = CASE WHEN available = 1 THEN 0 ELSE 1 END 
+            WHERE id = ?
+        """, (item_id,))
+        
+        return jsonify({"success": True, "message": "Mahsulot holati o'zgartirildi"})
+    except Exception as e:
+        app_logger.error(f"Toggle menu item error: {str(e)}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
 # API routes
 @app.route("/api")
 def api_home():
@@ -3802,15 +3885,27 @@ def staff_menu():
 
 @app.route("/admin/menu")
 def admin_menu():
+    "Admin menu management"
+    if not session.get("staff_id") and not session.get("super_admin"):
+        return redirect(url_for("staff_login"))
     return staff_menu()
 
 @app.route("/admin/employees")
 def admin_employees():
+    "Admin employee management"
+    if not session.get("staff_id") and not session.get("super_admin"):
+        return redirect(url_for("staff_login"))
     return staff_employees()
 
 @app.route("/admin/logout")
 def admin_logout():
-    return staff_logout()
+    "Admin logout"
+    if session.get("staff_id"):
+        return staff_logout()
+    elif session.get("super_admin"):
+        return super_admin_logout()
+    else:
+        return redirect(url_for("index"))
 
 @app.route("/staff/employees")
 def staff_employees():
@@ -3834,7 +3929,7 @@ def staff_logout():
     flash("Xodim tizimidan chiqdingiz.", "info")
     return redirect(url_for("index"))
 
-@app.route("/super-admin-control-panel-master-z8x9k", methods=["GET", "POST"])
+@app.route("/super-admin-control-panel-master-z8x9k")
 @app.route("/super-admin/dashboard-ultimate-m4st3r")
 def super_admin_dashboard():
     "Super admin dashboard"
@@ -4492,6 +4587,40 @@ def super_admin_add_courier():
     except Exception as e:
         app_logger.error(f"Add courier error: {str(e)}")
         flash("Kuryer qo'shishda xatolik yuz berdi.", "error")
+
+    return redirect(url_for("super_admin_dashboard"))
+
+@app.route("/super-admin/delete-user", methods=["POST"])
+def super_admin_delete_user():
+    "Super admin delete user"
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+
+    user_id = request.form.get("user_id")
+    
+    if not user_id:
+        flash("Foydalanuvchi ID kiritilmagan.", "error")
+        return redirect(url_for("super_admin_dashboard"))
+
+    try:
+        # Get user info first
+        user_data = execute_query("SELECT first_name, last_name, email FROM users WHERE id = ?", (user_id,), fetch_one=True)
+        
+        if not user_data:
+            flash("Foydalanuvchi topilmadi.", "error")
+        else:
+            # Delete user and related data
+            execute_query("DELETE FROM cart_items WHERE user_id = ?", (user_id,))
+            execute_query("DELETE FROM favorites WHERE user_id = ?", (user_id,))
+            execute_query("DELETE FROM ratings WHERE user_id = ?", (user_id,))
+            execute_query("DELETE FROM users WHERE id = ?", (user_id,))
+            
+            app_logger.info(f"Super admin foydalanuvchini o'chirdi: {user_data.get('first_name')} {user_data.get('last_name')} (ID: {user_id})")
+            flash(f"Foydalanuvchi {user_data.get('first_name', 'N/A')} {user_data.get('last_name', 'N/A')} muvaffaqiyatli o'chirildi.", "success")
+
+    except Exception as e:
+        app_logger.error(f"Delete user error: {str(e)}")
+        flash("Foydalanuvchini o'chirishda xatolik yuz berdi.", "error")
 
     return redirect(url_for("super_admin_dashboard"))
 

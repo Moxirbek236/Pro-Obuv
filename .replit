@@ -9,7 +9,7 @@ localPort = 5000
 externalPort = 80
 
 [workflows]
-runButton = "Simple Python App"
+runButton = "Fixed Restaurant Server v4"
 
 [[workflows.workflow]]
 name = "Run Flask App"
@@ -372,6 +372,31 @@ args = "python -c \"import app; print('✅ Import successful')\""
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "echo \"🚀 Starting Restaurant Management System...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python app.py"
+
+[[workflows.workflow]]
+name = "Fixed Restaurant Server v4"
+author = 45556560
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "export FLASK_ENV=production"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "export FLASK_APP=app.py"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "export PYTHONPATH=$PYTHONPATH:$(pwd)"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"🚀 Starting Fixed Restaurant Server v4 (all routes working)...\""
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
