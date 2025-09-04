@@ -119,11 +119,28 @@
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('menu') }}">📋 Menyu</a>
         </li>
-        {% if session.get('user_id') %}
+        
+        <!-- Faqat oddiy foydalanuvchilar uchun sevimlilar va savatcha -->
+        {% if session.get('user_id') and not session.get('staff_id') and not session.get('courier_id') and not session.get('super_admin') %}
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('favorites') }}">❤️ Sevimlilar</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link cart-btn" href="{{ url_for('cart') }}">
+            🛒 Savatcha
+            <span class="cart-badge" id="cart-count" style="display: none;">0</span>
+          </a>
+        </li>
+        {% elif not session.get('staff_id') and not session.get('courier_id') and not session.get('super_admin') %}
+        <!-- Kirish qilmagan foydalanuvchilar uchun savatcha -->
+        <li class="nav-item">
+          <a class="nav-link cart-btn" href="{{ url_for('cart') }}">
+            🛒 Savatcha
+            <span class="cart-badge" id="cart-count" style="display: none;">0</span>
+          </a>
+        </li>
         {% endif %}
+        
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('contact') }}">📞 Aloqa</a>
         </li>
@@ -132,12 +149,6 @@
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('downloads') }}">📱 Yuklamalar</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link cart-btn" href="{{ url_for('cart') }}">
-            🛒 Savatcha
-            <span class="cart-badge" id="cart-count" style="display: none;">0</span>
-          </a>
         </li>
       </ul>
 
@@ -207,18 +218,12 @@
             </ul>
           </li>
         {% else %}
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-              🔐 Kirish
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="{{ url_for('login_page') }}">👤 Foydalanuvchi</a></li>
-              <li><a class="dropdown-item" href="{{ url_for('register') }}">📝 Ro'yxatdan o'tish</a></li>
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="{{ url_for('staff_login') }}">👨‍💼 Xodim</a></li>
-              <li><a class="dropdown-item" href="{{ url_for('courier_login') }}">🚚 Kuryer</a></li>
-              <li><a class="dropdown-item" href="{{ url_for('super_admin_login') }}">🔧 Admin</a></li>
-            </ul>
+          <!-- Oddiy foydalanuvchilar uchun sodda login -->
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('login_page') }}">🔐 Kirish</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('register') }}">📝 Ro'yxat</a>
           </li>
         {% endif %}
       </ul>
