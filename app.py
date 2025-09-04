@@ -3514,6 +3514,36 @@ def admin_add_menu_item():
     
     return redirect(url_for("staff_menu"))
 
+@app.route("/admin/edit_menu_item/<int:item_id>", methods=["POST"])
+def admin_edit_menu_item(item_id):
+    "Edit menu item"
+    if not session.get("staff_id") and not session.get("super_admin"):
+        flash("Xodim huquqi kerak.", "error")
+        return redirect(url_for("staff_login"))
+    
+    try:
+        name = request.form.get("name", "").strip()
+        price = float(request.form.get("price", 0))
+        description = request.form.get("description", "").strip()
+        discount_percentage = float(request.form.get("discount_percentage", 0))
+        
+        if not name or price <= 0:
+            flash("Nomi va narxi to'g'ri bo'lishi kerak.", "error")
+            return redirect(url_for("staff_menu"))
+        
+        execute_query("""
+            UPDATE menu_items 
+            SET name = ?, price = ?, description = ?, discount_percentage = ?
+            WHERE id = ?
+        """, (name, price, description, discount_percentage, item_id))
+        
+        flash("Mahsulot yangilandi!", "success")
+    except Exception as e:
+        app_logger.error(f"Edit menu item error: {str(e)}")
+        flash("Mahsulotni yangilashda xatolik yuz berdi.", "error")
+    
+    return redirect(url_for("staff_menu"))
+
 @app.route("/admin/toggle_menu_item/<int:item_id>", methods=["POST"])
 def admin_toggle_menu_item(item_id):
     "Toggle menu item availability"
@@ -3543,9 +3573,51 @@ def api_home():
             "/api/cart-count",
             "/api/menu",
             "/api/orders",
-            "/api/status"
+            "/api/status",
+            "/api/get-menu-ratings"
         ]
     })
+
+@app.route("/api/get-menu-ratings/<int:menu_item_id>")
+def api_get_menu_ratings(menu_item_id):
+    "Get ratings for a specific menu item"
+    try:
+        # Get ratings for the menu item
+        ratings_raw = execute_query("""
+            SELECT r.rating, r.comment, r.created_at,
+                   COALESCE(u.first_name || ' ' || u.last_name, 'Anonim') as user_name
+            FROM ratings r
+            LEFT JOIN users u ON r.user_id = u.id
+            WHERE r.menu_item_id = ?
+            ORDER BY r.created_at DESC
+            LIMIT 20
+        """, (menu_item_id,), fetch_all=True)
+        
+        ratings = [dict(row) for row in ratings_raw] if ratings_raw else []
+        
+        # Calculate average rating
+        if ratings:
+            total_rating = sum(r['rating'] for r in ratings)
+            average_rating = round(total_rating / len(ratings), 1)
+        else:
+            average_rating = 0.0
+            
+        return jsonify({
+            "success": True,
+            "ratings": ratings,
+            "average_rating": average_rating,
+            "total_ratings": len(ratings)
+        })
+        
+    except Exception as e:
+        app_logger.error(f"Get menu ratings error: {str(e)}")
+        return jsonify({
+            "success": False,
+            "message": "Baholarni yuklashda xatolik",
+            "ratings": [],
+            "average_rating": 0.0,
+            "total_ratings": 0
+        })
 
 @app.route("/api/status")
 def api_status():
@@ -4787,10 +4859,33 @@ def staff_menu():
         return redirect(url_for("staff_login"))
 
     try:
-        menu_items_raw = execute_query("SELECT * FROM menu_items ORDER BY category, name", fetch_all=True)
-        menu_items = [dict(row) for row in menu_items_raw] if menu_items_raw else []
+        # Ma'lumotlarni to'g'ri olish
+        with db_pool.get_connection() as conn:
+            conn.row_factory = sqlite3.Row
+            cur = conn.cursor()
+            cur.execute("SELECT * FROM menu_items ORDER BY category, name")
+            menu_items_raw = cur.fetchall()
+            
+            menu_items = []
+            if menu_items_raw:
+                for row in menu_items_raw:
+                    try:
+                        item_dict = dict(row)
+                        # Default qiymatlarni qo'shish
+                        item_dict.setdefault('description', '')
+                        item_dict.setdefault('image_url', '/static/images/default-food.jpg')
+                        item_dict.setdefault('available', 1)
+                        item_dict.setdefault('discount_percentage', 0)
+                        item_dict.setdefault('rating', 0.0)
+                        item_dict.setdefault('orders_count', 0)
+                        menu_items.append(item_dict)
+                    except Exception as row_error:
+                        app_logger.warning(f"Menu item row processing error: {str(row_error)}")
+                        continue
 
+        app_logger.info(f"Staff menu loaded: {len(menu_items)} items found")
         return render_template("staff_menu.html", menu_items=menu_items)
+        
     except Exception as e:
         app_logger.error(f"Staff menu error: {str(e)}")
         return render_template("staff_menu.html", menu_items=[])
@@ -4826,10 +4921,30 @@ def staff_employees():
         return redirect(url_for("staff_login"))
 
     try:
-        staff_raw = execute_query("SELECT * FROM staff ORDER BY created_at DESC", fetch_all=True)
-        staff_list = [dict(row) for row in staff_raw] if staff_raw else []
+        # Ma'lumotlarni to'g'ri olish
+        with db_pool.get_connection() as conn:
+            conn.row_factory = sqlite3.Row
+            cur = conn.cursor()
+            cur.execute("SELECT * FROM staff ORDER BY created_at DESC")
+            staff_raw = cur.fetchall()
+            
+            staff_list = []
+            if staff_raw:
+                for row in staff_raw:
+                    try:
+                        staff_dict = dict(row)
+                        # Default qiymatlarni qo'shish
+                        staff_dict.setdefault('total_hours', 0.0)
+                        staff_dict.setdefault('orders_handled', 0)
+                        staff_dict.setdefault('last_activity', '')
+                        staff_list.append(staff_dict)
+                    except Exception as row_error:
+                        app_logger.warning(f"Staff row processing error: {str(row_error)}")
+                        continue
 
+        app_logger.info(f"Staff employees loaded: {len(staff_list)} staff members found")
         return render_template("staff_employees.html", staff_list=staff_list)
+        
     except Exception as e:
         app_logger.error(f"Staff employees error: {str(e)}")
         return render_template("staff_employees.html", staff_list=[])
