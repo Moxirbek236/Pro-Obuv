@@ -3145,6 +3145,11 @@ def contact():
 
     return render_template("contact.html", current_page='contact')
 
+@app.route("/about")
+def about():
+    "About sahifasi"
+    return render_template("about.html", current_page='about')
+
 # ---- COURIER AUTH ----
 @app.route("/courier-secure-login-k4m7p", methods=["GET", "POST"])
 def courier_login():
