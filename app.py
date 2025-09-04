@@ -7,7 +7,7 @@ start_time = time.time()
 
 # Cleanup function
 def cleanup_resources():
-    """Resource cleanup on app shutdown"""
+    "Resource cleanup on app shutdown"
     try:
         if 'executor' in globals():
             executor.shutdown(wait=True)
@@ -69,7 +69,7 @@ app = Flask(__name__)
 
 # Universal configuration class
 class Config:
-    """Universal dastur konfiguratsiyasi"""
+    "Universal dastur konfiguratsiyasi"
 
     # Environment detection
     ENVIRONMENT = os.environ.get('FLASK_ENV', 'production')
@@ -190,7 +190,7 @@ os.makedirs('logs', exist_ok=True)
 
 # Advanced logging konfiguratsiyasi - funksiyani oldinroq e'lon qilish
 def setup_logging():
-    """Professional logging setup with structured logging"""
+    "Professional logging setup with structured logging"
     # Detailed formatter
     detailed_formatter = logging.Formatter(
         '%(asctime)s | %(levelname)s | %(name)s | %(funcName)s:%(lineno)d | %(message)s'
@@ -274,7 +274,7 @@ class CacheManager:
         self._init_redis()
 
     def _init_redis(self):
-        """Redis connection (agar mavjud bo'lsa)"""
+        "Redis connection (agar mavjud bo'lsa)"
         try:
             if not REDIS_AVAILABLE:
                 return
@@ -289,7 +289,7 @@ class CacheManager:
             self.redis_client = None
 
     def get(self, key, default=None):
-        """Cache dan ma'lumot olish"""
+        "Cache dan ma'lumot olish"
         try:
             if self.redis_client:
                 value = self.redis_client.get(f"restaurant:{key}")
@@ -311,7 +311,7 @@ class CacheManager:
         return default
 
     def set(self, key, value, ttl=300):
-        """Cache ga ma'lumot saqlash"""
+        "Cache ga ma'lumot saqlash"
         try:
             if self.redis_client:
                 self.redis_client.setex(f"restaurant:{key}", ttl, json.dumps(value, default=str))
@@ -330,7 +330,7 @@ class CacheManager:
             app_logger.error(f"Cache set error: {str(e)}")
 
     def delete(self, key):
-        """Cache dan o'chirish"""
+        "Cache dan o'chirish"
         try:
             if self.redis_client:
                 self.redis_client.delete(f"restaurant:{key}")
@@ -351,7 +351,7 @@ class RateLimiter:
         self.lock = threading.Lock()
 
     def is_allowed(self, identifier, max_requests=100, window=3600):
-        """Rate limiting tekshiruvi"""
+        "Rate limiting tekshiruvi"
         current_time = time.time()
 
         with self.lock:
@@ -392,16 +392,17 @@ def not_found_error(error):
     try:
         return render_template('error.html', error_code=404, error_message="Sahifa topilmadi"), 404
     except:
-        return f"""
+        return f"
         <!DOCTYPE html>
         <html>
         <head><title>404 Not Found</title></head>
         <body>
             <h1>404 - Sahifa topilmadi</h1>
             <p>So'ralgan sahifa mavjud emas.</p>
-            <a href="/">Bosh sahifaga qaytish</a>        </body>
+            <a href="/">Bosh sahifaga qaytish</a>      
+        </body>
         </html>
-        """, 404
+        ", 404
 
 @app.errorhandler(500)
 def internal_error(error):
@@ -412,7 +413,7 @@ def internal_error(error):
     try:
         return render_template('error.html', error_code=500, error_message="Server xatoligi"), 500
     except:
-        return f"""
+        return f"
         <!DOCTYPE html>
         <html>
         <head><title>500 Internal Server Error</title></head>
@@ -422,7 +423,7 @@ def internal_error(error):
             <a href="/">Bosh sahifaga qaytish</a>
         </body>
         </html>
-        """, 500
+        ", 500
 
 @app.errorhandler(429)
 def rate_limit_error(error):
@@ -433,7 +434,7 @@ def rate_limit_error(error):
     try:
         return render_template('error.html', error_code=429, error_message="Juda ko'p so'rov"), 429
     except:
-        return f"""
+        return f"
         <!DOCTYPE html>
         <html>
         <head><title>429 Too Many Requests</title></head>
@@ -443,11 +444,11 @@ def rate_limit_error(error):
             <a href="/">Bosh sahifaga qaytish</a>
         </body>
         </html>
-        """, 429
+        ", 429
 
 @app.errorhandler(Exception)
 def handle_exception(e):
-    """Global exception handler"""
+    "Global exception handler"
     app_logger.error(f"Unhandled exception: {str(e)} - URL: {request.url}")
 
     if request.is_json or request.path.startswith('/api/'):
@@ -462,7 +463,7 @@ def handle_exception(e):
                              error_code=500,
                              error_message="Kutilmagan xatolik yuz berdi"), 500
     except:
-        return f"""
+        return f"
         <!DOCTYPE html>
         <html>
         <head><title>Unexpected Error</title></head>
@@ -472,7 +473,7 @@ def handle_exception(e):
             <a href="/">Bosh sahifaga qaytish</a>
         </body>
         </html>
-        """, 500
+        ", 500
 
 # Performance monitoring
 class PerformanceMonitor:
@@ -545,7 +546,7 @@ except Exception as e:
 
 @app.before_request
 def before_request():
-    """So'rov boshlanishida xavfsiz pre-processing"""
+    "So'rov boshlanishida xavfsiz pre-processing"
     try:
         # Request time tracking - g obyektiga saqlash
         g.start_time = time.time()
@@ -570,7 +571,7 @@ def before_request():
 
 @app.after_request
 def after_request(response):
-    """Request tugagandan keyin ishlaydigan function"""
+    "Request tugagandan keyin ishlaydigan function"
     try:
         end_time = time.time()
         start_time = getattr(g, 'start_time', end_time)
@@ -635,14 +636,14 @@ class DatabasePool:
         self._init_pool()
 
     def _init_pool(self):
-        """Connection pool ni ishga tushirish"""
+        "Connection pool ni ishga tushirish"
         for _ in range(5):  # Boshlang'ich 5 ta connection
             conn = self._create_connection()
             if conn:
                 self.connections.append(conn)
 
     def _create_connection(self):
-        """Yangi database connection yaratish"""
+        "Yangi database connection yaratish"
         max_retries = 3
         for attempt in range(max_retries):
             try:
@@ -678,7 +679,7 @@ class DatabasePool:
 
     @contextmanager
     def get_connection(self):
-        """Context manager orqali connection olish"""
+        "Context manager orqali connection olish"
         conn = None
         try:
             with self.lock:
@@ -714,14 +715,14 @@ class DatabasePool:
 db_pool = DatabasePool(DB_PATH, Config.DB_POOL_MAX_CONNECTIONS)
 
 def get_db():
-    """Legacy support uchun"""
+    "Legacy support uchun"
     conn = sqlite3.connect(DB_PATH, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     return conn
 
 # Optimized database operations
 def execute_query(query, params=None, fetch_one=False, fetch_all=False):
-    """Optimizatsiya qilingan database so'rovi"""
+    "Optimizatsiya qilingan database so'rovi"
     with db_pool.get_connection() as conn:
         try:
             cur = conn.cursor()
@@ -761,7 +762,7 @@ def execute_query(query, params=None, fetch_one=False, fetch_all=False):
             raise e
 
 def execute_many(query, params_list):
-    """Bulk operations uchun optimizatsiya"""
+    "Bulk operations uchun optimizatsiya"
     with db_pool.get_connection() as conn:
         try:
             cur = conn.cursor()
@@ -778,7 +779,7 @@ def init_db():
     cur = conn.cursor()
 
     # Foydalanuvchilar jadvali
-    cur.execute("""
+    cur.execute("
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             first_name TEXT NOT NULL,
@@ -796,10 +797,10 @@ def init_db():
             font_size TEXT DEFAULT 'medium',
             dark_theme BOOLEAN DEFAULT 0
         );
-    """)
+    ")
 
     # Xodimlar jadvali
-    cur.execute("""
+    cur.execute("
         CREATE TABLE IF NOT EXISTS staff (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             first_name TEXT NOT NULL,
@@ -814,10 +815,10 @@ def init_db():
             last_activity TEXT,
             created_at TEXT NOT NULL
         );
-    """)
+    ")
 
     # Kuryerlar jadvali
-    cur.execute("""
+    cur.execute("
         CREATE TABLE IF NOT EXISTS couriers (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             first_name TEXT NOT NULL,
@@ -832,10 +833,10 @@ def init_db():
             last_activity TEXT,
             created_at TEXT NOT NULL
         );
-    """)
+    ")
 
     # Buyurtmalar jadvali (yangilangan)
-    cur.execute("""
+    cur.execute("
         CREATE TABLE IF NOT EXISTS orders (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER,
@@ -861,19 +862,19 @@ def init_db():
             FOREIGN KEY (user_id) REFERENCES users (id),
             FOREIGNKEY (courier_id) REFERENCES couriers (id)
         );
-    """)
+    ")
 
     # Tikketlar hisoblagich
-    cur.execute("""
+    cur.execute("
         CREATE TABLE IF NOT EXISTS counters (
             name TEXT PRIMARY KEY,
             value INTEGER NOT NULL
         );
-    """)
+    ")
     cur.execute("INSERT OR IGNORE INTO counters (name, value) VALUES ('ticket', 10000);")
 
     # Menyu mahsulotlari (yangilangan)
-    cur.execute("""
+    cur.execute("
         CREATE TABLE IF NOT EXISTS menu_items (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
@@ -888,10 +889,10 @@ def init_db():
             discount_percentage REAL DEFAULT 0.0,
             created_at TEXT NOT NULL
         );
-    """)
+    ")
 
     # Sevimlilar jadvali
-    cur.execute("""
+    cur.execute("
         CREATE TABLE IF NOT EXISTS favorites (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
@@ -901,10 +902,10 @@ def init_db():
             FOREIGN KEY (menu_item_id) REFERENCES menu_items (id),
             UNIQUE(user_id, menu_item_id)
         );
-    """)
+    ")
 
     # Savatcha jadvali (yangilangan)
-    cur.execute("""
+    cur.execute("
         CREATE TABLE IF NOT EXISTS cart_items (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER,
@@ -915,10 +916,10 @@ def init_db():
             FOREIGN KEY (user_id) REFERENCES users (id),
             FOREIGN KEY (menu_item_id) REFERENCES menu_items (id)
         );
-    """)
+    ")
 
     # Buyurtma tafsilotlari jadvali
-    cur.execute("""
+    cur.execute("
         CREATE TABLE IF NOT EXISTS order_details (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             order_id INTEGER NOT NULL,
@@ -928,10 +929,10 @@ def init_db():
             FOREIGN KEY (order_id) REFERENCES orders (id),
             FOREIGN KEY (menu_item_id) REFERENCES menu_items (id)
         );
-    """)
+    ")
 
     # Baholar jadvali
-    cur.execute("""
+    cur.execute("
         CREATE TABLE IF NOT EXISTS ratings (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
@@ -943,10 +944,10 @@ def init_db():
             FOREIGN KEY (menu_item_id) REFERENCES menu_items (id),
             UNIQUE(user_id, menu_item_id)
         );
-    """)
+    ")
 
     # Savollar jadvali
-    cur.execute("""
+    cur.execute("
         CREATE TABLE IF NOT EXISTS questions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_name TEXT NOT NULL,
@@ -957,10 +958,10 @@ def init_db():
             status TEXT DEFAULT 'pending',
             created_at TEXT NOT NULL
         );
-    """)
+    ")
 
     # Cheklar jadvali
-    cur.execute("""
+    cur.execute("
         CREATE TABLE IF NOT EXISTS receipts (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             order_id INTEGER NOT NULL,
@@ -971,10 +972,10 @@ def init_db():
             created_at TEXT NOT NULL,
             FOREIGN KEY (order_id) REFERENCES orders (id)
         );
-    """)
+    ")
 
     # Filiallar jadvali
-    cur.execute("""
+    cur.execute("
         CREATE TABLE IF NOT EXISTS branches (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
@@ -987,7 +988,7 @@ def init_db():
             delivery_radius REAL DEFAULT 15.0,
             created_at TEXT NOT NULL
         );
-    """)
+    ")
 
     # Boshlang'ich taomlar qo'shish
     cur.execute("SELECT COUNT(*) FROM menu_items")
@@ -1021,7 +1022,7 @@ def init_db():
     conn.close()
 
 def ensure_orders_columns():
-    """Orders jadvaliga kerakli ustunlarni qo'shadi (migration)."""
+    "Orders jadvaliga kerakli ustunlarni qo'shadi (migration)."
     conn = get_db()
     cur = conn.cursor()
     try:
@@ -1103,7 +1104,7 @@ def ensure_orders_columns():
         conn.close()
 
 def ensure_users_columns():
-    """Users jadvaliga kerakli ustunlarni qo'shadi (migration)."""
+    "Users jadvaliga kerakli ustunlarni qo'shadi (migration)."
     conn = get_db()
     cur = conn.cursor()
     try:
@@ -1136,7 +1137,7 @@ def ensure_users_columns():
         conn.close()
 
 def ensure_cart_items_columns():
-    """Cart_items jadvaliga user_id ustunini qo'shadi va session_id ni optional qiladi (migration)."""
+    "Cart_items jadvaliga user_id ustunini qo'shadi va session_id ni optional qiladi (migration)."
     conn = get_db()
     cur = conn.cursor()
     try:
@@ -1155,7 +1156,7 @@ def ensure_cart_items_columns():
         conn.close()
 
 def ensure_staff_columns():
-    """Staff jadvaliga kerakli ustunlarni qo'shadi (migration)."""
+    "Staff jadvaliga kerakli ustunlarni qo'shadi (migration)."
     conn = get_db()
     cur = conn.cursor()
     try:
@@ -1184,7 +1185,7 @@ def ensure_staff_columns():
         conn.close()
 
 def ensure_courier_columns():
-    """Courier jadvaliga kerakli ustunlarni qo'shadi (migration)."""
+    "Courier jadvaliga kerakli ustunlarni qo'shadi (migration)."
     conn = get_db()
     cur = conn.cursor()
     try:
@@ -1217,7 +1218,7 @@ def ensure_courier_columns():
         conn.close()
 
 def ensure_menu_items_columns():
-    """Menu_items jadvaliga kerakli ustunlarni qo'shadi (migration)."""
+    "Menu_items jadvaliga kerakli ustunlarni qo'shadi (migration)."
     conn = None
     try:
         conn = get_db()
@@ -1254,7 +1255,7 @@ def ensure_menu_items_columns():
             conn.close()
 
 def cleanup_expired_orders():
-    """Waiting holatidagi, 30 daqiqadan oshgan buyurtmalarni cancelled ga o'tkazadi."""
+    "Waiting holatidagi, 30 daqiqadan oshgan buyurtmalarni cancelled ga o'tkazadi."
     try:
         # Connection pool dan connection olish
         with db_pool.get_connection() as conn:
@@ -1267,7 +1268,7 @@ def cleanup_expired_orders():
 
 
 def safe_init_database():
-    """Xavfsiz ma'lumotlar bazasini ishga tushirish"""
+    "Xavfsiz ma'lumotlar bazasini ishga tushirish"
     try:
         app_logger.info("Ma'lumotlar bazasini ishga tushirish boshlandi...")
         init_db()
@@ -1287,7 +1288,7 @@ def safe_init_database():
             return False
 
 def create_minimal_app():
-    """Minimal Flask app yaratish (emergency fallback)"""
+    "Minimal Flask app yaratish (emergency fallback)"
     from flask import Flask as MinimalFlask
 
     minimal_app = MinimalFlask(__name__)
@@ -1295,7 +1296,7 @@ def create_minimal_app():
 
     @minimal_app.route('/')
     def emergency_home():
-        return """
+        return "
         <!DOCTYPE html>
         <html>
         <head>
@@ -1330,7 +1331,7 @@ def create_minimal_app():
             </div>
         </body>
         </html>
-        """
+        "
 
     @minimal_app.route('/health')
     def emergency_health():
@@ -1387,12 +1388,12 @@ def get_user_queue_position(conn, ticket_no):
     # Foydalanuvchining navbatdagi o'rni
     try:
         cur = conn.cursor()
-        cur.execute("""
+        cur.execute("
             SELECT COUNT(*) FROM orders
             WHERE status='waiting' AND created_at < (
                 SELECT created_at FROM orders WHERE ticket_no=? AND status='waiting'
             )
-        """, (ticket_no,))
+        ", (ticket_no,))
         result = cur.fetchone()
         return result[0] + 1 if result else 0
     except Exception as e:
@@ -1403,7 +1404,7 @@ def fmt_time(dt):
     return dt.strftime("%H:%M")
 
 def search_location_with_serper(query, gl="uz", hl="uz"):
-    """Serper API orqali joylashuvlarni qidirish"""
+    "Serper API orqali joylashuvlarni qidirish"
     try:
         url = "https://google.serper.dev/search"
         headers = {
@@ -1428,7 +1429,7 @@ def search_location_with_serper(query, gl="uz", hl="uz"):
         return None
 
 def get_places_with_serper(query, gl="uz", hl="uz"):
-    """Serper API orqali Google Places ma'lumotlarini olish"""
+    "Serper API orqali Google Places ma'lumotlarini olish"
     try:
         url = "https://google.serper.dev/places"
         headers = {
@@ -1453,7 +1454,7 @@ def get_places_with_serper(query, gl="uz", hl="uz"):
         return None
 
 def validate_delivery_address(address):
-    """Yetkazib berish manzilini tekshirish Yandex API orqali"""
+    "Yetkazib berish manzilini tekshirish Yandex API orqali"
     if not address:
         return False, "Manzil kiritilmagan"
 
@@ -1505,7 +1506,7 @@ def validate_delivery_address(address):
             return False, "Manzilni to'liqroq kiriting (Xatolik)"
 
 def calculate_delivery_distance(address):
-    """Yetkazib berish masofasini hisoblash Yandex API orqali"""
+    "Yetkazib berish masofasini hisoblash Yandex API orqali"
     # Yandex API kaliti mavjudligini tekshirish
     if not app.config['YANDEX_GEOCODER_API']:
         app_logger.warning("Yandex Geocoding API kaliti belgilanmagan. Masofa hisoblash cheklangan.")
@@ -1563,7 +1564,7 @@ def calculate_delivery_distance(address):
         return calculate_distance_fallback(address) # Umumiy xatolikda fallback
 
 def calculate_distance_fallback(address):
-    """Masofa hisoblash uchun fallback funksiyasi"""
+    "Masofa hisoblash uchun fallback funksiyasi"
     address_lower = address.lower()
     if 'toshkent' in address_lower or 'алмазар' in address_lower or 'olmazor' in address_lower:
         if any(word in address_lower for word in ['chilonzor', 'olmazor', 'shayxontohur']):
@@ -1583,7 +1584,7 @@ def calculate_distance_fallback(address):
 
 
 def find_nearest_branch(user_latitude, user_longitude):
-    """Foydalanuvchiga eng yaqin filialni topish"""
+    "Foydalanuvchiga eng yaqin filialni topish"
     import math
 
     conn = get_db()
@@ -1635,7 +1636,7 @@ def find_nearest_branch(user_latitude, user_longitude):
     return nearest_branch
 
 def calculate_delivery_cost_and_time(distance_km):
-    """Masofa bo'yicha yetkazib berish narxi va vaqtini hisoblash"""
+    "Masofa bo'yicha yetkazib berish narxi va vaqtini hisoblash"
     # 1 km uchun 10000 so'm, 2 km uchun 20000 so'm
     base_price = 10000
     price = distance_km * base_price
@@ -1646,7 +1647,7 @@ def calculate_delivery_cost_and_time(distance_km):
     return round(price), delivery_time_minutes
 
 def auto_calculate_courier_delivery_price(distance_km):
-    """Kuryer uchun avtomatik yetkazish narxini hisoblash"""
+    "Kuryer uchun avtomatik yetkazish narxini hisoblash"
     # Asosiy narx: 1 km uchun 8000 so'm
     base_rate = 8000
 
@@ -1668,17 +1669,17 @@ def auto_calculate_courier_delivery_price(distance_km):
     return round(final_price), delivery_time
 
 def get_branch_average_rating(branch_id):
-    """Filial uchun o'rtacha bahoni hisoblash"""
+    "Filial uchun o'rtacha bahoni hisoblash"
     try:
         with db_pool.get_connection() as conn:
             cur = conn.cursor()
 
             # Filial uchun berilgan baholarni olish (menu_item_id = -branch_id)
-            cur.execute("""
+            cur.execute("
                 SELECT AVG(CAST(rating AS REAL)) as avg_rating, COUNT(*) as total_ratings
                 FROM ratings
                 WHERE menu_item_id = ?
-            """, (-branch_id,))
+            ", (-branch_id,))
 
             result = cur.fetchone()
 
@@ -1709,7 +1710,7 @@ def get_branch_average_rating(branch_id):
         }
 
 def generate_qr_code(receipt_data):
-    """Chek uchun QR kod yaratish"""
+    "Chek uchun QR kod yaratish"
     # Soliq.uz uchun chek ma'lumotlari
     qr_data = {
         "receipt_number": receipt_data.get('receipt_number', 'N/A'),
@@ -1746,7 +1747,7 @@ def generate_qr_code(receipt_data):
     return img_str
 
 def get_session_id():
-    """Session ID yaratish yoki olish - yaxshilangan versiya"""
+    "Session ID yaratish yoki olish - yaxshilangan versiya"
     try:
         # Session mavjudligini tekshirish
         if not session or 'session_id' not in session or not session['session_id'] or session['session_id'] == 'None':
@@ -1785,7 +1786,7 @@ def get_session_id():
         return fallback_id
 
 def get_cart_items(conn, session_id, user_id=None):
-    """Savatchadagi mahsulotlarni olish - xavfsizligi yuqori"""
+    "Savatchadagi mahsulotlarni olish - xavfsizligi yuqori"
     # If no connection passed, create new one
     if conn is None:
         conn = get_db()
@@ -1805,7 +1806,7 @@ def get_cart_items(conn, session_id, user_id=None):
 
         if user_id:
             # Asosiy so'rov
-            cur.execute("""
+            cur.execute("
                 SELECT ci.id, ci.menu_item_id, mi.name, mi.price, ci.quantity,
                        COALESCE(mi.discount_percentage, 0) as discount_percentage,
                        CASE
@@ -1817,9 +1818,9 @@ def get_cart_items(conn, session_id, user_id=None):
                 JOIN menu_items mi ON ci.menu_item_id = mi.id
                 WHERE ci.user_id = ? AND mi.available = 1
                 ORDER BY ci.created_at DESC
-            """, (user_id,))
+            ", (user_id,))
         else:
-            cur.execute("""
+            cur.execute("
                 SELECT ci.id, ci.menu_item_id, mi.name, mi.price, ci.quantity,
                        COALESCE(mi.discount_percentage, 0) as discount_percentage,
                        CASE
@@ -1831,7 +1832,7 @@ def get_cart_items(conn, session_id, user_id=None):
                 JOIN menu_items mi ON ci.menu_item_id = mi.id
                 WHERE ci.session_id = ? AND mi.available = 1
                 ORDER BY ci.created_at DESC
-            """, (session_id,))
+            ", (session_id,))
 
         results = cur.fetchall()
 
@@ -1882,7 +1883,7 @@ def get_cart_items(conn, session_id, user_id=None):
             conn.close()
 
 def get_cart_total(conn, session_id, user_id=None):
-    """Savatchaning umumiy summasini hisoblash"""
+    "Savatchaning umumiy summasini hisoblash"
     # If no connection passed, create new one
     if conn is None:
         conn = get_db()
@@ -1893,7 +1894,7 @@ def get_cart_total(conn, session_id, user_id=None):
     try:
         cur = conn.cursor()
         if user_id:
-            cur.execute("""
+            cur.execute("
                 SELECT SUM(
                     CASE
                         WHEN COALESCE(mi.discount_percentage, 0) > 0
@@ -1904,9 +1905,9 @@ def get_cart_total(conn, session_id, user_id=None):
                 FROM cart_items ci
                 JOIN menu_items mi ON ci.menu_item_id = mi.id
                 WHERE ci.user_id = ?
-            """, (user_id,))
+            ", (user_id,))
         else:
-            cur.execute("""
+            cur.execute("
                 SELECT SUM(
                     CASE
                         WHEN COALESCE(mi.discount_percentage, 0) > 0
@@ -1917,7 +1918,7 @@ def get_cart_total(conn, session_id, user_id=None):
                 FROM cart_items ci
                 JOIN menu_items mi ON ci.menu_item_id = mi.id
                 WHERE ci.session_id = ?
-            """, (session_id,))
+            ", (session_id,))
         result = cur.fetchone()
         return result[0] if result and result[0] is not None else 0
     except Exception as e:
@@ -1928,7 +1929,7 @@ def get_cart_total(conn, session_id, user_id=None):
             conn.close()
 
 def clear_cart(conn, session_id, user_id=None):
-    """Savatchani tozalash"""
+    "Savatchani tozalash"
     try:
         cur = conn.cursor()
         if user_id:
@@ -1940,7 +1941,7 @@ def clear_cart(conn, session_id, user_id=None):
         app_logger.error(f"Clear cart error: {str(e)}")
 
 def save_user_to_json(name, ticket_no, order_time, order_items):
-    """Foydalanuvchi ma'lumotlarini users.json fayliga saqlash"""
+    "Foydalanuvchi ma'lumotlarini users.json fayliga saqlash"
     users_file = 'users.json'
 
     # Yangi foydalanuvchi ma'lumotlari
@@ -1972,7 +1973,7 @@ def save_user_to_json(name, ticket_no, order_time, order_items):
 
 
 def save_staff_to_json(first_name, last_name, birth_date, phone, staff_id, register_time):
-    """Xodim ma'lumotlarini employees.json fayliga saqlash"""
+    "Xodim ma'lumotlarini employees.json fayliga saqlash"
     employees_file = 'employees.json'
 
     # Yangi xodim ma'lumotlari
@@ -2008,7 +2009,7 @@ def save_staff_to_json(first_name, last_name, birth_date, phone, staff_id, regis
 
 @app.route("/")
 def index():
-    """Bosh sahifa - xavfsiz error handling bilan"""
+    "Bosh sahifa - xavfsiz error handling bilan"
     try:
         # Session ID ni olish va tekshirish
         session_id = get_session_id()
@@ -2018,7 +2019,7 @@ def index():
     except Exception as e:
         app_logger.error(f"Index sahifasida xatolik: {str(e)}")
         # Emergency fallback
-        return f"""
+        return f"
         <!DOCTYPE html>
         <html>
         <head><title>Restaurant</title></head>
@@ -2028,7 +2029,7 @@ def index():
             <a href="/menu">Menyu</a>
         </body>
         </html>
-        """, 500
+        ", 500
 
 @app.route("/system-management-panel-x8k2m")
 def admin_index():
@@ -2041,18 +2042,18 @@ def admin_index():
 # Monitor routes
 @app.route("/monitor")
 def monitor():
-    """Monitor sahifasi - TV uchun"""
+    "Monitor sahifasi - TV uchun"
     return redirect(url_for("admin_monitor"))
 
 @app.route("/admin/monitor")
 def admin_monitor_alt():
-    """Alternative monitor route"""
+    "Alternative monitor route"
     return redirect(url_for("admin_monitor"))
 
 # Staff dashboard routes
 @app.route("/admin")
 def admin_redirect():
-    """Admin redirects"""
+    "Admin redirects"
     if session.get("super_admin"):
         return redirect(url_for("super_admin_dashboard"))
     elif session.get("staff_id"):
@@ -2064,13 +2065,13 @@ def admin_redirect():
 
 @app.route("/admin/dashboard")
 def admin_dashboard_redirect():
-    """Admin dashboard redirect"""
+    "Admin dashboard redirect"
     return redirect(url_for("admin_redirect"))
 
 # Staff routes
 @app.route("/staff")
 def staff_redirect():
-    """Staff redirect"""
+    "Staff redirect"
     if session.get("staff_id"):
         return redirect(url_for("staff_dashboard"))
     else:
@@ -2078,13 +2079,13 @@ def staff_redirect():
 
 @app.route("/staff/login")
 def staff_login_alt():
-    """Alternative staff login route"""
+    "Alternative staff login route"
     return redirect(url_for("staff_login"))
 
 # Courier routes  
 @app.route("/courier")
 def courier_redirect():
-    """Courier redirect"""
+    "Courier redirect"
     if session.get("courier_id"):
         return redirect(url_for("courier_dashboard"))
     else:
@@ -2092,7 +2093,7 @@ def courier_redirect():
 
 @app.route("/courier/login")
 def courier_login_alt():
-    """Alternative courier login route"""
+    "Alternative courier login route"
     return redirect(url_for("courier_login"))
 
 # Super admin routes
@@ -2100,7 +2101,7 @@ def courier_login_alt():
 @app.route("/super-admin")
 @app.route("/admin/super")
 def superadmin_redirect():
-    """Super admin redirect"""
+    "Super admin redirect"
     if session.get("super_admin"):
         return redirect(url_for("super_admin_dashboard"))
     else:
@@ -2108,18 +2109,18 @@ def superadmin_redirect():
 
 @app.route("/admin/login")
 def admin_login_redirect():
-    """Admin login redirect"""
+    "Admin login redirect"
     return redirect(url_for("super_admin_login"))
 
 # Dashboard routes
 @app.route("/dashboard")
 def dashboard_redirect():
-    """General dashboard redirect"""
+    "General dashboard redirect"
     return redirect(url_for("admin_redirect"))
 
 @app.route("/display-monitor-tv-screen-z9p4n")
 def admin_monitor():
-    """TV Monitor - autentifikatsiyasiz kirish mumkin"""
+    "TV Monitor - autentifikatsiyasiz kirish mumkin"
     cleanup_expired_orders()
 
     try:
@@ -2127,7 +2128,7 @@ def admin_monitor():
         cur = conn.cursor()
 
         # Waiting orders - kutayotgan buyurtmalar
-        cur.execute("""SELECT o.*,
+        cur.execute("SELECT o.*,
                    GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
             FROM orders o
             LEFT JOIN order_details od ON o.id = od.order_id
@@ -2135,11 +2136,11 @@ def admin_monitor():
             WHERE o.status='waiting'
             GROUP BY o.id
             ORDER BY o.eta_time ASC
-        """)
+        ")
         waiting = cur.fetchall() or []
 
         # Ready orders - tayyor buyurtmalar
-        cur.execute("""SELECT o.*,
+        cur.execute("SELECT o.*,
                    GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
             FROM orders o
             LEFT JOIN order_details od ON o.id = od.order_id
@@ -2147,12 +2148,12 @@ def admin_monitor():
             WHERE o.status='ready'
             GROUP BY o.id
             ORDER BY o.eta_time ASC
-        """)
+        ")
         ready = cur.fetchall() or []
 
         # Served orders in last 5 minutes - so'nggi 5 daqiqada berilgan buyurtmalar
         five_min_ago = (get_current_time() - datetime.timedelta(minutes=5)).isoformat()
-        cur.execute("""SELECT o.*,
+        cur.execute("SELECT o.*,
                    GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
             FROM orders o
             LEFT JOIN order_details od ON o.id = od.order_id
@@ -2160,7 +2161,7 @@ def admin_monitor():
             WHERE o.status='served' AND o.created_at >= ?
             GROUP BY o.id
             ORDER BY o.created_at DESC
-        """, (five_min_ago,))
+        ", (five_min_ago,))
         served_recent = cur.fetchall() or []
 
         conn.close()
@@ -2184,7 +2185,7 @@ def admin_monitor():
 
 # Advanced decorators
 def login_required(f):
-    """Enhanced login decorator"""
+    "Enhanced login decorator"
     @wraps(f)
     def wrapper(*args, **kwargs):
         if not session.get("super_admin") and not session.get("staff_id"):
@@ -2195,7 +2196,7 @@ def login_required(f):
     return wrapper
 
 def rate_limit(max_requests=100, window=3600):
-    """Rate limiting decorator"""
+    "Rate limiting decorator"
     def decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
@@ -2210,7 +2211,7 @@ def rate_limit(max_requests=100, window=3600):
     return decorator
 
 def cache_result(ttl=300):
-    """Result caching decorator"""
+    "Result caching decorator"
     def decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
@@ -2230,14 +2231,14 @@ def cache_result(ttl=300):
     return decorator
 
 def async_task(f):
-    """Asynchronous task decorator"""
+    "Asynchronous task decorator"
     @wraps(f)
     def wrapper(*args, **kwargs):
         return executor.submit(f, *args, **kwargs)
     return wrapper
 
 def validate_json(required_fields=None):
-    """JSON validation decorator"""
+    "JSON validation decorator"
     def decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
@@ -2262,19 +2263,19 @@ def validate_json(required_fields=None):
 @rate_limit(max_requests=500, window=60)
 @cache_result(ttl=120)
 def menu():
-    """Optimized menu endpoint"""
+    "Optimized menu endpoint"
     try:
         # Cache dan menu ma'lumotlarini olish
         cached_menu = cache_manager.get("menu_items_active")
 
         if not cached_menu:
             menu_items_raw = execute_query(
-                """SELECT m.*, COALESCE(AVG(r.rating), 0) as avg_rating, COUNT(r.rating) as rating_count
+                "SELECT m.*, COALESCE(AVG(r.rating), 0) as avg_rating, COUNT(r.rating) as rating_count
                    FROM menu_items m
                    LEFT JOIN ratings r ON m.id = r.menu_item_id
                    WHERE m.available = 1
                    GROUP BY m.id
-                   ORDER BY m.category, m.orders_count DESC, m.name""",
+                   ORDER BY m.category, m.orders_count DESC, m.name",
                 fetch_all=True
             )
             # Convert rows to dictionaries safely
@@ -2477,7 +2478,7 @@ def remove_from_cart(cart_item_id):
 @app.route("/favorites")
 @login_required
 def favorites():
-    """Foydalanuvchi sevimli mahsulotlari"""
+    "Foydalanuvchi sevimli mahsulotlari"
     try:
         user_id = session.get("user_id")
         if not user_id:
@@ -2486,13 +2487,13 @@ def favorites():
 
         # Sevimli mahsulotlarni olish
         favorite_items_raw = execute_query(
-            """
+            "
             SELECT m.*, f.created_at as favorite_added
             FROM menu_items m
             JOIN favorites f ON m.id = f.menu_item_id
             WHERE f.user_id = ?
             ORDER BY f.created_at DESC
-            """,
+            ",
             (user_id,),
             fetch_all=True
         )
@@ -2508,7 +2509,7 @@ def favorites():
 @app.route("/add-to-favorites/<int:menu_item_id>", methods=["POST"])
 @login_required
 def add_to_favorites(menu_item_id):
-    """Mahsulotni sevimlilarga qo'shish"""
+    "Mahsulotni sevimlilarga qo'shish"
     try:
         user_id = session.get("user_id")
         if not user_id:
@@ -2533,7 +2534,7 @@ def add_to_favorites(menu_item_id):
 @app.route("/remove-from-favorites/<int:menu_item_id>", methods=["POST"])
 @login_required
 def remove_from_favorites(menu_item_id):
-    """Mahsulotni sevimlilardan olib tashlash"""
+    "Mahsulotni sevimlilardan olib tashlash"
     try:
         user_id = session.get("user_id")
         if not user_id:
@@ -2583,10 +2584,10 @@ def register():
         now = get_current_time().isoformat()
 
         try:
-            user_id = execute_query("""
+            user_id = execute_query("
                 INSERT INTO users (first_name, last_name, email, phone, address, password_hash, created_at, address_latitude, address_longitude)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (first_name, last_name, email, phone, address, password_hash, now, address_latitude or None, address_longitude or None))
+            ", (first_name, last_name, email, phone, address, password_hash, now, address_latitude or None, address_longitude or None))
 
             # Session ma'lumotlarini yangilash
             session["user_id"] = user_id
@@ -2623,7 +2624,7 @@ def profile():
             return redirect(url_for("logout"))
 
         # Foydalanuvchi buyurtmalar tarixi va umumiy summa
-        orders_raw = execute_query("""
+        orders_raw = execute_query("
             SELECT o.*,
                    COALESCE(r.total_amount, 0) as total_amount,
                    GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
@@ -2635,7 +2636,7 @@ def profile():
             GROUP BY o.id
             ORDER BY o.created_at DESC
             LIMIT 10
-        """, (user_id,), fetch_all=True)
+        ", (user_id,), fetch_all=True)
         orders = [dict(row) for row in orders_raw] if orders_raw else []
 
         return render_template("profile.html", user=user, orders=orders)
@@ -2669,11 +2670,11 @@ def update_profile():
 
     # Ma'lumotlarni yangilash
     try:
-        execute_query("""
+        execute_query("
             UPDATE users
             SET first_name = ?, last_name = ?, email = ?, phone = ?
             WHERE id = ?
-        """, (first_name, last_name, email, phone, user_id))
+        ", (first_name, last_name, email, phone, user_id))
 
         # Session ma'lumotlarini yangilash
         session["user_name"] = f"{first_name} {last_name}".strip()
@@ -2703,11 +2704,11 @@ def update_address():
 
     try:
         # Manzilni yangilash
-        execute_query("""
+        execute_query("
             UPDATE users
             SET address = ?, address_latitude = ?, address_longitude = ?
             WHERE id = ?
-        """, (address, address_latitude or None,
+        ", (address, address_latitude or None,
               address_longitude or None, user_id))
 
         # Session ma'lumotlarini yangilash
@@ -2792,7 +2793,7 @@ def logout():
 # ---- PLACE ORDER ----
 @app.route("/place_order", methods=["POST"])
 def place_order():
-    """Buyurtma berish funksiyasi - to'liq qayta ishlangan"""
+    "Buyurtma berish funksiyasi - to'liq qayta ishlangan"
     try:
         # Rate limiting
         identifier = request.remote_addr
@@ -2901,10 +2902,10 @@ def place_order():
                 branch_id = 1
 
             # Buyurtma yaratish
-            order_id = execute_query("""
+            order_id = execute_query("
                 INSERT INTO orders (user_id, customer_name, ticket_no, order_type, status, delivery_address, delivery_distance, delivery_latitude, delivery_longitude, delivery_map_url, customer_note, customer_phone, card_number, branch_id, created_at, eta_time)
                 VALUES (?, ?, ?, ?, 'waiting', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-            """, (user_id, name, tno, order_type, delivery_address, delivery_distance, delivery_latitude or None, delivery_longitude or None, delivery_map_url, customer_note, customer_phone, card_number, branch_id, now.isoformat(), eta_time.isoformat()))
+            ", (user_id, name, tno, order_type, delivery_address, delivery_distance, delivery_latitude or None, delivery_longitude or None, delivery_map_url, customer_note, customer_phone, card_number, branch_id, now.isoformat(), eta_time.isoformat()))
 
             if not order_id:
                 raise Exception("Buyurtma yaratilmadi.")
@@ -2926,10 +2927,10 @@ def place_order():
                 item_total = final_price * item['quantity']
                 total_amount += item_total
 
-                execute_query("""
+                execute_query("
                     INSERT INTO order_details (order_id, menu_item_id, quantity, price)
                     VALUES (?, ?, ?, ?)
-                """, (order_id, item['menu_item_id'], item['quantity'], final_price))
+                ", (order_id, item['menu_item_id'], item['quantity'], final_price))
 
                 # JSON uchun mahsulot ma'lumotlarini to'plash
                 order_items_for_json.append({
@@ -2945,10 +2946,10 @@ def place_order():
             cashback_percentage = 1.0 # Default cashback
             cashback_amount = total_amount * (cashback_percentage / 100)
 
-            execute_query("""
+            execute_query("
                 INSERT INTO receipts (order_id, receipt_number, total_amount, cashback_amount, cashback_percentage, created_at)
                 VALUES (?, ?, ?, ?, ?, ?);
-            """, (order_id, receipt_number, total_amount, cashback_amount, cashback_percentage, now.isoformat()))
+            ", (order_id, receipt_number, total_amount, cashback_amount, cashback_percentage, now.isoformat()))
 
             # Savatchani tozalash
             clear_cart(conn, session_id, user_id)
@@ -2979,7 +2980,7 @@ def user_page():
 
 @app.route("/user/status/<int:ticket_no>")
 def user_status(ticket_no):
-    """Buyurtma holatini JSON formatda qaytarish"""
+    "Buyurtma holatini JSON formatda qaytarish"
     try:
         order = execute_query("SELECT * FROM orders WHERE ticket_no = ?", (ticket_no,), fetch_one=True)
         if not order:
@@ -2997,7 +2998,7 @@ def user_status(ticket_no):
 
 @app.route("/user/cancel/<int:ticket_no>", methods=["POST"])
 def user_cancel_order(ticket_no):
-    """Foydalanuvchi buyurtmasini bekor qilish"""
+    "Foydalanuvchi buyurtmasini bekor qilish"
     try:
         order = execute_query("SELECT * FROM orders WHERE ticket_no = ? AND status IN ('waiting', 'ready')", (ticket_no,), fetch_one=True)
         if not order:
@@ -3025,12 +3026,12 @@ def user_success(ticket_no):
         return redirect(url_for("menu"))
 
     # Buyurtma tafsilotlarini olish
-    order_items_raw = execute_query("""
+    order_items_raw = execute_query("
         SELECT od.quantity, mi.name, od.price
         FROM order_details od
         JOIN menu_items mi ON od.menu_item_id = mi.id
         WHERE od.order_id = ?
-    """, (order['id'],), fetch_all=True)
+    ", (order['id'],), fetch_all=True)
     order_items = [dict(row) for row in order_items_raw] if order_items_raw else []
 
     conn.close()
@@ -3052,29 +3053,29 @@ def user_success(ticket_no):
 
 @app.route("/receipt/<int:ticket_no>")
 def view_receipt(ticket_no):
-    """Chekni ko'rish sahifasi"""
+    "Chekni ko'rish sahifasi"
     try:
         # Buyurtma va chek ma'lumotlarini olish
-        order_receipt_data = execute_query("""
+        order_receipt_data = execute_query("
             SELECT o.*,
                    r.receipt_number, r.total_amount, r.cashback_amount, r.cashback_percentage, r.created_at as receipt_created
             FROM orders o
             LEFT JOIN receipts r ON o.id = r.order_id
             WHERE o.ticket_no = ?
             ORDER BY o.id DESC LIMIT 1
-        """, (ticket_no,), fetch_one=True)
+        ", (ticket_no,), fetch_one=True)
 
         if not order_receipt_data:
             flash("Buyurtma yoki chek topilmadi.", "error")
             return redirect(url_for("menu"))
 
         # Buyurtma tafsilotlarini olish
-        order_items_raw = execute_query("""
+        order_items_raw = execute_query("
             SELECT od.quantity, mi.name, od.price
             FROM order_details od
             JOIN menu_items mi ON od.menu_item_id = mi.id
             WHERE od.order_id = ?
-        """, (order_receipt_data['id'],), fetch_all=True)
+        ", (order_receipt_data['id'],), fetch_all=True)
         order_items = [dict(row) for row in order_items_raw] if order_items_raw else []
 
         # Order items ni string formatiga o'tkazish
@@ -3193,7 +3194,7 @@ def courier_dashboard():
 
     try:
         # Barcha ready delivery buyurtmalar va kuryerga tegishli buyurtmalarni olish
-        delivery_orders_raw = execute_query("""
+        delivery_orders_raw = execute_query("
             SELECT o.*,
                    GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
             FROM orders o
@@ -3210,7 +3211,7 @@ def courier_dashboard():
                     ELSE 4
                 END,
                 o.created_at ASC
-        """, (session.get("courier_id"),), fetch_all=True)
+        ", (session.get("courier_id"),), fetch_all=True)
         delivery_orders = [dict(row) for row in delivery_orders_raw] if delivery_orders_raw else []
 
         # Kuryer statistikasini olish
@@ -3244,7 +3245,7 @@ def courier_dashboard():
             return render_template("courier_dashboard.html", orders=[])
         except Exception as template_error:
             app_logger.error(f"Courier dashboard template error: {str(template_error)}")
-            return """
+            return "
             <!DOCTYPE html>
             <html><head><title>Courier Dashboard - Error</title></head>
             <body>
@@ -3252,7 +3253,7 @@ def courier_dashboard():
                 <p>Dashboard yuklashda xatolik yuz berdi.</p>
                 <a href="/courier-secure-login-k4m7p">Login sahifasiga qaytish</a>
             </body></html>
-            """, 500
+            ", 500
 
 @app.route("/courier/order/<int:order_id>/take", methods=["POST"])
 def courier_take_order(order_id):
@@ -3271,11 +3272,11 @@ def courier_take_order(order_id):
             auto_price, auto_delivery_time = auto_calculate_courier_delivery_price(distance)
 
             # Buyurtmani yangilash
-            execute_query("""
+            execute_query("
                 UPDATE orders
                 SET status='on_way', courier_id=?, courier_price=?, courier_delivery_minutes=?, delivery_price=?
                 WHERE id=? AND status='ready'
-            """, (courier_id, auto_price, auto_delivery_time, auto_price, order_id))
+            ", (courier_id, auto_price, auto_delivery_time, auto_price, order_id))
 
             flash(f"Buyurtma olib ketildi! Avtomatik narx: {auto_price:,.0f} so'm, Vaqt: {auto_delivery_time} daqiqa", "success")
         else:
@@ -3335,11 +3336,11 @@ def courier_set_price_time():
             return jsonify({"success": False, "message": "Buyurtma topilmadi yoki tayyor emas"})
 
         # Narx va vaqtni yangilash
-        execute_query("""
+        execute_query("
             UPDATE orders
             SET courier_price = ?, courier_delivery_minutes = ?, delivery_price = ?
             WHERE id = ?
-        """, (price, delivery_time, price, order_id))
+        ", (price, delivery_time, price, order_id))
 
         return jsonify({"success": True, "message": "Narx va vaqt belgilandi"})
 
@@ -3357,7 +3358,7 @@ def courier_logout():
 # API routes
 @app.route("/api")
 def api_home():
-    """API home page"""
+    "API home page"
     return jsonify({
         "message": "Restaurant API",
         "version": "1.0",
@@ -3371,7 +3372,7 @@ def api_home():
 
 @app.route("/api/status")
 def api_status():
-    """API status endpoint"""
+    "API status endpoint"
     return jsonify({
         "status": "OK",
         "timestamp": get_current_time().isoformat(),
@@ -3381,7 +3382,7 @@ def api_status():
 @app.route("/get_cart_count")
 @app.route("/api/cart-count")
 def api_cart_count():
-    """Savatchadagi mahsulotlar sonini qaytarish - API endpoint"""
+    "Savatchadagi mahsulotlar sonini qaytarish - API endpoint"
     try:
         session_id = get_session_id()
         user_id = session.get("user_id")
@@ -3442,7 +3443,7 @@ def api_cart_count():
 # ---- STATIC FILE HANDLING ----
 @app.route('/static/<path:filename>')
 def static_files(filename):
-    """Static fayllar uchun xavfsiz route"""
+    "Static fayllar uchun xavfsiz route"
     try:
         return app.send_static_file(filename)
     except Exception as e:
@@ -3452,7 +3453,7 @@ def static_files(filename):
 # Order tracking route
 @app.route("/order/<int:ticket_no>")
 def track_order(ticket_no):
-    """Buyurtma holatini kuzatish"""
+    "Buyurtma holatini kuzatish"
     try:
         order = execute_query("SELECT * FROM orders WHERE ticket_no = ?", (ticket_no,), fetch_one=True)
 
@@ -3461,12 +3462,12 @@ def track_order(ticket_no):
             return redirect(url_for("index"))
 
         # Buyurtma tafsilotlarini olish
-        order_items_raw = execute_query("""
+        order_items_raw = execute_query("
             SELECT od.quantity, mi.name, od.price
             FROM order_details od
             JOIN menu_items mi ON od.menu_item_id = mi.id
             WHERE od.order_id = ?
-        """, (order['id'],), fetch_all=True)
+        ", (order['id'],), fetch_all=True)
         order_items = [dict(row) for row in order_items_raw] if order_items_raw else []
 
         return render_template("user_success.html", order=order, order_items=order_items)
@@ -3479,7 +3480,7 @@ def track_order(ticket_no):
 # ---- LOGIN ROUTES ----
 @app.route("/login")
 def login():
-    """Login route - login_page ga yo'naltirish"""
+    "Login route - login_page ga yo'naltirish"
     # URL dan role parametrini tekshirish
     role_param = request.args.get('role')
 
@@ -3550,7 +3551,7 @@ SUPER_ADMIN_PASSWORD = Config.SUPER_ADMIN_PASSWORD
 
 @app.route("/super-admin-master-login-z9x4m", methods=["GET", "POST"])
 def super_admin_login():
-    """Super admin login"""
+    "Super admin login"
     if request.method == "POST":
         username = request.form.get("username", "").strip()
         password = request.form.get("password", "")
@@ -3570,7 +3571,7 @@ def super_admin_login():
 
 @app.route("/super-admin/logout")
 def super_admin_logout():
-    """Super admin logout"""
+    "Super admin logout"
     session.pop("super_admin", None)
     session.pop("super_admin_name", None)
     flash("Super Admin tizimidan chiqdingiz.", "info")
@@ -3647,7 +3648,7 @@ def staff_dashboard():
 
     try:
         # Barcha buyurtmalarni olish
-        orders_raw = execute_query("""
+        orders_raw = execute_query("
             SELECT o.*,
                    GROUP_CONCAT(mi.name || ' x' || od.quantity) as order_items
             FROM orders o
@@ -3663,7 +3664,7 @@ def staff_dashboard():
                     WHEN o.status = 'cancelled' THEN 4
                 END,
                 o.created_at DESC
-        """, fetch_all=True)
+        ", fetch_all=True)
         orders = [dict(row) for row in orders_raw] if orders_raw else []
 
         # Staff statistikasini olish
@@ -3687,7 +3688,7 @@ def staff_dashboard():
             return render_template("staff_dashboard.html", orders=[])
         except Exception as template_error:
             app_logger.error(f"Staff dashboard template error: {str(template_error)}")
-            return """
+            return "
             <!DOCTYPE html>
             <html><head><title>Staff Dashboard - Error</title></head>
             <body>
@@ -3695,7 +3696,7 @@ def staff_dashboard():
                 <p>Dashboard yuklashda xatolik yuz berdi.</p>
                 <a href="/staff-secure-login-j7h3n">Login sahifasiga qaytish</a>
             </body></html>
-            """, 500
+            ", 500
 
 @app.route("/staff/order/<int:order_id>/ready", methods=["POST"])
 @app.route("/admin/order/<int:order_id>/ready", methods=["POST"])
@@ -3754,7 +3755,7 @@ def staff_cancel_order(order_id):
 
 @app.route("/staff/menu")
 def staff_menu():
-    """Xodim menu boshqaruvi    if "staff_id" not in session and not session.get("super_admin"):
+    "Xodim menu boshqaruvi    if "staff_id" not in session and not session.get("super_admin"):
         return redirect(url_for("staff_login"))
 
     try:
@@ -3780,7 +3781,7 @@ def admin_logout():
 
 @app.route("/staff/employees")
 def staff_employees():
-    """Xodimlar ro'yxati"""
+    "Xodimlar ro'yxati"
     if "staff_id" not in session and not session.get("super_admin"):
         return redirect(url_for("staff_login"))
 
@@ -3803,7 +3804,7 @@ def staff_logout():
 @app.route("/super-admin-control-panel-master-z8x9k", methods=["GET", "POST"])
 @app.route("/super-admin/dashboard-ultimate-m4st3r")
 def super_admin_dashboard():
-    """Super admin dashboard"""
+    "Super admin dashboard"
     if not session.get("super_admin"):
         flash("Super admin paneliga kirish talab qilinadi.", "error")
         return redirect(url_for("super_admin_login"))
@@ -4134,15 +4135,15 @@ def super_admin_dashboard():
                                        'total_couriers': 0, 'total_users': 0, 'total_users_json': 0})
         except Exception as template_error:
             app_logger.critical(f"Template render ham ishlamadi: {str(template_error)}")
-            return """
+            return "
             <h1>Super Admin Dashboard</h1>
             <p>Dashboard yuklashda xatolik: {str(e)}</p>
             <a href="{url_for('super_admin_login')}">Login sahifasiga qaytish</a>
-            """.format(url_for=url_for, str=str), 500
+            .format(url_for=url_for, str=str), 500
 
 @app.route("/super-admin/analytics")
 def super_admin_analytics():
-    """Super admin analytics sahifasi"""
+    "Super admin analytics sahifasi"
     if not session.get("super_admin"):
         flash("Super admin paneliga kirish talab qilinadi.", "error")
         return redirect(url_for("super_admin_login"))
@@ -4173,14 +4174,14 @@ def super_admin_analytics():
         analytics_data['monthly_orders'].reverse()
 
         # Eng ko'p sotilgan mahsulotlar
-        cur.execute("""
+        cur.execute("
             SELECT mi.name, COALESCE(SUM(od.quantity), 0) as total_sold
             FROM menu_items mi
             LEFT JOIN order_details od ON mi.id = od.menu_item_id
             GROUP BY mi.id, mi.name
             ORDER BY total_sold DESC
             LIMIT 5
-        """)
+        ")
         popular_items_raw = cur.fetchall() or []
         analytics_data['popular_items'] = [{'name': row[0], 'sold': row[1]} for row in popular_items_raw]
 
@@ -4195,7 +4196,7 @@ def super_admin_analytics():
 
 @app.route("/super-admin/reports")
 def super_admin_reports():
-    """Super admin reports sahifasi"""
+    "Super admin reports sahifasi"
     if not session.get("super_admin"):
         flash("Super admin paneliga kirish talab qilinadi.", "error")
         return redirect(url_for("super_admin_login"))
@@ -4234,7 +4235,7 @@ def super_admin_reports():
         if os.path.exists(template_path):
             return render_template("super_admin_reports.html", reports=reports_data)
         else:
-            html_content = f"""
+            html_content = f"
             <!DOCTYPE html>
             <html>
             <head>
@@ -4274,22 +4275,22 @@ def super_admin_reports():
                 </div>
             </body>
             </html>
-            """
+            "
             return html_content
 
     except Exception as e:
         app_logger.error(f"Super admin reports xatoligi: {str(e)}")
-        return f"""
+        return f"
         <div class="container mt-4">
             <h2>Reports - Xatolik</h2>
             <div class="alert alert-danger">Hisobotlarni yuklashda xatolik: {str(e)}</div>
             <a href="{url_for('super_admin_dashboard')}" class="btn btn-primary">Dashboard ga qaytish</a>
         </div>
-        """, 500
+        ", 500
 
 @app.route("/super-admin/system")
 def super_admin_system():
-    """Super admin system sahifasi"""
+    "Super admin system sahifasi"
     if not session.get("super_admin"):
         flash("Super admin paneliga kirish talab qilinadi.", "error")
         return redirect(url_for("super_admin_login"))
@@ -4315,7 +4316,7 @@ def super_admin_system():
         if os.path.exists(template_path):
             return render_template("super_admin_system.html", system=system_info)
         else:
-            html_content = f"""
+            html_content = f"
             <!DOCTYPE html>
             <html>
             <head>
@@ -4341,22 +4342,22 @@ def super_admin_system():
                 </div>
             </body>
             </html>
-            """
+            "
             return html_content
 
     except Exception as e:
         app_logger.error(f"Super admin system xatoligi: {str(e)}")
-        return f"""
+        return f"
         <div class="container mt-4">
             <h2>System - Xatolik</h2>
             <div class="alert alert-danger">Tizim ma'lumotlarini yuklashda xatolik: {str(e)}</div>
             <a href="{url_for('super_admin_dashboard')}" class="btn btn-primary">Dashboard ga qaytish</a>
         </div>
-        """, 500
+        ", 500
 
 @app.route("/super-admin/logs")
 def super_admin_logs():
-    """Super admin logs sahifasi"""
+    "Super admin logs sahifasi"
     if not session.get("super_admin"):
         flash("Super admin paneliga kirish talab qilinadi.", "error")
         return redirect(url_for("super_admin_login"))
@@ -4403,7 +4404,7 @@ def super_admin_logs():
         if os.path.exists(template_path):
             return render_template("super_admin_logs.html", logs=logs_data)
         else:
-            html_content = f"""
+            html_content = f"
             <!DOCTYPE html>
             <html>
             <head>
@@ -4415,7 +4416,7 @@ def super_admin_logs():
                     <h2>Loglar</h2>
                     <div class="row">
                         <div class="col-md-6">
-                            <h4>So'nggi loglar</h4>
+                            <h4>"So'nggi loglar"</h4>
                             <div style="background-color: #f8f9fa; padding: 10px; border-radius: 5px; max-height: 400px; overflow-y: auto;">
                                 {'<br>'.join(logs_data['recent_logs']) if logs_data['recent_logs'] else 'Loglar mavjud emas'}
                             </div>
@@ -4431,18 +4432,18 @@ def super_admin_logs():
                 </div>
             </body>
             </html>
-            """
+            "
             return html_content
 
     except Exception as e:
         app_logger.error(f"Super admin logs xatoligi: {str(e)}")
-        return f"""
+        return f"
         <div class="container mt-4">
             <h2>Logs - Xatolik</h2>
             <div class="alert alert-danger">Loglarniyuklashda xatolik: {str(e)}</div>
             <a href="{url_for('super_admin_dashboard')}" class="btn btn-primary">Dashboard ga qaytish</a>
         </div>
-        """, 500
+        ", 500
 
 @app.route("/super-admin/delete-courier/<int:courier_id>", methods=["POST"])
 def super_admin_delete_courier(courier_id):
@@ -4466,7 +4467,7 @@ def super_admin_delete_courier(courier_id):
 
 @app.route("/staff/register", methods=["GET", "POST"])
 def staff_register():
-    """Xodim ro'yxatdan o'tish"""
+    "Xodim ro'yxatdan o'tish"
     if request.method == "POST":
         first_name = request.form.get("first_name", "").strip()
         last_name = request.form.get("last_name", "").strip()
@@ -4484,10 +4485,10 @@ def staff_register():
             password_hash = generate_password_hash(password)
             now = get_current_time().isoformat()
 
-            staff_id = execute_query("""
+            staff_id = execute_query("
                 INSERT INTO staff (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, created_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """, (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, now))
+            ", (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, now))
 
             # JSON fayliga saqlash
             executor.submit(save_staff_to_json, first_name, last_name, birth_date, phone, staff_id, get_current_time())
@@ -4508,7 +4509,7 @@ def staff_register_new():
 
 @app.route("/courier/register", methods=["GET", "POST"])
 def courier_register():
-    """Kuryer ro'yxatdan o'tish"""
+    "Kuryer ro'yxatdan o'tish"
     if request.method == "POST":
         first_name = request.form.get("first_name", "").strip()
         last_name = request.form.get("last_name", "").strip()
@@ -4526,10 +4527,10 @@ def courier_register():
             password_hash = generate_password_hash(password)
             now = get_current_time().isoformat()
 
-            courier_id = execute_query("""
+            courier_id = execute_query("
                 INSERT INTO couriers (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, created_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """, (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, now))
+            ", (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, now))
 
             flash(f"Muvaffaqiyatli ro'yxatdan o'tdingiz! ID: {courier_id}", "success")
             return redirect(url_for("courier_login"))
@@ -4561,10 +4562,10 @@ def super_admin_add_staff():
         password_hash = generate_password_hash(password)
         now = get_current_time().isoformat()
 
-        staff_id = execute_query("""
+        staff_id = execute_query("
             INSERT INTO staff (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, created_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        """, (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, now))
+        ", (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, now))
 
         flash(f"Yangi xodim qo'shildi. ID: {staff_id}", "success")
     except Exception as e:
@@ -4614,10 +4615,10 @@ def super_admin_add_courier():
         password_hash = generate_password_hash(password)
         now = get_current_time().isoformat()
 
-        new_id = execute_query("""
+        new_id = execute_query("
             INSERT INTO couriers (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, created_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        """, (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, now))
+        ", (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, now))
 
         # ID kamida 5 ta raqamdan iborat bo'lishi uchun
         if new_id and new_id < 10000:
