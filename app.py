@@ -695,7 +695,7 @@ class DatabasePool:
 
     @contextmanager
     def get_connection(self):
-        "Context manager orqali connection olish - timeout fix bilan"
+        "Context manager orqali connection olish - improved error handling"
         conn = None
         start_time = time.time()
         
@@ -721,9 +721,11 @@ class DatabasePool:
                 if not conn:
                     raise Exception("Database connection timeout - yangi connection yaratib bo'lmadi")
 
-            # Connection ni test qilish
+            # Connection ni test qilish - safe method
             try:
-                conn.execute("SELECT 1").fetchone()
+                test_result = conn.execute("SELECT 1").fetchone()
+                if test_result is None:
+                    raise Exception("Connection test returned None")
             except Exception as test_error:
                 app_logger.warning(f"Connection test failed, creating new one: {str(test_error)}")
                 try:
@@ -766,7 +768,8 @@ class DatabasePool:
                 except Exception as cleanup_error:
                     app_logger.warning(f"Connection cleanup error: {str(cleanup_error)}")
                     try:
-                        conn.close()
+                        if conn:
+                            conn.close()
                     except:
                         pass
 
@@ -801,12 +804,15 @@ def check_database_health():
 
 # Optimized database operations with timeout handling
 def execute_query(query, params=None, fetch_one=False, fetch_all=False, max_retries=3):
-    "Optimizatsiya qilingan database so'rovi - timeout fix bilan"
+    "Optimizatsiya qilingan database so'rovi - improved None handling"
     last_error = None
     
     for attempt in range(max_retries):
         try:
             with db_pool.get_connection() as conn:
+                if conn is None:
+                    raise Exception("Connection is None")
+                    
                 cur = conn.cursor()
 
                 # Query ni timeout bilan bajarish
@@ -817,26 +823,37 @@ def execute_query(query, params=None, fetch_one=False, fetch_all=False, max_retr
 
                 if fetch_one:
                     result = cur.fetchone()
-                    # Ensure result is a dictionary-like object for easier access
-                    if result and hasattr(result, 'keys'):
-                        return dict(zip(result.keys(), result))
-                    elif result:
-                        # Fallback for tuple results if row_factory is not set correctly
-                        return result
-                    return None
-                elif fetch_all:
-                    # fetch_all uchun alohida result olish
-                    all_results = cur.fetchall()
-                    if all_results and hasattr(all_results[0], 'keys'):
-                        return [dict(zip(row.keys(), row)) for row in all_results]
+                    # Safe result handling
+                    if result is None:
+                        return None
+                    elif hasattr(result, 'keys'):
+                        try:
+                            return dict(zip(result.keys(), result))
+                        except (TypeError, ValueError):
+                            return result
                     else:
+                        # Fallback for tuple results
+                        return result
+                elif fetch_all:
+                    # fetch_all uchun safe result handling
+                    all_results = cur.fetchall()
+                    if not all_results:
+                        return []
+                    
+                    # Safe conversion to dict list
+                    try:
+                        if hasattr(all_results[0], 'keys'):
+                            return [dict(zip(row.keys(), row)) for row in all_results if row is not None]
+                        else:
+                            return all_results
+                    except (IndexError, TypeError, AttributeError):
                         return all_results or []
                 else:
                     conn.commit()
-                    # Try to return lastrowid if available, else None
+                    # Safe lastrowid return
                     try:
                         return cur.lastrowid
-                    except:
+                    except (AttributeError, TypeError):
                         return None
                         
         except sqlite3.OperationalError as e:
