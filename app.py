@@ -392,7 +392,7 @@ def not_found_error(error):
     try:
         return render_template('error.html', error_code=404, error_message="Sahifa topilmadi"), 404
     except:
-        return f"
+        return """
         <!DOCTYPE html>
         <html>
         <head><title>404 Not Found</title></head>
@@ -402,7 +402,7 @@ def not_found_error(error):
             <a href="/">Bosh sahifaga qaytish</a>      
         </body>
         </html>
-        ", 404
+        """, 404
 
 @app.errorhandler(500)
 def internal_error(error):
@@ -413,7 +413,7 @@ def internal_error(error):
     try:
         return render_template('error.html', error_code=500, error_message="Server xatoligi"), 500
     except:
-        return f"
+        return """
         <!DOCTYPE html>
         <html>
         <head><title>500 Internal Server Error</title></head>
@@ -423,7 +423,7 @@ def internal_error(error):
             <a href="/">Bosh sahifaga qaytish</a>
         </body>
         </html>
-        ", 500
+        """, 500
 
 @app.errorhandler(429)
 def rate_limit_error(error):
@@ -434,7 +434,7 @@ def rate_limit_error(error):
     try:
         return render_template('error.html', error_code=429, error_message="Juda ko'p so'rov"), 429
     except:
-        return f"
+        return """
         <!DOCTYPE html>
         <html>
         <head><title>429 Too Many Requests</title></head>
@@ -444,7 +444,7 @@ def rate_limit_error(error):
             <a href="/">Bosh sahifaga qaytish</a>
         </body>
         </html>
-        ", 429
+        """, 429
 
 @app.errorhandler(Exception)
 def handle_exception(e):
@@ -463,7 +463,7 @@ def handle_exception(e):
                              error_code=500,
                              error_message="Kutilmagan xatolik yuz berdi"), 500
     except:
-        return f"
+        return """
         <!DOCTYPE html>
         <html>
         <head><title>Unexpected Error</title></head>
@@ -473,7 +473,7 @@ def handle_exception(e):
             <a href="/">Bosh sahifaga qaytish</a>
         </body>
         </html>
-        ", 500
+        """, 500
 
 # Performance monitoring
 class PerformanceMonitor:
