@@ -3842,158 +3842,52 @@ def super_admin_dashboard():
         flash("Super admin paneliga kirish talab qilinadi.", "error")
         return redirect(url_for("super_admin_login"))
 
-    conn = None
     try:
-        conn = get_db()
-        cur = conn.cursor()
 
-        # Xodimlar ma'lumotlari - xavfsiz olish va dict ga aylantirish
+        # Xodimlar ma'lumotlari - soddalashtirilgan
         staff_db = []
         try:
-            cur.execute("SELECT * FROM staff ORDER BY created_at DESC")
-            staff_raw = cur.fetchall() or []
-            for staff in staff_raw:
-                try:
-                    # SQLite Row obyektini xavfsiz dict ga aylantirish
-                    if hasattr(staff, 'keys'):
-                        staff_dict = dict(staff)
-                    else:
-                        # Tuple format uchun manual dict yaratish
-                        staff_dict = {
-                            'id': int(staff[0]) if staff[0] is not None else 0,
-                            'first_name': str(staff[1]) if len(staff) > 1 and staff[1] is not None else '',
-                            'last_name': str(staff[2]) if len(staff) > 2 and staff[2] is not None else '',
-                            'birth_date': str(staff[3]) if len(staff) > 3 and staff[3] is not None else '',
-                            'phone': str(staff[4]) if len(staff) > 4 and staff[4] is not None else '',
-                            'passport_series': str(staff[5]) if len(staff) > 5 and staff[5] is not None else '',
-                            'passport_number': str(staff[6]) if len(staff) > 6 and staff[6] is not None else '',
-                            'password_hash': str(staff[7]) if len(staff) > 7 and staff[7] is not None else '',
-                            'total_hours': 0.0,
-                            'orders_handled': 0,
-                            'last_activity': str(staff[10]) if len(staff) > 10 and staff[10] is not None else '',
-                            'created_at': str(staff[11]) if len(staff) > 11 and staff[11] is not None else ''
-                        }
-
-                        # Safe conversion for total_hours
-                        try:
-                            if len(staff) > 8 and staff[8] is not None:
-                                hours_val = staff[8]
-                                if isinstance(hours_val, (int, float)):
-                                    staff_dict['total_hours'] = float(hours_val)
-                                elif isinstance(hours_val, str) and hours_val.replace('.', '').replace(',', '').isdigit():
-                                    staff_dict['total_hours'] = float(hours_val.replace(',', '.'))
-                        except (ValueError, TypeError):
-                            staff_dict['total_hours'] = 0.0
-
-                        # Safe conversion for orders_handled
-                        try:
-                            if len(staff) > 9 and staff[9] is not None:
-                                orders_val = staff[9]
-                                if isinstance(orders_val, int):
-                                    staff_dict['orders_handled'] = orders_val
-                                elif isinstance(orders_val, str) and orders_val.isdigit():
-                                    staff_dict['orders_handled'] = int(orders_val)
-                        except (ValueError, TypeError):
-                            staff_dict['orders_handled'] = 0
-
-                    staff_db.append(staff_dict)
-
-                except Exception as staff_error:
-                    app_logger.error(f"Staff {staff[0] if staff and len(staff) > 0 else 'N/A'} qayta ishlashda xatolik: {str(staff_error)}")
-                    continue
-
+            staff_raw = execute_query("SELECT * FROM staff ORDER BY created_at DESC", fetch_all=True)
+            if staff_raw:
+                for staff in staff_raw:
+                    try:
+                        staff_dict = dict(staff) if hasattr(staff, 'keys') else {}
+                        # Ensure required fields exist
+                        staff_dict.setdefault('total_hours', 0.0)
+                        staff_dict.setdefault('orders_handled', 0)
+                        staff_db.append(staff_dict)
+                    except Exception as staff_error:
+                        app_logger.warning(f"Staff processing error: {str(staff_error)}")
+                        continue
         except Exception as e:
             app_logger.error(f"Staff ma'lumotlarini olishda xatolik: {str(e)}")
             staff_db = []
 
-        # Kuryerlar ma'lumotlari - xavfsiz olish va dict ga aylantirish
+        # Kuryerlar ma'lumotlari - soddalashtirilgan
         couriers_db = []
         try:
-            cur.execute("SELECT * FROM couriers ORDER BY created_at DESC")
-            couriers_raw = cur.fetchall() or []
-            for courier in couriers_raw:
-                try:
-                    # SQLite Row obyektini xavfsiz dict ga aylantirish
-                    if hasattr(courier, 'keys'):
-                        courier_dict = dict(courier)
-                    else:
-                        # Tuple format uchun manual dict yaratish
-                        courier_dict = {
-                            'id': int(courier[0]) if courier[0] is not None else 0,
-                            'first_name': str(courier[1]) if len(courier) > 1 and courier[1] is not None else '',
-                            'last_name': str(courier[2]) if len(courier) > 2 and courier[2] is not None else '',
-                            'birth_date': str(courier[3]) if len(courier) > 3 and courier[3] is not None else '',
-                            'phone': str(courier[4]) if len(courier) > 4 and courier[4] is not None else '',
-                            'passport_series': str(courier[5]) if len(courier) > 5 and courier[5] is not None else '',
-                            'passport_number': str(courier[6]) if len(courier) > 6 and courier[6] is not None else '',
-                            'password_hash': str(courier[7]) if len(courier) > 7 and courier[7] is not None else '',
-                            'total_hours': 0.0,
-                            'deliveries_completed': 0,
-                            'last_activity': str(courier[10]) if len(courier) > 10 and courier[10] is not None else '',
-                            'created_at': str(courier[11]) if len(courier) > 11 and courier[11] is not None else ''
-                        }
-
-                        # Safe conversion for total_hours
-                        try:
-                            if len(courier) > 8 and courier[8] is not None:
-                                hours_val = courier[8]
-                                if isinstance(hours_val, (int, float)):
-                                    courier_dict['total_hours'] = float(hours_val)
-                                elif isinstance(hours_val, str) and hours_val.replace('.', '').replace(',', '').isdigit():
-                                    courier_dict['total_hours'] = float(hours_val.replace(',', '.'))
-                        except (ValueError, TypeError):
-                            courier_dict['total_hours'] = 0.0
-
-                        # Safe conversion for deliveries_completed
-                        try:
-                            if len(courier) > 9 and courier[9] is not None:
-                                deliveries_val = courier[9]
-                                if isinstance(deliveries_val, int):
-                                    courier_dict['deliveries_completed'] = deliveries_val
-                                elif isinstance(deliveries_val, str) and deliveries_val.isdigit():
-                                    courier_dict['deliveries_completed'] = int(deliveries_val)
-                        except (ValueError, TypeError):
-                            courier_dict['deliveries_completed'] = 0
-
+            couriers_raw = execute_query("SELECT * FROM couriers ORDER BY created_at DESC", fetch_all=True)
+            if couriers_raw:
+                for courier in couriers_raw:
+                    try:
+                        courier_dict = dict(courier) if hasattr(courier, 'keys') else {}
+                        # Ensure required fields exist
+                        courier_dict.setdefault('total_hours', 0.0)
+                        courier_dict.setdefault('deliveries_completed', 0)
                         couriers_db.append(courier_dict)
-
-                except Exception as courier_error:
-                    app_logger.error(f"Courier {courier[0] if courier and len(courier) > 0 else 'N/A'} qayta ishlashda xatolik: {str(courier_error)}")
-                    continue
-
+                    except Exception as courier_error:
+                        app_logger.warning(f"Courier processing error: {str(courier_error)}")
+                        continue
         except Exception as e:
             app_logger.error(f"Couriers ma'lumotlarini olishda xatolik: {str(e)}")
             couriers_db = []
 
-        # Foydalanuvchilarni olish - xavfsiz va dict ga aylantirish
+        # Foydalanuvchilarni olish - soddalashtirilgan
         users_db = []
         try:
-            cur.execute("SELECT * FROM users ORDER BY created_at DESC")
-            users_raw = cur.fetchall() or []
-            for user in users_raw:
-                try:
-                    # SQLite Row obyektini xavfsiz dict ga aylantirish
-                    if hasattr(user, 'keys'):
-                        user_dict = dict(user)
-                    else:
-                        # Tuple format uchun manual dict yaratish
-                        user_dict = {
-                            'id': int(user[0]) if user[0] is not None else 0,
-                            'first_name': str(user[1]) if len(user) > 1 and user[1] is not None else '',
-                            'last_name': str(user[2]) if len(user) > 2 and user[2] is not None else '',
-                            'email': str(user[3]) if len(user) > 3 and user[3] is not None else '',
-                            'phone': str(user[4]) if len(user) > 4 and user[4] is not None else '',
-                            'password_hash': str(user[5]) if len(user) > 5 and user[5] is not None else '',
-                            'address': str(user[6]) if len(user) > 6 and user[6] is not None else '',
-                            'card_number': str(user[7]) if len(user) > 7 and user[7] is not None else '',
-                            'card_expiry': str(user[8]) if len(user) > 8 and user[8] is not None else '',
-                            'created_at': str(user[9]) if len(user) > 9 and user[9] is not None else ''
-                        }
-                    users_db.append(user_dict)
-                except Exception as user_error:
-                    app_logger.error(f"User {user[0] if user and len(user) > 0 else 'N/A'} qayta ishlashda xatolik: {str(user_error)}")
-                    continue
-
+            users_raw = execute_query("SELECT * FROM users ORDER BY created_at DESC", fetch_all=True)
+            if users_raw:
+                users_db = [dict(user) for user in users_raw if hasattr(user, 'keys')]
         except Exception as e:
             app_logger.error(f"Users ma'lumotlarini olishda xatolik: {str(e)}")
             users_db = []
@@ -4005,101 +3899,43 @@ def super_admin_dashboard():
             try:
                 with open(users_file, 'r', encoding='utf-8') as f:
                     users_json = json.load(f) or []
-            except (json.JSONDecodeError, FileNotFoundError, Exception) as e:
+            except Exception as e:
                 app_logger.warning(f"Users JSON faylini o'qishda xatolik: {str(e)}")
                 users_json = []
 
-        # Savollarni olish - xavfsiz
+        # Savollarni olish - soddalashtirilgan
         questions = []
         try:
-            cur.execute("SELECT * FROM questions ORDER BY created_at DESC")
-            questions = [dict(row) for row in cur.fetchall()] if cur.fetchall() else []
+            questions_raw = execute_query("SELECT * FROM questions ORDER BY created_at DESC", fetch_all=True)
+            if questions_raw:
+                questions = [dict(row) for row in questions_raw if hasattr(row, 'keys')]
         except Exception as e:
             app_logger.error(f"Questions ma'lumotlarini olishda xatolik: {str(e)}")
             questions = []
 
-        # Filiallarni olish - xavfsiz va baho qo'shish
+        # Filiallarni olish - soddalashtirilgan
         branches = []
         try:
-            cur.execute("SELECT * FROM branches ORDER BY created_at DESC")
-            branches_raw = cur.fetchall() or []
-
-            for branch_row in branches_raw:
-                try:
-                    # Safe access to branch data, assuming branch_row is a dictionary-like object from fetchall
-                    if hasattr(branch_row, 'keys'):
-                        branch_dict = dict(zip(branch_row.keys(), branch_row))
-                    else:
-                        # Tuple format uchun manual dict yaratish
-                        branch_dict = {
-                            'id': int(branch_row[0]) if len(branch_row) > 0 and branch_row[0] is not None else 0,
-                            'name': str(branch_row[1]) if len(branch_row) > 1 and branch_row[1] is not None else 'N/A',
-                            'address': str(branch_row[2]) if len(branch_row) > 2 and branch_row[2] is not None else 'N/A',
-                            'latitude': 41.2995, # Default if missing
-                            'longitude': 69.2401, # Default if missing
-                            'phone': str(branch_row[5]) if len(branch_row) > 5 and branch_row[5] is not None else 'N/A',
-                            'working_hours': str(branch_row[6]) if len(branch_row) > 6 and branch_row[6] is not None else '09:00-22:00',
-                            'is_active': int(branch_row[7]) if len(branch_row) > 7 and branch_row[7] is not None else 1,
-                            'delivery_radius': 15.0, # Default if missing
-                            'created_at': str(branch_row[9]) if len(branch_row) > 9 and branch_row[9] is not None else ''
-                        }
-
-                        # Safe coordinate conversion
-                        try:
-                            if len(branch_row) > 3 and branch_row[3] is not None:
-                                lat_val = branch_row[3]
-                                try:
-                                    if isinstance(lat_val, str):
-                                        clean_lat = str(lat_val).replace(',', '.').strip()
-                                        if clean_lat and clean_lat.replace('.', '').replace('-', '').isdigit():
-                                            branch_dict['latitude'] = float(clean_lat)
-                                except (ValueError, TypeError): branch_dict['latitude'] = 41.2995
-                            else: branch_dict['latitude'] = 41.2995
-                        except Exception: branch_dict['latitude'] = 41.2995
-
-                        try:
-                            if len(branch_row) > 4 and branch_row[4] is not None:
-                                lng_val = branch_row[4]
-                                if isinstance(lng_val, (int, float)): branch_dict['longitude'] = float(lng_val)
-                                elif isinstance(lng_val, str) and lng_val.replace(',', '.').strip():
-                                    clean_lng = lng_val.replace(',', '.').strip()
-                                    if clean_lng and clean_lng != '': branch_dict['longitude'] = float(clean_lng)
-                                    else: branch_dict['longitude'] = 0.0
-                                else: branch_dict['longitude'] = 0.0
-                            else: branch_dict['longitude'] = 0.0
-                        except Exception: branch_dict['longitude'] = 0.0
-
-                        # Safe radius conversion
-                        try:
-                            if len(branch_row) > 8 and branch_row[8] is not None:
-                                radius_val = branch_row[8]
-                                if isinstance(radius_val, (int, float)): branch_dict['delivery_radius'] = float(radius_val)
-                                elif isinstance(radius_val, str) and radius_val.replace('.', '').isdigit(): branch_dict['delivery_radius'] = float(radius_val)
-                                else: branch_dict['delivery_radius'] = 15.0
-                            else: branch_dict['delivery_radius'] = 15.0
-                        except Exception: branch_dict['delivery_radius'] = 15.0
-
-                    # Baho ma'lumotlarini xavfsiz olish
+            branches_raw = execute_query("SELECT * FROM branches ORDER BY created_at DESC", fetch_all=True)
+            if branches_raw:
+                for branch in branches_raw:
                     try:
-                        rating_data = get_branch_average_rating(int(branch_dict['id']))
-                        branch_dict['average_rating'] = float(rating_data.get('average_rating', 0.0))
-                        branch_dict['total_ratings'] = int(rating_data.get('total_ratings', 0))
-                    except Exception as rating_error:
-                        app_logger.warning(f"Branch {branch_dict['id']} bahosini olishda xatolik: {str(rating_error)}")
-                        branch_dict['average_rating'] = 0.0
-                        branch_dict['total_ratings'] = 0
-
-                    branches.append(branch_dict)
-
-                except Exception as branch_error:
-                    app_logger.error(f"Branch ma'lumotini qayta ishlashda xatolik: {str(branch_error)}")
-                    continue
-
+                        branch_dict = dict(branch) if hasattr(branch, 'keys') else {}
+                        # Ensure required fields exist with defaults
+                        branch_dict.setdefault('latitude', 41.2995)
+                        branch_dict.setdefault('longitude', 69.2401)
+                        branch_dict.setdefault('delivery_radius', 15.0)
+                        branch_dict.setdefault('average_rating', 0.0)
+                        branch_dict.setdefault('total_ratings', 0)
+                        branches.append(branch_dict)
+                    except Exception as branch_error:
+                        app_logger.warning(f"Branch processing error: {str(branch_error)}")
+                        continue
         except Exception as e:
             app_logger.error(f"Branches ma'lumotlarini olishda xatolik: {str(e)}")
             branches = []
 
-        # Buyurtmalar statistikasi - xavfsiz hisoblash
+        # Buyurtmalar statistikasi - soddalashtirilgan
         stats = {
             'total_orders': 0,
             'waiting_orders': 0,
@@ -4118,19 +3954,13 @@ def super_admin_dashboard():
             stats['total_orders'] = result[0] if result else 0
 
             # Status bo'yicha statistika
-            status_queries = [
-                ('waiting_orders', "SELECT COUNT(*) FROM orders WHERE status='waiting'"),
-                ('ready_orders', "SELECT COUNT(*) FROM orders WHERE status='ready'"),
-                ('served_orders', "SELECT COUNT(*) FROM orders WHERE status='served'")
-            ]
-
-            for stat_key, query in status_queries:
+            for status in ['waiting', 'ready', 'served']:
                 try:
-                    result = execute_query(query, fetch_one=True)
-                    stats[stat_key] = result[0] if result else 0
+                    result = execute_query(f"SELECT COUNT(*) FROM orders WHERE status='{status}'", fetch_one=True)
+                    stats[f'{status}_orders'] = result[0] if result else 0
                 except Exception as e:
-                    app_logger.warning(f"{stat_key} statistikasini olishda xatolik: {str(e)}")
-                    stats[stat_key] = 0
+                    app_logger.warning(f"{status} orders statistikasini olishda xatolik: {str(e)}")
+                    stats[f'{status}_orders'] = 0
 
             # Bu oylik statistika
             current_month = get_current_time().strftime("%Y-%m")
@@ -4140,40 +3970,38 @@ def super_admin_dashboard():
         except Exception as e:
             app_logger.error(f"Statistikalarni hisoblashda xatolik: {str(e)}")
 
-        if conn:
-            conn.close()
-
-        return render_template("super_admin_dashboard.html",
-                             staff_db=staff_db or [],
-                             couriers_db=couriers_db or [],
-                             users_db=users_db or [],
-                             users_json=users_json or [],
-                             questions=questions or [],
-                             branches=branches or [],
-                             stats=stats)
+        try:
+            return render_template("super_admin_dashboard.html",
+                                 staff_db=staff_db or [],
+                                 couriers_db=couriers_db or [],
+                                 users_db=users_db or [],
+                                 users_json=users_json or [],
+                                 questions=questions or [],
+                                 branches=branches or [],
+                                 stats=stats)
+        except Exception as template_error:
+            app_logger.warning(f"Main template failed, using simple template: {str(template_error)}")
+            return render_template("super_admin_dashboard_simple.html", stats=stats)
 
     except Exception as e:
         app_logger.error(f"Super admin dashboard xatoligi: {str(e)}")
-        # Emergency fallback
+        # Emergency fallback with simple template
         try:
-            return render_template("super_admin_dashboard.html",
-                                 staff_db=[],
-                                 couriers_db=[],
-                                 users_db=[],
-                                 users_json=[],
-                                 questions=[],
-                                 branches=[],
-                                 stats={'total_orders': 0, 'waiting_orders': 0, 'ready_orders': 0,
-                                       'served_orders': 0, 'month_orders': 0, 'total_staff': 0,
-                                       'total_couriers': 0, 'total_users': 0, 'total_users_json': 0})
+            simple_stats = {'total_orders': 0, 'waiting_orders': 0, 'ready_orders': 0,
+                           'served_orders': 0, 'month_orders': 0, 'total_staff': 0,
+                           'total_couriers': 0, 'total_users': 0, 'total_users_json': 0}
+            return render_template("super_admin_dashboard_simple.html", stats=simple_stats)
         except Exception as template_error:
-            app_logger.critical(f"Template render ham ishlamadi: {str(template_error)}")
-            return """
+            app_logger.critical(f"Simple template ham ishlamadi: {str(template_error)}")
+            return f"""
             <!DOCTYPE html>
-            <h1>Super Admin Dashboard</h1>
-            <p>Dashboard yuklashda xatolik: {str(e)}</p>
-            <a href="{url_for('super_admin_login')}">Login sahifasiga qaytish</a>
-            .format(url_for=url_for, str=str)""", 500
+            <html><head><title>Super Admin Dashboard - Error</title></head>
+            <body>
+                <h1>Super Admin Dashboard</h1>
+                <div style="color: red;">Dashboard yuklashda xatolik: {str(e)}</div>
+                <p><a href="{url_for('super_admin_login')}">Login sahifasiga qaytish</a></p>
+            </body></html>
+            """, 500
 
 @app.route("/super-admin/analytics")
 def super_admin_analytics():
