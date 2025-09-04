@@ -46,7 +46,7 @@
 
     <div class="cart-actions">
       {% if session.get('user_id') %}
-        <form method="post" action="{{ url_for('place_order') }}" onsubmit="return handleFormSubmit(this)">
+        <form method="post" action="{{ url_for('place_order') }}" onsubmit="return validateOrder()"
             <h3>📋 Buyurtma berish</h3>
 
             <div class="order-type-selection">
