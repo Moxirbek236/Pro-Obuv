@@ -3150,6 +3150,11 @@ def about():
     "About sahifasi"
     return render_template("about.html", current_page='about')
 
+@app.route("/downloads")
+def downloads():
+    "Downloads sahifasi - mobil ilovalar"
+    return render_template("downloads.html", current_page='downloads')
+
 # ---- COURIER AUTH ----
 @app.route("/courier-secure-login-k4m7p", methods=["GET", "POST"])
 def courier_login():
