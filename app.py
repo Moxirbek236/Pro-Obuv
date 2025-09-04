@@ -859,7 +859,7 @@ def init_db():
             created_at TEXT NOT NULL,
             eta_time TEXT NOT NULL,
             FOREIGN KEY (user_id) REFERENCES users (id),
-            FOREIGN KEY (courier_id) REFERENCES couriers (id)
+            FOREIGNKEY (courier_id) REFERENCES couriers (id)
         );
     """)
 
@@ -1317,7 +1317,7 @@ def create_minimal_app():
                     <strong>Server xatoligi:</strong> Asosiy tizim ishga tushmadi.
                 </div>
                 <div class="info">
-                    <strong>Status:</strong> Emergency fallback server ishlayapti.
+                    <strong>Status:</strong> Minimal fallback server ishlayapti.
                 </div>
                 <p>Iltimos, quyidagi amallarni bajaring:</p>
                 <ul>
@@ -3548,6 +3548,34 @@ def login_page():
 SUPER_ADMIN_USERNAME = Config.SUPER_ADMIN_USERNAME
 SUPER_ADMIN_PASSWORD = Config.SUPER_ADMIN_PASSWORD
 
+@app.route("/super-admin-master-login-z9x4m", methods=["GET", "POST"])
+def super_admin_login():
+    """Super admin login"""
+    if request.method == "POST":
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "")
+
+        if username == SUPER_ADMIN_USERNAME and password == SUPER_ADMIN_PASSWORD:
+            session["super_admin"] = True
+            session["super_admin_name"] = "Super Administrator"
+
+            app_logger.info(f"Super admin kirdi: {username}")
+            flash("Super Admin tizimiga xush kelibsiz!", "success")
+            return redirect(url_for("super_admin_dashboard"))
+        else:
+            app_logger.warning(f"Super admin login failed for username: {username}")
+            flash("Noto'g'ri username yoki parol.", "error")
+
+    return render_template("super_admin_login.html")
+
+@app.route("/super-admin/logout")
+def super_admin_logout():
+    """Super admin logout"""
+    session.pop("super_admin", None)
+    session.pop("super_admin_name", None)
+    flash("Super Admin tizimidan chiqdingiz.", "info")
+    return redirect(url_for("index"))
+
 # ---- STAFF AUTH ----
 @app.route("/staff-secure-login-w7m2k", methods=["GET", "POST"])
 @app.route("/staff-secure-login-j7h3n", methods=["GET", "POST"])
@@ -3726,8 +3754,7 @@ def staff_cancel_order(order_id):
 
 @app.route("/staff/menu")
 def staff_menu():
-    """Xodim menu boshqaruvi"""
-    if "staff_id" not in session and not session.get("super_admin"):
+    """Xodim menu boshqaruvi    if "staff_id" not in session and not session.get("super_admin"):
         return redirect(url_for("staff_login"))
 
     try:
@@ -4604,3 +4631,34 @@ def super_admin_add_courier():
         flash("Kuryer qo'shishda xatolik yuz berdi.", "error")
 
     return redirect(url_for("super_admin_dashboard"))
+
+# Flask app ishga tushirish
+if __name__ == "__main__":
+    try:
+        app_logger.info("🚀 Restaurant Management System ishga tushmoqda...")
+
+        # Database ni tekshirish va sozlash
+        if safe_init_database():
+            app_logger.info("✅ Database muvaffaqiyatli ishga tushdi")
+        else:
+            app_logger.warning("⚠️ Database qisman ishga tushdi")
+
+        app_logger.info("✅ Tizim muvaffaqiyatli ishga tushdi")
+        app_logger.info("🌐 Server 0.0.0.0:5000 da ishlamoqda")
+
+        # Flask serverni ishga tushirish
+        app.run(host="0.0.0.0", port=5000, debug=Config.IS_DEVELOPMENT, threaded=True)
+
+    except Exception as startup_error:
+        app_logger.critical(f"❌ Tizimni ishga tushirishda xatolik: {str(startup_error)}")
+        print(f"CRITICAL ERROR: {startup_error}")
+
+        # Emergency fallback server
+        try:
+            print("🆘 Emergency fallback server ishga tushirilmoqda...")
+            emergency_app = create_minimal_app()
+            emergency_app.run(host="0.0.0.0", port=5000, debug=True)
+        except Exception as emergency_error:
+            print(f"EMERGENCY FALLBACK FAILED: {emergency_error}")
+            import sys
+            sys.exit(1)
