@@ -4167,75 +4167,97 @@ def staff_dashboard():
     cleanup_expired_orders()
 
     try:
-        # Barcha buyurtmalarni olish - to'g'ridan-to'g'ri SQL so'rov
-        with db_pool.get_connection() as conn:
-            cur = conn.cursor()
-            
-            # Barcha buyurtmalarni olish
-            cur.execute("""
-                SELECT o.id, o.user_id, o.customer_name, o.ticket_no, o.order_type, 
-                       o.status, o.delivery_address, o.delivery_distance, o.customer_phone, 
-                       o.created_at, o.eta_time, o.branch_id,
-                       GROUP_CONCAT(mi.name || ' x' || od.quantity, ', ') as order_items
-                FROM orders o
-                LEFT JOIN order_details od ON o.id = od.order_id
-                LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
-                GROUP BY o.id, o.user_id, o.customer_name, o.ticket_no, o.order_type, 
-                         o.status, o.delivery_address, o.delivery_distance, o.customer_phone, 
-                         o.created_at, o.eta_time, o.branch_id
-                ORDER BY
-                    CASE
-                        WHEN o.status = 'waiting' THEN 1
-                        WHEN o.status = 'ready' THEN 2
-                        WHEN o.status = 'served' THEN 3
-                        WHEN o.status = 'cancelled' THEN 4
-                        WHEN o.status = 'on_way' THEN 5
-                        WHEN o.status = 'delivered' THEN 6
-                        ELSE 7
-                    END,
-                    o.created_at DESC
-            """)
-            
-            orders_raw = cur.fetchall()
-            
-            # Ma'lumotlarni dict formatiga o'tkazish
-            orders = []
-            if orders_raw:
-                columns = [description[0] for description in cur.description]
-                for row in orders_raw:
-                    order_dict = dict(zip(columns, row))
+        # Staff ID ni olish
+        staff_id = session.get("staff_id")
+        
+        # Buyurtmalarni olish - soddalashtirilgan usul
+        orders_raw = execute_query("""
+            SELECT o.id, o.user_id, o.customer_name, o.ticket_no, o.order_type, 
+                   o.status, o.delivery_address, o.delivery_distance, o.customer_phone, 
+                   o.created_at, o.eta_time, o.branch_id,
+                   GROUP_CONCAT(mi.name || ' x' || od.quantity, ', ') as order_items
+            FROM orders o
+            LEFT JOIN order_details od ON o.id = od.order_id
+            LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
+            GROUP BY o.id
+            ORDER BY
+                CASE
+                    WHEN o.status = 'waiting' THEN 1
+                    WHEN o.status = 'ready' THEN 2
+                    WHEN o.status = 'served' THEN 3
+                    WHEN o.status = 'cancelled' THEN 4
+                    WHEN o.status = 'on_way' THEN 5
+                    WHEN o.status = 'delivered' THEN 6
+                    ELSE 7
+                END,
+                o.created_at DESC
+        """, fetch_all=True)
+        
+        # Ma'lumotlarni dict formatiga o'tkazish
+        orders = []
+        if orders_raw:
+            for row in orders_raw:
+                try:
+                    order_dict = dict(row) if hasattr(row, 'keys') else {}
                     orders.append(order_dict)
+                except Exception as row_error:
+                    app_logger.warning(f"Order row processing error: {str(row_error)}")
+                    continue
 
         # Staff statistikasini olish
-        staff_id = session.get("staff_id")
         staff_stats = execute_query("SELECT orders_handled, total_hours FROM staff WHERE id = ?", (staff_id,), fetch_one=True)
 
         if staff_stats:
-            session['staff_orders_handled'] = staff_stats.get('orders_handled', 0) or 0
-            session['staff_hours'] = round(float(str(staff_stats.get('total_hours', 0) or 0)), 1)
+            try:
+                session['staff_orders_handled'] = int(staff_stats.get('orders_handled', 0) or 0)
+                session['staff_hours'] = round(float(str(staff_stats.get('total_hours', 0) or 0)), 1)
+            except (ValueError, TypeError):
+                session['staff_orders_handled'] = 0
+                session['staff_hours'] = 0.0
         else:
             session['staff_orders_handled'] = 0
-            session['staff_hours'] = 0
+            session['staff_hours'] = 0.0
 
         app_logger.info(f"Staff dashboard loaded for staff_id: {staff_id}, found {len(orders)} orders")
+        
+        # Template ni render qilish
         return render_template("staff_dashboard.html", orders=orders)
 
     except Exception as e:
         app_logger.error(f"Staff dashboard error: {str(e)}")
-        flash("Dashboard yuklashda xatolik yuz berdi.", "error")
-        try:
-            return render_template("staff_dashboard.html", orders=[])
-        except Exception as template_error:
-            app_logger.error(f"Staff dashboard template error: {str(template_error)}")
-            return """
-            <!DOCTYPE html>
-            <html><head><title>Staff Dashboard - Error</title></head>
-            <body>
-                <h1>Xodim Dashboard - Xatolik</h1>
-                <p>Dashboard yuklashda xatolik yuz berdi.</p>
-                <a href="/staff-secure-login-j7h3n">Login sahifasiga qaytish</a>
-            </body></html>
-            """, 500
+        # Emergency fallback HTML
+        return f"""
+        <!DOCTYPE html>
+        <html lang="uz">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Xodim Dashboard - Xatolik</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        </head>
+        <body>
+            <div class="container mt-4">
+                <div class="alert alert-danger">
+                    <h4>Xodim Dashboard - Xatolik</h4>
+                    <p>Dashboard yuklashda xatolik yuz berdi: {str(e)}</p>
+                    <a href="{url_for('staff_login')}" class="btn btn-primary">Login sahifasiga qaytish</a>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Muammolarni hal qilish</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>Serverni qayta ishga tushiring</li>
+                            <li>Database connection ni tekshiring</li>
+                            <li>Loglarni ko'rib chiqing</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </body>
+        </html>
+        """, 500
 
 @app.route("/staff/order/<int:order_id>/ready", methods=["POST"])
 @app.route("/admin/order/<int:order_id>/ready", methods=["POST"])

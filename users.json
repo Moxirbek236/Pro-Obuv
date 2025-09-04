@@ -872,5 +872,26 @@
         "jami": 50000.0
       }
     ]
+  },
+  {
+    "ism": "Moxirbek Solijonov",
+    "buyurtma_raqami": 68,
+    "buyurtma_vaqti": "2025-09-04 22:41:28",
+    "buyurtma_mahsulotlari": [
+      {
+        "nomi": "Coca Cola",
+        "miqdori": 4,
+        "asl_narxi": 10000.0,
+        "skidka_foizi": 100.0,
+        "jami": 0.0
+      },
+      {
+        "nomi": "Lagmon",
+        "miqdori": 1,
+        "asl_narxi": 22000.0,
+        "skidka_foizi": 15.0,
+        "jami": 18700.0
+      }
+    ]
   }
 ]
