@@ -3566,24 +3566,25 @@ def courier_dashboard():
             # Session ga statistikani saqlash - xavfsiz usul
             if courier_stats:
                 try:
-                    # Deliveries statistikasi - safe conversion
-                    deliveries = courier_stats.get('deliveries_completed', 0)
-                    if deliveries is None:
-                        deliveries = 0
-                    session['courier_deliveries'] = max(0, int(deliveries))
-                    
-                    # Hours statistikasi - safe conversion
-                    hours = courier_stats.get('total_hours', 0.0)
-                    if hours is None or hours == 0:
-                        session['courier_hours'] = 0.0
+                    # Safe handling of courier_stats - check if it's a dict or tuple
+                    if hasattr(courier_stats, 'get'):
+                        # It's a dict-like object
+                        deliveries = courier_stats.get('deliveries_completed', 0)
+                        hours = courier_stats.get('total_hours', 0.0)
+                    elif isinstance(courier_stats, (list, tuple)) and len(courier_stats) >= 2:
+                        # It's a tuple or list
+                        deliveries = courier_stats[0] if courier_stats[0] is not None else 0
+                        hours = courier_stats[1] if courier_stats[1] is not None else 0.0
                     else:
-                        try:
-                            hours_float = float(hours)
-                            session['courier_hours'] = max(0.0, round(hours_float, 1))
-                        except (ValueError, TypeError):
-                            session['courier_hours'] = 0.0
+                        # Fallback
+                        deliveries = 0
+                        hours = 0.0
+                    
+                    # Safe conversion
+                    session['courier_deliveries'] = max(0, int(deliveries) if deliveries is not None else 0)
+                    session['courier_hours'] = max(0.0, round(float(hours) if hours is not None else 0.0, 1))
                         
-                except (TypeError, ValueError, AttributeError) as conversion_error:
+                except (TypeError, ValueError, AttributeError, IndexError) as conversion_error:
                     app_logger.warning(f"Kuryer statistikasini conversion xatoligi: {str(conversion_error)}")
                     session['courier_deliveries'] = 0
                     session['courier_hours'] = 0.0
@@ -3596,8 +3597,14 @@ def courier_dashboard():
             active_orders = 0
             if active_orders_result:
                 try:
-                    active_orders = max(0, int(active_orders_result[0]) if active_orders_result[0] is not None else 0)
-                except (ValueError, TypeError):
+                    # Handle both dict and tuple formats
+                    if hasattr(active_orders_result, 'get'):
+                        active_orders = max(0, int(active_orders_result.get('COUNT(*)', 0) or 0))
+                    elif isinstance(active_orders_result, (list, tuple)) and len(active_orders_result) > 0:
+                        active_orders = max(0, int(active_orders_result[0]) if active_orders_result[0] is not None else 0)
+                    else:
+                        active_orders = 0
+                except (ValueError, TypeError, IndexError):
                     active_orders = 0
             session['courier_active_orders'] = active_orders
             
@@ -3612,11 +3619,28 @@ def courier_dashboard():
         
         # Template ni xavfsiz render qilish
         try:
-            return render_template("courier_dashboard.html", orders=delivery_orders or [])
+            # Ensure orders is always a list
+            safe_orders = delivery_orders if isinstance(delivery_orders, list) else []
+            return render_template("courier_dashboard.html", orders=safe_orders)
         except Exception as template_error:
             app_logger.error(f"Courier dashboard template render error: {str(template_error)}")
-            # Fallback template
-            return render_template("courier_dashboard.html", orders=[])
+            # Fallback template with empty orders
+            try:
+                return render_template("courier_dashboard.html", orders=[])
+            except Exception as fallback_error:
+                app_logger.error(f"Courier dashboard fallback template error: {str(fallback_error)}")
+                # Emergency HTML fallback
+                return f"""
+                <!DOCTYPE html>
+                <html>
+                <head><title>Kuryer Dashboard</title></head>
+                <body>
+                    <h1>Kuryer Dashboard</h1>
+                    <p>Template yuklashda xatolik: {str(template_error)}</p>
+                    <a href="{url_for('courier_login')}">Login sahifasiga qaytish</a>
+                </body>
+                </html>
+                """, 500
 
     except Exception as e:
         app_logger.error(f"Courier dashboard error: {str(e)}")
