@@ -386,11 +386,52 @@ function findNearestBranchAndRoute(userCoords) {
                 updateDeliveryInfo(data);
             });
         } else {
-            alert('Yaqin atrofda faol filial topilmadi: ' + data.message);
+            // Filial topilmagan holatda foydalanuvchiga xabar berish
+            document.getElementById('delivery-info').style.display = 'none';
+            
+            // Xato xabarini ko'rsatish
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'alert alert-warning';
+            errorDiv.innerHTML = `
+                <h5>⚠️ Filial topilmadi</h5>
+                <p>${data.message || 'Yaqin atrofda faol filial topilmadi'}</p>
+                <p>Iltimos, boshqa manzilni tanlang yoki telefon orqali bog\'laning: <strong>+998 71 123-45-67</strong></p>
+            `;
+            
+            // Xato xabarini delivery info joyiga qo'yish
+            const deliveryInfoContainer = document.getElementById('delivery-info').parentNode;
+            deliveryInfoContainer.insertBefore(errorDiv, document.getElementById('delivery-info'));
+            
+            // 10 soniyadan keyin xabarni olib tashlash
+            setTimeout(() => {
+                if (errorDiv.parentNode) {
+                    errorDiv.parentNode.removeChild(errorDiv);
+                }
+            }, 10000);
         }
     })
     .catch(error => {
         console.error('Filial topishda xatolik:', error);
+        
+        // Tarmoq xatoligi uchun xabar
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'alert alert-danger';
+        errorDiv.innerHTML = `
+            <h5>❌ Tarmoq xatoligi</h5>
+            <p>Filial ma'lumotlarini yuklashda xatolik yuz berdi.</p>
+            <p>Iltimos, internetingizni tekshiring va qaytadan urinib ko'ring.</p>
+        `;
+        
+        const deliveryInfoContainer = document.getElementById('delivery-info').parentNode;
+        deliveryInfoContainer.insertBefore(errorDiv, document.getElementById('delivery-info'));
+        
+        setTimeout(() => {
+            if (errorDiv.parentNode) {
+                errorDiv.parentNode.removeChild(errorDiv);
+            }
+        }, 8000);
+    });
+}l topishda xatolik:', error);
         alert('Filial topishda xatolik yuz berdi');
     });
 }

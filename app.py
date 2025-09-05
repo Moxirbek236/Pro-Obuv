@@ -1774,6 +1774,7 @@ def find_nearest_branch(user_latitude, user_longitude):
     conn.close()
 
     if not branches_raw:
+        app_logger.warning("Hech qanday faol filial topilmadi")
         return None
 
     nearest_branch = None
@@ -1790,6 +1791,7 @@ def find_nearest_branch(user_latitude, user_longitude):
             delivery_radius = float(branch.get('delivery_radius', 15.0)) if branch.get('delivery_radius') is not None else 15.0
 
             if not branch_lat or not branch_lng:
+                app_logger.warning(f"Filial {branch.get('id', 'N/A')} uchun koordinatalar mavjud emas")
                 continue # Skip if coordinates are missing or invalid
 
             # Haversine formula bilan masofa hisoblash
@@ -1803,6 +1805,9 @@ def find_nearest_branch(user_latitude, user_longitude):
             c = 2 * math.asin(math.sqrt(a))
             distance = 6371 * c  # Yer radiusi 6371 km
 
+            app_logger.info(f"Filial {branch.get('name', 'N/A')} masofa: {distance:.2f} km, radius: {delivery_radius} km")
+
+            # Eng yaqin filialni topish (radius ichida)
             if distance < min_distance and distance <= delivery_radius:
                 min_distance = distance
                 nearest_branch = {
@@ -1812,6 +1817,11 @@ def find_nearest_branch(user_latitude, user_longitude):
         except (ValueError, TypeError, KeyError, IndexError) as e:
             app_logger.warning(f"Filial ma'lumotlarini qayta ishlashda xatolik (ID: {branch_row.get('id', 'N/A')}): {str(e)}")
             continue # Skip this branch if error occurs
+
+    if nearest_branch:
+        app_logger.info(f"Eng yaqin filial topildi: {nearest_branch['branch']['name']} - {nearest_branch['distance']} km")
+    else:
+        app_logger.warning(f"Foydalanuvchi joylashuvi ({user_latitude}, {user_longitude}) uchun yetkazish radiusida filial topilmadi")
 
     return nearest_branch
 
@@ -3985,6 +3995,52 @@ def api_set_font_size():
             "success": False,
             "message": "Shrift o'lchamini o'zgartirishda xatolik"
         }), 500
+
+@app.route("/api/find-nearest-branch", methods=["POST"])
+def api_find_nearest_branch():
+    "Eng yaqin filialni topish API"
+    try:
+        data = request.get_json()
+        user_latitude = float(data.get('latitude', 41.2995))
+        user_longitude = float(data.get('longitude', 69.2401))
+        
+        # Eng yaqin filialni topish
+        nearest_branch_data = find_nearest_branch(user_latitude, user_longitude)
+        
+        if nearest_branch_data:
+            branch = nearest_branch_data['branch']
+            distance = nearest_branch_data['distance']
+            
+            # Yetkazib berish narxi va vaqtini hisoblash
+            delivery_cost, delivery_time = calculate_delivery_cost_and_time(distance)
+            
+            return jsonify({
+                "success": True,
+                "branch": {
+                    "id": branch['id'],
+                    "name": branch['name'],
+                    "address": branch['address'],
+                    "latitude": branch['latitude'],
+                    "longitude": branch['longitude'],
+                    "phone": branch.get('phone', ''),
+                    "working_hours": branch.get('working_hours', '09:00-22:00')
+                },
+                "distance": distance,
+                "delivery_cost": delivery_cost,
+                "delivery_time": delivery_time
+            })
+        else:
+            return jsonify({
+                "success": False,
+                "message": "Yaqin atrofda faol filial topilmadi. Iltimos, boshqa manzilni sinab ko'ring."
+            })
+            
+    except Exception as e:
+        app_logger.error(f"Find nearest branch API error: {str(e)}")
+        return jsonify({
+            "success": False,
+            "message": "Filial topishda xatolik yuz berdi"
+        })
 
 @app.route("/api/health")
 def api_health():
