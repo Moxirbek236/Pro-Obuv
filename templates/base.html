@@ -173,14 +173,40 @@
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('staff_dashboard') }}">🏠 Dashboard</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('staff_menu') }}">📋 Menyu boshqaruvi</a>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            📋 Buyurtmalar
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{{ url_for('staff_dashboard') }}">📊 Barcha buyurtmalar</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('admin_monitor') }}">📺 TV Monitor</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#" onclick="location.reload()">🔄 Yangilash</a></li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            📋 Menyu
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{{ url_for('staff_menu') }}">📝 Menyu boshqaruvi</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('menu') }}">👀 Menyu ko'rish</a></li>
+          </ul>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('staff_employees') }}">👥 Xodimlar ro'yxati</a>
+          <a class="nav-link" href="{{ url_for('staff_employees') }}">👥 Xodimlar</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            📊 Hisobotlar
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{{ url_for('staff_dashboard') }}">📈 Bugungi statistika</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('contact') }}">📞 Mijozlar savollari</a></li>
+          </ul>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('admin_monitor') }}">📺 Monitor</a>
+          <a class="nav-link" href="{{ url_for('index') }}">🌐 Sayt</a>
         </li>
       </ul>
 
@@ -219,14 +245,55 @@
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('courier_dashboard') }}">🏠 Dashboard</a>
         </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            🚚 Yetkazib berish
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{{ url_for('courier_dashboard') }}">📦 Tayyor buyurtmalar</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('courier_dashboard') }}">🎯 Mening buyurtmalarim</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#" onclick="location.reload()">🔄 Yangilash</a></li>
+          </ul>
+        </li>
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('menu') }}">📋 Menyu ko'rish</a>
+          <a class="nav-link" href="{{ url_for('menu') }}">📋 Menyu</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            📍 Xarita
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="https://yandex.uz/maps/" target="_blank">🗺️ Yandex Xarita</a></li>
+            <li><a class="dropdown-item" href="https://maps.google.com/" target="_blank">🌍 Google Maps</a></li>
+            <li><a class="dropdown-item" href="https://2gis.uz/" target="_blank">🏢 2GIS</a></li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            📊 Statistika
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{{ url_for('courier_dashboard') }}">📈 Mening statistikam</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('courier_dashboard') }}">💰 Daromad</a></li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('contact') }}">📞 Yordam</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('index') }}">🌐 Sayt</a>
         </li>
       </ul>
 
       <ul class="navbar-nav">
         <li class="nav-item">
-          <span class="navbar-text text-white me-3">🚚 {{ session.get('courier_name', 'Kuryer') }}</span>
+          <span class="navbar-text text-white me-3">
+            🚚 {{ session.get('courier_name', 'Kuryer') }}
+            {% if session.get('courier_active_orders', 0) > 0 %}
+              <span class="badge bg-warning text-dark ms-1">{{ session.get('courier_active_orders', 0) }}</span>
+            {% endif %}
+          </span>
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
