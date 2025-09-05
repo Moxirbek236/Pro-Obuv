@@ -780,8 +780,8 @@ def get_db():
     "Legacy support uchun - timeout fix bilan"
     try:
         conn = sqlite3.connect(
-            DB_PATH,
-            check_same_thread=False,
+            DB_PATH, 
+            check_same_thread=False, 
             timeout=60.0  # 60 soniya timeout
         )
         conn.row_factory = sqlite3.Row
@@ -985,7 +985,7 @@ def init_db():
             created_at TEXT NOT NULL,
             eta_time TEXT NOT NULL,
             FOREIGN KEY (user_id) REFERENCES users (id),
-            FOREIGNKEY (courier_id) REFERENCES couriers (id)
+            FOREIGN KEY (courier_id) REFERENCES couriers (id)
         );
     """)
 
@@ -2280,67 +2280,12 @@ def staff_redirect():
     else:
         return redirect(url_for("staff_login"))
 
-@app.route("/staff/login", methods=["GET", "POST"])
-@app.route("/staff-secure-login-j8n4q", methods=["GET", "POST"])
-def staff_login():
-    "Xodim login sahifasi"
-    if request.method == "POST":
-        staff_id_str = request.form.get("staff_id", "").strip()
-        password = request.form.get("password", "")
+@app.route("/staff/login")
+def staff_login_redirect():
+    "Staff login redirect"
+    return redirect(url_for("staff_login"))
 
-        if not staff_id_str or not password:
-            flash("ID va parolni kiriting.", "error")
-            return redirect(url_for("staff_login"))
-
-        try:
-            staff_id = int(staff_id_str)
-        except ValueError:
-            flash("ID raqam bo'lishi kerak.", "error")
-            return redirect(url_for("staff_login"))
-
-        row = execute_query("SELECT * FROM staff WHERE id = ?", (staff_id,), fetch_one=True)
-
-        if row:
-            try:
-                # Row obyektini xavfsiz dict ga aylantirish
-                row_dict = dict(row)
-                password_hash = row_dict.get("password_hash", "")
-
-                if password_hash and check_password_hash(password_hash, password):
-                    session["staff_id"] = row_dict["id"]
-                    session["staff_name"] = f"{row_dict['first_name']} {row_dict['last_name']}".strip()
-                    session["staff_role"] = "staff" # Role ni belgilash
-
-                    # Faoliyat vaqtini yangilash
-                    now = get_current_time().isoformat()
-                    try:
-                        execute_query("UPDATE staff SET last_activity = ? WHERE id = ?", (now, staff_id))
-                    except Exception as update_error:
-                        app_logger.warning(f"Staff last_activity update error: {str(update_error)}")
-
-                    flash(f"Xush kelibsiz, {row_dict['first_name']}!", "success")
-                    return redirect(url_for("staff_dashboard"))
-                else:
-                    flash("Noto'g'ri ID yoki parol.", "error")
-                    app_logger.warning(f"Failed staff login for ID: {staff_id}")
-            except Exception as login_error:
-                app_logger.error(f"Staff login processing error: {str(login_error)}")
-                flash("Login jarayonida xatolik yuz berdi.", "error")
-        else:
-            flash("Xodim topilmadi.", "error")
-
-    return render_template("staff_login.html")
-
-@app.route("/staff/logout")
-def staff_logout():
-    "Xodim tizimidan chiqish"
-    session.pop("staff_id", None)
-    session.pop("staff_name", None)
-    session.pop("staff_role", None)
-    flash("Xodim tizimidan chiqdingiz.", "info")
-    return redirect(url_for("index"))
-
-# Courier routes
+# Courier routes  
 @app.route("/courier")
 def courier_redirect():
     "Courier redirect"
@@ -3307,7 +3252,7 @@ def place_order():
         flash("Buyurtma berishda xatolik yuz berdi. Qaytadan urinib ko'ring.", "error")
         return redirect(url_for("cart"))
 
-@app.route("/user", methods=["GET", ""POST"])
+@app.route("/user", methods=["GET", "POST"])
 def user_page():
     "User page - buyurtma berish"
     if request.method == "POST":
@@ -3519,6 +3464,10 @@ def courier_login():
         row = execute_query("SELECT * FROM couriers WHERE id=?", (courier_id,), fetch_one=True)
 
         if row:
+            # Faollik vaqtini yangilash va ishchi soatlarini hisoblash
+            now = get_current_time()
+            now_iso = now.isoformat()
+
             try:
                 # Row obyektini dict ga aylantirish
                 if hasattr(row, 'keys'):
@@ -3528,7 +3477,7 @@ def courier_login():
                     columns = ['id', 'first_name', 'last_name', 'birth_date', 'phone', 'passport_series', 'passport_number', 'password_hash', 'total_hours', 'deliveries_completed', 'last_activity', 'created_at']
                     row_dict = {columns[i]: row[i] if i < len(row) else None for i in range(len(columns))}
 
-                # Agar avvalgi faollik vaqti mavjud bo'lsa, ishchi soatlarini hisoblash
+                # Agar avvalgi faollik vaqti mavjud bo'lsa, ishchi soatlarni yangilash
                 if row_dict.get("last_activity"):
                     try:
                         last_activity = datetime.datetime.fromisoformat(row_dict["last_activity"])
@@ -3539,14 +3488,14 @@ def courier_login():
                         if time_diff.total_seconds() < 28800:  # 8 soat
                             additional_hours = time_diff.total_seconds() / 3600
                             execute_query("UPDATE couriers SET total_hours = COALESCE(total_hours, 0) + ?, last_activity = ? WHERE id = ?",
-                                       (additional_hours, current_time.isoformat(), courier_id))
+                                       (additional_hours, now_iso, courier_id))
                         else:
-                            execute_query("UPDATE couriers SET last_activity = ? WHERE id = ?", (current_time.isoformat(), courier_id))
+                            execute_query("UPDATE couriers SET last_activity = ? WHERE id = ?", (now_iso, courier_id))
                     except Exception as update_error:
                         app_logger.warning(f"Courier faollik yangilashda xatolik: {str(update_error)}")
-                        execute_query("UPDATE couriers SET last_activity = ? WHERE id = ?", (current_time.isoformat(), courier_id)) # Update last_activity even if calculation fails
+                        execute_query("UPDATE couriers SET last_activity = ? WHERE id = ?", (now_iso, courier_id)) # Update last_activity even if calculation fails
                 else:
-                    execute_query("UPDATE couriers SET last_activity = ? WHERE id = ?", (current_time.isoformat(), courier_id))
+                    execute_query("UPDATE couriers SET last_activity = ? WHERE id = ?", (now_iso, courier_id))
 
             except Exception as dict_error:
                 app_logger.error(f"Courier row dict conversion error: {str(dict_error)}")
@@ -3558,7 +3507,7 @@ def courier_login():
             if password_hash and check_password_hash(password_hash, password):
                 # Login muvaffaqiyatli
                 session["courier_id"] = row_dict["id"]
-                session["courier_name"] = f"{row_dict['first_name']} {row_dict['last_name']}".strip()
+                session["courier_name"] = f"{row_dict['first_name']} {row_dict['last_name']}"
 
                 flash(f"Xush kelibsiz, {row_dict['first_name']}!", "success")
                 return redirect(url_for("courier_dashboard"))
@@ -4454,7 +4403,7 @@ def login_page():
 
     return render_template("login.html")
 
-# ---- SUPER ADMINROUTES ----
+# ---- SUPER ADMIN ROUTES ----
 # Super admin kredentsiallari - universal konfiguratsiyadan
 SUPER_ADMIN_USERNAME = Config.SUPER_ADMIN_USERNAME
 SUPER_ADMIN_PASSWORD = Config.SUPER_ADMIN_PASSWORD
@@ -4509,7 +4458,7 @@ def super_admin_get_orders():
         return jsonify(orders)
     except Exception as e:
         app_logger.error(f"Super admin get orders error: {str(e)}")
-        return jsonify({"success": False, "error": str(e)}), 500
+        return jsonify([])
 
 @app.route("/super-admin/get-menu")
 def super_admin_get_menu():
@@ -4844,7 +4793,7 @@ def super_admin_get_performance_stats():
         active_sessions = 0
         try:
             # Session'lar sonini taxminiy hisoblash
-            result = execute_query("SELECT COUNT(*) FROM orders WHERE created_at > datetime('now', '-1 hour')", fetch_one=True)
+            result = execute_query("SELECT COUNT(DISTINCT user_id) FROM orders WHERE created_at > datetime('now', '-1 hour')", fetch_one=True)
             active_sessions = result[0] if result else 0
         except:
             active_sessions = 5  # Fallback
@@ -5029,7 +4978,7 @@ def super_admin_get_system_stats():
         return jsonify({"success": True, "stats": stats})
 
     except ImportError:
-        # psutil mavjud bo'lmasa, fallback
+        # psutil mavjud bo'lmasa fallback
         stats = {
             'uptime': '2 kun 14 soat',
             'memory': '45%',
@@ -5393,7 +5342,7 @@ def super_admin_delete_staff(staff_id):
 
     except Exception as e:
         app_logger.error(f"Delete staff error: {str(e)}")
-        flash("Xodimni o'chirishda xatolik.", "error")
+        flash("Xodimni o'chirishda xatolik yuz berdi.", "error")
 
     return redirect(url_for("super_admin_dashboard"))
 
