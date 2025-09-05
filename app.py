@@ -2544,10 +2544,10 @@ def add_to_cart():
         if request.is_json:
             data = request.get_json()
             menu_item_id = data.get("menu_item_id") or data.get("item_id")
-            quantity = int(data.get("quantity", 1))
+            quantity = int(data.get("quantity", 1)) if data.get("quantity") else 1
         else:
             menu_item_id = request.form.get("menu_item_id")
-            quantity = int(request.form.get("quantity", 1))
+            quantity = int(request.form.get("quantity", 1)) if request.form.get("quantity") else 1
 
         if not menu_item_id:
             if request.is_json:
@@ -2555,8 +2555,16 @@ def add_to_cart():
             flash("Mahsulot tanlanmadi.", "error")
             return redirect(url_for("menu"))
 
+        # Convert menu_item_id to int safely
+        try:
+            menu_item_id = int(menu_item_id)
+        except (ValueError, TypeError):
+            if request.is_json:
+                return jsonify({"success": False, "message": "Noto'g'ri mahsulot ID"})
+            flash("Noto'g'ri mahsulot ID.", "error")
+            return redirect(url_for("menu"))
+
         # Validate menu item exists
-        # Using execute_query for consistency and safety
         menu_item_data = execute_query(
             "SELECT id FROM menu_items WHERE id = ? AND available = 1",
             (menu_item_id,),
@@ -2582,7 +2590,7 @@ def add_to_cart():
 
         if existing_item:
             # Update existing item
-            existing_id = existing_item.get('id')
+            existing_id = existing_item.get('id') if isinstance(existing_item, dict) else existing_item[0]
             if existing_id:
                 execute_query("UPDATE cart_items SET quantity = quantity + ? WHERE id = ?", (quantity, existing_id))
         else:
@@ -2594,20 +2602,23 @@ def add_to_cart():
                 execute_query("INSERT INTO cart_items (session_id, menu_item_id, quantity, created_at) VALUES (?, ?, ?, ?)",
                            (session_id, menu_item_id, quantity, now))
 
-        # Get updated cart count
-        if user_id:
-            cart_count_result = execute_query("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE user_id = ?", (user_id,), fetch_one=True)
-        else:
-            cart_count_result = execute_query("SELECT COALESCE(SUM(quantity), 0) as total_count FROM cart_items WHERE session_id = ?", (session_id,), fetch_one=True)
+        # Get updated cart count - safe handling
+        try:
+            if user_id:
+                cart_count_result = execute_query("SELECT COALESCE(SUM(quantity), 0) FROM cart_items WHERE user_id = ?", (user_id,), fetch_one=True)
+            else:
+                cart_count_result = execute_query("SELECT COALESCE(SUM(quantity), 0) FROM cart_items WHERE session_id = ?", (session_id,), fetch_one=True)
 
-        cart_count = cart_count_result[0] if cart_count_result else 0
+            cart_count = int(cart_count_result[0]) if cart_count_result and cart_count_result[0] is not None else 0
+        except Exception as count_error:
+            app_logger.warning(f"Cart count error: {str(count_error)}")
+            cart_count = 0
 
-        # Clear cache for cart count if it exists
+        # Clear cache for cart count
         if user_id:
             cache_manager.delete(f"cart_count_{user_id}")
         else:
             cache_manager.delete(f"cart_count_{session_id}")
-
 
         if request.is_json:
             return jsonify({
@@ -3995,6 +4006,91 @@ def api_set_font_size():
             "success": False,
             "message": "Shrift o'lchamini o'zgartirishda xatolik"
         }), 500
+
+@app.route("/api/search-nearby-places", methods=["POST"])
+def api_search_nearby_places():
+    "Yaqin joylarni qidirish API"
+    try:
+        data = request.get_json()
+        query = data.get('query', 'restoran')
+        user_latitude = float(data.get('latitude', 41.2995))
+        user_longitude = float(data.get('longitude', 69.2401))
+        radius = int(data.get('radius', 2000))  # metrda
+        
+        # Location service orqali qidirish
+        if location_service:
+            search_result = location_service.search_places(f"{query} Toshkent")
+            
+            if search_result.get('places'):
+                # Faqat radius ichidagi joylarni qaytarish
+                nearby_places = []
+                for place in search_result['places'][:10]:  # maksimal 10 ta
+                    if place.get('gps_coordinates'):
+                        place_lat = place['gps_coordinates'].get('latitude', 0)
+                        place_lng = place['gps_coordinates'].get('longitude', 0)
+                        
+                        if place_lat and place_lng:
+                            # Masofani hisoblash
+                            import math
+                            lat1, lng1 = math.radians(user_latitude), math.radians(user_longitude)
+                            lat2, lng2 = math.radians(place_lat), math.radians(place_lng)
+                            
+                            dlat = lat2 - lat1
+                            dlng = lng2 - lng1
+                            
+                            a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlng/2)**2
+                            c = 2 * math.asin(math.sqrt(a))
+                            distance_m = 6371000 * c  # metrda
+                            
+                            if distance_m <= radius:
+                                nearby_places.append({
+                                    'name': place.get('title', query),
+                                    'address': place.get('address', ''),
+                                    'latitude': place_lat,
+                                    'longitude': place_lng,
+                                    'distance': round(distance_m),
+                                    'rating': place.get('rating', 0)
+                                })
+                
+                return jsonify({
+                    "success": True,
+                    "places": nearby_places,
+                    "total": len(nearby_places)
+                })
+        
+        # Fallback - demo data
+        demo_places = [
+            {
+                'name': f'Demo {query.title()} 1',
+                'address': 'Toshkent shahri',
+                'latitude': user_latitude + 0.001,
+                'longitude': user_longitude + 0.001,
+                'distance': 150,
+                'rating': 4.2
+            },
+            {
+                'name': f'Demo {query.title()} 2', 
+                'address': 'Toshkent shahri',
+                'latitude': user_latitude - 0.002,
+                'longitude': user_longitude + 0.002,
+                'distance': 300,
+                'rating': 4.5
+            }
+        ]
+        
+        return jsonify({
+            "success": True,
+            "places": demo_places,
+            "total": len(demo_places)
+        })
+        
+    except Exception as e:
+        app_logger.error(f"Search nearby places API error: {str(e)}")
+        return jsonify({
+            "success": False,
+            "message": "Qidirishda xatolik yuz berdi",
+            "places": []
+        })
 
 @app.route("/api/find-nearest-branch", methods=["POST"])
 def api_find_nearest_branch():

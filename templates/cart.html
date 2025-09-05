@@ -88,8 +88,21 @@
                 <!-- Xarita -->
                 <div class="map-container">
                     <h5>🗺️ Joylashuvingizni xaritadan tanlang:</h5>
-                    <div id="map" style="height: 350px; border-radius: 12px; border: 2px solid #e2e8f0; margin-top: 10px;"></div>
-                    <p class="map-hint">💡 <em>Xaritaga bosib o'zingizning aniq joylashuvingizni belgilang</em></p>
+                    <div id="map" style="height: 400px; border-radius: 12px; border: 2px solid #e2e8f0; margin-top: 10px;"></div>
+                    <p class="map-hint">💡 <em>Xaritaga bosib o'zingizning aniq joylashuvingizni belgilang yoki GPS orqali avtomatik aniqlang</em></p>
+                    
+                    <!-- GPS va qidiruv tugmalari -->
+                    <div class="map-controls" style="margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button type="button" onclick="getCurrentLocation()" class="btn btn-info">
+                            📍 Joriy joylashuvni aniqlash
+                        </button>
+                        <button type="button" onclick="searchNearbyPlaces('restoran')" class="btn btn-secondary">
+                            🏪 Yaqin restoranlar
+                        </button>
+                        <button type="button" onclick="searchNearbyPlaces('do\'kon')" class="btn btn-secondary">
+                            🛒 Yaqin do'konlar
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Yetkazib berish ma'lumotlari -->
@@ -375,6 +388,180 @@ function setUserLocation(coords) {
     findNearestBranchAndRoute(coords);
 }
 
+// GPS joylashuvni olish funksiyasi
+function getCurrentLocation() {
+    if (navigator.geolocation) {
+        // Loading ko'rsatish
+        showLocationLoading(true);
+        
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                const userLocation = [position.coords.latitude, position.coords.longitude];
+                console.log('GPS joylashuv olindi:', userLocation);
+                
+                // Xaritani GPS joylashuvga o'tkazish
+                if (map) {
+                    map.setCenter(userLocation, 15);
+                    setUserLocation(userLocation);
+                }
+                
+                showLocationLoading(false);
+                showNotification('🎯 Joylashuvingiz muvaffaqiyatli aniqlandi!', 'success');
+            },
+            function(error) {
+                showLocationLoading(false);
+                console.error('GPS xatoligi:', error);
+                
+                let errorMessage = 'GPS orqali joylashuv aniqlanmadi.';
+                switch(error.code) {
+                    case error.PERMISSION_DENIED:
+                        errorMessage = 'GPS ruxsati berilmadi. Brauzer sozlamalaridan ruxsat bering.';
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        errorMessage = 'GPS ma\'lumotlari mavjud emas.';
+                        break;
+                    case error.TIMEOUT:
+                        errorMessage = 'GPS timeout xatoligi.';
+                        break;
+                }
+                
+                showNotification('❌ ' + errorMessage, 'error');
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 60000
+            }
+        );
+    } else {
+        showNotification('❌ GPS bu brauzerda qo\'llab-quvvatlanmaydi', 'error');
+    }
+}
+
+// Yaqin joylarni qidirish
+function searchNearbyPlaces(query) {
+    if (!map) {
+        showNotification('❌ Xarita yuklanmadi', 'error');
+        return;
+    }
+    
+    const currentCenter = map.getCenter();
+    console.log('Yaqin joylarni qidirish:', query, currentCenter);
+    
+    // Loading ko'rsatish
+    showLocationLoading(true);
+    
+    // API orqali qidirish (agar mavjud bo'lsa)
+    fetch('/api/search-nearby-places', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            query: query,
+            latitude: currentCenter[0],
+            longitude: currentCenter[1],
+            radius: 2000 // 2km radius
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        showLocationLoading(false);
+        if (data.success && data.places && data.places.length > 0) {
+            // Topilgan joylarni xaritaga qo'shish
+            data.places.forEach((place, index) => {
+                if (place.latitude && place.longitude) {
+                    const placeMarker = new ymaps.Placemark([place.latitude, place.longitude], {
+                        hintContent: place.name || `${query} ${index + 1}`,
+                        balloonContent: `<strong>${place.name || query}</strong><br>${place.address || 'Manzil noma\'lum'}`
+                    }, {
+                        iconColor: '#FF6B6B',
+                        preset: 'islands#redCircleIcon'
+                    });
+                    
+                    map.geoObjects.add(placeMarker);
+                    
+                    // Marker bosilganda joylashuvni tanlash
+                    placeMarker.events.add('click', function() {
+                        setUserLocation([place.latitude, place.longitude]);
+                        showNotification(`📍 ${place.name || query} tanlandi`, 'success');
+                    });
+                }
+            });
+            
+            showNotification(`🎯 ${data.places.length} ta ${query} topildi`, 'success');
+        } else {
+            showNotification(`❌ Yaqin atrofda ${query} topilmadi`, 'warning');
+        }
+    })
+    .catch(error => {
+        showLocationLoading(false);
+        console.error('Yaqin joylarni qidirishda xatolik:', error);
+        showNotification('❌ Qidirishda xatolik yuz berdi', 'error');
+    });
+}
+
+// Loading holatini ko'rsatish/yashirish
+function showLocationLoading(show) {
+    let loadingEl = document.getElementById('location-loading');
+    
+    if (show) {
+        if (!loadingEl) {
+            loadingEl = document.createElement('div');
+            loadingEl.id = 'location-loading';
+            loadingEl.className = 'alert alert-info';
+            loadingEl.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                    <span>Joylashuv aniqlanmoqda...</span>
+                </div>
+            `;
+            document.getElementById('map').parentNode.appendChild(loadingEl);
+        }
+        loadingEl.style.display = 'block';
+    } else {
+        if (loadingEl) {
+            loadingEl.style.display = 'none';
+        }
+    }
+}
+
+// Bildirishnoma ko'rsatish
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type} notification-toast`;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        max-width: 350px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        animation: slideInRight 0.3s ease;
+    `;
+    
+    notification.innerHTML = `
+        <div class="d-flex align-items-center">
+            <span style="margin-right: 8px;">${type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️'}</span>
+            <span>${message}</span>
+            <button type="button" class="btn-close ms-auto" onclick="this.parentElement.parentElement.remove()"></button>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Avtomatik olib tashlash
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.style.animation = 'slideOutRight 0.3s ease';
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        }
+    }, 5000);
+}
+
 function findNearestBranchAndRoute(userCoords) {
     fetch('/api/find-nearest-branch', {
         method: 'POST',
@@ -392,10 +579,23 @@ function findNearestBranchAndRoute(userCoords) {
             nearestBranch = data;
             const branchCoords = [data.branch.latitude, data.branch.longitude];
 
+            // Avvalgi filial markerini olib tashlash
+            if (branchMarker) {
+                map.geoObjects.remove(branchMarker);
+            }
+            
             // Filial markeri
             branchMarker = new ymaps.Placemark(branchCoords, {
                 hintContent: data.branch.name,
-                balloonContent: `${data.branch.name}<br>${data.branch.address}`
+                balloonContent: `
+                    <div style="max-width: 200px;">
+                        <strong>${data.branch.name}</strong><br>
+                        📍 ${data.branch.address}<br>
+                        📞 ${data.branch.phone || 'Telefon noma\'lum'}<br>
+                        ⭐ Reyting: ${data.branch.rating || 'N/A'}<br>
+                        🕒 ${data.branch.working_hours || '09:00-22:00'}
+                    </div>
+                `
             }, {
                 iconColor: '#4CAF50',
                 preset: 'islands#greenHomeIcon'
@@ -403,85 +603,126 @@ function findNearestBranchAndRoute(userCoords) {
 
             map.geoObjects.add(branchMarker);
 
-            // Yo'lni chizish
+            // Yo'lni chizish - yaxshilangan usul
             ymaps.route([branchCoords, userCoords], {
                 multiRoute: false,
-                routingMode: 'auto'
+                routingMode: 'auto',
+                avoidTrafficJams: true
             }).then(function(route) {
+                // Avvalgi yo'lni olib tashlash
+                if (routeLine) {
+                    map.geoObjects.remove(routeLine);
+                }
+                
                 routeLine = route;
                 map.geoObjects.add(route);
+
+                // Yo'l ma'lumotlarini olish
+                const routeLength = route.getLength(); // metrda
+                const routeTime = route.getTime(); // soniyada
+                
+                // Realtime ma'lumotlarni yangilash
+                const realDistance = routeLength / 1000; // km ga o'tkazish
+                const realTime = Math.ceil(routeTime / 60); // daqiqaga o'tkazish
+                
+                // Kuryer hisob-kitoblari
+                const courierSpeedKmPerMin = 1/10; // 10 daqiqada 1km
+                const courierTime = Math.ceil(realDistance / courierSpeedKmPerMin);
+                const courierCost = realDistance * 10000; // 1km = 10,000 so'm
+                
+                // Umumiy vaqt hisoblash
+                const prepTime = 15; // buyurtma tayyorlash vaqti (daqiqa)
+                const packTime = 5;  // qadoqlash vaqti (daqiqa)
+                const totalTime = prepTime + packTime + courierTime;
+                
+                // Ma'lumotlarni yangilash
+                const updatedData = {
+                    ...data,
+                    distance: realDistance.toFixed(1),
+                    delivery_cost: Math.round(courierCost),
+                    delivery_time: totalTime,
+                    courier_time: courierTime,
+                    prep_time: prepTime,
+                    pack_time: packTime
+                };
 
                 // Xaritani yo'lga moslash
                 map.setBounds(route.getBounds(), {
                     checkZoomRange: true,
-                    zoomMargin: 50
+                    zoomMargin: 30
                 });
 
                 // Ma'lumotlarni ko'rsatish
-                updateDeliveryInfo(data);
+                updateDeliveryInfo(updatedData);
+                
+                console.log('Yo\'l ma\'lumotlari:', {
+                    realDistance: realDistance.toFixed(1) + 'km',
+                    courierTime: courierTime + ' daqiqa',
+                    courierCost: courierCost.toLocaleString() + ' so\'m',
+                    totalTime: totalTime + ' daqiqa'
+                });
+                
             }).catch(function(error) {
                 console.error('Yo\'l chizishda xatolik:', error);
-                // Oddiy chiziq chizish
-                const simpleLine = new ymaps.Polyline([branchCoords, userCoords], {}, {
+                
+                // Fallback - oddiy chiziq va hisob-kitob
+                if (routeLine) {
+                    map.geoObjects.remove(routeLine);
+                }
+                
+                const simpleLine = new ymaps.Polyline([branchCoords, userCoords], {
+                    hintContent: 'Taxminiy yo\'l'
+                }, {
                     strokeColor: '#4CAF50',
-                    strokeWidth: 3,
-                    strokeOpacity: 0.8
+                    strokeWidth: 4,
+                    strokeOpacity: 0.8,
+                    strokeStyle: 'dash'
                 });
                 map.geoObjects.add(simpleLine);
                 routeLine = simpleLine;
 
-                // Ma'lumotlarni ko'rsatish
-                updateDeliveryInfo(data);
+                // Fallback hisob-kitoblar
+                const fallbackDistance = calculateDistance(branchCoords, userCoords);
+                const fallbackCourierTime = Math.ceil(fallbackDistance * 10); // 1km = 10 daqiqa
+                const fallbackCourierCost = fallbackDistance * 10000;
+                const fallbackTotalTime = 15 + 5 + fallbackCourierTime; // prep + pack + delivery
+                
+                const fallbackData = {
+                    ...data,
+                    distance: fallbackDistance.toFixed(1),
+                    delivery_cost: Math.round(fallbackCourierCost),
+                    delivery_time: fallbackTotalTime,
+                    courier_time: fallbackCourierTime,
+                    prep_time: 15,
+                    pack_time: 5
+                };
+                
+                updateDeliveryInfo(fallbackData);
+                showNotification('⚠️ Aniq yo\'l aniqlanmadi, taxminiy ma\'lumotlar ko\'rsatildi', 'warning');
             });
         } else {
-            // Filial topilmagan holatda foydalanuvchiga xabar berish
+            // Filial topilmagan holatda
             document.getElementById('delivery-info').style.display = 'none';
             
-            // Xato xabarini ko'rsatish
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'alert alert-warning';
-            errorDiv.innerHTML = `
-                <h5>⚠️ Filial topilmadi</h5>
-                <p>${data.message || 'Yaqin atrofda faol filial topilmadi'}</p>
-                <p>Iltimos, boshqa manzilni tanlang yoki telefon orqali bog\'laning: <strong>+998 71 123-45-67</strong></p>
-            `;
-            
-            // Xato xabarini delivery info joyiga qo'yish
-            const deliveryInfoContainer = document.getElementById('delivery-info').parentNode;
-            deliveryInfoContainer.insertBefore(errorDiv, document.getElementById('delivery-info'));
-            
-            // 10 soniyadan keyin xabarni olib tashlash
-            setTimeout(() => {
-                if (errorDiv.parentNode) {
-                    errorDiv.parentNode.removeChild(errorDiv);
-                }
-            }, 10000);
+            showNotification('⚠️ Yaqin atrofda faol filial topilmadi', 'warning');
         }
     })
     .catch(error => {
         console.error('Filial topishda xatolik:', error);
-        
-        // Tarmoq xatoligi uchun xabar
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'alert alert-danger';
-        errorDiv.innerHTML = `
-            <h5>❌ Tarmoq xatoligi</h5>
-            <p>Filial ma'lumotlarini yuklashda xatolik yuz berdi.</p>
-            <p>Iltimos, internetingizni tekshiring va qaytadan urinib ko'ring.</p>
-        `;
-        
-        const deliveryInfoContainer = document.getElementById('delivery-info').parentNode;
-        deliveryInfoContainer.insertBefore(errorDiv, document.getElementById('delivery-info'));
-        
-        setTimeout(() => {
-            if (errorDiv.parentNode) {
-                errorDiv.parentNode.removeChild(errorDiv);
-            }
-        }, 8000);
+        showNotification('❌ Filial ma\'lumotlarini yuklashda xatolik', 'error');
     });
-}l topishda xatolik:', error);
-        alert('Filial topishda xatolik yuz berdi');
-    });
+}
+
+// Haversine masofani hisoblash funksiyasi
+function calculateDistance(coords1, coords2) {
+    const R = 6371; // Yer radiusi km
+    const dLat = (coords2[0] - coords1[0]) * Math.PI / 180;
+    const dLon = (coords2[1] - coords1[1]) * Math.PI / 180;
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(coords1[0] * Math.PI / 180) * Math.cos(coords2[0] * Math.PI / 180) *
+              Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
 }
 
 function updateDeliveryInfo(data) {
@@ -489,7 +730,33 @@ function updateDeliveryInfo(data) {
     document.getElementById('branch-name').textContent = data.branch.name;
     document.getElementById('distance-display').textContent = data.distance + ' km';
     document.getElementById('delivery-price-display').textContent = data.delivery_cost.toLocaleString() + ' so\'m';
-    document.getElementById('delivery-time-display').textContent = data.delivery_time + ' daqiqa';
+    
+    // Batafsil vaqt ma'lumotlari
+    const timeBreakdown = `
+        Jami: ${data.delivery_time} daqiqa
+        (Tayyorlash: ${data.prep_time || 15} daq + 
+        Qadoqlash: ${data.pack_time || 5} daq + 
+        Yetkazish: ${data.courier_time || data.delivery_time - 20} daq)
+    `;
+    document.getElementById('delivery-time-display').textContent = timeBreakdown;
+
+    // Qo'shimcha ma'lumotlar
+    if (document.getElementById('branch-phone')) {
+        document.getElementById('branch-phone').textContent = data.branch.phone || 'Ma\'lumot yo\'q';
+    }
+    
+    if (document.getElementById('branch-rating')) {
+        const rating = data.branch.rating || data.branch.average_rating || 'N/A';
+        document.getElementById('branch-rating').textContent = rating;
+    }
+    
+    if (document.getElementById('branch-address')) {
+        document.getElementById('branch-address').textContent = data.branch.address;
+    }
+    
+    if (document.getElementById('delivery-address-display')) {
+        document.getElementById('delivery-address-display').textContent = document.getElementById('delivery_address').value || 'Tanlanmagan';
+    }
 
     // Yashirin maydonlarni to'ldirish
     document.getElementById('delivery_distance').value = data.distance;
@@ -502,6 +769,9 @@ function updateDeliveryInfo(data) {
 
     // Umumiy summani yangilash
     updateTotalAmount();
+    
+    // Muvaffaqiyatli bildirishnoma
+    showNotification(`✅ Eng yaqin filial topildi: ${data.branch.name} (${data.distance} km)`, 'success');
 }
 
 function searchAddressOnMap() {
@@ -972,19 +1242,163 @@ document.addEventListener('DOMContentLoaded', function() {
   transform: translateY(-1px);
 }
 
-@media (max-width: 768px) {
-  .info-grid {
-    grid-template-columns: 1fr;
-  }
+/* Notification animatsiyalari */
+@keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
 
-  .radio-group {
-    flex-direction: column;
+@keyframes slideOutRight {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+}
+
+/* Map controls styling */
+.map-controls {
+    display: flex;
     gap: 10px;
-  }
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
 
-  .address-search {
-    flex-direction: column;
-  }
+.map-controls .btn {
+    font-size: 13px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.map-controls .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+/* Loading spinner */
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+    border-width: 0.15em;
+}
+
+/* Enhanced info display */
+.info-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.info-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.info-item:hover::before {
+    opacity: 1;
+}
+
+/* Delivery route styling */
+.delivery-route-info {
+    background: #f8f9ff;
+    padding: 15px;
+    border-radius: 10px;
+    margin: 15px 0;
+    border-left: 4px solid #007bff;
+}
+
+.route-details {
+    margin-top: 10px;
+}
+
+.route-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    font-size: 14px;
+}
+
+.route-icon {
+    font-size: 16px;
+    min-width: 20px;
+}
+
+.route-text {
+    flex: 1;
+    color: #495057;
+}
+
+/* Delivery terms styling */
+.delivery-terms {
+    background: #fff9e6;
+    padding: 15px;
+    border-radius: 10px;
+    margin: 15px 0;
+    border-left: 4px solid #ffc107;
+}
+
+.terms-list {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 0 0;
+}
+
+.terms-list li {
+    padding: 5px 0;
+    font-size: 13px;
+    color: #495057;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Enhanced time display */
+#delivery-time-display {
+    font-size: 12px;
+    line-height: 1.4;
+    white-space: pre-line;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .radio-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .address-search {
+        flex-direction: column;
+    }
+    
+    .map-controls {
+        flex-direction: column;
+    }
+    
+    .map-controls .btn {
+        width: 100%;
+        text-align: center;
+    }
+    
+    #map {
+        height: 300px !important;
+    }
+    
+    .notification-toast {
+        right: 10px !important;
+        left: 10px !important;
+        max-width: none !important;
+    }
 }
 </style>
 {% endblock %}
