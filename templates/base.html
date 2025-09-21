@@ -471,6 +471,27 @@
       }
     </style>
 
+    <style>
+      /* Global avatar enforcement: make avatars perfectly circular */
+      img.app-avatar,
+      img.rounded-circle {
+        border-radius: 50% !important;
+        object-fit: cover !important;
+        display: inline-block !important;
+      }
+
+      /* default sizing; individual components may override */
+      .navbar img.app-avatar {
+        width: 32px !important;
+        height: 32px !important;
+      }
+
+      .dropdown-menu img.app-avatar {
+        width: 48px !important;
+        height: 48px !important;
+      }
+    </style>
+
     {% block head %} {% set yandex_key = (config.get('YANDEX_MAPS_API') or '')
     %} {% if yandex_key and yandex_key != 'None' %}
     <script>
@@ -2032,10 +2053,12 @@
 
       .news-media {
         width: 100%;
-        height: 60px;
+        height: auto; /* allow responsive height */
+        max-height: 200px; /* cap to avoid huge elements on large screens */
         object-fit: cover;
         border-radius: 8px;
         margin-bottom: 8px;
+        display: block;
       }
       
       .clickable-media {

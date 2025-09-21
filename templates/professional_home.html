@@ -1,0 +1,28 @@
+{% extends 'base.html' %} {% block title %}Pro-Obuv Professional Home{% endblock
+%} {% block content %}
+<div class="professional-home container">
+  <!-- professional header (cut from menu) -->
+  <div class="professional-header mb-4">
+    <div class="menu-title">
+      <h2>Pro-Obuv Professional</h2>
+      <p class="lead">Yangiliklar, reklama va mahalliy aksiyalar</p>
+    </div>
+
+    <!-- category buttons (copied pattern) -->
+    <div class="category-buttons d-flex gap-2 flex-wrap mt-3">
+      <button class="btn btn-outline-primary">Ayollar</button>
+      <button class="btn btn-outline-primary">Erkaklar</button>
+      <button class="btn btn-outline-primary">Bolalar</button>
+      <button class="btn btn-outline-secondary">Aksiyalar</button>
+    </div>
+  </div>
+
+  <!-- main content: news ticker and placeholder for menu -->
+  <div class="row">
+    <div class="col-12">{% include 'components/news_ticker.html' %}</div>
+  </div>
+
+  <!-- footer inclusion -->
+  <div class="mt-5">{% include 'components/footer.html' %}</div>
+</div>
+{% endblock %}

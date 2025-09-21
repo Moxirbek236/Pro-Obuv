@@ -1,26 +1,30 @@
-{% extends "base.html" %}
-{% block title %}Yangiliklar boshqaruvi - Admin{% endblock %}
-
-{% block additional_css %}
-<link href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" rel="stylesheet">
-<link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+{% extends "base.html" %} {% block title %}Yangiliklar boshqaruvi - Admin{%
+endblock %} {% block additional_css %}
+<link
+  href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css"
+  rel="stylesheet" />
+<link
+  href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css"
+  rel="stylesheet" />
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+  rel="stylesheet" />
 <style>
-.news-management-container {
+  .news-management-container {
     min-height: calc(100vh - 200px);
     padding: 20px 0;
-}
+  }
 
-.admin-header {
+  .admin-header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     padding: 30px 0;
     margin-bottom: 30px;
     border-radius: 12px;
-}
+  }
 
-.btn-add-news {
-    background: linear-gradient(135deg, #4CAF50, #45a049);
+  .btn-add-news {
+    background: linear-gradient(135deg, #4caf50, #45a049);
     border: none;
     padding: 12px 24px;
     border-radius: 8px;
@@ -28,157 +32,157 @@
     font-weight: 500;
     box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
     transition: all 0.3s ease;
-}
+  }
 
-td {
+  td {
     color: black;
-}
+  }
 
-.btn-add-news:hover {
+  .btn-add-news:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
-}
+  }
 
-.news-table-container {
+  .news-table-container {
     background: var(--bg-color);
     border-radius: 12px;
     padding: 25px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
+  }
 
-.news-status-active {
-    color: #4CAF50;
+  .news-status-active {
+    color: #4caf50;
     font-weight: bold;
-}
+  }
 
-.news-status-inactive {
+  .news-status-inactive {
     color: #f44336;
     font-weight: bold;
-}
+  }
 
-.news-type-news {
+  .news-type-news {
     background: #e3f2fd;
     color: #1976d2;
     padding: 4px 12px;
     border-radius: 20px;
     font-size: 12px;
     font-weight: 500;
-}
+  }
 
-.news-type-advertisement {
+  .news-type-advertisement {
     background: #fff3e0;
     color: #f57c00;
     padding: 4px 12px;
     border-radius: 20px;
     font-size: 12px;
     font-weight: 500;
-}
+  }
 
-.news-actions {
+  .news-actions {
     white-space: nowrap;
-}
+  }
 
-.news-actions .btn {
+  .news-actions .btn {
     margin: 0 2px;
     padding: 6px 12px;
     font-size: 12px;
     border-radius: 6px;
-}
+  }
 
-.btn-toggle {
-    background: #2196F3;
+  .btn-toggle {
+    background: #2196f3;
     color: white;
     border: none;
-}
+  }
 
-.btn-toggle:hover {
-    background: #1976D2;
-}
+  .btn-toggle:hover {
+    background: #1976d2;
+  }
 
-.btn-edit {
-    background: #FF9800;
+  .btn-edit {
+    background: #ff9800;
     color: white;
     border: none;
-}
+  }
 
-.btn-edit:hover {
-    background: #F57C00;
-}
+  .btn-edit:hover {
+    background: #f57c00;
+  }
 
-.btn-delete {
+  .btn-delete {
     background: #f44336;
     color: white;
     border: none;
-}
+  }
 
-.btn-delete:hover {
+  .btn-delete:hover {
     background: #d32f2f;
-}
+  }
 
-.modal-content {
+  .modal-content {
     border-radius: 12px;
     border: none;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-}
+  }
 
-.modal-header {
+  .modal-header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     border-radius: 12px 12px 0 0;
     border: none;
     padding: 20px 25px;
-}
+  }
 
-.modal-body {
+  .modal-body {
     padding: 25px;
-}
+  }
 
-.form-control {
+  .form-control {
     border-radius: 8px;
     border: 2px solid #e0e0e0;
     padding: 12px 16px;
     transition: all 0.3s ease;
-}
+  }
 
-.form-control:focus {
+  .form-control:focus {
     border-color: #667eea;
     box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-}
+  }
 
-.form-label {
+  .form-label {
     font-weight: 600;
     color: var(--text-color);
     margin-bottom: 8px;
-}
+  }
 
-.news-media-preview {
+  .news-media-preview {
     max-width: 200px;
     max-height: 120px;
     border-radius: 8px;
     margin-top: 10px;
-}
+  }
 
-.actions-bar {
+  .actions-bar {
     background: var(--bg-color);
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
+  }
 
-.news-stats {
+  .news-stats {
     display: flex;
     gap: 8px;
     align-items: center;
-}
+  }
 
-.news-stats .badge {
+  .news-stats .badge {
     font-size: 12px;
     padding: 6px 10px;
     border-radius: 20px;
     position: relative;
-}
+  }
 
-.news-stats .badge::before {
+  .news-stats .badge::before {
     content: attr(data-label);
     position: absolute;
     bottom: 100%;
@@ -193,807 +197,1011 @@ td {
     opacity: 0;
     transition: opacity 0.3s;
     pointer-events: none;
-}
+  }
 
-.news-stats .badge:hover::before {
+  .news-stats .badge:hover::before {
     opacity: 1;
-}
+  }
 
-#total-news::before { content: 'Jami'; }
-#active-news::before { content: 'Faol'; }
-#inactive-news::before { content: 'Nofaol'; }
+  #total-news::before {
+    content: "Jami";
+  }
+  #active-news::before {
+    content: "Faol";
+  }
+  #inactive-news::before {
+    content: "Nofaol";
+  }
 
-.btn-group .dropdown-toggle::after {
+  .btn-group .dropdown-toggle::after {
     margin-left: 8px;
-}
+  }
 
-/* Navigation styles */
-.nav-pills-container {
+  /* Navigation styles */
+  .nav-pills-container {
     background: var(--bg-color);
     padding: 15px;
     border-radius: 12px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
+  }
 
-.nav-pills .nav-link {
+  .nav-pills .nav-link {
     color: var(--text-color);
     border-radius: 8px;
     margin: 0 3px;
     transition: all 0.3s ease;
     font-weight: 500;
-}
+  }
 
-.nav-pills .nav-link:hover {
+  .nav-pills .nav-link:hover {
     background: rgba(102, 126, 234, 0.1);
     color: #667eea;
     transform: translateY(-1px);
-}
+  }
 
-.nav-pills .nav-link.active {
+  .nav-pills .nav-link.active {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-}
+  }
 
-.breadcrumb {
+  .breadcrumb {
     background: transparent;
     padding: 0;
-}
+  }
 
-.breadcrumb-item + .breadcrumb-item::before {
+  .breadcrumb-item + .breadcrumb-item::before {
     content: "›";
     color: var(--text-color);
     font-size: 1.2em;
-}
+  }
 
-.breadcrumb-item a {
+  .breadcrumb-item a {
     color: #667eea;
     text-decoration: none;
     transition: color 0.3s ease;
-}
+  }
 
-.breadcrumb-item a:hover {
+  .breadcrumb-item a:hover {
     color: #764ba2;
-}
+  }
 
-.breadcrumb-item.active {
+  .breadcrumb-item.active {
     color: var(--text-color);
     font-weight: 500;
-}
+  }
 
-/* Dark theme styles */
-body.dark-theme .news-table-container {
+  /* Dark theme styles */
+  body.dark-theme .news-table-container {
     background: #2d3748;
-}
+  }
 
-body.dark-theme .nav-pills-container {
+  body.dark-theme .nav-pills-container {
     background: #2d3748;
-}
+  }
 
-body.dark-theme .actions-bar {
+  body.dark-theme .actions-bar {
     background: #2d3748;
-}
+  }
 
-body.dark-theme .modal-content {
+  body.dark-theme .modal-content {
     background: #2d3748;
     color: #e2e8f0;
-}
+  }
 
-body.dark-theme .form-control {
+  body.dark-theme .form-control {
     background: #4a5568;
     border-color: #4a5568;
     color: #e2e8f0;
-}
+  }
 
-body.dark-theme .form-control:focus {
+  body.dark-theme .form-control:focus {
     background: #4a5568;
     border-color: #667eea;
     color: #e2e8f0;
-}
+  }
 </style>
-{% endblock %}
-
-{% block content %}
+{% endblock %} {% block content %}
 <div class="news-management-container">
-    <div class="container">
-        <!-- Breadcrumb -->
-        <nav aria-label="breadcrumb" class="mb-4">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ url_for('super_admin_dashboard') }}">🏠 Dashboard</a></li>
-                <li class="breadcrumb-item active" aria-current="page">📰 Yangiliklar</li>
-            </ol>
-        </nav>
+  <div class="container">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="{{ url_for('super_admin_dashboard') }}">🏠 Dashboard</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+          📰 Yangiliklar
+        </li>
+      </ol>
+    </nav>
 
-        <!-- Navigation Pills -->
-        <div class="nav-pills-container mb-4">
-            <ul class="nav nav-pills justify-content-center">
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('super_admin_dashboard') }}">🏠 Dashboard</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('super_admin_analytics') }}">📀 Analytics</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('super_admin_reports') }}">📈 Hisobotlar</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('super_admin_system') }}">⚙️ Tizim</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('super_admin_logs') }}">📝 Loglar</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="{{ url_for('admin_news_management') }}">📰 Yangiliklar</a>
-                </li>
-            </ul>
-        </div>
-
-        <!-- Header -->
-        <div class="admin-header text-center">
-            <h1 class="mb-3">📰 Yangiliklar boshqaruvi</h1>
-            <p class="mb-0">Saytdagi yangiliklar va reklamalarni boshqaring</p>
-            <!-- Debug info -->
-            <div class="mt-2" style="font-size: 12px; opacity: 0.8;">
-                {% if session.get('super_admin') %}
-                    Super Admin | 
-                    Session: {{ session.get('admin_name', 'Admin') }}
-                {% elif session.get('staff_id') %}
-                    Foydalanuvchi: {{ session.get('staff_name') }} | 
-                    Rol: {{ session.get('staff_role') }} | 
-                    ID: {{ session.get('staff_id') }}
-                {% else %}
-                    <span style="color: #ff6b6b;">Session topilmadi - Login kerak</span>
-                {% endif %}
-            </div>
-        </div>
-
-        <!-- Actions Bar -->
-        <div class="actions-bar mb-4">
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center gap-3">
-                    <h4 class="mb-0">Mavjud yangiliklar</h4>
-                    <div class="news-stats">
-                        <span class="badge bg-primary" id="total-news">0</span>
-                        <span class="badge bg-success" id="active-news">0</span>
-                        <span class="badge bg-secondary" id="inactive-news">0</span>
-                    </div>
-                </div>
-                
-                <div class="d-flex gap-2">
-                    <!-- Bulk Actions -->
-                    <div class="dropdown" id="bulkActionsDropdown" style="display: none;">
-                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-check-square me-1"></i>
-                            <span id="selectedCount">0</span> ta tanlandi
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><button class="dropdown-item" onclick="bulkToggle(true)"><i class="bi bi-toggle-on me-2"></i>Faollashtirish</button></li>
-                            <li><button class="dropdown-item" onclick="bulkToggle(false)"><i class="bi bi-toggle-off me-2"></i>O'chirish</button></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><button class="dropdown-item text-danger" onclick="bulkDelete()"><i class="bi bi-trash me-2"></i>O'chirish</button></li>
-                        </ul>
-                    </div>
-                    
-                    <!-- Export/Import -->
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-outline-info dropdown-toggle" data-bs-toggle="dropdown">
-                            <i class="bi bi-download me-1"></i>Eksport
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><button class="dropdown-item" onclick="exportNews('json')"><i class="bi bi-file-code me-2"></i>JSON</button></li>
-                            <li><button class="dropdown-item" onclick="exportNews('csv')"><i class="bi bi-file-earmark-spreadsheet me-2"></i>CSV</button></li>
-                        </ul>
-                    </div>
-                    
-                    <!-- Add News Button -->
-                    <button type="button" class="btn btn-add-news" data-bs-toggle="modal" data-bs-target="#newsModal" onclick="openNewsModal()">
-                        <i class="bi bi-plus-circle me-2"></i>Yangilik qo'shish
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Session Check Alert -->
-        {% if not session.get('super_admin') %}
-        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            <h4 class="alert-heading"><i class="bi bi-exclamation-triangle"></i> Kirish kerak!</h4>
-            <p>Yangiliklar boshqaruvi uchun super admin sifatida tizimga kirish kerak.</p>
-            <hr>
-            <p class="mb-0">
-                <a href="{{ url_for('staff_login') }}" class="btn btn-primary">Staff Login</a>
-                <a href="{{ url_for('super_admin_login') }}" class="btn btn-danger ms-2">Super Admin Login</a>
-            </p>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-        {% endif %}
-        
-        <!-- News Table -->
-        <div class="news-table-container">
-            <div class="table-responsive">
-                <table id="newsTable" class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th width="30px">
-                                <input type="checkbox" id="selectAll" class="form-check-input" onchange="toggleSelectAll()">
-                            </th>
-                            <th>ID</th>
-                            <th>Sarlavha</th>
-                            <th>Turi</th>
-                            <th>Holati</th>
-                            <th>Tartib</th>
-                            <th>Yaratilgan sana</th>
-                            <th>Amallar</th>
-                        </tr>
-                    </thead>
-                    <tbody id="newsTableBody">
-                        <tr>
-                            <td colspan="8" class="text-center" style="color: black;">Yuklanmoqda...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    <!-- Navigation Pills -->
+    <div class="nav-pills-container mb-4">
+      <ul class="nav nav-pills justify-content-center">
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('super_admin_dashboard') }}"
+            >🏠 Dashboard</a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('super_admin_analytics') }}"
+            >📀 Analytics</a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('super_admin_reports') }}"
+            >📈 Hisobotlar</a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('super_admin_system') }}"
+            >⚙️ Tizim</a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('super_admin_logs') }}"
+            >📝 Loglar</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link active"
+            href="{{ url_for('admin_news_management') }}"
+            >📰 Yangiliklar</a
+          >
+        </li>
+      </ul>
     </div>
+
+    <!-- Header -->
+    <div class="admin-header text-center">
+      <h1 class="mb-3">📰 Yangiliklar boshqaruvi</h1>
+      <p class="mb-0">Saytdagi yangiliklar va reklamalarni boshqaring</p>
+      <!-- Debug info -->
+      <div class="mt-2" style="font-size: 12px; opacity: 0.8">
+        {% if session.get('super_admin') %} Super Admin | Session: {{
+        session.get('admin_name', 'Admin') }} {% elif session.get('staff_id') %}
+        Foydalanuvchi: {{ session.get('staff_name') }} | Rol: {{
+        session.get('staff_role') }} | ID: {{ session.get('staff_id') }} {% else
+        %}
+        <span style="color: #ff6b6b">Session topilmadi - Login kerak</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Actions Bar -->
+    <div class="actions-bar mb-4">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-3">
+          <h4 class="mb-0">Mavjud yangiliklar</h4>
+          <div class="news-stats">
+            <span class="badge bg-primary" id="total-news">0</span>
+            <span class="badge bg-success" id="active-news">0</span>
+            <span class="badge bg-secondary" id="inactive-news">0</span>
+          </div>
+        </div>
+
+        <div class="d-flex gap-2">
+          <!-- Bulk Actions -->
+          <div class="dropdown" id="bulkActionsDropdown" style="display: none">
+            <button
+              class="btn btn-outline-secondary dropdown-toggle"
+              type="button"
+              data-bs-toggle="dropdown">
+              <i class="bi bi-check-square me-1"></i>
+              <span id="selectedCount">0</span> ta tanlandi
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <button class="dropdown-item" onclick="bulkToggle(true)">
+                  <i class="bi bi-toggle-on me-2"></i>Faollashtirish
+                </button>
+              </li>
+              <li>
+                <button class="dropdown-item" onclick="bulkToggle(false)">
+                  <i class="bi bi-toggle-off me-2"></i>O'chirish
+                </button>
+              </li>
+              <li><hr class="dropdown-divider" /></li>
+              <li>
+                <button
+                  class="dropdown-item text-danger"
+                  onclick="bulkDelete()">
+                  <i class="bi bi-trash me-2"></i>O'chirish
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Export/Import -->
+          <div class="btn-group">
+            <button
+              type="button"
+              class="btn btn-outline-info dropdown-toggle"
+              data-bs-toggle="dropdown">
+              <i class="bi bi-download me-1"></i>Eksport
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <button class="dropdown-item" onclick="exportNews('json')">
+                  <i class="bi bi-file-code me-2"></i>JSON
+                </button>
+              </li>
+              <li>
+                <button class="dropdown-item" onclick="exportNews('csv')">
+                  <i class="bi bi-file-earmark-spreadsheet me-2"></i>CSV
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Add News Button -->
+          <button
+            type="button"
+            class="btn btn-add-news"
+            data-bs-toggle="modal"
+            data-bs-target="#newsModal"
+            onclick="openNewsModal()">
+            <i class="bi bi-plus-circle me-2"></i>Yangilik qo'shish
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Session Check Alert -->
+    {% if not session.get('super_admin') %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+      <h4 class="alert-heading">
+        <i class="bi bi-exclamation-triangle"></i> Kirish kerak!
+      </h4>
+      <p>
+        Yangiliklar boshqaruvi uchun super admin sifatida tizimga kirish kerak.
+      </p>
+      <hr />
+      <p class="mb-0">
+        <a href="{{ url_for('staff_login') }}" class="btn btn-primary"
+          >Staff Login</a
+        >
+        <a href="{{ url_for('super_admin_login') }}" class="btn btn-danger ms-2"
+          >Super Admin Login</a
+        >
+      </p>
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endif %}
+
+    <!-- News Table -->
+    <div class="news-table-container">
+      <div class="table-responsive">
+        <table id="newsTable" class="table table-hover">
+          <thead>
+            <tr>
+              <th width="30px">
+                <input
+                  type="checkbox"
+                  id="selectAll"
+                  class="form-check-input"
+                  onchange="toggleSelectAll()" />
+              </th>
+              <th>ID</th>
+              <th>Sarlavha</th>
+              <th>Turi</th>
+              <th>Holati</th>
+              <th>Tartib</th>
+              <th>Yaratilgan sana</th>
+              <th>Amallar</th>
+            </tr>
+          </thead>
+          <tbody id="newsTableBody">
+            <tr>
+              <td colspan="8" class="text-center" style="color: black">
+                Yuklanmoqda...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- News Modal -->
 <div class="modal fade" id="newsModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="newsModalTitle">Yangilik qo'shish</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form id="newsForm">
-                    <input type="hidden" id="newsId">
-                    
-                    <div class="row">
-                        <div class="col-md-8">
-                            <div class="mb-3">
-                                <label for="newsTitle" class="form-label">Sarlavha *</label>
-                                <input type="text" class="form-control" id="newsTitle" required maxlength="200">
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label for="newsType" class="form-label">Turi</label>
-                                <select class="form-control" id="newsType">
-                                    <option value="news">📰 Yangilik</option>
-                                    <option value="advertisement">📢 Reklama</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="newsModalTitle">Yangilik qo'shish</h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="newsForm">
+          <input type="hidden" id="newsId" />
 
-                    <div class="mb-3">
-                        <label for="newsContent" class="form-label">Matn</label>
-                        <textarea class="form-control" id="newsContent" rows="3" maxlength="500"></textarea>
-                        <small class="form-text text-muted">Maksimal 500 ta belgi</small>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="newsImageFile" class="form-label">Rasm yuklash</label>
-                                <input type="file" class="form-control" id="newsImageFile" accept="image/*" onchange="uploadMediaFile('image')">
-                                <small class="form-text text-muted">PNG, JPG, JPEG, GIF, WEBP formatlarida</small>
-                                <div class="mt-2">
-                                    <img id="imagePreview" class="news-media-preview" style="display: none;">
-                                    <button type="button" class="btn btn-sm btn-outline-danger" id="removeImageBtn" style="display: none;" onclick="removeMedia('image')">
-                                        <i class="bi bi-trash"></i> Rasmni olib tashlash
-                                    </button>
-                                </div>
-                                <input type="hidden" id="newsImageUrl">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="newsVideoFile" class="form-label">Video yuklash</label>
-                                <input type="file" class="form-control" id="newsVideoFile" accept="video/*" onchange="uploadMediaFile('video')">
-                                <small class="form-text text-muted">MP4, WEBM, MOV formatlarida</small>
-                                <div class="mt-2">
-                                    <video id="videoPreview" class="news-media-preview" style="display: none;" controls muted></video>
-                                    <button type="button" class="btn btn-sm btn-outline-danger" id="removeVideoBtn" style="display: none;" onclick="removeMedia('video')">
-                                        <i class="bi bi-trash"></i> Videoni olib tashlash
-                                    </button>
-                                </div>
-                                <input type="hidden" id="newsVideoUrl">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="newsDisplayOrder" class="form-label">Tartib raqami</label>
-                                <input type="number" class="form-control" id="newsDisplayOrder" value="0" min="0">
-                                <small class="form-text text-muted">Kichik raqamlar birinchi ko'rinadi</small>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <div class="form-check mt-4">
-                                    <input type="checkbox" class="form-check-input" id="newsIsActive" checked>
-                                    <label class="form-check-label" for="newsIsActive">
-                                        Faol (ko'rsatilsin)
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
+          <div class="row">
+            <div class="col-md-8">
+              <div class="mb-3">
+                <label for="newsTitle" class="form-label">Sarlavha *</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="newsTitle"
+                  required
+                  maxlength="200" />
+              </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
-                <button type="button" class="btn btn-primary" id="saveNewsBtn" onclick="saveNews()">
-                    <i class="bi bi-check-circle me-2"></i>Saqlash
-                </button>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="newsType" class="form-label">Turi</label>
+                <select class="form-control" id="newsType">
+                  <option value="news">📰 Yangilik</option>
+                  <option value="advertisement">📢 Reklama</option>
+                </select>
+              </div>
             </div>
-        </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="newsContent" class="form-label">Matn</label>
+            <textarea
+              class="form-control"
+              id="newsContent"
+              rows="3"
+              maxlength="500"></textarea>
+            <small class="form-text text-muted">Maksimal 500 ta belgi</small>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="newsImageFile" class="form-label"
+                  >Rasm yuklash</label
+                >
+                <input
+                  type="file"
+                  class="form-control"
+                  id="newsImageFile"
+                  accept="image/*"
+                  onchange="uploadMediaFile('image')" />
+                <small class="form-text text-muted"
+                  >PNG, JPG, JPEG, GIF, WEBP formatlarida</small
+                >
+                <div class="mt-2">
+                  <img
+                    id="imagePreview"
+                    class="news-media-preview"
+                    style="display: none" />
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-danger"
+                    id="removeImageBtn"
+                    style="display: none"
+                    onclick="removeMedia('image')">
+                    <i class="bi bi-trash"></i> Rasmni olib tashlash
+                  </button>
+                </div>
+                <input type="hidden" id="newsImageUrl" />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="newsVideoFile" class="form-label"
+                  >Video yuklash</label
+                >
+                <input
+                  type="file"
+                  class="form-control"
+                  id="newsVideoFile"
+                  accept="video/*"
+                  onchange="uploadMediaFile('video')" />
+                <small class="form-text text-muted"
+                  >MP4, WEBM, MOV formatlarida</small
+                >
+                <div class="mt-2">
+                  <video
+                    id="videoPreview"
+                    class="news-media-preview"
+                    style="display: none"
+                    controls
+                    muted></video>
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-danger"
+                    id="removeVideoBtn"
+                    style="display: none"
+                    onclick="removeMedia('video')">
+                    <i class="bi bi-trash"></i> Videoni olib tashlash
+                  </button>
+                </div>
+                <input type="hidden" id="newsVideoUrl" />
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="newsDisplayOrder" class="form-label"
+                  >Tartib raqami</label
+                >
+                <input
+                  type="number"
+                  class="form-control"
+                  id="newsDisplayOrder"
+                  value="0"
+                  min="0" />
+                <small class="form-text text-muted"
+                  >Kichik raqamlar birinchi ko'rinadi</small
+                >
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <div class="form-check mt-4">
+                  <input
+                    type="checkbox"
+                    class="form-check-input"
+                    id="newsIsActive"
+                    checked />
+                  <label class="form-check-label" for="newsIsActive">
+                    Faol (ko'rsatilsin)
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Bekor qilish
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          id="saveNewsBtn"
+          onclick="saveNews()">
+          <i class="bi bi-check-circle me-2"></i>Saqlash
+        </button>
+      </div>
     </div>
+  </div>
 </div>
 
 <!-- Delete Confirmation Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Yanglikni o'chirish</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p>Ushbu yanglikni o'chirishni tasdiqlaysizmi?</p>
-                <div id="deleteNewsInfo"></div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
-                <button type="button" class="btn btn-danger" id="confirmDeleteBtn" onclick="confirmDelete()">
-                    <i class="bi bi-trash me-2"></i>O'chirish
-                </button>
-            </div>
-        </div>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Yanglikni o'chirish</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>Ushbu yanglikni o'chirishni tasdiqlaysizmi?</p>
+        <div id="deleteNewsInfo"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Bekor qilish
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          id="confirmDeleteBtn"
+          onclick="confirmDelete()">
+          <i class="bi bi-trash me-2"></i>O'chirish
+        </button>
+      </div>
     </div>
+  </div>
 </div>
-{% endblock %}
-
-{% block additional_js %}
+{% endblock %} {% block additional_js %}
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
 <script>
-// CSRF Token
-const CSRF_TOKEN = '{{ csrf_token() if csrf_token else "" }}';
+  // CSRF Token
+  const CSRF_TOKEN = '{{ csrf_token() if csrf_token else "" }}';
 
-// Global variables
-let newsDataTable;
-let editingNewsId = null;
-let deleteNewsId = null;
+  // Global variables
+  let newsDataTable;
+  let editingNewsId = null;
+  let deleteNewsId = null;
 
-// Global Functions - Available for onclick handlers
-function openNewsModal(newsData = null) {
-    console.log('openNewsModal called with:', newsData);
-    const modal = document.getElementById('newsModal');
-    const title = document.getElementById('newsModalTitle');
-    const form = document.getElementById('newsForm');
-    
+  // Global Functions - Available for onclick handlers
+  function openNewsModal(newsData = null) {
+    console.log("openNewsModal called with:", newsData);
+    const modal = document.getElementById("newsModal");
+    const title = document.getElementById("newsModalTitle");
+    const form = document.getElementById("newsForm");
+
     // Reset form
     form.reset();
-    document.getElementById('newsId').value = '';
-    document.getElementById('imagePreview').style.display = 'none';
-    document.getElementById('videoPreview').style.display = 'none';
-    document.getElementById('removeImageBtn').style.display = 'none';
-    document.getElementById('removeVideoBtn').style.display = 'none';
+    document.getElementById("newsId").value = "";
+    document.getElementById("imagePreview").style.display = "none";
+    document.getElementById("videoPreview").style.display = "none";
+    document.getElementById("removeImageBtn").style.display = "none";
+    document.getElementById("removeVideoBtn").style.display = "none";
     editingNewsId = null;
-    
-    if (newsData) {
-        // Edit mode
-        title.textContent = 'Yanglikni tahrirlash';
-        editingNewsId = newsData.id;
-        
-        document.getElementById('newsId').value = newsData.id;
-        document.getElementById('newsTitle').value = newsData.title || '';
-        document.getElementById('newsContent').value = newsData.content || '';
-        document.getElementById('newsType').value = newsData.type || 'news';
-        document.getElementById('newsImageUrl').value = newsData.image_url || '';
-        document.getElementById('newsVideoUrl').value = newsData.video_url || '';
-        document.getElementById('newsDisplayOrder').value = newsData.display_order || 0;
-        document.getElementById('newsIsActive').checked = !!newsData.is_active;
-        
-        // Show previews if URLs exist
-        if (newsData.image_url) {
-            const preview = document.getElementById('imagePreview');
-            preview.src = newsData.image_url;
-            preview.style.display = 'block';
-            document.getElementById('removeImageBtn').style.display = 'inline-block';
-        }
-        if (newsData.video_url) {
-            const preview = document.getElementById('videoPreview');
-            preview.src = newsData.video_url;
-            preview.style.display = 'block';
-            document.getElementById('removeVideoBtn').style.display = 'inline-block';
-        }
-    } else {
-        // Add mode
-        title.textContent = 'Yangilik qo\'shish';
-        document.getElementById('newsIsActive').checked = true;
-    }
-}
 
-function saveNews() {
-    console.log('saveNews function called');
-    
-    const form = document.getElementById('newsForm');
-    if (!form) {
-        console.error('News form not found');
-        showNotification('Form topilmadi', 'error');
-        return;
+    if (newsData) {
+      // Edit mode
+      title.textContent = "Yanglikni tahrirlash";
+      editingNewsId = newsData.id;
+
+      document.getElementById("newsId").value = newsData.id;
+      document.getElementById("newsTitle").value = newsData.title || "";
+      document.getElementById("newsContent").value = newsData.content || "";
+      document.getElementById("newsType").value = newsData.type || "news";
+      document.getElementById("newsImageUrl").value = newsData.image_url || "";
+      document.getElementById("newsVideoUrl").value = newsData.video_url || "";
+      document.getElementById("newsDisplayOrder").value =
+        newsData.display_order || 0;
+      document.getElementById("newsIsActive").checked = !!newsData.is_active;
+
+      // Show previews if URLs exist
+      if (newsData.image_url) {
+        const preview = document.getElementById("imagePreview");
+        preview.src = newsData.image_url;
+        preview.style.display = "block";
+        document.getElementById("removeImageBtn").style.display =
+          "inline-block";
+      }
+      if (newsData.video_url) {
+        const preview = document.getElementById("videoPreview");
+        preview.src = newsData.video_url;
+        preview.style.display = "block";
+        document.getElementById("removeVideoBtn").style.display =
+          "inline-block";
+      }
+    } else {
+      // Add mode
+      title.textContent = "Yangilik qo'shish";
+      document.getElementById("newsIsActive").checked = true;
     }
-    
-    console.log('Collecting form data...');
+  }
+
+  function saveNews() {
+    console.log("saveNews function called");
+
+    const form = document.getElementById("newsForm");
+    if (!form) {
+      console.error("News form not found");
+      showNotification("Form topilmadi", "error");
+      return;
+    }
+
+    console.log("Collecting form data...");
     const formData = {
-        title: document.getElementById('newsTitle').value.trim(),
-        content: document.getElementById('newsContent').value.trim(),
-        type: document.getElementById('newsType').value,
-        image_url: document.getElementById('newsImageUrl').value.trim(),
-        video_url: document.getElementById('newsVideoUrl').value.trim(),
-        display_order: parseInt(document.getElementById('newsDisplayOrder').value) || 0,
-        is_active: document.getElementById('newsIsActive').checked
+      title: document.getElementById("newsTitle").value.trim(),
+      content: document.getElementById("newsContent").value.trim(),
+      type: document.getElementById("newsType").value,
+      image_url: document.getElementById("newsImageUrl").value.trim(),
+      video_url: document.getElementById("newsVideoUrl").value.trim(),
+      display_order:
+        parseInt(document.getElementById("newsDisplayOrder").value) || 0,
+      is_active: document.getElementById("newsIsActive").checked,
     };
-    
-    console.log('Form data:', formData);
-    
+
+    console.log("Form data:", formData);
+
     // Validation
     if (!formData.title) {
-        console.warn('Title is required');
-        showNotification('Sarlavha kiritilishi shart', 'error');
-        return;
+      console.warn("Title is required");
+      showNotification("Sarlavha kiritilishi shart", "error");
+      return;
     }
-    
+
     const isEdit = !!editingNewsId;
-    const url = isEdit ? `/api/news/${editingNewsId}` : '/api/news';
-    const method = isEdit ? 'PUT' : 'POST';
-    
-    console.log('Sending request:', {
-        url: url,
-        method: method,
-        isEdit: isEdit,
-        editingNewsId: editingNewsId
+    const url = isEdit ? `/api/news/${editingNewsId}` : "/api/news";
+    const method = isEdit ? "PUT" : "POST";
+
+    console.log("Sending request:", {
+      url: url,
+      method: method,
+      isEdit: isEdit,
+      editingNewsId: editingNewsId,
     });
-    
+
     // Show loading state
-    const saveBtn = document.getElementById('saveNewsBtn');
+    const saveBtn = document.getElementById("saveNewsBtn");
     const originalText = saveBtn.innerHTML;
-    saveBtn.innerHTML = '<i class="spinner-border spinner-border-sm me-2"></i>Saqlanmoqda...';
+    saveBtn.innerHTML =
+      '<i class="spinner-border spinner-border-sm me-2"></i>Saqlanmoqda...';
     saveBtn.disabled = true;
-    
+
     fetch(url, {
-        method: method,
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : ''
-        },
-        body: JSON.stringify(formData)
+      method: method,
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-Token": typeof CSRF_TOKEN !== "undefined" ? CSRF_TOKEN : "",
+      },
+      body: JSON.stringify(formData),
     })
-    .then(response => {
-        console.log('Response status:', response.status);
+      .then((response) => {
+        console.log("Response status:", response.status);
         return response.json();
-    })
-    .then(data => {
-        console.log('Response data:', data);
+      })
+      .then((data) => {
+        console.log("Response data:", data);
         if (data.success) {
-            showNotification(isEdit ? 'Yangilik yangilandi' : 'Yangilik qo\'shildi', 'success');
-            const modal = bootstrap.Modal.getInstance(document.getElementById('newsModal'));
-            if (modal) {
-                modal.hide();
-            }
-            loadNewsData(); // Reload table
+          showNotification(
+            isEdit ? "Yangilik yangilandi" : "Yangilik qo'shildi",
+            "success"
+          );
+          const modal = bootstrap.Modal.getInstance(
+            document.getElementById("newsModal")
+          );
+          if (modal) {
+            modal.hide();
+          }
+          loadNewsData(); // Reload table
         } else {
-            console.error('API error:', data.message);
-            showNotification('Xatolik: ' + (data.message || 'Noma\'lum xatolik'), 'error');
+          console.error("API error:", data.message);
+          showNotification(
+            "Xatolik: " + (data.message || "Noma'lum xatolik"),
+            "error"
+          );
         }
-    })
-    .catch(error => {
-        console.error('Save news error:', error);
-        showNotification('Saqlashda xatolik yuz berdi: ' + error.message, 'error');
-    })
-    .finally(() => {
+      })
+      .catch((error) => {
+        console.error("Save news error:", error);
+        showNotification(
+          "Saqlashda xatolik yuz berdi: " + error.message,
+          "error"
+        );
+      })
+      .finally(() => {
         // Restore button state
         saveBtn.innerHTML = originalText;
         saveBtn.disabled = false;
-    });
-}
+      });
+  }
 
-function uploadMediaFile(type) {
-    console.log('uploadMediaFile called with type:', type);
-    const fileInput = document.getElementById(type === 'image' ? 'newsImageFile' : 'newsVideoFile');
+  function uploadMediaFile(type) {
+    console.log("uploadMediaFile called with type:", type);
+    const fileInput = document.getElementById(
+      type === "image" ? "newsImageFile" : "newsVideoFile"
+    );
     const file = fileInput.files[0];
-    
+
     if (!file) return;
-    
+
     // Show loading
-    const preview = document.getElementById(type === 'image' ? 'imagePreview' : 'videoPreview');
-    const removeBtn = document.getElementById(type === 'image' ? 'removeImageBtn' : 'removeVideoBtn');
-    const hiddenInput = document.getElementById(type === 'image' ? 'newsImageUrl' : 'newsVideoUrl');
-    
+    const preview = document.getElementById(
+      type === "image" ? "imagePreview" : "videoPreview"
+    );
+    const removeBtn = document.getElementById(
+      type === "image" ? "removeImageBtn" : "removeVideoBtn"
+    );
+    const hiddenInput = document.getElementById(
+      type === "image" ? "newsImageUrl" : "newsVideoUrl"
+    );
+
     // Create loading indicator
-    const loadingDiv = document.createElement('div');
-    loadingDiv.className = 'text-center';
-    loadingDiv.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Yuklanmoqda...</span></div> Yuklanmoqda...';
+    const loadingDiv = document.createElement("div");
+    loadingDiv.className = "text-center";
+    loadingDiv.innerHTML =
+      '<div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Yuklanmoqda...</span></div> Yuklanmoqda...';
     preview.parentNode.insertBefore(loadingDiv, preview);
-    
+
     // Create form data
     const formData = new FormData();
-    formData.append('file', file);
-    
-    fetch('/admin/upload-news-media', {
-        method: 'POST',
-        headers: {
-            'X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : ''
-        },
-        body: formData
+    formData.append("file", file);
+
+    fetch("/admin/upload-news-media", {
+      method: "POST",
+      headers: {
+        "X-CSRF-Token": typeof CSRF_TOKEN !== "undefined" ? CSRF_TOKEN : "",
+      },
+      body: formData,
     })
-    .then(response => response.json())
-    .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         loadingDiv.remove();
-        
+
         if (data.success) {
-            hiddenInput.value = data.file_url;
-            
-            if (type === 'image') {
-                preview.src = data.file_url;
-                preview.style.display = 'block';
-            } else {
-                preview.src = data.file_url;
-                preview.style.display = 'block';
-            }
-            
-            removeBtn.style.display = 'inline-block';
-            showNotification(data.message, 'success');
+          hiddenInput.value = data.file_url;
+
+          if (type === "image") {
+            preview.src = data.file_url;
+            preview.style.display = "block";
+          } else {
+            preview.src = data.file_url;
+            preview.style.display = "block";
+          }
+
+          removeBtn.style.display = "inline-block";
+          showNotification(data.message, "success");
         } else {
-            showNotification(data.message, 'error');
+          showNotification(data.message, "error");
         }
-    })
-    .catch(error => {
+      })
+      .catch((error) => {
         loadingDiv.remove();
-        console.error('Upload error:', error);
-        showNotification('Fayl yuklashda xatolik yuz berdi', 'error');
-    });
-}
+        console.error("Upload error:", error);
+        showNotification("Fayl yuklashda xatolik yuz berdi", "error");
+      });
+  }
 
-function removeMedia(type) {
-    const preview = document.getElementById(type === 'image' ? 'imagePreview' : 'videoPreview');
-    const removeBtn = document.getElementById(type === 'image' ? 'removeImageBtn' : 'removeVideoBtn');
-    const hiddenInput = document.getElementById(type === 'image' ? 'newsImageUrl' : 'newsVideoUrl');
-    const fileInput = document.getElementById(type === 'image' ? 'newsImageFile' : 'newsVideoFile');
-    
-    preview.style.display = 'none';
-    preview.src = '';
-    removeBtn.style.display = 'none';
-    hiddenInput.value = '';
-    fileInput.value = '';
-    
-    showNotification(type === 'image' ? 'Rasm olib tashlandi' : 'Video olib tashlandi', 'info');
-}
+  function removeMedia(type) {
+    const preview = document.getElementById(
+      type === "image" ? "imagePreview" : "videoPreview"
+    );
+    const removeBtn = document.getElementById(
+      type === "image" ? "removeImageBtn" : "removeVideoBtn"
+    );
+    const hiddenInput = document.getElementById(
+      type === "image" ? "newsImageUrl" : "newsVideoUrl"
+    );
+    const fileInput = document.getElementById(
+      type === "image" ? "newsImageFile" : "newsVideoFile"
+    );
 
-// Initialize when page loads
-$(document).ready(function() {
-    console.log('News management page loaded');
-    console.log('Session info:', {
-        staff_id: '{{ session.get("staff_id") }}',
-        staff_name: '{{ session.get("staff_name") }}',
-        staff_role: '{{ session.get("staff_role") }}'
+    preview.style.display = "none";
+    preview.src = "";
+    removeBtn.style.display = "none";
+    hiddenInput.value = "";
+    fileInput.value = "";
+
+    showNotification(
+      type === "image" ? "Rasm olib tashlandi" : "Video olib tashlandi",
+      "info"
+    );
+  }
+
+  // Initialize when page loads
+  $(document).ready(function () {
+    console.log("News management page loaded");
+    console.log("Session info:", {
+      staff_id: '{{ session.get("staff_id") }}',
+      staff_name: '{{ session.get("staff_name") }}',
+      staff_role: '{{ session.get("staff_role") }}',
     });
     initializeDataTable();
     loadNewsData();
     setupEventListeners();
-});
+  });
 
-// Initialize DataTable
-function initializeDataTable() {
-    newsDataTable = $('#newsTable').DataTable({
-        responsive: true,
-        pageLength: 10,
-        language: {
-            url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/uz.json',
-            emptyTable: "Yangiliklar topilmadi",
-            info: "_START_ dan _END_ gacha (_TOTAL_ ta yanglik)",
-            infoEmpty: "0 dan 0 gacha (0 ta yanglik)",
-            infoFiltered: "(jami _MAX_ ta yanglikdan filtrlandi)",
-            lengthMenu: "Har sahifada _MENU_ ta ko'rsatish",
-            loadingRecords: "Yuklanmoqda...",
-            processing: "Ishlanmoqda...",
-            search: "Qidirish:",
-            zeroRecords: "Mos yangilik topilmadi"
-        },
-        order: [[5, 'asc'], [6, 'desc']], // Adjusted for checkbox column
-        columnDefs: [
-            { orderable: false, targets: [0, 7] }, // Checkbox and actions columns
-            { width: '30px', targets: [0] }, // Checkbox column width
-            { width: '60px', targets: [1] }  // ID column width
-        ]
+  // Initialize DataTable
+  function initializeDataTable() {
+    newsDataTable = $("#newsTable").DataTable({
+      responsive: true,
+      pageLength: 10,
+      language: {
+        url: "//cdn.datatables.net/plug-ins/1.13.4/i18n/uz.json",
+        emptyTable: "Yangiliklar topilmadi",
+        info: "_START_ dan _END_ gacha (_TOTAL_ ta yanglik)",
+        infoEmpty: "0 dan 0 gacha (0 ta yanglik)",
+        infoFiltered: "(jami _MAX_ ta yanglikdan filtrlandi)",
+        lengthMenu: "Har sahifada _MENU_ ta ko'rsatish",
+        loadingRecords: "Yuklanmoqda...",
+        processing: "Ishlanmoqda...",
+        search: "Qidirish:",
+        zeroRecords: "Mos yangilik topilmadi",
+      },
+      order: [
+        [5, "asc"],
+        [6, "desc"],
+      ], // Adjusted for checkbox column
+      columnDefs: [
+        { orderable: false, targets: [0, 7] }, // Checkbox and actions columns
+        { width: "30px", targets: [0] }, // Checkbox column width
+        { width: "60px", targets: [1] }, // ID column width
+      ],
     });
-}
+  }
 
-// Load news data from server
-function loadNewsData() {
-    console.log('Loading news data...');
-    
-    // Check if user is logged in as super_admin
-    const isSuperAdmin = {{ 'true' if session.get('super_admin') else 'false' }};
-    console.log('Is super admin:', isSuperAdmin);
-    console.log('CSRF_TOKEN available:', typeof CSRF_TOKEN !== 'undefined', CSRF_TOKEN);
-    
-    if (!isSuperAdmin) {
-        console.warn('User is not super admin or not logged in');
-        showNotification('Super admin huquqi kerak. Iltimos login qiling.', 'error');
-        // Show table with no data message
-        document.getElementById('newsTableBody').innerHTML = '<tr><td colspan="8" class="text-center text-danger">Super admin huquqi kerak</td></tr>';
-        return;
-    }
-    
+  // Load news data from server
+  function loadNewsData() {
+    console.log("Loading news data...");
+
+    // NOTE: previously we stopped the fetch when client-side session flag missing.
+    // Server enforces permissions; attempt to fetch and handle 403 gracefully so admins can debug server-side issues.
+    console.log(
+      "CSRF_TOKEN available:",
+      typeof CSRF_TOKEN !== "undefined",
+      CSRF_TOKEN
+    );
+
     // Show loading message
-    document.getElementById('newsTableBody').innerHTML = '<tr><td colspan="8" class="text-center">Yuklanmoqda...</td></tr>';
-    
-    console.log('Making fetch request to /api/news/admin');
-    fetch('/api/news/admin', {
-        method: 'GET',
-        headers: {
-            'X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : ''
-        }
+    document.getElementById("newsTableBody").innerHTML =
+      '<tr><td colspan="8" class="text-center">Yuklanmoqda...</td></tr>';
+
+    console.log("Making fetch request to /api/news/admin");
+    fetch("/api/news/admin", {
+      method: "GET",
+      headers: {
+        "X-CSRF-Token": typeof CSRF_TOKEN !== "undefined" ? CSRF_TOKEN : "",
+      },
     })
-    .then(response => {
-        console.log('API Response status:', response.status);
-        console.log('API Response headers:', response.headers);
+      .then((response) => {
+        console.log("API Response status:", response.status);
+        console.log("API Response headers:", response.headers);
         if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
         return response.json();
-    })
-    .then(data => {
-        console.log('API Response data:', data);
+      })
+      .then((data) => {
+        console.log("API Response data:", data);
         if (data.success) {
-            console.log('News data loaded successfully, count:', data.news ? data.news.length : 0);
-            updateNewsTable(data.news || []);
+          console.log(
+            "News data loaded successfully, count:",
+            data.news ? data.news.length : 0
+          );
+          updateNewsTable(data.news || []);
         } else {
-            console.error('API returned error:', data.message);
-            showNotification('Yangiliklar yuklanmadi: ' + (data.message || 'Noma\'lum xatolik'), 'error');
-            document.getElementById('newsTableBody').innerHTML = '<tr><td colspan="8" class="text-center text-danger">Ma\'lumotlar yuklanmadi: ' + (data.message || 'Xatolik') + '</td></tr>';
+          console.error("API returned error:", data.message);
+          showNotification(
+            "Yangiliklar yuklanmadi: " + (data.message || "Noma'lum xatolik"),
+            "error"
+          );
+          document.getElementById("newsTableBody").innerHTML =
+            '<tr><td colspan="8" class="text-center text-danger">Ma\'lumotlar yuklanmadi: ' +
+            (data.message || "Xatolik") +
+            "</td></tr>";
         }
-    })
-    .catch(error => {
-        console.error('Load news error:', error);
-        showNotification('Yangiliklar yuklanishida xatolik: ' + error.message, 'error');
-        document.getElementById('newsTableBody').innerHTML = '<tr><td colspan="8" class="text-center text-danger">Xatolik: ' + error.message + '</td></tr>';
-    });
-}
+      })
+      .catch((error) => {
+        console.error("Load news error:", error);
+        showNotification(
+          "Yangiliklar yuklanishida xatolik: " + error.message,
+          "error"
+        );
+        document.getElementById("newsTableBody").innerHTML =
+          '<tr><td colspan="8" class="text-center text-danger">Xatolik: ' +
+          error.message +
+          "</td></tr>";
+      });
+  }
 
-// Update news table with data
-function updateNewsTable(newsItems) {
+  // Update news table with data
+  function updateNewsTable(newsItems) {
     newsDataTable.clear();
-    
+
     let activeCount = 0;
     let inactiveCount = 0;
-    
+
     if (newsItems && newsItems.length > 0) {
-        newsItems.forEach(item => {
-            // Count active/inactive news
-            if (item.is_active) activeCount++;
-            else inactiveCount++;
-            
-            const typeLabel = item.type === 'advertisement' 
-                ? '<span class="news-type-advertisement">📢 Reklama</span>'
-                : '<span class="news-type-news">📰 Yangilik</span>';
-            
-            const statusLabel = item.is_active 
-                ? '<span class="news-status-active">✅ Faol</span>'
-                : '<span class="news-status-inactive">❌ Nofaol</span>';
-                
-            const createdAt = new Date(item.created_at).toLocaleDateString('uz-UZ', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-            });
-            
-            const checkbox = `<input type="checkbox" class="news-checkbox form-check-input" value="${item.id}" onchange="updateBulkActions()">`;
-            
-            const actions = `
+      newsItems.forEach((item) => {
+        // Count active/inactive news
+        if (item.is_active) activeCount++;
+        else inactiveCount++;
+
+        const typeLabel =
+          item.type === "advertisement"
+            ? '<span class="news-type-advertisement">📢 Reklama</span>'
+            : '<span class="news-type-news">📰 Yangilik</span>';
+
+        const statusLabel = item.is_active
+          ? '<span class="news-status-active">✅ Faol</span>'
+          : '<span class="news-status-inactive">❌ Nofaol</span>';
+
+        const createdAt = new Date(item.created_at).toLocaleDateString(
+          "uz-UZ",
+          {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          }
+        );
+
+        const checkbox = `<input type="checkbox" class="news-checkbox form-check-input" value="${item.id}" onchange="updateBulkActions()">`;
+
+        const actions = `
                 <div class="news-actions">
-                    <button class="btn btn-toggle" onclick="toggleNews(${item.id})" title="Holatni o'zgartirish">
-                        <i class="bi bi-toggle-${item.is_active ? 'on' : 'off'}"></i>
+                    <button class="btn btn-toggle" onclick="toggleNews(${
+                      item.id
+                    })" title="Holatni o'zgartirish">
+                        <i class="bi bi-toggle-${
+                          item.is_active ? "on" : "off"
+                        }"></i>
                     </button>
-                    <button class="btn btn-edit" onclick="editNews(${item.id})" title="Tahrirlash">
+                    <button class="btn btn-edit" onclick="editNews(${
+                      item.id
+                    })" title="Tahrirlash">
                         <i class="bi bi-pencil"></i>
                     </button>
-                    <button class="btn btn-delete" onclick="deleteNews(${item.id})" title="O'chirish">
+                    <button class="btn btn-delete" onclick="deleteNews(${
+                      item.id
+                    })" title="O'chirish">
                         <i class="bi bi-trash"></i>
                     </button>
                 </div>
             `;
-            
-            newsDataTable.row.add([
-                checkbox,
-                item.id,
-                item.title,
-                typeLabel,
-                statusLabel,
-                item.display_order || 0,
-                createdAt,
-                actions
-            ]);
-        });
+
+        newsDataTable.row.add([
+          checkbox,
+          item.id,
+          item.title,
+          typeLabel,
+          statusLabel,
+          item.display_order || 0,
+          createdAt,
+          actions,
+        ]);
+      });
     }
-    
+
     // Update statistics
-    document.getElementById('total-news').textContent = newsItems ? newsItems.length : 0;
-    document.getElementById('active-news').textContent = activeCount;
-    document.getElementById('inactive-news').textContent = inactiveCount;
-    
+    document.getElementById("total-news").textContent = newsItems
+      ? newsItems.length
+      : 0;
+    document.getElementById("active-news").textContent = activeCount;
+    document.getElementById("inactive-news").textContent = inactiveCount;
+
     newsDataTable.draw();
-}
+  }
 
-// Setup event listeners
-function setupEventListeners() {
+  // Setup event listeners
+  function setupEventListeners() {
     // No longer needed - file upload handles previews
-}
+  }
 
-// Edit news
-function editNews(newsId) {
+  // Edit news
+  function editNews(newsId) {
     // Get news data from server
-    getNewsDataById(newsId).then(newsData => {
-        if (newsData) {
-            openNewsModal(newsData);
-            const modal = new bootstrap.Modal(document.getElementById('newsModal'));
-            modal.show();
-        } else {
-            showNotification('Yangilik ma\'lumotlari topilmadi', 'error');
-        }
+    getNewsDataById(newsId).then((newsData) => {
+      if (newsData) {
+        openNewsModal(newsData);
+        const modal = new bootstrap.Modal(document.getElementById("newsModal"));
+        modal.show();
+      } else {
+        showNotification("Yangilik ma'lumotlari topilmadi", "error");
+      }
     });
-}
+  }
 
-// Get news data by ID (from current table data)
-function getNewsDataById(newsId) {
+  // Get news data by ID (from current table data)
+  function getNewsDataById(newsId) {
     return fetch(`/api/news/admin`, {
-        method: 'GET',
-        headers: {
-            'X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : ''
-        }
+      method: "GET",
+      headers: {
+        "X-CSRF-Token": typeof CSRF_TOKEN !== "undefined" ? CSRF_TOKEN : "",
+      },
     })
-    .then(response => response.json())
-    .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         if (data.success && data.news) {
-            return data.news.find(item => item.id === newsId);
+          return data.news.find((item) => item.id === newsId);
         }
         return null;
-    })
-    .catch(error => {
-        console.error('Get news by ID error:', error);
+      })
+      .catch((error) => {
+        console.error("Get news by ID error:", error);
         return null;
-    });
-}
+      });
+  }
 
-// Utility functions for table formatting
-function formatNewsType(type) {
-    return type === 'advertisement'
-        ? '<span class="news-type-advertisement">📢 Reklama</span>'
-        : '<span class="news-type-news">📰 Yangilik</span>';
-}
+  // Utility functions for table formatting
+  function formatNewsType(type) {
+    return type === "advertisement"
+      ? '<span class="news-type-advertisement">📢 Reklama</span>'
+      : '<span class="news-type-news">📰 Yangilik</span>';
+  }
 
-function formatActiveStatus(isActive) {
+  function formatActiveStatus(isActive) {
     return isActive
-        ? '<span class="news-status-active">✅ Faol</span>'
-        : '<span class="news-status-inactive">❌ Nofaol</span>';
-}
+      ? '<span class="news-status-active">✅ Faol</span>'
+      : '<span class="news-status-inactive">❌ Nofaol</span>';
+  }
 
-function formatDate(dateString) {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString('uz-UZ', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
+  function formatDate(dateString) {
+    if (!dateString) return "N/A";
+    return new Date(dateString).toLocaleDateString("uz-UZ", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
-}
+  }
 
-function generateActionButtons(newsId) {
+  function generateActionButtons(newsId) {
     return `
         <div class="news-actions">
             <button class="btn btn-sm btn-info" onclick="editNews(${newsId})" title="Tahrirlash">
@@ -1007,260 +1215,297 @@ function generateActionButtons(newsId) {
             </button>
         </div>
     `;
-}
+  }
 
-// Notification system
-function showNotification(message, type = 'info', duration = 5000) {
+  // Notification system
+  function showNotification(message, type = "info", duration = 5000) {
     console.log(`Notification [${type}]: ${message}`);
-    
+
     // Create notification element
-    const notification = document.createElement('div');
-    notification.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show position-fixed`;
-    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; max-width: 350px;';
+    const notification = document.createElement("div");
+    notification.className = `alert alert-${
+      type === "error" ? "danger" : type
+    } alert-dismissible fade show position-fixed`;
+    notification.style.cssText =
+      "top: 20px; right: 20px; z-index: 9999; max-width: 350px;";
     notification.innerHTML = `
-        <i class="bi bi-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+        <i class="bi bi-${
+          type === "success"
+            ? "check-circle"
+            : type === "error"
+            ? "exclamation-circle"
+            : "info-circle"
+        }"></i>
         ${message}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     `;
-    
+
     // Add to document
     document.body.appendChild(notification);
-    
+
     // Auto remove after duration
     setTimeout(() => {
-        if (notification.parentNode) {
-            notification.remove();
-        }
+      if (notification.parentNode) {
+        notification.remove();
+      }
     }, duration);
-}
+  }
 
-// Bulk action functions
-function updateBulkActions() {
-    const checkboxes = document.querySelectorAll('.news-checkbox:checked');
-    const bulkActions = document.querySelector('.bulk-actions');
-    
+  // Bulk action functions
+  function updateBulkActions() {
+    const checkboxes = document.querySelectorAll(".news-checkbox:checked");
+    const bulkActions = document.querySelector(".bulk-actions");
+
     if (checkboxes.length > 0) {
-        if (bulkActions) bulkActions.style.display = 'block';
+      if (bulkActions) bulkActions.style.display = "block";
     } else {
-        if (bulkActions) bulkActions.style.display = 'none';
+      if (bulkActions) bulkActions.style.display = "none";
     }
-}
+  }
 
-// Delete news with confirmation
-var deleteNewsId = null;
+  // Delete news with confirmation
+  var deleteNewsId = null;
 
-function confirmDelete() {
+  function confirmDelete() {
     if (!deleteNewsId) return;
-    
+
     fetch(`/api/news/${deleteNewsId}`, {
-        method: 'DELETE',
-        headers: {
-            'X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : ''
-        }
+      method: "DELETE",
+      headers: {
+        "X-CSRF-Token": typeof CSRF_TOKEN !== "undefined" ? CSRF_TOKEN : "",
+      },
     })
-    .then(response => response.json())
-    .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         if (data.success) {
-            showNotification('Yangilik o\'chirildi', 'success');
-            const modal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
-            if (modal) modal.hide();
-            loadNewsData(); // Reload table
+          showNotification("Yangilik o'chirildi", "success");
+          const modal = bootstrap.Modal.getInstance(
+            document.getElementById("deleteModal")
+          );
+          if (modal) modal.hide();
+          loadNewsData(); // Reload table
         } else {
-            showNotification('Xatolik: ' + (data.message || 'Noma\'lum xatolik'), 'error');
+          showNotification(
+            "Xatolik: " + (data.message || "Noma'lum xatolik"),
+            "error"
+          );
         }
-    })
-    .catch(error => {
-        console.error('Delete news error:', error);
-        showNotification('O\'chirishda xatolik yuz berdi', 'error');
-    });
-}
+      })
+      .catch((error) => {
+        console.error("Delete news error:", error);
+        showNotification("O'chirishda xatolik yuz berdi", "error");
+      });
+  }
 
-// Toggle news status
-function toggleNews(newsId) {
+  // Toggle news status
+  function toggleNews(newsId) {
     fetch(`/api/news/toggle/${newsId}`, {
-        method: 'POST',
-        headers: {
-            'X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : ''
-        }
+      method: "POST",
+      headers: {
+        "X-CSRF-Token": typeof CSRF_TOKEN !== "undefined" ? CSRF_TOKEN : "",
+      },
     })
-    .then(response => response.json())
-    .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         if (data.success) {
-            showNotification(data.message, 'success');
-            loadNewsData(); // Reload table
+          showNotification(data.message, "success");
+          loadNewsData(); // Reload table
         } else {
-            showNotification('Xatolik: ' + (data.message || 'Noma\'lum xatolik'), 'error');
+          showNotification(
+            "Xatolik: " + (data.message || "Noma'lum xatolik"),
+            "error"
+          );
         }
-    })
-    .catch(error => {
-        console.error('Toggle news error:', error);
-        showNotification('Holatni o\'zgartirishda xatolik', 'error');
-    });
-}
+      })
+      .catch((error) => {
+        console.error("Toggle news error:", error);
+        showNotification("Holatni o'zgartirishda xatolik", "error");
+      });
+  }
 
-// Delete news
-function deleteNews(newsId) {
+  // Delete news
+  function deleteNews(newsId) {
     deleteNewsId = newsId;
-    
+
     // Show confirmation modal
-    const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    const modal = new bootstrap.Modal(document.getElementById("deleteModal"));
     modal.show();
-}
+  }
 
+  // Selection and bulk actions
+  function toggleSelectAll() {
+    const selectAll = document.getElementById("selectAll");
+    const checkboxes = document.querySelectorAll(".news-checkbox");
 
-// Selection and bulk actions
-function toggleSelectAll() {
-    const selectAll = document.getElementById('selectAll');
-    const checkboxes = document.querySelectorAll('.news-checkbox');
-    
-    checkboxes.forEach(checkbox => {
-        checkbox.checked = selectAll.checked;
+    checkboxes.forEach((checkbox) => {
+      checkbox.checked = selectAll.checked;
     });
-    
+
     updateBulkActions();
-}
+  }
 
-
-// Bulk toggle active status
-function bulkToggle(isActive) {
-    const checkedBoxes = document.querySelectorAll('.news-checkbox:checked');
+  // Bulk toggle active status
+  function bulkToggle(isActive) {
+    const checkedBoxes = document.querySelectorAll(".news-checkbox:checked");
     if (checkedBoxes.length === 0) {
-        showNotification('Hech qanday yangilik tanlanmagan', 'error');
-        return;
+      showNotification("Hech qanday yangilik tanlanmagan", "error");
+      return;
     }
-    
-    const newsIds = Array.from(checkedBoxes).map(cb => parseInt(cb.value));
-    const action = isActive ? 'faollashtirish' : 'nofaol qilish';
-    
+
+    const newsIds = Array.from(checkedBoxes).map((cb) => parseInt(cb.value));
+    const action = isActive ? "faollashtirish" : "nofaol qilish";
+
     if (confirm(`${newsIds.length} ta yanglikni ${action}ni tasdiqlaysizmi?`)) {
-        Promise.all(newsIds.map(id => {
-            return fetch(`/api/news/toggle/${id}`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : ''
-                }
-            }).then(response => response.json());
-        }))
-        .then(results => {
-            const successful = results.filter(r => r.success).length;
-            showNotification(`${successful} ta yangilik ${action} amalga oshirildi`, 'success');
-            loadNewsData();
-            
-            // Clear selections
-            document.getElementById('selectAll').checked = false;
-            updateBulkActions();
+      Promise.all(
+        newsIds.map((id) => {
+          return fetch(`/api/news/toggle/${id}`, {
+            method: "POST",
+            headers: {
+              "X-CSRF-Token":
+                typeof CSRF_TOKEN !== "undefined" ? CSRF_TOKEN : "",
+            },
+          }).then((response) => response.json());
         })
-        .catch(error => {
-            console.error('Bulk toggle error:', error);
-            showNotification('Bulk amalni bajarishda xatolik', 'error');
+      )
+        .then((results) => {
+          const successful = results.filter((r) => r.success).length;
+          showNotification(
+            `${successful} ta yangilik ${action} amalga oshirildi`,
+            "success"
+          );
+          loadNewsData();
+
+          // Clear selections
+          document.getElementById("selectAll").checked = false;
+          updateBulkActions();
+        })
+        .catch((error) => {
+          console.error("Bulk toggle error:", error);
+          showNotification("Bulk amalni bajarishda xatolik", "error");
         });
     }
-}
+  }
 
-// Bulk delete
-function bulkDelete() {
-    const checkedBoxes = document.querySelectorAll('.news-checkbox:checked');
+  // Bulk delete
+  function bulkDelete() {
+    const checkedBoxes = document.querySelectorAll(".news-checkbox:checked");
     if (checkedBoxes.length === 0) {
-        showNotification('Hech qanday yangilik tanlanmagan', 'error');
-        return;
+      showNotification("Hech qanday yangilik tanlanmagan", "error");
+      return;
     }
-    
-    const newsIds = Array.from(checkedBoxes).map(cb => parseInt(cb.value));
-    
-    if (confirm(`${newsIds.length} ta yanglikni o'chirishni tasdiqlaysizmi? Bu amal qaytarilmaydi!`)) {
-        Promise.all(newsIds.map(id => {
-            return fetch(`/api/news/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : ''
-                }
-            }).then(response => response.json());
-        }))
-        .then(results => {
-            const successful = results.filter(r => r.success).length;
-            showNotification(`${successful} ta yangilik o'chirildi`, 'success');
-            loadNewsData();
-            
-            // Clear selections
-            document.getElementById('selectAll').checked = false;
-            updateBulkActions();
+
+    const newsIds = Array.from(checkedBoxes).map((cb) => parseInt(cb.value));
+
+    if (
+      confirm(
+        `${newsIds.length} ta yanglikni o'chirishni tasdiqlaysizmi? Bu amal qaytarilmaydi!`
+      )
+    ) {
+      Promise.all(
+        newsIds.map((id) => {
+          return fetch(`/api/news/${id}`, {
+            method: "DELETE",
+            headers: {
+              "X-CSRF-Token":
+                typeof CSRF_TOKEN !== "undefined" ? CSRF_TOKEN : "",
+            },
+          }).then((response) => response.json());
         })
-        .catch(error => {
-            console.error('Bulk delete error:', error);
-            showNotification('Bulk o\'chirishda xatolik', 'error');
+      )
+        .then((results) => {
+          const successful = results.filter((r) => r.success).length;
+          showNotification(`${successful} ta yangilik o'chirildi`, "success");
+          loadNewsData();
+
+          // Clear selections
+          document.getElementById("selectAll").checked = false;
+          updateBulkActions();
+        })
+        .catch((error) => {
+          console.error("Bulk delete error:", error);
+          showNotification("Bulk o'chirishda xatolik", "error");
         });
     }
-}
+  }
 
-// Export news data
-function exportNews(format) {
-    fetch('/api/news/admin', {
-        method: 'GET',
-        headers: {
-            'X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : ''
-        }
+  // Export news data
+  function exportNews(format) {
+    fetch("/api/news/admin", {
+      method: "GET",
+      headers: {
+        "X-CSRF-Token": typeof CSRF_TOKEN !== "undefined" ? CSRF_TOKEN : "",
+      },
     })
-    .then(response => response.json())
-    .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         if (data.success && data.news) {
-            if (format === 'json') {
-                exportAsJSON(data.news);
-            } else if (format === 'csv') {
-                exportAsCSV(data.news);
-            }
+          if (format === "json") {
+            exportAsJSON(data.news);
+          } else if (format === "csv") {
+            exportAsCSV(data.news);
+          }
         } else {
-            showNotification('Export ma\'lumotlarni olishda xatolik', 'error');
+          showNotification("Export ma'lumotlarni olishda xatolik", "error");
         }
-    })
-    .catch(error => {
-        console.error('Export error:', error);
-        showNotification('Export da xatolik yuz berdi', 'error');
-    });
-}
+      })
+      .catch((error) => {
+        console.error("Export error:", error);
+        showNotification("Export da xatolik yuz berdi", "error");
+      });
+  }
 
-function exportAsJSON(newsData) {
+  function exportAsJSON(newsData) {
     const dataStr = JSON.stringify(newsData, null, 2);
-    const dataBlob = new Blob([dataStr], {type: 'application/json'});
+    const dataBlob = new Blob([dataStr], { type: "application/json" });
     const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
-    link.download = `yangiliklar_${new Date().toISOString().split('T')[0]}.json`;
+    link.download = `yangiliklar_${
+      new Date().toISOString().split("T")[0]
+    }.json`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-    showNotification('JSON eksport muvaffaqiyatli yakunlandi', 'success');
-}
+    showNotification("JSON eksport muvaffaqiyatli yakunlandi", "success");
+  }
 
-function exportAsCSV(newsData) {
-    const headers = ['ID', 'Sarlavha', 'Matn', 'Turi', 'Faol', 'Tartib', 'Yaratilgan sana'];
-    const csvRows = [headers.join(',')];
-    
-    newsData.forEach(item => {
-        const row = [
-            item.id,
-            `"${(item.title || '').replace(/"/g, '""')}"`,
-            `"${(item.content || '').replace(/"/g, '""')}"`,
-            item.type === 'advertisement' ? 'Reklama' : 'Yangilik',
-            item.is_active ? 'Ha' : 'Yo\'q',
-            item.display_order || 0,
-            new Date(item.created_at).toLocaleDateString('uz-UZ')
-        ];
-        csvRows.push(row.join(','));
+  function exportAsCSV(newsData) {
+    const headers = [
+      "ID",
+      "Sarlavha",
+      "Matn",
+      "Turi",
+      "Faol",
+      "Tartib",
+      "Yaratilgan sana",
+    ];
+    const csvRows = [headers.join(",")];
+
+    newsData.forEach((item) => {
+      const row = [
+        item.id,
+        `"${(item.title || "").replace(/"/g, '""')}"`,
+        `"${(item.content || "").replace(/"/g, '""')}"`,
+        item.type === "advertisement" ? "Reklama" : "Yangilik",
+        item.is_active ? "Ha" : "Yo'q",
+        item.display_order || 0,
+        new Date(item.created_at).toLocaleDateString("uz-UZ"),
+      ];
+      csvRows.push(row.join(","));
     });
-    
-    const csvData = csvRows.join('\n');
-    const dataBlob = new Blob([csvData], {type: 'text/csv;charset=utf-8'});
+
+    const csvData = csvRows.join("\n");
+    const dataBlob = new Blob([csvData], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
-    link.download = `yangiliklar_${new Date().toISOString().split('T')[0]}.csv`;
+    link.download = `yangiliklar_${new Date().toISOString().split("T")[0]}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-    showNotification('CSV eksport muvaffaqiyatli yakunlandi', 'success');
-}
-
+    showNotification("CSV eksport muvaffaqiyatli yakunlandi", "success");
+  }
 </script>
 {% endblock %}

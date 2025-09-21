@@ -9619,3 +9619,1180 @@ MemoryError
 2025-09-21 11:24:40,845 | WARNING | restaurant_app | not_found_error:1002 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
 2025-09-21 11:24:40,845 | WARNING | restaurant_app | not_found_error:1002 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
 2025-09-21 11:24:53,002 | WARNING | restaurant_app | not_found_error:1002 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-21 17:20:55,503 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-21 17:21:31,736 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:21:31,742 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:21:31,781 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:21:31,790 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:21:32,967 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-21 17:21:32,973 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-21 17:21:33,000 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-21 17:21:33,017 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-21 17:21:33,103 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-21 17:21:33,111 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-21 17:21:33,121 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-21 17:21:33,134 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-21 17:21:33,147 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/formal-shoes-black.jpg
+2025-09-21 17:21:33,166 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/high-heels.jpg
+2025-09-21 17:21:33,175 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/classic-heels.jpg
+2025-09-21 17:21:33,713 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:21:33,730 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:21:33,738 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:21:33,759 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:21:33,776 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-21 17:22:08,228 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-21 17:22:08,259 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-21 17:22:08,261 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-21 17:22:08,305 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-21 17:22:08,332 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-21 17:22:08,363 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-21 17:22:08,381 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-21 17:22:08,505 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-21 17:22:08,531 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-21 17:22:08,547 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/formal-shoes-black.jpg
+2025-09-21 17:22:08,562 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/high-heels.jpg
+2025-09-21 17:22:08,580 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/classic-heels.jpg
+2025-09-21 17:22:08,671 | WARNING | restaurant_app | wrapper:901 | CSRF token mismatch or missing
+2025-09-21 17:22:08,688 | WARNING | restaurant_app | wrapper:901 | CSRF token mismatch or missing
+2025-09-21 17:22:09,051 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-21 17:22:10,679 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-21 17:22:11,665 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:22:11,680 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:22:11,680 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:22:11,727 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:22:14,029 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-21 17:22:14,182 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:22:14,183 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:22:14,195 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:22:14,202 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:22:16,873 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-21 17:22:16,905 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-21 17:22:16,914 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-21 17:22:16,918 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-21 17:22:16,920 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-21 17:22:16,923 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-21 17:22:16,980 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:22:16,981 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:22:16,984 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:22:16,999 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:22:18,833 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:22:18,850 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:22:18,862 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:22:18,866 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:22:33,783 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:22:33,802 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:22:33,818 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:22:33,819 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:23:17,817 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:23:17,823 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:23:17,843 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:23:17,852 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:23:18,825 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:23:18,849 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:23:18,856 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:23:18,858 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:23:33,849 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:23:33,851 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:23:33,865 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:23:33,876 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:24:17,788 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:24:17,788 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:24:17,796 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:24:17,813 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:24:18,838 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:24:18,846 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:24:18,854 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:24:18,862 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:24:33,762 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:24:33,778 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:24:33,843 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:24:33,843 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:25:17,886 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:25:17,892 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:25:17,895 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:25:17,908 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:25:18,870 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:25:18,878 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:25:18,878 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:25:18,894 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:25:33,795 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:25:33,805 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:25:33,805 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-21 17:25:33,805 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-21 17:25:33,813 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-21 17:25:33,821 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:25:33,821 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-21 17:25:33,829 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:25:33,829 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-21 17:25:33,829 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-21 17:26:17,777 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:26:17,794 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:26:17,794 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:26:17,810 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:26:18,794 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:26:18,812 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:26:18,833 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:26:18,835 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:27:17,784 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:27:17,792 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:27:17,800 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:27:17,800 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-21 17:27:17,800 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-21 17:27:17,808 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:27:17,808 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-21 17:27:17,816 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-21 17:27:18,823 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:27:18,831 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-21 17:27:18,831 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:27:18,839 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:27:18,839 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:42:40,396 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-21 17:44:22,204 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-21 17:44:22,204 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-21 17:44:22,305 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-21 17:44:22,329 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-21 17:44:22,437 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-21 17:44:22,453 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-21 17:44:22,469 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-21 17:44:22,485 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-21 17:44:22,493 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/formal-shoes-black.jpg
+2025-09-21 17:44:22,509 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/high-heels.jpg
+2025-09-21 17:44:22,525 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/classic-heels.jpg
+2025-09-21 17:44:23,341 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-21 17:44:23,617 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:44:23,623 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:44:23,626 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:44:23,651 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:45:24,169 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:45:24,169 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:45:24,185 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:45:24,185 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:46:24,146 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:46:24,148 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:46:24,165 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:46:24,170 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:47:24,136 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:47:24,152 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:47:24,152 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:47:24,168 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:48:24,136 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:48:24,136 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:48:24,152 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:48:24,167 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:49:24,136 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:49:24,152 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:49:24,152 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:49:24,152 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:50:23,212 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:50:23,212 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:50:23,215 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:50:23,236 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:51:23,212 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:51:23,212 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:51:23,227 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:51:23,238 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:52:23,214 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:52:23,216 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:52:23,229 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:52:23,244 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:53:23,211 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:53:23,212 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:53:23,224 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:53:23,225 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:54:23,184 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:54:23,201 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:54:23,217 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:54:23,251 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:55:23,219 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:55:23,223 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:55:23,237 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:55:23,252 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:56:23,214 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:56:23,215 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:56:23,219 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:56:23,231 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:57:23,206 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:57:23,223 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:57:23,239 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:57:23,240 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:58:24,139 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:58:24,139 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:58:24,155 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 17:58:24,169 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:59:37,158 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 17:59:37,163 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 17:59:37,180 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 17:59:37,186 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:00:37,155 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:00:37,156 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:00:37,174 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:00:37,182 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:01:37,140 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:01:37,144 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:01:37,157 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:01:37,174 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:02:37,143 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:02:37,158 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:02:37,167 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:02:37,167 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:03:37,127 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:03:37,127 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:03:37,144 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:03:37,160 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:04:37,139 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:04:37,154 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:04:37,154 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:04:37,170 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:05:01,060 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-21 18:05:01,129 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-21 18:05:01,187 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-21 18:05:01,219 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-21 18:05:01,245 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-21 18:05:01,256 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-21 18:05:01,267 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-21 18:05:01,277 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-21 18:05:01,289 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/formal-shoes-black.jpg
+2025-09-21 18:05:01,298 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/high-heels.jpg
+2025-09-21 18:05:01,311 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/classic-heels.jpg
+2025-09-21 18:05:01,455 | WARNING | restaurant_app | wrapper:901 | CSRF token mismatch or missing
+2025-09-21 18:05:01,485 | WARNING | restaurant_app | wrapper:901 | CSRF token mismatch or missing
+2025-09-21 18:05:01,551 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-21 18:05:02,150 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:05:02,165 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:05:02,165 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:05:02,173 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:06:02,152 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:06:02,153 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:06:02,169 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:06:02,170 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:07:02,153 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:07:02,153 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:07:02,169 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:07:02,169 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:08:02,136 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:08:02,152 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:08:02,152 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:08:02,163 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:09:02,152 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:09:02,152 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:09:02,163 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:09:02,169 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:10:02,144 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:10:02,151 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:10:02,159 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:10:02,164 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:10:56,122 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-21 18:11:02,159 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:11:02,161 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:11:02,182 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:11:02,193 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:11:04,295 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-21 18:11:04,335 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-21 18:11:04,739 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-21 18:11:04,779 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-21 18:11:04,782 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-21 18:11:04,795 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-21 18:11:04,813 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/formal-shoes-black.jpg
+2025-09-21 18:11:04,814 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/high-heels.jpg
+2025-09-21 18:11:04,816 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-21 18:11:04,817 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/classic-heels.jpg
+2025-09-21 18:11:04,840 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-21 18:11:05,102 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-21 18:11:05,844 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:11:05,848 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:11:05,867 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:11:05,898 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:11:12,243 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-21 18:12:04,992 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:12:04,994 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:12:05,011 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:12:05,032 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:13:04,984 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:13:04,984 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:13:04,992 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:13:05,001 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:14:05,141 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:14:05,143 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:14:05,156 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:14:05,165 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:15:05,149 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:15:05,150 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:15:05,182 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:15:05,208 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:16:00,191 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-21 18:16:00,258 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-21 18:16:00,354 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-21 18:16:00,474 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-21 18:16:00,495 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-21 18:16:00,659 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-21 18:16:00,684 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-21 18:16:00,709 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/formal-shoes-black.jpg
+2025-09-21 18:16:00,717 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/classic-heels.jpg
+2025-09-21 18:16:00,725 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-21 18:16:00,733 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-21 18:16:00,742 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/high-heels.jpg
+2025-09-21 18:16:00,949 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-21 18:16:01,502 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:16:01,516 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:16:01,529 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:16:01,537 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:17:00,869 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:17:00,883 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:17:00,899 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:17:00,913 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:18:01,122 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:18:01,122 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:18:01,138 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:18:01,153 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:18:46,510 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-21 18:18:47,200 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-09-21 18:18:51,272 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-21 18:18:51,535 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-21 18:18:51,552 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-21 18:18:51,591 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-21 18:18:51,604 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-21 18:18:51,634 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-21 18:18:51,650 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-21 18:18:51,658 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-21 18:18:51,670 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-21 18:18:51,682 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/formal-shoes-black.jpg
+2025-09-21 18:18:51,690 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/high-heels.jpg
+2025-09-21 18:18:51,702 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/classic-heels.jpg
+2025-09-21 18:18:52,034 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-21 18:18:52,557 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:18:52,557 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:18:52,573 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:18:52,582 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:19:52,150 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:19:52,166 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:19:52,167 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:19:52,168 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:20:52,150 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:20:52,150 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:20:52,163 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:20:52,163 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:21:52,145 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:21:52,153 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:21:52,160 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:21:52,165 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:22:26,414 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-21 18:22:26,422 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-21 18:22:26,448 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-21 18:22:26,464 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-21 18:22:26,496 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-21 18:22:26,496 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-21 18:22:26,512 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-21 18:22:26,529 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-21 18:22:26,529 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/formal-shoes-black.jpg
+2025-09-21 18:22:26,546 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/high-heels.jpg
+2025-09-21 18:22:26,563 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/classic-heels.jpg
+2025-09-21 18:22:26,890 | WARNING | restaurant_app | wrapper:901 | CSRF token mismatch or missing
+2025-09-21 18:22:26,897 | WARNING | restaurant_app | wrapper:901 | CSRF token mismatch or missing
+2025-09-21 18:22:26,950 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-21 18:22:27,701 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:22:27,735 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:22:27,736 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:22:27,752 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:22:31,353 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-21 18:22:31,362 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-21 18:22:31,393 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-21 18:22:31,408 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-21 18:22:31,416 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-21 18:22:31,430 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-21 18:22:31,442 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-21 18:22:31,442 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-21 18:22:31,462 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/formal-shoes-black.jpg
+2025-09-21 18:22:31,462 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/high-heels.jpg
+2025-09-21 18:22:31,475 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/classic-heels.jpg
+2025-09-21 18:22:31,541 | WARNING | restaurant_app | wrapper:901 | CSRF token mismatch or missing
+2025-09-21 18:22:31,558 | WARNING | restaurant_app | wrapper:901 | CSRF token mismatch or missing
+2025-09-21 18:22:31,615 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-21 18:22:31,690 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:22:31,705 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:22:31,720 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:22:31,737 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:22:34,108 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-21 18:22:34,125 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-21 18:22:34,125 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-21 18:22:34,125 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-21 18:22:34,143 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-21 18:22:34,151 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-21 18:22:34,173 | WARNING | restaurant_app | wrapper:901 | CSRF token mismatch or missing
+2025-09-21 18:22:34,190 | WARNING | restaurant_app | wrapper:901 | CSRF token mismatch or missing
+2025-09-21 18:22:34,235 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-21 18:22:34,254 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-21 18:22:34,268 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/formal-shoes-black.jpg
+2025-09-21 18:22:34,274 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-21 18:22:34,298 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/high-heels.jpg
+2025-09-21 18:22:34,315 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:22:34,323 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:22:34,323 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:22:34,340 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:22:34,358 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/classic-heels.jpg
+2025-09-21 18:22:36,650 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-21 18:22:36,675 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-21 18:22:36,826 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-21 18:22:36,830 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-21 18:22:37,157 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-21 18:22:37,175 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-21 18:22:37,179 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/formal-shoes-black.jpg
+2025-09-21 18:22:37,180 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-21 18:22:37,197 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-21 18:22:37,201 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/high-heels.jpg
+2025-09-21 18:22:37,209 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/classic-heels.jpg
+2025-09-21 18:22:37,321 | WARNING | restaurant_app | wrapper:901 | CSRF token mismatch or missing
+2025-09-21 18:22:37,326 | WARNING | restaurant_app | wrapper:901 | CSRF token mismatch or missing
+2025-09-21 18:22:37,426 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-21 18:22:37,489 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:22:37,505 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:22:37,514 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:22:37,525 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:22:39,738 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-21 18:22:39,742 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-21 18:22:39,769 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-21 18:22:39,774 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-21 18:22:39,783 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-21 18:22:39,795 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-21 18:22:39,803 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-21 18:22:39,814 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-21 18:22:39,825 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/formal-shoes-black.jpg
+2025-09-21 18:22:39,835 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/high-heels.jpg
+2025-09-21 18:22:39,846 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/classic-heels.jpg
+2025-09-21 18:22:39,958 | WARNING | restaurant_app | wrapper:901 | CSRF token mismatch or missing
+2025-09-21 18:22:39,963 | WARNING | restaurant_app | wrapper:901 | CSRF token mismatch or missing
+2025-09-21 18:22:40,032 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-21 18:22:40,081 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:22:40,085 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:22:40,096 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:22:40,106 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:22:42,256 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-21 18:22:42,331 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-21 18:22:42,396 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-21 18:22:42,396 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-21 18:22:42,396 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-21 18:22:42,412 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-21 18:22:42,423 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-21 18:22:42,431 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-21 18:22:42,442 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/formal-shoes-black.jpg
+2025-09-21 18:22:42,442 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/classic-heels.jpg
+2025-09-21 18:22:42,454 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/high-heels.jpg
+2025-09-21 18:22:42,480 | WARNING | restaurant_app | wrapper:901 | CSRF token mismatch or missing
+2025-09-21 18:22:42,497 | WARNING | restaurant_app | wrapper:901 | CSRF token mismatch or missing
+2025-09-21 18:22:42,548 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-21 18:22:42,663 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:22:42,663 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:22:42,673 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:22:42,674 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:22:45,260 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-09-21 18:22:50,819 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-21 18:22:50,823 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-21 18:22:50,865 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-21 18:22:50,877 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-21 18:22:50,890 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-21 18:22:50,900 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-21 18:22:50,913 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-21 18:22:50,934 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/high-heels.jpg
+2025-09-21 18:22:50,937 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/classic-heels.jpg
+2025-09-21 18:22:50,939 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/formal-shoes-black.jpg
+2025-09-21 18:22:50,942 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-21 18:22:50,981 | WARNING | restaurant_app | wrapper:901 | CSRF token mismatch or missing
+2025-09-21 18:22:51,013 | WARNING | restaurant_app | wrapper:901 | CSRF token mismatch or missing
+2025-09-21 18:22:51,079 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-21 18:22:51,151 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:22:51,153 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:22:51,154 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:22:51,171 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:22:54,170 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:22:54,170 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:22:54,194 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-21 18:22:54,194 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:22:54,204 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:23:09,320 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:23:09,329 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:23:09,329 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:23:09,361 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:23:09,369 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-21 18:23:29,602 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-21 18:23:29,602 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-21 18:23:29,659 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-21 18:23:29,672 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-21 18:23:29,680 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-21 18:23:29,701 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-21 18:23:29,709 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-21 18:23:29,730 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-21 18:23:29,738 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/high-heels.jpg
+2025-09-21 18:23:29,746 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/formal-shoes-black.jpg
+2025-09-21 18:23:29,762 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/classic-heels.jpg
+2025-09-21 18:23:29,821 | WARNING | restaurant_app | wrapper:901 | CSRF token mismatch or missing
+2025-09-21 18:23:29,856 | WARNING | restaurant_app | wrapper:901 | CSRF token mismatch or missing
+2025-09-21 18:23:29,905 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-21 18:23:30,006 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:23:30,010 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:23:30,027 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:23:30,035 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:24:30,158 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:24:30,160 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:24:30,171 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:24:30,172 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:25:29,693 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-21 18:25:29,693 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-21 18:25:30,115 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-21 18:25:30,123 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-21 18:25:30,155 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-21 18:25:30,155 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/formal-shoes-black.jpg
+2025-09-21 18:25:30,156 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-21 18:25:30,161 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-21 18:25:30,174 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-21 18:25:30,184 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/high-heels.jpg
+2025-09-21 18:25:30,194 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/classic-heels.jpg
+2025-09-21 18:25:30,395 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-21 18:25:30,618 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:25:30,619 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:25:30,620 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:25:30,633 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:25:31,557 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-21 18:25:31,597 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-21 18:25:31,695 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-21 18:25:31,771 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-21 18:25:31,824 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-21 18:25:31,826 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-21 18:25:31,827 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-21 18:25:31,827 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/formal-shoes-black.jpg
+2025-09-21 18:25:31,861 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/high-heels.jpg
+2025-09-21 18:25:31,870 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-21 18:25:31,873 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/classic-heels.jpg
+2025-09-21 18:25:32,137 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-21 18:25:32,246 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:25:32,253 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:25:32,259 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:25:32,274 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:25:39,143 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-21 18:26:32,140 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:26:32,164 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:26:32,171 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:26:32,177 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:27:10,121 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-21 18:27:32,154 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:27:32,166 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:27:32,180 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:27:32,194 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:28:24,105 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-21 18:28:32,094 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:28:32,101 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:28:32,108 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:28:32,117 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:29:32,146 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:29:32,154 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:29:32,156 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:29:32,165 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:30:17,895 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-21 18:30:17,909 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-21 18:30:17,926 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-21 18:30:17,928 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-21 18:30:18,292 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-21 18:30:18,303 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-21 18:30:18,316 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-21 18:30:18,327 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-21 18:30:18,336 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/formal-shoes-black.jpg
+2025-09-21 18:30:18,348 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/high-heels.jpg
+2025-09-21 18:30:18,361 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/classic-heels.jpg
+2025-09-21 18:30:18,607 | WARNING | restaurant_app | wrapper:901 | CSRF token mismatch or missing
+2025-09-21 18:30:18,607 | WARNING | restaurant_app | wrapper:901 | CSRF token mismatch or missing
+2025-09-21 18:30:18,680 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:30:18,687 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:30:18,736 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:30:18,744 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:30:25,497 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:30:25,497 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:30:25,514 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:30:25,529 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:30:29,732 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:30:29,733 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:30:29,761 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:30:29,771 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:30:32,040 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:30:32,061 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:30:32,067 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:30:32,083 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:30:32,157 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:30:32,158 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:30:32,185 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:30:32,200 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:31:32,148 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:31:32,157 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:31:32,182 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:31:32,182 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:31:32,182 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:31:32,190 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:31:32,198 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:31:32,206 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:32:32,155 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:32:32,159 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:32:32,160 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:32:32,161 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:32:32,180 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:32:32,191 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:32:32,198 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:32:32,205 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:33:09,159 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-21 18:33:09,282 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-21 18:33:09,306 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-21 18:33:09,424 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-21 18:33:09,460 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-21 18:33:09,590 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-21 18:33:09,590 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-21 18:33:09,598 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-21 18:33:09,608 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/high-heels.jpg
+2025-09-21 18:33:09,616 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/formal-shoes-black.jpg
+2025-09-21 18:33:09,624 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-21 18:33:09,642 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/classic-heels.jpg
+2025-09-21 18:33:10,718 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-21 18:33:11,211 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:33:11,211 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:33:11,212 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:33:11,226 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:33:32,146 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:33:32,157 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:33:32,175 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:33:32,184 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:34:10,607 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:34:10,615 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:34:10,622 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:34:10,636 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:34:32,165 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:34:32,170 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:34:32,183 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:34:32,197 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:35:11,144 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:35:11,145 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:35:11,159 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:35:11,164 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:35:32,164 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:35:32,178 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:35:32,205 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:35:32,205 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:36:11,149 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:36:11,156 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:36:11,168 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:36:11,186 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:36:32,165 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:36:32,179 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:36:32,192 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:36:32,223 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:37:11,148 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:37:11,155 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:37:11,173 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:37:11,182 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:37:32,184 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:37:32,191 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:37:32,215 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:37:32,234 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:38:11,148 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:38:11,151 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:38:11,167 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:38:11,185 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:38:32,122 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:38:32,177 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:38:32,186 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:38:32,197 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:38:32,223 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:38:37,110 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:38:52,109 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:39:11,154 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:39:11,155 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:39:11,162 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:39:11,187 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:39:12,663 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:39:12,686 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:39:13,224 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:39:14,858 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:39:14,860 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:39:31,112 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:39:32,127 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:39:32,169 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:39:32,169 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:39:32,185 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:39:32,191 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:39:51,116 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:39:52,123 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:40:11,117 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:40:11,152 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:40:11,163 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:40:11,175 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:40:11,190 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:40:12,115 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:40:21,466 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:40:22,847 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:40:24,000 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:40:30,538 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:40:32,120 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:40:32,170 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:40:32,171 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:40:32,200 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:40:32,207 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:40:35,841 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:40:38,245 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:40:38,245 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:40:38,341 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:40:39,382 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:40:42,241 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:40:42,387 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:40:42,391 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:40:42,414 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:40:42,425 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:40:50,169 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:40:50,533 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:40:58,294 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-21 18:40:58,366 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-21 18:40:58,449 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-21 18:40:58,856 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-21 18:40:58,905 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-21 18:40:58,936 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-21 18:40:58,948 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-21 18:40:58,970 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-21 18:40:58,984 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/high-heels.jpg
+2025-09-21 18:40:58,986 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-21 18:40:59,013 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/formal-shoes-black.jpg
+2025-09-21 18:40:59,023 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/classic-heels.jpg
+2025-09-21 18:40:59,303 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:40:59,328 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:40:59,374 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:40:59,378 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:40:59,580 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-21 18:41:00,766 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:41:00,766 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:41:00,790 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:41:00,799 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:41:03,113 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:41:19,307 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:41:22,783 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:41:22,802 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:41:23,529 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:41:23,884 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:41:40,101 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:41:43,126 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:41:43,176 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:41:43,177 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:41:43,200 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:41:43,201 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:42:00,118 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:42:00,161 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:42:00,169 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:42:00,181 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:42:00,193 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:42:03,114 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:42:10,627 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:42:10,654 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:42:19,304 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:42:23,114 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:42:28,299 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:42:40,123 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:42:43,121 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:42:43,171 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:42:43,172 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:42:43,195 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:42:43,207 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:43:00,113 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:43:00,151 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:43:00,158 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:43:00,167 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:43:00,177 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:43:03,125 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:43:20,112 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:43:23,112 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:43:25,106 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:43:25,237 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:43:26,203 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:43:40,123 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:43:43,108 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:43:43,158 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:43:43,158 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:43:43,175 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:43:43,192 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:44:00,119 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:44:00,153 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:44:00,169 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:44:00,169 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:44:00,205 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:44:03,125 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:44:20,113 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:44:23,124 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:44:43,204 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:44:43,224 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:44:43,239 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:44:43,264 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:45:00,149 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:45:00,166 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:45:00,166 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:45:00,182 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:45:34,933 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:45:34,941 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:45:34,945 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:45:35,007 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:45:40,120 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:45:43,120 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:45:43,186 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:45:43,194 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:45:43,208 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:45:43,224 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:46:00,119 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:46:00,153 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:46:00,153 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:46:00,161 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:46:00,185 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:46:03,116 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:46:04,117 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:46:05,734 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:46:20,120 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:46:23,120 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:46:43,105 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:46:43,154 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:46:43,154 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:46:43,179 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:46:43,190 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:47:00,140 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:47:00,148 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:47:00,148 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:47:00,182 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:47:03,115 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:47:06,347 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:47:07,016 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:47:07,263 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:47:08,145 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:47:12,611 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:47:14,434 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:47:14,441 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:47:16,358 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-21 18:47:16,410 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:47:16,435 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-21 18:47:16,908 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-21 18:47:16,936 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-21 18:47:16,973 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-21 18:47:17,033 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-21 18:47:17,051 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-21 18:47:17,062 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-21 18:47:17,063 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:47:17,084 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/formal-shoes-black.jpg
+2025-09-21 18:47:17,087 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:47:17,156 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-21 18:47:17,173 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:47:17,174 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:47:17,221 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/high-heels.jpg
+2025-09-21 18:47:17,237 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/classic-heels.jpg
+2025-09-21 18:47:17,470 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-21 18:47:18,553 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:47:18,558 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:47:18,642 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:47:18,755 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:47:23,121 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:47:31,407 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:47:31,425 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:47:37,061 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:47:43,125 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:47:43,203 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:47:43,213 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:47:43,232 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:47:43,243 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:47:57,062 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:48:03,159 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:48:03,238 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:48:07,599 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:48:07,607 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:48:09,034 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:48:09,330 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:48:09,334 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:48:12,003 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:48:12,101 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:48:12,102 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:48:12,127 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:48:12,136 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:48:17,124 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:48:17,173 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:48:17,179 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:48:17,180 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:48:17,202 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:48:31,992 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:48:37,109 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:48:51,993 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:48:54,473 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:48:57,066 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:48:59,946 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:49:07,310 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:49:07,311 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:49:12,123 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:49:12,192 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:49:12,193 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:49:12,216 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:49:12,226 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:49:16,771 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-21 18:49:16,784 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-21 18:49:16,974 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-21 18:49:17,230 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-21 18:49:17,237 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-21 18:49:17,285 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-21 18:49:17,293 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-21 18:49:17,301 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-21 18:49:17,309 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/formal-shoes-black.jpg
+2025-09-21 18:49:17,316 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-21 18:49:17,316 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/high-heels.jpg
+2025-09-21 18:49:17,331 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/classic-heels.jpg
+2025-09-21 18:49:17,521 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:49:17,547 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:49:17,587 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:49:17,594 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:49:17,803 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-21 18:49:18,985 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:49:18,998 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:49:19,007 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:49:19,009 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:49:19,513 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:49:32,124 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:49:34,103 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:49:34,113 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:49:37,545 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:49:41,927 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:49:44,310 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:49:44,310 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:49:52,001 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:49:58,111 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:50:03,222 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:50:03,238 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:50:09,722 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:50:09,723 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:50:12,121 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:50:12,203 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:50:12,205 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:50:12,205 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:50:12,233 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:50:13,767 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:50:18,115 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:50:18,160 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:50:18,183 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:50:18,189 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:50:18,197 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:50:32,127 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:50:38,112 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:50:52,122 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:50:58,109 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:51:12,116 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:51:12,191 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:51:12,193 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:51:12,213 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:51:12,227 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:51:18,112 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:51:18,168 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:51:18,170 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:51:18,197 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:51:18,198 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:51:37,124 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:52:12,183 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:52:12,185 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:52:12,198 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:52:12,219 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:52:18,168 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:52:18,184 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:52:18,192 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:52:18,200 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:52:24,436 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:52:24,437 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:52:24,463 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:52:24,464 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:52:32,111 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:52:38,112 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:52:52,105 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:52:58,114 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:53:12,117 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:53:12,212 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:53:12,214 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:53:12,236 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:53:12,246 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:53:18,117 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:53:18,157 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:53:18,173 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:53:18,190 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:53:18,198 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:53:33,755 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:53:35,530 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:53:36,480 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:53:37,121 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:53:38,117 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:53:41,027 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:53:58,112 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:54:12,187 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:54:12,187 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:54:12,203 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:54:12,220 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:54:18,105 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:54:18,151 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:54:18,151 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:54:18,183 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:54:18,198 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:54:37,118 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:54:38,101 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:55:01,957 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:55:01,973 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:55:18,112 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:55:18,163 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:55:18,166 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:55:18,198 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:55:18,200 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:55:37,126 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:55:37,189 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:55:37,190 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:55:37,210 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:55:37,230 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:55:38,099 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:55:58,112 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:56:37,117 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:56:37,123 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:56:37,188 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:56:37,194 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:56:37,210 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:56:37,228 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:56:37,238 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:56:37,238 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:56:37,254 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:56:37,271 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:57:37,118 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:57:37,123 | WARNING | restaurant_app | rate_limit_error:1073 | Rate limit exceeded: 127.0.0.1
+2025-09-21 18:57:37,223 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:57:37,229 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:57:37,242 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:57:37,260 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 18:57:37,262 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 18:57:37,277 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 18:57:37,288 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 18:57:37,294 | WARNING | restaurant_app | not_found_error:1012 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
