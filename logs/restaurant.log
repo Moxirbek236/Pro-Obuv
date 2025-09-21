@@ -9612,3 +9612,10 @@ MemoryError
 2025-09-21 11:01:37,268 | WARNING | restaurant_app | not_found_error:1002 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
 2025-09-21 11:01:37,268 | WARNING | restaurant_app | not_found_error:1002 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
 2025-09-21 11:01:37,273 | WARNING | restaurant_app | not_found_error:1002 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 11:24:33,015 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-21 11:24:39,625 | WARNING | restaurant_app | not_found_error:1002 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-21 11:24:40,814 | WARNING | restaurant_app | not_found_error:1002 | 404 Error: http://127.0.0.1:5000/static/media/news/bonus.jpg
+2025-09-21 11:24:40,837 | WARNING | restaurant_app | not_found_error:1002 | 404 Error: http://127.0.0.1:5000/static/media/news/review.jpg
+2025-09-21 11:24:40,845 | WARNING | restaurant_app | not_found_error:1002 | 404 Error: http://127.0.0.1:5000/static/media/news/delivery.jpg
+2025-09-21 11:24:40,845 | WARNING | restaurant_app | not_found_error:1002 | 404 Error: http://127.0.0.1:5000/static/media/news/sport.jpg
+2025-09-21 11:24:53,002 | WARNING | restaurant_app | not_found_error:1002 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
