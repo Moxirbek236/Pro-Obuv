@@ -1,11 +1,16 @@
 
 {% extends "base.html" %}
 
-{% block title %}Aloqa - Restoran{% endblock %}
+{% block title %}Aloqa - Pro Obuv{% endblock %}
 
 {% block content %}
-<div class="card">
-  <h2>📞 Biz bilan bog'lanish</h2>
+<div class="contact-page-container">
+  <div class="contact-hero-section">
+    <h1 class="contact-hero-title animate-fade-in">📞 Biz bilan bog'lanish</h1>
+    <p class="contact-hero-subtitle animate-fade-in">Sizning savollaringiz va takliflaringiz biz uchun muhim</p>
+  </div>
+  
+<div class="card contact-card animate-slide-left">
   
   <div class="row">
     <div class="col-md-6">
@@ -38,26 +43,313 @@
     <div class="col-md-6">
       <h4>📍 Aloqa ma'lumotlari</h4>
       <div class="contact-info">
-        <p><strong>👤 Ism:</strong> Moxirbek</p>
-        <p><strong>📞 Telefon:</strong> +998 99 145 96 86</p>
-        <p><strong>📧 Email:</strong> nasimjonnasimjon46@gmail.com</p>
-        <p><strong>📱 Telegram:</strong> @Rakhimberdiyev_1970</p>
-        <p><strong>📍 Manzil:</strong> Toshkent, Sergeli, Yuqori Darxon MFY, Do'stlik 1-tor ko'cha 12 uy</p>
-        <p><strong>🕒 Ish vaqti:</strong> 09:00 - 23:00</p>
+        <div class="contact-item">
+          <p><strong>👤 Ism:</strong> Avaz</p>
+        </div>
+        <div class="contact-item">
+          <p><strong>📞 Telefon:</strong> 
+            <a href="tel:+998977195770" class="contact-link">+998 97 719 57 70</a>
+          </p>
+        </div>
+        <div class="contact-item">
+          <p><strong>📧 Email:</strong> 
+            <a href="mailto:premiumsafety@mail.ru" class="contact-link">premiumsafety@mail.ru</a>
+          </p>
+        </div>
+        <div class="contact-item">
+          <p><strong>📱 Admin Telegram:</strong> 
+            <a href="https://t.me/proobuvLLC" target="_blank" class="contact-link">@proobuvLLC</a>
+          </p>
+        </div>
+        <div class="contact-item">
+          <p><strong>📱 Telegram:</strong> 
+            <a href="https://t.me/specobuv" target="_blank" class="contact-link">https://t.me/specobuv</a>
+          </p>
+        </div>
+        <div class="contact-item">
+          <p><strong>📍 Manzil:</strong> Toshkent sh., Chilonzor t., Bunyodkor ko'chasi 12-uy</p>
+        </div>
+        <div class="contact-item">
+          <p><strong>🕒 Ish vaqti:</strong> Dushanba - Juma: 9:00 - 18:00, Shanba va Yakshanba: Dam</p>
+        </div>
+        
+        <!-- Social Media Links -->
+        <div class="social-media-section mt-4">
+          <h5 class="mb-3">🌟 Ijtimoiy tarmoqlarda bizni kuzatib boring:</h5>
+          <div class="d-flex flex-wrap gap-3">
+            <a href="https://www.facebook.com/aklashoes/?ref=pl_edit_xav_ig_profile_page_web#" target="_blank" class="social-btn facebook">
+              <img src="{{ url_for('static', filename='icons/facebook.svg') }}" alt="Facebook" width="20" height="20" style="margin-right: 8px;">
+              Facebook
+            </a>
+            <a href="https://www.instagram.com/proguarduz/" target="_blank" class="social-btn instagram">
+              <img src="{{ url_for('static', filename='icons/instagram.svg') }}" alt="Instagram" width="20" height="20" style="margin-right: 8px;">
+              Instagram
+            </a>
+            <a href="https://t.me/specobuv" target="_blank" class="social-btn telegram">
+              <img src="{{ url_for('static', filename='icons/telegram.svg') }}" alt="Telegram" width="20" height="20" style="margin-right: 8px;">
+              Telegram
+            </a>
+            <a href="https://www.threads.com/@proguarduz?xmt=AQF0Luvd5UXAmD_U3B5JI01ho5dNPZudQGYe4WbnAc934pc" target="_blank" class="social-btn threads">
+              <img src="{{ url_for('static', filename='icons/threads.svg') }}" alt="Threads" width="20" height="20" style="margin-right: 8px;">
+              Threads
+            </a>
+            <a href="https://uzum.uz/uz/shop/pro-obuv" target="_blank" class="social-btn uzum">
+              <img src="{{ url_for('static', filename='icons/uzum.svg') }}" alt="Uzum Market" width="20" height="20" style="margin-right: 8px;">
+              Uzum Market
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
+</div> <!-- End contact-page-container -->
 
 <style>
-.contact-info {
-  background: #f8f9fa;
-  padding: 20px;
-  border-radius: 10px;
-  margin-top: 20px;
+/* ================================
+   CONTACT PAGE STYLES
+   ================================ */
+
+/* Hero Section */
+.contact-page-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 0;
+  margin: -24px -15px 0;
 }
+
+.contact-hero-section {
+  text-align: center;
+  padding: 80px 20px 60px;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.contact-hero-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  animation: float 6s ease-in-out infinite;
+}
+
+.contact-hero-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: white;
+  margin-bottom: 20px;
+  text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  animation-delay: 0.2s;
+}
+
+.contact-hero-subtitle {
+  font-size: 1.3rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 0;
+  font-weight: 300;
+  animation-delay: 0.4s;
+}
+
+.contact-card {
+  margin: -40px 20px 40px;
+  z-index: 10;
+  position: relative;
+  border-radius: 25px;
+  animation-delay: 0.6s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-30px) rotate(120deg);
+  }
+  66% {
+    transform: translateY(-20px) rotate(240deg);
+  }
+}
+.contact-info {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 30px;
+  border-radius: 15px;
+  margin-top: 20px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border: 1px solid #dee2e6;
+  position: relative;
+  overflow: hidden;
+}
+
+.contact-info::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+.contact-item {
+  margin-bottom: 15px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.contact-item:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateX(5px);
+}
+
 .contact-info p {
-  margin-bottom: 10px;
+  margin-bottom: 5px;
+  font-size: 1rem;
+}
+
+.contact-link {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.contact-link:hover {
+  color: #0056b3;
+  text-decoration: underline;
+  transform: scale(1.05);
+}
+
+/* ================================
+   SOCIAL MEDIA SECTION
+   ================================ */
+.social-media-section {
+  border-top: 2px solid #dee2e6;
+  padding-top: 20px;
+}
+
+.social-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  text-decoration: none;
+  border-radius: 25px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  font-size: 0.95rem;
+}
+
+.social-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  text-decoration: none;
+}
+
+.social-btn.facebook {
+  background: linear-gradient(135deg, #1877f2 0%, #0d47a1 100%);
+  color: white;
+}
+
+.social-btn.facebook:hover {
+  color: white;
+  background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%);
+}
+
+.social-btn.instagram {
+  background: linear-gradient(135deg, #e4405f 0%, #833ab4 50%, #fccc63 100%);
+  color: white;
+}
+
+.social-btn.instagram:hover {
+  color: white;
+  background: linear-gradient(135deg, #833ab4 0%, #e4405f 50%, #fccc63 100%);
+}
+
+.social-btn.telegram {
+  background: linear-gradient(135deg, #0088cc 0%, #005bb5 100%);
+  color: white;
+}
+
+.social-btn.telegram:hover {
+  color: white;
+  background: linear-gradient(135deg, #005bb5 0%, #004494 100%);
+}
+
+.social-btn.threads {
+  background: linear-gradient(135deg, #000000 0%, #333333 100%);
+  color: white;
+}
+
+.social-btn.threads:hover {
+  color: white;
+  background: linear-gradient(135deg, #333333 0%, #555555 100%);
+}
+
+.social-btn.uzum {
+  background: linear-gradient(135deg, #7c4dff 0%, #651fff 100%);
+  color: white;
+}
+
+.social-btn.uzum:hover {
+  color: white;
+  background: linear-gradient(135deg, #651fff 0%, #3d5afe 100%);
+}
+
+/* ================================
+   ENHANCED FORM STYLING
+   ================================ */
+.form-control {
+  border-radius: 10px;
+  border: 2px solid #e9ecef;
+  padding: 12px 15px;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  transform: translateY(-2px);
+}
+
+.btn.big {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+.btn.big:hover {
+  background: linear-gradient(135deg, #20c997 0%, #17a2b8 100%);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+}
+
+@media (max-width: 768px) {
+  .contact-info {
+    padding: 20px;
+  }
+  
+  .social-btn {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+  }
+  
+  .d-flex.flex-wrap.gap-3 {
+    justify-content: center;
+  }
 }
 </style>
 {% endblock %}

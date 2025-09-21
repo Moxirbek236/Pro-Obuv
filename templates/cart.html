@@ -1,14 +1,18 @@
 {% extends "base.html" %}
 
-{% block title %}Savatcha - Restoran{% endblock %}
+{% block title %}Savatcha - Oyoq kiyim do'koni{% endblock %}
 
 {% block head %}
-<script src="https://api-maps.yandex.ru/2.1/?apikey={{ config.get('YANDEX_MAPS_API', 'fc256b90-6f74-4f1b-a7ee-d42b695a8284') }}&lang=uz_UZ" type="text/javascript"></script>
 {% endblock %}
 
 {% block content %}
-<div class="card cart-section">
-  <h2 class="section-title" data-translate="cart_title">🛒 Savatcha</h2>
+<div class="cart-page-container">
+  <div class="cart-hero-section">
+    <h1 class="cart-hero-title animate-fade-in">🛒 Savatcha</h1>
+    <p class="cart-hero-subtitle animate-fade-in">Tanlagan mahsulotlaringizni ko'ring va buyurtma bering</p>
+  </div>
+  
+<div class="card cart-section animate-slide-left">
 
   {% if cart_items %}
     <div class="cart-items">
@@ -16,20 +20,19 @@
       <div class="cart-item">
         <div class="item-info">
           <h4>{{ item.name }}</h4>
-          {% set discount_percentage = item['discount_percentage'] if item['discount_percentage'] else 0 %}
-          {% if discount_percentage > 0 %}
-            {% set discounted_price = item.price * (100 - discount_percentage) / 100 %}
-            {% set discounted_total = discounted_price * item.quantity %}
-            <p>
-              <span style="text-decoration: line-through; color: #999; margin-right: 10px;">{{ "{:,.0f}".format(item.price) }} so'm</span>
-              <span style="color: #28a745; font-weight: bold;">{{ "{:,.0f}".format(discounted_price) }} so'm</span>
-              <span style="background: #dc3545; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; margin-left: 10px;">-{{ discount_percentage }}%</span>
-              <br>
-              {{ item.quantity }} dona x {{ "{:,.0f}".format(discounted_price) }} = {{ "{:,.0f}".format(discounted_total) }} so'm
-            </p>
-          {% else %}
-            <p>{{ "{:,.0f}".format(item.price) }} so'm x {{ item.quantity }} = {{ "{:,.0f}".format(item.total) }} so'm</p>
-          {% endif %}
+                    {% if item.get('image_url') %}
+                        <div style="margin:8px 0;">
+                            <img src="{{ item.image_url }}" alt="{{ item.name }}" style="height:60px;border-radius:6px;border:1px solid #eee;" />
+                        </div>
+                    {% endif %}
+                    {% if item.get('size') or item.get('color') %}
+                        <p style="font-size:0.95em;color:#555;margin-top:6px;">
+                            {% if item.get('size') %}<strong>O'lcham:</strong> {{ item.size }}{% endif %}
+                            {% if item.get('size') and item.get('color') %} &nbsp;|&nbsp; {% endif %}
+                            {% if item.get('color') %}<strong>Rangi:</strong> {{ item.color }}{% endif %}
+                        </p>
+                    {% endif %}
+                    <p><strong>Miqdor:</strong> {{ item.quantity }} dona</p>
         </div>
         <form method="post" action="{{ url_for('remove_from_cart', cart_item_id=item.id) }}" style="margin-left: auto;">
           <button type="submit" class="btn small danger" onclick="return confirm('Rostdan ham olib tashlamoqchimisiz?')">
@@ -40,21 +43,19 @@
       {% endfor %}
     </div>
 
-    <div class="cart-total">
-      <h3>Jami: {{ "{:,.0f}".format(total) }} so'm</h3>
-    </div>
 
     <div class="cart-actions">
-      {% if session.get('user_id') %}
-        <form method="post" action="{{ url_for('place_order') }}" onsubmit="return validateOrder()"
-            <h3>📋 Buyurtma berish</h3>
+            {% if session.get('user_id') %}
+                <form method="post" action="{{ url_for('place_order') }}" onsubmit="return validateOrder()">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <h3>📋 Buyurtma berish</h3>
 
             <div class="order-type-selection">
                 <h4 data-translate="order_type">Buyurtma turi:</h4>
                 <div class="radio-group">
                     <label class="radio-option">
                         <input type="radio" name="order_type" value="dine_in" checked onchange="toggleDeliveryFields()">
-                        <span class="radio-text" data-translate="dine_in">🍽️ Restoranda iste'mol qilish</span>
+                        <span class="radio-text" data-translate="dine_in">👟 Do'konda olish</span>
                     </label>
                     <label class="radio-option">
                         <input type="radio" name="order_type" value="delivery" onchange="toggleDeliveryFields()">
@@ -96,8 +97,8 @@
                         <button type="button" onclick="getCurrentLocation()" class="btn btn-info">
                             📍 Joriy joylashuvni aniqlash
                         </button>
-                        <button type="button" onclick="searchNearbyPlaces('restoran')" class="btn btn-secondary">
-                            🏪 Yaqin restoranlar
+                        <button type="button" onclick="searchNearbyPlaces('do\'kon')" class="btn btn-secondary">
+                            🏪 Yaqin do'konlar
                         </button>
                         <button type="button" onclick="searchNearbyPlaces('do\'kon')" class="btn btn-secondary">
                             🛒 Yaqin do'konlar
@@ -179,14 +180,6 @@
                         </ul>
                     </div>
                 </div>
-                            <span class="info-icon">⏱️</span>
-                            <div class="info-content">
-                                <span class="info-label">Taxminiy vaqt:</span>
-                                <span id="delivery-time-display" class="info-value">-</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Yashirin maydonlar -->
                 <input type="hidden" id="delivery_address" name="delivery_address">
@@ -201,17 +194,44 @@
             <div class="total-section">
                 <div class="total-breakdown">
                     <div class="total-item">
-                        <span>Mahsulotlar:</span>
-                        <span>{{ "{:,.0f}".format(total) }} so'm</span>
+                        <span>Buyurtma tayyorgarlik vaqti:</span>
+                        <span>15-20 daqiqa</span>
                     </div>
                     <div class="delivery-cost-info">
-                        <span class="delivery-cost">Yetkazib berish: <span id="delivery-cost-text">Bepul</span></span>
-                    </div>
-                    <div class="total-final">
-                        <strong>Jami summa: <span id="total-amount">{{ "{:,.0f}".format(total) }} so'm</span></strong>
+                        <span class="delivery-cost">Yetkazib berish: <span id="delivery-cost-text">Mavjud</span></span>
                     </div>
                 </div>
-                <button type="submit" class="btn checkout-btn" onclick="return validateOrder()">🛒 Buyurtma berish</button>
+                <div class="payment-section" style="margin-top:20px;">
+                    <h5>💳 To'lov usuli</h5>
+                    <div id="payment-methods-container">
+                        <p>To'lov usullari yuklanmoqda...</p>
+                    </div>
+                    <input type="hidden" id="selected_payment_method" name="payment_method" value="cash">
+                    <input type="hidden" id="selected_payment_data" name="payment_data" value="">
+                </div>
+                
+                <!-- QR Code Modal -->
+                <div class="modal fade" id="qrModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="qrModalTitle">QR kod orqali to'lov</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body text-center">
+                                <div id="qrCodeDisplay">
+                                    <img id="qrCodeImage" src="" alt="QR Code" style="max-width: 300px; width: 100%; height: auto; border-radius: 8px;">
+                                    <p class="mt-3">Telefoningiz orqali QR kodni skanerlang va to'lovni amalga oshiring</p>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Yopish</button>
+                                <button type="button" class="btn btn-success" onclick="confirmQRPayment()">To'lov amalga oshirildi</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn checkout-btn">🛒 Buyurtma berish</button>
             </div>
         </form>
 
@@ -278,7 +298,101 @@ function initMap() {
         return;
     }
 
-    ymaps.ready(function() {
+    // Ensure ymaps or the YANDEX_MAPS_LOADED flag is present before using ymaps APIs
+    const ensureYMaps = (cb) => {
+        // If ymaps is already present and ready, use it
+        if (window.ymaps && typeof ymaps.ready === 'function') return ymaps.ready(cb);
+        if (window.YANDEX_MAPS_LOADED === true && window.ymaps && typeof ymaps.ready === 'function') return ymaps.ready(cb);
+
+        // Helper to show a friendly fallback in the map container
+        function showYMapsFallback() {
+            try {
+                const container = document.getElementById('map');
+                if (!container) return;
+                // Avoid duplicate fallback
+                if (document.getElementById('yandex-map-fallback')) return;
+                const fallback = document.createElement('div');
+                fallback.id = 'yandex-map-fallback';
+                fallback.className = 'alert alert-warning';
+                fallback.style.padding = '12px';
+                fallback.style.borderRadius = '8px';
+                fallback.innerHTML = `
+                    <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start">
+                        <strong>⚠️ Xarita yuklanmadi</strong>
+                        <div>Xatolik sababli Yandex Maps yuklanmadi. Xarita o'rniga tashqi xizmatda ko'rish mumkin.</div>
+                        <div style="display:flex;gap:8px;margin-top:6px">
+                            <button id="openYandexExternal" class="btn btn-sm btn-primary">Xaritani Yandex-da ochish</button>
+                            <button id="reloadYandex" class="btn btn-sm btn-secondary">Qayta yuklash</button>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML = '';
+                container.appendChild(fallback);
+
+                document.getElementById('openYandexExternal').addEventListener('click', function(){
+                    // Open Yandex maps centered on default city (Tashkent) or user's last known coords
+                    const lat = parseFloat(document.getElementById('delivery_latitude').value) || 41.2995;
+                    const lng = parseFloat(document.getElementById('delivery_longitude').value) || 69.2401;
+                    const url = `https://yandex.com/maps/?pt=${lng},${lat}&z=15&l=map`;
+                    window.open(url, '_blank');
+                });
+
+                document.getElementById('reloadYandex').addEventListener('click', function(){
+                    // attempt to load again
+                    const existing = document.querySelector('script[data-ymaps-dyn]');
+                    if (existing) existing.remove();
+                    // try again
+                    ensureYMaps(cb);
+                });
+            } catch (e) { console.warn('Fallback render failed', e); }
+        }
+
+        // If an API key is available, try dynamic script injection and wait for ymaps.ready
+        const yKey = '{{ config.get("YANDEX_MAPS_API") }}';
+        if (yKey && yKey !== '') {
+            // Add script only once
+            if (!document.querySelector('script[data-ymaps-dyn]') && !document.querySelector('script[src*="api-maps.yandex.ru"]')) {
+                const s = document.createElement('script');
+                s.src = `https://api-maps.yandex.ru/2.1/?apikey=${yKey}&lang=uz_UZ`;
+                s.async = true;
+                s.setAttribute('data-ymaps-dyn', '1');
+                s.onload = function() {
+                    // ymaps may take short time to initialize; use ymaps.ready
+                    if (window.ymaps && typeof ymaps.ready === 'function') {
+                        ymaps.ready(function(){ window.YANDEX_MAPS_LOADED = true; try{ cb(); }catch(e){} });
+                    }
+                };
+                s.onerror = function() {
+                    console.warn('Failed to load Yandex Maps script');
+                };
+                document.head.appendChild(s);
+            }
+
+            // Wait up to a timeout for ymaps to appear
+            let attempts = 0;
+            const maxAttempts = 40; // up to ~8 seconds
+            const iv = setInterval(() => {
+                attempts += 1;
+                if (window.ymaps && typeof ymaps.ready === 'function') {
+                    clearInterval(iv);
+                    window.YANDEX_MAPS_LOADED = true;
+                    return ymaps.ready(cb);
+                }
+                if (attempts >= maxAttempts) {
+                    clearInterval(iv);
+                    // console.warn('Yandex Maps not available after waiting; map will not be initialized');
+                    showYMapsFallback();
+                }
+            }, 200);
+            return;
+        }
+
+        // No API key available - show fallback immediately
+        console.warn('Yandex Maps API key not configured; map features disabled');
+        showYMapsFallback();
+    };
+
+    ensureYMaps(function() {
         // Xarita containerini tekshirish
         const mapContainer = document.getElementById('map');
         if (!mapContainer) {
@@ -826,26 +940,14 @@ function toggleDeliveryFields() {
 
 function updateTotalAmount() {
     const deliveryRadio = document.querySelector('input[name="order_type"][value="delivery"]');
-    const totalElement = document.getElementById('total-amount');
     const deliveryCostElement = document.getElementById('delivery-cost-text');
 
-    let baseTotal = {{ total }};
-    let deliveryCost = 0;
-
-    if (deliveryRadio && deliveryRadio.checked) {
-        deliveryCost = parseFloat(document.getElementById('delivery_price').value) || 0;
-    }
-
     if (deliveryCostElement) {
-        if (deliveryCost > 0) {
-            deliveryCostElement.textContent = deliveryCost.toLocaleString() + ' so\'m';
+        if (deliveryRadio && deliveryRadio.checked) {
+            deliveryCostElement.textContent = 'Faol';
         } else {
-            deliveryCostElement.textContent = 'Bepul';
+            deliveryCostElement.textContent = 'Mavjud';
         }
-    }
-
-    if (totalElement) {
-        totalElement.textContent = (baseTotal + deliveryCost).toLocaleString() + ' so\'m';
     }
 }
 
@@ -895,12 +997,112 @@ function validateOrder() {
     return confirmed;
 }
 
+// Payment methods functionality
+let currentPaymentMethod = 'cash';
+let paymentMethods = {};
+
+function loadPaymentMethods() {
+    fetch('/api/payment-methods')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                paymentMethods = data.payment_methods;
+                renderPaymentMethods();
+            } else {
+                showPaymentMethodsError();
+            }
+        })
+        .catch(error => {
+            console.error('Payment methods loading error:', error);
+            showPaymentMethodsError();
+        });
+}
+
+function renderPaymentMethods() {
+    const container = document.getElementById('payment-methods-container');
+    let html = '<div class="payment-methods-grid">';
+    
+    Object.keys(paymentMethods).forEach(methodKey => {
+        const method = paymentMethods[methodKey];
+        if (method.available) {
+            const isSelected = methodKey === currentPaymentMethod;
+            html += `
+                <div class="payment-method ${isSelected ? 'selected' : ''}" 
+                     onclick="selectPaymentMethod('${methodKey}')">
+                    <div class="payment-method-icon">${method.icon}</div>
+                    <div class="payment-method-name">${method.name}</div>
+                    ${methodKey === 'card' && method.cards && method.cards.length > 0 ? 
+                        `<div class="payment-method-info">` + 
+                        method.cards.map(card => `${card.bank_name || 'Bank'}`).slice(0, 2).join(', ') + 
+                        (method.cards.length > 2 ? `+${method.cards.length - 2}` : '') + 
+                        `</div>` : ''}
+                </div>
+            `;
+        }
+    });
+    
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+function selectPaymentMethod(methodKey) {
+    currentPaymentMethod = methodKey;
+    document.getElementById('selected_payment_method').value = methodKey;
+    
+    // Update visual selection
+    document.querySelectorAll('.payment-method').forEach(el => {
+        el.classList.remove('selected');
+    });
+    event.target.closest('.payment-method').classList.add('selected');
+    
+    // Handle special cases
+    if (methodKey === 'click' || methodKey === 'payme') {
+        showQRModal(methodKey);
+    } else if (methodKey === 'card') {
+        showCardSelection();
+    }
+}
+
+function showQRModal(methodKey) {
+    const method = paymentMethods[methodKey];
+    if (method.qr_url) {
+        document.getElementById('qrModalTitle').textContent = method.name + ' orqali to\'lov';
+        document.getElementById('qrCodeImage').src = method.qr_url;
+        new bootstrap.Modal(document.getElementById('qrModal')).show();
+    }
+}
+
+function showCardSelection() {
+    const method = paymentMethods['card'];
+    if (method.cards && method.cards.length > 0) {
+        // For now, just select the first card
+        document.getElementById('selected_payment_data').value = JSON.stringify(method.cards[0]);
+    }
+}
+
+function confirmQRPayment() {
+    document.getElementById('selected_payment_data').value = JSON.stringify({
+        confirmed: true,
+        timestamp: new Date().toISOString()
+    });
+    bootstrap.Modal.getInstance(document.getElementById('qrModal')).hide();
+    showNotification('To\'lov tasdiqlandi', 'success');
+}
+
+function showPaymentMethodsError() {
+    document.getElementById('payment-methods-container').innerHTML = 
+        '<div class="alert alert-warning">To\'lov usullarini yuklab bo\'lmadi. Faqat naqd to\'lov mavjud.</div>';
+}
+
 // Sahifa yuklanganda
 document.addEventListener('DOMContentLoaded', function() {
     const radioButtons = document.querySelectorAll('input[name="order_type"]');
     radioButtons.forEach(radio => {
         radio.addEventListener('change', toggleDeliveryFields);
     });
+    
+    // Load payment methods
+    loadPaymentMethods();
 
     // Barcha mavjud xarita class elementlarini tekshirish va duplikatni olib tashlash
     const mapElements = document.querySelectorAll('.ymaps-2-1-79-map');
@@ -927,12 +1129,81 @@ document.addEventListener('DOMContentLoaded', function() {
   {% else %}
     <div class="empty-cart">
       <p>Savatchangiz bo'sh</p>
-      <a href="{{ url_for('menu') }}" class="btn big">🍽️ Taom tanlash</a>
+    <a href="{{ url_for('menu') }}" class="btn big">👟 Mahsulot tanlash</a>
     </div>
   {% endif %}
 </div>
+</div> <!-- End cart-page-container -->
 
 <style>
+/* ================================
+   CART PAGE STYLES
+   ================================ */
+
+/* Hero Section */
+.cart-page-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+  padding: 0;
+  margin: -24px -15px 0;
+}
+
+.cart-hero-section {
+  text-align: center;
+  padding: 80px 20px 60px;
+  background: linear-gradient(135deg, rgba(72, 187, 120, 0.9) 0%, rgba(56, 161, 105, 0.9) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.cart-hero-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  animation: pulse 4s ease-in-out infinite;
+}
+
+.cart-hero-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: white;
+  margin-bottom: 20px;
+  text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  animation-delay: 0.2s;
+}
+
+.cart-hero-subtitle {
+  font-size: 1.3rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 0;
+  font-weight: 300;
+  animation-delay: 0.4s;
+}
+
+.cart-section {
+  margin: -40px 20px 40px;
+  z-index: 10;
+  position: relative;
+  border-radius: 25px;
+  animation-delay: 0.6s;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translateY(-20px) scale(1.1);
+    opacity: 1;
+  }
+}
+
+/* Enhanced cart items */
 .cart-item {
   display: flex;
   align-items: center;
@@ -1400,5 +1671,98 @@ document.addEventListener('DOMContentLoaded', function() {
         max-width: none !important;
     }
 }
+
+/* Payment Methods Styles */
+.payment-methods-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin: 15px 0;
+}
+
+.payment-method {
+    background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.payment-method:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border-color: #4CAF50;
+}
+
+.payment-method.selected {
+    border-color: #4CAF50;
+    background: linear-gradient(145deg, #e8f5e8 0%, #f1f8e9 100%);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.2);
+}
+
+.payment-method.selected::before {
+    content: '✓';
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    background: #4CAF50;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.payment-method-icon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.payment-method-name {
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 5px;
+    font-size: 16px;
+}
+
+.payment-method-info {
+    font-size: 12px;
+    color: #718096;
+    font-style: italic;
+}
+
+@media (max-width: 768px) {
+    .payment-methods-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    
+    .payment-method {
+        padding: 15px 10px;
+    }
+    
+    .payment-method-icon {
+        font-size: 2rem;
+    }
+    
+    .payment-method-name {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .payment-methods-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 </style>
 {% endblock %}

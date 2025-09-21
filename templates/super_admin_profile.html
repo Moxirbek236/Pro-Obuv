@@ -1,0 +1,57 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container mt-4">
+  <h2>Super Admin Profil</h2>
+  <form
+    method="POST"
+    action="{{ url_for('super_admin_profile_update') }}"
+    enctype="multipart/form-data">
+    <div class="mb-3">
+      <label class="form-label">Foydalanuvchi nomi</label>
+      <input
+        type="text"
+        name="username"
+        class="form-control"
+        value="{{ user.username }}"
+        required />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Yangi parol (qoldirish shart emas)</label>
+      <input type="password" name="password" class="form-control" />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Ism</label>
+      <input
+        type="text"
+        name="first_name"
+        class="form-control"
+        value="{{ user.first_name }}" />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Familiya</label>
+      <input
+        type="text"
+        name="last_name"
+        class="form-control"
+        value="{{ user.last_name }}" />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Telefon</label>
+      <input
+        type="text"
+        name="phone"
+        class="form-control"
+        value="{{ user.phone }}" />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Profil rasmi</label>
+      <input type="file" name="avatar" accept="image/*" class="form-control" />
+      {% if user.avatar %}
+      <div class="mt-2">
+        <img src="{{ user.avatar }}" width="120" style="border-radius: 8px" />
+      </div>
+      {% endif %}
+    </div>
+    <button class="btn btn-primary">Saqlash</button>
+  </form>
+</div>
+{% endblock %}

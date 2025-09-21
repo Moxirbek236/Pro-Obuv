@@ -1,0 +1,137 @@
+/* Status card styles - use alongside your main stylesheet */
+
+:root{
+	--status-card-bg: #ffffff;
+	--status-card-border: rgba(16,24,40,0.06);
+	--status-card-shadow: 0 6px 18px rgba(15,23,42,0.08);
+	--accent: #0ea5a4; /* teal-ish */
+	--muted: #6b7280;
+	--success: #16a34a;
+	--danger: #ef4444;
+	--radius: 12px;
+	--gap: 12px;
+	--card-padding: 14px;
+}
+
+/* Base card */
+.status-card{
+	background: var(--status-card-bg);
+	border: 1px solid var(--status-card-border);
+	box-shadow: var(--status-card-shadow);
+	border-radius: var(--radius);
+	padding: var(--card-padding);
+	display: flex;
+	align-items: center;
+	gap: var(--gap);
+	transition: transform 180ms ease, box-shadow 180ms ease;
+	min-width: 220px;
+	max-width: 100%;
+	box-sizing: border-box;
+}
+
+/* hover / focus micro-interaction */
+.status-card:hover,
+.status-card:focus-within{
+	transform: translateY(-4px);
+	box-shadow: 0 12px 26px rgba(15,23,42,0.12);
+}
+
+/* left area: icon or small chart */
+.status-card__media{
+	flex: 0 0 56px;
+	height: 56px;
+	border-radius: 10px;
+	background: linear-gradient(180deg, rgba(14,165,164,0.08), rgba(14,165,164,0.03));
+	display: grid;
+	place-items: center;
+	color: var(--accent);
+	font-size: 20px;
+}
+
+/* content area */
+.status-card__content{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	flex: 1 1 auto;
+	min-width: 0; /* allow truncation */
+}
+
+/* title and main value */
+.status-card__title{
+	font-size: 0.85rem;
+	color: var(--muted);
+	margin: 0 0 4px 0;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.status-card__value{
+	font-size: 1.25rem;
+	font-weight: 600;
+	color: #0f172a;
+	line-height: 1;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* small meta line on the right */
+.status-card__meta{
+	display:flex;
+	align-items:center;
+	gap:8px;
+	margin-left: 12px;
+	flex: 0 0 auto;
+	white-space: nowrap;
+}
+
+/* badges */
+.status-card__badge{
+	display:inline-flex;
+	align-items:center;
+	gap:6px;
+	padding:6px 10px;
+	font-size:0.75rem;
+	border-radius:999px;
+	background: rgba(15,23,42,0.04);
+	color: #0f172a;
+}
+
+/* positive / negative indicators */
+.status-card__delta{
+	font-weight:700;
+}
+.status-card__delta.positive{ color: var(--success); }
+.status-card__delta.negative{ color: var(--danger); }
+
+/* compact variant */
+.status-card--compact{
+	padding:10px;
+	gap:8px;
+}
+.status-card--compact .status-card__media{ width:44px; height:44px; }
+
+/* helper for truncated text */
+.status-card .truncate{
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* accessibility: focus outline */
+.status-card:focus{
+	outline: 3px solid rgba(14,165,164,0.12);
+	outline-offset: 2px;
+}
+
+/* Utility: stack when narrow */
+@media (max-width: 420px){
+	.status-card{
+		flex-direction: column;
+		align-items: stretch;
+		padding:12px;
+	}
+	.status-card__meta{ margin-left:0; margin-top:8px; justify-content: flex-start; }
+}

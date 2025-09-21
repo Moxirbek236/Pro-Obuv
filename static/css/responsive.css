@@ -1,0 +1,525 @@
+/* Global responsive helpers and corrected @media rules */
+
+/* Breakpoint definitions:
+   - small mobile: up to 420px
+   - mobile: up to 640px
+   - tablet: 641px — 1024px
+   - desktop: 1025px and above
+*/
+
+/* Base layout adjustments */
+.container {
+	max-width: 1200px;
+	margin-left: auto;
+	margin-right: auto;
+	padding-left: 16px;
+	padding-right: 16px;
+	box-sizing: border-box;
+}
+
+/* Responsive grid helper */
+.grid {
+	display: grid;
+	gap: 16px;
+	grid-template-columns: repeat(12, 1fr);
+}
+
+/* Common column helpers */
+.col-span-12 { grid-column: span 12; }
+.col-span-6 { grid-column: span 6; }
+.col-span-4 { grid-column: span 4; }
+.col-span-3 { grid-column: span 3; }
+
+/* Mobile first: responsive layout */
+@media (max-width: 640px) {
+	/* collapse grid to single column on small devices */
+	.grid {
+		grid-template-columns: 1fr;
+	}
+	.col-span-12, .col-span-6, .col-span-4, .col-span-3 {
+		grid-column: auto;
+	}
+
+	/* Typography scaling */
+	body, p, input, button {
+		font-size: 15px;
+	}
+
+	/* Make status cards full width on small screens */
+	.status-card {
+		width: 100% !important;
+	}
+	
+	/* Ensure menu-grid shows 2 columns on phones */
+	.menu-grid {
+		grid-template-columns: repeat(2, 1fr) !important;
+		gap: 0.75rem !important;
+		padding: 1rem 0 !important;
+		max-width: 100% !important;
+		margin: 0 !important;
+	}
+}
+
+/* Tablet: two column layout */
+@media (min-width: 641px) and (max-width: 1024px) {
+	.grid {
+		grid-template-columns: repeat(8, 1fr);
+	}
+	.col-span-12 { grid-column: span 8; }
+	.col-span-6 { grid-column: span 4; }
+	.col-span-4 { grid-column: span 3; }
+	.col-span-3 { grid-column: span 2; }
+
+	body, p, input, button {
+		font-size: 15.5px;
+	}
+}
+
+/* Desktop: wider multi-column layout */
+@media (min-width: 1025px) {
+	.grid {
+		grid-template-columns: repeat(12, 1fr);
+	}
+	.col-span-12 { grid-column: span 12; }
+	.col-span-6 { grid-column: span 6; }
+	.col-span-4 { grid-column: span 4; }
+	.col-span-3 { grid-column: span 3; }
+
+	body, p, input, button {
+		font-size: 16px;
+	}
+}
+
+/* Ensure images and media scale appropriately */
+img, video, .embed {
+	max-width: 100%;
+	height: auto;
+	display: block;
+}
+
+/* Fix for buttons and inputs on small screens */
+@media (max-width: 420px) {
+	button, .btn {
+		width: 100%;
+		padding-left: 14px;
+		padding-right: 14px;
+	}
+}
+
+/* Utility: reduce motion for prefers-reduced-motion users */
+@media (prefers-reduced-motion: reduce) {
+	* { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
+
+/* ===========================
+   News Ticker Responsive Styles
+   =========================== */
+.news-ticker-viewport {
+	position: fixed;
+	top: 10px;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 60vw;
+	height: 50px;
+	background: rgba(44, 85, 48, 0.95);
+	color: white;
+	border-radius: 25px;
+	padding: 8px 20px;
+	display: flex;
+	align-items: center;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+	z-index: 1000;
+	backdrop-filter: blur(10px);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.news-ticker-viewport .ticker-content {
+	white-space: nowrap;
+	animation: scroll-left 30s linear infinite;
+	font-weight: 500;
+	font-size: 14px;
+}
+
+@keyframes scroll-left {
+	0% { transform: translateX(100%); }
+	100% { transform: translateX(-100%); }
+}
+
+/* News ticker wrapper and viewport responsive adjustments */
+.news-ticker-wrapper {
+	position: fixed;
+	top: 10px;
+	left: 2%;
+	right: 2%;
+	z-index: 1000;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	pointer-events: none;
+	box-sizing: border-box;
+}
+
+.news-ticker-wrapper .news-ticker-viewport {
+	pointer-events: auto;
+}
+
+/* News ticker viewport responsive adjustments */
+@media (min-width: 1200px) {
+	.news-ticker-viewport {
+		width: 45vw;
+		max-width: 800px;
+		height: 55px;
+		padding: 10px 25px;
+		top: 15px;
+		box-sizing: border-box;
+	}
+	
+	.news-ticker-viewport .ticker-content {
+		font-size: 15px;
+		font-weight: 500;
+	}
+}
+
+@media (min-width: 769px) and (max-width: 1199px) {
+	.news-ticker-viewport {
+		width: 55vw;
+		max-width: 700px;
+		height: 50px;
+		padding: 8px 20px;
+		top: 12px;
+		box-sizing: border-box;
+	}
+	
+	.news-ticker-viewport .ticker-content {
+		font-size: 14px;
+	}
+}
+
+@media (max-width: 768px) {
+	.news-ticker-viewport {
+		width: 70vw;
+		max-width: 500px;
+		height: 45px;
+		padding: 6px 15px;
+		top: 8px;
+		box-sizing: border-box;
+	}
+	
+	.news-ticker-viewport .ticker-content {
+		font-size: 13px;
+	}
+}
+
+@media (max-width: 480px) {
+	.news-ticker-viewport {
+		width: 80vw;
+		max-width: 350px;
+		height: 40px;
+		padding: 5px 12px;
+		top: 5px;
+		box-sizing: border-box;
+	}
+	
+	.news-ticker-viewport .ticker-content {
+		font-size: 12px;
+	}
+}
+
+/* ===========================
+   Menu Grid Responsive Layout
+   =========================== */
+
+/* Very small phones: 1 column */
+@media (max-width: 480px) {
+	.menu-grid {
+		grid-template-columns: repeat(1, 1fr);
+		gap: 0.5rem;
+		padding: 0.75rem 0;
+	}
+	
+	.menu-item {
+		min-height: 280px;
+		max-width: 100%;
+	}
+	
+	.menu-item-image {
+		height: 120px;
+	}
+	
+	.menu-item-content {
+		padding: 0.5rem;
+	}
+	
+	.menu-item-name {
+		font-size: 0.85rem;
+		margin-bottom: 0.4rem;
+	}
+	
+	.menu-item-description {
+		font-size: 0.7rem;
+		margin-bottom: 0.6rem;
+		line-height: 1.2;
+	}
+	
+	.menu-item-price {
+		font-size: 0.9rem;
+		margin-bottom: 0.6rem;
+	}
+}
+
+/* Mobile phones: 2 columns */
+@media (min-width: 481px) and (max-width: 640px) {
+	.menu-grid {
+		grid-template-columns: repeat(2, 1fr);
+		gap: 0.75rem;
+		padding: 1rem 0;
+	}
+	
+	.menu-item {
+		min-height: 320px;
+		max-width: 100%;
+	}
+	
+	.menu-item-image {
+		height: 150px;
+	}
+	
+	.menu-item-content {
+		padding: 0.75rem;
+	}
+	
+	.menu-item-name {
+		font-size: 0.9rem;
+		margin-bottom: 0.5rem;
+	}
+	
+	.menu-item-description {
+		font-size: 0.75rem;
+		margin-bottom: 0.75rem;
+		line-height: 1.3;
+	}
+	
+	.menu-item-price {
+		font-size: 1rem;
+		margin-bottom: 0.75rem;
+	}
+}
+
+/* Tablet: 3 columns */
+@media (min-width: 641px) and (max-width: 1024px) {
+	.menu-grid {
+		grid-template-columns: repeat(3, 1fr);
+		gap: 1rem;
+		padding: 1.25rem 0;
+	}
+	
+	.menu-item {
+		min-height: 380px;
+	}
+	
+	.menu-item-image {
+		height: 180px;
+	}
+	
+	.menu-item-content {
+		padding: 1rem;
+	}
+	
+	.menu-item-name {
+		font-size: 1rem;
+		margin-bottom: 0.6rem;
+	}
+	
+	.menu-item-description {
+		font-size: 0.85rem;
+		margin-bottom: 1rem;
+		line-height: 1.4;
+	}
+	
+	.menu-item-price {
+		font-size: 1.2rem;
+		margin-bottom: 1rem;
+	}
+}
+
+/* Desktop: 4 columns with wider items */
+@media (min-width: 1025px) {
+	.menu-grid {
+		grid-template-columns: repeat(4, 1fr);
+		gap: 1.5rem;
+		padding: 1.5rem 0;
+		max-width: 1400px;
+		margin: 0 auto;
+	}
+	
+	.menu-item {
+		min-height: 480px;
+		min-width: 280px;
+		max-width: 100%;
+		width: 100%;
+	}
+	
+	.menu-item-image {
+		height: 220px;
+	}
+	
+	.menu-item-content {
+		padding: 1.5rem;
+	}
+	
+	.menu-item-name {
+		font-size: 1.2rem;
+		margin-bottom: 0.8rem;
+		font-weight: 600;
+	}
+	
+	.menu-item-description {
+		font-size: 1rem;
+		margin-bottom: 1.2rem;
+		line-height: 1.5;
+	}
+	
+	.menu-item-price {
+		font-size: 1.4rem;
+		margin-bottom: 1.2rem;
+		font-weight: 700;
+	}
+}
+
+/* Large Desktop: enhanced 4 columns with even wider items */
+@media (min-width: 1200px) and (max-width: 1599px) {
+	.menu-grid {
+		grid-template-columns: repeat(4, 1fr);
+		gap: 2rem;
+		padding: 1.75rem 0;
+		max-width: 1600px;
+		margin: 0 auto;
+	}
+	
+	.menu-item {
+		min-height: 520px;
+		min-width: 320px;
+		max-width: 100%;
+		width: 100%;
+		transform: scale(1);
+	}
+	
+	.menu-item:hover {
+		transform: translateY(-6px) scale(1.02);
+	}
+	
+	.menu-item-image {
+		height: 240px;
+	}
+	
+	.menu-item-content {
+		padding: 1.75rem;
+	}
+	
+	.menu-item-name {
+		font-size: 1.3rem;
+		margin-bottom: 0.85rem;
+		font-weight: 600;
+	}
+	
+	.menu-item-description {
+		font-size: 1.05rem;
+		margin-bottom: 1.3rem;
+		line-height: 1.5;
+	}
+	
+	.menu-item-price {
+		font-size: 1.5rem;
+		margin-bottom: 1.3rem;
+		font-weight: 700;
+	}
+}
+
+/* Extra Large Desktop: 1600px+ - Maximum width items */
+@media (min-width: 1600px) {
+	.menu-grid {
+		grid-template-columns: repeat(4, 1fr);
+		gap: 2.5rem;
+		max-width: 1800px;
+		margin: 0 auto;
+		padding: 2rem 0;
+	}
+	
+	.menu-item {
+		min-height: 560px;
+		min-width: 380px;
+		max-width: 100%;
+		width: 100%;
+	}
+	
+	.menu-item:hover {
+		transform: translateY(-8px) scale(1.03);
+	}
+	
+	.menu-item-image {
+		height: 280px;
+	}
+	
+	.menu-item-content {
+		padding: 2rem;
+	}
+	
+	.menu-item-name {
+		font-size: 1.5rem;
+		margin-bottom: 1rem;
+		font-weight: 700;
+	}
+	
+	.menu-item-description {
+		font-size: 1.1rem;
+		margin-bottom: 1.5rem;
+		line-height: 1.6;
+	}
+	
+	.menu-item-price {
+		font-size: 1.8rem;
+		margin-bottom: 1.5rem;
+		font-weight: 800;
+	}
+	
+	/* Buttons also larger on very big screens */
+	.btn {
+		padding: 12px 24px;
+		font-size: 1.1rem;
+		font-weight: 600;
+	}
+}
+
+/* Ultra-wide ekranlar uchun (2000px+) */
+@media (min-width: 2000px) {
+	.menu-grid {
+		grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+		gap: 2.5rem;
+		max-width: 2200px;
+	}
+	
+	.menu-item {
+		min-height: 580px;
+	}
+	
+	.menu-item-image {
+		height: 320px;
+	}
+	
+	.menu-item-content {
+		padding: 2.5rem;
+	}
+	
+	.menu-item-name {
+		font-size: 1.75rem;
+	}
+	
+	.menu-item-description {
+		font-size: 1.2rem;
+	}
+	
+	.menu-item-price {
+		font-size: 2rem;
+	}
+}
+}

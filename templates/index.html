@@ -1,169 +1,420 @@
-
 <!DOCTYPE html>
 <html lang="uz">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Restoran Tizimi - Bosh sahifa</title>
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
-    <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Oyoq-Kiyim Tizimi - Bosh sahifa</title>
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="{{ url_for('static', filename='apple-touch-icon.png') }}" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="{{ url_for('static', filename='favicon-32x32.png') }}" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="{{ url_for('static', filename='favicon-16x16.png') }}" />
+    <link
+      rel="manifest"
+      href="{{ url_for('static', filename='site.webmanifest') }}" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}" />
     <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #2d3748;
-        }
-        .navbar {
-            background: rgba(0, 0, 0, 0.8) !important;
-            backdrop-filter: blur(10px);
-        }
-        .hero-section {
-            text-align: center;
-            color: white;
-            padding: 100px 0;
-        }
-        .service-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 40px;
-            margin: 20px 0;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
-        .service-card:hover {
-            transform: translateY(-10px);
-        }
-        .service-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-        }
-        .btn-service {
-            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-            border: none;
-            color: white;
-            padding: 15px 30px;
-            border-radius: 50px;
-            font-size: 18px;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-block;
-            transition: all 0.3s ease;
-        }
-        .btn-service:hover {
-            background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%);
-            color: white;
-            transform: translateY(-2px);
-        }
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #ffeaa7 100%);
+        background-attachment: fixed;
+        min-height: 100vh;
+        color: #2d3748;
+        font-family: 'Inter', sans-serif;
+        overflow-x: hidden;
+      }
+      
+      /* Animated background particles */
+      .bg-animation {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: -1;
+      }
+      
+      .bg-animation::before {
+        content: '';
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: float1 6s ease-in-out infinite;
+        top: 10%;
+        left: 10%;
+      }
+      
+      .bg-animation::after {
+        content: '';
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: float2 8s ease-in-out infinite;
+        bottom: 10%;
+        right: 10%;
+      }
+      
+      @keyframes float1 {
+        0%, 100% { transform: translate(0, 0) rotate(0deg); }
+        25% { transform: translate(20px, -20px) rotate(90deg); }
+        50% { transform: translate(-15px, -30px) rotate(180deg); }
+        75% { transform: translate(-20px, 10px) rotate(270deg); }
+      }
+      
+      @keyframes float2 {
+        0%, 100% { transform: translate(0, 0) rotate(0deg); }
+        33% { transform: translate(-30px, -15px) rotate(120deg); }
+        66% { transform: translate(25px, -25px) rotate(240deg); }
+      }
+      
+      .navbar {
+        background: rgba(0, 0, 0, 0.9) !important;
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      
+      .navbar-brand {
+        font-size: 1.8rem;
+        font-weight: 800;
+        background: linear-gradient(45deg, #ffeaa7, #fd79a8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      
+      .nav-link {
+        font-weight: 600;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: 8px;
+        padding: 8px 16px !important;
+        margin: 0 4px;
+      }
+      
+      .nav-link:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateY(-2px);
+        color: #ffeaa7 !important;
+      }
+      
+      .hero-section {
+        text-align: center;
+        color: white;
+        padding: 120px 0 80px;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .hero-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 60%);
+        animation: heroGlow 4s ease-in-out infinite alternate;
+      }
+      
+      @keyframes heroGlow {
+        0% { transform: scale(1) rotate(0deg); opacity: 0.3; }
+        100% { transform: scale(1.1) rotate(180deg); opacity: 0.7; }
+      }
+      
+      .display-4 {
+        font-size: 3.5rem;
+        font-weight: 900;
+        margin-bottom: 2rem;
+        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        background: linear-gradient(45deg, #ffffff, #ffeaa7, #fd79a8);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: gradientShift 3s ease-in-out infinite;
+      }
+      
+      @keyframes gradientShift {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+      }
+      
+      .lead {
+        font-size: 1.4rem;
+        font-weight: 500;
+        opacity: 0.95;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      }
+      
+      .service-card {
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 24px;
+        padding: 50px 40px;
+        margin: 30px 0;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .service-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 234, 167, 0.2), transparent);
+        transition: left 0.6s ease;
+      }
+      
+      .service-card:hover::before {
+        left: 100%;
+      }
+      
+      .service-card:hover {
+        transform: translateY(-15px) scale(1.02);
+        box-shadow: 0 25px 80px rgba(0, 0, 0, 0.2);
+        border-color: #ffeaa7;
+      }
+      
+      .service-icon {
+        font-size: 5rem;
+        margin-bottom: 30px;
+        animation: iconFloat 3s ease-in-out infinite;
+        filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
+      }
+      
+      @keyframes iconFloat {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+      }
+      
+      .service-card h3 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 20px;
+      }
+      
+      .service-card p {
+        font-size: 1.1rem;
+        color: #4a5568;
+        line-height: 1.6;
+        margin-bottom: 30px;
+      }
+      
+      .btn-service {
+        background: linear-gradient(135deg, #4caf50 0%, #45a049 50%, #66bb6a 100%);
+        border: none;
+        color: white;
+        padding: 18px 36px;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .btn-service::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.5s ease;
+      }
+      
+      .btn-service:hover::before {
+        left: 100%;
+      }
+      
+      .btn-service:hover {
+        background: linear-gradient(135deg, #45a049 0%, #3d8b40 50%, #4caf50 100%);
+        color: white;
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 12px 35px rgba(76, 175, 80, 0.4);
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
+    <!-- Animated Background -->
+    <div class="bg-animation"></div>
+    
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-        <div class="container">
-            <a class="navbar-brand" href="{{ url_for('index') }}">🍽️ Restoran</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('menu') }}">📋 Menyu</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('favorites') }}">❤️ Sevimlilar</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('contact') }}">📞 Aloqa</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('about') }}">❓ Savollar</a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav">
-                    {% if session.get('user_id') %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('cart') }}">🛒 Savatcha</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('profile') }}">👤 {{ session.get('user_name') }}</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('logout') }}">🚪 Chiqish</a>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('login_page') }}">🔐 Kirish</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('register') }}">📝 Ro'yxatdan o'tish</a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </div>
+      <div class="container">
+        <a class="navbar-brand" href="{{ url_for('index') }}">👟 Pro_Obuv</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('menu') }}">📋 Menyu</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('favorites') }}"
+                >❤️ Sevimlilar</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('contact') }}">📞 Aloqa</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('about') }}">❓ Savollar</a>
+            </li>
+          </ul>
+          <ul class="navbar-nav">
+            {% if session.get('user_id') %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('cart') }}">🛒 Savatcha</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('profile') }}"
+                >👤 {{ session.get('user_name') }}</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('logout') }}">🚪 Chiqish</a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('login_page') }}"
+                >🔐 Kirish</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('register') }}"
+                >📝 Ro'yxatdan o'tish</a
+              >
+            </li>
+            {% endif %}
+          </ul>
         </div>
+      </div>
     </nav>
 
     <!-- Hero Section -->
     <div class="hero-section">
-        <div class="container">
-            <h1 class="display-4 fw-bold mb-4" data-translate="welcome">🍽️ Bizning Restoranga Xush Kelibsiz!</h1>
-            <p class="lead" data-translate="best_food">Eng mazali taomlar va a'lo xizmat</p>
-        </div>
+      <div class="container">
+        <h1 class="display-4 fw-bold mb-4" data-translate="welcome">
+          👟 Pro Obuv - Sizning Ishonchli Oyoq Kiyim Do'koningiz!
+        </h1>
+        <p class="lead" data-translate="best_shoes">
+          Eng sifatli oyoq kiyimlar va professional xizmat ko'rsatish
+        </p>
+      </div>
     </div>
 
     <!-- Services Section -->
     <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="service-card">
-                    <div class="service-icon">🏪</div>
-                    <h3 data-translate="restaurant_order">Restoranda buyurtma berish</h3>
-                    <p data-translate="restaurant_desc">Restoranda o'tirib, navbat oling va buyurtma bering</p>
-                    <a href="{{ url_for('user_page') }}" class="btn-service" data-translate="get_queue">Navbat olish</a>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="service-card">
-                    <div class="service-icon">🚚</div>
-                    <h3 data-translate="delivery_service">Dostavka xizmati</h3>
-                    <p data-translate="delivery_desc">Uyingizgacha yetkazib berish xizmati</p>
-                    <a href="{{ url_for('menu') }}" class="btn-service" data-translate="order_now">Buyurtma berish</a>
-                </div>
-            </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="service-card">
+            <div class="service-icon">🏪</div>
+            <h3 data-translate="shoe_catalog">
+               Oyoq Kiyim Katalogi
+            </h3>
+            <p data-translate="catalog_desc">
+              Keng assortimentdagi sifatli oyoq kiyimlarni ko'rish va sotib olish
+            </p>
+            <a
+              href="{{ url_for('menu') }}"
+              class="btn-service"
+              data-translate="browse_shoes"
+              >👟 Katalogni ko'rish</a
+            >
+          </div>
         </div>
+        <div class="col-md-6">
+          <div class="service-card">
+            <div class="service-icon">🚚</div>
+            <h3 data-translate="delivery_service">Yetkazib Berish Xizmati</h3>
+            <p data-translate="delivery_desc">
+              Toshkent bo'ylab tez va ishonchli yetkazib berish xizmati
+            </p>
+            <a
+              href="{{ url_for('menu') }}"
+              class="btn-service"
+              data-translate="order_now"
+              >🚚 Buyurtma berish</a
+            >
+          </div>
+        </div>
+      </div>
     </div>
+
+    <!-- Yangiliklar Tasmasi -->
+    {% include 'components/news_ticker.html' %}
 
     <!-- Contact Section -->
     <div class="container mt-5" id="contact">
-        <div class="service-card">
-            <h3 data-translate="contact_us">📞 Biz bilan bog'lanish</h3>
-            <p><strong>Ism:</strong> Moxirbek</p>
-            <p><strong>Telefon:</strong> +998 99 145 96 86</p>
-            <p><strong>Email:</strong> nasimjonnasimjon46@gmail.com</p>
-            <p><strong>Telegram:</strong> @Rakhimberdiyev_1970</p>
-            <p><strong>Manzil:</strong> Toshkent, Sergeli, Yuqori Darxon MFY, Do'stlik 1-tor ko'cha 12 uy</p>
-            <p><strong data-translate="work_time">Ish vaqti:</strong> 09:00 - 23:00</p>
-        </div>
+      <div class="service-card">
+        <h3 data-translate="contact_us">📞 Biz bilan bog'lanish</h3>
+        <p><strong>Ism:</strong> Moxirbek</p>
+        <p><strong>Telefon:</strong> +998 99 145 96 86</p>
+        <p><strong>Email:</strong> nasimjonnasimjon46@gmail.com</p>
+        <p><strong>Telegram:</strong> @Rakhimberdiyev_1970</p>
+        <p>
+          <strong>Manzil:</strong> Toshkent, Sergeli, Yuqori Darxon MFY,
+          Do'stlik 1-tor ko'cha 12 uy
+        </p>
+        <p>
+          <strong data-translate="work_time">Ish vaqti:</strong> Dushanba - Juma: 9:00 - 18:00, Shanba va Yakshanba: Dam
+        </p>
+      </div>
     </div>
 
     <!-- Flash Messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div class="container">
-          {% for category, message in messages %}
-            <div class="alert alert-{{ 'danger' if category=='error' else 'success' if category=='success' else category }} alert-dismissible fade show" role="alert">
-              {{ message }}
-              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-          {% endfor %}
-        </div>
-      {% endif %}
-    {% endwith %}
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %}
+    <div class="container">
+      {% for category, message in messages %}
+      <div
+        class="alert alert-{{ 'danger' if category=='error' else 'success' if category=='success' else category }} alert-dismissible fade show"
+        role="alert">
+        {{ message }}
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"></button>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %} {% endwith %}
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+  </body>
 </html>

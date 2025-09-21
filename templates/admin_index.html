@@ -63,6 +63,16 @@
             </div>
             
             <div class="card">
+                <h3>📰 Yangiliklar</h3>
+                <p>Sayt yangiliklar va reklamalarini boshqaring</p>
+                {% if session.get('staff_role') == 'super_admin' %}
+                    <a href="{{ url_for('admin_news_management') }}" class="btn big" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);">Yangiliklar boshqaruvi</a>
+                {% else %}
+                    <span class="btn big disabled" style="background: #6b7280; cursor: not-allowed;">Faqat Super Admin</span>
+                {% endif %}
+            </div>
+            
+            <div class="card">
                 <h3>🛡️ Super Admin</h3>
                 <p>To'liq tizim boshqaruvi</p>
                 <a href="{{ url_for('super_admin_login') }}" class="btn big" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">Super Admin</a>

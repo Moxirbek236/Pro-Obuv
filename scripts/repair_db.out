@@ -1,0 +1,3 @@
+﻿Backing up c:\Users\Moxir_Coder\OneDrive\Desktop\retourant\database.sqlite3 -> c:\Users\Moxir_Coder\OneDrive\Desktop\retourant\database.sqlite3.bak.20250909_231553
+PRAGMA integrity_check -> ('ok',)
+Database integrity OK. No repair needed.
