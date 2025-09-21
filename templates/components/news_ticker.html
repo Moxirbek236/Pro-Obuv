@@ -1,280 +1,364 @@
 <!-- News Ticker Component -->
 <div class="news-ticker-container">
-    <div class="news-ticker-wrapper">
-        <!-- Left navigation button -->
-        <button class="news-nav-btn news-nav-prev" id="newsPrevBtn" title="Oldingi yangilik" onclick="prevNews()">
-            <i class="bi bi-chevron-left"></i>
-        </button>
-        
-        <div class="news-ticker-title">
-            <i class="bi bi-newspaper"></i> YANGILIKLAR
-        </div>
-        
-        <div class="news-ticker" id="newsTicker">
-            <div class="news-ticker-viewport">
-                <div class="news-ticker-content" id="newsTickerContent">
-                    <!-- News items will be loaded here -->
-                    <div class="news-item loading">
-                        <div class="news-icon">📰</div>
-                        <div class="news-text">
-                            <div class="news-title">Yuklanmoqda...</div>
-                            <div class="news-content">Yangiliklar yuklanmoqda...</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- News indicators -->
-            <div class="news-indicators" id="newsIndicators">
-                <!-- Indicators will be generated dynamically -->
-            </div>
-        </div>
-        
-        <!-- Right navigation button -->
-        <button class="news-nav-btn news-nav-next" id="newsNextBtn" title="Keyingi yangilik" onclick="nextNews()">
-            <i class="bi bi-chevron-right"></i>
-        </button>
+  <div class="news-ticker-wrapper">
+    <div class="news-ticker-title">
+      <i class="bi bi-newspaper"></i> YANGILIKLAR
     </div>
+
+    <div class="news-ticker" id="newsTicker">
+      <div class="news-ticker-viewport">
+        <!-- Put nav buttons inside the viewport so they remain clickable on small screens -->
+        <button
+          class="news-nav-btn news-nav-prev"
+          id="newsPrevBtn"
+          title="Oldingi yangilik"
+          onclick="prevNews()">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+
+        <div class="news-ticker-content" id="newsTickerContent">
+          <!-- News items will be loaded here -->
+          <div class="news-item loading">
+            <div class="news-icon">📰</div>
+            <div class="news-text">
+              <div class="news-title">Yuklanmoqda...</div>
+              <div class="news-content">Yangiliklar yuklanmoqda...</div>
+            </div>
+          </div>
+        </div>
+
+        <button
+          class="news-nav-btn news-nav-next"
+          id="newsNextBtn"
+          title="Keyingi yangilik"
+          onclick="nextNews()">
+          <i class="bi bi-chevron-right"></i>
+        </button>
+      </div>
+
+      <!-- News indicators -->
+      <div class="news-indicators" id="newsIndicators">
+        <!-- Indicators will be generated dynamically -->
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
-// News Ticker Management Class
-class NewsTicker {
+  // News Ticker Management Class
+  class NewsTicker {
     constructor() {
-        this.currentIndex = 0;
-        this.newsItems = [];
-        this.autoSlideInterval = null;
-        this.isPlaying = true;
-        this.init();
+      this.currentIndex = 0;
+      this.newsItems = [];
+      this.autoSlideInterval = null;
+      this.isPlaying = true;
+      this.init();
     }
-    
+
     init() {
-        // Load news data
-        this.loadNewsData();
-        
-        // Setup event listeners
-        this.setupEventListeners();
-        
-        // Start auto-slide
-        this.startAutoSlide();
-        
-        // Reload news every 5 minutes
-        setInterval(() => this.loadNewsData(), 5 * 60 * 1000);
+      // Load news data
+      this.loadNewsData();
+
+      // Setup event listeners
+      this.setupEventListeners();
+
+      // Start auto-slide
+      this.startAutoSlide();
+
+      // Reload news every 5 minutes
+      setInterval(() => this.loadNewsData(), 5 * 60 * 1000);
     }
-    
+
     setupEventListeners() {
-        // Navigation buttons
-        const prevBtn = document.getElementById('newsPrevBtn');
-        const nextBtn = document.getElementById('newsNextBtn');
-        const ticker = document.getElementById('newsTicker');
-        
-        if (prevBtn) {
-            prevBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.prevNews();
-            });
-        }
-        
-        if (nextBtn) {
-            nextBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.nextNews();
-            });
-        }
-        
-        // Pause on hover
-        if (ticker) {
-            ticker.addEventListener('mouseenter', () => this.pauseAutoSlide());
-            ticker.addEventListener('mouseleave', () => this.startAutoSlide());
-        }
+      // Navigation buttons
+      const prevBtn = document.getElementById("newsPrevBtn");
+      const nextBtn = document.getElementById("newsNextBtn");
+      const ticker = document.getElementById("newsTicker");
+
+      if (prevBtn) {
+        prevBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          this.prevNews();
+    const newsHTML = this.newsItems
+    .map((item, index) => {
+      const icon = item.type === "advertisement" ? "\ud83d\udce2" : "\ud83d\udcf0";
+      // If video exists, render a video wrapper with an overlay play button (videos won't autoplay)
+      const mediaHtml = item.video_url
+      ? `<div class="news-media">
+          <div class="video-wrapper">
+            <video src="${item.video_url}" preload="metadata" playsinline muted></video>
+            <button class="video-play-overlay" aria-label="Play video">▶</button>
+          </div>
+          </div>`
+      : item.image_url
+        ? `<div class="news-media"><img src="${item.image_url}" alt="News image" /></div>`
+        : '';
+
+      return `
+        <div class="news-item ${item.type}" data-index="${index}">
+          <div class="news-icon">${icon}</div>
+          <div class="news-text">
+            <div class="news-title">${item.title}</div>
+            <div class="news-content">${item.content || ""}</div>
+          </div>
+          ${mediaHtml}
+        </div>
+      `;
+    })
+    .join("");
+
+      // Try to load from API first
+      fetch("/api/news/active")
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          if (data.success && data.news && data.news.length > 0) {
+            this.newsItems = data.news
+              .filter((item) => item.is_active)
+              .sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
+            this.updateDisplay();
+            console.log(`Loaded ${this.newsItems.length} news items`);
+          } else {
+            this.loadDefaultNews();
+          }
+        })
+        .catch((error) => {
+          console.warn("API failed, loading from JSON:", error);
+          this.loadFromJSON();
+        });
+    // After DOM is updated attach video overlays handlers so videos don't autoplay but play on click
+    this.setupVideoOverlays();
     }
-    
-    loadNewsData() {
-        console.log('Loading news data...');
-        
-        // Try to load from API first
-        fetch('/api/news/active')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success && data.news && data.news.length > 0) {
-                    this.newsItems = data.news.filter(item => item.is_active)
-                        .sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
-                    this.updateDisplay();
-                    console.log(`Loaded ${this.newsItems.length} news items`);
-                } else {
-                    this.loadDefaultNews();
-                }
-            })
-            .catch(error => {
-                console.warn('API failed, loading from JSON:', error);
-                this.loadFromJSON();
-            });
-    }
-    
+
     loadFromJSON() {
-        // Try to load from local JSON file
-        fetch('/data/news.json')
-            .then(response => {
-                if (!response.ok) throw new Error('JSON file not found');
-                return response.json();
-            })
-            .then(data => {
-                if (data.news && data.news.length > 0) {
-                    this.newsItems = data.news.filter(item => item.is_active)
-                        .sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
-                    this.updateDisplay();
-                    console.log(`Loaded ${this.newsItems.length} news items from JSON`);
-                } else {
-                    this.loadDefaultNews();
-                }
-            })
-            .catch(error => {
-                console.warn('JSON loading failed, using defaults:', error);
-                this.loadDefaultNews();
-            });
+      // Try to load from local JSON file
+      fetch("/data/news.json")
+        .then((response) => {
+          if (!response.ok) throw new Error("JSON file not found");
+          return response.json();
+        })
+        .then((data) => {
+          if (data.news && data.news.length > 0) {
+            this.newsItems = data.news
+              .filter((item) => item.is_active)
+              .sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
+            this.updateDisplay();
+            console.log(`Loaded ${this.newsItems.length} news items from JSON`);
+          } else {
+            this.loadDefaultNews();
+          }
+        })
+        .catch((error) => {
+          console.warn("JSON loading failed, using defaults:", error);
+          this.loadDefaultNews();
+        });
     }
-    
+
     loadDefaultNews() {
-        this.newsItems = [
-            {
-                id: 'default1',
-                title: '🛍️ Pro-Obuv Do\'koni',
-                content: 'Eng sifatli va zamonaviy oyoq kiyimlar do\'koni. Katta assortiment va qulay narxlar!',
-                type: 'news',
-                is_active: true
-            },
-            {
-                id: 'default2',
-                title: '🎉 Yangi Kolleksiya',
-                content: 'Bahor-yoz kolleksiyasi keldi! Erkaklar va ayollar uchun eng yangi modellar.',
-                type: 'news',
-                is_active: true
-            },
-            {
-                id: 'default3',
-                title: '🚚 Bepul Yetkazib Berish',
-                content: '100,000 so\'mdan yuqori xaridlarga bepul yetkazib berish xizmati!',
-                type: 'advertisement',
-                is_active: true
-            }
-        ];
-        this.updateDisplay();
-        console.log('Loaded default news items');
+      this.newsItems = [
+        {
+          id: "default1",
+          title: "🛍️ Pro-Obuv Do'koni",
+          content:
+            "Eng sifatli va zamonaviy oyoq kiyimlar do'koni. Katta assortiment va qulay narxlar!",
+          type: "news",
+          is_active: true,
+        },
+        {
+          id: "default2",
+          title: "🎉 Yangi Kolleksiya",
+          content:
+            "Bahor-yoz kolleksiyasi keldi! Erkaklar va ayollar uchun eng yangi modellar.",
+          type: "news",
+          is_active: true,
+        },
+        {
+          id: "default3",
+          title: "🚚 Bepul Yetkazib Berish",
+          content:
+            "100,000 so'mdan yuqori xaridlarga bepul yetkazib berish xizmati!",
+          type: "advertisement",
+          is_active: true,
+        },
+      ];
+      this.updateDisplay();
+      console.log("Loaded default news items");
     }
-    
+
     updateDisplay() {
-        const container = document.getElementById('newsTickerContent');
-        const indicators = document.getElementById('newsIndicators');
-        const ticker = document.getElementById('newsTicker');
-        
-        if (!container || !this.newsItems.length) return;
-        
-        // Generate news items HTML
-        const newsHTML = this.newsItems.map((item, index) => {
-            const icon = item.type === 'advertisement' ? '📢' : '📰';
-            return `
+      const container = document.getElementById("newsTickerContent");
+      const indicators = document.getElementById("newsIndicators");
+      const ticker = document.getElementById("newsTicker");
+
+      if (!container || !this.newsItems.length) return;
+
+      // Generate news items HTML
+      const newsHTML = this.newsItems
+        .map((item, index) => {
+          const icon = item.type === "advertisement" ? "📢" : "📰";
+          return `
                 <div class="news-item ${item.type}" data-index="${index}">
                     <div class="news-icon">${icon}</div>
                     <div class="news-text">
                         <div class="news-title">${item.title}</div>
-                        <div class="news-content">${item.content || ''}</div>
+                        <div class="news-content">${item.content || ""}</div>
                     </div>
-                    ${item.image_url ? `<div class="news-media"><img src="${item.image_url}" alt="News image" /></div>` : ''}
+                    ${
+                      item.image_url
+                        ? `<div class="news-media"><img src="${item.image_url}" alt="News image" /></div>`
+                        : ""
+                    }
                 </div>
             `;
-        }).join('');
-        
-        container.innerHTML = newsHTML;
-        
-        // Generate indicators
-        if (indicators && this.newsItems.length > 1) {
-            const indicatorsHTML = this.newsItems.map((_, index) => 
-                `<button class="news-indicator ${index === this.currentIndex ? 'active' : ''}" 
-                         onclick="newsTicker.goToSlide(${index})" 
+        })
+        .join("");
+
+      container.innerHTML = newsHTML;
+
+      // Generate indicators
+      if (indicators && this.newsItems.length > 1) {
+        const indicatorsHTML = this.newsItems
+          .map(
+            (_, index) =>
+              `<button class="news-indicator ${
+                index === this.currentIndex ? "active" : ""
+              }"
+                         onclick="newsTicker.goToSlide(${index})"
                          aria-label="Yangilik ${index + 1}"></button>`
-            ).join('');
-            indicators.innerHTML = indicatorsHTML;
-        }
-        
-        // Show ticker
-        if (ticker) {
-            ticker.style.display = 'flex';
-        }
-        
-        // Update current slide position
-        this.updateSlidePosition();
+          )
+          .join("");
+        indicators.innerHTML = indicatorsHTML;
+      }
+
+      // Show ticker
+      if (ticker) {
+        ticker.style.display = "flex";
+      }
+
+      // Update current slide position
+      this.updateSlidePosition();
     }
-    
+
     updateSlidePosition() {
-        const container = document.getElementById('newsTickerContent');
-        if (!container || !this.newsItems.length) return;
-        
-        const translateX = -(this.currentIndex * 100);
-        container.style.transform = `translateX(${translateX}%)`;
-        
-        // Update indicators
-        document.querySelectorAll('.news-indicator').forEach((indicator, index) => {
-            indicator.classList.toggle('active', index === this.currentIndex);
+      const container = document.getElementById("newsTickerContent");
+      if (!container || !this.newsItems.length) return;
+
+      const translateX = -(this.currentIndex * 100);
+      container.style.transform = `translateX(${translateX}%)`;
+
+      // Update indicators
+      document
+        .querySelectorAll(".news-indicator")
+        .forEach((indicator, index) => {
+          indicator.classList.toggle("active", index === this.currentIndex);
         });
     }
-    
+
     nextNews() {
-        if (!this.newsItems.length) return;
-        this.currentIndex = (this.currentIndex + 1) % this.newsItems.length;
-        this.updateSlidePosition();
+      if (!this.newsItems.length) return;
+      this.currentIndex = (this.currentIndex + 1) % this.newsItems.length;
+      this.updateSlidePosition();
     }
-    
+
     prevNews() {
-        if (!this.newsItems.length) return;
-        this.currentIndex = this.currentIndex === 0 
-            ? this.newsItems.length - 1 
-            : this.currentIndex - 1;
-        this.updateSlidePosition();
+      if (!this.newsItems.length) return;
+      this.currentIndex =
+        this.currentIndex === 0
+          ? this.newsItems.length - 1
+          : this.currentIndex - 1;
+      this.updateSlidePosition();
     }
-    
+
     goToSlide(index) {
-        if (index >= 0 && index < this.newsItems.length) {
-            this.currentIndex = index;
-            this.updateSlidePosition();
-        }
+      if (index >= 0 && index < this.newsItems.length) {
+        this.currentIndex = index;
+        this.updateSlidePosition();
+      }
     }
-    
+
     startAutoSlide() {
-        this.pauseAutoSlide();
-        if (this.newsItems.length > 1) {
-            this.autoSlideInterval = setInterval(() => {
-                this.nextNews();
-            }, 5000); // Change slide every 5 seconds
-        }
+      this.pauseAutoSlide();
+      if (this.newsItems.length > 1) {
+        this.autoSlideInterval = setInterval(() => {
+          this.nextNews();
+        }, 5000); // Change slide every 5 seconds
+      }
     }
-    
+
     pauseAutoSlide() {
-        if (this.autoSlideInterval) {
-            clearInterval(this.autoSlideInterval);
-            this.autoSlideInterval = null;
-        }
+      if (this.autoSlideInterval) {
+        clearInterval(this.autoSlideInterval);
+        this.autoSlideInterval = null;
+      }
     }
-}
 
-// Global variables and functions for compatibility
-let newsTicker;
+  setupVideoOverlays() {
+    // Find all video wrappers and attach overlay click handlers
+    const wrappers = document.querySelectorAll('.video-wrapper');
+    wrappers.forEach(wrapper => {
+      const video = wrapper.querySelector('video');
+      const overlay = wrapper.querySelector('.video-play-overlay');
 
-function nextNews() {
+      if (!video || !overlay) return;
+
+      // Ensure video is paused and does not autoplay
+      try { video.pause(); } catch (e) { /* ignore */ }
+      video.controls = false;
+
+      // Clicking overlay plays the video (unmute if needed) and hides overlay; clicking video toggles play/pause
+      const playVideo = () => {
+        // unmute on user gesture if needed, but keep muted optional
+        try { video.play(); } catch (e) { console.warn('Play failed', e); }
+        overlay.style.display = 'none';
+        video.controls = true;
+      };
+      const pauseVideo = () => {
+        try { video.pause(); } catch (e) { }
+        overlay.style.display = '';
+        video.controls = false;
+      };
+
+      overlay.addEventListener('click', (e) => {
+        e.stopPropagation();
+        playVideo();
+      });
+
+      // Toggle on video click (if playing pause, else play)
+      video.addEventListener('click', (e) => {
+        if (video.paused) playVideo(); else pauseVideo();
+      });
+
+      // Pause video when slide changes (simple approach: listen for transition end on container)
+      const container = document.getElementById('newsTickerContent');
+      if (container) {
+        // When transform occurs, pauses all videos to avoid background play
+        const observer = new MutationObserver(() => {
+          if (!video.paused) pauseVideo();
+        });
+        observer.observe(container, { attributes: true, attributeFilter: ['style'] });
+      }
+    });
+  }
+  }
+
+  // Global variables and functions for compatibility
+  let newsTicker;
+
+  function nextNews() {
     if (newsTicker) newsTicker.nextNews();
-}
+  }
 
-function prevNews() {
+  function prevNews() {
     if (newsTicker) newsTicker.prevNews();
-}
+  }
 
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Initializing News Ticker...');
+  // Initialize when DOM is loaded
+  document.addEventListener("DOMContentLoaded", function () {
+    console.log("Initializing News Ticker...");
     newsTicker = new NewsTicker();
-});
+  });
 </script>

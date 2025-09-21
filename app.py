@@ -110,32 +110,36 @@ from functools import wraps
 MEMORY_CACHE = {}
 CACHE_TIMEOUT = 300  # 5 минут
 
+
 def simple_cache(timeout=300):
     """Простое кеширование в памяти"""
+
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
             # Создаем ключ кеша
             cache_key = f"{func.__name__}_{hash(str(args) + str(kwargs))}"
             current_time = time.time()
-            
+
             # Проверяем кеш
             if cache_key in MEMORY_CACHE:
                 cached_time, cached_result = MEMORY_CACHE[cache_key]
                 if current_time - cached_time < timeout:
                     return cached_result
-            
+
             # Выполняем функцию и кешируем
             result = func(*args, **kwargs)
             MEMORY_CACHE[cache_key] = (current_time, result)
-            
+
             # Очищаем старые записи
             if len(MEMORY_CACHE) % 100 == 0:
                 cutoff = current_time - timeout * 2
                 MEMORY_CACHE.clear()  # Простое очищение
-                
+
             return result
+
         return wrapper
+
     return decorator
 
 
@@ -176,13 +180,13 @@ print("DEBUG: Flask app created")
 # News API ni ulash
 try:
     from api.news_api import register_news_api
+
     register_news_api(app)
     print("DEBUG: News API registered")
 except ImportError as e:
     print(f"WARNING: News API import failed: {e}")
 except Exception as e:
     print(f"WARNING: News API registration failed: {e}")
-
 
 
 # Duplicate `api_members` removed. The canonical implementation appears later in the file.
@@ -260,9 +264,9 @@ class Config:
     MAX_DELIVERY_DISTANCE = float(os.environ.get("MAX_DELIVERY_DISTANCE", "50.0"))
 
     # Rate limiting - ВЫСОКАЯ ПРОИЗВОДИТЕЛЬНОСТЬ
-    RATE_LIMIT_DAILY = int(os.environ.get("RATE_LIMIT_DAILY", "100000"))      # 100k в день
-    RATE_LIMIT_HOURLY = int(os.environ.get("RATE_LIMIT_HOURLY", "10000"))     # 10k в час
-    RATE_LIMIT_MINUTE = int(os.environ.get("RATE_LIMIT_MINUTE", "1000"))      # 1k в минуту
+    RATE_LIMIT_DAILY = int(os.environ.get("RATE_LIMIT_DAILY", "100000"))  # 100k в день
+    RATE_LIMIT_HOURLY = int(os.environ.get("RATE_LIMIT_HOURLY", "10000"))  # 10k в час
+    RATE_LIMIT_MINUTE = int(os.environ.get("RATE_LIMIT_MINUTE", "1000"))  # 1k в минуту
 
     # Logging
     LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
@@ -270,22 +274,26 @@ class Config:
     LOG_BACKUP_COUNT = int(os.environ.get("LOG_BACKUP_COUNT", "5"))
 
     # Performance - ОПТИМИЗИРОВАНО ДЛЯ 100+ ПОЛЬЗОВАТЕЛЕЙ
-    THREAD_POOL_MAX_WORKERS = int(os.environ.get("THREAD_POOL_MAX_WORKERS", "200"))  # Больше потоков
-    DB_POOL_MAX_CONNECTIONS = int(os.environ.get("DB_POOL_MAX_CONNECTIONS", "100"))  # Больше соединений
-    
+    THREAD_POOL_MAX_WORKERS = int(
+        os.environ.get("THREAD_POOL_MAX_WORKERS", "200")
+    )  # Больше потоков
+    DB_POOL_MAX_CONNECTIONS = int(
+        os.environ.get("DB_POOL_MAX_CONNECTIONS", "100")
+    )  # Больше соединений
+
     # Дополнительные оптимизации производительности
     SQLALCHEMY_ENGINE_OPTIONS = {
         "connect_args": {
             "check_same_thread": False,
-            "timeout": 120,           # Увеличенный timeout
-            "isolation_level": None,   # autocommit mode для скорости
+            "timeout": 120,  # Увеличенный timeout
+            "isolation_level": None,  # autocommit mode для скорости
         },
         "pool_timeout": 60,
-        "pool_recycle": 7200,        # 2 часа
+        "pool_recycle": 7200,  # 2 часа
         "pool_pre_ping": True,
-        "pool_size": 50,             # Большой пул соединений
-        "max_overflow": 100,         # Много overflow соединений
-        "echo": False,               # Без SQL логирования для производительности
+        "pool_size": 50,  # Большой пул соединений
+        "max_overflow": 100,  # Много overflow соединений
+        "echo": False,  # Без SQL логирования для производительности
     }
 
     # Admin credentials
@@ -376,7 +384,12 @@ os.makedirs("logs", exist_ok=True)
 @app.errorhandler(413)
 def request_entity_too_large(e):
     app.logger.warning("Request entity too large")
-    return jsonify({"success": False, "message": "File too large or request payload too big"}), 413
+    return (
+        jsonify(
+            {"success": False, "message": "File too large or request payload too big"}
+        ),
+        413,
+    )
 
 
 # Advanced logging konfiguratsiyasi - funksiyani oldinroq e'lon qilish
@@ -713,38 +726,86 @@ def clear_session_conflicts():
     try:
         # Store current session type before clearing
         session_types = {
-            'user': bool(session.get('user_id')),
-            'staff': bool(session.get('staff_id')),
-            'courier': bool(session.get('courier_id')),
-            'super_admin': bool(session.get('super_admin'))
+            "user": bool(session.get("user_id")),
+            "staff": bool(session.get("staff_id")),
+            "courier": bool(session.get("courier_id")),
+            "super_admin": bool(session.get("super_admin")),
         }
-        
+
         # Count active sessions
         active_sessions = sum(session_types.values())
-        
-        # If more than one session type is active, clear all except the most recently set
+
+        # If more than one session type is active, clear authentication-related keys but
+        # preserve general, non-auth session data (cart, preferences, csrf token, etc.).
         if active_sessions > 1:
-            app_logger.warning(f"Multiple session types detected: {session_types}. Clearing conflicts.")
-            
-            # Clear all session data related to authentication
-            keys_to_clear = [
-                'user_id', 'user_phone', 'user_address', 'user_first_name', 'user_last_name',
-                'user_address_latitude', 'user_address_longitude',
-                'staff_id', 'staff_name', 'staff_role', 'staff_role_display',
-                'courier_id', 'courier_name', 'courier_phone',
-                'super_admin', 'admin_name'
-            ]
-            
-            for key in keys_to_clear:
-                session.pop(key, None)
-                
-            # Force regeneration of session ID to prevent session fixation
-            session.permanent = True
-            
-            return True
-        
+            app_logger.warning(
+                f"Multiple session types detected: {session_types}. Clearing auth conflicts while preserving non-auth data."
+            )
+
+            # Preserve non-auth keys and CSRF token
+            try:
+                csrf_token = session.get("csrf_token")
+                # Keep any key that does not look like an auth key. Auth keys start with
+                # prefixes like 'user_', 'staff_', 'courier_', or are 'super_admin'/'admin_name'.
+                preserved = {
+                    k: v
+                    for k, v in dict(session).items()
+                    if not (
+                        k.startswith("user_")
+                        or k.startswith("staff_")
+                        or k.startswith("courier_")
+                        or k.startswith("admin_")
+                        or k in ("super_admin", "admin_name", "session_id")
+                    )
+                }
+
+                # Clear the whole session then restore preserved keys (safer across session backends)
+                session.clear()
+                session.update(preserved)
+
+                if csrf_token:
+                    session["csrf_token"] = csrf_token
+
+                # Regenerate session_id to reduce session fixation & cross-device linkage
+                import uuid as _uuid
+
+                new_sid = str(_uuid.uuid4())
+                session["session_id"] = new_sid
+                session.permanent = True
+                app_logger.info(
+                    f"Session conflicts cleared; new session_id={new_sid[:8]}..."
+                )
+                return True
+            except Exception as exc:
+                app_logger.error(
+                    f"Error while preserving session during conflict clear: {exc}"
+                )
+                # Fall back to previous conservative approach: remove common auth keys
+                keys_to_clear = [
+                    "user_id",
+                    "user_phone",
+                    "user_address",
+                    "user_first_name",
+                    "user_last_name",
+                    "user_address_latitude",
+                    "user_address_longitude",
+                    "staff_id",
+                    "staff_name",
+                    "staff_role",
+                    "staff_role_display",
+                    "courier_id",
+                    "courier_name",
+                    "courier_phone",
+                    "super_admin",
+                    "admin_name",
+                ]
+                for key in keys_to_clear:
+                    session.pop(key, None)
+                session.permanent = True
+                return True
+
         return False
-        
+
     except Exception as e:
         app_logger.error(f"Session conflict clearing error: {str(e)}")
         return False
@@ -752,49 +813,100 @@ def clear_session_conflicts():
 
 def secure_session_login(session_type, session_data):
     """Securely set session data with conflict prevention.
-    
+
     Args:
         session_type: 'user', 'staff', 'courier', or 'super_admin'
         session_data: dict with session data to set
     """
     try:
-        # Clear any existing session conflicts first
+        # Preserve non-auth session data (cart, preferences, csrf token) before touching auth keys.
+        try:
+            csrf_token = session.get("csrf_token")
+            preserved = {
+                k: v
+                for k, v in dict(session).items()
+                if not (
+                    k.startswith("user_")
+                    or k.startswith("staff_")
+                    or k.startswith("courier_")
+                    or k.startswith("admin_")
+                    or k in ("super_admin", "session_id")
+                )
+            }
+        except Exception:
+            csrf_token = None
+            preserved = {}
+
+        # Clear conflicts and restore preserved keys to avoid losing guest/cart info
         clear_session_conflicts()
-        
+        session.clear()
+        session.update(preserved)
+        if csrf_token:
+            session["csrf_token"] = csrf_token
+
+        # Regenerate session_id on successful login to avoid session fixation / cross-device reuse
+        try:
+            import uuid as _uuid
+
+            session["session_id"] = str(_uuid.uuid4())
+        except Exception:
+            # If uuid generation fails for some reason keep existing session_id
+            pass
+
         # Set new session data based on type
-        if session_type == 'user':
-            session['user_id'] = session_data.get('user_id')
-            session['user_phone'] = session_data.get('phone', '')
-            session['user_first_name'] = session_data.get('first_name', '')
-            session['user_last_name'] = session_data.get('last_name', '')
-            session['user_address'] = session_data.get('address', '')
-            session['user_address_latitude'] = session_data.get('address_latitude')
-            session['user_address_longitude'] = session_data.get('address_longitude')
-            
-        elif session_type == 'staff':
-            session['staff_id'] = session_data.get('staff_id')
-            session['staff_name'] = session_data.get('staff_name', '')
-            session['staff_role'] = session_data.get('staff_role', 'staff')
-            session['staff_role_display'] = session_data.get('staff_role_display', 'Xodim')
-            
-        elif session_type == 'courier':
-            session['courier_id'] = session_data.get('courier_id')
-            session['courier_name'] = session_data.get('courier_name', '')
-            session['courier_phone'] = session_data.get('courier_phone', '')
-            
-        elif session_type == 'super_admin':
-            session['super_admin'] = True
-            session['admin_name'] = session_data.get('admin_name', 'Super Admin')
-        
+        if session_type == "user":
+            # Core identifiers
+            session["user_id"] = session_data.get("user_id")
+            # Friendly display name used across templates
+            first = session_data.get("first_name", "")
+            last = session_data.get("last_name", "")
+            full_name = (
+                f"{first} {last}".strip()
+                or session_data.get("username")
+                or session_data.get("email")
+            )
+            session["user_first_name"] = first
+            session["user_last_name"] = last
+            session["user_name"] = full_name
+            # Contact and profile
+            session["user_email"] = session_data.get("email", "")
+            session["user_phone"] = session_data.get("phone", "")
+            session["user_avatar"] = session_data.get("avatar") or session.get(
+                "user_avatar"
+            )
+            # Address / geo
+            session["user_address"] = session_data.get("address", "")
+            session["user_address_latitude"] = session_data.get("address_latitude")
+            session["user_address_longitude"] = session_data.get("address_longitude")
+
+        elif session_type == "staff":
+            session["staff_id"] = session_data.get("staff_id")
+            session["staff_name"] = session_data.get("staff_name", "")
+            session["staff_role"] = session_data.get("staff_role", "staff")
+            session["staff_role_display"] = session_data.get(
+                "staff_role_display", "Xodim"
+            )
+
+        elif session_type == "courier":
+            session["courier_id"] = session_data.get("courier_id")
+            session["courier_name"] = session_data.get("courier_name", "")
+            session["courier_phone"] = session_data.get("courier_phone", "")
+
+        elif session_type == "super_admin":
+            session["super_admin"] = True
+            session["admin_name"] = session_data.get("admin_name", "Super Admin")
+
         # Set session as permanent with proper timeout
         session.permanent = True
-        
-        # Generate new CSRF token for security
+
+        # Generate a fresh CSRF token for the new authenticated session (preserve if already present)
         generate_csrf_token()
-        
-        app_logger.info(f"Secure session login completed for {session_type}")
+
+        app_logger.info(
+            f"Secure session login completed for {session_type}; session_id={session.get('session_id')[:8]}..."
+        )
         return True
-        
+
     except Exception as e:
         app_logger.error(f"Secure session login error: {str(e)}")
         return False
@@ -805,9 +917,9 @@ def is_international_delivery_enabled():
     try:
         result = execute_query(
             "SELECT value FROM settings WHERE key = 'international_delivery'",
-            fetch_one=True
+            fetch_one=True,
         )
-        return result and str(result[0]).lower() in ('1', 'true', 'yes')
+        return result and str(result[0]).lower() in ("1", "true", "yes")
     except Exception as e:
         app_logger.error(f"Error checking international delivery: {str(e)}")
         return True  # Default to enabled
@@ -818,28 +930,30 @@ def accepts_orders_from_country(country_name):
     try:
         if not is_international_delivery_enabled():
             return False
-            
+
         # Get the main branch's supported countries
         result = execute_query(
             "SELECT international_countries FROM branches WHERE accepts_international = 1 AND is_active = 1 LIMIT 1",
-            fetch_one=True
+            fetch_one=True,
         )
-        
+
         if not result or not result[0]:
             return True  # If no restrictions specified, accept all
-            
-        supported_countries = str(result[0]).lower().split(',')
+
+        supported_countries = str(result[0]).lower().split(",")
         country_check = country_name.lower().strip()
-        
+
         # Check if country is in the supported list
         for supported in supported_countries:
             if country_check in supported.strip() or supported.strip() in country_check:
                 return True
-                
+
         return False
-        
+
     except Exception as e:
-        app_logger.error(f"Error checking country acceptance for {country_name}: {str(e)}")
+        app_logger.error(
+            f"Error checking country acceptance for {country_name}: {str(e)}"
+        )
         return True  # Default to accepting if error occurs
 
 
@@ -848,27 +962,26 @@ def get_main_branch():
     try:
         # Get main branch ID from settings
         main_branch_result = execute_query(
-            "SELECT value FROM settings WHERE key = 'main_branch_id'",
-            fetch_one=True
+            "SELECT value FROM settings WHERE key = 'main_branch_id'", fetch_one=True
         )
-        
+
         if main_branch_result:
             main_branch_id = int(main_branch_result[0])
             branch = execute_query(
                 "SELECT * FROM branches WHERE id = ? AND is_active = 1",
                 (main_branch_id,),
-                fetch_one=True
+                fetch_one=True,
             )
             if branch:
-                return dict(branch) if hasattr(branch, 'keys') else branch
-        
+                return dict(branch) if hasattr(branch, "keys") else branch
+
         # Fallback to first active branch
         branch = execute_query(
             "SELECT * FROM branches WHERE is_active = 1 ORDER BY id LIMIT 1",
-            fetch_one=True
+            fetch_one=True,
         )
-        return dict(branch) if branch and hasattr(branch, 'keys') else branch
-        
+        return dict(branch) if branch and hasattr(branch, "keys") else branch
+
     except Exception as e:
         app_logger.error(f"Error getting main branch: {str(e)}")
         return None
@@ -2419,54 +2532,54 @@ def init_db():
     if cur.fetchone()[0] == 0:
         now = get_current_time().isoformat()
         sample_news = [
-                (
-                    "🎉 Yangi kolleksiya!",
-                    "Bahorgi yangi oyoq kiyimlar kolleksiyasi do'konimizga keldi! 50% gacha chegirmalar.",
-                    "advertisement",
-                    "/static/images/default-men.jpg",
-                    None,
-                    1,
-                    1,
-                    1,
-                    now,
-                    now,
-                ),
-                (
-                    "🚚 Bepul yetkazib berish",
-                    "Endi 300,000 so'mdan yuqori xaridlar uchun bepul yetkazib berish xizmati!",
-                    "news",
-                    None,
-                    None,
-                    1,
-                    2,
-                    1,
-                    now,
-                    now,
-                ),
-                (
-                    "⭐ Mijozlar bahosi",
-                    "Do'konimiz 4.8/5 bahoga ega bo'ldi. Rahmat barcha mijozlarimizga!",
-                    "news",
-                    None,
-                    None,
-                    1,
-                    3,
-                    1,
-                    now,
-                    now,
-                ),
-                (
-                    "💳 Click va Payme orqali to'lov",
-                    "Endi sizlar uchun yanada qulay - Click va Payme orqali to'lov imkoni!",
-                    "advertisement",
-                    "/static/images/default-product.jpg",
-                    None,
-                    1,
-                    4,
-                    1,
-                    now,
-                    now,
-                ),
+            (
+                "🎉 Yangi kolleksiya!",
+                "Bahorgi yangi oyoq kiyimlar kolleksiyasi do'konimizga keldi! 50% gacha chegirmalar.",
+                "advertisement",
+                "/static/images/default-men.jpg",
+                None,
+                1,
+                1,
+                1,
+                now,
+                now,
+            ),
+            (
+                "🚚 Bepul yetkazib berish",
+                "Endi 300,000 so'mdan yuqori xaridlar uchun bepul yetkazib berish xizmati!",
+                "news",
+                None,
+                None,
+                1,
+                2,
+                1,
+                now,
+                now,
+            ),
+            (
+                "⭐ Mijozlar bahosi",
+                "Do'konimiz 4.8/5 bahoga ega bo'ldi. Rahmat barcha mijozlarimizga!",
+                "news",
+                None,
+                None,
+                1,
+                3,
+                1,
+                now,
+                now,
+            ),
+            (
+                "💳 Click va Payme orqali to'lov",
+                "Endi sizlar uchun yanada qulay - Click va Payme orqali to'lov imkoni!",
+                "advertisement",
+                "/static/images/default-product.jpg",
+                None,
+                1,
+                4,
+                1,
+                now,
+                now,
+            ),
         ]
         cur.executemany(
             "INSERT INTO news (title, content, type, image_url, video_url, is_active, display_order, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
@@ -2492,7 +2605,7 @@ def init_db():
         );
         """
     )
-    
+
     # Boshlang'ich filiallarni qo'shish - bitta asosiy filial bilan
     cur.execute("SELECT COUNT(*) FROM branches")
     if cur.fetchone()[0] == 0:
@@ -2511,36 +2624,36 @@ def init_db():
             "Rossiya,Qozog'iston,Qirg'iziston,Tojikiston,Turkmaniston,Ozarbayjon,Belorussiya,Ukraina,Gruziya,Armaniston,Moldaviya,Latviya,Estoniya,Litva",  # international countries
             now,
         )
-        
+
         cur.execute(
             "INSERT INTO branches (name, address, latitude, longitude, phone, working_hours, is_active, delivery_radius, accepts_international, international_countries, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            main_branch
+            main_branch,
         )
-        
+
         # Set as the main branch in settings
         cur.execute(
             "INSERT OR REPLACE INTO settings (key, value, description) VALUES (?, ?, ?)",
-            ("main_branch_id", "1", "Asosiy filial ID raqami")
+            ("main_branch_id", "1", "Asosiy filial ID raqami"),
         )
-        
+
         cur.execute(
             "INSERT OR REPLACE INTO settings (key, value, description) VALUES (?, ?, ?)",
-            ("international_delivery", "1", "Xalqaro yetkazib berish yoqilgan")
+            ("international_delivery", "1", "Xalqaro yetkazib berish yoqilgan"),
         )
-        
+
         cur.execute(
             "INSERT OR REPLACE INTO settings (key, value, description) VALUES (?, ?, ?)",
-            ("accepts_russia_orders", "1", "Rossiyadan buyurtma qabul qilish")
+            ("accepts_russia_orders", "1", "Rossiyadan buyurtma qabul qilish"),
         )
-        
+
         cur.execute(
             "INSERT OR REPLACE INTO settings (key, value, description) VALUES (?, ?, ?)",
-            ("working_hours", "9:00 - 18:00", "Ish vaqti")
+            ("working_hours", "9:00 - 18:00", "Ish vaqti"),
         )
-        
+
         cur.execute(
             "INSERT OR REPLACE INTO settings (key, value, description) VALUES (?, ?, ?)",
-            ("address_coordinates", "41.236832,69.203578", "Manzil koordinatalari")
+            ("address_coordinates", "41.236832,69.203578", "Manzil koordinatalari"),
         )
 
     # Payment Cards jadvali - superadmin tomonidan boshqariladigan to'lov kartalari
@@ -2562,7 +2675,7 @@ def init_db():
         );
     """
     )
-    
+
     # Boshlang'ich to'lov kartalarini qo'shish
     cur.execute("SELECT COUNT(*) FROM payment_cards")
     if cur.fetchone()[0] == 0:
@@ -2609,7 +2722,7 @@ def init_db():
             "INSERT INTO payment_cards (card_name, card_number, card_holder_name, bank_name, card_type, is_active, display_order, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             sample_cards,
         )
-    
+
     conn.commit()
     conn.close()
 
@@ -3100,7 +3213,9 @@ def ensure_ratings_columns():
         if not need_rebuild:
             return
 
-        app_logger.info("Rebuilding ratings table to add branch_id and allow NULL menu_item_id")
+        app_logger.info(
+            "Rebuilding ratings table to add branch_id and allow NULL menu_item_id"
+        )
 
         # Read existing rows
         cur.execute(
@@ -3315,7 +3430,7 @@ def fix_staff_role_table():
             conn.commit()
             app_logger.info("Added role column to staff table")
 
-        # Check if login column exists  
+        # Check if login column exists
         if "login" not in cols:
             cur.execute("ALTER TABLE staff ADD COLUMN login TEXT;")
             conn.commit()
@@ -3325,10 +3440,21 @@ def fix_staff_role_table():
         cur.execute("SELECT COUNT(*) FROM staff WHERE role = 'super_admin'")
         if cur.fetchone()[0] == 0:
             now = get_current_time().isoformat()
-            password_hash = generate_password_hash('admin123')
+            password_hash = generate_password_hash("admin123")
             cur.execute(
                 "INSERT INTO staff (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, role, login, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                ('Super', 'Admin', '1990-01-01', '+998901234567', 'AA', '1234567', password_hash, 'super_admin', 'admin', now)
+                (
+                    "Super",
+                    "Admin",
+                    "1990-01-01",
+                    "+998901234567",
+                    "AA",
+                    "1234567",
+                    password_hash,
+                    "super_admin",
+                    "admin",
+                    now,
+                ),
             )
             conn.commit()
             app_logger.info("Created super admin user: login=admin, password=admin123")
@@ -3345,7 +3471,7 @@ def fix_news_table():
     try:
         conn = get_db()
         cur = conn.cursor()
-        
+
         # Create news table
         cur.execute(
             """
@@ -3364,37 +3490,89 @@ def fix_news_table():
             )
             """
         )
-        
+
         # Check and fix sample data with wrong image paths
-        cur.execute("SELECT COUNT(*) FROM news WHERE image_url LIKE '%spring-collection.jpg%' OR image_url LIKE '%payment-methods.jpg%'")
+        cur.execute(
+            "SELECT COUNT(*) FROM news WHERE image_url LIKE '%spring-collection.jpg%' OR image_url LIKE '%payment-methods.jpg%'"
+        )
         wrong_images_count = cur.fetchone()[0]
-        
+
         if wrong_images_count > 0:
             # Update wrong image paths
-            cur.execute("UPDATE news SET image_url = '/static/images/default-men.jpg' WHERE image_url = '/static/images/spring-collection.jpg'")
-            cur.execute("UPDATE news SET image_url = '/static/images/default-product.jpg' WHERE image_url = '/static/images/payment-methods.jpg'")
+            cur.execute(
+                "UPDATE news SET image_url = '/static/images/default-men.jpg' WHERE image_url = '/static/images/spring-collection.jpg'"
+            )
+            cur.execute(
+                "UPDATE news SET image_url = '/static/images/default-product.jpg' WHERE image_url = '/static/images/payment-methods.jpg'"
+            )
             conn.commit()
-            app_logger.info(f"Fixed {wrong_images_count} news items with wrong image paths")
+            app_logger.info(
+                f"Fixed {wrong_images_count} news items with wrong image paths"
+            )
             print(f"{wrong_images_count} ta yangilik rasmiy yo'llari tuzatildi")
-        
+
         # Add sample news if table is empty
         cur.execute("SELECT COUNT(*) FROM news")
         if cur.fetchone()[0] == 0:
             now = get_current_time().isoformat()
             sample_news = [
-                ('🎉 Yangi kolleksiya!', 'Bahorgi yangi oyoq kiyimlar kolleksiyasi do\'konimizga keldi! 50% gacha chegirmalar.', 'advertisement', '/static/images/default-men.jpg', None, 1, 1, 1, now, now),
-                ('🚚 Bepul yetkazib berish', 'Endi 300,000 so\'mdan yuqori xaridlar uchun bepul yetkazib berish xizmati!', 'news', None, None, 1, 2, 1, now, now),
-                ('⭐ Mijozlar bahosi', 'Do\'konimiz 4.8/5 bahoga ega bo\'ldi. Rahmat barcha mijozlarimizga!', 'news', None, None, 1, 3, 1, now, now),
-                ('💳 Click va Payme orqali to\'lov', 'Endi sizlar uchun yanada qulay - Click va Payme orqali to\'lov imkoni!', 'advertisement', '/static/images/default-product.jpg', None, 1, 4, 1, now, now)
+                (
+                    "🎉 Yangi kolleksiya!",
+                    "Bahorgi yangi oyoq kiyimlar kolleksiyasi do'konimizga keldi! 50% gacha chegirmalar.",
+                    "advertisement",
+                    "/static/images/default-men.jpg",
+                    None,
+                    1,
+                    1,
+                    1,
+                    now,
+                    now,
+                ),
+                (
+                    "🚚 Bepul yetkazib berish",
+                    "Endi 300,000 so'mdan yuqori xaridlar uchun bepul yetkazib berish xizmati!",
+                    "news",
+                    None,
+                    None,
+                    1,
+                    2,
+                    1,
+                    now,
+                    now,
+                ),
+                (
+                    "⭐ Mijozlar bahosi",
+                    "Do'konimiz 4.8/5 bahoga ega bo'ldi. Rahmat barcha mijozlarimizga!",
+                    "news",
+                    None,
+                    None,
+                    1,
+                    3,
+                    1,
+                    now,
+                    now,
+                ),
+                (
+                    "💳 Click va Payme orqali to'lov",
+                    "Endi sizlar uchun yanada qulay - Click va Payme orqali to'lov imkoni!",
+                    "advertisement",
+                    "/static/images/default-product.jpg",
+                    None,
+                    1,
+                    4,
+                    1,
+                    now,
+                    now,
+                ),
             ]
             cur.executemany(
                 "INSERT INTO news (title, content, type, image_url, video_url, is_active, display_order, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                sample_news
+                sample_news,
             )
             conn.commit()
             app_logger.info("Added sample news data")
             print("Namuna yangiliklar qo'shildi")
-        
+
         conn.close()
     except Exception as e:
         app_logger.error(f"Failed to fix news table: {str(e)}")
@@ -4649,7 +4827,11 @@ def send_notification(
 
         # Ensure recipient_id is an integer or None
         try:
-            recipient_id = int(recipient_id) if recipient_id is not None and str(recipient_id) != "" else None
+            recipient_id = (
+                int(recipient_id)
+                if recipient_id is not None and str(recipient_id) != ""
+                else None
+            )
         except Exception:
             recipient_id = None
 
@@ -5002,7 +5184,11 @@ def get_recipient_info_from_session():
                 session.get("user_id"),
             )
         if session.get("staff_id"):
-            return ("staff", ["staff", "staff_member", "staffs", "staff_members"], session.get("staff_id"))
+            return (
+                "staff",
+                ["staff", "staff_member", "staffs", "staff_members"],
+                session.get("staff_id"),
+            )
         if session.get("courier_id"):
             return ("couriers", ["couriers", "courier"], session.get("courier_id"))
 
@@ -5018,7 +5204,7 @@ def get_recipient_info_from_session():
 @app.route("/")
 def index():
     "Bosh sahifa - menu sahifasiga yo'naltirish"
-    return redirect('/menu')
+    return redirect("/menu")
 
 
 @app.route("/system-management-panel-x8k2m")
@@ -5899,7 +6085,9 @@ def menu():
                         session["user_first_name"] = (
                             user_profile.get("first_name", "") or ""
                         )
-                        session["user_last_name"] = user_profile.get("last_name", "") or ""
+                        session["user_last_name"] = (
+                            user_profile.get("last_name", "") or ""
+                        )
                     except Exception:
                         # tuple-style access fallback
                         try:
@@ -5965,9 +6153,12 @@ def menu():
             return redirect(url_for("index"))
 
 
-@app.route('/api/menu-search', methods=['GET'])
-@rate_limit(max_requests=5000, window=60)   # Высокий лимит для API
-@cached(ttl=30, key_func=lambda req, *a, **k: f"menu_search:{json.dumps(dict(req.args), sort_keys=True)}")
+@app.route("/api/menu-search", methods=["GET"])
+@rate_limit(max_requests=5000, window=60)  # Высокий лимит для API
+@cached(
+    ttl=30,
+    key_func=lambda req, *a, **k: f"menu_search:{json.dumps(dict(req.args), sort_keys=True)}",
+)
 def api_menu_search():
     """API: Search and filter menu items.
 
@@ -5980,13 +6171,13 @@ def api_menu_search():
     Returns JSON: { success: True, items: [...] }
     """
     try:
-        q = (request.args.get('q') or '').strip()
-        category = (request.args.get('category') or '').strip()
-        min_price = request.args.get('min_price')
-        max_price = request.args.get('max_price')
-        size = (request.args.get('size') or '').strip()
-        color = (request.args.get('color') or '').strip()
-        sort = (request.args.get('sort') or '').strip()
+        q = (request.args.get("q") or "").strip()
+        category = (request.args.get("category") or "").strip()
+        min_price = request.args.get("min_price")
+        max_price = request.args.get("max_price")
+        size = (request.args.get("size") or "").strip()
+        color = (request.args.get("color") or "").strip()
+        sort = (request.args.get("sort") or "").strip()
 
         where_clauses = ["available = 1"]
         params = []
@@ -6020,24 +6211,28 @@ def api_menu_search():
         # Size and color are stored as CSV or JSON in sizes/colors columns
         if size:
             # Use LIKE to match value inside CSV (e.g., '36,37,38')
-            where_clauses.append("(sizes LIKE ? OR sizes LIKE ? OR sizes LIKE ? OR sizes = ?)")
+            where_clauses.append(
+                "(sizes LIKE ? OR sizes LIKE ? OR sizes LIKE ? OR sizes = ?)"
+            )
             params.extend([f"%,{size},%", f"{size},%", f"%,{size}", size])
 
         if color:
-            where_clauses.append("(colors LIKE ? OR colors LIKE ? OR colors LIKE ? OR colors = ?)")
+            where_clauses.append(
+                "(colors LIKE ? OR colors LIKE ? OR colors LIKE ? OR colors = ?)"
+            )
             params.extend([f"%,{color},%", f"{color},%", f"%,{color}", color])
 
         order_by = "ORDER BY category, name"
-        if sort == 'price_asc':
-            order_by = 'ORDER BY price ASC'
-        elif sort == 'price_desc':
-            order_by = 'ORDER BY price DESC'
-        elif sort == 'popularity':
-            order_by = 'ORDER BY orders_count DESC'
-        elif sort == 'rating':
-            order_by = 'ORDER BY rating DESC'
+        if sort == "price_asc":
+            order_by = "ORDER BY price ASC"
+        elif sort == "price_desc":
+            order_by = "ORDER BY price DESC"
+        elif sort == "popularity":
+            order_by = "ORDER BY orders_count DESC"
+        elif sort == "rating":
+            order_by = "ORDER BY rating DESC"
 
-        where_sql = ' AND '.join(where_clauses) if where_clauses else '1'
+        where_sql = " AND ".join(where_clauses) if where_clauses else "1"
         sql = f"SELECT * FROM menu_items WHERE {where_sql} {order_by} LIMIT 200"
 
         items_raw = execute_query(sql, params, fetch_all=True)
@@ -6075,8 +6270,16 @@ def add_to_cart():
                 if request.form.get("quantity")
                 else 1
             )
-            size = (request.form.get("size") or "").strip() if request.form.get("size") else None
-            color = (request.form.get("color") or "").strip() if request.form.get("color") else None
+            size = (
+                (request.form.get("size") or "").strip()
+                if request.form.get("size")
+                else None
+            )
+            color = (
+                (request.form.get("color") or "").strip()
+                if request.form.get("color")
+                else None
+            )
 
         if not menu_item_id:
             if request.is_json:
@@ -6097,14 +6300,24 @@ def add_to_cart():
         MAX_QUANTITY_PER_ITEM = 10000
         if quantity <= 0:
             if request.is_json:
-                return jsonify({"success": False, "message": "Miqdor 0 dan katta bo'lishi kerak"})
+                return jsonify(
+                    {"success": False, "message": "Miqdor 0 dan katta bo'lishi kerak"}
+                )
             flash("Miqdor 0 dan katta bo'lishi kerak.", "error")
             return redirect(url_for("menu"))
-        
+
         if quantity > MAX_QUANTITY_PER_ITEM:
             if request.is_json:
-                return jsonify({"success": False, "message": f"Bir vaqtda maksimal {MAX_QUANTITY_PER_ITEM:,} ta buyurtma berish mumkin"})
-            flash(f"Bir vaqtda maksimal {MAX_QUANTITY_PER_ITEM:,} ta buyurtma berish mumkin.", "error")
+                return jsonify(
+                    {
+                        "success": False,
+                        "message": f"Bir vaqtda maksimal {MAX_QUANTITY_PER_ITEM:,} ta buyurtma berish mumkin",
+                    }
+                )
+            flash(
+                f"Bir vaqtda maksimal {MAX_QUANTITY_PER_ITEM:,} ta buyurtma berish mumkin.",
+                "error",
+            )
             return redirect(url_for("menu"))
 
         # Validate menu item exists
@@ -6128,8 +6341,8 @@ def add_to_cart():
                 prod_sizes = ""
                 prod_colors = ""
             elif hasattr(menu_item_data, "get"):
-                prod_sizes = (menu_item_data.get("sizes") or "")
-                prod_colors = (menu_item_data.get("colors") or "")
+                prod_sizes = menu_item_data.get("sizes") or ""
+                prod_colors = menu_item_data.get("colors") or ""
             else:
                 # Assume positional tuple: SELECT id, sizes, colors
                 try:
@@ -6173,11 +6386,15 @@ def add_to_cart():
 
             if size and prod_sizes:
                 if not _matches_option(size, prod_sizes):
-                    app_logger.info(f"Add_to_cart: provided size='{size}' does not match allowed sizes='{prod_sizes}' for item_id={menu_item_id}")
+                    app_logger.info(
+                        f"Add_to_cart: provided size='{size}' does not match allowed sizes='{prod_sizes}' for item_id={menu_item_id}"
+                    )
                     size = None
             if color and prod_colors:
                 if not _matches_option(color, prod_colors):
-                    app_logger.info(f"Add_to_cart: provided color='{color}' does not match allowed colors='{prod_colors}' for item_id={menu_item_id}")
+                    app_logger.info(
+                        f"Add_to_cart: provided color='{color}' does not match allowed colors='{prod_colors}' for item_id={menu_item_id}"
+                    )
                     color = None
         except Exception:
             # Be conservative: if anything fails during validation, just ignore
@@ -6191,14 +6408,30 @@ def add_to_cart():
             prod_has_colors = bool(prod_colors and str(prod_colors).strip())
             if prod_has_sizes and not size:
                 if request.is_json:
-                    return jsonify({"success": False, "message": "Iltimos, mahsulot uchun o'lchamni tanlang"}), 400
+                    return (
+                        jsonify(
+                            {
+                                "success": False,
+                                "message": "Iltimos, mahsulot uchun o'lchamni tanlang",
+                            }
+                        ),
+                        400,
+                    )
                 flash("Iltimos, mahsulot uchun o'lchamni tanlang.", "error")
-                return redirect(url_for('menu'))
+                return redirect(url_for("menu"))
             if prod_has_colors and not color:
                 if request.is_json:
-                    return jsonify({"success": False, "message": "Iltimos, mahsulot uchun rangni tanlang"}), 400
+                    return (
+                        jsonify(
+                            {
+                                "success": False,
+                                "message": "Iltimos, mahsulot uchun rangni tanlang",
+                            }
+                        ),
+                        400,
+                    )
                 flash("Iltimos, mahsulot uchun rangni tanlang.", "error")
-                return redirect(url_for('menu'))
+                return redirect(url_for("menu"))
         except Exception:
             # If anything goes wrong determining requirements, fall back to permissive behavior
             pass
@@ -6210,13 +6443,13 @@ def add_to_cart():
         if user_id:
             existing_item = execute_query(
                 "SELECT id, quantity FROM cart_items WHERE user_id = ? AND menu_item_id = ? AND COALESCE(size,'') = COALESCE(?, '') AND COALESCE(color,'') = COALESCE(?, '')",
-                (user_id, menu_item_id, size or '', color or ''),
+                (user_id, menu_item_id, size or "", color or ""),
                 fetch_one=True,
             )
         else:
             existing_item = execute_query(
                 "SELECT id, quantity FROM cart_items WHERE session_id = ? AND menu_item_id = ? AND COALESCE(size,'') = COALESCE(?, '') AND COALESCE(color,'') = COALESCE(?, '')",
-                (session_id, menu_item_id, size or '', color or ''),
+                (session_id, menu_item_id, size or "", color or ""),
                 fetch_one=True,
             )
 
@@ -6239,12 +6472,27 @@ def add_to_cart():
             if user_id:
                 execute_query(
                     "INSERT INTO cart_items (user_id, session_id, menu_item_id, quantity, size, color, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                    (user_id, session_id, menu_item_id, quantity, size or None, color or None, now),
+                    (
+                        user_id,
+                        session_id,
+                        menu_item_id,
+                        quantity,
+                        size or None,
+                        color or None,
+                        now,
+                    ),
                 )
             else:
                 execute_query(
                     "INSERT INTO cart_items (session_id, menu_item_id, quantity, size, color, created_at) VALUES (?, ?, ?, ?, ?, ?)",
-                    (session_id, menu_item_id, quantity, size or None, color or None, now),
+                    (
+                        session_id,
+                        menu_item_id,
+                        quantity,
+                        size or None,
+                        color or None,
+                        now,
+                    ),
                 )
 
         # Get updated cart count - safe handling
@@ -6639,7 +6887,7 @@ def profile():
         is_courier = bool(session.get("courier_id"))
         is_user = bool(session.get("user_id"))
         is_super = bool(session.get("super_admin"))
-        
+
         # Priority order: super_admin > staff > courier > user (to avoid conflicts)
         if is_super:
             is_staff = is_courier = is_user = False
@@ -6656,10 +6904,12 @@ def profile():
             )
             if user_row:
                 # Prioritize database avatar over session avatar
-                avatar_url = user_row.get("avatar") or "/static/images/default-avatar.svg"
+                avatar_url = (
+                    user_row.get("avatar") or "/static/images/default-avatar.svg"
+                )
                 # Update session with current avatar from database
                 session["user_avatar"] = avatar_url
-                
+
                 user = {
                     "first_name": user_row.get("first_name") or "",
                     "last_name": user_row.get("last_name") or "",
@@ -6759,16 +7009,20 @@ def profile():
         elif is_super:
             creds = get_superadmin_creds()
             # Update session with current avatar from settings
-            persistent_avatar = creds.get("avatar") or "/static/images/default-avatar.svg"
+            persistent_avatar = (
+                creds.get("avatar") or "/static/images/default-avatar.svg"
+            )
             session["user_avatar"] = persistent_avatar
-            
+
             user = {
-                "first_name": creds.get("first_name", "") or (
+                "first_name": creds.get("first_name", "")
+                or (
                     (session.get("user_name", "") or "").split(" ")[0]
                     if session.get("user_name")
                     else "Super"
                 ),
-                "last_name": creds.get("last_name", "") or (
+                "last_name": creds.get("last_name", "")
+                or (
                     " ".join((session.get("user_name", "") or "").split(" ")[1:])
                     if session.get("user_name")
                     else ""
@@ -6937,14 +7191,21 @@ def api_terminate_all_sessions():
             try:
                 terminate_session(sid, current_session_id=current_sid)
             except Exception as e:
-                app_logger.warning(f"Failed to terminate session {sid} for user {user_id}: {e}")
+                app_logger.warning(
+                    f"Failed to terminate session {sid} for user {user_id}: {e}"
+                )
                 failed.append(sid)
 
         # Always clear current session to force logout
         session.clear()
 
         if failed:
-            return jsonify({"success": False, "error": "Some sessions could not be terminated"}), 500
+            return (
+                jsonify(
+                    {"success": False, "error": "Some sessions could not be terminated"}
+                ),
+                500,
+            )
         return jsonify({"success": True})
     except Exception as e:
         app_logger.error(f"api_terminate_all_sessions error: {e}")
@@ -7337,7 +7598,7 @@ def csrf_protect(fn):
 @app.route("/logout")
 def logout():
     user_name = session.get("user_name", "")
-    
+
     # Terminate the session in database if session_id exists
     current_session_id = session.get("session_id")
     if current_session_id:
@@ -7345,7 +7606,7 @@ def logout():
             terminate_session(current_session_id, current_session_id=current_session_id)
         except Exception as e:
             app_logger.warning(f"Failed to terminate session in database: {e}")
-    
+
     session.clear()
     flash(f"Tizimdan chiqdingiz. Xayr, {user_name}!", "info")
     return redirect(url_for("index"))
@@ -8376,7 +8637,7 @@ def courier_logout():
             terminate_session(current_session_id, current_session_id=current_session_id)
         except Exception as e:
             app_logger.warning(f"Failed to terminate courier session in database: {e}")
-    
+
     session.clear()  # Clear entire session instead of just popping specific keys
     flash("Kuryer tizimidan chiqdingiz.", "info")
     return redirect(url_for("index"))
@@ -8433,14 +8694,24 @@ def admin_add_menu_item():
             return redirect(url_for("staff_menu"))
 
         now = get_current_time().isoformat()
-        
+
         # Birinchi mahsulotni qo'shamiz (image_url ni hozircha None bilan)
         menu_item_id = execute_query(
             """
             INSERT INTO menu_items (name, price, category, description, sizes, colors, discount_percentage, image_url, created_at, available)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
         """,
-            (name, price, category, description, sizes, colors, discount_percentage, None, now),
+            (
+                name,
+                price,
+                category,
+                description,
+                sizes,
+                colors,
+                discount_percentage,
+                None,
+                now,
+            ),
         )
 
         if menu_item_id:
@@ -8448,69 +8719,89 @@ def admin_add_menu_item():
             media_files = request.files.getlist("media_files")  # Yangi input nomi
             uploaded_media = []
             main_image_set = False
-            
+
             upload_dir = os.path.join(app.root_path, "static", "uploads", "products")
             os.makedirs(upload_dir, exist_ok=True)
-            
+
             for idx, file in enumerate(media_files):
                 if file and file.filename:
                     try:
                         from werkzeug.utils import secure_filename
                         import uuid
-                        
+
                         # Fayl kengaytmasini aniqlash
-                        ext = file.filename.rsplit('.', 1)[1].lower() if '.' in file.filename else ''
-                        
+                        ext = (
+                            file.filename.rsplit(".", 1)[1].lower()
+                            if "." in file.filename
+                            else ""
+                        )
+
                         # Media turini aniqlash
-                        image_extensions = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
-                        video_extensions = {'mp4', 'avi', 'mov', 'wmv', 'flv', 'webm'}
-                        
+                        image_extensions = {"png", "jpg", "jpeg", "gif", "webp"}
+                        video_extensions = {"mp4", "avi", "mov", "wmv", "flv", "webm"}
+
                         if ext in image_extensions:
-                            media_type = 'image'
+                            media_type = "image"
                         elif ext in video_extensions:
-                            media_type = 'video'
+                            media_type = "video"
                         else:
                             continue  # Noma'lum fayl turini o'tkazib yuboramiz
-                        
+
                         # Unique fayl nomi yaratish
                         unique_filename = f"{menu_item_id}_{uuid.uuid4().hex}.{ext}"
                         save_path = os.path.join(upload_dir, unique_filename)
-                        
+
                         file.save(save_path)
                         media_url = f"/static/uploads/products/{unique_filename}"
-                        
+
                         # Birinchi rasmni asosiy qilish
-                        is_main = not main_image_set and media_type == 'image'
+                        is_main = not main_image_set and media_type == "image"
                         if is_main:
                             main_image_set = True
                             # Menu items jadvalidagi image_url ni yangilash
                             execute_query(
                                 "UPDATE menu_items SET image_url = ? WHERE id = ?",
-                                (media_url, menu_item_id)
+                                (media_url, menu_item_id),
                             )
-                        
+
                         # Product media jadvaliga qo'shish
                         execute_query(
                             """
                             INSERT INTO product_media (menu_item_id, media_type, media_url, display_order, is_main, created_at, updated_at)
                             VALUES (?, ?, ?, ?, ?, ?, ?)
                             """,
-                            (menu_item_id, media_type, media_url, idx, 1 if is_main else 0, now, now)
+                            (
+                                menu_item_id,
+                                media_type,
+                                media_url,
+                                idx,
+                                1 if is_main else 0,
+                                now,
+                                now,
+                            ),
                         )
-                        
-                        uploaded_media.append({'type': media_type, 'url': media_url})
-                        
+
+                        uploaded_media.append({"type": media_type, "url": media_url})
+
                     except Exception as media_error:
-                        app_logger.warning(f"Media yuklashda xatolik: {str(media_error)}")
+                        app_logger.warning(
+                            f"Media yuklashda xatolik: {str(media_error)}"
+                        )
                         continue
-            
+
             if uploaded_media:
-                flash(f"Yangi mahsulot va {len(uploaded_media)} ta media fayl qo'shildi!", "success")
+                flash(
+                    f"Yangi mahsulot va {len(uploaded_media)} ta media fayl qo'shildi!",
+                    "success",
+                )
             else:
-                flash("Yangi mahsulot qo'shildi, lekin media fayllar yuklanmadi!", "warning")
+                flash(
+                    "Yangi mahsulot qo'shildi, lekin media fayllar yuklanmadi!",
+                    "warning",
+                )
         else:
             flash("Mahsulot qo'shishda xatolik yuz berdi.", "error")
-            
+
     except Exception as e:
         app_logger.error(f"Add menu item error: {str(e)}")
         flash("Mahsulot qo'shishda xatolik yuz berdi.", "error")
@@ -8557,87 +8848,106 @@ def admin_edit_menu_item(item_id):
         """,
             tuple(params),
         )
-        
+
         # Yangi media fayllarni yuklash
         media_files = request.files.getlist("media_files")
         if media_files:
             now = get_current_time().isoformat()
             uploaded_media = []
-            
+
             upload_dir = os.path.join(app.root_path, "static", "uploads", "products")
             os.makedirs(upload_dir, exist_ok=True)
-            
+
             # Hozirgi media fayllar sonini olish
             current_media_count = execute_query(
                 "SELECT COUNT(*) FROM product_media WHERE menu_item_id = ?",
-                (item_id,), fetch_one=True
+                (item_id,),
+                fetch_one=True,
             )
             next_order = current_media_count[0] if current_media_count else 0
-            
+
             for idx, file in enumerate(media_files):
                 if file and file.filename:
                     try:
                         from werkzeug.utils import secure_filename
                         import uuid
-                        
+
                         # Fayl kengaytmasini aniqlash
-                        ext = file.filename.rsplit('.', 1)[1].lower() if '.' in file.filename else ''
-                        
+                        ext = (
+                            file.filename.rsplit(".", 1)[1].lower()
+                            if "." in file.filename
+                            else ""
+                        )
+
                         # Media turini aniqlash
-                        image_extensions = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
-                        video_extensions = {'mp4', 'avi', 'mov', 'wmv', 'flv', 'webm'}
-                        
+                        image_extensions = {"png", "jpg", "jpeg", "gif", "webp"}
+                        video_extensions = {"mp4", "avi", "mov", "wmv", "flv", "webm"}
+
                         if ext in image_extensions:
-                            media_type = 'image'
+                            media_type = "image"
                         elif ext in video_extensions:
-                            media_type = 'video'
+                            media_type = "video"
                         else:
                             continue
-                        
+
                         # Unique fayl nomi yaratish
                         unique_filename = f"{item_id}_{uuid.uuid4().hex}.{ext}"
                         save_path = os.path.join(upload_dir, unique_filename)
-                        
+
                         file.save(save_path)
                         media_url = f"/static/uploads/products/{unique_filename}"
-                        
+
                         # Agar hech qanday asosiy rasm yo'q bo'lsa va bu birinchi rasm bo'lsa
                         is_main = False
-                        if media_type == 'image':
+                        if media_type == "image":
                             main_image_exists = execute_query(
                                 "SELECT COUNT(*) FROM product_media WHERE menu_item_id = ? AND is_main = 1 AND media_type = 'image'",
-                                (item_id,), fetch_one=True
+                                (item_id,),
+                                fetch_one=True,
                             )
                             if not main_image_exists[0]:
                                 is_main = True
                                 # Menu items jadvalidagi image_url ni yangilash
                                 execute_query(
                                     "UPDATE menu_items SET image_url = ? WHERE id = ?",
-                                    (media_url, item_id)
+                                    (media_url, item_id),
                                 )
-                        
+
                         # Product media jadvaliga qo'shish
                         execute_query(
                             """
                             INSERT INTO product_media (menu_item_id, media_type, media_url, display_order, is_main, created_at, updated_at)
                             VALUES (?, ?, ?, ?, ?, ?, ?)
                             """,
-                            (item_id, media_type, media_url, next_order + idx, 1 if is_main else 0, now, now)
+                            (
+                                item_id,
+                                media_type,
+                                media_url,
+                                next_order + idx,
+                                1 if is_main else 0,
+                                now,
+                                now,
+                            ),
                         )
-                        
-                        uploaded_media.append({'type': media_type, 'url': media_url})
-                        
+
+                        uploaded_media.append({"type": media_type, "url": media_url})
+
                     except Exception as media_error:
-                        app_logger.warning(f"Media yuklashda xatolik: {str(media_error)}")
+                        app_logger.warning(
+                            f"Media yuklashda xatolik: {str(media_error)}"
+                        )
                         continue
-            
+
             if uploaded_media:
-                flash(f"Mahsulot yangilandi va {len(uploaded_media)} ta yangi media fayl qo'shildi!", "success")
+                flash(
+                    f"Mahsulot yangilandi va {len(uploaded_media)} ta yangi media fayl qo'shildi!",
+                    "success",
+                )
             else:
                 flash("Mahsulot yangilandi!", "success")
         else:
             flash("Mahsulot yangilandi!", "success")
-            
+
     except Exception as e:
         app_logger.error(f"Edit menu item error: {str(e)}")
         flash("Mahsulotni yangilashda xatolik yuz berdi.", "error")
@@ -8658,15 +8968,19 @@ def api_get_product_media(item_id):
             WHERE menu_item_id = ? 
             ORDER BY is_main DESC, display_order ASC
             """,
-            (item_id,), fetch_all=True
+            (item_id,),
+            fetch_all=True,
         )
-        
+
         media_list = [dict(media) for media in media_files] if media_files else []
         return jsonify({"success": True, "media": media_list})
-        
+
     except Exception as e:
         app_logger.error(f"Get product media error: {str(e)}")
-        return jsonify({"success": False, "message": "Media fayllarni olishda xatolik"}), 500
+        return (
+            jsonify({"success": False, "message": "Media fayllarni olishda xatolik"}),
+            500,
+        )
 
 
 @app.route("/api/product-media/<int:media_id>/set-main", methods=["POST"])
@@ -8677,39 +8991,43 @@ def api_set_main_media(media_id):
         # Avval ushbu media fayl qaysi mahsulotga tegishliligini aniqlaymiz
         media_item = execute_query(
             "SELECT menu_item_id, media_url FROM product_media WHERE id = ?",
-            (media_id,), fetch_one=True
+            (media_id,),
+            fetch_one=True,
         )
-        
+
         if not media_item:
             return jsonify({"success": False, "message": "Media fayl topilmadi"}), 404
-        
-        menu_item_id = media_item['menu_item_id']
-        media_url = media_item['media_url']
-        
+
+        menu_item_id = media_item["menu_item_id"]
+        media_url = media_item["media_url"]
+
         # Barcha media fayllarni asosiy emas deb belgilaymiz
         execute_query(
             "UPDATE product_media SET is_main = 0 WHERE menu_item_id = ?",
-            (menu_item_id,)
+            (menu_item_id,),
         )
-        
+
         # Tanlangan media faylni asosiy qilib belgilaymiz
         now = get_current_time().isoformat()
         execute_query(
             "UPDATE product_media SET is_main = 1, updated_at = ? WHERE id = ?",
-            (now, media_id)
+            (now, media_id),
         )
-        
+
         # Menu items jadvalidagi image_url ni ham yangilaymiz
         execute_query(
             "UPDATE menu_items SET image_url = ? WHERE id = ?",
-            (media_url, menu_item_id)
+            (media_url, menu_item_id),
         )
-        
+
         return jsonify({"success": True, "message": "Asosiy rasm belgilandi"})
-        
+
     except Exception as e:
         app_logger.error(f"Set main media error: {str(e)}")
-        return jsonify({"success": False, "message": "Asosiy rasm belgilashda xatolik"}), 500
+        return (
+            jsonify({"success": False, "message": "Asosiy rasm belgilashda xatolik"}),
+            500,
+        )
 
 
 @app.route("/api/product-media/<int:media_id>/delete", methods=["DELETE"])
@@ -8720,43 +9038,57 @@ def api_delete_product_media(media_id):
         # Media fayl ma'lumotlarini olish
         media_item = execute_query(
             "SELECT media_url, menu_item_id FROM product_media WHERE id = ?",
-            (media_id,), fetch_one=True
+            (media_id,),
+            fetch_one=True,
         )
-        
+
         if not media_item:
             return jsonify({"success": False, "message": "Media fayl topilmadi"}), 404
-        
+
         # Faylni diskdan o'chirish
         try:
-            media_path = media_item['media_url'].replace('/static/', 'static/')
+            media_path = media_item["media_url"].replace("/static/", "static/")
             if os.path.exists(media_path):
                 os.remove(media_path)
         except Exception as file_error:
             app_logger.warning(f"Could not delete media file: {file_error}")
-        
+
         # Database dan o'chirish
         execute_query("DELETE FROM product_media WHERE id = ?", (media_id,))
-        
+
         # Agar bu asosiy rasm bo'lsa, boshqa rasmni asosiy qilish
-        menu_item_id = media_item['menu_item_id']
+        menu_item_id = media_item["menu_item_id"]
         remaining_images = execute_query(
             "SELECT id, media_url FROM product_media WHERE menu_item_id = ? AND media_type = 'image' ORDER BY display_order ASC LIMIT 1",
-            (menu_item_id,), fetch_one=True
+            (menu_item_id,),
+            fetch_one=True,
         )
-        
+
         if remaining_images:
             # Boshqa rasmni asosiy qilish
-            execute_query("UPDATE product_media SET is_main = 1 WHERE id = ?", (remaining_images['id'],))
-            execute_query("UPDATE menu_items SET image_url = ? WHERE id = ?", (remaining_images['media_url'], menu_item_id))
+            execute_query(
+                "UPDATE product_media SET is_main = 1 WHERE id = ?",
+                (remaining_images["id"],),
+            )
+            execute_query(
+                "UPDATE menu_items SET image_url = ? WHERE id = ?",
+                (remaining_images["media_url"], menu_item_id),
+            )
         else:
             # Hech qanday rasm qolmasa, default rasm qo'yish
-            execute_query("UPDATE menu_items SET image_url = ? WHERE id = ?", ("/static/images/default-men.jpg", menu_item_id))
-        
+            execute_query(
+                "UPDATE menu_items SET image_url = ? WHERE id = ?",
+                ("/static/images/default-men.jpg", menu_item_id),
+            )
+
         return jsonify({"success": True, "message": "Media fayl o'chirildi"})
-        
+
     except Exception as e:
         app_logger.error(f"Delete product media error: {str(e)}")
-        return jsonify({"success": False, "message": "Media faylni o'chirishda xatolik"}), 500
+        return (
+            jsonify({"success": False, "message": "Media faylni o'chirishda xatolik"}),
+            500,
+        )
 
 
 @app.route("/api/product-media/reorder", methods=["POST"])
@@ -8765,25 +9097,30 @@ def api_reorder_product_media():
     """Media fayllar tartibini o'zgartirish"""
     try:
         data = request.get_json() or {}
-        media_ids = data.get('media_ids', [])
-        
+        media_ids = data.get("media_ids", [])
+
         if not media_ids:
             return jsonify({"success": False, "message": "Media ID'lar kerak"}), 400
-        
+
         now = get_current_time().isoformat()
-        
+
         # Har bir media fayl uchun yangi tartib raqamini belgilash
         for index, media_id in enumerate(media_ids):
             execute_query(
                 "UPDATE product_media SET display_order = ?, updated_at = ? WHERE id = ?",
-                (index, now, media_id)
+                (index, now, media_id),
             )
-        
-        return jsonify({"success": True, "message": "Media fayllar tartibi o'zgartirildi"})
-        
+
+        return jsonify(
+            {"success": True, "message": "Media fayllar tartibi o'zgartirildi"}
+        )
+
     except Exception as e:
         app_logger.error(f"Reorder product media error: {str(e)}")
-        return jsonify({"success": False, "message": "Tartibni o'zgartirishda xatolik"}), 500
+        return (
+            jsonify({"success": False, "message": "Tartibni o'zgartirishda xatolik"}),
+            500,
+        )
 
 
 @app.route("/admin/toggle_menu_item/<int:item_id>", methods=["POST"])
@@ -8822,38 +9159,53 @@ def admin_delete_menu_item(item_id):
         if not current_item:
             return jsonify({"success": False, "error": "Mahsulot topilmadi"}), 404
 
-        item_name = current_item.get("name", "N/A") if hasattr(current_item, 'get') else current_item[1]
-        
+        item_name = (
+            current_item.get("name", "N/A")
+            if hasattr(current_item, "get")
+            else current_item[1]
+        )
+
         # Bog'langan ma'lumotlarni o'chirish (xavfsizlik uchun)
         # Cart itemsni o'chirish
         execute_query("DELETE FROM cart_items WHERE menu_item_id = ?", (item_id,))
-        
+
         # Order detailsni o'chirish
         execute_query("DELETE FROM order_details WHERE menu_item_id = ?", (item_id,))
-        
+
         # Ratingsni o'chirish
         execute_query("DELETE FROM ratings WHERE menu_item_id = ?", (item_id,))
-        
+
         # Favoritesni o'chirish
         execute_query("DELETE FROM favorites WHERE menu_item_id = ?", (item_id,))
-        
+
         # Oxirida menu itemni o'chirish
         execute_query("DELETE FROM menu_items WHERE id = ?", (item_id,))
 
         # Log yozish
-        staff_info = f"Staff ID: {session.get('staff_id')}" if session.get('staff_id') else "Super Admin"
+        staff_info = (
+            f"Staff ID: {session.get('staff_id')}"
+            if session.get("staff_id")
+            else "Super Admin"
+        )
         app_logger.info(
             f"Menu item o'chirildi: {item_name} (ID: {item_id}) by {staff_info}"
         )
-        
-        return jsonify({
-            "success": True, 
-            "message": f"Mahsulot '{item_name}' muvaffaqiyatli o'chirildi"
-        })
+
+        return jsonify(
+            {
+                "success": True,
+                "message": f"Mahsulot '{item_name}' muvaffaqiyatli o'chirildi",
+            }
+        )
 
     except Exception as e:
         app_logger.error(f"Delete menu item error: {str(e)}")
-        return jsonify({"success": False, "error": "Mahsulotni o'chirishda xatolik yuz berdi"}), 500
+        return (
+            jsonify(
+                {"success": False, "error": "Mahsulotni o'chirishda xatolik yuz berdi"}
+            ),
+            500,
+        )
 
 
 # API routes
@@ -8967,7 +9319,9 @@ def api_submit_rating():
 
         # Validate that the user exists
         try:
-            user_row = execute_query("SELECT id FROM users WHERE id = ?", (user_id,), fetch_one=True)
+            user_row = execute_query(
+                "SELECT id FROM users WHERE id = ?", (user_id,), fetch_one=True
+            )
             if not user_row:
                 app_logger.warning(f"Submit rating: missing user id={user_id}")
                 return jsonify({"success": False, "message": "User not found"}), 400
@@ -8979,15 +9333,29 @@ def api_submit_rating():
         try:
             if menu_item_id_int < 0:
                 branch_id = -menu_item_id_int
-                branch_row = execute_query("SELECT id FROM branches WHERE id = ?", (branch_id,), fetch_one=True)
+                branch_row = execute_query(
+                    "SELECT id FROM branches WHERE id = ?", (branch_id,), fetch_one=True
+                )
                 if not branch_row:
                     app_logger.warning(f"Submit rating: missing branch id={branch_id}")
-                    return jsonify({"success": False, "message": "Branch not found"}), 400
+                    return (
+                        jsonify({"success": False, "message": "Branch not found"}),
+                        400,
+                    )
             else:
-                mi_row = execute_query("SELECT id FROM menu_items WHERE id = ?", (menu_item_id_int,), fetch_one=True)
+                mi_row = execute_query(
+                    "SELECT id FROM menu_items WHERE id = ?",
+                    (menu_item_id_int,),
+                    fetch_one=True,
+                )
                 if not mi_row:
-                    app_logger.warning(f"Submit rating: missing menu_item id={menu_item_id_int}")
-                    return jsonify({"success": False, "message": "Menu item not found"}), 400
+                    app_logger.warning(
+                        f"Submit rating: missing menu_item id={menu_item_id_int}"
+                    )
+                    return (
+                        jsonify({"success": False, "message": "Menu item not found"}),
+                        400,
+                    )
         except Exception as e:
             app_logger.error(f"Submit rating parent check failed: {str(e)}")
             return jsonify({"success": False, "message": "Server error"}), 500
@@ -9009,8 +9377,15 @@ def api_submit_rating():
         except Exception as e:
             # If FK still fails here, log full context for debugging
             if "FOREIGN KEY constraint failed" in str(e):
-                app_logger.error(f"Submit rating FK failed for user_id={user_id} menu_item_id={menu_item_id_int}: {str(e)}")
-                return jsonify({"success": False, "message": "Foreign key constraint failed"}), 400
+                app_logger.error(
+                    f"Submit rating FK failed for user_id={user_id} menu_item_id={menu_item_id_int}: {str(e)}"
+                )
+                return (
+                    jsonify(
+                        {"success": False, "message": "Foreign key constraint failed"}
+                    ),
+                    400,
+                )
             app_logger.error(f"Submit rating insert failed: {str(e)}")
             return jsonify({"success": False, "message": "Server error"}), 500
 
@@ -9040,43 +9415,60 @@ def api_get_active_news():
             ORDER BY display_order ASC, created_at DESC
             LIMIT 20
         """
-        
+
         news_items = execute_query(news_query, fetch_all=True)
-        
+
         if news_items:
             news_list = []
             for item in news_items:
                 news_dict = {
-                    'id': item[0] if isinstance(item, tuple) else item.get('id'),
-                    'title': item[1] if isinstance(item, tuple) else item.get('title', ''),
-                    'content': item[2] if isinstance(item, tuple) else item.get('content', ''),
-                    'type': item[3] if isinstance(item, tuple) else item.get('type', 'news'),
-                    'is_active': bool(item[4] if isinstance(item, tuple) else item.get('is_active', False)),
-                    'display_order': item[5] if isinstance(item, tuple) else item.get('display_order', 0),
-                    'created_at': item[6] if isinstance(item, tuple) else item.get('created_at', '')
+                    "id": item[0] if isinstance(item, tuple) else item.get("id"),
+                    "title": (
+                        item[1] if isinstance(item, tuple) else item.get("title", "")
+                    ),
+                    "content": (
+                        item[2] if isinstance(item, tuple) else item.get("content", "")
+                    ),
+                    "type": (
+                        item[3] if isinstance(item, tuple) else item.get("type", "news")
+                    ),
+                    "is_active": bool(
+                        item[4]
+                        if isinstance(item, tuple)
+                        else item.get("is_active", False)
+                    ),
+                    "display_order": (
+                        item[5]
+                        if isinstance(item, tuple)
+                        else item.get("display_order", 0)
+                    ),
+                    "created_at": (
+                        item[6]
+                        if isinstance(item, tuple)
+                        else item.get("created_at", "")
+                    ),
                 }
                 news_list.append(news_dict)
-                
-            return jsonify({
-                'success': True,
-                'news': news_list,
-                'total': len(news_list)
-            })
+
+            return jsonify(
+                {"success": True, "news": news_list, "total": len(news_list)}
+            )
         else:
-            return jsonify({
-                'success': True,
-                'news': [],
-                'total': 0
-            })
-            
+            return jsonify({"success": True, "news": [], "total": 0})
+
     except Exception as e:
         app_logger.error(f"Get active news error: {str(e)}")
-        return jsonify({
-            'success': False,
-            'message': 'Yangiliklar yuklanmadi',
-            'news': [],
-            'total': 0
-        }), 500
+        return (
+            jsonify(
+                {
+                    "success": False,
+                    "message": "Yangiliklar yuklanmadi",
+                    "news": [],
+                    "total": 0,
+                }
+            ),
+            500,
+        )
 
 
 @app.route("/api/payment-cards", methods=["GET"])
@@ -9091,44 +9483,71 @@ def api_get_payment_cards():
             WHERE is_active = 1 
             ORDER BY display_order ASC, id ASC
         """
-        
+
         cards_items = execute_query(cards_query, fetch_all=True)
-        
+
         if cards_items:
             cards_list = []
             for item in cards_items:
                 card_dict = {
-                    'id': item[0] if isinstance(item, tuple) else item.get('id'),
-                    'card_name': item[1] if isinstance(item, tuple) else item.get('card_name', ''),
-                    'card_number': item[2] if isinstance(item, tuple) else item.get('card_number', ''),
-                    'card_holder_name': item[3] if isinstance(item, tuple) else item.get('card_holder_name', ''),
-                    'bank_name': item[4] if isinstance(item, tuple) else item.get('bank_name', ''),
-                    'card_type': item[5] if isinstance(item, tuple) else item.get('card_type', 'visa'),
-                    'is_active': bool(item[6] if isinstance(item, tuple) else item.get('is_active', False)),
-                    'display_order': item[7] if isinstance(item, tuple) else item.get('display_order', 0)
+                    "id": item[0] if isinstance(item, tuple) else item.get("id"),
+                    "card_name": (
+                        item[1]
+                        if isinstance(item, tuple)
+                        else item.get("card_name", "")
+                    ),
+                    "card_number": (
+                        item[2]
+                        if isinstance(item, tuple)
+                        else item.get("card_number", "")
+                    ),
+                    "card_holder_name": (
+                        item[3]
+                        if isinstance(item, tuple)
+                        else item.get("card_holder_name", "")
+                    ),
+                    "bank_name": (
+                        item[4]
+                        if isinstance(item, tuple)
+                        else item.get("bank_name", "")
+                    ),
+                    "card_type": (
+                        item[5]
+                        if isinstance(item, tuple)
+                        else item.get("card_type", "visa")
+                    ),
+                    "is_active": bool(
+                        item[6]
+                        if isinstance(item, tuple)
+                        else item.get("is_active", False)
+                    ),
+                    "display_order": (
+                        item[7]
+                        if isinstance(item, tuple)
+                        else item.get("display_order", 0)
+                    ),
                 }
                 cards_list.append(card_dict)
-                
-            return jsonify({
-                'success': True,
-                'cards': cards_list,
-                'total': len(cards_list)
-            })
+
+            return jsonify(
+                {"success": True, "cards": cards_list, "total": len(cards_list)}
+            )
         else:
-            return jsonify({
-                'success': True,
-                'cards': [],
-                'total': 0
-            })
-            
+            return jsonify({"success": True, "cards": [], "total": 0})
+
     except Exception as e:
         app_logger.error(f"Get payment cards error: {str(e)}")
-        return jsonify({
-            'success': False,
-            'message': 'To\'lov kartalari yuklanmadi',
-            'cards': [],
-            'total': 0
-        }), 500
+        return (
+            jsonify(
+                {
+                    "success": False,
+                    "message": "To'lov kartalari yuklanmadi",
+                    "cards": [],
+                    "total": 0,
+                }
+            ),
+            500,
+        )
 
 
 @app.route("/api/payment-methods", methods=["GET"])
@@ -9136,49 +9555,68 @@ def api_get_payment_methods():
     """Get available payment methods for cart"""
     try:
         payment_methods = {
-            'cash': {'available': True, 'name': 'Naqd pul', 'icon': '💵'},
-            'card': {'available': False, 'name': 'Bank kartasi', 'icon': '💳', 'cards': []},
-            'click': {'available': False, 'name': 'Click', 'icon': '🟦', 'qr_url': None},
-            'payme': {'available': False, 'name': 'Payme', 'icon': '🟨', 'qr_url': None}
+            "cash": {"available": True, "name": "Naqd pul", "icon": "💵"},
+            "card": {
+                "available": False,
+                "name": "Bank kartasi",
+                "icon": "💳",
+                "cards": [],
+            },
+            "click": {
+                "available": False,
+                "name": "Click",
+                "icon": "🟦",
+                "qr_url": None,
+            },
+            "payme": {
+                "available": False,
+                "name": "Payme",
+                "icon": "🟨",
+                "qr_url": None,
+            },
         }
-        
+
         # Check for active payment cards
         cards = execute_query(
             "SELECT id, card_name, card_number, card_holder_name, bank_name FROM payment_cards WHERE is_active = 1 ORDER BY display_order ASC",
-            fetch_all=True
+            fetch_all=True,
         )
-        
+
         if cards:
-            payment_methods['card']['available'] = True
-            payment_methods['card']['cards'] = cards
-        
+            payment_methods["card"]["available"] = True
+            payment_methods["card"]["cards"] = cards
+
         # Check for QR codes
         qr_settings = execute_query(
             "SELECT click_qr_url, payme_qr_url FROM card_payment_settings WHERE id = 1",
-            fetch_one=True
+            fetch_one=True,
         )
-        
+
         if qr_settings:
-            if qr_settings.get('click_qr_url'):
-                payment_methods['click']['available'] = True
-                payment_methods['click']['qr_url'] = qr_settings['click_qr_url']
-                
-            if qr_settings.get('payme_qr_url'):
-                payment_methods['payme']['available'] = True
-                payment_methods['payme']['qr_url'] = qr_settings['payme_qr_url']
-        
-        return jsonify({
-            'success': True,
-            'payment_methods': payment_methods
-        })
-        
+            if qr_settings.get("click_qr_url"):
+                payment_methods["click"]["available"] = True
+                payment_methods["click"]["qr_url"] = qr_settings["click_qr_url"]
+
+            if qr_settings.get("payme_qr_url"):
+                payment_methods["payme"]["available"] = True
+                payment_methods["payme"]["qr_url"] = qr_settings["payme_qr_url"]
+
+        return jsonify({"success": True, "payment_methods": payment_methods})
+
     except Exception as e:
         app_logger.error(f"Get payment methods error: {str(e)}")
-        return jsonify({
-            'success': False,
-            'message': 'To\'lov usullari yuklanmadi',
-            'payment_methods': {'cash': {'available': True, 'name': 'Naqd pul', 'icon': '💵'}}
-        }), 500
+        return (
+            jsonify(
+                {
+                    "success": False,
+                    "message": "To'lov usullari yuklanmadi",
+                    "payment_methods": {
+                        "cash": {"available": True, "name": "Naqd pul", "icon": "💵"}
+                    },
+                }
+            ),
+            500,
+        )
 
 
 @app.route("/api/set-language", methods=["POST"])
@@ -9677,22 +10115,41 @@ def login_page():
                 password_hash = user_dict.get("password_hash", "")
 
                 if password_hash and check_password_hash(password_hash, password):
-                    # User ma'lumotlarini alohida o'zgaruvchilarga saqlash
+                    # Use secure helper to set session and avoid mixed-role conflicts
                     user_id = user_dict.get("id")
-                    user_first_name = user_dict.get("first_name", "")
-                    user_last_name = user_dict.get("last_name", "")
-                    user_email = user_dict.get("email", "")
+                    session_payload = {
+                        "user_id": user_id,
+                        "first_name": user_dict.get("first_name", ""),
+                        "last_name": user_dict.get("last_name", ""),
+                        "email": user_dict.get("email", ""),
+                        "phone": user_dict.get("phone", ""),
+                        "address": user_dict.get("address", ""),
+                        "address_latitude": user_dict.get("address_latitude"),
+                        "address_longitude": user_dict.get("address_longitude"),
+                        "avatar": user_dict.get("avatar")
+                        or user_dict.get("gravatar")
+                        or None,
+                    }
 
-                    session["user_id"] = user_id
-                    session["user_name"] = f"{user_first_name} {user_last_name}".strip()
-                    session["user_email"] = user_email
+                    secure_session_login("user", session_payload)
+                    # UI preferences
                     session["interface_language"] = (
-                        user_dict.get("interface_language") or "uz"
+                        user_dict.get("interface_language")
+                        or session.get("interface_language")
+                        or "uz"
                     )
-                    session["font_size"] = user_dict.get("font_size") or "medium"
-                    session["dark_theme"] = bool(user_dict.get("dark_theme", 1))
+                    session["font_size"] = (
+                        user_dict.get("font_size")
+                        or session.get("font_size")
+                        or "medium"
+                    )
+                    session["dark_theme"] = bool(
+                        user_dict.get("dark_theme", session.get("dark_theme", 1))
+                    )
 
-                    flash(f"Xush kelibsiz, {user_first_name}!", "success")
+                    flash(
+                        f"Xush kelibsiz, {user_dict.get('first_name','')}!", "success"
+                    )
                     return redirect(url_for("index"))
                 else:
                     flash("Noto'g'ri email yoki parol.", "error")
@@ -9842,8 +10299,10 @@ def super_admin_login():
                 name_parts.append(creds.get("last_name"))
             display_name = " ".join(name_parts) if name_parts else "Super Administrator"
             # Load avatar from persistent settings
-            persistent_avatar = creds.get("avatar") or "/static/images/default-avatar.svg"
-            
+            persistent_avatar = (
+                creds.get("avatar") or "/static/images/default-avatar.svg"
+            )
+
             set_role_session(
                 "super_admin",
                 name=display_name,
@@ -9852,7 +10311,7 @@ def super_admin_login():
                 phone=creds.get("phone", ""),
                 avatar=persistent_avatar,
             )
-            
+
             # Ensure user_avatar is also set for template consistency
             session["user_avatar"] = persistent_avatar
 
@@ -9875,8 +10334,10 @@ def super_admin_logout():
         try:
             terminate_session(current_session_id, current_session_id=current_session_id)
         except Exception as e:
-            app_logger.warning(f"Failed to terminate super admin session in database: {e}")
-    
+            app_logger.warning(
+                f"Failed to terminate super admin session in database: {e}"
+            )
+
     session.clear()  # Clear entire session instead of just popping specific keys
     flash("Super Admin tizimidan chiqdingiz.", "info")
     return redirect(url_for("index"))
@@ -9946,7 +10407,9 @@ def super_admin_profile_update():
             session["super_admin_phone"] = settings.get("phone", "")
             session["super_admin_avatar"] = settings.get("avatar")
             # Also update the main user_avatar session key
-            session["user_avatar"] = settings.get("avatar") or "/static/images/default-avatar.svg"
+            session["user_avatar"] = (
+                settings.get("avatar") or "/static/images/default-avatar.svg"
+            )
 
             flash("Profil saqlandi", "success")
         else:
@@ -10306,7 +10769,9 @@ def mark_notification_read(notification_id):
 
         if not canonical_type:
             return (
-                jsonify({"success": False, "message": "Foydalanuvchi tizimga kirmagan"}),
+                jsonify(
+                    {"success": False, "message": "Foydalanuvchi tizimga kirmagan"}
+                ),
                 401,
             )
 
@@ -10319,7 +10784,11 @@ def mark_notification_read(notification_id):
             placeholders = ",".join(["?" for _ in aliases]) if aliases else ""
             if placeholders:
                 sql = f"UPDATE notifications SET read_flag = 1 WHERE id = ? AND (recipient_type = 'all' OR recipient_type IN ({placeholders}) OR recipient_type = ?) AND (recipient_id = ? OR recipient_id IS NULL)"
-                params = (notification_id,) + tuple(aliases) + (canonical_type, current_user_id)
+                params = (
+                    (notification_id,)
+                    + tuple(aliases)
+                    + (canonical_type, current_user_id)
+                )
             else:
                 sql = "UPDATE notifications SET read_flag = 1 WHERE id = ? AND (recipient_type = 'all' OR recipient_type = ?) AND (recipient_id = ? OR recipient_id IS NULL)"
                 params = (notification_id, canonical_type, current_user_id)
@@ -10339,10 +10808,15 @@ def mark_notification_read(notification_id):
         if cur.rowcount > 0:
             conn.commit()
             conn.close()
-            return jsonify({"success": True, "message": "Bildirishnoma o'qilgan deb belgilandi"})
+            return jsonify(
+                {"success": True, "message": "Bildirishnoma o'qilgan deb belgilandi"}
+            )
         else:
             conn.close()
-            return (jsonify({"success": False, "message": "Bildirishnoma topilmadi"}), 404)
+            return (
+                jsonify({"success": False, "message": "Bildirishnoma topilmadi"}),
+                404,
+            )
 
     except Exception as e:
         app_logger.error(f"Mark notification read error: {e}")
@@ -10366,7 +10840,9 @@ def mark_all_notifications_read():
         # Super admin marks everything
         if canonical_type == "super_admin":
             execute_query("UPDATE notifications SET read_flag = 1 WHERE read_flag = 0")
-            return jsonify({"success": True, "message": "All notifications marked read"})
+            return jsonify(
+                {"success": True, "message": "All notifications marked read"}
+            )
 
         # Update all notifications as read for this recipient (alias-aware)
         conn = get_db()
@@ -10391,7 +10867,12 @@ def mark_all_notifications_read():
         conn.commit()
         conn.close()
 
-        return jsonify({"success": True, "message": f"{updated_count} ta bildirishnoma o'qilgan deb belgilandi"})
+        return jsonify(
+            {
+                "success": True,
+                "message": f"{updated_count} ta bildirishnoma o'qilgan deb belgilandi",
+            }
+        )
 
     except Exception as e:
         app_logger.error(f"Mark all notifications read error: {e}")
@@ -10689,7 +11170,9 @@ def ensure_chat_tables_and_groups():
         # Add missing columns if they don't exist
         # Add missing columns if they don't exist (use PRAGMA to avoid duplicate ALTER)
         try:
-            res = execute_query("PRAGMA table_info(notifications)", fetch_all=True) or []
+            res = (
+                execute_query("PRAGMA table_info(notifications)", fetch_all=True) or []
+            )
             cols = [r[1] for r in res]
             if "sender_type" not in cols:
                 execute_query(
@@ -11039,8 +11522,8 @@ def api_chats():
 
             # If the user is a regular user and has no chats yet, auto-create a private chat with super_admin
             try:
-                if (not chats) and member_type == 'users' and member_id:
-                    created_cid = add_private_chat_between('users', member_id)
+                if (not chats) and member_type == "users" and member_id:
+                    created_cid = add_private_chat_between("users", member_id)
                     if created_cid:
                         # fetch the newly created private chat and enrich it
                         new_row = execute_query(
@@ -11071,7 +11554,9 @@ def api_chats():
             canonical_type, aliases, current_user_id = get_recipient_info_from_session()
             if not canonical_type:
                 return (
-                    jsonify({"success": False, "message": "Foydalanuvchi tizimga kirmagan"}),
+                    jsonify(
+                        {"success": False, "message": "Foydalanuvchi tizimga kirmagan"}
+                    ),
                     401,
                 )
 
@@ -11094,7 +11579,10 @@ def api_chats():
                 cur_type = "super_admin"
                 cur_id = None
             else:
-                return (jsonify({"success": False, "message": "Authentication required"}), 401)
+                return (
+                    jsonify({"success": False, "message": "Authentication required"}),
+                    401,
+                )
 
             # Normalize and validate target_id
             try:
@@ -11128,8 +11616,14 @@ def api_chats():
                         fetch_one=True,
                     )
                     if existing:
-                        existing_id = existing["id"] if isinstance(existing, dict) else existing[0]
-                        return jsonify({"success": True, "chat_id": existing_id, "name": None})
+                        existing_id = (
+                            existing["id"]
+                            if isinstance(existing, dict)
+                            else existing[0]
+                        )
+                        return jsonify(
+                            {"success": True, "chat_id": existing_id, "name": None}
+                        )
             except Exception:
                 # best-effort: if lookup fails, proceed to create a new chat
                 pass
@@ -11194,6 +11688,8 @@ def api_chats():
     except Exception as e:
         app_logger.error(f"API chats error: {str(e)}")
         return jsonify({"success": False, "message": "Server error"}), 500
+
+
 @app.route("/api/chats/<chat_id>/messages", methods=["GET", "POST"])
 def api_chat_messages(chat_id):
     """GET messages (limit param) and POST new message to chat."""
@@ -11257,16 +11753,16 @@ def api_chat_messages(chat_id):
         try:
             if not session.get("super_admin"):
                 try:
-                    canonical_type, aliases, member_id_from_session = get_recipient_info_from_session()
+                    canonical_type, aliases, member_id_from_session = (
+                        get_recipient_info_from_session()
+                    )
                     allowed_types = aliases if aliases else [sender_type]
                 except Exception:
                     allowed_types = [sender_type]
 
                 # Build IN-clause placeholders
                 placeholders = ",".join(["?" for _ in allowed_types])
-                sql = (
-                    f"SELECT 1 FROM chat_members WHERE chat_id = ? AND member_type IN ({placeholders}) AND (member_id = ? OR member_id IS NULL) LIMIT 1"
-                )
+                sql = f"SELECT 1 FROM chat_members WHERE chat_id = ? AND member_type IN ({placeholders}) AND (member_id = ? OR member_id IS NULL) LIMIT 1"
                 params = (actual_chat_id,) + tuple(allowed_types) + (sender_id,)
                 member_check = execute_query(sql, params, fetch_one=True)
                 if not member_check:
@@ -11369,7 +11865,10 @@ def debug_chats_info():
         canonical_type, aliases, member_id = get_recipient_info_from_session()
 
         resp = {
-            "session_keys": {k: session.get(k) for k in ["user_id", "staff_id", "courier_id", "super_admin"]},
+            "session_keys": {
+                k: session.get(k)
+                for k in ["user_id", "staff_id", "courier_id", "super_admin"]
+            },
             "canonical_type": canonical_type,
             "aliases": aliases,
             "member_id": member_id,
@@ -11421,11 +11920,17 @@ def debug_chats_info():
         try:
             resp["recent_messages"] = {}
             # collect chat ids from resp['chats']
-            chat_ids = [c.get('id') for c in resp.get('chats', []) if c.get('id') is not None]
+            chat_ids = [
+                c.get("id") for c in resp.get("chats", []) if c.get("id") is not None
+            ]
             # also include chat_ids from chat_members rows
-            for cm in resp.get('chat_members', []) or []:
+            for cm in resp.get("chat_members", []) or []:
                 try:
-                    cid = cm.get('chat_id') if isinstance(cm, dict) else (cm[0] if len(cm) > 0 else None)
+                    cid = (
+                        cm.get("chat_id")
+                        if isinstance(cm, dict)
+                        else (cm[0] if len(cm) > 0 else None)
+                    )
                     if cid and cid not in chat_ids:
                         chat_ids.append(cid)
                 except Exception:
@@ -11433,11 +11938,14 @@ def debug_chats_info():
 
             for cid in chat_ids:
                 try:
-                    rows = execute_query(
-                        "SELECT id, chat_id, sender_type, sender_id, text, created_at FROM chat_messages WHERE chat_id = ? ORDER BY id DESC LIMIT 50",
-                        (cid,),
-                        fetch_all=True,
-                    ) or []
+                    rows = (
+                        execute_query(
+                            "SELECT id, chat_id, sender_type, sender_id, text, created_at FROM chat_messages WHERE chat_id = ? ORDER BY id DESC LIMIT 50",
+                            (cid,),
+                            fetch_all=True,
+                        )
+                        or []
+                    )
                     # return reversed (oldest first)
                     msgs = [dict(r) for r in reversed(rows)] if rows else []
                     resp["recent_messages"][str(cid)] = msgs
@@ -11449,9 +11957,15 @@ def debug_chats_info():
         # Best-effort: include a sample of the last posted message body if available in a temporary table or last log entry
         try:
             # If a helper table "chat_capture" exists (created by debug runs), fetch its last row
-            has_capture = execute_query("SELECT name FROM sqlite_master WHERE type='table' AND name='chat_capture'", fetch_one=True)
+            has_capture = execute_query(
+                "SELECT name FROM sqlite_master WHERE type='table' AND name='chat_capture'",
+                fetch_one=True,
+            )
             if has_capture:
-                cap = execute_query("SELECT id, chat_id, posted_by, payload, created_at FROM chat_capture ORDER BY id DESC LIMIT 1", fetch_one=True)
+                cap = execute_query(
+                    "SELECT id, chat_id, posted_by, payload, created_at FROM chat_capture ORDER BY id DESC LIMIT 1",
+                    fetch_one=True,
+                )
                 if cap:
                     resp["last_posted_sample"] = dict(cap)
         except Exception:
@@ -11460,14 +11974,28 @@ def debug_chats_info():
 
         # Also include distinct member_type and recipient_type values for diagnostics
         try:
-            dm = execute_query("SELECT DISTINCT member_type FROM chat_members", fetch_all=True) or []
-            resp["distinct_member_types"] = [r[0] if not isinstance(r, dict) else next(iter(r.values())) for r in dm]
+            dm = (
+                execute_query(
+                    "SELECT DISTINCT member_type FROM chat_members", fetch_all=True
+                )
+                or []
+            )
+            resp["distinct_member_types"] = [
+                r[0] if not isinstance(r, dict) else next(iter(r.values())) for r in dm
+            ]
         except Exception as e:
             resp["distinct_member_types_error"] = str(e)
 
         try:
-            dr = execute_query("SELECT DISTINCT recipient_type FROM notifications", fetch_all=True) or []
-            resp["distinct_recipient_types"] = [r[0] if not isinstance(r, dict) else next(iter(r.values())) for r in dr]
+            dr = (
+                execute_query(
+                    "SELECT DISTINCT recipient_type FROM notifications", fetch_all=True
+                )
+                or []
+            )
+            resp["distinct_recipient_types"] = [
+                r[0] if not isinstance(r, dict) else next(iter(r.values())) for r in dr
+            ]
         except Exception as e:
             resp["distinct_recipient_types_error"] = str(e)
 
@@ -11483,7 +12011,10 @@ def debug_notifications_info():
     try:
         canonical_type, aliases, recipient_id = get_recipient_info_from_session()
         resp = {
-            "session_keys": {k: session.get(k) for k in ["user_id", "staff_id", "courier_id", "super_admin"]},
+            "session_keys": {
+                k: session.get(k)
+                for k in ["user_id", "staff_id", "courier_id", "super_admin"]
+            },
             "canonical_type": canonical_type,
             "aliases": aliases,
             "recipient_id": recipient_id,
@@ -11495,7 +12026,10 @@ def debug_notifications_info():
 
         # Build the notifications SQL (same as api_get_notifications)
         if not canonical_type:
-            rows = execute_query("SELECT * FROM notifications WHERE recipient_type = 'all' ORDER BY created_at DESC LIMIT 50", fetch_all=True)
+            rows = execute_query(
+                "SELECT * FROM notifications WHERE recipient_type = 'all' ORDER BY created_at DESC LIMIT 50",
+                fetch_all=True,
+            )
             resp["notifications"] = [dict(r) for r in rows] if rows else []
         else:
             try:
@@ -11514,8 +12048,15 @@ def debug_notifications_info():
 
         # distinct recipient_type values
         try:
-            dr = execute_query("SELECT DISTINCT recipient_type FROM notifications", fetch_all=True) or []
-            resp["distinct_recipient_types"] = [r[0] if not isinstance(r, dict) else next(iter(r.values())) for r in dr]
+            dr = (
+                execute_query(
+                    "SELECT DISTINCT recipient_type FROM notifications", fetch_all=True
+                )
+                or []
+            )
+            resp["distinct_recipient_types"] = [
+                r[0] if not isinstance(r, dict) else next(iter(r.values())) for r in dr
+            ]
         except Exception as e:
             resp["distinct_recipient_types_error"] = str(e)
 
@@ -11706,7 +12247,8 @@ def api_private_chats():
             elif user_type == "user":
                 # Regular users can start private chats with staff and couriers
                 staff = execute_query(
-                    "SELECT id, first_name, last_name, avatar FROM staff", fetch_all=True
+                    "SELECT id, first_name, last_name, avatar FROM staff",
+                    fetch_all=True,
                 )
                 if staff:
                     for s in staff:
@@ -11714,14 +12256,17 @@ def api_private_chats():
                             {
                                 "id": f"staff_{s['id'] if isinstance(s, dict) else s[0]}",
                                 "name": f"{s.get('first_name', '') if isinstance(s, dict) else s[1]} {s.get('last_name', '') if isinstance(s, dict) else s[2]}".strip(),
-                                "avatar": s.get("avatar") if isinstance(s, dict) else s[3],
+                                "avatar": (
+                                    s.get("avatar") if isinstance(s, dict) else s[3]
+                                ),
                                 "type": "staff",
                                 "user_id": s["id"] if isinstance(s, dict) else s[0],
                             }
                         )
 
                 couriers = execute_query(
-                    "SELECT id, first_name, last_name, avatar FROM couriers", fetch_all=True
+                    "SELECT id, first_name, last_name, avatar FROM couriers",
+                    fetch_all=True,
                 )
                 if couriers:
                     for courier in couriers:
@@ -12184,7 +12729,9 @@ def api_send_notification():
 
             # Add missing columns if they don't exist
             # Add missing columns if they don't exist (use PRAGMA)
-            res = execute_query("PRAGMA table_info(notifications)", fetch_all=True) or []
+            res = (
+                execute_query("PRAGMA table_info(notifications)", fetch_all=True) or []
+            )
             cols = [r[1] for r in res]
             if "sender_type" not in cols:
                 execute_query(
@@ -12422,7 +12969,7 @@ def super_admin_get_errors_summary():
                                 "message": message_part,
                                 "count": 1,
                             }
-                            
+
             # Top 10 error
             sorted_errors = sorted(
                 error_counts.values(), key=lambda x: x["count"], reverse=True
@@ -13244,7 +13791,7 @@ def staff_menu():
                         item_dict.setdefault("discount_percentage", 0)
                         item_dict.setdefault("rating", 0.0)
                         item_dict.setdefault("orders_count", 0)
-                        
+
                         # Mahsulot media fayllarini olish
                         media_query = """
                             SELECT media_type, media_url, display_order, is_main
@@ -13252,24 +13799,26 @@ def staff_menu():
                             WHERE menu_item_id = ? 
                             ORDER BY is_main DESC, display_order ASC
                         """
-                        cur.execute(media_query, (item_dict['id'],))
+                        cur.execute(media_query, (item_dict["id"],))
                         media_files = cur.fetchall()
-                        
-                        item_dict['media_files'] = []
+
+                        item_dict["media_files"] = []
                         if media_files:
                             for media in media_files:
                                 media_dict = dict(media)
-                                item_dict['media_files'].append(media_dict)
-                        
+                                item_dict["media_files"].append(media_dict)
+
                         # Agar media fayllar yo'q bo'lsa, eski image_url dan foydalanish
-                        if not item_dict['media_files'] and item_dict.get('image_url'):
-                            item_dict['media_files'] = [{
-                                'media_type': 'image',
-                                'media_url': item_dict['image_url'],
-                                'display_order': 0,
-                                'is_main': True
-                            }]
-                        
+                        if not item_dict["media_files"] and item_dict.get("image_url"):
+                            item_dict["media_files"] = [
+                                {
+                                    "media_type": "image",
+                                    "media_url": item_dict["image_url"],
+                                    "display_order": 0,
+                                    "is_main": True,
+                                }
+                            ]
+
                         menu_items.append(item_dict)
                     except Exception as row_error:
                         app_logger.warning(
@@ -13361,7 +13910,7 @@ def staff_logout():
             terminate_session(current_session_id, current_session_id=current_session_id)
         except Exception as e:
             app_logger.warning(f"Failed to terminate staff session in database: {e}")
-    
+
     session.clear()  # Clear entire session instead of just popping specific keys
     flash("Xodim tizimidan chiqdingiz.", "info")
     return redirect(url_for("index"))
@@ -14605,13 +15154,14 @@ def reset_settings():
 # YANGILIKLAR API ENDPOINTS
 # ================================
 
+
 @app.route("/api/news", methods=["GET"])
 def api_news():
     """Get all active news items for ticker"""
     try:
         news_items = execute_query(
             "SELECT * FROM news WHERE is_active = 1 ORDER BY display_order ASC, created_at DESC",
-            fetch_all=True
+            fetch_all=True,
         )
         return jsonify({"success": True, "news": news_items or []})
     except Exception as e:
@@ -14644,8 +15194,18 @@ def api_create_news():
         news_id = execute_query(
             """INSERT INTO news (title, content, type, image_url, video_url, is_active, display_order, created_by, created_at, updated_at)
                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-            (title, content, news_type, image_url or None, video_url or None, 
-             1 if is_active else 0, display_order, 1, now, now)
+            (
+                title,
+                content,
+                news_type,
+                image_url or None,
+                video_url or None,
+                1 if is_active else 0,
+                display_order,
+                1,
+                now,
+                now,
+            ),
         )
 
         return jsonify({"success": True, "message": "News item created", "id": news_id})
@@ -14677,7 +15237,9 @@ def api_update_news(news_id):
             return jsonify({"success": False, "message": "Invalid news type"}), 400
 
         # Check if news exists
-        existing = execute_query("SELECT id FROM news WHERE id = ?", (news_id,), fetch_one=True)
+        existing = execute_query(
+            "SELECT id FROM news WHERE id = ?", (news_id,), fetch_one=True
+        )
         if not existing:
             return jsonify({"success": False, "message": "News not found"}), 404
 
@@ -14685,8 +15247,17 @@ def api_update_news(news_id):
         execute_query(
             """UPDATE news SET title = ?, content = ?, type = ?, image_url = ?, video_url = ?, 
                is_active = ?, display_order = ?, updated_at = ? WHERE id = ?""",
-            (title, content, news_type, image_url or None, video_url or None, 
-             1 if is_active else 0, display_order, now, news_id)
+            (
+                title,
+                content,
+                news_type,
+                image_url or None,
+                video_url or None,
+                1 if is_active else 0,
+                display_order,
+                now,
+                news_id,
+            ),
         )
 
         return jsonify({"success": True, "message": "News item updated"})
@@ -14703,7 +15274,9 @@ def api_delete_news(news_id):
     """Delete news item - Super admin only"""
     try:
         # Check if news exists
-        existing = execute_query("SELECT id FROM news WHERE id = ?", (news_id,), fetch_one=True)
+        existing = execute_query(
+            "SELECT id FROM news WHERE id = ?", (news_id,), fetch_one=True
+        )
         if not existing:
             return jsonify({"success": False, "message": "News not found"}), 404
 
@@ -14722,7 +15295,7 @@ def api_admin_news():
     try:
         news_items = execute_query(
             "SELECT * FROM news ORDER BY display_order ASC, created_at DESC",
-            fetch_all=True
+            fetch_all=True,
         )
         return jsonify({"success": True, "news": news_items or []})
     except Exception as e:
@@ -14737,26 +15310,41 @@ def api_toggle_news(news_id):
     """Toggle news active status - Super admin only"""
     try:
         # Get current status
-        news_item = execute_query("SELECT is_active FROM news WHERE id = ?", (news_id,), fetch_one=True)
+        news_item = execute_query(
+            "SELECT is_active FROM news WHERE id = ?", (news_id,), fetch_one=True
+        )
         if not news_item:
             return jsonify({"success": False, "message": "News not found"}), 404
 
         # Toggle status
-        new_status = 0 if news_item['is_active'] else 1
+        new_status = 0 if news_item["is_active"] else 1
         now = get_current_time().isoformat()
-        execute_query("UPDATE news SET is_active = ?, updated_at = ? WHERE id = ?", (new_status, now, news_id))
+        execute_query(
+            "UPDATE news SET is_active = ?, updated_at = ? WHERE id = ?",
+            (new_status, now, news_id),
+        )
 
         status_text = "activated" if new_status else "deactivated"
-        return jsonify({"success": True, "message": f"News item {status_text}", "is_active": bool(new_status)})
+        return jsonify(
+            {
+                "success": True,
+                "message": f"News item {status_text}",
+                "is_active": bool(new_status),
+            }
+        )
 
     except Exception as e:
         app_logger.error(f"Toggle news error: {str(e)}")
-        return jsonify({"success": False, "message": "Failed to toggle news status"}), 500
+        return (
+            jsonify({"success": False, "message": "Failed to toggle news status"}),
+            500,
+        )
 
 
 # ================================
 # YANGILIKLAR SAHIFALARI
 # ================================
+
 
 @app.route("/admin/news")
 @role_required("super_admin")
@@ -14778,55 +15366,71 @@ def admin_news_management():
 def upload_news_media():
     """Upload media files for news - Super admin only"""
     try:
-        if 'file' not in request.files:
+        if "file" not in request.files:
             return jsonify({"success": False, "message": "Fayl tanlanmagan"}), 400
-            
-        file = request.files['file']
-        if file.filename == '':
+
+        file = request.files["file"]
+        if file.filename == "":
             return jsonify({"success": False, "message": "Fayl tanlanmagan"}), 400
-            
+
         # Check file type
-        allowed_extensions = {'png', 'jpg', 'jpeg', 'gif', 'webp', 'mp4', 'webm', 'mov'}
-        if file and '.' in file.filename:
-            ext = file.filename.rsplit('.', 1)[1].lower()
+        allowed_extensions = {"png", "jpg", "jpeg", "gif", "webp", "mp4", "webm", "mov"}
+        if file and "." in file.filename:
+            ext = file.filename.rsplit(".", 1)[1].lower()
             if ext not in allowed_extensions:
-                return jsonify({"success": False, "message": "Faqat rasm (PNG, JPG, JPEG, GIF, WEBP) va video (MP4, WEBM, MOV) fayllari qo'llab-quvvatlanadi"}), 400
-        
+                return (
+                    jsonify(
+                        {
+                            "success": False,
+                            "message": "Faqat rasm (PNG, JPG, JPEG, GIF, WEBP) va video (MP4, WEBM, MOV) fayllari qo'llab-quvvatlanadi",
+                        }
+                    ),
+                    400,
+                )
+
         # Create uploads directory if not exists
         import os
-        upload_folder = os.path.join(os.getcwd(), 'static', 'uploads', 'news')
+
+        upload_folder = os.path.join(os.getcwd(), "static", "uploads", "news")
         os.makedirs(upload_folder, exist_ok=True)
-        
+
         # Generate unique filename
         import uuid
         from datetime import datetime
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         unique_id = str(uuid.uuid4())[:8]
         filename = f"{timestamp}_{unique_id}.{ext}"
         filepath = os.path.join(upload_folder, filename)
-        
+
         # Save file
         file.save(filepath)
-        
+
         # Return URL
         file_url = f"/static/uploads/news/{filename}"
-        file_type = "video" if ext in {'mp4', 'webm', 'mov'} else "image"
-        
-        return jsonify({
-            "success": True, 
-            "file_url": file_url,
-            "file_type": file_type,
-            "message": "Fayl muvaffaqiyatli yuklandi"
-        })
-        
+        file_type = "video" if ext in {"mp4", "webm", "mov"} else "image"
+
+        return jsonify(
+            {
+                "success": True,
+                "file_url": file_url,
+                "file_type": file_type,
+                "message": "Fayl muvaffaqiyatli yuklandi",
+            }
+        )
+
     except Exception as e:
         app_logger.error(f"Upload news media error: {str(e)}")
-        return jsonify({"success": False, "message": "Fayl yuklashda xatolik yuz berdi"}), 500
+        return (
+            jsonify({"success": False, "message": "Fayl yuklashda xatolik yuz berdi"}),
+            500,
+        )
 
 
 # ================================
 # CARD PAYMENT MANAGEMENT
 # ================================
+
 
 @app.route("/admin/card-management")
 @role_required("super_admin")
@@ -14839,6 +15443,7 @@ def admin_card_management():
         flash("Sahifani yuklashda xatolik yuz berdi", "danger")
         return redirect(url_for("super_admin_dashboard"))
 
+
 @app.route("/api/card-data", methods=["GET"])
 @role_required("super_admin")
 def api_get_card_data():
@@ -14846,26 +15451,28 @@ def api_get_card_data():
     try:
         # Get card data from database
         card_data = execute_query(
-            "SELECT * FROM card_payment_settings WHERE id = 1", 
-            fetch_one=True
+            "SELECT * FROM card_payment_settings WHERE id = 1", fetch_one=True
         )
-        
+
         if card_data:
-            return jsonify({
-                "success": True,
-                "data": {
-                    "card_number": card_data.get("card_number", ""),
-                    "card_name": card_data.get("card_name", ""),
-                    "click_qr_url": card_data.get("click_qr_url", ""),
-                    "payme_qr_url": card_data.get("payme_qr_url", "")
+            return jsonify(
+                {
+                    "success": True,
+                    "data": {
+                        "card_number": card_data.get("card_number", ""),
+                        "card_name": card_data.get("card_name", ""),
+                        "click_qr_url": card_data.get("click_qr_url", ""),
+                        "payme_qr_url": card_data.get("payme_qr_url", ""),
+                    },
                 }
-            })
+            )
         else:
             return jsonify({"success": True, "data": None})
-            
+
     except Exception as e:
         app_logger.error(f"Get card data error: {str(e)}")
         return jsonify({"success": False, "message": "Ma'lumot yuklashda xatolik"}), 500
+
 
 @app.route("/api/save-card-data", methods=["POST"])
 @role_required("super_admin")
@@ -14878,36 +15485,63 @@ def api_save_card_data():
         card_name = data.get("card_name", "").strip()
         click_qr_url = data.get("click_qr_url", "").strip()
         payme_qr_url = data.get("payme_qr_url", "").strip()
-        
+
         if not card_number or not card_name:
-            return jsonify({"success": False, "message": "Karta raqami va egasi ismi kiritilishi shart"}), 400
-        
+            return (
+                jsonify(
+                    {
+                        "success": False,
+                        "message": "Karta raqami va egasi ismi kiritilishi shart",
+                    }
+                ),
+                400,
+            )
+
         # Check if record exists
-        existing = execute_query("SELECT id FROM card_payment_settings WHERE id = 1", fetch_one=True)
-        
+        existing = execute_query(
+            "SELECT id FROM card_payment_settings WHERE id = 1", fetch_one=True
+        )
+
         now = get_current_time().isoformat()
-        
+
         if existing:
             # Update existing record
             execute_query(
                 """UPDATE card_payment_settings 
                    SET card_number = ?, card_name = ?, click_qr_url = ?, payme_qr_url = ?, updated_at = ? 
                    WHERE id = 1""",
-                (card_number, card_name, click_qr_url or None, payme_qr_url or None, now)
+                (
+                    card_number,
+                    card_name,
+                    click_qr_url or None,
+                    payme_qr_url or None,
+                    now,
+                ),
             )
         else:
             # Insert new record
             execute_query(
                 """INSERT INTO card_payment_settings (id, card_number, card_name, click_qr_url, payme_qr_url, created_at, updated_at) 
                    VALUES (1, ?, ?, ?, ?, ?, ?)""",
-                (card_number, card_name, click_qr_url or None, payme_qr_url or None, now, now)
+                (
+                    card_number,
+                    card_name,
+                    click_qr_url or None,
+                    payme_qr_url or None,
+                    now,
+                    now,
+                ),
             )
-        
+
         return jsonify({"success": True, "message": "Karta ma'lumotlari saqlandi"})
-        
+
     except Exception as e:
         app_logger.error(f"Save card data error: {str(e)}")
-        return jsonify({"success": False, "message": "Ma'lumotlarni saqlashda xatolik"}), 500
+        return (
+            jsonify({"success": False, "message": "Ma'lumotlarni saqlashda xatolik"}),
+            500,
+        )
+
 
 @app.route("/api/upload-qr", methods=["POST"])
 @role_required("super_admin")
@@ -14915,46 +15549,57 @@ def api_save_card_data():
 def api_upload_qr():
     """Upload QR code files - Super admin only"""
     try:
-        if 'file' not in request.files:
+        if "file" not in request.files:
             return jsonify({"success": False, "message": "Fayl tanlanmagan"}), 400
-            
-        file = request.files['file']
-        qr_type = request.form.get('type', 'unknown')
-        
-        if file.filename == '':
+
+        file = request.files["file"]
+        qr_type = request.form.get("type", "unknown")
+
+        if file.filename == "":
             return jsonify({"success": False, "message": "Fayl tanlanmagan"}), 400
-            
+
         # Check file type
-        allowed_extensions = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
-        if file and '.' in file.filename:
-            ext = file.filename.rsplit('.', 1)[1].lower()
+        allowed_extensions = {"png", "jpg", "jpeg", "gif", "webp"}
+        if file and "." in file.filename:
+            ext = file.filename.rsplit(".", 1)[1].lower()
             if ext not in allowed_extensions:
-                return jsonify({"success": False, "message": "Faqat rasm fayllari qabul qilinadi"}), 400
-        
+                return (
+                    jsonify(
+                        {
+                            "success": False,
+                            "message": "Faqat rasm fayllari qabul qilinadi",
+                        }
+                    ),
+                    400,
+                )
+
         # Create uploads directory
-        upload_folder = os.path.join(os.getcwd(), 'static', 'uploads', 'qr')
+        upload_folder = os.path.join(os.getcwd(), "static", "uploads", "qr")
         os.makedirs(upload_folder, exist_ok=True)
-        
+
         # Generate unique filename
         import uuid
         from datetime import datetime
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         unique_id = str(uuid.uuid4())[:8]
         filename = f"{qr_type}_{timestamp}_{unique_id}.{ext}"
         filepath = os.path.join(upload_folder, filename)
-        
+
         # Save file
         file.save(filepath)
-        
+
         # Return URL
         file_url = f"/static/uploads/qr/{filename}"
-        
-        return jsonify({
-            "success": True, 
-            "url": file_url,
-            "message": "QR kod muvaffaqiyatli yuklandi"
-        })
-        
+
+        return jsonify(
+            {
+                "success": True,
+                "url": file_url,
+                "message": "QR kod muvaffaqiyatli yuklandi",
+            }
+        )
+
     except Exception as e:
         app_logger.error(f"Upload QR error: {str(e)}")
         return jsonify({"success": False, "message": "O'chirish xatoligi"}), 500
@@ -14974,6 +15619,7 @@ def admin_360_management():
         flash("Sahifani yuklashda xatolik yuz berdi", "danger")
         return redirect(url_for("super_admin_dashboard"))
 
+
 @app.route("/api/360-photos", methods=["GET"])
 @role_required("super_admin")
 def api_get_360_photos():
@@ -14981,82 +15627,94 @@ def api_get_360_photos():
     try:
         photos = execute_query(
             "SELECT * FROM photos_360 ORDER BY display_order ASC, created_at DESC",
-            fetch_all=True
+            fetch_all=True,
         )
         return jsonify({"success": True, "photos": photos or []})
     except Exception as e:
         app_logger.error(f"Get 360 photos error: {str(e)}")
-        return jsonify({"success": False, "message": "360° rasmlarni yuklashda xatolik"}), 500
+        return (
+            jsonify({"success": False, "message": "360° rasmlarni yuklashda xatolik"}),
+            500,
+        )
+
 
 @app.route("/api/upload-360-photos", methods=["POST"])
 @role_required("super_admin")
 def api_upload_360_photos():
     """Upload 360 photos - Super admin only"""
     try:
-        if 'files' not in request.files:
+        if "files" not in request.files:
             return jsonify({"success": False, "message": "Fayllar tanlanmagan"}), 400
-            
-        files = request.files.getlist('files')
+
+        files = request.files.getlist("files")
         if not files:
             return jsonify({"success": False, "message": "Fayllar tanlanmagan"}), 400
-        
+
         # Create uploads directory
-        upload_folder = os.path.join(os.getcwd(), 'static', 'uploads', '360')
+        upload_folder = os.path.join(os.getcwd(), "static", "uploads", "360")
         os.makedirs(upload_folder, exist_ok=True)
-        
+
         uploaded_files = []
         now = get_current_time().isoformat()
-        
+
         for file in files:
-            if file.filename == '':
+            if file.filename == "":
                 continue
-                
+
             # Check file type
-            allowed_extensions = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
-            if file and '.' in file.filename:
-                ext = file.filename.rsplit('.', 1)[1].lower()
+            allowed_extensions = {"png", "jpg", "jpeg", "gif", "webp"}
+            if file and "." in file.filename:
+                ext = file.filename.rsplit(".", 1)[1].lower()
                 if ext not in allowed_extensions:
                     continue
-            
+
             # Generate unique filename
             import uuid
             from datetime import datetime
-            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             unique_id = str(uuid.uuid4())[:8]
             filename = f"360_{timestamp}_{unique_id}.{ext}"
             filepath = os.path.join(upload_folder, filename)
-            
+
             # Save file
             file.save(filepath)
-            
+
             # Save to database
             file_url = f"/static/uploads/360/{filename}"
             title = f"360° Rasm - {datetime.now().strftime('%d.%m.%Y %H:%M')}"
-            
+
             photo_id = execute_query(
                 """INSERT INTO photos_360 (title, image_url, is_active, display_order, created_by, created_at, updated_at)
                    VALUES (?, ?, 0, 0, 1, ?, ?)""",
-                (title, file_url, now, now)
+                (title, file_url, now, now),
             )
-            
-            uploaded_files.append({
-                "id": photo_id,
-                "title": title,
-                "image_url": file_url
-            })
-        
+
+            uploaded_files.append(
+                {"id": photo_id, "title": title, "image_url": file_url}
+            )
+
         if uploaded_files:
-            return jsonify({
-                "success": True, 
-                "message": f"{len(uploaded_files)} ta 360° rasm yuklandi",
-                "uploaded": uploaded_files
-            })
+            return jsonify(
+                {
+                    "success": True,
+                    "message": f"{len(uploaded_files)} ta 360° rasm yuklandi",
+                    "uploaded": uploaded_files,
+                }
+            )
         else:
-            return jsonify({"success": False, "message": "Hech qanday fayl yuklanmadi"}), 400
-        
+            return (
+                jsonify({"success": False, "message": "Hech qanday fayl yuklanmadi"}),
+                400,
+            )
+
     except Exception as e:
         app_logger.error(f"Upload 360 photos error: {str(e)}")
-        return jsonify({"success": False, "message": "360° rasm yuklashda xatolik"}), 500
+        return (
+            jsonify({"success": False, "message": "360° rasm yuklashda xatolik"}),
+            500,
+        )
+
 
 @app.route("/api/set-active-360-photo/<int:photo_id>", methods=["POST"])
 @role_required("super_admin")
@@ -15066,16 +15724,20 @@ def api_set_active_360_photo(photo_id):
     try:
         # First deactivate all photos
         execute_query("UPDATE photos_360 SET is_active = 0")
-        
+
         # Then activate the selected photo
         now = get_current_time().isoformat()
-        execute_query("UPDATE photos_360 SET is_active = 1, updated_at = ? WHERE id = ?", (now, photo_id))
-        
+        execute_query(
+            "UPDATE photos_360 SET is_active = 1, updated_at = ? WHERE id = ?",
+            (now, photo_id),
+        )
+
         return jsonify({"success": True, "message": "360° rasm faollashtirildi"})
-        
+
     except Exception as e:
         app_logger.error(f"Set active 360 photo error: {str(e)}")
         return jsonify({"success": False, "message": "Faollashtirish xatoligi"}), 500
+
 
 @app.route("/api/delete-360-photo/<int:photo_id>", methods=["DELETE"])
 @role_required("super_admin")
@@ -15084,29 +15746,33 @@ def api_delete_360_photo(photo_id):
     """Delete 360 photo - Super admin only"""
     try:
         # Get photo info to delete file
-        photo = execute_query("SELECT image_url FROM photos_360 WHERE id = ?", (photo_id,), fetch_one=True)
-        
+        photo = execute_query(
+            "SELECT image_url FROM photos_360 WHERE id = ?", (photo_id,), fetch_one=True
+        )
+
         if photo:
             # Try to delete the file
             try:
-                file_path = photo['image_url'].replace('/static/', 'static/')
+                file_path = photo["image_url"].replace("/static/", "static/")
                 if os.path.exists(file_path):
                     os.remove(file_path)
             except Exception as file_err:
                 app_logger.warning(f"Could not delete 360 photo file: {file_err}")
-        
+
         # Delete from database
         execute_query("DELETE FROM photos_360 WHERE id = ?", (photo_id,))
-        
+
         return jsonify({"success": True, "message": "360° rasm o'chirildi"})
-        
+
     except Exception as e:
         app_logger.error(f"Delete 360 photo error: {str(e)}")
         return jsonify({"success": False, "message": "O'chirish xatoligi"}), 500
 
+
 # ================================
 # USER 360 ROOM
 # ================================
+
 
 @app.route("/360-room")
 def user_360_room():
@@ -15115,35 +15781,39 @@ def user_360_room():
         # Get active 360 photos
         photos_360 = execute_query(
             "SELECT id, title, image_url, is_active, created_at FROM photos_360 WHERE is_active = 1 ORDER BY created_at DESC",
-            fetch_all=True
+            fetch_all=True,
         )
-        
+
         # If no active photos, get all photos for demo
         if not photos_360:
             photos_360 = execute_query(
                 "SELECT id, title, image_url, is_active, created_at FROM photos_360 ORDER BY created_at DESC LIMIT 5",
-                fetch_all=True
+                fetch_all=True,
             )
-        
+
         return render_template("360_room.html", photos_360=photos_360 or [])
     except Exception as e:
         app_logger.error(f"360 room page error: {str(e)}")
         flash("Sahifani yuklashda xatolik yuz berdi", "danger")
         return redirect(url_for("index"))
 
+
 # ================================
 # DATA FILES SERVING
 # ================================
 
-@app.route('/data/<path:filename>')
+
+@app.route("/data/<path:filename>")
 def serve_data_file(filename):
     """Serve files from data directory (for news.json etc.)"""
     try:
         from flask import send_from_directory
-        return send_from_directory('data', filename)
+
+        return send_from_directory("data", filename)
     except Exception as e:
         app_logger.error(f"Error serving data file {filename}: {str(e)}")
         return jsonify({"error": "File not found"}), 404
+
 
 # Flask app runner
 if __name__ == "__main__":
