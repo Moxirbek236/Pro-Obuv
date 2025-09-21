@@ -1,74 +1,341 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="{{ session.get('interface_language', 'uz') }}">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}Restoran tizimi{% endblock %}</title>
-  <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
-  <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
-  <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
-  <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}Restoran tizimi{% endblock %}</title>
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="{{ url_for('static', filename='apple-touch-icon.png') }}" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="{{ url_for('static', filename='favicon-32x32.png') }}" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="{{ url_for('static', filename='favicon-16x16.png') }}" />
+    <link
+      rel="manifest"
+      href="{{ url_for('static', filename='site.webmanifest') }}" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/global-enhancements.css') }}" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/responsive.css') }}" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/global-responsive.css') }}" />
+    <!-- Yangiliklar tasmasi CSS -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/news-ticker.css') }}" />
+    <!-- Bootstrap Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+      rel="stylesheet" />
 
-  <!-- Global sozlamalar uchun CSS -->
-  <style>
-    /* Tungi rejim uchun global CSS */
-    body.dark-theme {
-        background: linear-gradient(135deg, #1e293b 0%, #334155 20%, #475569 100%) !important;
-        color: #f8fafc !important;
-    }
-    body.dark-theme .navbar,
-    body.dark-theme .navbar-nav,
-    body.dark-theme .navbar-dark {
-        background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(51, 65, 85, 0.95) 100%) !important;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3) !important;
-    }
-    body.dark-theme .nav-link,
-    body.dark-theme .navbar-brand,
-    body.dark-theme .navbar-text {
-        color: #f8fafc !important;
-    }
-    body.dark-theme .dropdown-menu {
-        background: rgba(45, 55, 72, 0.98) !important;
-        border: 1px solid rgba(203, 213, 225, 0.2) !important;
-    }
-    body.dark-theme .dropdown-item {
-        color: #f8fafc !important;
-    }
-    body.dark-theme .dropdown-item:hover {
-        background: rgba(71, 85, 105, 0.8) !important;
+    <!-- Global sozlamalar uchun CSS -->
+    <style>
+      /* CSS Variables for admin templates */
+      :root {
+        --bg-color: #ffffff;
+        --text-color: #333333;
+      }
+
+      body.dark-theme {
+        --bg-color: #1a1a1a;
+        --text-color: #ffffff;
+      }
+
+      /* Tungi rejim uchun global CSS - muted backgrounds, white text */
+      body.dark-theme {
+        background: #0b1116 !important; /* very dark, low saturation */
+        color: #ffffff !important; /* all text white for readability */
+        transition: background 200ms ease, color 200ms ease;
+      }
+
+      /* Tungi rejimda jadvallar */
+      body.dark-theme .table {
+        background-color: #1a1a1a !important;
         color: #ffffff !important;
-    }
-    body.dark-theme .card,
-    body.dark-theme .modal-content,
-    body.dark-theme .hero-section,
-    body.dark-theme .service-card {
-        background: linear-gradient(145deg, rgba(51, 65, 85, 0.9) 0%, rgba(71, 85, 105, 0.8) 100%) !important;
-        color: #f8fafc !important;
-        border: 1px solid rgba(203, 213, 225, 0.2) !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
-    }
-    body.dark-theme .btn-primary {
-        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
-        border: none !important;
-        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3) !important;
-    }
-    body.dark-theme .form-control,
-    body.dark-theme .form-select {
-        background: rgba(51, 65, 85, 0.9) !important;
-        border: 1px solid rgba(203, 213, 225, 0.2) !important;
-        color: #f8fafc !important;
-    }
+      }
 
-    /* Shrift o'lchamlari */
-    .font-small { font-size: 14px !important; }
-    .font-medium { font-size: 16px !important; }
-    .font-large { font-size: 18px !important; }
-    .font-xlarge { font-size: 20px !important; }
+      body.dark-theme .table-striped > tbody > tr:nth-of-type(odd) > td,
+      body.dark-theme .table-striped > tbody > tr:nth-of-type(odd) > th {
+        background-color: #2d2d2d !important;
+        color: #ffffff !important;
+      }
 
-    /* Cart badge styling */
-    .cart-badge {
+      body.dark-theme .table-striped > tbody > tr:nth-of-type(even) > td,
+      body.dark-theme .table-striped > tbody > tr:nth-of-type(even) > th {
+        background-color: #1a1a1a !important;
+        color: #ffffff !important;
+      }
+
+      body.dark-theme .table-hover tbody tr:hover > td,
+      body.dark-theme .table-hover tbody tr:hover > th {
+        background-color: #3d3d3d !important;
+        color: #ffffff !important;
+      }
+
+      body.dark-theme .table-dark {
+        background-color: #1a1a1a !important;
+        color: #ffffff !important;
+      }
+
+      body.dark-theme .table-dark th,
+      body.dark-theme .table-dark td {
+        background-color: #1a1a1a !important;
+        color: #ffffff !important;
+        border-color: #3d3d3d !important;
+      }
+
+      /* Tungi rejimda kartalar */
+      body.dark-theme .card {
+        background-color: #1a1a1a !important;
+        color: #ffffff !important;
+        border-color: #3d3d3d !important;
+      }
+
+      body.dark-theme .card-header {
+        background-color: #2d2d2d !important;
+        color: #ffffff !important;
+        border-bottom-color: #3d3d3d !important;
+      }
+
+      body.dark-theme .card-body {
+        background-color: #1a1a1a !important;
+        color: #ffffff !important;
+      }
+
+      /* Tungi rejimda form elementlari */
+      body.dark-theme .form-control {
+        background-color: #2d2d2d !important;
+        color: #ffffff !important;
+        border-color: #3d3d3d !important;
+      }
+
+      body.dark-theme .form-control:focus {
+        background-color: #2d2d2d !important;
+        color: #ffffff !important;
+        border-color: #4299e1 !important;
+        box-shadow: 0 0 0 0.2rem rgba(66, 153, 225, 0.25) !important;
+      }
+
+      body.dark-theme .form-select {
+        background-color: #2d2d2d !important;
+        color: #ffffff !important;
+        border-color: #3d3d3d !important;
+      }
+
+      body.dark-theme .form-select:focus {
+        background-color: #2d2d2d !important;
+        color: #ffffff !important;
+        border-color: #4299e1 !important;
+        box-shadow: 0 0 0 0.2rem rgba(66, 153, 225, 0.25) !important;
+      }
+
+      /* Tungi rejimda alert'lar */
+      body.dark-theme .alert {
+        background-color: #2d2d2d !important;
+        color: #ffffff !important;
+        border-color: #3d3d3d !important;
+      }
+
+      body.dark-theme .alert-success {
+        background-color: #1a4d1a !important;
+        color: #ffffff !important;
+        border-color: #2d5a2d !important;
+      }
+
+      body.dark-theme .alert-danger {
+        background-color: #4d1a1a !important;
+        color: #ffffff !important;
+        border-color: #5a2d2d !important;
+      }
+
+      body.dark-theme .alert-warning {
+        background-color: #4d3d1a !important;
+        color: #ffffff !important;
+        border-color: #5a4d2d !important;
+      }
+
+      body.dark-theme .alert-info {
+        background-color: #1a3d4d !important;
+        color: #ffffff !important;
+        border-color: #2d4d5a !important;
+      }
+
+      /* Tungi rejimda modal'lar */
+      body.dark-theme .modal-content {
+        background-color: #1a1a1a !important;
+        color: #ffffff !important;
+        border-color: #3d3d3d !important;
+      }
+
+      body.dark-theme .modal-header {
+        background-color: #2d2d2d !important;
+        color: #ffffff !important;
+        border-bottom-color: #3d3d3d !important;
+      }
+
+      body.dark-theme .modal-body {
+        background-color: #1a1a1a !important;
+        color: #ffffff !important;
+      }
+
+      body.dark-theme .modal-footer {
+        background-color: #1a1a1a !important;
+        color: #ffffff !important;
+        border-top-color: #3d3d3d !important;
+      }
+
+      /* Tungi rejimda dropdown'lar */
+      body.dark-theme .dropdown-menu {
+        background-color: #1a1a1a !important;
+        color: #ffffff !important;
+        border-color: #3d3d3d !important;
+      }
+
+      body.dark-theme .dropdown-item {
+        color: #ffffff !important;
+      }
+
+      body.dark-theme .dropdown-item:hover {
+        background-color: #2d2d2d !important;
+        color: #ffffff !important;
+      }
+
+      /* Tungi rejimda list group */
+      body.dark-theme .list-group-item {
+        background-color: #1a1a1a !important;
+        color: #ffffff !important;
+        border-color: #3d3d3d !important;
+      }
+
+      body.dark-theme .list-group-item:hover {
+        background-color: #2d2d2d !important;
+        color: #ffffff !important;
+      }
+
+      /* Tungi rejimda badge'lar */
+      body.dark-theme .badge {
+        color: #ffffff !important;
+      }
+
+      /* Tungi rejimda text ranglari */
+      body.dark-theme .text-muted {
+        color: #a0a0a0 !important;
+      }
+
+      body.dark-theme .text-primary {
+        color: #66b3ff !important;
+      }
+
+      body.dark-theme .text-success {
+        color: #66ff66 !important;
+      }
+
+      body.dark-theme .text-danger {
+        color: #ff6666 !important;
+      }
+
+      body.dark-theme .text-warning {
+        color: #ffcc66 !important;
+      }
+
+      body.dark-theme .text-info {
+        color: #66ccff !important;
+      }
+      body.dark-theme .navbar,
+      body.dark-theme .navbar-nav,
+      body.dark-theme .navbar-dark {
+        background: linear-gradient(90deg, #0f1724 0%, #111827 100%) !important;
+        box-shadow: none !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.03) !important;
+      }
+      body.dark-theme .nav-link,
+      body.dark-theme .navbar-brand,
+      body.dark-theme .navbar-text {
+        color: #ffffff !important;
+        opacity: 0.95;
+      }
+      body.dark-theme .dropdown-menu {
+        background: #071019 !important;
+        border: 1px solid rgba(255, 255, 255, 0.04) !important;
+      }
+      body.dark-theme .dropdown-item {
+        color: #ffffff !important;
+        opacity: 0.95;
+      }
+      body.dark-theme .dropdown-item:hover {
+        background: rgba(255, 255, 255, 0.03) !important;
+        color: #ffffff !important;
+      }
+      body.dark-theme .card,
+      body.dark-theme .modal-content,
+      body.dark-theme .hero-section,
+      body.dark-theme .service-card {
+        background: #0d161b !important; /* muted card bg */
+        color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.03) !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6) !important;
+      }
+      body.dark-theme .btn-primary {
+        background: linear-gradient(
+          180deg,
+          #334155 0%,
+          #2b3440 100%
+        ) !important; /* muted button */
+        border: 1px solid rgba(255, 255, 255, 0.04) !important;
+        color: #ffffff !important;
+        box-shadow: none !important;
+      }
+      body.dark-theme .btn-outline-primary {
+        border-color: rgba(255, 255, 255, 0.06) !important;
+        color: #e6eef8 !important;
+      }
+      body.dark-theme a {
+        color: #e6eef8 !important;
+      }
+      body.dark-theme .form-control,
+      body.dark-theme .form-select {
+        background: rgba(255, 255, 255, 0.02) !important;
+        border: 1px solid rgba(255, 255, 255, 0.04) !important;
+        color: #ffffff !important;
+      }
+      body.dark-theme input::placeholder,
+      body.dark-theme textarea::placeholder {
+        color: rgba(255, 255, 255, 0.5) !important;
+      }
+
+      /* Shrift o'lchamlari */
+      .font-small {
+        font-size: 14px !important;
+      }
+      .font-medium {
+        font-size: 16px !important;
+      }
+      .font-large {
+        font-size: 18px !important;
+      }
+      .font-xlarge {
+        font-size: 20px !important;
+      }
+
+      /* Cart badge styling */
+      .cart-badge {
         background: #dc3545;
         color: white;
         border-radius: 50%;
@@ -81,588 +348,4275 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-    }
+      }
 
-    /* Navigation improvements */
-    .nav-link {
+      /* Navigation improvements */
+      .nav-link {
         transition: all 0.3s ease;
         border-radius: 8px;
         margin: 0 2px;
         padding: 8px 12px !important;
-    }
+      }
 
-    .nav-link:hover {
-        background: rgba(255,255,255,0.1);
+      .nav-link:hover {
+        background: rgba(255, 255, 255, 0.1);
         transform: translateY(-1px);
-    }
-  </style>
+      }
 
-  {% block head %}
-  <script src="https://api-maps.yandex.ru/2.1/?apikey={{ config.get('YANDEX_MAPS_API', 'fc256b90-6f74-4f1b-a7ee-d42b695a8284') }}&lang=uz_UZ" type="text/javascript"></script>
-  {% endblock %}
-  {% block extra_head %}{% endblock %}
-</head>
-<body data-dark-mode="{{ session.get('dark_theme', False) | lower }}"
-      data-font-size="{{ session.get('font_size', 'medium') }}"
-      data-language="{{ session.get('interface_language', 'uz') }}">
+      /* Qo'shimcha tungi rejim tuzatishlari */
+      body.dark-theme .bg-white,
+      body.dark-theme .bg-light {
+        background-color: #1a1a1a !important;
+        color: #ffffff !important;
+      }
 
-<!-- Super Admin Navbar -->
-{% if session.get('super_admin') %}
-<nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); box-shadow: 0 2px 10px rgba(0,0,0,0.3);">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="{{ url_for('super_admin_dashboard') }}">🔧 Super Admin Panel</a>
+      body.dark-theme .text-dark {
+        color: #ffffff !important;
+      }
 
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+      body.dark-theme .border-light {
+        border-color: #3d3d3d !important;
+      }
 
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav me-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('super_admin_dashboard') }}">🏠 Dashboard</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('super_admin_analytics') }}">📊 Analytics</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('super_admin_reports') }}">📈 Hisobotlar</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('super_admin_system') }}">⚙️ Tizim</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('super_admin_logs') }}">📝 Loglar</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('admin_monitor') }}">📺 Monitor</a>
-        </li>
-      </ul>
+      body.dark-theme .shadow {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6) !important;
+      }
 
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <span class="navbar-text text-white me-3">🔧 Super Administrator</span>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-            ⚙️ Profil
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="{{ url_for('profile_settings') }}">⚙️ Profil sozlamalari</a></li>
-            <li><a class="dropdown-item" href="{{ url_for('general_settings') }}">🔧 Umumi sozlamalar</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="{{ url_for('super_admin_logout') }}">🚪 Chiqish</a></li>
+      /* Footer va news ticker uchun tungi rejim */
+      body.dark-theme .footer,
+      body.dark-theme .news-ticker {
+        background: #0d161b !important;
+        color: #ffffff !important;
+        border-color: rgba(255, 255, 255, 0.1) !important;
+      }
+
+      /* Pagination uchun tungi rejim */
+      body.dark-theme .pagination .page-link {
+        background-color: #2d2d2d !important;
+        color: #ffffff !important;
+        border-color: #3d3d3d !important;
+      }
+
+      body.dark-theme .pagination .page-item.active .page-link {
+        background-color: #4299e1 !important;
+        border-color: #4299e1 !important;
+        color: #ffffff !important;
+      }
+
+      /* Progress bar uchun tungi rejim */
+      body.dark-theme .progress {
+        background-color: #2d2d2d !important;
+      }
+
+      body.dark-theme .progress-bar {
+        background-color: #4299e1 !important;
+      }
+
+      /* Breadcrumb uchun tungi rejim */
+      body.dark-theme .breadcrumb {
+        background-color: #1a1a1a !important;
+      }
+
+      body.dark-theme .breadcrumb-item a {
+        color: #66b3ff !important;
+      }
+
+      /* Tab navigation uchun tungi rejim */
+      body.dark-theme .nav-tabs .nav-link {
+        background-color: #2d2d2d !important;
+        color: #ffffff !important;
+        border-color: #3d3d3d !important;
+      }
+
+      body.dark-theme .nav-tabs .nav-link.active {
+        background-color: #1a1a1a !important;
+        color: #ffffff !important;
+        border-bottom-color: #1a1a1a !important;
+      }
+
+      /* Filter sidebar va modal uchun */
+      body.dark-theme .filter-sidebar,
+      body.dark-theme .offcanvas {
+        background: #0d161b !important;
+        color: #ffffff !important;
+      }
+
+      body.dark-theme .offcanvas-header {
+        border-bottom-color: #3d3d3d !important;
+      }
+
+      /* Input group uchun */
+      body.dark-theme .input-group-text {
+        background-color: #2d2d2d !important;
+        color: #ffffff !important;
+        border-color: #3d3d3d !important;
+      }
+
+      /* Spinner va loading elements uchun */
+      body.dark-theme .spinner-border {
+        color: #66b3ff !important;
+      }
+
+      /* Toast notifications uchun */
+      body.dark-theme .toast {
+        background-color: #1a1a1a !important;
+        color: #ffffff !important;
+        border-color: #3d3d3d !important;
+      }
+
+      body.dark-theme .toast-header {
+        background-color: #2d2d2d !important;
+        color: #ffffff !important;
+        border-bottom-color: #3d3d3d !important;
+      }
+    </style>
+
+    {% block head %} {% set yandex_key = (config.get('YANDEX_MAPS_API') or '')
+    %} {% if yandex_key and yandex_key != 'None' %}
+    <script>
+      // Masked debug: show whether a Yandex key exists (last 4 chars) without revealing full key
+      try {
+        const _y = "{{ yandex_key }}" || "";
+        if (_y && _y !== "None")
+          console.debug("Yandex API key present (last4): ****" + _y.slice(-4));
+        else console.debug("Yandex API key missing or unset");
+      } catch (e) {}
+    </script>
+    <!-- Robust fallback: ensure nav-notify clicks always open notify modal and manage aria-hidden -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        try {
+          const safeJson = (res) => res.json().catch(() => ({}));
+          const openNotifyModal = async (btn) => {
+            try {
+              const modal = document.getElementById("notifyModal");
+              if (!modal) {
+                // nothing to show
+                return;
+              }
+              // If this is a non-super-admin viewer, try to fetch notifications and populate preview
+              const preview = document.getElementById("notifyListPreview");
+              if (preview) {
+                preview.innerHTML =
+                  '<div class="text-muted">Yuklanmoqda...</div>';
+                try {
+                  const res = await fetch("/api/notifications");
+                  const data = await safeJson(res);
+                  const list = (data && data.notifications) || [];
+                  preview.innerHTML = "";
+                  if (list.length === 0)
+                    preview.innerHTML =
+                      '<div class="text-muted">Hech qanday bildirishnoma yo\'q</div>';
+                  list.slice(0, 10).forEach((n) => {
+                    const item = document.createElement("div");
+                    item.className = "mb-2";
+                    item.innerHTML = `<div style="font-weight:600">${
+                      n.title || ""
+                    }</div><div style="font-size:12px;color:#666">${
+                      n.body || ""
+                    }</div><hr/>`;
+                    preview.appendChild(item);
+                  });
+                } catch (e) {
+                  preview.innerHTML =
+                    '<div class="text-muted">Bildirishnomalar yuklanmadi</div>';
+                }
+              }
+
+              // show modal and set accessibility attributes
+              modal.style.display = "block";
+              modal.setAttribute("aria-hidden", "false");
+              // ensure focus
+              modal.setAttribute("tabindex", "-1");
+              modal.focus && modal.focus();
+              // mark read best-effort
+              fetch("/api/notifications/mark-read", {
+                method: "POST",
+                headers: {
+                  "X-CSRF-Token":
+                    typeof CSRF_TOKEN !== "undefined" ? CSRF_TOKEN : "",
+                },
+              })
+                .then(() => {})
+                .catch(() => {});
+            } catch (e) {
+              /* ignore */
+            }
+          };
+
+          // Attach listeners (use delegation-safe approach)
+          const attach = () => {
+            const btns = document.querySelectorAll(".nav-notify");
+            btns.forEach((b) => {
+              // remove duplicate listeners by cloning node if needed
+              if (!b.__notifyAttached) {
+                b.addEventListener("click", (ev) => {
+                  ev.preventDefault();
+                  openNotifyModal(b);
+                });
+                b.__notifyAttached = true;
+              }
+            });
+          };
+          attach();
+          // also observe for dynamically injected nav buttons
+          const nav = document.querySelector("nav");
+          if (nav) {
+            const mo = new MutationObserver(() => attach());
+            mo.observe(nav, { childList: true, subtree: true });
+          }
+
+          // Close handlers to set aria-hidden
+          const closeViewer = document.getElementById("notifyCloseViewer");
+          if (closeViewer) {
+            closeViewer.addEventListener("click", () => {
+              const m = document.getElementById("notifyModal");
+              if (m) {
+                m.style.display = "none";
+                m.setAttribute("aria-hidden", "true");
+              }
+            });
+          }
+          // Also ensure cancel buttons set aria-hidden
+          const cancelBtn = document.getElementById("notifyCancelBtn");
+          if (cancelBtn) {
+            cancelBtn.addEventListener("click", () => {
+              const m = document.getElementById("notifyModal");
+              if (m) {
+                m.style.display = "none";
+                m.setAttribute("aria-hidden", "true");
+              }
+            });
+          }
+        } catch (e) {
+          // swallow to avoid breaking other scripts
+        }
+      });
+    </script>
+    <script
+      src="https://api-maps.yandex.ru/2.1/?apikey={{ yandex_key }}&lang=uz_UZ"
+      type="text/javascript"></script>
+    <script>
+      // Set a global flag once ymaps is available so pages can detect load failures
+      (function checkYMaps() {
+        window.YANDEX_MAPS_LOADED = false;
+        var maxAttempts = 20;
+        var attempts = 0;
+        var iv = setInterval(function () {
+          attempts += 1;
+          if (window.ymaps) {
+            window.YANDEX_MAPS_LOADED = true;
+            clearInterval(iv);
+            console.log("Yandex Maps loaded successfully");
+            return;
+          }
+          if (attempts >= maxAttempts) {
+            clearInterval(iv);
+            window.YANDEX_MAPS_LOADED = false;
+            console.warn(
+              "Yandex Maps failed to load (check YANDEX_MAPS_API and network)"
+            );
+          }
+        }, 200);
+      })();
+    </script>
+    {% else %}
+    <script>
+      console.warn(
+        "Yandex Maps API key not configured; map features will be disabled"
+      );
+      window.YANDEX_MAPS_LOADED = false;
+    </script>
+    {% endif %} {% endblock %} {% block extra_head %}{% endblock %}
+    <script>
+      const CSRF_TOKEN = '{{ csrf_token|default('') }}';
+    </script>
+  </head>
+  <body
+    class="dark-theme"
+    data-dark-mode="true"
+    data-font-size="{{ session.get('font_size', 'medium') }}"
+    data-language="{{ session.get('interface_language', 'uz') }}">
+    <!-- Set dark theme as default in JavaScript -->
+    <script>
+      document.documentElement.classList.add("dark-theme");
+      document.body.classList.add("dark-theme");
+      // Store default dark theme preference
+      if (!localStorage.getItem("theme_preference")) {
+        localStorage.setItem("theme_preference", "dark");
+      }
+    </script>
+    <!-- Navigation Bar - SECURE ROLE CHECKING -->
+    {% if show_nav %}
+
+    <!-- Super Admin Navbar - ONLY for authenticated super admins -->
+    {% if session.get('super_admin') and not session.get('user_id') and not
+    session.get('staff_id') and not session.get('courier_id') %}
+    <nav
+      class="navbar navbar-expand-lg navbar-dark"
+      style="
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      ">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('super_admin_dashboard') }}"
+          >🔧 Super Admin Panel</a
+        >
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('super_admin_dashboard') }}"
+                >🏠 Dashboard</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('super_admin_analytics') }}"
+                >📊 Analytics</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('super_admin_reports') }}"
+                >📈 Hisobotlar</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('super_admin_system') }}"
+                >⚙️ Tizim</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('super_admin_logs') }}"
+                >📝 Loglar</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('admin_monitor') }}"
+                >📺 Monitor</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('admin_card_management') }}"
+                >💳 Karta</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('admin_360_management') }}"
+                >🔄 360°</a
+              >
+            </li>
           </ul>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
 
-<!-- Staff Navbar -->
-{% elif session.get('staff_id') %}
-<nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); box-shadow: 0 2px 10px rgba(0,0,0,0.3);">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="{{ url_for('staff_dashboard') }}">👨‍💼 Xodim Panel</a>
-
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav me-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('staff_dashboard') }}">🏠 Dashboard</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('staff_menu') }}">📋 Menyu boshqaruvi</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('staff_employees') }}">👥 Xodimlar ro'yxati</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('admin_monitor') }}">📺 Monitor</a>
-        </li>
-      </ul>
-
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <span class="navbar-text text-white me-3">👨‍💼 {{ session.get('staff_name', 'Xodim') }}</span>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-            ⚙️ Profil
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="{{ url_for('profile_settings') }}">⚙️ Profil sozlamalari</a></li>
-            <li><a class="dropdown-item" href="{{ url_for('general_settings') }}">🔧 Umumi sozlamalar</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="{{ url_for('staff_logout') }}">🚪 Chiqish</a></li>
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <span class="navbar-text text-white me-3"
+                >🔧 Super Administrator</span
+              >
+            </li>
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle d-flex align-items-center"
+                href="#"
+                role="button"
+                data-bs-toggle="dropdown">
+                <img
+                  src="{{ session.get('user_avatar','/static/images/default-avatar.svg') }}"
+                  alt="avatar"
+                  class="rounded-circle"
+                  width="32"
+                  height="32"
+                  style="object-fit: cover; margin-right: 8px" />
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li class="px-3 py-2 d-flex align-items-center">
+                  <img
+                    src="{{ session.get('user_avatar','/static/images/default-avatar.svg') }}"
+                    alt="avatar"
+                    class="rounded-circle me-2"
+                    width="48"
+                    height="48"
+                    style="object-fit: cover" />
+                  <div>
+                    <div class="fw-bold">
+                      {{ session.get('user_name', 'Foydalanuvchi') }}
+                    </div>
+                    <div class="text-muted small">
+                      {{ session.get('user_email','') }}
+                    </div>
+                  </div>
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('profile') }}"
+                    >👤 Profil ma'lumotlari</a
+                  >
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('profile_settings') }}"
+                    >⚙️ Profil sozlamalari</a
+                  >
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('general_settings') }}"
+                    >🔧 Umumi sozlamalar</a
+                  >
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('super_admin_logout') }}"
+                    >🚪 Chiqish</a
+                  >
+                </li>
+              </ul>
+            </li>
           </ul>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
+        </div>
+      </div>
+    </nav>
 
-<!-- Courier Navbar -->
-{% elif session.get('courier_id') %}
-<nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(135deg, #17a2b8 0%, #138496 100%); box-shadow: 0 2px 10px rgba(0,0,0,0.3);">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="{{ url_for('courier_dashboard') }}">🚚 Kuryer Panel</a>
+    <!-- Staff Navbar - ONLY for authenticated staff -->
+    {% elif session.get('staff_id') and not session.get('user_id') and not
+    session.get('super_admin') and not session.get('courier_id') %}
+    <nav
+      class="navbar navbar-expand-lg navbar-dark"
+      style="
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      ">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('staff_dashboard') }}"
+          >👨‍💼 Xodim Panel</a
+        >
 
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
 
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav me-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('courier_dashboard') }}">🏠 Dashboard</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('menu') }}">📋 Menyu ko'rish</a>
-        </li>
-      </ul>
-
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <span class="navbar-text text-white me-3">🚚 {{ session.get('courier_name', 'Kuryer') }}</span>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-            ⚙️ Profil
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="{{ url_for('profile_settings') }}">⚙️ Profil sozlamalari</a></li>
-            <li><a class="dropdown-item" href="{{ url_for('general_settings') }}">🔧 Umumi sozlamalar</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="{{ url_for('courier_logout') }}">🚪 Chiqish</a></li>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('staff_dashboard') }}"
+                >🏠 Dashboard</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('staff_menu') }}"
+                >📋 Menyu boshqaruvi</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('staff_employees') }}"
+                >👥 Xodimlar ro'yxati</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('admin_monitor') }}"
+                >📺 Monitor</a
+              >
+            </li>
           </ul>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
 
-<!-- User Navbar -->
-{% elif session.get('user_id') %}
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="{{ url_for('index') }}">🍽️ Restoran</a>
-
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav me-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('menu') }}">📋 Menyu</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('favorites') }}">❤️ Sevimlilar</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link cart-btn" href="{{ url_for('cart') }}">
-            🛒 Savatcha
-            <span class="cart-badge" id="cart-count" style="display: none;">0</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('contact') }}">📞 Aloqa</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('about') }}">❓ Savollar</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('downloads') }}">📱 Yuklamalar</a>
-        </li>
-      </ul>
-
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <span class="navbar-text text-white me-3">👤 {{ session.get('user_name', 'Foydalanuvchi') }}</span>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-            ⚙️ Profil
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="{{ url_for('profile') }}">👤 Profil ma'lumotlari</a></li>
-            <li><a class="dropdown-item" href="{{ url_for('profile_settings') }}">⚙️ Profil sozlamalari</a></li>
-            <li><a class="dropdown-item" href="{{ url_for('general_settings') }}">🔧 Umumi sozlamalar</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="{{ url_for('logout') }}">🚪 Chiqish</a></li>
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <span class="navbar-text text-white me-3"
+                >👨‍💼 {{ session.get('staff_name', 'Xodim') }}</span
+              >
+            </li>
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle d-flex align-items-center"
+                href="#"
+                role="button"
+                data-bs-toggle="dropdown">
+                <img
+                  src="{{ session.get('staff_avatar', session.get('user_avatar','/static/images/default-avatar.svg')) }}"
+                  alt="avatar"
+                  class="rounded-circle"
+                  width="32"
+                  height="32"
+                  style="object-fit: cover; margin-right: 8px" />
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li class="px-3 py-2 d-flex align-items-center">
+                  <img
+                    src="{{ session.get('staff_avatar', session.get('user_avatar','/static/images/default-avatar.svg')) }}"
+                    alt="avatar"
+                    class="rounded-circle me-2"
+                    width="48"
+                    height="48"
+                    style="object-fit: cover" />
+                  <div>
+                    <div class="fw-bold">
+                      {{ session.get('staff_name', 'Xodim') }}
+                    </div>
+                    <div class="text-muted small">
+                      {{ session.get('staff_email','') }}
+                    </div>
+                  </div>
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('profile') }}"
+                    >👤 Profil ma'lumotlari</a
+                  >
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('profile_settings') }}"
+                    >⚙️ Profil sozlamalari</a
+                  >
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('general_settings') }}"
+                    >🔧 Umumi sozlamalar</a
+                  >
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('staff_logout') }}"
+                    >🚪 Chiqish</a
+                  >
+                </li>
+              </ul>
+            </li>
           </ul>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
+        </div>
+      </div>
+    </nav>
 
-<!-- Guest Navbar -->
-{% else %}
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="{{ url_for('index') }}">🍽️ Restoran</a>
+    <!-- Courier Navbar - ONLY for authenticated couriers -->
+    {% elif session.get('courier_id') and not session.get('user_id') and not
+    session.get('super_admin') and not session.get('staff_id') %}
+    <nav
+      class="navbar navbar-expand-lg navbar-dark"
+      style="
+        background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        z-index: 2050; /* keep navbar above the in-app map */
+      ">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('courier_dashboard') }}"
+          >🚚 Kuryer Panel</a
+        >
 
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
 
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav me-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('menu') }}">📋 Menyu</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link cart-btn" href="{{ url_for('cart') }}">
-            🛒 Savatcha
-            <span class="cart-badge" id="cart-count" style="display: none;">0</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('contact') }}">📞 Aloqa</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('about') }}">❓ Savollar</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('downloads') }}">📱 Yuklamalar</a>
-        </li>
-      </ul>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('courier_dashboard') }}"
+                >🏠 Dashboard</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('menu') }}"
+                >📋 Menyu ko'rish</a
+              >
+            </li>
+          </ul>
 
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('login_page') }}">🔐 Kirish</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('register') }}">📝 Ro'yxatdan o'tish</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
-{% endif %}
+          <ul class="navbar-nav">
+            <li class="nav-item d-flex align-items-center me-2">
+              <!-- Global map open button for couriers -->
+              <button
+                id="openMapGlobalBtn"
+                class="btn btn-sm btn-outline-light"
+                title="Haritani ochish">
+                🗺️
+              </button>
+            </li>
+            <li class="nav-item d-flex align-items-center">
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-light nav-notify"
+                title="Bildirishnomalar"
+                aria-controls="notifyModal"
+                style="position: relative">
+                🔔
+                <span
+                  id="notify-count"
+                  class="badge bg-danger"
+                  style="
+                    display: none;
+                    position: absolute;
+                    top: -6px;
+                    right: -6px;
+                  "
+                  >0</span
+                >
+              </button>
+            </li>
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle d-flex align-items-center"
+                href="#"
+                role="button"
+                data-bs-toggle="dropdown">
+                <img
+                  src="{{ session.get('courier_avatar', session.get('user_avatar','/static/images/default-avatar.svg')) }}"
+                  alt="avatar"
+                  class="rounded-circle"
+                  width="32"
+                  height="32"
+                  style="object-fit: cover; margin-right: 8px" />
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li class="px-3 py-2 d-flex align-items-center">
+                  <img
+                    src="{{ session.get('courier_avatar', session.get('user_avatar','/static/images/default-avatar.svg')) }}"
+                    alt="avatar"
+                    class="rounded-circle me-2"
+                    width="48"
+                    height="48"
+                    style="object-fit: cover" />
+                  <div>
+                    <div class="fw-bold">
+                      {{ session.get('courier_name', 'Kuryer') }}
+                    </div>
+                    <div class="text-muted small">
+                      {{ session.get('courier_email','') }}
+                    </div>
+                  </div>
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('profile') }}"
+                    >👤 Profil ma'lumotlari</a
+                  >
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('profile_settings') }}"
+                    >⚙️ Profil sozlamalari</a
+                  >
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('general_settings') }}"
+                    >🔧 Umumi sozlamalar</a
+                  >
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('courier_logout') }}"
+                    >🚪 Chiqish</a
+                  >
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
 
-<main class="container mt-4">
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
+    <!-- User Navbar -->
+    {% elif is_user %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('index') }}"
+          >👟 Oyoq kiyim do'koni</a
+        >
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('menu') }}">📋 Menyu</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('favorites') }}"
+                >❤️ Sevimlilar</a
+              >
+            </li>
+            <!-- Shopping cart - Only visible to regular users -->
+            {% if not session.get('super_admin') and not session.get('staff_id')
+            and not session.get('courier_id') %}
+            <li class="nav-item">
+              <a class="nav-link cart-btn" href="{{ url_for('cart') }}">
+                🛒 Savatcha
+                <span class="cart-badge" id="cart-count" style="display: none"
+                  >0</span
+                >
+              </a>
+            </li>
+            {% endif %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('contact') }}">📞 Aloqa</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('about') }}">❓ Savollar</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('downloads') }}"
+                >📱 Yuklamalar</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('user_360_room') }}"
+                >🔄 360 Room</a
+              >
+            </li>
+          </ul>
+
+          <ul class="navbar-nav">
+            <li class="nav-item d-flex align-items-center">
+              <img
+                src="{{ session.get('user_avatar','/static/images/default-avatar.svg') }}"
+                alt="avatar"
+                class="rounded-circle"
+                width="32"
+                height="32"
+                style="object-fit: cover; margin-right: 8px" />
+              <span class="navbar-text text-white me-3"
+                >👤 {{ session.get('user_name', 'Foydalanuvchi') }}</span
+              >
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-light nav-notify"
+                title="Bildirishnomalar"
+                aria-controls="notifyModal"
+                style="margin-left: 6px; position: relative">
+                🔔
+                <span
+                  id="notify-count"
+                  class="badge bg-danger"
+                  style="
+                    display: none;
+                    position: absolute;
+                    top: -6px;
+                    right: -6px;
+                  "
+                  >0</span
+                >
+              </button>
+            </li>
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle d-flex align-items-center"
+                href="#"
+                role="button"
+                data-bs-toggle="dropdown">
+                <img
+                  src="{{ session.get('user_avatar','/static/images/default-avatar.svg') }}"
+                  alt="avatar"
+                  class="rounded-circle"
+                  width="32"
+                  height="32"
+                  style="object-fit: cover; margin-right: 8px" />
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li class="px-3 py-2 d-flex align-items-center">
+                  <img
+                    src="{{ session.get('user_avatar','/static/images/default-avatar.svg') }}"
+                    alt="avatar"
+                    class="rounded-circle me-2"
+                    width="48"
+                    height="48"
+                    style="object-fit: cover" />
+                  <div>
+                    <div class="fw-bold">
+                      {{ session.get('user_name', 'Foydalanuvchi') }}
+                    </div>
+                    <div class="text-muted small">
+                      {{ session.get('user_email','') }}
+                    </div>
+                  </div>
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('profile') }}"
+                    >👤 Profil ma'lumotlari</a
+                  >
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('profile_settings') }}"
+                    >⚙️ Profil sozlamalari</a
+                  >
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('general_settings') }}"
+                    >🔧 Umumi sozlamalar</a
+                  >
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('logout') }}"
+                    >🚪 Chiqish</a
+                  >
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Guest Navbar -->
+    {% else %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('index') }}">👟 Pro_Obuv</a>
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('menu') }}">📋 Menyu</a>
+            </li>
+            <!-- Shopping cart - Only visible to guests and regular users, not admin roles -->
+            {% if not session.get('super_admin') and not session.get('staff_id')
+            and not session.get('courier_id') %}
+            <li class="nav-item">
+              <a class="nav-link cart-btn" href="{{ url_for('cart') }}">
+                🛒 Savatcha
+                <span class="cart-badge" id="cart-count" style="display: none"
+                  >0</span
+                >
+              </a>
+            </li>
+            {% endif %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('contact') }}">📞 Aloqa</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('about') }}">❓ Savollar</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('downloads') }}"
+                >📱 Yuklamalar</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('user_360_room') }}"
+                >🔄 360 Room</a
+              >
+            </li>
+          </ul>
+
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('login_page') }}"
+                >🔐 Kirish</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('register') }}"
+                >📝 Ro'yxatdan o'tish</a
+              >
+            </li>
+            <li class="nav-item d-flex align-items-center">
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-light nav-notify"
+                title="Bildirishnomalar"
+                aria-controls="notifyModal"
+                style="margin-left: 6px; position: relative">
+                🔔
+                <span
+                  id="notify-count"
+                  class="badge bg-danger"
+                  style="
+                    display: none;
+                    position: absolute;
+                    top: -6px;
+                    right: -6px;
+                  "
+                  >0</span
+                >
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    {% endif %} {% endif %}
+
+    <main class="container mt-4">
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %}
       <div class="flash">
         {% for category, message in messages %}
-          <div class="alert alert-{{ 'danger' if category=='error' else 'success' if category=='success' else category }} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-          </div>
+        <div
+          class="alert alert-{{ 'danger' if category=='error' else 'success' if category=='success' else category }} alert-dismissible fade show"
+          role="alert">
+          {{ message }}
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"></button>
+        </div>
         {% endfor %}
       </div>
-    {% endif %}
-  {% endwith %}
+      {% endif %} {% endwith %} {% block content %}{% endblock %}
+    </main>
 
-  {% block content %}{% endblock %}
-</main>
+    <footer class="footer mt-5">
+      <!-- Yangiliklar Tasmasi - Footer ichida -->
+      <div class="news-ticker-container">
+        <div class="news-ticker-wrapper">
+          <!-- Chap navigation tugmasi -->
+          <button
+            class="news-nav-btn news-nav-prev"
+            id="newsPrevBtn"
+            title="Oldingi yangilik">
+            <span>‹</span>
+          </button>
 
-<footer class="footer mt-5">
-  <div class="container">
-    <p>© 2025 Restoran Tizimi | Barcha huquqlar himoyalangan</p>
-    <p class="muted">Savollar uchun: +998 99 145 96 86</p>
-  </div>
-</footer>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="{{ url_for('static', filename='main.js') }}"></script>
+          <div class="news-ticker">
+            <div class="news-ticker-viewport">
+              <div class="news-ticker-content" id="news-ticker-content">
+                <!-- Yangiliklar JavaScript orqali yuklanadi -->
+                <div class="news-item news">📢 Sahifa yuklanmoqda...</div>
+              </div>
+            </div>
+          </div>
 
-<!-- Global sozlamalarni yuklash -->
-<script>
-// Darhol sozlamalarni qo'llash (DOMContentLoaded dan oldin)
-(function() {
-    // LocalStorage dan sozlamalarni olish
-    const darkMode = localStorage.getItem('darkMode') === 'true';
-    const fontSize = localStorage.getItem('fontSize') || 'medium';
-    const language = localStorage.getItem('language') || 'uz';
+          <!-- O'ng navigation tugmasi -->
+          <button
+            class="news-nav-btn news-nav-next"
+            id="newsNextBtn"
+            title="Keyingi yangilik">
+            <span>›</span>
+          </button>
+        </div>
+      </div>
 
-    console.log('Base.html - Darhol qo\'llanayotgan sozlamalar:', { darkMode, fontSize, language });
+      <div class="container-fluid bg-dark text-light py-5">
+        <div class="container">
+          <div class="row g-4">
+            <!-- Company Info -->
+            <div class="col-lg-3 col-md-6">
+              <h5 class="fw-bold mb-3 text-warning">👟 Pro Obuv</h5>
+              <p class="mb-3">
+                O'zbekistondagi eng yirik oyoq kiyim do'koni. Sifatli
+                mahsulotlar va eng yaxshi xizmat ko'rsatish bizning
+                ustuvorligimiz.
+              </p>
+              <div
+                class="d-flex gap-3 mb-3 flex-wrap justify-content-center justify-content-lg-start">
+                <a
+                  href="https://www.facebook.com/aklashoes/?ref=pl_edit_xav_ig_profile_page_web#"
+                  target="_blank"
+                  class="social-icon-btn facebook"
+                  title="Facebook">
+                  <img
+                    src="{{ url_for('static', filename='icons/facebook.svg') }}"
+                    alt="Facebook"
+                    width="24"
+                    height="24" />
+                </a>
+                <a
+                  href="https://www.instagram.com/proguarduz/"
+                  target="_blank"
+                  class="social-icon-btn instagram"
+                  title="Instagram">
+                  <img
+                    src="{{ url_for('static', filename='icons/instagram.svg') }}"
+                    alt="Instagram"
+                    width="24"
+                    height="24" />
+                </a>
+                <a
+                  href="https://t.me/specobuv"
+                  target="_blank"
+                  class="social-icon-btn telegram"
+                  title="Telegram">
+                  <img
+                    src="{{ url_for('static', filename='icons/telegram.svg') }}"
+                    alt="Telegram"
+                    width="24"
+                    height="24" />
+                </a>
+                <a
+                  href="https://www.threads.com/@proguarduz?xmt=AQF0Luvd5UXAmD_U3B5JI01ho5dNPZudQGYe4WbnAc934pc"
+                  target="_blank"
+                  class="social-icon-btn threads"
+                  title="Threads">
+                  <img
+                    src="{{ url_for('static', filename='icons/threads.svg') }}"
+                    alt="Threads"
+                    width="24"
+                    height="24" />
+                </a>
+                <a
+                  href="https://uzum.uz/uz/shop/pro-obuv"
+                  target="_blank"
+                  class="social-icon-btn uzum"
+                  title="Uzum Market">
+                  <img
+                    src="{{ url_for('static', filename='icons/uzum.png') }}"
+                    alt="Uzum Market"
+                    width="24"
+                    height="24" />
+                </a>
+                <a
+                  href="mailto:premiumsafety@mail.ru"
+                  class="social-icon-btn email"
+                  title="Email">
+                  <img
+                    src="{{ url_for('static', filename='icons/gmail.png') }}"
+                    alt="Uzum Market"
+                    width="24"
+                    height="24" />
+                </a>
+                <a
+                  href="tel:+998977195770"
+                  class="social-icon-btn phone"
+                  title="Telefon">
+                  <img
+                    src="{{ url_for('static', filename='icons/phone.jpg') }}"
+                    alt="Uzum Market"
+                    width="24"
+                    height="24" />
+                </a>
+              </div>
+            </div>
 
-    // Body klasslarini tozalash
-    document.body.classList.remove('dark-theme', 'font-small', 'font-medium', 'font-large', 'font-xlarge');
-    document.body.classList.remove('lang-uz', 'lang-ru', 'lang-en');
+            <!-- Quick Links -->
+            <div class="col-lg-2 col-md-6">
+              <h6 class="fw-bold mb-3 text-warning">🔗 Tezkor havolalar</h6>
+              <ul class="list-unstyled">
+                <li class="mb-2">
+                  <a
+                    href="{{ url_for('index') }}"
+                    class="text-light text-decoration-none hover-text-warning">
+                    🏠 Bosh sahifa
+                  </a>
+                </li>
+                <li class="mb-2">
+                  <a
+                    href="{{ url_for('menu') }}"
+                    class="text-light text-decoration-none hover-text-warning">
+                    📋 Mahsulotlar
+                  </a>
+                </li>
+                <li class="mb-2">
+                  <a
+                    href="{{ url_for('cart') }}"
+                    class="text-light text-decoration-none hover-text-warning">
+                    🛒 Savatcha
+                  </a>
+                </li>
+                <li class="mb-2">
+                  <a
+                    href="{{ url_for('about') }}"
+                    class="text-light text-decoration-none hover-text-warning">
+                    ❓ Biz haqimizda
+                  </a>
+                </li>
+                <li class="mb-2">
+                  <a
+                    href="{{ url_for('contact') }}"
+                    class="text-light text-decoration-none hover-text-warning">
+                    📞 Aloqa
+                  </a>
+                </li>
+              </ul>
+            </div>
 
-    // Mavzu klassini qo'shish
-    if (darkMode) {
-        document.body.classList.add('dark-theme');
-        console.log('Base.html - Dark theme qo\'shildi');
-    }
+            <!-- Categories -->
+            <div class="col-lg-2 col-md-6">
+              <h6 class="fw-bold mb-3 text-warning">🏷️ Kategoriyalar</h6>
+              <ul class="list-unstyled">
+                <li class="mb-2">
+                  <a
+                    href="{{ url_for('menu') }}?category=specobuv"
+                    class="text-light text-decoration-none hover-text-warning">
+                    🥾 Спецобувь
+                  </a>
+                </li>
+                <li class="mb-2">
+                  <a
+                    href="{{ url_for('menu') }}?category=specodezhda"
+                    class="text-light text-decoration-none hover-text-warning">
+                    🦺 Спецодежда
+                  </a>
+                </li>
+                <li class="mb-2">
+                  <a
+                    href="{{ url_for('menu') }}"
+                    class="text-light text-decoration-none hover-text-warning">
+                    🔄 Все товары
+                  </a>
+                </li>
+                <li class="mb-2">
+                  <a
+                    href="{{ url_for('contact') }}"
+                    class="text-light text-decoration-none hover-text-warning">
+                    📞 Консультация
+                  </a>
+                </li>
+              </ul>
+            </div>
 
-    // Font o'lcham klassini qo'shish
-    document.body.classList.add('font-' + fontSize);
-    console.log('Base.html - Font size qo\'shildi:', 'font-' + fontSize);
+            <!-- Contact Info -->
+            <div class="col-lg-3 col-md-6">
+              <h6 class="fw-bold mb-3 text-warning">📞 Aloqa ma'lumotlari</h6>
+              <div class="mb-3">
+                <div class="d-flex align-items-center mb-2">
+                  <span class="me-2">📱</span>
+                  <a
+                    href="tel:+998977195770"
+                    class="text-light text-decoration-none">
+                    +998 97 719 57 70
+                  </a>
+                </div>
+                <div class="d-flex align-items-center mb-2">
+                  <span class="me-2">✉️</span>
+                  <a
+                    href="mailto:premiumsafety@mail.ru"
+                    class="text-light text-decoration-none">
+                    premiumsafety@mail.ru
+                  </a>
+                </div>
+                <div class="d-flex align-items-start mb-2">
+                  <span class="me-2">📍</span>
+                  <span class="text-light">
+                    Toshkent sh., Chilonzor t., Bunyodkor ko'chasi 12-uy
+                  </span>
+                </div>
+              </div>
+              <div class="border-top pt-3">
+                <h6 class="fw-bold mb-2 text-warning">⏰ Ish vaqti</h6>
+                <small class="text-light d-block mb-1"
+                  >Dushanba - Juma: 9:00 - 18:00</small
+                >
+                <small class="text-light d-block"
+                  >Shanba - Yakshanba: Dam</small
+                >
+              </div>
+            </div>
 
-    // Til klassini qo'shish
-    document.body.classList.add('lang-' + language);
-    console.log('Base.html - Language qo\'shildi:', 'lang-' + language);
-})();
+            <!-- Customer Service -->
+            <div class="col-lg-2 col-md-6">
+              <h6 class="fw-bold mb-3 text-warning">🎯 Xizmatlar</h6>
+              <ul class="list-unstyled">
+                <li class="mb-2">
+                  <a
+                    href="{{ url_for('contact') }}#delivery"
+                    class="text-light text-decoration-none hover-text-warning">
+                    🚚 Yetkazib berish
+                  </a>
+                </li>
+                <li class="mb-2">
+                  <a
+                    href="{{ url_for('about') }}#return-policy"
+                    class="text-light text-decoration-none hover-text-warning">
+                    🔄 Qaytarish siyosati
+                  </a>
+                </li>
+                <li class="mb-2">
+                  <a
+                    href="{{ url_for('contact') }}#payment"
+                    class="text-light text-decoration-none hover-text-warning">
+                    💳 To'lov usullari
+                  </a>
+                </li>
+                <li class="mb-2">
+                  <a
+                    href="{{ url_for('about') }}#size-chart"
+                    class="text-light text-decoration-none hover-text-warning">
+                    📏 O'lcham jadvali
+                  </a>
+                </li>
+                <li class="mb-2">
+                  <a
+                    href="{{ url_for('about') }}#warranty"
+                    class="text-light text-decoration-none hover-text-warning">
+                    🛡️ Kafolat
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
 
-// Global sozlamalarni yuklash
-document.addEventListener('DOMContentLoaded', function() {
-    // Session ma'lumotlarini localStorage bilan sinxronlash
-    const sessionDarkMode = {{ 'true' if session.get('dark_theme') else 'false' }};
-    const sessionFontSize = '{{ session.get("font_size", "medium") }}';
-    const sessionLanguage = '{{ session.get("interface_language", "uz") }}';
+          <!-- Payment Methods -->
+          <div class="row mt-4 pt-4 border-top">
+            <div class="col-md-8">
+              <h6 class="fw-bold mb-3 text-warning">💳 To'lov usullari</h6>
+              <div class="d-flex flex-wrap gap-3 align-items-center">
+                <span class="badge bg-success px-3 py-2">💵 Naqd</span>
+                <span class="badge bg-primary px-3 py-2">💳 Plastik karta</span>
+                <span class="badge bg-info px-3 py-2">📱 Click</span>
+                <span class="badge bg-warning px-3 py-2 text-dark"
+                  >💰 Payme</span
+                >
+                <span class="badge bg-secondary px-3 py-2"
+                  >🏦 Bank o'tkazmasi</span
+                >
+              </div>
+            </div>
+            <div class="col-md-4 text-md-end">
+              <h6 class="fw-bold mb-3 text-warning">🌟 Bizni kuzatib boring</h6>
+              <p class="text-light mb-1">
+                Eng so'nggi yangiliklar va takliflar uchun
+              </p>
+              <div class="input-group" style="max-width: 300px">
+                <input
+                  type="email"
+                  class="form-control"
+                  placeholder="Email manzilingiz" />
+                <button class="btn btn-warning" type="button">📧 Obuna</button>
+              </div>
+            </div>
+          </div>
 
-    console.log('Session sozlamalari:', { sessionDarkMode, sessionFontSize, sessionLanguage });
+          <!-- Bottom Copyright -->
+          <div class="row mt-4 pt-4 border-top">
+            <div class="col-md-8">
+              <p class="mb-1 text-light">
+                © 2025 <strong class="text-warning">Pro Obuv</strong> - Oyoq
+                kiyim do'koni | Barcha huquqlar himoyalangan
+              </p>
+              <small class="text-muted">
+                Ushbu sayt materiallaridan foydalanganda, Pro Obuv do'koniga
+                havola qilish majburiy.
+              </small>
+            </div>
+            <div class="col-md-4 text-md-end">
+              <div class="d-flex justify-content-md-end gap-3 flex-wrap">
+                <a
+                  href="{{ url_for('about') }}#privacy"
+                  class="text-light text-decoration-none hover-text-warning">
+                  <small>📋 Maxfiylik siyosati</small>
+                </a>
+                <a
+                  href="{{ url_for('about') }}#terms"
+                  class="text-light text-decoration-none hover-text-warning">
+                  <small>📄 Foydalanish shartlari</small>
+                </a>
+                <a
+                  href="{{ url_for('about') }}#cookies"
+                  class="text-light text-decoration-none hover-text-warning">
+                  <small>🍪 Cookie siyosati</small>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
 
-    // Session sozlamalarini localStorage ga saqlash
-    localStorage.setItem('darkMode', sessionDarkMode);
-    localStorage.setItem('fontSize', sessionFontSize);
-    localStorage.setItem('language', sessionLanguage);
+    <!-- Enhanced Footer & Global Styles -->
+    <style>
+      /* ================================
+         FOOTER STYLES
+         ================================ */
+      .footer {
+        background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+        border-top: 3px solid #ffc107;
+        position: relative;
+        z-index: 1000 !important; /* Above news ticker (100) and filter sidebar (99) */
+      }
 
-    // Sozlamalarni darhol qo'llash
-    const isDarkMode = sessionDarkMode === 'true';
+      .footer .hover-text-warning:hover {
+        color: #ffc107 !important;
+        transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
 
-    // Klasslarni tozalash
-    document.body.classList.remove('dark-theme', 'font-small', 'font-medium', 'font-large', 'font-xlarge');
-    document.body.classList.remove('lang-uz', 'lang-ru', 'lang-en');
+      /* ================================
+         SOCIAL MEDIA ICONS
+         ================================ */
+      .social-icon-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none;
+        border: 2px solid rgba(255, 255, 255, 0.15);
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(15px) saturate(180%);
+        position: relative;
+        overflow: hidden;
+      }
 
-    // Mavzuni qo'llash
-    if (isDarkMode) {
-        document.body.classList.add('dark-theme');
+      .social-icon-btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: left 0.5s ease;
+      }
 
-        // Navbar klasslarini o'zgartirish
-        const navbar = document.querySelector('.navbar');
-        if (navbar) {
-            navbar.classList.remove('navbar-light', 'bg-light');
-            navbar.classList.add('navbar-dark', 'bg-dark');
+      .social-icon-btn:hover::before {
+        left: 100%;
+      }
+
+      .social-icon-btn:hover {
+        transform: translateY(-4px) scale(1.15);
+        text-decoration: none;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+        border-color: rgba(255, 255, 255, 0.3);
+      }
+
+      .social-icon-btn.facebook:hover {
+        background: linear-gradient(135deg, #1877f2 0%, #166fe5 100%);
+        box-shadow: 0 12px 35px rgba(24, 119, 242, 0.5);
+      }
+
+      .social-icon-btn.instagram:hover {
+        background: linear-gradient(
+          135deg,
+          #e4405f 0%,
+          #833ab4 50%,
+          #fccc63 100%
+        );
+        box-shadow: 0 12px 35px rgba(228, 64, 95, 0.5);
+      }
+
+      .social-icon-btn.telegram:hover {
+        background: linear-gradient(135deg, #0088cc 0%, #006bb3 100%);
+        box-shadow: 0 12px 35px rgba(0, 136, 204, 0.5);
+      }
+
+      .social-icon-btn.threads:hover {
+        background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+      }
+
+      .social-icon-btn.uzum:hover {
+        background: linear-gradient(135deg, #7c4dff 0%, #651fff 100%);
+        box-shadow: 0 12px 35px rgba(124, 77, 255, 0.5);
+      }
+
+      .social-icon-btn.email:hover {
+        background: linear-gradient(135deg, #ea4335 0%, #d33b2c 100%);
+        box-shadow: 0 12px 35px rgba(234, 67, 53, 0.5);
+        color: white;
+      }
+
+      .social-icon-btn.phone:hover {
+        background: linear-gradient(135deg, #25d366 0%, #1ebe57 100%);
+        box-shadow: 0 12px 35px rgba(37, 211, 102, 0.5);
+        color: white;
+      }
+
+      /* ================================
+         FORM ELEMENTS
+         ================================ */
+      .footer .input-group .form-control {
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        color: white;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .footer .input-group .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .footer .input-group .form-control:focus {
+        border-color: #ffc107;
+        box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateY(-1px);
+      }
+
+      .footer .btn-warning {
+        background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+        border: none;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        font-weight: 600;
+      }
+
+      .footer .btn-warning:hover {
+        background: linear-gradient(135deg, #e0a800 0%, #cc9a06 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(255, 193, 7, 0.4);
+      }
+
+      /* ================================
+         BADGES & INTERACTIVE ELEMENTS
+         ================================ */
+      .footer .badge {
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .footer .badge:hover {
+        transform: translateY(-2px) scale(1.08);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      }
+
+      /* ================================
+         ANIMATIONS
+         ================================ */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
         }
-        console.log('Dark theme qo\'llandi');
-    } else {
-        // Light theme
-        const navbar = document.querySelector('.navbar');
-        if (navbar) {
-            navbar.classList.remove('navbar-dark', 'bg-dark');
-            navbar.classList.add('navbar-light', 'bg-light');
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
-        console.log('Light theme qo\'llandi');
-    }
+      }
 
-    // Font o'lchamini qo'llash
-    document.body.classList.add('font-' + sessionFontSize);
-    console.log('Font size qo\'llandi:', sessionFontSize);
+      .footer .col-lg-3,
+      .footer .col-lg-2 {
+        animation: fadeInUp 0.6s ease-out;
+        animation-fill-mode: both;
+      }
 
-    // Tilni qo'llash
-    document.body.classList.add('lang-' + sessionLanguage);
-    console.log('Language qo\'llandi:', sessionLanguage);
+      .footer .col-lg-3:nth-child(2) {
+        animation-delay: 0.1s;
+      }
+      .footer .col-lg-2:nth-child(3) {
+        animation-delay: 0.2s;
+      }
+      .footer .col-lg-3:nth-child(4) {
+        animation-delay: 0.3s;
+      }
+      .footer .col-lg-2:nth-child(5) {
+        animation-delay: 0.4s;
+      }
 
-    // Sahifani tarjima qilish
-    if (typeof translatePage === 'function') {
-        setTimeout(() => {
-            translatePage(sessionLanguage);
-            console.log('Til tarjimasi qo\'llandi:', sessionLanguage);
-        }, 200);
-    }
-
-    // Storage eventini tinglash
-    window.addEventListener('storage', function(e) {
-        if (e.key === 'darkMode') {
-            const isDark = e.newValue === 'true';
-            if (isDark) {
-                document.body.classList.add('dark-theme');
-            } else {
-                document.body.classList.remove('dark-theme');
-            }
-            console.log('Storage event - Dark mode o\'zgartirildi:', isDark);
-        } else if (e.key === 'fontSize') {
-            document.body.classList.remove('font-small', 'font-medium', 'font-large', 'font-xlarge');
-            document.body.classList.add('font-' + e.newValue);
-            console.log('Storage event - Font size o\'zgartirildi:', e.newValue);
-        } else if (e.key === 'language') {
-            document.body.classList.remove('lang-uz', 'lang-ru', 'lang-en');
-            document.body.classList.add('lang-' + e.newValue);
-            if (typeof translatePage === 'function') {
-                translatePage(e.newValue);
-            }
-            console.log('Storage event - Language o\'zgartirildi:', e.newValue);
+      /* ================================
+         RESPONSIVE DESIGN
+         ================================ */
+      @media (max-width: 768px) {
+        .footer .container-fluid {
+          padding: 30px 15px;
         }
-    });
-});
 
-// Professional Translation System
-const translations = {
-    uz: {
-        menu: '📋 Menyu',
-        favorites: '❤️ Sevimlilar',
-        contact: '📞 Aloqa',
-        about: '❓ Savollar',
-        downloads: '📱 Yuklamalar',
-        cart: '🛒 Savatcha',
-        profile_info: '👤 Profil ma\'lumotlari',
-        profile_settings: '⚙️ Profil sozlamalari',
-        settings: '🔧 Sozlamalar',
-        logout: '🚪 Chiqish',
-        login: '🔐 Kirish',
-        register: '📝 Ro\'yxat',
-        user: '👤 Foydalanuvchi',
-        staff: '👨‍💼 Xodim',
-        courier: '🚚 Kuryer',
-        admin: '🔧 Admin',
-        dashboard: '🏠 Dashboard'
-    },
-    ru: {
-        menu: '📋 Меню',
-        favorites: '❤️ Избранное',
-        contact: '📞 Контакты',
-        about: '❓ Вопросы',
-        downloads: '📱 Загрузки',
-        cart: '🛒 Корзина',
-        profile_info: '👤 Данные профиля',
-        profile_settings: '⚙️ Настройки профиля',
-        settings: '🔧 Настройки',
-        logout: '🚪 Выход',
-        login: '🔐 Вход',
-        register: '📝 Регистрация',
-        user: '👤 Пользователь',
-        staff: '👨‍💼 Сотрудник',
-        courier: '🚚 Курьер',
-        admin: '🔧 Админ',
-        dashboard: '🏠 Панель'
-    },
-    en: {
-        menu: '📋 Menu',
-        favorites: '❤️ Favorites',
-        contact: '📞 Contact',
-        about: '❓ About',
-        downloads: '📱 Downloads',
-        cart: '🛒 Cart',
-        profile_info: '👤 Profile Info',
-        profile_settings: '⚙️ Profile Settings',
-        settings: '🔧 Settings',
-        logout: '🚪 Logout',
-        login: '🔐 Login',
-        register: '📝 Register',
-        user: '👤 User',
-        staff: '👨‍💼 Staff',
-        courier: '🚚 Courier',
-        admin: '🔧 Admin',
-        dashboard: '🏠 Dashboard'
-    }
-};
-
-// Global Translation Function
-function translatePage(language) {
-    const trans = translations[language] || translations.uz;
-
-    // Navbar links
-    const menuLink = document.querySelector('a[href*="menu"]');
-    if (menuLink) menuLink.innerHTML = trans.menu;
-
-    const favoritesLink = document.querySelector('a[href*="favorites"]');
-    if (favoritesLink) favoritesLink.innerHTML = trans.favorites;
-
-    const contactLink = document.querySelector('a[href*="contact"]');
-    if (contactLink) contactLink.innerHTML = trans.contact;
-
-    const aboutLink = document.querySelector('a[href*="about"]');
-    if (aboutLink) aboutLink.innerHTML = trans.about;
-
-    const downloadsLink = document.querySelector('a[href*="downloads"]');
-    if (downloadsLink) downloadsLink.innerHTML = trans.downloads;
-
-    const cartLink = document.querySelector('.cart-btn');
-    if (cartLink) {
-        const badge = cartLink.querySelector('.cart-badge');
-        const badgeHtml = badge ? badge.outerHTML : '';
-        cartLink.innerHTML = trans.cart + ' ' + badgeHtml;
-    }
-
-    const logoutLink = document.querySelector('a[href*="logout"]');
-    if (logoutLink) logoutLink.innerHTML = trans.logout;
-}
-
-// Enhanced Language Change Function
-window.changeLanguage = function(language) {
-    console.log('Changing language to:', language);
-
-    // Immediately apply translation
-    translatePage(language);
-    localStorage.setItem('language', language);
-
-    // Update body attribute
-    document.body.setAttribute('data-language', language);
-    document.body.classList.remove('lang-uz', 'lang-ru', 'lang-en');
-    document.body.classList.add('lang-' + language);
-
-    // Server ga yuborish
-    fetch('/api/set-language', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ language: language })
-    }).then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            console.log('Language saved to server:', language);
-            // Show success message briefly
-            showNotification(data.message || 'Til muvaffaqiyatli o\'zgartirildi');
+        .footer .input-group {
+          max-width: 100% !important;
+          margin-top: 15px;
         }
-    }).catch(error => {
-        console.log('Til sozlamasini saqlashda xato:', error);
-        // Show error but keep local changes
-        showNotification('Til mahalliy o\'zgartirildi');
-    });
-};
 
-// Notification function
-function showNotification(message) {
-    const notification = document.createElement('div');
-    notification.className = 'notification';
-    notification.textContent = message;
-    document.body.appendChild(notification);
+        .social-icon-btn {
+          width: 40px;
+          height: 40px;
+        }
 
-    setTimeout(() => {
-        notification.remove();
-    }, 3000);
-}
+        .footer .row {
+          text-align: center;
+        }
 
-// Language-specific CSS classes
-const languageStyles = {
-    uz: { direction: 'ltr', fontFamily: 'Inter, sans-serif' },
-    ru: { direction: 'ltr', fontFamily: 'Inter, sans-serif' },
-    en: { direction: 'ltr', fontFamily: 'Inter, sans-serif' }
-};
+        .footer .d-flex {
+          justify-content: center !important;
+        }
+      }
 
-// Apply language-specific styles
-function applyLanguageStyles(language) {
-    const styles = languageStyles[language] || languageStyles.uz;
-    document.documentElement.dir = styles.direction;
-    document.body.style.fontFamily = styles.fontFamily;
-}
-</script>
+      @media (max-width: 480px) {
+        .footer h5,
+        .footer h6 {
+          font-size: 1.1rem;
+        }
 
-<!-- Savatcha sonini yangilash -->
-<script>
-function updateCartCount() {
-    fetch('/api/cart-count')
-        .then(response => response.json())
-        .then(data => {
-            const cartBadge = document.getElementById('cart-count');
-            if (cartBadge && data.success) {
-                const count = data.cart_count || 0;
-                if (count > 0) {
-                    cartBadge.textContent = count;
-                    cartBadge.style.display = 'inline-flex';
-                } else {
-                    cartBadge.style.display = 'none';
+        .footer p,
+        .footer small {
+          font-size: 0.9rem;
+        }
+
+        .social-icon-btn {
+          width: 38px;
+          height: 38px;
+          margin: 0 4px;
+        }
+      }
+
+      /* ================================
+         YANGILIKLAR TASMASI - YANGI DIZAYN
+         ================================ */
+      .news-ticker-container {
+        background: linear-gradient(
+          135deg,
+          #0a0a0b 0%,
+          #1a1b23 50%,
+          #0f1419 100%
+        );
+        border-top: 2px solid #2d3748;
+        position: relative;
+        z-index: 100 !important; /* Above filter sidebar (99) but below navbar (1050) */
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+      }
+
+      .news-ticker-wrapper {
+        display: flex;
+        align-items: center;
+        height: 220px; /* Increased from 180px */
+        padding: 30px 40px;
+        position: relative;
+        gap: 30px;
+        max-width: 1600px; /* Increased from 1400px to utilize full width */
+        margin: 0 auto;
+      }
+
+
+      .news-ticker {
+        flex: 1;
+        height: 160px; /* Increased from 140px */
+        position: relative;
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2);
+        /* Take up more space since title is removed */
+        margin: 0 10px;
+        /* Expanded width for better content display */
+        min-width: 800px;
+        max-width: none;
+      }
+
+      .news-ticker-viewport {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        position: relative;
+        border-radius: 15px;
+        /* Maximized viewport for better content visibility */
+        min-width: 780px;
+      }
+
+      .news-ticker-content {
+        display: flex;
+        align-items: stretch;
+        height: 160px; /* Increased from 140px */
+        position: relative;
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        gap: 25px;
+        padding: 20px;
+      }
+
+      /* Navigation tugmalari */
+      .news-nav-btn {
+        width: 50px;
+        height: 50px;
+        border: none;
+        background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+        color: #ffffff;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        font-weight: bold;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        flex-shrink: 0;
+      }
+
+      .news-nav-btn:hover {
+        background: linear-gradient(135deg, #22d3ee 0%, #0891b2 100%);
+        transform: scale(1.1);
+        box-shadow: 0 6px 20px rgba(34, 211, 238, 0.4);
+        border-color: rgba(255, 255, 255, 0.3);
+      }
+
+      .news-nav-btn:active {
+        transform: scale(0.95);
+      }
+
+      .news-nav-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .news-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        width: 320px; /* Increased from 280px */
+        height: 120px; /* Increased from 100px */
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 15px;
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        position: relative;
+        overflow: hidden;
+        flex-shrink: 0;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .news-item:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(255, 255, 255, 0.25);
+      }
+
+      .news-item.news {
+        border-left: 4px solid #22d3ee;
+      }
+
+      .news-item.news::before {
+        background: #22d3ee;
+      }
+
+      .news-item.advertisement {
+        border-left: 4px solid #fbbf24;
+        background: rgba(251, 191, 36, 0.1);
+      }
+
+      .news-item.advertisement::before {
+        background: #fbbf24;
+      }
+
+      .news-media {
+        width: 100%;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 8px;
+      }
+      
+      .clickable-media {
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+      }
+      
+      .clickable-media:hover {
+        transform: scale(1.05);
+        border-color: #22d3ee;
+        box-shadow: 0 4px 15px rgba(34, 211, 238, 0.3);
+      }
+
+      .news-title {
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 600;
+        text-align: center;
+        line-height: 1.2;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        max-height: 36px;
+      }
+
+      .news-content {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 12px;
+        text-align: center;
+        line-height: 1.3;
+        margin-top: 4px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+
+      .news-item.advertisement .news-title {
+        color: #fbbf24;
+        font-weight: 700;
+        text-shadow: 0 2px 6px rgba(251, 191, 36, 0.4);
+      }
+
+      .news-item::before {
+        content: "";
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #22d3ee;
+        opacity: 0.8;
+        animation: pulse 2s infinite;
+      }
+
+      .news-item.advertisement::before {
+        background: #fbbf24;
+        animation: bounce 1.5s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.7;
+          transform: scale(1.2);
+        }
+      }
+
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-3px);
+        }
+      }
+
+      /* Dark theme uchun yangiliklar tasmasi */
+      body.dark-theme .news-ticker-container {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        border-top: 3px solid #22d3ee;
+        border-bottom: 3px solid #22d3ee;
+      }
+
+
+      body.dark-theme .news-item {
+        color: #f8fafc;
+      }
+
+      body.dark-theme .news-item.advertisement {
+        color: #22d3ee;
+        text-shadow: 0 2px 6px rgba(34, 211, 238, 0.4);
+      }
+
+      body.dark-theme .news-item::before {
+        color: #22d3ee;
+      }
+
+      /* Responsive design */
+      @media (max-width: 968px) {
+        .news-ticker-wrapper {
+          height: 150px;
+          padding: 15px 20px;
+          gap: 15px;
+        }
+
+
+        .news-ticker {
+          height: 110px;
+        }
+
+        .news-ticker-content {
+          height: 110px;
+          padding: 15px;
+        }
+
+        .news-item {
+          width: 250px;
+          height: 80px;
+          padding: 10px;
+        }
+
+        .news-nav-btn {
+          width: 45px;
+          height: 45px;
+          font-size: 20px;
+        }
+
+        .news-play-btn {
+          width: 35px;
+          height: 35px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .news-ticker-wrapper {
+          height: 120px;
+          padding: 10px 15px;
+          gap: 10px;
+        }
+
+
+        .news-ticker {
+          height: 90px;
+        }
+
+        .news-ticker-content {
+          height: 90px;
+          padding: 10px;
+          gap: 15px;
+        }
+
+        .news-item {
+          width: 220px;
+          height: 70px;
+          padding: 8px;
+        }
+
+        .news-nav-btn {
+          width: 40px;
+          height: 40px;
+          font-size: 18px;
+        }
+
+        .news-play-btn {
+          width: 30px;
+          height: 30px;
+          font-size: 12px;
+        }
+      }
+
+      /* Global Floating Cart Icon */
+      .floating-cart-global {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 10px 40px rgba(56, 161, 105, 0.8);
+        z-index: 9999 !important; /* Highest priority - visible everywhere */
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 4px solid rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        text-decoration: none;
+        color: white;
+        animation: cartPulse 3s ease-in-out infinite;
+      }
+
+      @keyframes cartPulse {
+        0%,
+        100% {
+          transform: scale(1);
+          box-shadow: 0 10px 40px rgba(56, 161, 105, 0.8);
+        }
+        50% {
+          transform: scale(1.05);
+          box-shadow: 0 15px 50px rgba(56, 161, 105, 1);
+        }
+      }
+
+      .floating-cart-global:hover {
+        transform: scale(1.15) rotate(10deg);
+        box-shadow: 0 15px 60px rgba(56, 161, 105, 1);
+        animation: cartWiggle 0.6s ease-in-out;
+        text-decoration: none;
+        color: white;
+      }
+
+      @keyframes cartWiggle {
+        0%,
+        100% {
+          transform: scale(1.15) rotate(10deg);
+        }
+        25% {
+          transform: scale(1.15) rotate(-5deg);
+        }
+        75% {
+          transform: scale(1.15) rotate(15deg);
+        }
+      }
+
+      .floating-cart-global .cart-icon {
+        font-size: 32px;
+        animation: iconBounce 2s ease-in-out infinite;
+      }
+
+      @keyframes iconBounce {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-3px);
+        }
+      }
+
+      .floating-cart-global .cart-badge-floating {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+        color: white;
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: 900;
+        transform: scale(0);
+        transition: transform 0.3s ease-in-out;
+        border: 3px solid white;
+        box-shadow: 0 4px 12px rgba(229, 62, 62, 0.6);
+      }
+
+      .floating-cart-global .cart-badge-floating.show {
+        transform: scale(1);
+        animation: badgePulse 1.5s ease-in-out infinite;
+      }
+
+      @keyframes badgePulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+      }
+
+      @media (max-width: 480px) {
+        .floating-cart-global {
+          width: 70px;
+          height: 70px;
+          bottom: 15px;
+          left: 15px;
+        }
+
+        .floating-cart-global .cart-icon {
+          font-size: 28px;
+        }
+
+        .floating-cart-global .cart-badge-floating {
+          width: 24px;
+          height: 24px;
+          font-size: 12px;
+          top: -3px;
+          right: -3px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .news-ticker-wrapper {
+          height: 100px;
+          padding: 8px 12px;
+          gap: 8px;
+        }
+
+        .news-ticker {
+          height: 75px;
+        }
+
+        .news-ticker-content {
+          height: 75px;
+          padding: 8px;
+          gap: 12px;
+        }
+
+        .news-item {
+          width: 200px;
+          height: 60px;
+          padding: 6px;
+        }
+
+        .news-nav-btn {
+          width: 35px;
+          height: 35px;
+          font-size: 16px;
+        }
+
+        .news-play-btn {
+          width: 25px;
+          height: 25px;
+          font-size: 10px;
+        }
+      }
+      
+      /* ================================
+         MEDIA MODAL STYLES
+         ================================ */
+      .media-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+      }
+      
+      .media-modal-content {
+        background: #ffffff;
+        border-radius: 15px;
+        max-width: 90vw;
+        max-height: 90vh;
+        width: auto;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        overflow: hidden;
+        position: relative;
+      }
+      
+      .media-modal-header {
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      
+      .media-modal-header h3 {
+        margin: 0;
+        font-size: 1.3rem;
+        font-weight: 600;
+      }
+      
+      .media-modal-close {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+      }
+      
+      .media-modal-close:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: scale(1.1);
+      }
+      
+      .media-modal-body {
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 200px;
+        background: #000000;
+      }
+      
+      .modal-media-image {
+        max-width: 100%;
+        max-height: 80vh;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        border-radius: 0;
+      }
+      
+      .modal-media-video {
+        max-width: 100%;
+        max-height: 80vh;
+        width: auto;
+        height: auto;
+        border-radius: 0;
+      }
+      
+      /* Dark theme support for media modal */
+      body.dark-theme .media-modal-content {
+        background: #1a1a1a;
+        color: #ffffff;
+        border: 1px solid #3d3d3d;
+      }
+      
+      body.dark-theme .media-modal-header {
+        background: linear-gradient(135deg, #2d2d2d 0%, #404040 100%);
+        border-bottom: 1px solid #3d3d3d;
+      }
+      
+      /* Responsive design for media modal */
+      @media (max-width: 768px) {
+        .media-modal-content {
+          max-width: 95vw;
+          max-height: 95vh;
+        }
+        
+        .media-modal-header {
+          padding: 15px;
+        }
+        
+        .media-modal-header h3 {
+          font-size: 1.1rem;
+        }
+        
+        .modal-media-image,
+        .modal-media-video {
+          max-height: 70vh;
+        }
+      }
+    </style>
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+
+    <!-- Global sozlamalarni yuklash -->
+    <script>
+          // Darhol sozlamalarni qo'llash (DOMContentLoaded dan oldin)
+          (function() {
+            try {
+              // LocalStorage dan sozlamalarni olish
+              const darkMode = localStorage.getItem('darkMode') === 'true';
+              const fontSize = localStorage.getItem('fontSize') || 'medium';
+              const language = localStorage.getItem('language') || 'uz';
+
+              // console.log('Base.html - Darhol qo\'llanayotgan sozlamalar:', { darkMode, fontSize, language });
+
+              function applyImmediate() {
+                // Body klasslarini tozalash
+                document.body.classList.remove('dark-theme', 'font-small', 'font-medium', 'font-large', 'font-xlarge');
+                document.body.classList.remove('lang-uz', 'lang-ru', 'lang-en');
+
+                // Mavzu klassini qo'shish
+                if (darkMode) {
+                  document.body.classList.add('dark-theme');
+                  // console.log('Base.html - Dark theme qo\'shildi');
                 }
+
+                // Font o'lcham klassini qo'shish
+                document.body.classList.add('font-' + fontSize);
+                // console.log('Base.html - Font size qo\'shildi:', 'font-' + fontSize);
+
+                // Til klassini qo'shish
+                document.body.classList.add('lang-' + language);
+                // console.log('Base.html - Language qo\'llandi:', 'lang-' + language);
+              }
+
+              if (document && document.body) {
+                applyImmediate();
+              } else {
+                window.addEventListener('DOMContentLoaded', applyImmediate);
+              }
+            } catch (e) {
+              console.warn('Initial settings apply failed:', e);
+              // Defer to DOMContentLoaded to avoid blocking the rest of the script
+              window.addEventListener('DOMContentLoaded', function() {
+                try {
+                  const fontSize = localStorage.getItem('fontSize') || 'medium';
+                  const language = localStorage.getItem('language') || 'uz';
+                  document.body.classList.add('font-' + fontSize);
+                  document.body.classList.add('lang-' + language);
+                } catch (inner) { /* noop */ }
+              });
             }
-        })
-        .catch(error => console.log('Savatcha sonini olishda xato:', error));
-}
+          })();
 
-// Sahifa yuklanganda va har 10 soniyada yangilash
-document.addEventListener('DOMContentLoaded', updateCartCount);
-setInterval(updateCartCount, 10000);
-</script>
+            // Global sozlamalarni yuklash
+            document.addEventListener('DOMContentLoaded', function() {
+                // Session ma'lumotlarini localStorage bilan sinxronlash
+                const sessionDarkMode = {{ 'true' if session.get('dark_theme') else 'false' }};
+                const sessionFontSize = '{{ session.get("font_size", "medium") }}';
+                const sessionLanguage = '{{ session.get("interface_language", "uz") }}';
 
-{% block scripts %}{% endblock %}
-</body>
+                // console.log('Session sozlamalari:', { sessionDarkMode, sessionFontSize, sessionLanguage });
+
+                // Session sozlamalarini localStorage ga saqlash
+                localStorage.setItem('darkMode', sessionDarkMode);
+                localStorage.setItem('fontSize', sessionFontSize);
+                localStorage.setItem('language', sessionLanguage);
+
+                // Sozlamalarni darhol qo'llash
+                const isDarkMode = sessionDarkMode === 'true';
+
+                // Klasslarni tozalash
+                document.body.classList.remove('dark-theme', 'font-small', 'font-medium', 'font-large', 'font-xlarge');
+                document.body.classList.remove('lang-uz', 'lang-ru', 'lang-en');
+
+                // Mavzuni qo'llash
+                if (isDarkMode) {
+                    document.body.classList.add('dark-theme');
+
+                    // Navbar klasslarini o'zgartirish
+                    const navbar = document.querySelector('.navbar');
+                    if (navbar) {
+                        navbar.classList.remove('navbar-light', 'bg-light');
+                        navbar.classList.add('navbar-dark', 'bg-dark');
+                    }
+                    // console.log('Dark theme qo\'llandi');
+                } else {
+                    // Light theme
+                    document.body.classList.remove('dark-theme');
+                    const navbar = document.querySelector('.navbar');
+                    if (navbar) {
+                        navbar.classList.remove('navbar-dark', 'bg-dark');
+                        navbar.classList.add('navbar-light', 'bg-light');
+                    }
+                    // console.log('Light theme qo\'llandi');
+                }
+
+                // Font o'lchamini qo'llash
+                document.body.classList.add('font-' + sessionFontSize);
+                // console.log('Font size qo\'llandi:', sessionFontSize);
+
+                // Tilni qo'llash
+                document.body.classList.add('lang-' + sessionLanguage);
+                console.log('Language qo\'llandi:', sessionLanguage);
+
+                // Sahifani tarjima qilish
+                if (typeof translatePage === 'function') {
+                    setTimeout(() => {
+                        translatePage(sessionLanguage);
+                        // console.log('Til tarjimasi qo\'llandi:', sessionLanguage);
+                    }, 200);
+                }
+
+                // Storage eventini tinglash
+                window.addEventListener('storage', function(e) {
+                    if (e.key === 'darkMode') {
+                        const isDark = e.newValue === 'true';
+                        if (isDark) {
+                            document.body.classList.add('dark-theme');
+                            // Navbar klasslarini o'zgartirish
+                            const navbar = document.querySelector('.navbar');
+                            if (navbar) {
+                                navbar.classList.remove('navbar-light', 'bg-light');
+                                navbar.classList.add('navbar-dark', 'bg-dark');
+                            }
+                        } else {
+                            document.body.classList.remove('dark-theme');
+                            // Navbar klasslarini o'zgartirish
+                            const navbar = document.querySelector('.navbar');
+                            if (navbar) {
+                                navbar.classList.remove('navbar-dark', 'bg-dark');
+                                navbar.classList.add('navbar-light', 'bg-light');
+                            }
+                        }
+                        // console.log('Storage event - Dark mode o\'zgartirildi:', isDark);
+                    } else if (e.key === 'fontSize') {
+                        document.body.classList.remove('font-small', 'font-medium', 'font-large', 'font-xlarge');
+                        document.body.classList.add('font-' + e.newValue);
+                        // console.log('Storage event - Font size o\'zgartirildi:', e.newValue);
+                    } else if (e.key === 'language') {
+                        document.body.classList.remove('lang-uz', 'lang-ru', 'lang-en');
+                        document.body.classList.add('lang-' + e.newValue);
+                        if (typeof translatePage === 'function') {
+                            translatePage(e.newValue);
+                        }
+                        // console.log('Storage event - Language o\'zgartirildi:', e.newValue);
+                    }
+                });
+            });
+
+        // Professional Translation System
+        // Attach translations to window to avoid redeclaration when main.js
+        // or other templates also define translations.
+        if (typeof window.translations === 'undefined') {
+          window.translations = {
+        uz: {
+          menu: '📋 Menyu',
+          favorites: '❤️ Sevimlilar',
+          contact: '📞 Aloqa',
+          about: '❓ Savollar',
+          downloads: '📱 Yuklamalar',
+          cart: '🛒 Savatcha',
+          profile_info: '👤 Profil ma\'lumotlari',
+          profile_settings: '⚙️ Profil sozlamalari',
+          settings: '🔧 Sozlamalar',
+          logout: '🚪 Chiqish',
+          login: '🔐 Kirish',
+          register: '📝 Ro\'yxat',
+          user: '👤 Foydalanuvchi',
+          staff: '👨‍💼 Xodim',
+          courier: '🚚 Kuryer',
+          admin: '🔧 Admin',
+          dashboard: '🏠 Dashboard',
+          brand: "👟 Oyoq kiyim do'koni"
+        },
+                ru: {
+                    menu: '📋 Меню',
+                    favorites: '❤️ Избранное',
+                    contact: '📞 Контакты',
+                    about: '❓ Вопросы',
+                    downloads: '📱 Загрузки',
+                    cart: '🛒 Корзина',
+                    profile_info: '👤 Данные профиля',
+                    profile_settings: '⚙️ Настройки профиля',
+                    settings: '🔧 Настройки',
+                    logout: '🚪 Выход',
+                    login: '🔐 Вход',
+                    register: '📝 Регистрация',
+                    user: '👤 Пользователь',
+                    staff: '👨‍💼 Сотрудник',
+                    courier: '🚚 Курьер',
+                    admin: '🔧 Админ',
+                    dashboard: '🏠 Панель'
+                },
+                en: {
+                    menu: '📋 Menu',
+                    favorites: '❤️ Favorites',
+                    contact: '📞 Contact',
+                    about: '❓ About',
+                    downloads: '📱 Downloads',
+                    cart: '🛒 Cart',
+                    profile_info: '👤 Profile Info',
+                    profile_settings: '⚙️ Profile Settings',
+                    settings: '🔧 Settings',
+                    logout: '🚪 Logout',
+                    login: '🔐 Login',
+                    register: '📝 Register',
+                    user: '👤 User',
+                    staff: '👨‍💼 Staff',
+                    courier: '🚚 Courier',
+                    admin: '🔧 Admin',
+                    dashboard: '🏠 Dashboard'
+                }
+          };
+        }
+
+            // Global Translation Function
+      function translatePage(language) {
+      const trans = (window.translations && window.translations[language]) || (window.translations && window.translations.uz) || {};
+
+            // Translate elements that use data-translate attribute
+            document.querySelectorAll('[data-translate]').forEach(el => {
+              const key = el.getAttribute('data-translate');
+              if (!key) return;
+              const val = trans[key] || el.textContent;
+              // If element is input/textarea, change placeholder instead
+              if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                if (el.placeholder !== undefined) el.placeholder = val;
+              } else {
+                el.textContent = val;
+              }
+            });
+
+            // Translate placeholders and titles
+            document.querySelectorAll('[data-translate-placeholder]').forEach(el => {
+              const key = el.getAttribute('data-translate-placeholder');
+              if (!key) return;
+              el.placeholder = trans[key] || el.placeholder || '';
+            });
+            document.querySelectorAll('[data-translate-title]').forEach(el => {
+              const key = el.getAttribute('data-translate-title');
+              if (!key) return;
+              el.title = trans[key] || el.title || '';
+            });
+
+            // Fallback: translate a few common navbar/text nodes by selector
+            const menuLink = document.querySelector('a[href*="menu"]');
+            if (menuLink) menuLink.textContent = trans.menu || menuLink.textContent;
+            const favoritesLink = document.querySelector('a[href*="favorites"]');
+            if (favoritesLink) favoritesLink.textContent = trans.favorites || favoritesLink.textContent;
+            const contactLink = document.querySelector('a[href*="contact"]');
+            if (contactLink) contactLink.textContent = trans.contact || contactLink.textContent;
+            const aboutLink = document.querySelector('a[href*="about"]');
+            if (aboutLink) aboutLink.textContent = trans.about || aboutLink.textContent;
+
+            const downloadsLink = document.querySelector('a[href*="downloads"]');
+            if (downloadsLink) downloadsLink.textContent = trans.downloads || downloadsLink.textContent;
+
+            const cartLink = document.querySelector('.cart-btn');
+            if (cartLink) {
+              const badge = cartLink.querySelector('.cart-badge');
+              const badgeHtml = badge ? badge.outerHTML : '';
+              cartLink.innerHTML = (trans.cart || cartLink.textContent) + ' ' + badgeHtml;
+            }
+
+            const logoutLink = document.querySelector('a[href*="logout"]');
+            if (logoutLink) logoutLink.textContent = trans.logout || logoutLink.textContent;
+            }
+
+            // Enhanced Language Change Function
+            window.changeLanguage = function(language) {
+                // console.log('Changing language to:', language);
+                try {
+                    // Immediately apply translation and styles
+                    translatePage(language);
+                    applyLanguageStyles(language);
+                    localStorage.setItem('language', language);
+                    document.body.setAttribute('data-language', language);
+                } catch (error) {
+                    // console.log('Language change error:', error);
+                }
+            document.body.classList.remove('lang-uz', 'lang-ru', 'lang-en');
+            document.body.classList.add('lang-' + language);
+
+            // Server ga yuborish (include CSRF)
+            fetch('/api/set-language', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : ''
+              },
+              body: JSON.stringify({ language: language })
+            }).then(response => {
+              if (response.ok) {
+                return response.json();
+              }
+              throw new Error('Network response was not ok');
+            })
+            .then(data => {
+              if (data && data.success) {
+                // console.log('Language saved to server:', language);
+                showNotification(data.message || 'Til muvaffaqiyatli o\'zgartirildi');
+              }
+            }).catch(error => {
+              // console.log('Til sozlamasini saqlashda xato:', error);
+              showNotification('Til mahalliy o\'zgartirildi');
+            });
+            };
+
+            // Notification function
+            function showNotification(message) {
+                const notification = document.createElement('div');
+                notification.className = 'notification';
+                notification.textContent = message;
+                document.body.appendChild(notification);
+
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
+            }
+
+            // Language-specific CSS classes
+            const languageStyles = {
+                uz: { direction: 'ltr', fontFamily: 'Inter, sans-serif' },
+                ru: { direction: 'ltr', fontFamily: 'Inter, sans-serif' },
+                en: { direction: 'ltr', fontFamily: 'Inter, sans-serif' }
+            };
+
+            // Apply language-specific styles
+            function applyLanguageStyles(language) {
+                const styles = languageStyles[language] || languageStyles.uz;
+                document.documentElement.dir = styles.direction;
+                document.body.style.fontFamily = styles.fontFamily;
+            }
+    </script>
+
+    <!-- Savatcha sonini yangilash (one-off guard to avoid duplicate polling from main.js) -->
+    <script>
+      // If main.js is present it manages polling (CartManager). Do a single initial update otherwise fall back to fetching once.
+      function initialCartUpdate() {
+        try {
+          if (
+            window.cartManager &&
+            typeof window.cartManager.updateCartCount === "function"
+          ) {
+            window.cartManager.updateCartCount();
+            return;
+          }
+        } catch (e) {
+          /* ignore and fallback */
+        }
+
+        // Fallback: single fetch (no interval) to avoid duplicate polling that caused 429s
+        fetch("/api/cart-count")
+          .then((response) => response.json())
+          .then((data) => {
+            const cartBadge = document.getElementById("cart-count");
+            if (cartBadge && data && data.cart_count !== undefined) {
+              const count = data.cart_count || 0;
+              if (count > 0) {
+                cartBadge.textContent = count;
+                cartBadge.style.display = "inline-flex";
+              } else {
+                cartBadge.style.display = "none";
+              }
+            }
+          })
+          .catch((error) =>
+            // console.log("Savatcha sonini olishda xato:", error)
+          );
+      }
+
+      document.addEventListener("DOMContentLoaded", initialCartUpdate);
+    </script>
+
+    <!-- Notification Modal -->
+    <div
+      id="notifyModal"
+      class="modal-overlay"
+      style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+      "
+      aria-hidden="true">
+      <div
+        class="modal-content"
+        style="
+          background: white;
+          border-radius: 8px;
+          max-width: 500px;
+          width: 90%;
+          max-height: 80vh;
+          overflow-y: auto;
+        ">
+        <div
+          class="modal-header"
+          style="
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          ">
+          <h5 id="notifyModalTitle">📢 Bildirishnomalar</h5>
+          <button
+            type="button"
+            id="notifyCloseViewer"
+            class="btn-close"
+            style="
+              border: none;
+              background: none;
+              font-size: 24px;
+              cursor: pointer;
+            ">
+            ✕
+          </button>
+        </div>
+        <div class="modal-body" style="padding: 20px">
+          <!-- For super admin: compose notification form -->
+          {% if is_super_admin %}
+          <div id="notifyComposer" class="mb-3">
+            <h6>📝 Yangi bildirishnoma yuborish</h6>
+            <div class="mb-3">
+              <label for="notifyTitle" class="form-label">Sarlavha:</label>
+              <input
+                type="text"
+                id="notifyTitle"
+                class="form-control"
+                placeholder="Bildirishnoma sarlavhasi" />
+            </div>
+            <div class="mb-3">
+              <label for="notifyBody" class="form-label">Matn:</label>
+              <textarea
+                id="notifyBody"
+                class="form-control"
+                rows="3"
+                placeholder="Bildirishnoma matni"></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="notifyRecipientType" class="form-label"
+                >Qabul qiluvchi:</label
+              >
+              <select id="notifyRecipientType" class="form-select">
+                <option value="users">👤 Foydalanuvchilar</option>
+                <option value="staff">👨‍💼 Xodimlar</option>
+                <option value="couriers">🚚 Kuryerlar</option>
+                <option value="all">👥 Barchasi</option>
+              </select>
+            </div>
+            <div class="d-flex gap-2">
+              <button type="button" id="notifySendBtn" class="btn btn-primary">
+                📤 Yuborish
+              </button>
+              <button
+                type="button"
+                id="notifyCancelBtn"
+                class="btn btn-secondary">
+                ❌ Bekor qilish
+              </button>
+            </div>
+            <hr />
+          </div>
+          {% endif %}
+
+          <!-- Notification list -->
+          <div id="notifyListPreview">
+            <p class="text-muted">📥 Bildirishnomalar yuklanmoqda...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Member Profile Modal -->
+    <div
+      id="memberProfileModal"
+      class="modal-overlay"
+      style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9998;
+        align-items: center;
+        justify-content: center;
+      "
+      aria-hidden="true">
+      <div
+        class="modal-content"
+        style="
+          background: white;
+          border-radius: 8px;
+          max-width: 400px;
+          width: 90%;
+          padding: 20px;
+        ">
+        <div
+          class="modal-header"
+          style="
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          ">
+          <h5>👤 Profil ma'lumotlari</h5>
+          <button
+            type="button"
+            id="memberProfileClose"
+            class="btn-close"
+            style="
+              border: none;
+              background: none;
+              font-size: 24px;
+              cursor: pointer;
+            ">
+            ✕
+          </button>
+        </div>
+        <div id="memberProfileContent">
+          <p class="text-muted">Yuklanmoqda...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Global Floating Cart Icon -->
+    <a
+      href="{{ url_for('cart') }}"
+      class="floating-cart-global"
+      id="floating-cart-global">
+      <span class="cart-icon">🛒</span>
+      <span class="cart-badge-floating" id="cart-badge-floating-global">0</span>
+    </a>
+
+    {% block scripts %}{% endblock %}
+
+    <!-- Enhanced Telegram-style Chat Widget - Only for Staff, Courier, SuperAdmin -->
+    {% if is_staff or is_courier or is_super_admin %}
+    <style>
+      /* Chat FAB - Telegram style */
+      .chat-fab {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #0088cc, #00a8ff);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 8px 25px rgba(0, 136, 204, 0.4);
+        cursor: pointer;
+        z-index: 2000;
+        transition: all 0.3s ease;
+        font-size: 24px;
+        border: 3px solid white;
+      }
+
+      .chat-fab:hover {
+        transform: scale(1.1);
+        box-shadow: 0 12px 35px rgba(0, 136, 204, 0.6);
+      }
+
+      .chat-fab.active {
+        background: linear-gradient(135deg, #dc3545, #ff6b6b);
+        transform: rotate(45deg);
+      }
+
+      /* Chat Panel - Telegram style */
+      .chat-panel {
+        position: fixed;
+        right: 20px;
+        bottom: 100px;
+        width: 560px;
+        height: 760px;
+        background: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+        display: none;
+        flex-direction: column;
+        border: 1px solid #e1e8ed;
+      }
+
+      .chat-panel.show {
+        display: flex;
+        animation: slideUp 0.3s ease-out;
+      }
+
+      @keyframes slideUp {
+        from {
+          transform: translateY(100px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      /* Chat Header - Telegram style */
+      .chat-header {
+        background: linear-gradient(135deg, #0088cc, #00a8ff);
+        color: white;
+        padding: 15px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 2px 10px rgba(0, 136, 204, 0.3);
+      }
+
+      .chat-header h5 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 18px;
+      }
+
+      .chat-header-controls {
+        display: flex;
+        gap: 10px;
+      }
+
+      .chat-header-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 16px;
+      }
+
+      .chat-header-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.1);
+      }
+
+      /* Chat Content */
+      .chat-content {
+        display: flex;
+        flex: 1;
+        height: 100%;
+      }
+
+      /* Chat List - Groups and Contacts */
+      .chat-list {
+        width: 200px;
+        background: #f8f9fa;
+        border-right: 1px solid #e1e8ed;
+        overflow-y: auto;
+      }
+
+      .chat-list-header {
+        padding: 15px;
+        background: #e9ecef;
+        border-bottom: 1px solid #dee2e6;
+        font-weight: 600;
+        color: #495057;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .chat-group {
+        padding: 8px 0;
+        border-bottom: 1px solid #e9ecef;
+      }
+
+      .chat-group-title {
+        padding: 8px 15px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        background: #f1f3f4;
+      }
+
+      .chat-item {
+        padding: 12px 15px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: all 0.2s ease;
+        border-left: 3px solid transparent;
+      }
+
+      .chat-item:hover {
+        background: #e3f2fd;
+        border-left-color: #0088cc;
+      }
+
+      .chat-item.active {
+        background: #e3f2fd;
+        border-left-color: #0088cc;
+      }
+
+      .chat-item-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #0088cc, #00a8ff);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 16px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .chat-item-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+      }
+
+      .chat-item-info {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .chat-item-name {
+        font-weight: 600;
+        color: #212529;
+        font-size: 14px;
+        margin-bottom: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .chat-item-last-message {
+        font-size: 12px;
+        color: #6c757d;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .chat-item-badge {
+        background: #dc3545;
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: 600;
+        position: absolute;
+        top: -5px;
+        right: -5px;
+      }
+
+      /* Chat Messages Area */
+      .chat-messages-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: #ffffff;
+      }
+
+      .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        background-image: radial-gradient(
+            circle at 20% 80%,
+            rgba(0, 136, 204, 0.1) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 80% 20%,
+            rgba(0, 136, 204, 0.1) 0%,
+            transparent 50%
+          );
+      }
+
+      .chat-message {
+        margin-bottom: 15px;
+        display: flex;
+        align-items: flex-end;
+        gap: 8px;
+      }
+
+      .chat-message.own {
+        flex-direction: row-reverse;
+      }
+
+      .chat-message-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #0088cc, #00a8ff);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 12px;
+        flex-shrink: 0;
+        overflow: hidden;
+      }
+
+      .chat-message-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+      }
+
+      .chat-message-content {
+        max-width: 70%;
+        position: relative;
+      }
+
+      .chat-message-bubble {
+        padding: 12px 16px;
+        border-radius: 18px;
+        position: relative;
+        word-wrap: break-word;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        font-size: 14px;
+        line-height: 1.4;
+      }
+
+      .chat-message-bubble.other {
+        background: #ffffff;
+        color: #212529;
+        border-bottom-left-radius: 4px;
+      }
+
+      .chat-message-bubble.own {
+        background: linear-gradient(135deg, #0088cc, #00a8ff);
+        color: #ffffff;
+        border-bottom-right-radius: 4px;
+      }
+
+      .chat-message-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 4px;
+        font-size: 12px;
+        color: #6c757d;
+      }
+
+      .chat-message-sender {
+        font-weight: 600;
+        color: #0088cc;
+      }
+
+      .chat-message-time {
+        font-size: 11px;
+        opacity: 0.7;
+      }
+
+      .chat-message.own .chat-message-info {
+        justify-content: flex-end;
+      }
+
+      .chat-message.own .chat-message-sender {
+        color: #ffffff;
+      }
+
+      /* Chat Input */
+      .chat-input {
+        padding: 15px 20px;
+        background: #ffffff;
+        border-top: 1px solid #e1e8ed;
+        display: flex;
+        align-items: flex-end;
+        gap: 10px;
+      }
+
+      .chat-input-area {
+        flex: 1;
+        position: relative;
+      }
+
+      .chat-input textarea {
+        width: 100%;
+        border: 2px solid #e1e8ed;
+        border-radius: 20px;
+        padding: 12px 20px;
+        resize: none;
+        font-size: 14px;
+        line-height: 1.4;
+        max-height: 100px;
+        transition: all 0.2s ease;
+        background: #f8f9fa;
+      }
+
+      .chat-input textarea:focus {
+        outline: none;
+        border-color: #0088cc;
+        background: #ffffff;
+        box-shadow: 0 0 0 3px rgba(0, 136, 204, 0.1);
+      }
+
+      .chat-send-btn {
+        background: linear-gradient(135deg, #0088cc, #00a8ff);
+        border: none;
+        color: white;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 18px;
+        box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+      }
+
+      .chat-send-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+      }
+
+      .chat-send-btn:disabled {
+        background: #6c757d;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      /* Empty State */
+      .chat-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: #6c757d;
+        text-align: center;
+        padding: 40px;
+      }
+
+      .chat-empty-icon {
+        font-size: 48px;
+        margin-bottom: 20px;
+        opacity: 0.5;
+      }
+
+      .chat-empty h5 {
+        margin-bottom: 10px;
+        color: #495057;
+      }
+
+      .chat-empty p {
+        font-size: 14px;
+        margin: 0;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .chat-panel {
+          right: 10px;
+          left: 10px;
+          width: auto;
+          height: 85vh;
+        }
+
+        .chat-list {
+          width: 150px;
+        }
+
+        .chat-item-name {
+          font-size: 12px;
+        }
+
+        .chat-message-bubble {
+          max-width: 85%;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .chat-panel {
+          right: 5px;
+          left: 5px;
+          height: 90vh;
+        }
+
+        .chat-list {
+          width: 120px;
+        }
+
+        .chat-item {
+          padding: 8px 10px;
+        }
+
+        .chat-item-avatar {
+          width: 35px;
+          height: 35px;
+          font-size: 14px;
+        }
+      }
+    </style>
+
+    {% if (session.get('staff_id') or session.get('courier_id') or
+    session.get('super_admin') or session.get('user_id')) %}
+    <div id="chatFab" class="chat-fab" title="Chat" aria-label="Chat">
+      💬
+      <span
+        id="chat-unread-count"
+        class="badge bg-danger"
+        style="
+          position: absolute;
+          top: -6px;
+          right: -6px;
+          display: none;
+        "></span>
+    </div>
+
+    <div id="chatPanel" class="chat-panel" role="dialog" aria-hidden="true">
+      <!-- Chat Header -->
+      <div class="chat-header">
+        <h5>💬 Chat</h5>
+        <div class="chat-header-controls">
+          <button id="chatRefreshBtn" class="chat-header-btn" title="Yangilash">
+            🔄
+          </button>
+          <button id="chatCloseBtn" class="chat-header-btn" title="Yopish">
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <!-- Chat Content -->
+      <div class="chat-content">
+        <!-- Chat List (Groups and Contacts) -->
+        <div class="chat-list" id="chatList">
+          <div class="chat-list-header">💬 Guruhlar</div>
+          <div class="chat-group">
+            <div class="chat-group-title">🏢 Guruhlar</div>
+            <div class="chat-item" data-chat-id="all" data-chat-type="group">
+              <div class="chat-item-avatar">🌐</div>
+              <div class="chat-item-info">
+                <div class="chat-item-name">All Team</div>
+                <div class="chat-item-last-message">Barcha xodimlar</div>
+              </div>
+            </div>
+            <div class="chat-item" data-chat-id="staffs" data-chat-type="group">
+              <div class="chat-item-avatar">👥</div>
+              <div class="chat-item-info">
+                <div class="chat-item-name">Staffs</div>
+                <div class="chat-item-last-message">Xodimlar guruhi</div>
+              </div>
+            </div>
+            <div
+              class="chat-item"
+              data-chat-id="couriers"
+              data-chat-type="group">
+              <div class="chat-item-avatar">🚚</div>
+              <div class="chat-item-info">
+                <div class="chat-item-name">Couriers</div>
+                <div class="chat-item-last-message">Yetkazib beruvchilar</div>
+              </div>
+            </div>
+          </div>
+          <div class="chat-group">
+            <div class="chat-group-title">👤 Shaxsiy suhbatlar</div>
+            <div id="privateChatsList">
+              <!-- Private chats will be loaded here -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat Messages Area -->
+        <div class="chat-messages-area">
+          <div class="chat-messages" id="chatMessages">
+            <div class="chat-empty">
+              <div class="chat-empty-icon">💬</div>
+              <h5>Chatni tanlang</h5>
+              <p>Xabarlarni ko'rish uchun chap tomondan chatni tanlang</p>
+            </div>
+          </div>
+          <div class="chat-input">
+            <div class="chat-input-area">
+              <textarea
+                id="chatText"
+                rows="1"
+                placeholder="Xabar yozing..."
+                disabled></textarea>
+            </div>
+            <button id="chatSendBtn" class="chat-send-btn" disabled>➤</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    <!-- Notify modal: composer visible only to superadmin. Other roles get a read-only viewer. -->
+    {% if session.get('super_admin') %}
+    <div
+      id="notifyModal"
+      class="notify-modal"
+      style="
+        display: none;
+        position: fixed;
+        right: 20px;
+        bottom: 90px;
+        width: 320px;
+        background: #fff;
+        border: 1px solid #ddd;
+        padding: 12px;
+        border-radius: 8px;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+        z-index: 11000; /* raised so it overlays other panels */
+      ">
+      <h5>📣 Superadmenga bildirishnoma</h5>
+      <div class="mb-2">
+        <input id="notifyTitle" class="form-control" placeholder="Sarlavha" />
+      </div>
+      <div class="mb-2">
+        <textarea
+          id="notifyBody"
+          class="form-control"
+          rows="3"
+          placeholder="Matn"></textarea>
+      </div>
+      <div style="display: flex; gap: 8px; justify-content: flex-end">
+        <button id="notifyCancelBtn" class="btn btn-sm btn-secondary">
+          Bekor
+        </button>
+        <button id="notifySendBtn" class="btn btn-sm btn-primary">
+          Yuborish
+        </button>
+      </div>
+    </div>
+    {% else %}
+    <!-- Read-only notify viewer for non-superadmin (shows latest notifications) -->
+    <div
+      id="notifyModal"
+      class="notify-modal"
+      style="
+        display: none;
+        position: fixed;
+        right: 20px;
+        bottom: 90px;
+        width: 360px;
+        max-height: 50vh;
+        overflow-y: auto;
+        background: #fff;
+        border: 1px solid #ddd;
+        padding: 12px;
+        border-radius: 8px;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+        z-index: 11000; /* raised so it overlays other panels */
+      ">
+      <h5>🔔 Bildirishnomalar</h5>
+      <div id="notifyListPreview">
+        <!-- Filled by JS: latest notifications for this user -->
+      </div>
+      <div style="display: flex; justify-content: flex-end; margin-top: 8px">
+        <button id="notifyCloseViewer" class="btn btn-sm btn-secondary">
+          Yopish
+        </button>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Member profile popup modal -->
+    <div
+      id="memberProfileModal"
+      style="
+        display: none;
+        position: fixed;
+        right: 20px;
+        bottom: 120px;
+        width: 300px;
+        background: #fff;
+        border: 1px solid #ddd;
+        padding: 12px;
+        border-radius: 8px;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+        z-index: 10000;
+      ">
+      <div style="display: flex; gap: 8px; align-items: center">
+        <img
+          id="memberProfileAvatar"
+          src="/static/images/default-avatar.svg"
+          alt="avatar"
+          style="
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            object-fit: cover;
+          " />
+        <div>
+          <div id="memberProfileName" style="font-weight: 700"></div>
+          <div
+            id="memberProfileRole"
+            style="font-size: 12px; color: #666"></div>
+        </div>
+      </div>
+      <hr />
+      <div style="font-size: 13px">
+        <div><strong>ID:</strong> <span id="memberProfileId"></span></div>
+        <div>
+          <strong>Username:</strong> <span id="memberProfileUsername"></span>
+        </div>
+        <div><strong>Phone:</strong> <span id="memberProfilePhone"></span></div>
+        <div>
+          <strong>Birth date:</strong> <span id="memberProfileBirth"></span>
+        </div>
+      </div>
+      <div style="display: flex; justify-content: flex-end; margin-top: 8px">
+        <button id="memberProfileClose" class="btn btn-sm btn-secondary">
+          Yopish
+        </button>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        const fab = document.getElementById("chatFab");
+        const panel = document.getElementById("chatPanel");
+        const closeBtn = document.getElementById("chatCloseBtn");
+        const refreshBtn = document.getElementById("chatRefreshBtn");
+        const listEl = document.getElementById("chatList");
+        const messagesEl = document.getElementById("chatMessages");
+        const sendBtn = document.getElementById("chatSendBtn");
+        const textEl = document.getElementById("chatText");
+        const privateChatsList = document.getElementById("privateChatsList");
+
+        let activeChatId = null;
+        let activeChatType = null;
+        let currentUserType = null;
+        let currentUserId = null;
+
+        // Get current user info
+        function getCurrentUser() {
+          const IS_SUPER_ADMIN = {{ (session.get('super_admin') and True) | tojson }};
+          const STAFF_ID = {{ (session.get('staff_id') or None) | tojson }};
+          const COURIER_ID = {{ (session.get('courier_id') or None) | tojson }};
+          const USER_ID = {{ (session.get('user_id') or None) | tojson }};
+
+          if (IS_SUPER_ADMIN) {
+            currentUserType = 'super_admin';
+            currentUserId = 1;
+          } else if (STAFF_ID) {
+            currentUserType = 'staff';
+            currentUserId = STAFF_ID;
+          } else if (COURIER_ID) {
+            currentUserType = 'courier';
+            currentUserId = COURIER_ID;
+          } else if (USER_ID) {
+            currentUserType = 'user';
+            currentUserId = USER_ID;
+          }
+        }
+
+        function togglePanel() {
+          if (panel.classList.contains('show')) {
+            panel.classList.remove('show');
+            panel.setAttribute("aria-hidden", "true");
+            fab.classList.remove('active');
+          } else {
+            panel.classList.add('show');
+            panel.setAttribute("aria-hidden", "false");
+            fab.classList.add('active');
+            loadChats();
+            loadPrivateChats();
+          }
+        }
+
+        fab.addEventListener("click", togglePanel);
+        closeBtn.addEventListener("click", togglePanel);
+        refreshBtn.addEventListener("click", () => {
+          loadChats();
+          loadPrivateChats();
+        });
+
+        // Auto-resize textarea
+        textEl.addEventListener('input', function() {
+          this.style.height = 'auto';
+          this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+        });
+
+        // Send message on Enter (but allow Shift+Enter for new line)
+        textEl.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+          }
+        });
+
+        function safeJson(res) {
+          return res.json().catch(() => ({}));
+        }
+
+        function loadChats() {
+          const IS_USER = (window.CURRENT_MEMBER_TYPE === 'user');
+          fetch("/api/chats")
+              .then(safeJson)
+              .then((data) => {
+                listEl.innerHTML = "";
+                if (!data || !Array.isArray(data.chats)) return;
+
+                let chats = data.chats;
+                if (IS_USER) {
+                  const forbiddenNames = new Set(['All Team','Staffs','Couriers']);
+                  chats = chats.filter(m => !(m.is_group === 1 || m.is_group === true || forbiddenNames.has((m.name||'').trim())));
+                }
+
+                const colorPalette = ['#16a34a','#0ea5e9','#f97316','#7c3aed','#ef4444','#06b6d4','#f59e0b'];
+                const nameColorMap = {};
+                function pickColorFor(idOrName){
+                  const key = String(idOrName || '').trim();
+                  if(!key) return '#6b7280';
+                  if(nameColorMap[key]) return nameColorMap[key];
+                  let h=0; for(let i=0;i<key.length;i++){ h = (h<<5)-h + key.charCodeAt(i); h |= 0 }
+                  const idx = Math.abs(h) % colorPalette.length;
+                  nameColorMap[key] = colorPalette[idx];
+                  return nameColorMap[key];
+                }
+
+                data.chats.forEach((m) => {
+                  const div = document.createElement('div');
+                  div.className = 'chat-item d-flex align-items-center';
+                  div.style.gap = '8px';
+                  div.title = m.name || m.display_name || 'Chat';
+
+                  const av = document.createElement('div');
+                  av.className = 'chat-avatar';
+                  av.style.background = pickColorFor(m.id || m.name || m.display_name);
+                  if(m.avatar){ const img = document.createElement('img'); img.src = m.avatar; img.style.width='36px'; img.style.height='36px'; img.style.borderRadius='50%'; img.style.objectFit='cover'; av.appendChild(img); }
+                  // attach member metadata when available for profile popup
+                  if(m.member_type && m.member_id){ av.dataset.memberType = m.member_type; av.dataset.memberId = m.member_id; }
+                  // click avatar to view profile
+                  av.addEventListener('click', (ev)=>{ ev.stopPropagation(); if(av.dataset.memberType && av.dataset.memberId) fetchMemberProfile(av.dataset.memberType, av.dataset.memberId); });
+
+                  const meta = document.createElement('div');
+                  meta.style.flex = '1';
+                  meta.innerHTML = `<div style="font-weight:600">${escapeHtml(m.name || m.display_name || 'Chat')}</div><div style="font-size:12px;color:#666">${escapeHtml(m.preview || '')}</div>`;
+
+                  div.appendChild(av);
+                  div.appendChild(meta);
+
+                  div.dataset.chatId = m.id;
+                  div.addEventListener('click', ()=>{
+                    openChat(m.id, m.name || m.display_name || 'Chat');
+                  });
+
+                  listEl.appendChild(div);
+                });
+              })
+              .catch((e) => {
+                // console.log("Load chats error", e);
+              });
+        }
+
+        function loadPrivateChats() {
+          // Load private chats based on user role
+          privateChatsList.innerHTML = '';
+
+          fetch('/api/private-chats')
+              .then(safeJson)
+              .then((data) => {
+                    // Debug: log what backend returned (helps when chats don't appear)
+                    try { console.debug('loadPrivateChats -> response:', data); } catch(e){}
+
+                    // Only treat as present if private_chats is a non-empty array
+                    if (data && data.success && Array.isArray(data.private_chats) && data.private_chats.length > 0) {
+                      data.private_chats.forEach(chat => {
+                      // Normalize fields with safe fallbacks for robustness
+                      const chatId = chat.id || (`unknown_${Math.random().toString(36).slice(2,8)}`);
+                      const chatType = chat.type || 'unknown';
+                      const userId = chat.user_id || (chat.userId || chat.user_id || null);
+                      const name = chat.name || chat.first_name || 'No name';
+
+                      const chatItem = document.createElement('div');
+                      chatItem.className = 'chat-item';
+                      chatItem.dataset.chatId = chatId;
+                      chatItem.dataset.chatType = 'private';
+                      chatItem.dataset.userType = chatType;
+                      if (userId) chatItem.dataset.userId = userId;
+                      chatItem.dataset.hasMeta = JSON.stringify({hasAvatar: !!chat.avatar, idPresent: !!chat.id, userIdPresent: !!userId});
+
+                      // clickable
+                      chatItem.style.cursor = 'pointer';
+                      chatItem.addEventListener('click', () => {
+                        try { openChat(chatItem.dataset.chatId, 'private'); } catch(e) { console.debug('openChat error', e); }
+                      });
+
+                      // build avatar/info below
+                      const avatar = document.createElement('div');
+                      avatar.className = 'chat-item-avatar';
+                      if (chat.avatar) {
+                        const img = document.createElement('img');
+                        img.src = chat.avatar;
+                        img.alt = name;
+                        avatar.appendChild(img);
+                      } else {
+                        avatar.textContent = (name || 'U').charAt(0).toUpperCase();
+                      }
+
+                      const info = document.createElement('div');
+                      info.className = 'chat-item-info';
+                      info.innerHTML = `\n                    <div class="chat-item-name">${name}</div>\n                    <div class="chat-item-last-message">Shaxsiy suhbat</div>\n                  `;
+
+                      chatItem.appendChild(avatar);
+                      chatItem.appendChild(info);
+                      // Ensure the item is visible even if some CSS/bootstrap classes interfered
+                      try { chatItem.style.display = 'flex'; } catch (e) {}
+                      privateChatsList.appendChild(chatItem);
+                });
+              } else {
+                // Show placeholder if no private chats
+                const placeholder = document.createElement('div');
+                placeholder.className = 'chat-item';
+                placeholder.innerHTML = `
+                  <div class="chat-item-avatar">👤</div>
+                  <div class="chat-item-info">
+                    <div class="chat-item-name">Shaxsiy suhbatlar yo'q</div>
+                    <div class="chat-item-last-message">Boshqa xodimlar bilan suhbatlashish</div>
+                  </div>
+                `;
+                privateChatsList.appendChild(placeholder);
+              }
+            })
+            .catch(error => {
+              // console.error('Error loading private chats:', error);
+              const placeholder = document.createElement('div');
+              placeholder.className = 'chat-item';
+              placeholder.innerHTML = `
+                <div class="chat-item-avatar">❌</div>
+                <div class="chat-item-info">
+                  <div class="chat-item-name">Xatolik</div>
+                  <div class="chat-item-last-message">Shaxsiy suhbatlarni yuklashda xatolik</div>
+                </div>
+              `;
+              privateChatsList.appendChild(placeholder);
+            });
+        }
+
+        function openChat(chatId, chatType) {
+          activeChatId = chatId;
+          activeChatType = chatType;
+
+          // Update active state
+          document.querySelectorAll('.chat-item').forEach(item => {
+            item.classList.remove('active');
+          });
+          document.querySelector(`[data-chat-id="${chatId}"]`).classList.add('active');
+
+          // Enable input
+          textEl.disabled = false;
+          sendBtn.disabled = false;
+
+          // Handle private chats
+          if (chatType === 'private') {
+            const chatItem = document.querySelector(`[data-chat-id="${chatId}"]`);
+            const userType = chatItem.dataset.userType;
+            const userId = chatItem.dataset.userId;
+
+            // Create or get private chat
+            fetch(`/api/private-chat/${userType}/${userId}`)
+              .then(safeJson)
+              .then((data) => {
+                if (data.success) {
+                  // Load messages for the private chat
+                  loadMessages(data.chat_id);
+                } else {
+                  messagesEl.innerHTML = `
+                    <div class="chat-empty">
+                      <div class="chat-empty-icon">❌</div>
+                      <h5>Xatolik</h5>
+                      <p>Shaxsiy suhbatni ochishda xatolik: ${data.message}</p>
+                    </div>
+                  `;
+                }
+              })
+              .catch(error => {
+                // console.error('Error opening private chat:', error);
+                messagesEl.innerHTML = `
+                  <div class="chat-empty">
+                    <div class="chat-empty-icon">❌</div>
+                    <h5>Xatolik</h5>
+                    <p>Shaxsiy suhbatni ochishda xatolik yuz berdi</p>
+                  </div>
+                `;
+              });
+          } else {
+            // Load messages for group chats
+            loadMessages(chatId);
+          }
+        }
+
+        function loadMessages(chatId) {
+          messagesEl.innerHTML = '<div class="text-center p-4">Yuklanmoqda...</div>';
+
+          fetch(`/api/chats/${chatId}/messages?limit=100`)
+            .then(safeJson)
+            .then((data) => {
+              messagesEl.innerHTML = '';
+
+              if (!data || !data.messages || data.messages.length === 0) {
+                messagesEl.innerHTML = `
+                  <div class="chat-empty">
+                    <div class="chat-empty-icon">💬</div>
+                    <h5>Hali xabar yo'q</h5>
+                    <p>Birinchi xabarni yuboring!</p>
+                  </div>
+                `;
+                return;
+              }
+
+              data.messages.forEach((message) => {
+                const messageEl = createMessageElement(message);
+                messagesEl.appendChild(messageEl);
+              });
+
+              // Scroll to bottom
+              messagesEl.scrollTop = messagesEl.scrollHeight;
+            })
+            .catch(error => {
+              // console.error('Error loading messages:', error);
+              messagesEl.innerHTML = `
+                <div class="chat-empty">
+                  <div class="chat-empty-icon">❌</div>
+                  <h5>Xatolik</h5>
+                  <p>Xabarlarni yuklashda xatolik yuz berdi</p>
+                </div>
+              `;
+            });
+        }
+
+        function createMessageElement(message) {
+          const isOwn = message.sender_type === currentUserType && message.sender_id == currentUserId;
+          const messageEl = document.createElement('div');
+          messageEl.className = `chat-message ${isOwn ? 'own' : ''}`;
+
+          const avatar = document.createElement('div');
+          avatar.className = 'chat-message-avatar';
+          if (message.sender_avatar) {
+            const img = document.createElement('img');
+            img.src = message.sender_avatar;
+            img.alt = message.sender_name || 'User';
+            avatar.appendChild(img);
+          } else {
+            avatar.textContent = (message.sender_name || 'U').charAt(0).toUpperCase();
+          }
+
+          const content = document.createElement('div');
+          content.className = 'chat-message-content';
+
+          const info = document.createElement('div');
+          info.className = 'chat-message-info';
+
+          if (!isOwn) {
+            const sender = document.createElement('span');
+            sender.className = 'chat-message-sender';
+            sender.textContent = message.sender_name || 'Unknown';
+            info.appendChild(sender);
+          }
+
+          const time = document.createElement('span');
+          time.className = 'chat-message-time';
+          time.textContent = formatTime(message.created_at);
+          info.appendChild(time);
+
+          const bubble = document.createElement('div');
+          bubble.className = `chat-message-bubble ${isOwn ? 'own' : 'other'}`;
+          bubble.textContent = message.text;
+
+          content.appendChild(info);
+          content.appendChild(bubble);
+
+          messageEl.appendChild(avatar);
+          messageEl.appendChild(content);
+
+          return messageEl;
+        }
+
+        function formatTime(timestamp) {
+          const date = new Date(timestamp);
+          const now = new Date();
+          const diff = now - date;
+
+          if (diff < 60000) { // Less than 1 minute
+            return 'hozir';
+          } else if (diff < 3600000) { // Less than 1 hour
+            return Math.floor(diff / 60000) + ' daqiqa oldin';
+          } else if (diff < 86400000) { // Less than 1 day
+            return Math.floor(diff / 3600000) + ' soat oldin';
+          } else {
+            return date.toLocaleDateString('uz-UZ');
+          }
+        }
+
+        function sendMessage() {
+          const text = textEl.value.trim();
+          if (!text || !activeChatId) return;
+
+          // Validate message length
+          if (text.length > 1000) {
+            alert('Xabar juda uzun (maksimum 1000 belgi)');
+            return;
+          }
+
+          sendBtn.disabled = true;
+          sendBtn.textContent = '⏳';
+
+          fetch(`/api/chats/${activeChatId}/messages`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : ''
+            },
+            body: JSON.stringify({ text: text })
+          })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then((data) => {
+            if (data && data.success) {
+              textEl.value = '';
+              textEl.style.height = 'auto';
+              loadMessages(activeChatId);
+            } else {
+              alert('Xabar yuborishda xatolik: ' + (data.message || 'Noma\'lum xatolik'));
+            }
+          })
+          .catch(error => {
+            // console.error('Error sending message:', error);
+            alert('Xabar yuborishda xatolik yuz berdi');
+          })
+          .finally(() => {
+            sendBtn.disabled = false;
+            sendBtn.textContent = '➤';
+          });
+        }
+
+        // Event listeners
+        sendBtn.addEventListener('click', sendMessage);
+
+        // Chat item click handlers
+        document.addEventListener('click', function(e) {
+          const chatItem = e.target.closest('.chat-item');
+          if (chatItem) {
+            const chatId = chatItem.dataset.chatId;
+            const chatType = chatItem.dataset.chatType;
+            if (chatId) {
+              openChat(chatId, chatType);
+            }
+          }
+        });
+
+        // Initialize
+        getCurrentUser();
+        loadChats();
+        loadPrivateChats();
+
+        // Auto-refresh messages every 5 seconds when panel is open
+        setInterval(() => {
+          if (panel.classList.contains('show') && activeChatId) {
+            loadMessages(activeChatId);
+          }
+        }, 5000);
+
+        // Notification buttons in the navbar have class .nav-notify
+        const navNotifyBtns = document.querySelectorAll(".nav-notify");
+        navNotifyBtns.forEach((b) =>
+          b.addEventListener("click", () => {
+            const modal = document.getElementById("notifyModal");
+            if (modal) modal.style.display = "block";
+          })
+        );
+      })();
+    </script>
+
+    <script>
+          // Load chats function
+          function loadChats() {
+            const IS_USER = (window.CURRENT_MEMBER_TYPE === 'user');
+            fetch("/api/chats")
+                .then(safeJson)
+                .then((data) => {
+                  listEl.innerHTML = "";
+                  if (!data || !Array.isArray(data.chats)) return;
+
+                  let chats = data.chats;
+                  if (IS_USER) {
+                    const forbiddenNames = new Set(['All Team','Staffs','Couriers']);
+                    chats = chats.filter(m => !(m.is_group === 1 || m.is_group === true || forbiddenNames.has((m.name||'').trim())));
+                  }
+
+                  const colorPalette = ['#16a34a','#0ea5e9','#f97316','#7c3aed','#ef4444','#06b6d4','#f59e0b'];
+                  const nameColorMap = {};
+                  function pickColorFor(idOrName){
+                    const key = String(idOrName || '').trim();
+                    if(!key) return '#6b7280';
+                    if(nameColorMap[key]) return nameColorMap[key];
+                    let h=0; for(let i=0;i<key.length;i++){ h = (h<<5)-h + key.charCodeAt(i); h |= 0 }
+                    const idx = Math.abs(h) % colorPalette.length;
+                    nameColorMap[key] = colorPalette[idx];
+                    return nameColorMap[key];
+                  }
+
+                  data.chats.forEach((m) => {
+                    const div = document.createElement('div');
+                    div.className = 'chat-item d-flex align-items-center';
+                    div.style.gap = '8px';
+                    div.title = m.name || m.display_name || 'Chat';
+
+                    const av = document.createElement('div');
+                    av.className = 'chat-avatar';
+                    av.style.background = pickColorFor(m.id || m.name || m.display_name);
+                    if(m.avatar){ const img = document.createElement('img'); img.src = m.avatar; img.style.width='36px'; img.style.height='36px'; img.style.borderRadius='50%'; img.style.objectFit='cover'; av.appendChild(img); }
+                    // attach member metadata when available for profile popup
+                    if(m.member_type && m.member_id){ av.dataset.memberType = m.member_type; av.dataset.memberId = m.member_id; }
+                    // click avatar to view profile
+                    av.addEventListener('click', (ev)=>{ ev.stopPropagation(); if(av.dataset.memberType && av.dataset.memberId) fetchMemberProfile(av.dataset.memberType, av.dataset.memberId); });
+
+                    const meta = document.createElement('div');
+                    meta.style.flex = '1';
+                    meta.innerHTML = `<div style="font-weight:600">${escapeHtml(m.name || m.display_name || 'Chat')}</div><div style="font-size:12px;color:#666">${escapeHtml(m.preview || '')}</div>`;
+
+                    div.appendChild(av);
+                    div.appendChild(meta);
+
+                    div.dataset.chatId = m.id;
+                    div.addEventListener('click', ()=>{
+                      openChat(m.id, m.name || m.display_name || 'Chat');
+                    });
+
+                    listEl.appendChild(div);
+                  });
+                })
+                .catch((e) => {
+                  // console.log("Load chats error", e);
+                });
+            }
+
+            function createOrOpenPrivateChat(member) {
+              // call POST /api/chats to create private chat with selected member
+              const payload = {
+                member_type: member.member_type,
+                member_id: member.member_id,
+              };
+              fetch("/api/chats", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "X-CSRF-Token":
+                    typeof CSRF_TOKEN !== "undefined" ? CSRF_TOKEN : "",
+                },
+                body: JSON.stringify(payload),
+              })
+                .then(safeJson)
+                .then((resp) => {
+                  if (resp && resp.success && resp.chat_id) {
+                    // open the new chat
+                    {# openChat(resp.chat_id, resp.name || "Chat " + resp.chat_id); #}
+                  } else {
+                    // fallback: refresh chat list
+                    loadChats();
+                  }
+                })
+                .catch((e) => {
+                  // console.log("Create private chat error", e);
+                  loadChats();
+                });
+            }
+
+            function openChat(chatId, name) {
+              activeChatId = chatId;
+              // ensure panel is visible
+              if (panel.style.display !== 'block') togglePanel();
+              messagesEl.innerHTML = '<div class="text-muted">Yuklanmoqda...</div>';
+              // notifications are handled via separate FAB, do not inject notify button into chat header
+
+              fetch(`/api/chats/${chatId}/messages?limit=200`)
+                .then(safeJson)
+                .then((data) => {
+                  messagesEl.innerHTML = "";
+                  if (!data || !data.messages)
+                    return (messagesEl.innerHTML =
+                      '<div class="text-muted">Xabarlar topilmadi</div>');
+                  data.messages.forEach((m) => {
+                    const d = document.createElement("div");
+                    d.className = "chat-message d-flex gap-2";
+
+                    const avatar = document.createElement("div");
+                    avatar.className = "chat-avatar";
+                    if (m.sender_avatar) {
+                      const img = document.createElement("img");
+                      img.src = m.sender_avatar;
+                      img.style.width = "36px";
+                      img.style.height = "36px";
+                      img.style.borderRadius = "50%";
+                      img.style.objectFit = "cover";
+                      avatar.appendChild(img);
+                    }
+                    // Attach sender metadata for profile click if available
+                    if(m.sender_type && m.sender_id){ avatar.dataset.memberType = m.sender_type; avatar.dataset.memberId = m.sender_id; }
+                    avatar.addEventListener('click', (ev)=>{ ev.stopPropagation(); if(avatar.dataset.memberType && avatar.dataset.memberId) fetchMemberProfile(avatar.dataset.memberType, avatar.dataset.memberId); });
+
+                    const content = document.createElement("div");
+                    const header = document.createElement("div");
+                    header.style.fontSize = "12px";
+                    header.style.color = "#666";
+                    header.textContent = `${m.sender_name || m.sender_type || "N/A"} ${m.created_at || ""}`;
+
+                    const bodyDiv = document.createElement("div");
+                    bodyDiv.innerHTML = escapeHtml(m.text);
+                    bodyDiv.style.background = "#f1f3f5";
+                    bodyDiv.style.padding = "8px 10px";
+                    bodyDiv.style.borderRadius = "8px";
+
+                    content.appendChild(header);
+                    content.appendChild(bodyDiv);
+
+                    d.appendChild(avatar);
+                    d.appendChild(content);
+                    messagesEl.appendChild(d);
+                  });
+                  messagesEl.scrollTop = messagesEl.scrollHeight;
+                  // After opening, clear unread count badge by refreshing unread count
+                  updateChatUnreadCount();
+                })
+                .catch((e) => {
+                  messagesEl.innerHTML =
+                    '<div class="text-danger">Xatolik yuz berdi</div>';
+                  // console.log(e);
+                });
+            }
+
+            function escapeHtml(s) {
+              return (s || "").replace(/[&<>"']/g, function (c) {
+                return {
+                  "&": "&amp;",
+                  "<": "&lt;",
+                  ">": "&gt;",
+                  '"': "&quot;",
+                  "'": "&#39;",
+                }[c];
+              });
+            }
+
+            sendBtn.addEventListener("click", () => {
+              const text = textEl.value.trim();
+              if (!text || !activeChatId) return;
+              fetch(`/api/chats/${activeChatId}/messages`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "X-CSRF-Token":
+                    typeof CSRF_TOKEN !== "undefined" ? CSRF_TOKEN : "",
+                },
+                body: JSON.stringify({ text }),
+              })
+                .then(safeJson)
+                .then((resp) => {
+                  if (resp && resp.success) {
+                    textEl.value = "";
+                    {# openChat(activeChatId); #}
+                  }
+                })
+                .catch((e) => {
+                  // console.log("Send chat error", e);
+                });
+            });
+
+            // Poll for new messages every 7s when panel open
+            setInterval(() => {
+              if (panel.style.display === "block" && activeChatId) {
+                // reload messages for active chat and render Telegram-like bubbles
+                fetch(`/api/chats/${activeChatId}/messages?limit=200`)
+                  .then(safeJson)
+                  .then((d) => {
+                    if (d && d.messages) {
+                      messagesEl.innerHTML = '';
+                      d.messages.forEach((m) => {
+                        const wrapper = document.createElement('div');
+                        wrapper.style.display = 'flex';
+                        wrapper.style.marginBottom = '8px';
+                        const isMe = window.CURRENT_MEMBER_ID && String(m.sender_id) === String(window.CURRENT_MEMBER_ID);
+                        wrapper.style.justifyContent = isMe ? 'flex-end' : 'flex-start';
+
+                        const bubble = document.createElement('div');
+                        bubble.className = 'tg-bubble ' + (isMe ? 'tg-bubble-right' : 'tg-bubble-left');
+                        bubble.innerHTML = `<div style="font-size:12px;color:#6b7280;margin-bottom:4px">${escapeHtml(m.sender_name||m.sender_type||'')}</div><div>${escapeHtml(m.text||'')}</div><div style="font-size:10px;color:#9ca3af;margin-top:6px;text-align:${isMe?'right':'left'}">${escapeHtml(m.created_at||'')}</div>`;
+                        wrapper.appendChild(bubble);
+                        messagesEl.appendChild(wrapper);
+                      });
+                      messagesEl.scrollTop = messagesEl.scrollHeight;
+                    }
+                  })
+                  .catch(() => {});
+              }
+            }, 7000);
+
+            // Chat unread badge updater
+            function updateChatUnreadCount(){
+              fetch('/api/chat-unread-count').then(safeJson).then((r)=>{
+                try{
+                  const unread = (r && r.unread) || 0;
+                  const badge = document.getElementById('chat-unread-count');
+                  if(!badge) return;
+                  if(unread>0){ badge.style.display='inline-block'; badge.textContent = unread>99? '99+': String(unread); }
+                  else badge.style.display='none';
+                }catch(e){ }
+              }).catch(()=>{});
+            }
+
+            // Update unread count on load and every 10s
+            updateChatUnreadCount();
+            setInterval(updateChatUnreadCount, 10000);
+
+            // Notify modal handlers
+            const notifyModal = document.getElementById("notifyModal");
+            const notifyCancelBtn = document.getElementById("notifyCancelBtn");
+            const notifySendBtn = document.getElementById("notifySendBtn");
+            if (notifyCancelBtn)
+              notifyCancelBtn.addEventListener("click", () => {
+                if (notifyModal) {
+                  notifyModal.style.display = "none";
+                  // clear inputs
+                  const t = document.getElementById('notifyTitle');
+                  const b = document.getElementById('notifyBody');
+                  if (t) t.value = '';
+                  if (b) b.value = '';
+                }
+              });
+            // Server will render IS_SUPER_ADMIN true/false
+            const IS_SUPER_ADMIN = {{ (session.get('super_admin') and True) | tojson }};
+            // Current member context for chat (used to align "my" messages)
+            window.CURRENT_MEMBER_ID = {{ (session.get('user_id') or session.get('staff_id') or session.get('courier_id') or None) | tojson }};
+            window.CURRENT_MEMBER_TYPE = {{ ('user' if session.get('user_id') else ('staff' if session.get('staff_id') else ('courier' if session.get('courier_id') else 'anonymous'))) | tojson }};
+            if (IS_SUPER_ADMIN && notifySendBtn) {
+              // Only attach send handler for superadmin
+              notifySendBtn.addEventListener("click", () => {
+                const title = document.getElementById("notifyTitle").value.trim();
+                const body = document.getElementById("notifyBody").value.trim();
+                if (!title || !body) return alert("Iltimos sarlavha va matn kiriting");
+
+                const isBroadcast = confirm('Barcha foydalanuvchilarga yuborilsinmi? OK = BARCHA; Cancel = Yagona qabul qiluvchi');
+                let payload = { title, body };
+                if (isBroadcast) {
+                  const group = prompt('Qaysi guruh? (all, users, staff, couriers)', 'all') || 'all';
+                  payload.recipient_type = group;
+                } else {
+                  const rType = prompt('Qabul qiluvchi turi? (users, staff, couriers)', 'users');
+                  const rId = prompt('Qabul qiluvchining id raqami', '');
+                  if (!rId) return alert('Iltimos id kiriting');
+                  payload.recipient_type = rType || 'users';
+                  payload.recipient_id = parseInt(rId, 10);
+                }
+
+                fetch("/super-admin/send-notification", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-Token": typeof CSRF_TOKEN !== "undefined" ? CSRF_TOKEN : "",
+                  },
+                  body: JSON.stringify(payload),
+                })
+                  .then(safeJson)
+                  .then((r) => {
+                    if (r && r.success) {
+                      alert("Bildirishnoma yuborildi");
+                      if (notifyModal) {
+                        notifyModal.style.display = "none";
+                        const t = document.getElementById('notifyTitle');
+                        const b = document.getElementById('notifyBody');
+                        if (t) t.value = '';
+                        if (b) b.value = '';
+                      }
+                    } else alert("Yuborishda xatolik: " + (r && r.message ? r.message : ''));
+                  })
+                  .catch((e) => {
+                    alert("Yuborishda xatolik");
+                    // console.log(e);
+                  });
+              });
+            }
+
+      // Notification count updater
+            function updateNotifyCount() {
+              fetch("/api/notifications")
+                .then(safeJson)
+                .then((r) => {
+                  try {
+                    const notes = (r && r.notifications) || [];
+                    // count unread (read_flag === 0) if present
+                    let unread = 0;
+                    notes.forEach((n) => {
+                      if (
+                        n.read_flag === 0 ||
+                        n.read_flag === "0" ||
+                        n.read_flag === null
+                      )
+                        unread++;
+                    });
+                    const badges = document.querySelectorAll("#notify-count");
+                    badges.forEach((b) => {
+                      if (unread > 0) {
+                        b.style.display = "inline-block";
+                        b.textContent = unread > 99 ? "99+" : String(unread);
+                      } else {
+                        b.style.display = "none";
+                      }
+                    });
+                  } catch (e) {
+                    // console.log("notify count parse error", e);
+                  }
+                })
+                .catch((e) => {
+                  // console.log("Notify count fetch error", e);
+                });
+            }
+
+            // Fetch and show member profile in popup modal
+            function fetchMemberProfile(memberType, memberId){
+              fetch(`/api/member/${memberType}/${memberId}`)
+                .then(safeJson)
+                .then((r)=>{ if(r && r.success && r.profile) showMemberProfile(r.profile); })
+                .catch((e)=>{
+                  // console.log('Member profile fetch error', e);
+                });
+            }
+
+            function showMemberProfile(profile){
+              if(!profile) return;
+              const modal = document.getElementById('memberProfileModal');
+              if(!modal) return;
+              document.getElementById('memberProfileAvatar').src = profile.avatar || '/static/images/default-avatar.svg';
+              document.getElementById('memberProfileName').textContent = profile.name || profile.username || ('#'+profile.id);
+              document.getElementById('memberProfileRole').textContent = (profile.role || '').toString();
+              document.getElementById('memberProfileId').textContent = profile.id || '';
+              document.getElementById('memberProfileUsername').textContent = profile.username || '';
+              document.getElementById('memberProfilePhone').textContent = profile.phone || '';
+              document.getElementById('memberProfileBirth').textContent = profile.birth_date || '';
+              modal.style.display = 'block';
+            }
+
+            const memberProfileClose = document.getElementById('memberProfileClose');
+            if(memberProfileClose) memberProfileClose.addEventListener('click', ()=>{ const m = document.getElementById('memberProfileModal'); if(m) m.style.display='none'; });
+
+            // Update on load and every 20s
+            updateNotifyCount();
+            setInterval(updateNotifyCount, 20000);
+
+            // When opening the notify modal, mark visible notifications as read
+            const notifyButtons = document.querySelectorAll('.nav-notify');
+            notifyButtons.forEach((b) => b.addEventListener('click', async ()=>{
+              if(!IS_SUPER_ADMIN){
+                // non-super-admin: fetch latest notifications and show read-only viewer
+                try{
+                  const res = await fetch('/api/notifications');
+                  const data = await res.json().catch(()=>({}));
+                  const list = (data && data.notifications) || [];
+                  const preview = document.getElementById('notifyListPreview');
+                  if(preview){
+                    preview.innerHTML = '';
+                    if(list.length===0) preview.innerHTML = '<div class="text-muted">Hech qanday bildirishnoma yo\'q</div>';
+                    list.slice(0,10).forEach(n=>{
+                      const item = document.createElement('div');
+                      item.className = 'mb-2';
+                      item.innerHTML = `<div style="font-weight:600">${escapeHtml(n.title || '')}</div><div style="font-size:12px;color:#666">${escapeHtml(n.body || '')}</div><hr/>`;
+                      preview.appendChild(item);
+                    });
+                  }
+                  if(notifyModal) notifyModal.style.display = 'block';
+                  // mark read for this recipient (best-effort)
+                  fetch('/api/notifications/mark-read', { method: 'POST', headers: { 'X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : '' } }).then(()=>updateNotifyCount()).catch(()=>{});
+                }catch(e){
+                  // console.log('Failed to load notifications', e);
+                  if(notifyModal) notifyModal.style.display = 'block';
+                }
+                return;
+              }
+              // super admin opens composer modal
+              if(notifyModal) notifyModal.style.display = 'block';
+            }));
+            // Close viewer button handler for non-superadmins
+            const notifyCloseViewer = document.getElementById('notifyCloseViewer');
+            if(notifyCloseViewer) notifyCloseViewer.addEventListener('click', ()=>{ const m = document.getElementById('notifyModal'); if(m) m.style.display='none'; });
+          })();
+    </script>
+    {% endif %}
+    <!-- End chat widget for staff/courier/superadmin -->
+  </body>
 </html>

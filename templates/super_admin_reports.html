@@ -1,8 +1,5 @@
-
 {% extends "base.html" %}
-
 {% block title %}Hisobotlar - Super Admin{% endblock %}
-
 {% block content %}
 <div class="reports-container">
     <div class="reports-header">
@@ -12,11 +9,11 @@
         </div>
     </div>
 
-    <!-- Report Filters -->
+    <!-- Filters Section -->
     <div class="filters-section">
         <div class="filter-group">
             <label>Hisobot turi:</label>
-            <select id="reportType" onchange="generateReport()">
+            <select id="reportType">
                 <option value="daily">Kunlik hisobot</option>
                 <option value="weekly">Haftalik hisobot</option>
                 <option value="monthly">Oylik hisobot</option>
@@ -37,6 +34,8 @@
         <div class="filter-group">
             <button class="btn btn-primary" onclick="generateReport()">📊 Hisobot yaratish</button>
             <button class="btn btn-success" onclick="exportReport()">📄 Eksport</button>
+            <button class="btn btn-outline-secondary" onclick="exportStaffList()">👨‍💼 Xodimlar (.xlsx)</button>
+            <button class="btn btn-outline-secondary" onclick="exportCourierList()">🚚 Kuryerlar (.xlsx)</button>
         </div>
     </div>
 
@@ -80,7 +79,6 @@
         <!-- Sales Report Tab -->
         <div id="sales-report" class="report-tab active">
             <div class="report-content">
-                <h3>💰 Sotuvlar Hisoboti</h3>
                 <div id="sales-data" class="table-responsive">
                     <p class="text-center">Hisobot yaratish uchun yuqoridagi tugmani bosing</p>
                 </div>
@@ -126,6 +124,66 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Current reports display -->
+    <div class="current-reports">
+        <div class="reports-grid">
+            <div class="report-card daily">
+                <div class="report-icon">📅</div>
+                <div class="report-content">
+                    <h3>Bugungi Hisobot</h3>
+                    <div class="report-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Buyurtmalar:</span>
+                            <span class="stat-value">{{ reports.daily.orders or 0 }}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Daromad:</span>
+                            <span class="stat-value">{{ "{:,}".format(reports.daily.revenue or 0) }} so'm</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="report-card weekly">
+                <div class="report-icon">📆</div>
+                <div class="report-content">
+                    <h3>Haftalik Hisobot</h3>
+                    <div class="report-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Buyurtmalar:</span>
+                            <span class="stat-value">{{ reports.weekly.orders or 0 }}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Daromad:</span>
+                            <span class="stat-value">{{ "{:,}".format(reports.weekly.revenue or 0) }} so'm</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="report-card monthly">
+                <div class="report-icon">📈</div>
+                <div class="report-content">
+                    <h3>Oylik Hisobot</h3>
+                    <div class="report-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Buyurtmalar:</span>
+                            <span class="stat-value">{{ reports.monthly.orders or 0 }}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Daromad:</span>
+                            <span class="stat-value">{{ "{:,}".format(reports.monthly.revenue or 0) }} so'm</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="back-button">
+        <a href="{{ url_for('super_admin_dashboard') }}" class="btn btn-primary">⬅️ Dashboard ga qaytish</a>
     </div>
 </div>
 
@@ -442,25 +500,23 @@ function exportReport() {
     }
     
     const reportType = document.getElementById('reportType').value;
-    const startDate = document.getElementById('startDate').value;
-    const endDate = document.getElementById('endDate').value;
     
     fetch('/api/super-admin/export-report', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-            type: reportType,
-            start_date: startDate,
-            end_date: endDate,
-            data: currentReportData
-        })
+        body: JSON.stringify(currentReportData)
     })
-    .then(response => response.blob())
-    .then(blob => {
+    .then(response => {
+        if (!response.ok) throw new Error('Export failed');
+        const contentType = response.headers.get('content-type') || '';
+        return response.blob().then(blob => ({ blob, contentType }));
+    })
+    .then(({ blob, contentType }) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `hisobot_${reportType}_${new Date().toISOString().split('T')[0]}.xlsx`;
+        const ext = contentType.includes('text/csv') ? 'csv' : 'xlsx';
+        a.download = `hisobot_${reportType}_${new Date().toISOString().split('T')[0]}.${ext}`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
@@ -470,6 +526,46 @@ function exportReport() {
         console.error('Eksport xatoligi:', error);
         alert('Hisobotni eksport qilishda xatolik');
     });
+}
+
+// Xodimlar ro'yxatini eksport qilish
+function exportStaffList() {
+    fetch('/api/super-admin/export-staff', { method: 'GET' })
+        .then(response => {
+            if (!response.ok) throw new Error('Export failed');
+            return response.blob();
+        })
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `staff_list_${new Date().toISOString().split('T')[0]}.xlsx`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        })
+        .catch(err => alert('Xodimlar ro\'yxatini eksport qilishda xatolik: ' + err));
+}
+
+// Kuryerlar ro'yxatini eksport qilish
+function exportCourierList() {
+    fetch('/api/super-admin/export-couriers', { method: 'GET' })
+        .then(response => {
+            if (!response.ok) throw new Error('Export failed');
+            return response.blob();
+        })
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `couriers_list_${new Date().toISOString().split('T')[0]}.xlsx`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        })
+        .catch(err => alert('Kuryerlar ro\'yxatini eksport qilishda xatolik: ' + err));
 }
 
 // Loading ko'rsatish
@@ -600,6 +696,7 @@ document.addEventListener('DOMContentLoaded', function() {
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.08);
     overflow: hidden;
+    margin-bottom: 30px;
 }
 
 .report-tabs {
@@ -673,317 +770,8 @@ document.addEventListener('DOMContentLoaded', function() {
     background: #f8f9fa;
 }
 
-.btn {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    text-decoration: none;
-    display: inline-block;
-    transition: all 0.3s ease;
-}
-
-.btn-primary {
-    background: #007bff;
-    color: white;
-}
-
-.btn-primary:hover {
-    background: #0056b3;
-}
-
-.btn-success {
-    background: #28a745;
-    color: white;
-}
-
-.btn-success:hover {
-    background: #1e7e34;
-}
-
-.badge {
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 11px;
-    font-weight: 500;
-}
-
-.bg-success { background: #28a745; color: white; }
-.bg-danger { background: #dc3545; color: white; }
-
-.text-center { text-align: center; }
-
-.spinner-border {
-    width: 2rem;
-    height: 2rem;
-    border: 0.25em solid currentColor;
-    border-right-color: transparent;
-    border-radius: 50%;
-    animation: spin 0.75s linear infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-/* Mobile responsive */
-@media (max-width: 768px) {
-    .reports-container {
-        padding: 15px;
-    }
-    
-    .filters-section {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    
-    .filter-group {
-        width: 100%;
-    }
-    
-    .summary-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .report-tabs {
-        flex-direction: column;
-    }
-    
-    .tab-btn {
-        text-align: center;
-        border-bottom: 1px solid #e2e8f0;
-    }
-    
-    .tab-btn.active {
-        border-bottom: 3px solid #007bff;
-    }
-}
-</style>
-{% endblock %}
-{% extends "base.html" %}
-
-{% block content %}
-<div class="reports-container">
-    <h1>📈 Hisobotlar</h1>
-    
-    <div class="reports-grid">
-        <div class="report-card">
-            <h3>📊 Moliyaviy Hisobot</h3>
-            <p>Oylik va yillik daromad statistikasi</p>
-            <button class="btn btn-primary" onclick="generateFinancialReport()">Hisobot yaratish</button>
-        </div>
-        
-        <div class="report-card">
-            <h3>👥 Xodimlar Hisoboti</h3>
-            <p>Xodimlar faolligi va ishlash statistikasi</p>
-            <button class="btn btn-primary" onclick="generateStaffReport()">Hisobot yaratish</button>
-        </div>
-        
-        <div class="report-card">
-            <h3>🚚 Yetkazish Hisoboti</h3>
-            <p>Kuryerlar va yetkazish statistikasi</p>
-            <button class="btn btn-primary" onclick="generateDeliveryReport()">Hisobot yaratish</button>
-        </div>
-        
-        <div class="report-card">
-            <h3>🍽️ Menyu Hisoboti</h3>
-            <p>Mashhur mahsulotlar va sotuvlar tahlili</p>
-            <button class="btn btn-primary" onclick="generateMenuReport()">Hisobot yaratish</button>
-        </div>
-    </div>
-    
-    <div class="report-results" id="reportResults"></div>
-    
-    <div class="back-button">
-        <a href="{{ url_for('super_admin_dashboard') }}" class="btn btn-primary">⬅️ Dashboard ga qaytish</a>
-    </div>
-</div>
-
-<script>
-function generateFinancialReport() {
-    document.getElementById('reportResults').innerHTML = '<p>Moliyaviy hisobot yaratilmoqda...</p>';
-}
-
-function generateStaffReport() {
-    document.getElementById('reportResults').innerHTML = '<p>Xodimlar hisoboti yaratilmoqda...</p>';
-}
-
-function generateDeliveryReport() {
-    document.getElementById('reportResults').innerHTML = '<p>Yetkazish hisoboti yaratilmoqda...</p>';
-}
-
-function generateMenuReport() {
-    document.getElementById('reportResults').innerHTML = '<p>Menyu hisoboti yaratilmoqda...</p>';
-}
-</script>
-
-<style>
-.reports-container {
-    padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.reports-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
+.current-reports {
     margin-bottom: 30px;
-}
-
-.report-card {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    text-align: center;
-}
-
-.report-results {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    margin-bottom: 20px;
-    min-height: 100px;
-}
-
-.back-button {
-    text-align: center;
-}
-</style>
-{% endblock %}
-{% extends "base.html" %}
-
-{% block title %}Hisobotlar - Super Admin{% endblock %}
-
-{% block content %}
-<div class="reports-container">
-    <div class="page-header">
-        <h1>📈 Hisobotlar va Statistika</h1>
-        <nav class="breadcrumb">
-            <a href="{{ url_for('super_admin_dashboard') }}">Dashboard</a> / Hisobotlar
-        </nav>
-    </div>
-
-    <!-- Hisobotlar kartlari -->
-    <div class="reports-grid">
-        <div class="report-card daily">
-            <div class="report-icon">📅</div>
-            <div class="report-content">
-                <h3>Bugungi Hisobot</h3>
-                <div class="report-stats">
-                    <div class="stat-item">
-                        <span class="stat-label">Buyurtmalar:</span>
-                        <span class="stat-value">{{ reports.daily.orders or 0 }}</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Daromad:</span>
-                        <span class="stat-value">{{ "{:,}".format(reports.daily.revenue or 0) }} so'm</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="report-card weekly">
-            <div class="report-icon">📊</div>
-            <div class="report-content">
-                <h3>Haftalik Hisobot</h3>
-                <div class="report-stats">
-                    <div class="stat-item">
-                        <span class="stat-label">Buyurtmalar:</span>
-                        <span class="stat-value">{{ reports.weekly.orders or 0 }}</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Daromad:</span>
-                        <span class="stat-value">{{ "{:,}".format(reports.weekly.revenue or 0) }} so'm</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Batafsil hisobotlar -->
-    <div class="detailed-reports">
-        <h3>📋 Batafsil hisobotlar</h3>
-        <div class="report-filters">
-            <input type="date" id="startDate" class="form-control">
-            <input type="date" id="endDate" class="form-control">
-            <button onclick="generateReport()" class="btn btn-primary">Hisobot yaratish</button>
-        </div>
-        <div id="reportResults" class="report-results">
-            <p class="text-center">Hisobot yaratish uchun sana oralig'ini tanlang</p>
-        </div>
-    </div>
-
-    <div class="back-button">
-        <a href="{{ url_for('super_admin_dashboard') }}" class="btn btn-primary">⬅️ Dashboard ga qaytish</a>
-    </div>
-</div>
-
-<script>
-function generateReport() {
-    const startDate = document.getElementById('startDate').value;
-    const endDate = document.getElementById('endDate').value;
-    
-    if (!startDate || !endDate) {
-        alert('Iltimos sana oralig\'ini tanlang');
-        return;
-    }
-    
-    document.getElementById('reportResults').innerHTML = '<p class="text-center">Hisobot tayyorlanmoqda...</p>';
-    
-    // API dan hisobot ma'lumotlarini olish
-    fetch(`/api/super-admin/reports?start_date=${startDate}&end_date=${endDate}`)
-        .then(response => response.json())
-        .then(data => {
-            displayReportResults(data);
-        })
-        .catch(error => {
-            console.error('Hisobot olishda xatolik:', error);
-            document.getElementById('reportResults').innerHTML = '<p class="text-center text-danger">Hisobot yaratishda xatolik</p>';
-        });
-}
-
-function displayReportResults(data) {
-    let html = '<div class="report-summary">';
-    html += '<h4>📊 Hisobot xulosasi</h4>';
-    html += `<p><strong>Jami daromad:</strong> ${data.summary.total_revenue.toLocaleString()} so'm</p>`;
-    html += `<p><strong>Jami buyurtmalar:</strong> ${data.summary.total_orders}</p>`;
-    html += `<p><strong>Yangi mijozlar:</strong> ${data.summary.new_customers}</p>`;
-    html += `<p><strong>O'sish sur'ati:</strong> ${data.summary.growth_rate}%</p>`;
-    html += '</div>';
-    
-    document.getElementById('reportResults').innerHTML = html;
-}
-</script>
-
-<style>
-.reports-container {
-    padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.page-header {
-    margin-bottom: 30px;
-}
-
-.page-header h1 {
-    color: #2d3748;
-    margin-bottom: 10px;
-}
-
-.breadcrumb {
-    color: #718096;
-    font-size: 14px;
-}
-
-.breadcrumb a {
-    color: #3182ce;
-    text-decoration: none;
 }
 
 .reports-grid {
@@ -1007,6 +795,10 @@ function displayReportResults(data) {
 
 .report-card.weekly {
     border-left-color: #17a2b8;
+}
+
+.report-card.monthly {
+    border-left-color: #ffc107;
 }
 
 .report-icon {
@@ -1040,58 +832,70 @@ function displayReportResults(data) {
     color: #2d3748;
 }
 
-.detailed-reports {
-    background: white;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    margin-bottom: 20px;
-}
-
-.report-filters {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-}
-
-.form-control {
-    padding: 8px 12px;
-    border: 1px solid #e2e8f0;
-    border-radius: 5px;
-    font-size: 14px;
-}
-
 .btn {
-    padding: 8px 16px;
+    padding: 10px 20px;
     border: none;
-    border-radius: 5px;
+    border-radius: 6px;
     cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
     text-decoration: none;
     display: inline-block;
+    transition: all 0.3s ease;
 }
 
 .btn-primary {
-    background-color: #007bff;
+    background: #007bff;
     color: white;
 }
 
 .btn-primary:hover {
-    background-color: #0056b3;
+    background: #0056b3;
 }
 
-.report-results {
-    min-height: 200px;
-    padding: 20px;
-    background: #f8f9fa;
-    border-radius: 5px;
+.btn-success {
+    background: #28a745;
+    color: white;
 }
 
-.report-summary {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    border-left: 4px solid #28a745;
+.btn-success:hover {
+    background: #1e7e34;
+}
+
+.btn-outline-secondary {
+    background: transparent;
+    border: 1px solid #6c757d;
+    color: #6c757d;
+}
+
+.btn-outline-secondary:hover {
+    background: #6c757d;
+    color: white;
+}
+
+.badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.bg-success { background: #28a745; color: white; }
+.bg-danger { background: #dc3545; color: white; }
+
+.text-center { text-align: center; }
+
+.spinner-border {
+    width: 2rem;
+    height: 2rem;
+    border: 0.25em solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
 
 .back-button {
@@ -1099,157 +903,42 @@ function displayReportResults(data) {
     margin-top: 30px;
 }
 
-.text-center {
-    text-align: center;
-}
-
-.text-danger {
-    color: #dc3545;
-}
-
+/* Mobile responsive */
 @media (max-width: 768px) {
+    .reports-container {
+        padding: 15px;
+    }
+    
+    .filters-section {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filter-group {
+        width: 100%;
+    }
+    
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
+    
     .reports-grid {
         grid-template-columns: 1fr;
     }
     
-    .report-filters {
+    .report-tabs {
         flex-direction: column;
+    }
+    
+    .tab-btn {
+        text-align: center;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .tab-btn.active {
+        border-bottom: 3px solid #007bff;
     }
 }
 </style>
-{% endblock %}
-{% extends "base.html" %}
 
-{% block title %}Reports - Super Admin Panel{% endblock %}
-
-{% block content %}
-<div class="container-fluid mt-4">
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2>📈 Hisobotlar</h2>
-                <a href="{{ url_for('super_admin_dashboard') }}" class="btn btn-outline-primary">
-                    ← Dashboard ga qaytish
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Vaqt bo'yicha hisobotlar -->
-    <div class="row">
-        <div class="col-md-4 mb-4">
-            <div class="card border-primary">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">📅 Bugungi kun</h5>
-                </div>
-                <div class="card-body">
-                    <div class="text-center">
-                        <h3 class="text-primary">{{ reports.daily.orders }}</h3>
-                        <p class="mb-1">Buyurtmalar</p>
-                        <hr>
-                        <h4 class="text-success">{{ "{:,}".format(reports.daily.revenue) }} so'm</h4>
-                        <small class="text-muted">Daromad</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4 mb-4">
-            <div class="card border-success">
-                <div class="card-header bg-success text-white">
-                    <h5 class="mb-0">📊 Bu hafta</h5>
-                </div>
-                <div class="card-body">
-                    <div class="text-center">
-                        <h3 class="text-success">{{ reports.weekly.orders }}</h3>
-                        <p class="mb-1">Buyurtmalar</p>
-                        <hr>
-                        <h4 class="text-primary">{{ "{:,}".format(reports.weekly.revenue) }} so'm</h4>
-                        <small class="text-muted">Daromad</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4 mb-4">
-            <div class="card border-warning">
-                <div class="card-header bg-warning text-dark">
-                    <h5 class="mb-0">📈 Bu oy</h5>
-                </div>
-                <div class="card-body">
-                    <div class="text-center">
-                        <h3 class="text-warning">{{ reports.monthly.orders }}</h3>
-                        <p class="mb-1">Buyurtmalar</p>
-                        <hr>
-                        <h4 class="text-info">{{ "{:,}".format(reports.monthly.revenue) }} so'm</h4>
-                        <small class="text-muted">Daromad</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Batafsil hisobotlar -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">📋 Batafsil hisobot</h5>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Davr</th>
-                                    <th>Buyurtmalar soni</th>
-                                    <th>Daromad</th>
-                                    <th>O'rtacha check</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><span class="badge bg-primary">Bugun</span></td>
-                                    <td>{{ reports.daily.orders }}</td>
-                                    <td>{{ "{:,}".format(reports.daily.revenue) }} so'm</td>
-                                    <td>
-                                        {% if reports.daily.orders > 0 %}
-                                            {{ "{:,}".format((reports.daily.revenue / reports.daily.orders)|round|int) }} so'm
-                                        {% else %}
-                                            0 so'm
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><span class="badge bg-success">Bu hafta</span></td>
-                                    <td>{{ reports.weekly.orders }}</td>
-                                    <td>{{ "{:,}".format(reports.weekly.revenue) }} so'm</td>
-                                    <td>
-                                        {% if reports.weekly.orders > 0 %}
-                                            {{ "{:,}".format((reports.weekly.revenue / reports.weekly.orders)|round|int) }} so'm
-                                        {% else %}
-                                            0 so'm
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><span class="badge bg-warning text-dark">Bu oy</span></td>
-                                    <td>{{ reports.monthly.orders }}</td>
-                                    <td>{{ "{:,}".format(reports.monthly.revenue) }} so'm</td>
-                                    <td>
-                                        {% if reports.monthly.orders > 0 %}
-                                            {{ "{:,}".format((reports.monthly.revenue / reports.monthly.orders)|round|int) }} so'm
-                                        {% else %}
-                                            0 so'm
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 {% endblock %}

@@ -1,0 +1,248 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container mt-4">
+  <h2>Bildirishnomalar</h2>
+  <p>
+    Bu yerda super admin barcha yuborilgan bildirishnomalarni ko'rishi va yangi
+    yuborishi mumkin.
+  </p>
+
+  <div class="mb-3">
+    <button class="btn btn-outline-secondary" id="openNotifyComposer">
+      ➕ Yangi bildirishnoma
+    </button>
+    <small class="text-muted ms-2"
+      >Eslatma: faqat bitta odamga yuborish mumkin.</small
+    >
+  </div>
+
+  <div class="mb-4">
+    <h4>Yuborilgan bildirishnomalar</h4>
+    <div id="sentNotifications"></div>
+  </div>
+
+  <!-- Composer modal (copied simplified) -->
+  <div class="modal" tabindex="-1" id="notifyComposerModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Bildirishnoma yaratish</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-2">
+            <label class="form-label">Qabul qilish rejimi</label>
+            <div class="input-group">
+              <select
+                id="notifyRecipientType"
+                class="form-select"
+                style="max-width: 160px">
+                <option value="single">Bitta qabul qiluvchi</option>
+                <option value="broadcast">Hammasiga (broadcast)</option>
+              </select>
+              <div id="singleRecipientWrap" style="flex: 1">
+                <div style="display: flex; gap: 8px">
+                  <select
+                    id="notifySingleType"
+                    class="form-select"
+                    style="max-width: 160px">
+                    <option value="users">Foydalanuvchi</option>
+                    <option value="staff">Xodim</option>
+                    <option value="courier">Kuryer</option>
+                  </select>
+                  <select id="notifySingleId" class="form-select">
+                    <option value="">--- Tanlang ---</option>
+                  </select>
+                </div>
+              </div>
+              <div
+                id="broadcastWrap"
+                style="display: none; flex: 1; align-items: center">
+                <select id="broadcastGroup" class="form-select">
+                  <option value="all">Hammasi (all)</option>
+                  <option value="users">Foydalanuvchilar</option>
+                  <option value="staff">Xodimlar</option>
+                  <option value="couriers">Kuryerlar</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-2">
+            <input
+              id="notifyTitleNotifications"
+              class="form-control"
+              placeholder="Sarlavha" />
+          </div>
+          <div class="mb-2">
+            <textarea
+              id="notifyBodyNotifications"
+              class="form-control"
+              rows="4"
+              placeholder="Matn"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            id="notifyCancelBtnAdmin"
+            data-bs-dismiss="modal">
+            Bekor qilish
+          </button>
+          <button type="button" class="btn btn-primary" id="notifySendBtnAdmin">
+            Yuborish
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const openBtn = document.getElementById("openNotifyComposer");
+    const modalEl = document.getElementById("notifyComposerModal");
+    const sendBtn = document.getElementById("notifySendBtnAdmin");
+    let bsModal = null;
+    try {
+      bsModal = new bootstrap.Modal(modalEl);
+    } catch (e) {}
+
+    function loadSent() {
+      fetch("/api/notifications")
+        .then((r) => r.json())
+        .then((d) => {
+          const container = document.getElementById("sentNotifications");
+          container.innerHTML = "";
+          if (!d || !d.success)
+            return (container.innerHTML =
+              "<p>Yuborilgan bildirishnomalar topilmadi.</p>");
+          const notes = d.notifications || [];
+          if (notes.length === 0)
+            return (container.innerHTML =
+              "<p>Hozircha bildirishnoma yo'q.</p>");
+          let html = '<ul class="list-group">';
+          for (const n of notes) {
+            html += `<li class="list-group-item"><strong>${n.title}</strong><br/><small class="text-muted">${n.created_at}</small><div>${n.body}</div></li>`;
+          }
+          html += "</ul>";
+          container.innerHTML = html;
+        });
+    }
+
+    if (openBtn)
+      openBtn.addEventListener("click", () => {
+        if (bsModal) bsModal.show();
+        else modalEl.style.display = "block";
+      });
+
+    // Open composer directly - single recipient enforced
+    // show modal when open button clicked (single recipient already visible)
+
+    if (sendBtn)
+      sendBtn.addEventListener("click", () => {
+        const title = document
+          .getElementById("notifyTitleNotifications")
+          .value.trim();
+        const body = document
+          .getElementById("notifyBodyNotifications")
+          .value.trim();
+        const mode = document.getElementById("notifyRecipientType").value;
+        const payload = { title, body };
+        if (mode === "single") {
+          const singleType = document.getElementById("notifySingleType").value;
+          const singleSelect = document.getElementById("notifySingleId");
+          const singleId = singleSelect.value;
+          if (!singleId) return alert("Iltimos qabul qiluvchini tanlang");
+          const map = { users: "users", staff: "staff", courier: "couriers" };
+          payload.recipient_type = map[singleType] || "users";
+          payload.recipient_id = parseInt(singleId, 10);
+          payload.recipient_username =
+            singleSelect.options[singleSelect.selectedIndex].dataset.username ||
+            null;
+        } else {
+          // broadcast
+          payload.recipient_type =
+            document.getElementById("broadcastGroup").value || "all";
+        }
+
+        if (!title || !body) return alert("Iltimos sarlavha va matn kiriting");
+        fetch("/super-admin/send-notification", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-Token": typeof CSRF_TOKEN !== "undefined" ? CSRF_TOKEN : "",
+          },
+          body: JSON.stringify(payload),
+        })
+          .then((r) => r.json())
+          .then((d) => {
+            if (d && d.success) {
+              alert("Bildirishnoma yuborildi");
+              if (bsModal) bsModal.hide();
+              else modalEl.style.display = "none";
+              // clear inputs
+              document.getElementById("notifyTitleNotifications").value = "";
+              document.getElementById("notifyBodyNotifications").value = "";
+              loadSent();
+            } else
+              alert("Yuborishda xatolik: " + (d && d.message ? d.message : ""));
+          })
+          .catch((e) => {
+            alert("Yuborishda xatolik");
+            console.log(e);
+          });
+      });
+
+    document
+      .getElementById("notifyRecipientType")
+      .addEventListener("change", function () {
+        document.getElementById("singleRecipientWrap").style.display =
+          this.value === "single" ? "block" : "none";
+        document.getElementById("broadcastWrap").style.display =
+          this.value === "broadcast" ? "block" : "none";
+        if (this.value === "single") loadMembers();
+      });
+
+    function loadMembers() {
+      fetch("/api/members")
+        .then((r) => r.json())
+        .then((d) => {
+          if (!d || !d.success) return;
+          const singleType = document.getElementById("notifySingleType");
+          const singleId = document.getElementById("notifySingleId");
+          singleType.onchange = function () {
+            buildOptions(this.value, d);
+          };
+          buildOptions(singleType.value, d);
+          function buildOptions(type, data) {
+            let list = [];
+            if (type === "users") list = data.users || [];
+            if (type === "staff") list = data.staff || [];
+            if (type === "courier") list = data.couriers || [];
+            singleId.innerHTML = '<option value="">--- Tanlang ---</option>';
+            for (const it of list) {
+              const opt = document.createElement("option");
+              opt.value = it.member_id;
+              opt.textContent =
+                (it.username ? it.username + " — " : "") +
+                (it.name || it.email || "#" + it.member_id);
+              if (it.username) opt.dataset.username = it.username;
+              singleId.appendChild(opt);
+            }
+          }
+        })
+        .catch((e) => console.log("Members load error", e));
+    }
+
+    // Preload members for single mode
+    loadSent();
+    loadMembers();
+  })();
+</script>
+
+{% endblock %}

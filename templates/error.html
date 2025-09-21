@@ -23,70 +23,9 @@
                 <h1 class="error-code">{{ error_code }}</h1>
                 
                 <h2 class="error-title">
-                    {% if error_code == 404 %}
-                        Sahifa topilmadi
-                    {% elif error_code == 500 %}
-                        Server xatoligi
-                    {% elif error_code == 429 %}
-                        Juda ko'p so'rov
-                    {% else %}
-                        Xatolik yuz berdi
-                    {% endif %}
-                </h2>
-                
-                <p class="error-message">{{ error_message }}</p>
-                
-                <div class="error-actions">
-                    <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg">
-                        <i class="fas fa-home"></i> Bosh sahifa
-                    </a>
-                    <a href="{{ url_for('menu') }}" class="btn btn-success btn-lg">
-                        <i class="fas fa-utensils"></i> Menyu
-                    </a>
-                    <button onclick="history.back()" class="btn btn-secondary btn-lg">
-                        <i class="fas fa-arrow-left"></i> Orqaga
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<style>
-.error-container {
-    padding: 3rem 2rem;
-    background: var(--bg-primary);
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-lg);
-    border: 1px solid var(--border-color);
-}
-
-.error-icon {
-    font-size: 5rem;
-    margin-bottom: 1rem;
-}
-
-.error-code {
-    font-size: 4rem;
-    font-weight: 700;
-    color: var(--error-color);
-    margin-bottom: 1rem;
-}
-
-.error-title {
-    font-size: 2rem;
-    color: var(--text-primary);
-    margin-bottom: 1rem;
-}
-
-.error-message {
-    font-size: 1.1rem;
-    color: var(--text-secondary);
-    margin-bottom: 2rem;
-}
-
-.error-actions {
     display: flex;
+                {% endblock %}
+
     gap: 1rem;
     justify-content: center;
     flex-wrap: wrap;

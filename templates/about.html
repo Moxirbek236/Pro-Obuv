@@ -1,38 +1,48 @@
 
 {% extends "base.html" %}
 
-{% block title %}Savollar - Restoran{% endblock %}
+{% block title %}Savollar - Pro Obuv{% endblock %}
 
 {% block content %}
-<div class="card">
-  <h2 data-translate="faq_title">❓ Ko'p so'raladigan savollar</h2>
+<div class="faq-page-container">
+  <div class="faq-hero-section">
+    <h1 class="faq-hero-title animate-fade-in">❓ Ko'p so'raladigan savollar</h1>
+    <p class="faq-hero-subtitle animate-fade-in">Sizni qiziqtirgan savollarning javoblarini toping</p>
+  </div>
+  
+<div class="card faq-card">
   
   <div class="faq-section">
     <div class="faq-item">
-      <h4>🍽️ Buyurtma qanday beriladi?</h4>
-      <p>Saytdan ro'yxatdan o'tib, menyudan taomlarni tanlab savatchangizga qo'shing. Keyin buyurtma bering.</p>
+      <h4>👟 Buyurtma qanday beriladi?</h4>
+      <p>Saytdan ro'yxatdan o'tib, mahsulotlarni ko'rib chiqing va kerakli oyoq kiyimni savatchangizga qo'shing. Keyin buyurtma bering.</p>
     </div>
     
     <div class="faq-item">
-      <h4>🚚 Dostavka xizmati bormi?</h4>
-      <p>Ha, bizda dostavka xizmati mavjud. Menyudan buyurtma berishda dostavka manzilini ko'rsatishingiz mumkin.</p>
+      <h4>🚚 Yetkazib berish xizmati bormi?</h4>
+      <p>Ha, bizda yetkazib berish xizmati mavjud. Buyurtma berishda yetkazib berish manzilini ko'rsatishingiz mumkin.</p>
     </div>
     
     <div class="faq-item">
       <h4>💳 To'lov usullari qanday?</h4>
-      <p>Naqd pul, plastik karta va onlayn to'lov usullari mavjud.</p>
+      <p>Naqd pul, plastik karta, Click, Payme va bank o'tkazmasi usullari mavjud.</p>
+    </div>
+    
+    <div class="faq-item">
+      <h4>📏 O'lcham jadvali bormi?</h4>
+      <p>Ha, har bir mahsulot sahifasida o'lcham jadvali mavjud. Shuningdek, do'konimizga kelib o'lchamingizni aniqlay olasiz.</p>
     </div>
     
     <div class="faq-item">
       <h4>⏰ Ish vaqti qanaqa?</h4>
-      <p>Biz har kuni 09:00 dan 23:00 gacha ishlaymiz.</p>
+      <p>Dushanba-Juma: 9:00-18:00, Shanba va Yakshanba: Dam</p>
     </div>
     
     <div class="faq-item">
       <h4>📞 Qanday bog'lanishim mumkin?</h4>
-      <p>Telefon: +998 99 145 96 86<br>
-         Email: nasimjonnasimjon46@gmail.com<br>
-         Telegram: @Rakhimberdiyev_1970</p>
+      <p>Telefon: +998 97 719 57 70<br>
+         Email: premiumsafety@mail.ru<br>
+         Telegram: @specobuv</p>
     </div>
   </div>
   
@@ -42,25 +52,178 @@
     <a href="{{ url_for('contact') }}" class="btn big">📨 Savol yuborish</a>
   </div>
 </div>
+</div> <!-- End faq-page-container -->
 
 <style>
+/* ================================
+   ABOUT/FAQ PAGE STYLES
+   ================================ */
+
+/* Hero Section */
+.faq-page-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  padding: 0;
+  margin: -24px -15px 0;
+}
+
+.faq-hero-section {
+  text-align: center;
+  padding: 80px 20px 60px;
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.9) 0%, rgba(69, 160, 73, 0.9) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.faq-hero-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  animation: rotate 20s linear infinite;
+}
+
+.faq-hero-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: white;
+  margin-bottom: 20px;
+  text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  animation-delay: 0.2s;
+}
+
+.faq-hero-subtitle {
+  font-size: 1.3rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 0;
+  font-weight: 300;
+  animation-delay: 0.4s;
+}
+
+.faq-card {
+  margin: -40px 20px 40px;
+  z-index: 10;
+  position: relative;
+  border-radius: 25px;
+  animation-delay: 0.6s;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(10px);
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 .faq-section {
   margin: 20px 0;
+  animation: fadeInUp 0.6s ease-out;
 }
+
 .faq-item {
-  background: #f8f9fa;
-  padding: 20px;
-  border-radius: 10px;
-  margin-bottom: 15px;
-  border-left: 4px solid #4CAF50;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 25px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  border-left: 5px solid #4CAF50;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
+
+.faq-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #4CAF50, #8BC34A);
+}
+
+.faq-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.15);
+  border-left-color: #8BC34A;
+}
+
 .faq-item h4 {
   color: #2d3748;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  font-weight: 600;
+  font-size: 1.2rem;
 }
+
 .faq-item p {
   margin: 0;
-  color: #6b7280;
+  color: #4a5568;
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+/* Enhanced button styling */
+.btn.big {
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+.btn.big:hover {
+  background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+  color: white;
+  text-decoration: none;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.faq-item:nth-child(1) { animation: fadeInUp 0.6s ease-out 0.1s both; }
+.faq-item:nth-child(2) { animation: fadeInUp 0.6s ease-out 0.2s both; }
+.faq-item:nth-child(3) { animation: fadeInUp 0.6s ease-out 0.3s both; }
+.faq-item:nth-child(4) { animation: fadeInUp 0.6s ease-out 0.4s both; }
+.faq-item:nth-child(5) { animation: fadeInUp 0.6s ease-out 0.5s both; }
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .faq-item {
+    padding: 20px;
+    margin-bottom: 15px;
+  }
+  
+  .faq-item h4 {
+    font-size: 1.1rem;
+  }
+  
+  .btn.big {
+    padding: 12px 25px;
+    font-size: 1rem;
+  }
 }
 </style>
 {% endblock %}

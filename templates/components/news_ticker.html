@@ -1,0 +1,280 @@
+<!-- News Ticker Component -->
+<div class="news-ticker-container">
+    <div class="news-ticker-wrapper">
+        <!-- Left navigation button -->
+        <button class="news-nav-btn news-nav-prev" id="newsPrevBtn" title="Oldingi yangilik" onclick="prevNews()">
+            <i class="bi bi-chevron-left"></i>
+        </button>
+        
+        <div class="news-ticker-title">
+            <i class="bi bi-newspaper"></i> YANGILIKLAR
+        </div>
+        
+        <div class="news-ticker" id="newsTicker">
+            <div class="news-ticker-viewport">
+                <div class="news-ticker-content" id="newsTickerContent">
+                    <!-- News items will be loaded here -->
+                    <div class="news-item loading">
+                        <div class="news-icon">📰</div>
+                        <div class="news-text">
+                            <div class="news-title">Yuklanmoqda...</div>
+                            <div class="news-content">Yangiliklar yuklanmoqda...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- News indicators -->
+            <div class="news-indicators" id="newsIndicators">
+                <!-- Indicators will be generated dynamically -->
+            </div>
+        </div>
+        
+        <!-- Right navigation button -->
+        <button class="news-nav-btn news-nav-next" id="newsNextBtn" title="Keyingi yangilik" onclick="nextNews()">
+            <i class="bi bi-chevron-right"></i>
+        </button>
+    </div>
+</div>
+
+<script>
+// News Ticker Management Class
+class NewsTicker {
+    constructor() {
+        this.currentIndex = 0;
+        this.newsItems = [];
+        this.autoSlideInterval = null;
+        this.isPlaying = true;
+        this.init();
+    }
+    
+    init() {
+        // Load news data
+        this.loadNewsData();
+        
+        // Setup event listeners
+        this.setupEventListeners();
+        
+        // Start auto-slide
+        this.startAutoSlide();
+        
+        // Reload news every 5 minutes
+        setInterval(() => this.loadNewsData(), 5 * 60 * 1000);
+    }
+    
+    setupEventListeners() {
+        // Navigation buttons
+        const prevBtn = document.getElementById('newsPrevBtn');
+        const nextBtn = document.getElementById('newsNextBtn');
+        const ticker = document.getElementById('newsTicker');
+        
+        if (prevBtn) {
+            prevBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.prevNews();
+            });
+        }
+        
+        if (nextBtn) {
+            nextBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.nextNews();
+            });
+        }
+        
+        // Pause on hover
+        if (ticker) {
+            ticker.addEventListener('mouseenter', () => this.pauseAutoSlide());
+            ticker.addEventListener('mouseleave', () => this.startAutoSlide());
+        }
+    }
+    
+    loadNewsData() {
+        console.log('Loading news data...');
+        
+        // Try to load from API first
+        fetch('/api/news/active')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success && data.news && data.news.length > 0) {
+                    this.newsItems = data.news.filter(item => item.is_active)
+                        .sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
+                    this.updateDisplay();
+                    console.log(`Loaded ${this.newsItems.length} news items`);
+                } else {
+                    this.loadDefaultNews();
+                }
+            })
+            .catch(error => {
+                console.warn('API failed, loading from JSON:', error);
+                this.loadFromJSON();
+            });
+    }
+    
+    loadFromJSON() {
+        // Try to load from local JSON file
+        fetch('/data/news.json')
+            .then(response => {
+                if (!response.ok) throw new Error('JSON file not found');
+                return response.json();
+            })
+            .then(data => {
+                if (data.news && data.news.length > 0) {
+                    this.newsItems = data.news.filter(item => item.is_active)
+                        .sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
+                    this.updateDisplay();
+                    console.log(`Loaded ${this.newsItems.length} news items from JSON`);
+                } else {
+                    this.loadDefaultNews();
+                }
+            })
+            .catch(error => {
+                console.warn('JSON loading failed, using defaults:', error);
+                this.loadDefaultNews();
+            });
+    }
+    
+    loadDefaultNews() {
+        this.newsItems = [
+            {
+                id: 'default1',
+                title: '🛍️ Pro-Obuv Do\'koni',
+                content: 'Eng sifatli va zamonaviy oyoq kiyimlar do\'koni. Katta assortiment va qulay narxlar!',
+                type: 'news',
+                is_active: true
+            },
+            {
+                id: 'default2',
+                title: '🎉 Yangi Kolleksiya',
+                content: 'Bahor-yoz kolleksiyasi keldi! Erkaklar va ayollar uchun eng yangi modellar.',
+                type: 'news',
+                is_active: true
+            },
+            {
+                id: 'default3',
+                title: '🚚 Bepul Yetkazib Berish',
+                content: '100,000 so\'mdan yuqori xaridlarga bepul yetkazib berish xizmati!',
+                type: 'advertisement',
+                is_active: true
+            }
+        ];
+        this.updateDisplay();
+        console.log('Loaded default news items');
+    }
+    
+    updateDisplay() {
+        const container = document.getElementById('newsTickerContent');
+        const indicators = document.getElementById('newsIndicators');
+        const ticker = document.getElementById('newsTicker');
+        
+        if (!container || !this.newsItems.length) return;
+        
+        // Generate news items HTML
+        const newsHTML = this.newsItems.map((item, index) => {
+            const icon = item.type === 'advertisement' ? '📢' : '📰';
+            return `
+                <div class="news-item ${item.type}" data-index="${index}">
+                    <div class="news-icon">${icon}</div>
+                    <div class="news-text">
+                        <div class="news-title">${item.title}</div>
+                        <div class="news-content">${item.content || ''}</div>
+                    </div>
+                    ${item.image_url ? `<div class="news-media"><img src="${item.image_url}" alt="News image" /></div>` : ''}
+                </div>
+            `;
+        }).join('');
+        
+        container.innerHTML = newsHTML;
+        
+        // Generate indicators
+        if (indicators && this.newsItems.length > 1) {
+            const indicatorsHTML = this.newsItems.map((_, index) => 
+                `<button class="news-indicator ${index === this.currentIndex ? 'active' : ''}" 
+                         onclick="newsTicker.goToSlide(${index})" 
+                         aria-label="Yangilik ${index + 1}"></button>`
+            ).join('');
+            indicators.innerHTML = indicatorsHTML;
+        }
+        
+        // Show ticker
+        if (ticker) {
+            ticker.style.display = 'flex';
+        }
+        
+        // Update current slide position
+        this.updateSlidePosition();
+    }
+    
+    updateSlidePosition() {
+        const container = document.getElementById('newsTickerContent');
+        if (!container || !this.newsItems.length) return;
+        
+        const translateX = -(this.currentIndex * 100);
+        container.style.transform = `translateX(${translateX}%)`;
+        
+        // Update indicators
+        document.querySelectorAll('.news-indicator').forEach((indicator, index) => {
+            indicator.classList.toggle('active', index === this.currentIndex);
+        });
+    }
+    
+    nextNews() {
+        if (!this.newsItems.length) return;
+        this.currentIndex = (this.currentIndex + 1) % this.newsItems.length;
+        this.updateSlidePosition();
+    }
+    
+    prevNews() {
+        if (!this.newsItems.length) return;
+        this.currentIndex = this.currentIndex === 0 
+            ? this.newsItems.length - 1 
+            : this.currentIndex - 1;
+        this.updateSlidePosition();
+    }
+    
+    goToSlide(index) {
+        if (index >= 0 && index < this.newsItems.length) {
+            this.currentIndex = index;
+            this.updateSlidePosition();
+        }
+    }
+    
+    startAutoSlide() {
+        this.pauseAutoSlide();
+        if (this.newsItems.length > 1) {
+            this.autoSlideInterval = setInterval(() => {
+                this.nextNews();
+            }, 5000); // Change slide every 5 seconds
+        }
+    }
+    
+    pauseAutoSlide() {
+        if (this.autoSlideInterval) {
+            clearInterval(this.autoSlideInterval);
+            this.autoSlideInterval = null;
+        }
+    }
+}
+
+// Global variables and functions for compatibility
+let newsTicker;
+
+function nextNews() {
+    if (newsTicker) newsTicker.nextNews();
+}
+
+function prevNews() {
+    if (newsTicker) newsTicker.prevNews();
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Initializing News Ticker...');
+    newsTicker = new NewsTicker();
+});
+</script>

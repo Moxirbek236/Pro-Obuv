@@ -1,198 +1,396 @@
 <!DOCTYPE html>
 <html lang="uz">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ro'yxatdan o'tish - Restoran</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ro'yxatdan o'tish - Oyoq kiyim do'koni</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}" />
     <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .register-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            max-width: 500px;
-            width: 100%;
-        }
-        .form-control {
-            border-radius: 10px;
-            padding: 12px 15px;
-            border: 2px solid #e2e8f0;
-        }
-        .form-control:focus {
-            border-color: #4299e1;
-            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
-        }
-        .btn-register {
-            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-            border: none;
-            color: white;
-            padding: 12px 30px;
-            border-radius: 10px;
-            font-weight: 600;
-            width: 100%;
-        }
-        .btn-register:hover {
-            background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%);
-            color: white;
-        }
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .register-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        max-width: 500px;
+        width: 100%;
+      }
+      .form-control {
+        border-radius: 10px;
+        padding: 12px 15px;
+        border: 2px solid #e2e8f0;
+      }
+      .form-control:focus {
+        border-color: #4299e1;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+      }
+      .btn-register {
+        background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+        border: none;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 10px;
+        font-weight: 600;
+        width: 100%;
+      }
+      .btn-register:hover {
+        background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%);
+        color: white;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="register-card">
-        <h2 class="text-center mb-4">📝 Ro'yxatdan o'tish</h2>
+      <h2 class="text-center mb-4">📝 Ro'yxatdan o'tish</h2>
 
-        {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            {% for category, message in messages %}
-              <div class="alert alert-{{ 'danger' if category=='error' else 'success' if category=='success' else category }} alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-              </div>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
+      <div
+        class="alert alert-{{ 'danger' if category=='error' else 'success' if category=='success' else category }} alert-dismissible fade show"
+        role="alert">
+        {{ message }}
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"></button>
+      </div>
+      {% endfor %} {% endif %} {% endwith %}
 
-        <form method="POST">
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="first_name" class="form-label">👤 Ism</label>
-                    <input type="text" class="form-control" id="first_name" name="first_name" required>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label for="last_name" class="form-label">👤 Familiya</label>
-                    <input type="text" class="form-control" id="last_name" name="last_name" required>
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label for="email" class="form-label">📧 Email</label>
-                <input type="email" class="form-control" id="email" name="email" required>
-            </div>
-
-            <div class="mb-3">
-                <label for="phone" class="form-label">📱 Telefon</label>
-                <input type="tel" class="form-control" id="phone" name="phone" placeholder="+998901234567">
-            </div>
-
-            <!-- Xarita bilan manzil tanlash -->
-            <div class="mb-3">
-                <label for="address" class="form-label">📍 Yashash manzili</label>
-                <div class="mb-2">
-                    <input type="text" class="form-control" id="address" name="address" placeholder="Manzilni xaritadan tanlang" readonly required>
-                </div>
-                <div id="register-map" style="height: 250px; border-radius: 10px;"></div>
-                <div class="mt-2">
-                    <input type="hidden" id="address_latitude" name="address_latitude">
-                    <input type="hidden" id="address_longitude" name="address_longitude">
-                    <small class="text-muted">Xaritada joyingizni belgilang</small>
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label for="password" class="form-label">🔑 Parol</label>
-                <input type="password" class="form-control" id="password" name="password" required>
-            </div>
-
-            <div class="mb-3">
-                <label for="confirm_password" class="form-label">🔑 Parolni tasdiqlash</label>
-                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
-            </div>
-
-            <button type="submit" class="btn btn-register">✅ Ro'yxatdan o'tish</button>
-        </form>
-
-        <div class="text-center mt-3">
-            <p>Akkauntingiz bormi? <a href="{{ url_for('login') }}">Kirish</a></p>
-            <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">⬅️ Bosh sahifa</a>
+      <form method="POST">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="first_name" class="form-label">👤 Ism</label>
+            <input
+              type="text"
+              class="form-control"
+              id="first_name"
+              name="first_name"
+              required />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="last_name" class="form-label">👤 Familiya</label>
+            <input
+              type="text"
+              class="form-control"
+              id="last_name"
+              name="last_name"
+              required />
+          </div>
         </div>
+
+        <div class="mb-3">
+          <label for="email" class="form-label">📧 Email</label>
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            name="email"
+            required />
+        </div>
+
+        <div class="mb-3">
+          <label for="phone" class="form-label">📱 Telefon</label>
+          <input
+            type="tel"
+            class="form-control"
+            id="phone"
+            name="phone"
+            placeholder="+998901234567" />
+        </div>
+
+        <!-- Xarita bilan manzil tanlash -->
+        <div class="mb-3">
+          <label for="address" class="form-label">📍 Yashash manzili</label>
+          <div class="mb-2">
+            <input
+              type="text"
+              class="form-control"
+              id="address"
+              name="address"
+              placeholder="Manzilni xaritadan tanlang"
+              readonly
+              required />
+          </div>
+          <div
+            id="register-map"
+            style="height: 250px; border-radius: 10px"></div>
+          <div class="mt-2">
+            <input
+              type="hidden"
+              id="address_latitude"
+              name="address_latitude" />
+            <input
+              type="hidden"
+              id="address_longitude"
+              name="address_longitude" />
+            <small class="text-muted">Xaritada joyingizni belgilang</small>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="password" class="form-label">🔑 Parol</label>
+          <input
+            type="password"
+            class="form-control"
+            id="password"
+            name="password"
+            required />
+        </div>
+
+        <div class="mb-3">
+          <label for="confirm_password" class="form-label"
+            >🔑 Parolni tasdiqlash</label
+          >
+          <input
+            type="password"
+            class="form-control"
+            id="confirm_password"
+            name="confirm_password"
+            required />
+        </div>
+
+        <button type="submit" class="btn btn-register">
+          ✅ Ro'yxatdan o'tish
+        </button>
+      </form>
+
+      <div class="text-center mt-3">
+        <p>Akkauntingiz bormi? <a href="{{ url_for('login_page') }}">Kirish</a></p>
+        <a href="{{ url_for('index') }}" class="btn btn-outline-secondary"
+          >⬅️ Bosh sahifa</a
+        >
+      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://api-maps.yandex.ru/2.1/?apikey={{ config.get('YANDEX_MAPS_API', 'fc256b90-6f74-4f1b-a7ee-d42b695a8284') }}&lang=uz_UZ" type="text/javascript"></script>pe="text/javascript"></script>
+    <!-- Yandex Maps script loaded globally in base.html -->
+    <!-- Fallback: if Yandex isn't available, load Leaflet (OpenStreetMap) so users can pick an address -->
     <script>
-        let registerMap;
-        let registerMarker;
+      let registerMap;
+      let registerMarker;
 
-        ymaps.ready(function() {
-            // Toshkent markazi
-            const tashkent = [41.2995, 69.2401];
-
-            // Xarita yaratish
-            registerMap = new ymaps.Map('register-map', {
-                center: tashkent,
-                zoom: 12,
-                controls: ['zoomControl', 'typeSelector']
-            });
-
-            // Foydalanuvchi joylashuvini olishga harakat qilish
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    const userLocation = [position.coords.latitude, position.coords.longitude];
-                    registerMap.setCenter(userLocation);
-                    registerMap.setZoom(15);
-                    setRegisterLocation(userLocation);
-                }, function(error) {
-                    console.log("Joylashuvni olishda xatolik:", error);
-                });
+      const ensureYMaps = (cb) => {
+        if (window.ymaps) return cb();
+        let attempts = 0;
+        const maxAttempts = 25;
+        const iv = setInterval(() => {
+          attempts += 1;
+          if (window.ymaps) {
+            clearInterval(iv);
+            return cb();
+          }
+          if (attempts >= maxAttempts) {
+            clearInterval(iv);
+            // Yandex didn't load, fallback to Leaflet
+            try {
+              initLeafletFallback();
+            } catch (e) {
+              console.warn("Map fallback failed:", e);
             }
+          }
+        }, 200);
+      };
 
-            // Xaritaga bosish hodisasi
-            registerMap.events.add('click', function(e) {
-                const coords = e.get('coords');
-                setRegisterLocation(coords);
-            });
+      ensureYMaps(function () {
+        // Toshkent markazi
+        const tashkent = [41.2995, 69.2401];
+
+        // Xarita yaratish
+        registerMap = new ymaps.Map("register-map", {
+          center: tashkent,
+          zoom: 12,
+          controls: ["zoomControl", "typeSelector"],
         });
 
-        function setRegisterLocation(coords) {
-            // Avvalgi marker olib tashlash
-            if (registerMarker) {
-                registerMap.geoObjects.remove(registerMarker);
+        // Foydalanuvchi joylashuvini olishga harakat qilish
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            function (position) {
+              const userLocation = [
+                position.coords.latitude,
+                position.coords.longitude,
+              ];
+              registerMap.setCenter(userLocation);
+              registerMap.setZoom(15);
+              setRegisterLocation(userLocation);
+            },
+            function (error) {
+              console.log("Joylashuvni olishda xatolik:", error);
             }
-
-            // Yangi marker qo'yish
-            registerMarker = new ymaps.Placemark(coords, {
-                hintContent: 'Sizning manzilingiz',
-                balloonContent: 'Yashash manzilingiz'
-            }, {
-                draggable: true,
-                iconColor: '#4CAF50'
-            });
-
-            registerMap.geoObjects.add(registerMarker);
-
-            // Marker siqilganda yangi joylashuvni olish
-            registerMarker.events.add('dragend', function() {
-                const newCoords = registerMarker.geometry.getCoordinates();
-                setRegisterLocation(newCoords);
-            });
-
-            // Koordinatalarni saqlash
-            document.getElementById('address_latitude').value = coords[0];
-            document.getElementById('address_longitude').value = coords[1];
-
-            // Manzilni olish (Reverse Geocoding)
-            ymaps.geocode(coords).then(function(res) {
-                const firstGeoObject = res.geoObjects.get(0);
-                let address = '';
-
-                if (firstGeoObject) {
-                    address = firstGeoObject.getAddressLine();
-                } else {
-                    address = `Lat: ${coords[0].toFixed(6)}, Lng: ${coords[1].toFixed(6)}`;
-                }
-
-                document.getElementById('address').value = address;
-            });
+          );
         }
+
+        // Xaritaga bosish hodisasi
+        registerMap.events.add("click", function (e) {
+          const coords = e.get("coords");
+          setRegisterLocation(coords);
+        });
+      });
+
+      function setRegisterLocation(coords) {
+        // Avvalgi marker olib tashlash
+        if (registerMarker) {
+          registerMap.geoObjects.remove(registerMarker);
+        }
+
+        // Yangi marker qo'yish
+        registerMarker = new ymaps.Placemark(
+          coords,
+          {
+            hintContent: "Sizning manzilingiz",
+            balloonContent: "Yashash manzilingiz",
+          },
+          {
+            draggable: true,
+            iconColor: "#4CAF50",
+          }
+        );
+
+        registerMap.geoObjects.add(registerMarker);
+
+        // Marker siqilganda yangi joylashuvni olish
+        registerMarker.events.add("dragend", function () {
+          const newCoords = registerMarker.geometry.getCoordinates();
+          setRegisterLocation(newCoords);
+        });
+
+        // Koordinatalarni saqlash
+        document.getElementById("address_latitude").value = coords[0];
+        document.getElementById("address_longitude").value = coords[1];
+
+        // Manzilni olish (Reverse Geocoding)
+        ymaps.geocode(coords).then(function (res) {
+          const firstGeoObject = res.geoObjects.get(0);
+          let address = "";
+
+          if (firstGeoObject) {
+            address = firstGeoObject.getAddressLine();
+          } else {
+            address = `Lat: ${coords[0].toFixed(6)}, Lng: ${coords[1].toFixed(
+              6
+            )}`;
+          }
+
+          document.getElementById("address").value = address;
+        });
+      }
+
+      // Leaflet fallback implementation
+      function initLeafletFallback() {
+        // Only load once
+        if (window._leaflet_loaded) return initLeafletMap();
+        window._leaflet_loaded = true;
+
+        // Inject Leaflet CSS
+        const lnk = document.createElement("link");
+        lnk.rel = "stylesheet";
+        lnk.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+        document.head.appendChild(lnk);
+
+        // Inject Leaflet JS
+        const scr = document.createElement("script");
+        scr.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+        scr.onload = function () {
+          initLeafletMap();
+        };
+        scr.onerror = function () {
+          console.warn("Failed to load Leaflet script");
+        };
+        document.body.appendChild(scr);
+      }
+
+      function initLeafletMap() {
+        try {
+          const tashkent = [41.2995, 69.2401];
+          // ensure container has non-zero height
+          const el = document.getElementById("register-map");
+          if (el && (!el.style.height || el.style.height === "0px"))
+            el.style.height = "250px";
+
+          // Create map
+          registerMap = L.map("register-map").setView(tashkent, 12);
+          L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            maxZoom: 19,
+            attribution: "&copy; OpenStreetMap contributors",
+          }).addTo(registerMap);
+
+          // Try geolocation
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+              function (position) {
+                const userLocation = [
+                  position.coords.latitude,
+                  position.coords.longitude,
+                ];
+                registerMap.setView(userLocation, 15);
+                setRegisterLocationLeaflet(userLocation);
+              },
+              function () {
+                /* ignore */
+              }
+            );
+          }
+
+          registerMap.on("click", function (e) {
+            setRegisterLocationLeaflet([e.latlng.lat, e.latlng.lng]);
+          });
+        } catch (e) {
+          console.warn("Leaflet init error", e);
+        }
+      }
+
+      function setRegisterLocationLeaflet(coords) {
+        // remove old marker
+        try {
+          if (registerMarker && registerMap && registerMap.removeLayer) {
+            registerMap.removeLayer(registerMarker);
+          }
+        } catch (e) {}
+
+        registerMarker = L.marker([coords[0], coords[1]], {
+          draggable: true,
+        }).addTo(registerMap);
+        registerMarker.on("dragend", function (e) {
+          const latlng = registerMarker.getLatLng();
+          setRegisterLocationLeaflet([latlng.lat, latlng.lng]);
+        });
+
+        // Save coords
+        document.getElementById("address_latitude").value = coords[0];
+        document.getElementById("address_longitude").value = coords[1];
+
+        // Reverse geocode via Nominatim (OpenStreetMap)
+        fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${coords[0]}&lon=${coords[1]}`
+        )
+          .then((r) => r.json())
+          .then((data) => {
+            const display =
+              data && data.display_name
+                ? data.display_name
+                : `Lat: ${coords[0].toFixed(6)}, Lng: ${coords[1].toFixed(6)}`;
+            const addrEl = document.getElementById("address");
+            if (addrEl) addrEl.value = display;
+          })
+          .catch(() => {
+            const addrEl = document.getElementById("address");
+            if (addrEl)
+              addrEl.value = `Lat: ${coords[0].toFixed(
+                6
+              )}, Lng: ${coords[1].toFixed(6)}`;
+          });
+      }
     </script>
-</body>
+  </body>
 </html>
