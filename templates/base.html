@@ -44,6 +44,8 @@
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
       rel="stylesheet" />
+    <!-- Responsive overrides for phone & laptop (cleanup) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive-cleanup.css') }}" />
 
     <!-- Global sozlamalar uchun CSS -->
     <style>
@@ -734,6 +736,9 @@
                 >🔄 360°</a
               >
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('news_page') }}">📰 Yangiliklar</a>
+            </li>
           </ul>
 
           <ul class="navbar-nav">
@@ -853,6 +858,9 @@
                 >📺 Monitor</a
               >
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('news_page') }}">📰 Yangiliklar</a>
+            </li>
           </ul>
 
           <ul class="navbar-nav">
@@ -961,6 +969,9 @@
                 >📋 Menyu ko'rish</a
               >
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('news_page') }}">📰 Yangiliklar</a>
+            </li>
           </ul>
 
           <ul class="navbar-nav">
@@ -1063,11 +1074,10 @@
 
     <!-- User Navbar -->
     {% elif is_user %}
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="container-fluid">
         <a class="navbar-brand" href="{{ url_for('index') }}"
-          >👟 Oyoq kiyim do'koni</a
-        >
+         >👟 {{ _('nav.home') }}</a
 
         <button
           class="navbar-toggler"
@@ -1080,12 +1090,10 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav me-auto">
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('menu') }}">📋 Menyu</a>
+            <a class="nav-link" href="{{ url_for('menu') }}">📋 {{ _('nav.menu') }}</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('favorites') }}"
-                >❤️ Sevimlilar</a
-              >
+            <a class="nav-link" href="{{ url_for('favorites') }}">❤️ {{ _('nav.favorites') }}</a>
             </li>
             <!-- Shopping cart - Only visible to regular users -->
             {% if not session.get('super_admin') and not session.get('staff_id')
@@ -1100,15 +1108,16 @@
             </li>
             {% endif %}
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('contact') }}">📞 Aloqa</a>
+            <a class="nav-link" href="{{ url_for('contact') }}">📞 {{ _('nav.contact') }}</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('about') }}">❓ Savollar</a>
+            <a class="nav-link" href="{{ url_for('news_page') }}">📰 {{ _('nav.news') }}</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('downloads') }}"
-                >📱 Yuklamalar</a
-              >
+            <a class="nav-link" href="{{ url_for('about') }}">❓ {{ _('nav.about') }}</a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('downloads') }}">📱 {{ _('nav.downloads') }}</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('user_360_room') }}"
@@ -1120,15 +1129,13 @@
           <ul class="navbar-nav">
             <li class="nav-item d-flex align-items-center">
               <img
-                src="{{ session.get('user_avatar','/static/images/default-avatar.svg') }}"
+                src="{{ user_profile.avatar or session.get('user_avatar','/static/images/default-avatar.svg') }}"
                 alt="avatar"
                 class="rounded-circle"
                 width="32"
                 height="32"
                 style="object-fit: cover; margin-right: 8px" />
-              <span class="navbar-text text-white me-3"
-                >👤 {{ session.get('user_name', 'Foydalanuvchi') }}</span
-              >
+                <span class="navbar-text text-white me-3">👤 {{ user_profile.name or session.get('user_name', _('nav.profile')) }}</span>
               <button
                 type="button"
                 class="btn btn-sm btn-outline-light nav-notify"
@@ -1155,13 +1162,13 @@
                 href="#"
                 role="button"
                 data-bs-toggle="dropdown">
-                <img
-                  src="{{ session.get('user_avatar','/static/images/default-avatar.svg') }}"
-                  alt="avatar"
-                  class="rounded-circle"
-                  width="32"
-                  height="32"
-                  style="object-fit: cover; margin-right: 8px" />
+                  <img
+                    src="{{ user_profile.avatar or session.get('user_avatar','/static/images/default-avatar.svg') }}"
+                    alt="avatar"
+                    class="rounded-circle"
+                    width="32"
+                    height="32"
+                    style="object-fit: cover; margin-right: 8px" />
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li class="px-3 py-2 d-flex align-items-center">
@@ -1174,32 +1181,29 @@
                     style="object-fit: cover" />
                   <div>
                     <div class="fw-bold">
-                      {{ session.get('user_name', 'Foydalanuvchi') }}
+                      {{ user_profile.name or session.get('user_name', 'Foydalanuvchi') }}
                     </div>
                     <div class="text-muted small">
-                      {{ session.get('user_email','') }}
+                      {{ user_profile.email or session.get('user_email','') }}
                     </div>
                   </div>
                 </li>
                 <li><hr class="dropdown-divider" /></li>
                 <li>
                   <a class="dropdown-item" href="{{ url_for('profile') }}"
-                    >👤 Profil ma'lumotlari</a
-                  >
+            >👤 {{ _('nav.profile') }}</a>
                 </li>
                 <li>
                   <a
                     class="dropdown-item"
                     href="{{ url_for('profile_settings') }}"
-                    >⚙️ Profil sozlamalari</a
-                  >
+                    >⚙️ {{ _('nav.profile_settings') }}</a>
                 </li>
                 <li>
                   <a
                     class="dropdown-item"
                     href="{{ url_for('general_settings') }}"
-                    >🔧 Umumi sozlamalar</a
-                  >
+                    >🔧 {{ _('settings.title') }}</a>
                 </li>
                 <li><hr class="dropdown-divider" /></li>
                 <li>
@@ -1246,10 +1250,11 @@
             </li>
             {% endif %}
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('contact') }}">📞 Aloqa</a>
-            </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('about') }}">❓ Savollar</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('news_page') }}">📰 Yangiliklar</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('downloads') }}"
@@ -1445,42 +1450,22 @@
 
             <!-- Quick Links -->
             <div class="col-lg-2 col-md-6">
-              <h6 class="fw-bold mb-3 text-warning">🔗 Tezkor havolalar</h6>
+              <h6 class="fw-bold mb-3 text-warning">🔗 {{ _('nav.quick_links') }}</h6>
               <ul class="list-unstyled">
                 <li class="mb-2">
-                  <a
-                    href="{{ url_for('index') }}"
-                    class="text-light text-decoration-none hover-text-warning">
-                    🏠 Bosh sahifa
-                  </a>
+                  <a href="{{ url_for('index') }}" class="text-light text-decoration-none hover-text-warning">🏠 {{ _('nav.home') }}</a>
                 </li>
                 <li class="mb-2">
-                  <a
-                    href="{{ url_for('menu') }}"
-                    class="text-light text-decoration-none hover-text-warning">
-                    📋 Mahsulotlar
-                  </a>
+                  <a href="{{ url_for('menu') }}" class="text-light text-decoration-none hover-text-warning">📋 {{ _('nav.menu') }}</a>
                 </li>
                 <li class="mb-2">
-                  <a
-                    href="{{ url_for('cart') }}"
-                    class="text-light text-decoration-none hover-text-warning">
-                    🛒 Savatcha
-                  </a>
+                  <a href="{{ url_for('cart') }}" class="text-light text-decoration-none hover-text-warning">🛒 {{ _('nav.cart') }}</a>
                 </li>
                 <li class="mb-2">
-                  <a
-                    href="{{ url_for('about') }}"
-                    class="text-light text-decoration-none hover-text-warning">
-                    ❓ Biz haqimizda
-                  </a>
+                  <a href="{{ url_for('about') }}" class="text-light text-decoration-none hover-text-warning">❓ {{ _('nav.about') }}</a>
                 </li>
                 <li class="mb-2">
-                  <a
-                    href="{{ url_for('contact') }}"
-                    class="text-light text-decoration-none hover-text-warning">
-                    📞 Aloqa
-                  </a>
+                  <a href="{{ url_for('contact') }}" class="text-light text-decoration-none hover-text-warning">📞 {{ _('nav.contact') }}</a>
                 </li>
               </ul>
             </div>
@@ -1522,7 +1507,7 @@
 
             <!-- Contact Info -->
             <div class="col-lg-3 col-md-6">
-              <h6 class="fw-bold mb-3 text-warning">📞 Aloqa ma'lumotlari</h6>
+              <h6 class="fw-bold mb-3 text-warning">📞 {{ _('footer.contact_info') }}</h6>
               <div class="mb-3">
                 <div class="d-flex align-items-center mb-2">
                   <span class="me-2">📱</span>
@@ -1548,19 +1533,15 @@
                 </div>
               </div>
               <div class="border-top pt-3">
-                <h6 class="fw-bold mb-2 text-warning">⏰ Ish vaqti</h6>
-                <small class="text-light d-block mb-1"
-                  >Dushanba - Juma: 9:00 - 18:00</small
-                >
-                <small class="text-light d-block"
-                  >Shanba - Yakshanba: Dam</small
-                >
+                <h6 class="fw-bold mb-2 text-warning">⏰ {{ _('footer.hours') }}</h6>
+                <small class="text-light d-block mb-1">Dushanba - Juma: 9:00 - 18:00</small>
+                <small class="text-light d-block">Shanba - Yakshanba: Dam</small>
               </div>
             </div>
 
             <!-- Customer Service -->
             <div class="col-lg-2 col-md-6">
-              <h6 class="fw-bold mb-3 text-warning">🎯 Xizmatlar</h6>
+              <h6 class="fw-bold mb-3 text-warning">🎯 {{ _('footer.services') }}</h6>
               <ul class="list-unstyled">
                 <li class="mb-2">
                   <a
@@ -1591,11 +1572,7 @@
                   </a>
                 </li>
                 <li class="mb-2">
-                  <a
-                    href="{{ url_for('about') }}#warranty"
-                    class="text-light text-decoration-none hover-text-warning">
-                    🛡️ Kafolat
-                  </a>
+                  <a href="{{ url_for('kafolatlar') }}" class="text-light text-decoration-none hover-text-warning">🛡️ {{ _('nav.warranty') }}</a>
                 </li>
               </ul>
             </div>
@@ -1618,16 +1595,11 @@
               </div>
             </div>
             <div class="col-md-4 text-md-end">
-              <h6 class="fw-bold mb-3 text-warning">🌟 Bizni kuzatib boring</h6>
-              <p class="text-light mb-1">
-                Eng so'nggi yangiliklar va takliflar uchun
-              </p>
+              <h6 class="fw-bold mb-3 text-warning">🌟 {{ _('footer.follow_us') }}</h6>
+              <p class="text-light mb-1">{{ _('footer.subscribe') }}</p>
               <div class="input-group" style="max-width: 300px">
-                <input
-                  type="email"
-                  class="form-control"
-                  placeholder="Email manzilingiz" />
-                <button class="btn btn-warning" type="button">📧 Obuna</button>
+                <input type="email" class="form-control" placeholder="{{ _('footer.subscribe_placeholder') }}" />
+                <button class="btn btn-warning" type="button">📧 {{ _('footer.subscribe') }}</button>
               </div>
             </div>
           </div>
@@ -1923,30 +1895,31 @@
 
       .news-ticker-wrapper {
         display: flex;
-        align-items: center;
-        height: 220px; /* Increased from 180px */
-        padding: 30px 40px;
+        /* let the wrapper stretch to the container height and keep children aligned */
+        align-items: stretch;
+        padding: 24px 30px;
         position: relative;
-        gap: 30px;
-        max-width: 1600px; /* Increased from 1400px to utilize full width */
+        gap: 20px;
+        max-width: 1600px;
         margin: 0 auto;
+        /* allow external CSS or small-screen media queries to control exact height */
+        min-height: 100px;
       }
 
 
       .news-ticker {
-        flex: 1;
-        height: 160px; /* Increased from 140px */
+        flex: 1 1 auto;
+        /* fill available wrapper height */
+        height: 100%;
+        min-height: 120px;
         position: relative;
         border-radius: 15px;
         background: rgba(255, 255, 255, 0.05);
         backdrop-filter: blur(15px);
         border: 1px solid rgba(255, 255, 255, 0.1);
         box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2);
-        /* Take up more space since title is removed */
-        margin: 0 10px;
-        /* Expanded width for better content display */
-        min-width: 800px;
-        max-width: none;
+        margin: 0 8px;
+        max-width: 100%;
       }
 
       .news-ticker-viewport {
@@ -1955,18 +1928,19 @@
         overflow: hidden;
         position: relative;
         border-radius: 15px;
-        /* Maximized viewport for better content visibility */
-        min-width: 780px;
+        display: flex;
+        align-items: stretch;
       }
 
       .news-ticker-content {
         display: flex;
         align-items: stretch;
-        height: 160px; /* Increased from 140px */
+        height: 100%;
         position: relative;
         transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        gap: 25px;
-        padding: 20px;
+        gap: 20px;
+        padding: 16px;
+        flex-wrap: nowrap;
       }
 
       /* Navigation tugmalari */
@@ -2012,16 +1986,16 @@
         flex-direction: column;
         align-items: center;
         justify-content: space-between;
-        width: 320px; /* Increased from 280px */
-        height: 120px; /* Increased from 100px */
-        padding: 15px;
+        flex: 0 0 320px; /* fixed card width for carousel flow */
+        min-width: 220px;
+        height: 100%;
+        padding: 12px;
         background: rgba(255, 255, 255, 0.08);
         border-radius: 15px;
         backdrop-filter: blur(20px);
         border: 1px solid rgba(255, 255, 255, 0.15);
         position: relative;
         overflow: hidden;
-        flex-shrink: 0;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         cursor: pointer;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);

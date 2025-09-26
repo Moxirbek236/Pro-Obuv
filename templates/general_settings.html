@@ -1,4 +1,5 @@
-{% extends "base.html" %} {% block title %}Umumiy sozlamalar{% endblock %} {% block head %}
+{% extends "base.html" %} {% block title %}Umumiy sozlamalar{% endblock %} {%
+block head %}
 <style>
   .settings-container {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -310,8 +311,8 @@
 <div class="settings-container">
   <div class="settings-card">
     <div class="settings-header">
-      <h3>🔧 Umumiy sozlamalar</h3>
-      <p>Interfeys va ko'rinish sozlamalari</p>
+      <h3>{{ _('settings.title') }}</h3>
+      <p>{{ _('settings.description') }}</p>
     </div>
 
     <!-- Flash messages -->
@@ -327,7 +328,7 @@
 
     <!-- Til sozlamalari -->
     <div class="settings-section">
-      <h5>🌐 Til sozlamalari</h5>
+      <h5>{{ _('settings.language_label') }}</h5>
       <div class="language-options">
         <div
           class="language-option {{ 'active' if session.get('interface_language', 'uz') == 'uz' }}"
@@ -356,7 +357,7 @@
 
     <!-- Mavzu sozlamalari -->
     <div class="settings-section">
-      <h5>🎨 Ko'rinish sozlamalari</h5>
+      <h5>{{ _('settings.theme_label') }}</h5>
       <div class="theme-options">
         <div
           class="theme-option {{ 'active' if not session.get('dark_theme', False) }}"
@@ -375,7 +376,7 @@
       </div>
 
       <div class="mt-4">
-        <label class="form-label">Matn o'lchami:</label>
+        <label class="form-label">{{ _('settings.font_size_label') }}</label>
         <div class="font-size-options">
           <div
             class="font-size-option {{ 'active' if session.get('font_size', 'medium') == 'small' }}"
@@ -442,7 +443,7 @@
       <h5>👁️ Ko'rinish namunasi</h5>
       <div class="preview-area">
         <div class="preview-text" id="previewText">
-          Bu matn sizning sozlamalaringizga qarab ko'rinadi
+          {{ _('preview.default') }}
         </div>
       </div>
     </div>
@@ -451,10 +452,10 @@
     <div class="settings-section">
       <div class="d-flex gap-3">
         <button class="btn btn-save" onclick="saveSettings()">
-          💾 Sozlamalarni saqlash
+          {{ _('settings.save') }}
         </button>
         <button class="btn btn-reset" onclick="resetSettings()">
-          🔄 Standart sozlamalar
+          {{ _('settings.reset') }}
         </button>
       </div>
     </div>
@@ -464,13 +465,13 @@
       <a
         href="{{ url_for('profile_settings') }}"
         class="btn btn-outline-secondary me-2">
-        ⚙️ Profil sozlamalari
+        {{ _('nav.profile_settings') }}
       </a>
       <a href="{{ url_for('profile') }}" class="btn btn-outline-primary me-2">
-        👤 Profil
+        {{ _('nav.profile') }}
       </a>
       <a href="{{ url_for('index') }}" class="btn btn-outline-primary">
-        🏠 Bosh sahifa
+        {{ _('nav.home') }}
       </a>
     </div>
   </div>

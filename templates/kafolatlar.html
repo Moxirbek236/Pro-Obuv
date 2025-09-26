@@ -1,0 +1,101 @@
+{% extends "base.html" %} {% block title %}Kafolatlar - Pro Obuv{% endblock %}
+{% block content %}
+<div class="kafolatlar-page container py-4">
+  <!-- Moved Professional Header -->
+  <div class="professional-header mb-4">
+    <div class="construction-tape-container">
+      <div class="construction-tape tape-1"></div>
+      <div class="construction-tape tape-2"></div>
+      <div class="construction-tape tape-3"></div>
+      <div class="construction-tape tape-4"></div>
+    </div>
+    <div class="main-title-container">
+      <h1 class="main-pro-obuv-title">
+        <span class="title-gradient">PRO</span>
+        <span class="title-separator">⚡</span>
+        <span class="title-gradient">OBUV</span>
+      </h1>
+      <div class="subtitle-masters">✨ ПРОФЕССИОНАЛЫ СТРОИТЕЛЬСТВА ✨</div>
+    </div>
+  </div>
+
+  <!-- Moved Menu Title -->
+  <div class="menu-title mb-3">
+    <div class="construction-header">
+      <div class="safety-icons">
+        <span class="safety-icon rotating">⚠️</span>
+        <span class="safety-icon bouncing">🔨</span>
+        <span class="safety-icon waving">👷</span>
+        <span class="safety-icon scaling">🥾</span>
+        <span class="safety-icon pulsing">🦺</span>
+      </div>
+      <h1 class="professional-title">
+        <span class="title-brand">PRO-OBUV</span>
+        <span class="title-main">ПРОФЕССИОНАЛЬНАЯ</span>
+        <span class="title-sub">СПЕЦОДЕЖДА И ОБУВЬ</span>
+      </h1>
+      <div class="construction-badge premium-badge">
+        <span class="badge-text">ПРЕМИУМ КАЧЕСТВО</span>
+        <span class="badge-check glowing">✓</span>
+      </div>
+    </div>
+    <div class="professional-subtitle">
+      <span class="subtitle-left gradient-text"
+        >🏗️ ДЛЯ СТРОИТЕЛЕЙ И МАСТЕРОВ</span
+      >
+      <span class="subtitle-center diamond">◆</span>
+      <span class="subtitle-right gradient-text">ПРОФЕССИОНАЛОВ 🔧</span>
+    </div>
+    <div class="quality-indicators">
+      <div class="quality-item enhanced">
+        <span class="quality-icon">🛡️</span>
+        <span class="quality-text">МАКСИМАЛЬНАЯ ЗАЩИТА</span>
+      </div>
+      <div class="quality-item enhanced">
+        <span class="quality-icon">💪</span>
+        <span class="quality-text">НЕПРЕВЗОЙДЕННАЯ ПРОЧНОСТЬ</span>
+      </div>
+      <div class="quality-item enhanced">
+        <span class="quality-icon">⚡</span>
+        <span class="quality-text">ПРЕМИУМ КАЧЕСТВО</span>
+      </div>
+      <div class="quality-item enhanced">
+        <span class="quality-icon">🏆</span>
+        <span class="quality-text">СЕРТИФИКАЦИЯ ТР ТС</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Copied Category Buttons -->
+  <div class="category-buttons mb-4 d-flex gap-2 flex-wrap">
+    <button
+      class="category-btn active"
+      onclick="showCategory('all')"
+      data-translate="all_categories">
+      🔄 Все товары
+    </button>
+    <button
+      class="category-btn"
+      onclick="showCategory('specobuv')"
+      data-translate="specobuv_category">
+      🥾 Спецобувь
+    </button>
+    <button
+      class="category-btn"
+      onclick="showCategory('specodezhda')"
+      data-translate="specodezhda_category">
+      🦺 Спецодежда
+    </button>
+  </div>
+
+  <!-- Kafolatlar content placeholder -->
+  <div class="kafolatlar-content">
+    <h2>Kafolatlar va sertifikatlar</h2>
+    <p>
+      Bu sahifa kafolatlar, sertifikatlar va mahsulot kafolati haqidagi
+      ma'lumotlar uchun mo'ljallangan.
+    </p>
+    <!-- Add more content here as needed -->
+  </div>
+</div>
+{% endblock %}

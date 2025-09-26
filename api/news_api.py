@@ -1,7 +1,5 @@
-"""
-News API Endpoints for Pro-Obuv Application
-Yangiliklar va reklamalar uchun API endpointlari
-"""
+# News API Endpoints for Pro-Obuv Application
+# Yangiliklar va reklamalar uchun API endpointlari
 
 import json
 import os
@@ -11,14 +9,11 @@ from werkzeug.utils import secure_filename
 from flask import Blueprint, request, jsonify, current_app
 import uuid
 
-# Blueprint yaratish
 news_api = Blueprint("news_api", __name__)
 
-# Ma'lumotlar fayli yo'li
 DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
 NEWS_FILE = os.path.join(DATA_DIR, "news.json")
 
-# Media fayllari uchun yo'llar
 MEDIA_DIR = os.path.join(
     os.path.dirname(os.path.dirname(__file__)), "static", "media", "news"
 )
@@ -29,7 +24,6 @@ MAX_VIDEO_SIZE = 50 * 1024 * 1024  # 50MB
 
 
 def ensure_directories():
-    """Kerakli papkalarni yaratish"""
     os.makedirs(DATA_DIR, exist_ok=True)
     os.makedirs(MEDIA_DIR, exist_ok=True)
     os.makedirs(os.path.join(MEDIA_DIR, "images"), exist_ok=True)

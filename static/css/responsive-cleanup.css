@@ -1,0 +1,264 @@
+/* responsive-cleanup.css
+   Purpose: central override file to harmonize responsive behavior across the app
+   Mobile-first approach. Focus on phone/tablet/laptop widths.
+
+   Breakpoints used:
+   - mobile: up to 480px
+   - tablet: 481px - 768px
+   - laptop: 769px - 1200px
+   - desktop: 1201px+
+
+   This file is intentionally specific and uses selectors to override inline and other styles
+   when needed (keeps changes centralized). Adjust values if you want tighter pixel control.
+*/
+
+:root {
+  --base-font-size: 15px; /* default mobile-friendly */
+  --touch-target: 44px; /* minimum touch target */
+  --container-max: 1200px; /* default container max on larger screens */
+}
+
+/* Global resets useful for responsive layouts */
+html,
+body {
+  font-size: var(--base-font-size);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.35;
+}
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+button,
+.btn {
+  min-height: var(--touch-target);
+  min-width: var(--touch-target);
+  padding: 8px 12px;
+  font-size: 1rem;
+}
+
+input[type="text"],
+input[type="email"],
+textarea,
+select {
+  font-size: 1rem;
+  padding: 10px 12px;
+  min-height: 40px;
+}
+
+/* Make containers responsive and centered */
+.container,
+.container-fluid {
+  width: 100%;
+  padding-left: 12px;
+  padding-right: 12px;
+  box-sizing: border-box;
+}
+
+@media (min-width: 769px) {
+  .container {
+    max-width: var(--container-max);
+    margin: 0 auto;
+  }
+}
+
+/* NAVBAR adjustments - phone & laptop friendly */
+.navbar {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+.navbar .navbar-brand {
+  font-size: 1.05rem;
+  padding-left: 6px;
+}
+.navbar .nav-link {
+  padding: 8px 10px;
+  font-size: 0.95rem;
+}
+
+/* Ensure collapsed toggler is large enough on phones */
+.navbar-toggler {
+  padding: 6px 8px;
+  width: 48px;
+  height: 48px;
+}
+
+/* Footer layout: stack on mobile, grid on larger screens */
+.footer .container {
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+
+.footer .row {
+  gap: 12px;
+}
+
+@media (max-width: 480px) {
+  .footer .col-md-8,
+  .footer .col-md-4,
+  .footer .col-lg-3,
+  .footer .col-lg-2 {
+    width: 100% !important;
+    display: block !important;
+    text-align: center;
+  }
+  .footer .input-group {
+    max-width: 100% !important;
+  }
+  .footer {
+    padding: 16px 8px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .footer .col-md-8,
+  .footer .col-md-4 {
+    width: 100%;
+  }
+  .footer {
+    padding: 18px 12px;
+  }
+}
+
+@media (min-width: 769px) {
+  .footer {
+    padding: 26px 18px;
+  }
+}
+
+/* News ticker: harmonize and make mobile-first */
+.news-ticker-container {
+  width: 100%;
+}
+.news-ticker-wrapper {
+  padding: 10px 12px;
+  gap: 12px;
+  align-items: stretch;
+}
+.news-ticker {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  height: auto;
+}
+.news-ticker-viewport {
+  width: 100%;
+  height: auto;
+}
+.news-ticker-content {
+  padding: 8px;
+  gap: 12px;
+}
+.news-item {
+  flex: 0 0 100%;
+  padding: 10px;
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .news-ticker-wrapper {
+    padding: 12px 16px;
+  }
+  .news-item {
+    padding: 12px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1200px) {
+  .news-ticker-wrapper {
+    padding: 18px 24px;
+  }
+  .news-ticker {
+    max-width: 1000px;
+  }
+  .news-item {
+    padding: 14px;
+  }
+}
+
+@media (min-width: 1201px) {
+  .news-ticker-wrapper {
+    padding: 22px 30px;
+  }
+  .news-ticker {
+    max-width: 1400px;
+  }
+  .news-item {
+    padding: 16px;
+  }
+}
+
+/* touch target & spacing helpers */
+.btn,
+button,
+.news-nav-btn {
+  cursor: pointer;
+}
+
+/* Accessibility: larger fonts on small screens for readability */
+@media (max-width: 480px) {
+  html,
+  body {
+    font-size: 15px;
+  }
+  h1 {
+    font-size: 1.4rem;
+  }
+  h2 {
+    font-size: 1.2rem;
+  }
+  h3 {
+    font-size: 1.05rem;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  html,
+  body {
+    font-size: 15px;
+  }
+  h1 {
+    font-size: 1.6rem;
+  }
+  h2 {
+    font-size: 1.25rem;
+  }
+}
+
+@media (min-width: 769px) {
+  html,
+  body {
+    font-size: 15px;
+  }
+  h1 {
+    font-size: 1.8rem;
+  }
+}
+
+/* small components fixups */
+.card,
+.modal-content {
+  box-sizing: border-box;
+}
+
+/* Ensure inputs and clickable areas have enough spacing on small devices */
+@media (max-width: 480px) {
+  .input-group .form-control {
+    padding: 10px 12px;
+  }
+  .social-icon-btn {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* final safe defaults */
+* {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+/* End of responsive-cleanup.css */

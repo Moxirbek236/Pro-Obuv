@@ -1,0 +1,323 @@
+{% extends "base.html" %} {% block title %}Yangiliklar - PRO-OBUV{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <h1 class="mb-3">📰 Yangiliklar</h1>
+
+  {% if session.get('super_admin') %}
+  <div class="mb-3">
+    <button
+      class="btn btn-primary"
+      data-bs-toggle="modal"
+      data-bs-target="#newsModalPublic"
+      onclick="openNewsModalPublic()">
+      ➕ Yangilik qo'shish
+    </button>
+  </div>
+  {% endif %}
+
+  <!-- Simple ticker: recent titles -->
+  <div
+    id="news-ticker"
+    class="mb-3"
+    style="
+      background: #111;
+      color: #fff;
+      padding: 8px;
+      border-radius: 6px;
+      overflow: hidden;
+    ">
+    <div
+      id="ticker-inner"
+      style="
+        white-space: nowrap;
+        display: inline-block;
+        animation: ticker 20s linear infinite;
+      "></div>
+  </div>
+
+  <style>
+    @keyframes ticker {
+      0% {
+        transform: translateX(100%);
+      }
+      100% {
+        transform: translateX(-100%);
+      }
+    }
+    .news-item {
+      margin-bottom: 28px;
+    }
+    .news-media {
+      margin-top: 12px;
+      margin-bottom: 12px;
+    }
+  </style>
+
+  {% if news %}
+  <div id="news-list">
+    {% for item in news %}
+    <article class="news-item card p-3">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h3 class="h5 mb-0">{{ item.title }}</h3>
+        <small class="text-muted"
+          >{{ item.created_at.split('T')[0] if item.created_at else '' }}</small
+        >
+      </div>
+
+      <div class="news-media">
+        {% if item.image or item.image_url %}
+        <img
+          src="{{ item.image_url or item.image }}"
+          alt="{{ item.title }}"
+          style="
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+            border: 1px solid #eee;
+          " />
+        {% endif %} {% if item.youtube_url %}
+        <div
+          style="
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 8px;
+            margin-top: 8px;
+          ">
+          <iframe
+            src="{{ item.youtube_url|replace('watch?v=','embed/') }}"
+            style="
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              border: 0;
+            "
+            allowfullscreen></iframe>
+        </div>
+        {% endif %} {% if item.video or item.video_url %}
+        <video
+          controls
+          style="
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-top: 8px;
+          ">
+          <source src="{{ item.video_url or item.video }}" />
+          Your browser does not support the video tag.
+        </video>
+        {% endif %}
+      </div>
+
+      <div class="news-body">
+        <p>{{ (item.description or item.content) | safe }}</p>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="alert alert-info">Hozircha yangiliklar mavjud emas.</div>
+  {% endif %}
+</div>
+
+<script>
+  (function(){
+    const news = {{ (news|length if news else 0) }};
+    const items = [];
+    {% for it in news %}
+      items.push("{{ it.title|replace('"','\"') }}");
+    {% endfor %}
+    const ticker = document.getElementById('ticker-inner');
+    if(items.length){
+      ticker.innerText = items.join('  •  ');
+    } else {
+      ticker.innerText = 'Yangiliklar yo\'q';
+    }
+  })();
+</script>
+
+<!-- Public Add News Modal (for superadmin on /news page) -->
+{% if session.get('super_admin') %}
+<div class="modal fade" id="newsModalPublic" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Yangilik qo'shish</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="newsFormPublic">
+          <div class="mb-3">
+            <label class="form-label">Sarlavha *</label>
+            <input
+              type="text"
+              id="newsTitlePublic"
+              class="form-control"
+              required
+              maxlength="200" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Matn</label>
+            <textarea
+              id="newsContentPublic"
+              class="form-control"
+              rows="3"
+              maxlength="500"></textarea>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-label">Rasm</label>
+              <input
+                type="file"
+                id="newsImageFilePublic"
+                class="form-control"
+                accept="image/*"
+                onchange="uploadMediaFilePublic('image')" />
+              <input type="hidden" id="newsImageUrlPublic" />
+              <img
+                id="imagePreviewPublic"
+                style="display: none; max-width: 180px; margin-top: 8px" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Video</label>
+              <input
+                type="file"
+                id="newsVideoFilePublic"
+                class="form-control"
+                accept="video/*"
+                onchange="uploadMediaFilePublic('video')" />
+              <input type="hidden" id="newsVideoUrlPublic" />
+              <video
+                id="videoPreviewPublic"
+                style="display: none; max-width: 180px; margin-top: 8px"
+                controls
+                muted></video>
+            </div>
+          </div>
+          <div class="mb-3 mt-2">
+            <label class="form-label">Turi</label>
+            <select id="newsTypePublic" class="form-control">
+              <option value="news">📰 Yangilik</option>
+              <option value="advertisement">📢 Reklama</option>
+            </select>
+          </div>
+          <div class="form-check mb-3">
+            <input
+              type="checkbox"
+              id="newsIsActivePublic"
+              class="form-check-input"
+              checked />
+            <label for="newsIsActivePublic" class="form-check-label"
+              >Faol</label
+            >
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Bekor qilish
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          onclick="saveNewsPublic()">
+          Saqlash
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openNewsModalPublic() {
+    document.getElementById("newsFormPublic").reset();
+    document.getElementById("imagePreviewPublic").style.display = "none";
+    document.getElementById("videoPreviewPublic").style.display = "none";
+    document.getElementById("newsImageUrlPublic").value = "";
+    document.getElementById("newsVideoUrlPublic").value = "";
+  }
+
+  function uploadMediaFilePublic(type) {
+    const fileInput = document.getElementById(
+      type === "image" ? "newsImageFilePublic" : "newsVideoFilePublic"
+    );
+    const file = fileInput.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    fetch("/admin/upload-news-media", { method: "POST", body: formData })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success) {
+          if (type === "image") {
+            document.getElementById("newsImageUrlPublic").value = data.file_url;
+            const img = document.getElementById("imagePreviewPublic");
+            img.src = data.file_url;
+            img.style.display = "block";
+          } else {
+            document.getElementById("newsVideoUrlPublic").value = data.file_url;
+            const vid = document.getElementById("videoPreviewPublic");
+            vid.src = data.file_url;
+            vid.style.display = "block";
+          }
+        } else {
+          alert("Upload xatosi: " + (data.message || ""));
+        }
+      })
+      .catch((err) => {
+        console.error("Upload error", err);
+        alert("Fayl yuklashda xatolik");
+      });
+  }
+
+  function saveNewsPublic() {
+    const title = document.getElementById("newsTitlePublic").value.trim();
+    if (!title) {
+      alert("Sarlavha kiritilishi shart");
+      return;
+    }
+
+    const payload = {
+      title: title,
+      content: document.getElementById("newsContentPublic").value.trim(),
+      type: document.getElementById("newsTypePublic").value,
+      image_url: document.getElementById("newsImageUrlPublic").value,
+      video_url: document.getElementById("newsVideoUrlPublic").value,
+      is_active: document.getElementById("newsIsActivePublic").checked,
+      display_order: 0,
+    };
+
+    fetch("/api/news", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success) {
+          alert("Yangilik qo'shildi");
+          const modal = bootstrap.Modal.getInstance(
+            document.getElementById("newsModalPublic")
+          );
+          if (modal) modal.hide();
+          // reload page to show new item
+          window.location.reload();
+        } else {
+          alert("Xato: " + (data.message || ""));
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        alert("Saqlashda xatolik");
+      });
+  }
+</script>
+{% endif %} {% endblock %}

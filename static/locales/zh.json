@@ -1,0 +1,22 @@
+{
+  "settings.title": "🔧 通用设置",
+  "settings.description": "界面和外观设置",
+  "settings.language_label": "🌐 界面语言",
+  "settings.theme_label": "🎨 外观设置",
+  "settings.font_size_label": "文字大小:",
+  "settings.save": "💾 保存设置",
+  "settings.reset": "🔄 恢复默认",
+  "preview.default": "此文本将根据您的设置进行更新",
+  "nav.profile_settings": "⚙️ 个人设置",
+  "nav.profile": "👤 个人资料",
+  "nav.home": "🏠 主页",
+  "nav.menu": "📋 菜单",
+  "nav.favorites": "❤️ 收藏",
+  "nav.cart": "🛒 购物车",
+  "nav.contact": "📞 联系我们",
+  "nav.news": "📰 新闻",
+  "nav.about": "❓ 关于",
+  "nav.downloads": "📱 下载",
+  "footer.follow_us": "关注我们",
+  "footer.subscribe": "订阅"
+}

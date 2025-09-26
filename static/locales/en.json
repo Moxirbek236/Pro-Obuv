@@ -1,0 +1,22 @@
+{
+  "settings.title": "🔧 General Settings",
+  "settings.description": "Interface and appearance settings",
+  "settings.language_label": "🌐 Interface language",
+  "settings.theme_label": "🎨 Appearance settings",
+  "settings.font_size_label": "Text size:",
+  "settings.save": "💾 Save settings",
+  "settings.reset": "🔄 Reset to defaults",
+  "preview.default": "This text updates according to your settings",
+  "nav.profile_settings": "⚙️ Profile settings",
+  "nav.profile": "👤 Profile",
+  "nav.home": "🏠 Home",
+  "nav.menu": "📋 Menu",
+  "nav.favorites": "❤️ Favorites",
+  "nav.cart": "🛒 Cart",
+  "nav.contact": "📞 Contact",
+  "nav.news": "📰 News",
+  "nav.about": "❓ About",
+  "nav.downloads": "📱 Downloads",
+  "footer.follow_us": "Follow us",
+  "footer.subscribe": "Subscribe"
+}

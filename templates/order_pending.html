@@ -1,0 +1,63 @@
+{% extends "base.html" %} {% block title %}Buyurtma tasdiqlash kutilmoqda{%
+endblock %} {% block content %}
+<div class="container mt-4">
+  <h1>⏳ Buyurtma tasdiqlash kutilmoqda</h1>
+  <p class="text-muted">
+    Buyurtmangiz super admin tomonidan tasdiqlangach, ishga olinadi.
+  </p>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5 class="card-title">Buyurtma ma'lumotlari</h5>
+      <div class="row">
+        <div class="col-md-6">
+          <div><strong>Order ID:</strong> {{ order.id }}</div>
+          <div><strong>Ticket:</strong> {{ order.ticket_no }}</div>
+          <div><strong>Holati:</strong> {{ order.status }}</div>
+          <div><strong>Yaratilgan:</strong> {{ order.created_at }}</div>
+        </div>
+        <div class="col-md-6">
+          <div><strong>Mijoz:</strong> {{ order.customer_name }}</div>
+          <div><strong>Telefon:</strong> {{ order.customer_phone or '-' }}</div>
+          <div>
+            <strong>Manzil:</strong> {{ order.delivery_address or '-' }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Super admin bilan bog'lanish</h5>
+      <ul class="list-unstyled mb-0">
+        <li><strong>Email:</strong> {{ contact.email or '—' }}</li>
+        <li>
+          <strong>Telegram:</strong> {% if contact.telegram %}<a
+            href="{{ contact.telegram }}"
+            target="_blank"
+            >Telegram</a
+          >{% else %}—{% endif %}
+        </li>
+        <li>
+          <strong>Instagram:</strong> {% if contact.instagram %}<a
+            href="{{ contact.instagram }}"
+            target="_blank"
+            >Instagram</a
+          >{% else %}—{% endif %}
+        </li>
+        <li>
+          <strong>Telefon:</strong> {% if contact.phone %}<a
+            href="tel:{{ contact.phone }}"
+            >{{ contact.phone }}</a
+          >{% else %}—{% endif %}
+        </li>
+      </ul>
+      <p class="mt-3">
+        Iltimos, zarur bo'lsa yuqoridagi kontaktlardan foydalanib tasdiqlashni
+        tezlashtiring.
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,154 @@
+{% extends "base.html" %} {% block title %}Yangiliklar tasmasi boshqaruvi -
+Admin{% endblock %} {% block content %}
+<div class="container mt-4">
+  <h1>📢 Yangiliklar tasmasi</h1>
+  <p class="text-muted">
+    Tasmada ko'rsatiladigan elementlarni alohida boshqaring
+  </p>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0">Tasmadagi elementlar</h5>
+        <a
+          href="{{ url_for('admin_news_management') }}"
+          class="btn btn-outline-secondary"
+          >📰 Yangiliklarni boshqarish</a
+        >
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Sarlavha</th>
+              <th>Turi</th>
+              <th>Holati</th>
+              <th>Tartib</th>
+              <th>Amallar</th>
+            </tr>
+          </thead>
+          <tbody id="tickerTableBody">
+            <tr>
+              <td colspan="6" class="text-center">Yuklanmoqda...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %} {% block additional_js %}
+<script>
+  // Disable service worker caching on this admin page
+  if (
+    typeof navigator !== "undefined" &&
+    navigator.serviceWorker &&
+    navigator.serviceWorker.getRegistrations
+  ) {
+    navigator.serviceWorker
+      .getRegistrations()
+      .then(function (regs) {
+        regs.forEach(function (reg) {
+          try {
+            reg.unregister();
+          } catch (e) {}
+        });
+      })
+      .catch(function () {});
+  }
+
+  const CSRF_TOKEN = '{{ csrf_token if csrf_token else "" }}';
+
+  document.addEventListener("DOMContentLoaded", () => {
+    loadTickerItems();
+  });
+
+  function loadTickerItems() {
+    const body = document.getElementById("tickerTableBody");
+    body.innerHTML =
+      '<tr><td colspan="6" class="text-center">Yuklanmoqda...</td></tr>';
+    const url = "/api/news/ticker?t=" + Date.now();
+    fetch(url, {
+      headers: {
+        "X-CSRF-Token": CSRF_TOKEN,
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        Pragma: "no-cache",
+        Expires: "0",
+      },
+      cache: "no-store",
+      credentials: "same-origin",
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (!data.success) {
+          body.innerHTML =
+            '<tr><td colspan="6" class="text-danger text-center">Yuklab bo\'lmadi</td></tr>';
+          return;
+        }
+        const items = data.news || [];
+        if (items.length === 0) {
+          body.innerHTML =
+            '<tr><td colspan="6" class="text-center">Tasmada element yo\'q</td></tr>';
+          return;
+        }
+        body.innerHTML = items.map((it) => renderRow(it)).join("");
+      })
+      .catch(() => {
+        body.innerHTML =
+          '<tr><td colspan="6" class="text-danger text-center">Xatolik</td></tr>';
+      });
+  }
+
+  function renderRow(it) {
+    const type = it.type === "advertisement" ? "📢 Reklama" : "📰 Yangilik";
+    const status = it.is_active ? "✅ Faol" : "❌ Nofaol";
+    return `
+      <tr>
+        <td>${it.id}</td>
+        <td>${escapeHtml(it.title || "")}</td>
+        <td>${type}</td>
+        <td>${status}</td>
+        <td>${it.display_order || 0}</td>
+        <td>
+          <button class="btn btn-sm btn-outline-secondary" onclick="toggleTicker(${
+            it.id
+          })">Tasmadan olib tashlash</button>
+        </td>
+      </tr>
+    `;
+  }
+
+  function toggleTicker(id) {
+    fetch(`/api/news/ticker/toggle/${id}`, {
+      method: "POST",
+      headers: { "X-CSRF-Token": CSRF_TOKEN },
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success) {
+          loadTickerItems();
+        } else {
+          alert(data.message || "Xatolik");
+        }
+      })
+      .catch(() => alert("Xatolik"));
+  }
+
+  function escapeHtml(s) {
+    return (s || "").replace(
+      /[&<>"]]/g,
+      (c) =>
+        ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;",
+        }[c] || c)
+    );
+  }
+</script>
+{% endblock %}
