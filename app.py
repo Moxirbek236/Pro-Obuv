@@ -18,7 +18,6 @@ import pytz
 from contextlib import contextmanager
 from functools import wraps
 
-# import cros
 import os
 from flask import (
     Flask,
@@ -28,6 +27,7 @@ from flask import (
     url_for,
     session,
     flash,
+    get_flashed_messages,
     jsonify,
     g,
     send_file,
@@ -44,7 +44,6 @@ import sqlite3
 import json
 import pandas as pd
 
-# Optional third-party libraries used across the app. Import with safe fallbacks
 try:
     import requests
 except Exception:
@@ -67,7 +66,6 @@ try:
 except Exception:
     Workbook = None
 
-# SQLAlchemy is optional in this project (used only for Postgres deployments)
 try:
     from flask_sqlalchemy import SQLAlchemy
 except Exception:
@@ -76,20 +74,17 @@ except Exception:
 try:
     from werkzeug.utils import secure_filename
 except Exception:
-    # provide a minimal fallback to avoid NameError in templates/routes
+
     def secure_filename(name):
         return os.path.basename(name)
 
 
 import uuid as uuid_module
 
-# compatibility alias for existing code that uses `uuid`
 uuid = uuid_module
 
-# Application start time (used for uptime calculations)
 start_time = time.time()
 
-# Redis import - optional
 try:
     import redis
 
@@ -98,40 +93,32 @@ except ImportError:
     REDIS_AVAILABLE = False
     redis = None
 
-# Environment variables yuklash
 load_dotenv()
 print("DEBUG: load_dotenv done")
 
-# Простое кеширование в памяти для высокой производительности
 import time
 from functools import wraps
 
-# Кеш в памяти
 MEMORY_CACHE = {}
 CACHE_TIMEOUT = 300  # 5 минут
 
 
 def simple_cache(timeout=300):
-    """Простое кеширование в памяти"""
 
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            # Создаем ключ кеша
             cache_key = f"{func.__name__}_{hash(str(args) + str(kwargs))}"
             current_time = time.time()
 
-            # Проверяем кеш
             if cache_key in MEMORY_CACHE:
                 cached_time, cached_result = MEMORY_CACHE[cache_key]
                 if current_time - cached_time < timeout:
                     return cached_result
 
-            # Выполняем функцию и кешируем
             result = func(*args, **kwargs)
             MEMORY_CACHE[cache_key] = (current_time, result)
 
-            # Очищаем старые записи
             if len(MEMORY_CACHE) % 100 == 0:
                 cutoff = current_time - timeout * 2
                 MEMORY_CACHE.clear()  # Простое очищение
@@ -143,7 +130,6 @@ def simple_cache(timeout=300):
     return decorator
 
 
-# Hisobotlarni Excel faylga eksport qilish funksiyasi
 def export_orders_report(period="day"):
     """
     period: 'day', 'month', 'year'
@@ -177,7 +163,6 @@ app = Flask(__name__)
 
 print("DEBUG: Flask app created")
 
-# News API ni ulash
 try:
     from api.news_api import register_news_api
 
@@ -189,10 +174,6 @@ except Exception as e:
     print(f"WARNING: News API registration failed: {e}")
 
 
-# Duplicate `api_members` removed. The canonical implementation appears later in the file.
-
-
-# Universal configuration class
 class Config:
     "Universal dastur konfiguratsiyasi"
 
@@ -912,6 +893,72 @@ def secure_session_login(session_type, session_data):
         return False
 
 
+@app.context_processor
+def inject_navbar_context():
+    """Provide template variables to decide which navbar to render.
+
+    Rules implemented:
+    - super_admin, staff, courier are role-specific and must be logged in to use their menus.
+    - If no special role is logged in, show the public/user navbar.
+    - If a normal user is logged in, expose `user_profile` and `notifications_count` so templates
+      can show profile info and unread notifications icon.
+    """
+    try:
+        is_user = bool(session.get("user_id"))
+        is_staff = bool(session.get("staff_id"))
+        is_courier = bool(session.get("courier_id"))
+        is_super_admin = bool(session.get("super_admin"))
+
+        # If any elevated role is present, prefer that role's navbar (they must be logged in)
+        elevated = is_staff or is_courier or is_super_admin
+
+        user_profile = {}
+        notifications_count = 0
+
+        if is_user and not elevated:
+            # Build a minimal profile object for templates
+            user_profile = {
+                "name": session.get("user_name")
+                or session.get("user_first_name")
+                or "",
+                "avatar": session.get("user_avatar") or None,
+                "email": session.get("user_email") or None,
+            }
+
+            # Try to get unread notifications count (best-effort, silent on error)
+            try:
+                if session.get("user_id"):
+                    # notifications table stores recipient as (recipient_type, recipient_id)
+                    # and the read flag column is named 'read_flag'. Use those columns.
+                    res = execute_query(
+                        "SELECT COUNT(1) FROM notifications WHERE recipient_type = 'user' AND recipient_id = ? AND read_flag = 0",
+                        (session.get("user_id"),),
+                        fetch_one=True,
+                    )
+                    if res:
+                        try:
+                            notifications_count = int(res[0])
+                        except Exception:
+                            notifications_count = 0
+            except Exception:
+                notifications_count = 0
+
+        return {
+            "is_user": is_user and not elevated,
+            "is_staff": is_staff,
+            "is_courier": is_courier,
+            "is_super_admin": is_super_admin,
+            "user_profile": user_profile,
+            "notifications_count": notifications_count,
+        }
+    except Exception as e:
+        try:
+            app_logger.warning(f"inject_navbar_context error: {e}")
+        except Exception:
+            pass
+        return {}
+
+
 def is_international_delivery_enabled():
     """Check if international delivery is enabled."""
     try:
@@ -1113,10 +1160,31 @@ from logging.handlers import RotatingFileHandler, SMTPHandler
 @app.errorhandler(404)
 def not_found_error(error):
     app_logger.warning(f"404 Error: {request.url}")
-    if request.is_json or request.path.startswith("/api/"):
+
+    # Collect diagnostics to help identify why some clients receive JSON
+    headers_snapshot = {
+        "User-Agent": request.headers.get("User-Agent"),
+        "Accept": request.headers.get("Accept"),
+        "X-Requested-With": request.headers.get("X-Requested-With"),
+        "Path": request.path,
+        "is_json": request.is_json,
+    }
+
+    # Decision rule:
+    # - If the path is an API call (starts with /api/) -> return JSON
+    # - Else if the request method is GET (normal browser navigation) -> return HTML
+    # - Otherwise (non-GET non-API), fall back to JSON for clients that expect it
+    wants_json = request.path.startswith("/api/") or request.is_json
+
+    app_logger.debug(
+        f"404 diagnostics: {headers_snapshot} wants_json={wants_json} method={request.method}"
+    )
+
+    if wants_json and request.method != "GET":
+        # For API endpoints and non-GET requests that indicate JSON usage, return JSON
         return jsonify({"error": "Not found", "code": 404}), 404
 
-    # Error template mavjudligini tekshirish
+    # Otherwise serve an HTML page for GET navigations (safe for browsers/crawlers)
     try:
         return (
             render_template(
@@ -1124,7 +1192,8 @@ def not_found_error(error):
             ),
             404,
         )
-    except:
+    except Exception as e:
+        app_logger.debug(f"Rendering error.html failed: {e}")
         return (
             """
         <!DOCTYPE html>
@@ -1133,7 +1202,7 @@ def not_found_error(error):
         <body>
             <h1>404 - Sahifa topilmadi</h1>
             <p>So'ralgan sahifa mavjud emas.</p>
-            <a href="/">Bosh sahifaga qaytish</a>      
+            <a href="/">Bosh sahifaga qaytish</a>
         </body>
         </html>
         """,
@@ -3794,6 +3863,102 @@ def inject_role_nav():
             "session_font_size": "medium",
             "session_language": "uz",
         }
+
+
+# ---- Simple i18n loader -------------------------------------------------
+# Loads JSON files from static/locales/<lang>.json and provides a Jinja helper
+SUPPORTED_LANGUAGES = ["uz", "ru", "en", "kk", "zh"]
+LOCALES = {}
+
+
+def load_locales():
+    """Load locale JSON files into LOCALES dict. Missing files produce empty dicts."""
+    global LOCALES
+    base = os.path.join(app.root_path, "static", "locales")
+    for lang in SUPPORTED_LANGUAGES:
+        path = os.path.join(base, f"{lang}.json")
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                LOCALES[lang] = json.load(f)
+        except Exception:
+            LOCALES[lang] = {}
+
+
+# load once at startup (safe if files missing)
+try:
+    load_locales()
+except Exception:
+    LOCALES = {ln: {} for ln in SUPPORTED_LANGUAGES}
+
+
+def translate(key, **kwargs):
+    """Translate a key using session['interface_language'] with graceful fallbacks.
+
+    Usage in templates: {{ _('settings.title') }}
+    """
+    lang = session.get("interface_language", "uz")
+    # prefer requested lang -> uz -> en -> raw key
+    candidates = [lang, "uz", "en"]
+    for c in candidates:
+        bucket = LOCALES.get(c, {})
+        if key in bucket:
+            val = bucket.get(key)
+            try:
+                return val.format(**kwargs) if isinstance(val, str) else val
+            except Exception:
+                return val
+    # fallback to key if nothing found
+    return key
+
+
+# Load optional message->key mapping for existing flash strings so we can
+# automatically translate legacy literal messages without changing every
+# flash(...) callsite.
+MSG_KEY_MAP = {}
+try:
+    msg_map_path = os.path.join(app.root_path, "static", "locales", "msg_key_map.json")
+    if os.path.exists(msg_map_path):
+        with open(msg_map_path, "r", encoding="utf-8") as f:
+            MSG_KEY_MAP = json.load(f)
+except Exception:
+    MSG_KEY_MAP = {}
+
+
+@app.before_request
+def localize_flashes():
+    """Remap any flashed literal messages into translated strings using
+    MSG_KEY_MAP and translate(). This lets us keep existing flash(...) calls
+    and have their text localized automatically.
+    """
+    try:
+        # get current flashed messages (consumes them)
+        messages = get_flashed_messages(with_categories=True)
+        if not messages:
+            return
+        # re-flash localized versions
+        for category, msg in messages:
+            # If mapping exists, use translation key; else try to find key by value
+            key = MSG_KEY_MAP.get(msg)
+            if key:
+                localized = translate(key) if isinstance(key, str) else translate(msg)
+            else:
+                # As a fallback, try to treat the msg itself as a translation key
+                localized = translate(msg)
+            # re-flash localized message in same category
+            flash(localized, category)
+    except Exception:
+        # don't break the request flow on localization errors
+        pass
+
+
+@app.context_processor
+def inject_translations():
+    """Expose translation helper and current language to templates."""
+    return {
+        "_": translate,
+        "supported_languages": SUPPORTED_LANGUAGES,
+        "current_language": session.get("interface_language", "uz"),
+    }
 
 
 # ---------- Helpers ----------
@@ -7663,7 +7828,8 @@ def place_order():
                 return redirect(url_for("menu"))
 
             # Formdan ma'lumotlarni xavfsiz olish
-            order_type = request.form.get("order_type", "dine_in")
+            # Default to delivery since in-store pickup was removed from UI
+            order_type = request.form.get("order_type", "delivery")
             delivery_address = request.form.get("delivery_address", "").strip()
             home_address = request.form.get("home_address", "").strip()
             customer_phone_new = request.form.get("customer_phone", "").strip()
@@ -7717,11 +7883,11 @@ def place_order():
             customer_phone = session.get("user_phone", "") or customer_phone_new
             card_number = session.get("user_card_number", "") or card_number_new
 
-            # Require card for delivery orders
-            if order_type == "delivery" and not card_number:
-                # If user didn't provide card and doesn't have one in profile, force them to add it
+            # Payment method handling: default to cash; only require card if selected
+            payment_method = request.form.get("payment_method", "cash") or "cash"
+            if payment_method in ("card", "online") and not card_number:
                 flash(
-                    "Yetkazib berish uchun karta ma'lumotlari talab qilinadi. Iltimos, karta ma'lumotlarini kiriting.",
+                    "Tanlangan to'lov usuli uchun karta ma'lumotlari talab qilinadi. Iltimos, karta ma'lumotlarini kiriting.",
                     "error",
                 )
                 return redirect(url_for("cart"))
@@ -7751,7 +7917,7 @@ def place_order():
             order_id = execute_query(
                 """
                 INSERT INTO orders (user_id, customer_name, ticket_no, order_type, status, delivery_address, delivery_distance, delivery_latitude, delivery_longitude, delivery_map_url, customer_note, customer_phone, card_number, branch_id, created_at, eta_time)
-                VALUES (?, ?, ?, ?, 'waiting', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                VALUES (?, ?, ?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
             """,
                 (
                     user_id,
@@ -7891,8 +8057,8 @@ def place_order():
             # Avtomatik bildirishnoma yuborish
             send_order_notifications(order_id, "pending", name, total_amount)
 
-            flash("Buyurtma muvaffaqiyatli berildi!", "success")
-            return redirect(url_for("user_success", ticket_no=tno))
+            flash("Buyurtma yuborildi. Super admin tasdiqlashi kutilmoqda.", "info")
+            return redirect(url_for("order_pending_approval", order_id=order_id))
 
     except Exception as e:
         app_logger.error(f"Buyurtma berishda xatolik: {str(e)}")
@@ -7939,6 +8105,40 @@ def user_status(ticket_no):
                 "eta_time": order["eta_time"],
             }
         )
+    except Exception as e:
+        app_logger.error(f"user_status error: {str(e)}")
+        return jsonify({"error": "Server xatosi"}), 500
+
+
+# ----- Order pending approval page (shows superadmin contacts) -----
+@app.route("/order/pending/<int:order_id>")
+def order_pending_approval(order_id):
+    try:
+        order = execute_query(
+            "SELECT * FROM orders WHERE id = ?", (order_id,), fetch_one=True
+        )
+        if not order:
+            flash("Buyurtma topilmadi.", "error")
+            return redirect(url_for("menu"))
+
+        # Load superadmin contact info from settings
+        creds = get_superadmin_creds()
+        contact = {
+            "email": creds.get("email", ""),
+            "telegram": creds.get("telegram", ""),
+            "instagram": creds.get("instagram", ""),
+            "phone": creds.get("phone", ""),
+        }
+
+        return render_template(
+            "order_pending.html",
+            order=order,
+            contact=contact,
+        )
+    except Exception as e:
+        app_logger.error(f"Order pending page error: {str(e)}")
+        flash("Sahifani yuklashda xatolik.", "error")
+        return redirect(url_for("menu"))
     except Exception as e:
         app_logger.error(f"User status error: {str(e)}")
         return jsonify({"error": "Server xatoligi"}), 500
@@ -8021,8 +8221,15 @@ def user_success(ticket_no):
         except:
             eta_hhmm = "N/A"  # Handle potential parsing errors
 
+    # Load superadmin settings (contact info) so the success page can show admin contact
+    superadmin_settings = load_superadmin_settings() or {}
+
     return render_template(
-        "user_success.html", order=order, order_items=order_items, eta_hhmm=eta_hhmm
+        "user_success.html",
+        order=order,
+        order_items=order_items,
+        eta_hhmm=eta_hhmm,
+        superadmin_settings=superadmin_settings,
     )
 
 
@@ -8149,6 +8356,11 @@ def contact():
 def about():
     "About sahifasi"
     return render_template("about.html", current_page="about")
+
+
+@app.route("/kafolatlar", endpoint="kafolatlar")
+def kafolatlar_page():
+    return render_template("kafolatlar.html")
 
 
 @app.route("/downloads")
@@ -9407,11 +9619,31 @@ def api_status():
 def api_get_active_news():
     """Get active news for ticker display"""
     try:
-        # Get active news sorted by display order
+        # Ensure schema has show_in_ticker
+        try:
+            cols = execute_query("PRAGMA table_info(news)", fetch_all=True)
+            has_show = False
+            if cols:
+                for c in cols:
+                    name = c[1] if isinstance(c, tuple) else c.get("name")
+                    if name == "show_in_ticker":
+                        has_show = True
+                        break
+            if not has_show:
+                try:
+                    execute_query(
+                        "ALTER TABLE news ADD COLUMN show_in_ticker BOOLEAN DEFAULT 0"
+                    )
+                except Exception:
+                    pass
+        except Exception:
+            pass
+
+        # Get active ticker news sorted by display order
         news_query = """
-            SELECT id, title, content, type, is_active, display_order, created_at 
+            SELECT id, title, content, type, image_url, video_url, is_active, display_order, created_at 
             FROM news 
-            WHERE is_active = 1 
+            WHERE is_active = 1 AND COALESCE(show_in_ticker, 0) = 1
             ORDER BY display_order ASC, created_at DESC
             LIMIT 20
         """
@@ -9432,18 +9664,24 @@ def api_get_active_news():
                     "type": (
                         item[3] if isinstance(item, tuple) else item.get("type", "news")
                     ),
+                    "image_url": (
+                        item[4] if isinstance(item, tuple) else item.get("image_url")
+                    ),
+                    "video_url": (
+                        item[5] if isinstance(item, tuple) else item.get("video_url")
+                    ),
                     "is_active": bool(
-                        item[4]
+                        item[6]
                         if isinstance(item, tuple)
                         else item.get("is_active", False)
                     ),
                     "display_order": (
-                        item[5]
+                        item[7]
                         if isinstance(item, tuple)
                         else item.get("display_order", 0)
                     ),
                     "created_at": (
-                        item[6]
+                        item[8]
                         if isinstance(item, tuple)
                         else item.get("created_at", "")
                     ),
@@ -10227,6 +10465,149 @@ def get_superadmin_creds():
         "phone": phone,
         "avatar": avatar,
     }
+
+
+# News storage path (simple JSON-backed list so we don't alter DB schema)
+NEWS_STORAGE_PATH = os.path.join(os.path.dirname(__file__), "news.json")
+
+
+def load_news():
+    try:
+        if os.path.exists(NEWS_STORAGE_PATH):
+            with open(NEWS_STORAGE_PATH, "r", encoding="utf-8") as f:
+                data = json.load(f) or []
+                # ensure it's a list and sort by created_at desc
+                if isinstance(data, list):
+                    return sorted(
+                        data, key=lambda x: x.get("created_at", ""), reverse=True
+                    )
+    except Exception as e:
+        try:
+            app_logger.error(f"Failed to load news: {e}")
+        except Exception:
+            pass
+    return []
+
+
+def save_news(list_of_items):
+    try:
+        d = os.path.dirname(NEWS_STORAGE_PATH)
+        os.makedirs(d, exist_ok=True)
+        tmp = NEWS_STORAGE_PATH + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump(list_of_items, f, ensure_ascii=False, indent=2)
+        os.replace(tmp, NEWS_STORAGE_PATH)
+        return True
+    except Exception as e:
+        try:
+            app_logger.error(f"Failed to save news: {e}")
+        except Exception:
+            pass
+    return False
+
+
+@app.route("/news")
+def news_page():
+    """Public news list from database (active only)"""
+    try:
+        rows = (
+            execute_query(
+                "SELECT id, title, content, type, image_url, video_url, is_active, display_order, created_at FROM news WHERE is_active = 1 ORDER BY display_order ASC, created_at DESC",
+                fetch_all=True,
+            )
+            or []
+        )
+
+        # Normalize rows to dicts
+        news_items = []
+        for r in rows:
+            if isinstance(r, dict):
+                item = r
+            else:
+                # tuple ordering per SELECT above
+                item = {
+                    "id": r[0],
+                    "title": r[1],
+                    "content": r[2],
+                    "type": r[3],
+                    "image_url": r[4],
+                    "video_url": r[5],
+                    "is_active": bool(r[6]),
+                    "display_order": r[7],
+                    "created_at": r[8],
+                }
+            news_items.append(item)
+
+        return render_template("news.html", news=news_items)
+    except Exception as e:
+        app_logger.error(f"News page error: {e}")
+        flash("Yangiliklarni yuklashda xatolik.", "error")
+        return redirect(url_for("index"))
+
+
+@app.route("/super-admin/news", methods=["GET"])
+@role_required("super_admin")
+def super_admin_news_list():
+    news = load_news()
+    return render_template("admin/news_manage.html", news=news)
+
+
+@app.route("/super-admin/news/add", methods=["POST"])
+@role_required("super_admin")
+def super_admin_add_news():
+    try:
+        title = request.form.get("title", "").strip()
+        image_url = request.form.get("image_url", "").strip() or None
+        youtube_url = request.form.get("youtube_url", "").strip() or None
+        video_url = request.form.get("video_url", "").strip() or None
+        description = request.form.get("description", "").strip() or ""
+        published = bool(request.form.get("published"))
+
+        if not title:
+            flash("Sarlavha majburiy.", "error")
+            return redirect(url_for("super_admin_news_list"))
+
+        news = load_news()
+        new_id = max([n.get("id", 0) for n in news] or [0]) + 1
+        item = {
+            "id": new_id,
+            "title": title,
+            "image": image_url,
+            "youtube_url": youtube_url,
+            "video": video_url,
+            "description": description,
+            "published": published,
+            "created_at": get_current_time().isoformat(),
+        }
+        news.insert(0, item)
+        ok = save_news(news)
+        if ok:
+            flash("Yangilik qo'shildi.", "success")
+        else:
+            flash("Yangilikni saqlashda xatolik.", "error")
+        return redirect(url_for("super_admin_news_list"))
+    except Exception as e:
+        app_logger.error(f"Add news error: {e}")
+        flash("Yangilikni qo'shishda xatolik.", "error")
+        return redirect(url_for("super_admin_news_list"))
+
+
+@app.route("/super-admin/news/delete/<int:news_id>", methods=["POST"])
+@role_required("super_admin")
+def super_admin_delete_news(news_id):
+    try:
+        news = load_news()
+        newlist = [n for n in news if int(n.get("id", 0)) != int(news_id)]
+        ok = save_news(newlist)
+        if ok:
+            flash("Yangilik o'chirildi.", "success")
+        else:
+            flash("Yangilikni o'chirishda xatolik.", "error")
+        return redirect(url_for("super_admin_news_list"))
+    except Exception as e:
+        app_logger.error(f"Delete news error: {e}")
+        flash("Yangilikni o'chirishda xatolik.", "error")
+        return redirect(url_for("super_admin_news_list"))
 
 
 def clear_role_sessions():
@@ -13762,6 +14143,40 @@ def staff_cancel_order(order_id):
     return redirect(url_for("staff_dashboard"))
 
 
+# Superadmin explicit approval endpoint - marks pending -> confirmed/accepted
+@app.route("/admin/order/<int:order_id>/approve", methods=["POST"])
+@role_required("super_admin")
+def superadmin_approve_order(order_id):
+    """Superadmin approves a pending order. Only super_admin role can call this."""
+    try:
+        order = execute_query(
+            "SELECT * FROM orders WHERE id = ?", (order_id,), fetch_one=True
+        )
+        if not order:
+            flash("Buyurtma topilmadi.", "error")
+            return redirect(url_for("super_admin_dashboard"))
+
+        if order.get("status") != "pending":
+            flash("Buyurtma tasdiqlash uchun pending holatda emas.", "warning")
+            return redirect(url_for("super_admin_dashboard"))
+
+    # Update status in DB to 'waiting' so staff workflows (which expect 'waiting') continue to work.
+    # We still notify the customer with a 'confirmed' notification below.
+        execute_query("UPDATE orders SET status = 'waiting' WHERE id = ?", (order_id,))
+
+        # Notify customer and staff
+        customer_name = order.get("customer_name", "Mijoz")
+        total_amount = order.get("total_amount", 0)
+        send_order_notifications(order_id, "confirmed", customer_name, total_amount)
+
+        flash("Buyurtma tasdiqlandi va mijozga xabar yuborildi.", "success")
+    except Exception as e:
+        app_logger.error(f"Superadmin approve order error: {str(e)}")
+        flash("Buyurtmani tasdiqlashda xatolik yuz berdi.", "error")
+
+    return redirect(url_for("super_admin_dashboard"))
+
+
 @app.route("/staff/menu")
 @role_required("staff")
 def staff_menu():
@@ -14983,7 +15398,7 @@ def change_language():
     data = request.get_json() or {}
     language = data.get("language", "uz")
 
-    if language not in ["uz", "ru", "en"]:
+    if language not in SUPPORTED_LANGUAGES:
         return jsonify({"success": False, "message": "Invalid language"}), 400
 
     session["interface_language"] = language
@@ -15183,6 +15598,7 @@ def api_create_news():
         video_url = data.get("video_url", "").strip()
         is_active = bool(data.get("is_active", True))
         display_order = int(data.get("display_order", 0))
+        show_in_ticker = 1 if bool(data.get("show_in_ticker", False)) else 0
 
         if not title:
             return jsonify({"success": False, "message": "Title is required"}), 400
@@ -15191,6 +15607,45 @@ def api_create_news():
             return jsonify({"success": False, "message": "Invalid news type"}), 400
 
         now = get_current_time().isoformat()
+        # Ensure schema has show_in_ticker before insert
+        try:
+            cols = execute_query("PRAGMA table_info(news)", fetch_all=True)
+            has_show = False
+            if cols:
+                for c in cols:
+                    name = c[1] if isinstance(c, tuple) else c.get("name")
+                    if name == "show_in_ticker":
+                        has_show = True
+                        break
+            if not has_show:
+                try:
+                    execute_query(
+                        "ALTER TABLE news ADD COLUMN show_in_ticker BOOLEAN DEFAULT 0"
+                    )
+                except Exception:
+                    pass
+        except Exception:
+            pass
+
+        if has_show:
+            news_id = execute_query(
+                """INSERT INTO news (title, content, type, image_url, video_url, is_active, display_order, show_in_ticker, created_by, created_at, updated_at)
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                (
+                    title,
+                    content,
+                    news_type,
+                    image_url or None,
+                    video_url or None,
+                    1 if is_active else 0,
+                    display_order,
+                    show_in_ticker,
+                    1,
+                    now,
+                    now,
+                ),
+            )
+        else:
         news_id = execute_query(
             """INSERT INTO news (title, content, type, image_url, video_url, is_active, display_order, created_by, created_at, updated_at)
                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
@@ -15207,6 +15662,27 @@ def api_create_news():
                 now,
             ),
         )
+
+        # Sync to JSON file
+        try:
+            items = (
+                execute_query(
+                    "SELECT * FROM news ORDER BY display_order ASC, created_at DESC",
+                    fetch_all=True,
+                )
+                or []
+            )
+            json_path = os.path.join(os.getcwd(), "data", "news.json")
+            os.makedirs(os.path.dirname(json_path), exist_ok=True)
+            with open(json_path, "w", encoding="utf-8") as f:
+                json.dump(
+                    {"news": items, "metadata": {"last_updated": now}},
+                    f,
+                    ensure_ascii=False,
+                    indent=2,
+                )
+        except Exception as _:
+            pass
 
         return jsonify({"success": True, "message": "News item created", "id": news_id})
 
@@ -15229,6 +15705,7 @@ def api_update_news(news_id):
         video_url = data.get("video_url", "").strip()
         is_active = bool(data.get("is_active", True))
         display_order = int(data.get("display_order", 0))
+        show_in_ticker = 1 if bool(data.get("show_in_ticker", False)) else 0
 
         if not title:
             return jsonify({"success": False, "message": "Title is required"}), 400
@@ -15244,6 +15721,37 @@ def api_update_news(news_id):
             return jsonify({"success": False, "message": "News not found"}), 404
 
         now = get_current_time().isoformat()
+        # Check if show_in_ticker column exists
+        has_show = False
+        try:
+            cols = execute_query("PRAGMA table_info(news)", fetch_all=True)
+            if cols:
+                for c in cols:
+                    name = c[1] if isinstance(c, tuple) else c.get("name")
+                    if name == "show_in_ticker":
+                        has_show = True
+                        break
+        except Exception:
+            has_show = False
+
+        if has_show:
+            execute_query(
+                """UPDATE news SET title = ?, content = ?, type = ?, image_url = ?, video_url = ?, 
+                   is_active = ?, display_order = ?, show_in_ticker = ?, updated_at = ? WHERE id = ?""",
+                (
+                    title,
+                    content,
+                    news_type,
+                    image_url or None,
+                    video_url or None,
+                    1 if is_active else 0,
+                    display_order,
+                    show_in_ticker,
+                    now,
+                    news_id,
+                ),
+            )
+        else:
         execute_query(
             """UPDATE news SET title = ?, content = ?, type = ?, image_url = ?, video_url = ?, 
                is_active = ?, display_order = ?, updated_at = ? WHERE id = ?""",
@@ -15259,6 +15767,27 @@ def api_update_news(news_id):
                 news_id,
             ),
         )
+
+        # Sync to JSON file
+        try:
+            items = (
+                execute_query(
+                    "SELECT * FROM news ORDER BY display_order ASC, created_at DESC",
+                    fetch_all=True,
+                )
+                or []
+            )
+            json_path = os.path.join(os.getcwd(), "data", "news.json")
+            os.makedirs(os.path.dirname(json_path), exist_ok=True)
+            with open(json_path, "w", encoding="utf-8") as f:
+                json.dump(
+                    {"news": items, "metadata": {"last_updated": now}},
+                    f,
+                    ensure_ascii=False,
+                    indent=2,
+                )
+        except Exception as _:
+            pass
 
         return jsonify({"success": True, "message": "News item updated"})
 
@@ -15281,6 +15810,29 @@ def api_delete_news(news_id):
             return jsonify({"success": False, "message": "News not found"}), 404
 
         execute_query("DELETE FROM news WHERE id = ?", (news_id,))
+
+        # Sync to JSON file
+        try:
+            items = (
+                execute_query(
+                    "SELECT * FROM news ORDER BY display_order ASC, created_at DESC",
+                    fetch_all=True,
+                )
+                or []
+            )
+            now = get_current_time().isoformat()
+            json_path = os.path.join(os.getcwd(), "data", "news.json")
+            os.makedirs(os.path.dirname(json_path), exist_ok=True)
+            with open(json_path, "w", encoding="utf-8") as f:
+                json.dump(
+                    {"news": items, "metadata": {"last_updated": now}},
+                    f,
+                    ensure_ascii=False,
+                    indent=2,
+                )
+        except Exception as _:
+            pass
+
         return jsonify({"success": True, "message": "News item deleted"})
 
     except Exception as e:
@@ -15293,10 +15845,153 @@ def api_delete_news(news_id):
 def api_admin_news():
     """Get all news for admin management - Super admin only"""
     try:
+        # Ensure news table exists (first run safety)
+        try:
+            execute_query(
+                """
+                CREATE TABLE IF NOT EXISTS news (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    title TEXT NOT NULL,
+                    content TEXT,
+                    type TEXT DEFAULT 'news' CHECK (type IN ('news','advertisement')),
+                    is_active BOOLEAN DEFAULT 1,
+                    display_order INTEGER DEFAULT 0,
+                    image_url TEXT,
+                    video_url TEXT,
+                    show_in_ticker BOOLEAN DEFAULT 0,
+                    created_by INTEGER,
+                    created_at TEXT NOT NULL,
+                    updated_at TEXT NOT NULL
+                )
+                """
+            )
+        except Exception:
+            pass
+
         news_items = execute_query(
             "SELECT * FROM news ORDER BY display_order ASC, created_at DESC",
             fetch_all=True,
         )
+
+        # Auto-import from data/news.json if DB is empty and JSON exists
+        if not news_items:
+            try:
+                json_path = os.path.join(os.getcwd(), "data", "news.json")
+                if os.path.exists(json_path):
+                    with open(json_path, "r", encoding="utf-8") as f:
+                        raw = json.load(f)
+                    items = raw.get("news") if isinstance(raw, dict) else raw
+                    if isinstance(items, list) and items:
+                        now = get_current_time().isoformat()
+                        order_counter = 0
+                        for it in items:
+                            try:
+                                title = (
+                                    it.get("title") or it.get("name") or ""
+                                ).strip()
+                                if not title:
+                                    continue
+                                content = (
+                                    it.get("description") or it.get("content") or ""
+                                ).strip()
+                                image_url = (
+                                    it.get("image_url") or it.get("image") or None
+                                )
+                                video_url = (
+                                    it.get("video_url")
+                                    or it.get("video")
+                                    or it.get("youtube_url")
+                                    or None
+                                )
+                                news_type = it.get("type") or (
+                                    "advertisement" if it.get("is_ad") else "news"
+                                )
+                                is_active = 1 if (it.get("published", True)) else 0
+                                display_order = int(
+                                    it.get("display_order", order_counter)
+                                )
+                                order_counter += 1
+
+                                # Insert row
+                                try:
+                                    execute_query(
+                                        """INSERT INTO news (title, content, type, image_url, video_url, is_active, display_order, created_by, created_at, updated_at)
+                                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                                        (
+                                            title,
+                                            content,
+                                            (
+                                                news_type
+                                                if news_type
+                                                in ["news", "advertisement"]
+                                                else "news"
+                                            ),
+                                            image_url,
+                                            video_url,
+                                            is_active,
+                                            display_order,
+                                            1,
+                                            now,
+                                            now,
+                                        ),
+                                    )
+                                except Exception:
+                                    # If show_in_ticker exists, ignore here; default 0
+                                    pass
+                            except Exception:
+                                continue
+
+                        # Reload after import
+                        news_items = execute_query(
+                            "SELECT * FROM news ORDER BY display_order ASC, created_at DESC",
+                            fetch_all=True,
+                        )
+            except Exception as imp_err:
+                app_logger.warning(f"News JSON import skipped: {imp_err}")
+
+        # Seed with a few defaults if still empty (first-time setup convenience)
+        if not news_items:
+            try:
+                now = get_current_time().isoformat()
+                defaults = [
+                    (
+                        "🎉 PRO-OBUV yangiliklari",
+                        "Do'konimizda yangilanishlar!",
+                        "news",
+                        1,
+                        0,
+                        None,
+                        None,
+                        now,
+                        now,
+                    ),
+                    (
+                        "🔥 Chegirmalar",
+                        "Ayrim mahsulotlarda chegirmalar mavjud.",
+                        "advertisement",
+                        1,
+                        1,
+                        None,
+                        None,
+                        now,
+                        now,
+                    ),
+                ]
+                for d in defaults:
+                    try:
+                        execute_query(
+                            """INSERT INTO news (title, content, type, is_active, display_order, image_url, video_url, created_at, updated_at)
+                               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                            d,
+                        )
+                    except Exception:
+                        continue
+                news_items = execute_query(
+                    "SELECT * FROM news ORDER BY display_order ASC, created_at DESC",
+                    fetch_all=True,
+                )
+            except Exception as seed_err:
+                app_logger.warning(f"News seed skipped: {seed_err}")
         return jsonify({"success": True, "news": news_items or []})
     except Exception as e:
         app_logger.error(f"Admin news API error: {str(e)}")
@@ -15341,11 +16036,6 @@ def api_toggle_news(news_id):
         )
 
 
-# ================================
-# YANGILIKLAR SAHIFALARI
-# ================================
-
-
 @app.route("/admin/news")
 @role_required("super_admin")
 def admin_news_management():
@@ -15358,6 +16048,89 @@ def admin_news_management():
         app_logger.error(f"News management page error: {str(e)}")
         flash("Sahifani yuklashda xatolik yuz berdi", "danger")
         return redirect(url_for("dashboard"))
+
+
+@app.route("/admin/news-ticker")
+@role_required("super_admin")
+def admin_news_ticker_management():
+    """Yangiliklar tasmasi boshqaruvi sahifasi - Super admin only"""
+    try:
+        csrf_token = generate_csrf_token()
+        return render_template(
+            "admin/news_ticker_management.html", csrf_token=csrf_token
+        )
+    except Exception as e:
+        app_logger.error(f"News ticker management page error: {str(e)}")
+        flash("Sahifani yuklashda xatolik yuz berdi", "danger")
+        return redirect(url_for("super_admin_dashboard"))
+
+
+@app.route("/api/news/ticker", methods=["GET"])
+@role_required("super_admin")
+def api_admin_news_ticker():
+    """Get only items marked for ticker - Super admin only"""
+    try:
+        # Ensure column exists
+        try:
+            cols = execute_query("PRAGMA table_info(news)", fetch_all=True)
+            has_show = False
+            if cols:
+                for c in cols:
+                    name = c[1] if isinstance(c, tuple) else c.get("name")
+                    if name == "show_in_ticker":
+                        has_show = True
+                        break
+            if not has_show:
+                execute_query(
+                    "ALTER TABLE news ADD COLUMN show_in_ticker BOOLEAN DEFAULT 0"
+                )
+        except Exception:
+            pass
+
+        items = execute_query(
+            "SELECT * FROM news WHERE COALESCE(show_in_ticker,0)=1 ORDER BY display_order ASC, created_at DESC",
+            fetch_all=True,
+        )
+        return jsonify({"success": True, "news": items or []})
+    except Exception as e:
+        app_logger.error(f"Admin news ticker API error: {str(e)}")
+        return (
+            jsonify({"success": False, "message": "Failed to load ticker items"}),
+            500,
+        )
+
+
+@app.route("/api/news/ticker/toggle/<int:news_id>", methods=["POST"])
+@role_required("super_admin")
+@csrf_protect
+def api_toggle_news_ticker(news_id):
+    """Toggle show_in_ticker flag - Super admin only"""
+    try:
+        row = execute_query(
+            "SELECT show_in_ticker FROM news WHERE id = ?", (news_id,), fetch_one=True
+        )
+        if not row:
+            return jsonify({"success": False, "message": "News not found"}), 404
+        current = row[0] if isinstance(row, tuple) else row.get("show_in_ticker", 0)
+        new_val = 0 if current else 1
+        now = get_current_time().isoformat()
+        execute_query(
+            "UPDATE news SET show_in_ticker = ?, updated_at = ? WHERE id = ?",
+            (new_val, now, news_id),
+        )
+        return jsonify(
+            {
+                "success": True,
+                "message": "Ticker holati yangilandi",
+                "show_in_ticker": bool(new_val),
+            }
+        )
+    except Exception as e:
+        app_logger.error(f"Toggle news ticker error: {str(e)}")
+        return (
+            jsonify({"success": False, "message": "Failed to toggle ticker flag"}),
+            500,
+        )
 
 
 @app.route("/admin/upload-news-media", methods=["POST"])
@@ -15425,11 +16198,6 @@ def upload_news_media():
             jsonify({"success": False, "message": "Fayl yuklashda xatolik yuz berdi"}),
             500,
         )
-
-
-# ================================
-# CARD PAYMENT MANAGEMENT
-# ================================
 
 
 @app.route("/admin/card-management")
@@ -15605,9 +16373,6 @@ def api_upload_qr():
         return jsonify({"success": False, "message": "O'chirish xatoligi"}), 500
 
 
-# ================================
-# Main system status endpoint
-# ================================
 @app.route("/admin/360-management")
 @role_required("super_admin")
 def admin_360_management():
@@ -15769,11 +16534,6 @@ def api_delete_360_photo(photo_id):
         return jsonify({"success": False, "message": "O'chirish xatoligi"}), 500
 
 
-# ================================
-# USER 360 ROOM
-# ================================
-
-
 @app.route("/360-room")
 def user_360_room():
     """360 Room page for users - Public"""
@@ -15796,11 +16556,6 @@ def user_360_room():
         app_logger.error(f"360 room page error: {str(e)}")
         flash("Sahifani yuklashda xatolik yuz berdi", "danger")
         return redirect(url_for("index"))
-
-
-# ================================
-# DATA FILES SERVING
-# ================================
 
 
 @app.route("/data/<path:filename>")

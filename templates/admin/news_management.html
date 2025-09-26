@@ -621,6 +621,21 @@ endblock %} {% block additional_css %}
             </div>
           </div>
 
+          <div class="mb-3">
+            <label for="newsYoutubeUrl" class="form-label"
+              >YouTube URL (ixtiyoriy)</label
+            >
+            <input
+              type="url"
+              class="form-control"
+              id="newsYoutubeUrl"
+              placeholder="https://www.youtube.com/watch?v=..." />
+            <small class="form-text text-muted"
+              >Agar YouTube havola kiritsangiz, video fayl o'rniga shu havola
+              ishlatiladi.</small
+            >
+          </div>
+
           <div class="row">
             <div class="col-md-6">
               <div class="mb-3">
@@ -705,8 +720,25 @@ endblock %} {% block additional_css %}
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
 <script>
+  // Disable service workers on this admin page to prevent stale caches
+  if (
+    typeof navigator !== "undefined" &&
+    navigator.serviceWorker &&
+    navigator.serviceWorker.getRegistrations
+  ) {
+    navigator.serviceWorker
+      .getRegistrations()
+      .then(function (regs) {
+        regs.forEach(function (reg) {
+          try {
+            reg.unregister();
+          } catch (e) {}
+        });
+      })
+      .catch(function () {});
+  }
   // CSRF Token
-  const CSRF_TOKEN = '{{ csrf_token() if csrf_token else "" }}';
+  const CSRF_TOKEN = '{{ csrf_token if csrf_token else "" }}';
 
   // Global variables
   let newsDataTable;
@@ -740,6 +772,12 @@ endblock %} {% block additional_css %}
       document.getElementById("newsType").value = newsData.type || "news";
       document.getElementById("newsImageUrl").value = newsData.image_url || "";
       document.getElementById("newsVideoUrl").value = newsData.video_url || "";
+      document.getElementById("newsYoutubeUrl").value =
+        newsData.video_url &&
+        (newsData.video_url.includes("youtube") ||
+          newsData.video_url.includes("youtu.be"))
+          ? newsData.video_url
+          : "";
       document.getElementById("newsDisplayOrder").value =
         newsData.display_order || 0;
       document.getElementById("newsIsActive").checked = !!newsData.is_active;
@@ -777,12 +815,17 @@ endblock %} {% block additional_css %}
     }
 
     console.log("Collecting form data...");
+    // Prefer YouTube URL over uploaded file if provided
+    const youtubeUrl = document.getElementById("newsYoutubeUrl").value.trim();
+    const computedVideoUrl =
+      youtubeUrl || document.getElementById("newsVideoUrl").value.trim();
+
     const formData = {
       title: document.getElementById("newsTitle").value.trim(),
       content: document.getElementById("newsContent").value.trim(),
       type: document.getElementById("newsType").value,
       image_url: document.getElementById("newsImageUrl").value.trim(),
-      video_url: document.getElementById("newsVideoUrl").value.trim(),
+      video_url: computedVideoUrl,
       display_order:
         parseInt(document.getElementById("newsDisplayOrder").value) || 0,
       is_active: document.getElementById("newsIsActive").checked,
@@ -1014,11 +1057,17 @@ endblock %} {% block additional_css %}
       '<tr><td colspan="8" class="text-center">Yuklanmoqda...</td></tr>';
 
     console.log("Making fetch request to /api/news/admin");
-    fetch("/api/news/admin", {
+    const url = "/api/news/admin?t=" + Date.now();
+    fetch(url, {
       method: "GET",
       headers: {
         "X-CSRF-Token": typeof CSRF_TOKEN !== "undefined" ? CSRF_TOKEN : "",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        Pragma: "no-cache",
+        Expires: "0",
       },
+      cache: "no-store",
+      credentials: "same-origin",
     })
       .then((response) => {
         console.log("API Response status:", response.status);

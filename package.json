@@ -1,0 +1,29 @@
+{
+  "name": "pro-obuv",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Moxirbek236/Pro-Obuv.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Moxirbek236/Pro-Obuv/issues"
+  },
+  "homepage": "https://github.com/Moxirbek236/Pro-Obuv#readme",
+  "dependencies": {
+    "express": "^5.1.0",
+    "http-proxy": "^1.18.1"
+  }
+}

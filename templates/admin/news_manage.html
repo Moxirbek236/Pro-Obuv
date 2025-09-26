@@ -1,0 +1,90 @@
+{% extends "base.html" %} {% block title %}Yangiliklarni boshqarish - Admin{%
+endblock %} {% block content %}
+<div class="container mt-4">
+  <h1>🛠️ Yangiliklar (Superadmin)</h1>
+
+  <form
+    method="post"
+    enctype="multipart/form-data"
+    action="{{ url_for('super_admin_add_news') }}">
+    <div class="mb-3">
+      <label class="form-label">Sarlavha</label>
+      <input class="form-control" name="title" required />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Rasm (URL yoki fayl)</label>
+      <input
+        class="form-control"
+        type="text"
+        name="image_url"
+        placeholder="Masalan: /static/uploads/news1.jpg" />
+      <small class="text-muted"
+        >Agar faylni yuklamoqchi bo'lsangiz, serverga yuklash funksiyasi yo'q —
+        avvalo faylni uploads papkasiga qo'ying va URL kiriting.</small
+      >
+    </div>
+    <div class="mb-3">
+      <label class="form-label">YouTube URL</label>
+      <input
+        class="form-control"
+        name="youtube_url"
+        placeholder="https://www.youtube.com/watch?v=..." />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Video (URL)</label>
+      <input
+        class="form-control"
+        name="video_url"
+        placeholder="Masalan: /static/uploads/news_video.mp4" />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Tavsif (HTML ruxsat etiladi)</label>
+      <textarea class="form-control" name="description" rows="6"></textarea>
+    </div>
+
+    <div class="mb-3 form-check">
+      <input
+        class="form-check-input"
+        type="checkbox"
+        name="published"
+        id="publishedCheck"
+        checked />
+      <label class="form-check-label" for="publishedCheck">Nashr etilsin</label>
+    </div>
+
+    <button class="btn btn-primary" type="submit">Yangilik qo'sh</button>
+  </form>
+
+  <hr />
+  <h3>Mavjud yangiliklar</h3>
+  {% if news %}
+  <ul class="list-group">
+    {% for it in news %}
+    <li
+      class="list-group-item d-flex justify-content-between align-items-center">
+      <div>
+        <strong>{{ it.title }}</strong>
+        <div class="text-muted small">
+          {{ it.created_at.split('T')[0] if it.created_at else '' }}
+        </div>
+      </div>
+      <div>
+        <form
+          method="post"
+          action="{{ url_for('super_admin_delete_news', news_id=it.id) }}"
+          style="display: inline">
+          <button
+            class="btn btn-sm btn-danger"
+            onclick="return confirm('O'chirishni tasdiqlaysizmi?')">
+            O'chirish
+          </button>
+        </form>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <div class="alert alert-info">Yangiliklar mavjud emas.</div>
+  {% endif %}
+</div>
+{% endblock %}
