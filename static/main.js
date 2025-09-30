@@ -636,9 +636,9 @@ window.addEventListener("resize", function () {
 // Yangiliklar tasmasi (News Ticker) - Yangi Slider System
 class NewsTicker {
   constructor(selector = ".news-ticker-content", options = {}) {
-    console.log('NewsTicker constructor called with selector:', selector);
+    console.log("NewsTicker constructor called with selector:", selector);
     this.container = document.querySelector(selector);
-    console.log('Container found:', this.container);
+    console.log("Container found:", this.container);
     this.options = {
       autoSlide: options.autoSlide !== false,
       slideInterval: options.slideInterval || 3000, // 3 sekund
@@ -646,98 +646,108 @@ class NewsTicker {
       itemWidth: options.itemWidth || 300, // Har bir element kengligi (gap bilan)
       autoUpdate: options.autoUpdate !== false,
       updateInterval: options.updateInterval || 60000, // 1 daqiqa
-      ...options
+      ...options,
     };
-    
+
     if (!this.container) {
-      console.error('News ticker container not found with selector:', selector);
+      console.error("News ticker container not found with selector:", selector);
       return;
     }
-    
+
     // Slider holati
     this.currentIndex = 0;
     this.newsItems = [];
     this.isPlaying = true;
     this.autoSlideTimer = null;
-    
-    console.log('Calling init()');
+
+    console.log("Calling init()");
     this.init();
   }
-  
+
   init() {
-    console.log('NewsTicker init() called');
+    console.log("NewsTicker init() called");
     // Navigation tugmalarini topish
-    this.prevBtn = document.getElementById('newsPrevBtn');
-    this.nextBtn = document.getElementById('newsNextBtn');
-    this.playBtn = document.getElementById('newsPlayBtn');
-    this.playIcon = document.getElementById('playIcon');
-    
-    console.log('Buttons found:', {
+    this.prevBtn = document.getElementById("newsPrevBtn");
+    this.nextBtn = document.getElementById("newsNextBtn");
+    this.playBtn = document.getElementById("newsPlayBtn");
+    this.playIcon = document.getElementById("playIcon");
+
+    console.log("Buttons found:", {
       prevBtn: this.prevBtn,
       nextBtn: this.nextBtn,
       playBtn: this.playBtn,
-      playIcon: this.playIcon
+      playIcon: this.playIcon,
     });
-    
+
     // Event listener'larni o'rnatish
     this.setupEventListeners();
-    
+
     // Yangiliklarni yuklash
-    console.log('Loading news...');
+    console.log("Loading news...");
     this.loadNews();
-    
+
     // Vaqti-vaqti bilan yangilab turish
     if (this.options.autoUpdate) {
       setInterval(() => this.loadNews(), this.options.updateInterval);
     }
   }
-  
+
   setupEventListeners() {
-    console.log('Setting up event listeners - prevBtn:', this.prevBtn, 'nextBtn:', this.nextBtn);
+    console.log(
+      "Setting up event listeners - prevBtn:",
+      this.prevBtn,
+      "nextBtn:",
+      this.nextBtn
+    );
     if (this.prevBtn) {
-      console.log('Adding click listener to prevBtn');
-      this.prevBtn.addEventListener('click', () => {
-        console.log('Prev button clicked!');
+      console.log("Adding click listener to prevBtn");
+      this.prevBtn.addEventListener("click", () => {
+        console.log("Prev button clicked!");
         this.slidePrev();
       });
     } else {
-      console.warn('Previous button not found!');
+      console.warn("Previous button not found!");
     }
-    
+
     if (this.nextBtn) {
-      console.log('Adding click listener to nextBtn');
-      this.nextBtn.addEventListener('click', () => {
-        console.log('Next button clicked!');
+      console.log("Adding click listener to nextBtn");
+      this.nextBtn.addEventListener("click", () => {
+        console.log("Next button clicked!");
         this.slideNext();
       });
     } else {
-      console.warn('Next button not found!');
+      console.warn("Next button not found!");
     }
-    
+
     if (this.playBtn) {
-      this.playBtn.addEventListener('click', () => this.toggleAutoSlide());
+      this.playBtn.addEventListener("click", () => this.toggleAutoSlide());
     }
-    
+
     // Hover pause/resume
     if (this.container) {
-      this.container.addEventListener('mouseenter', () => this.pauseAutoSlide());
-      this.container.addEventListener('mouseleave', () => this.resumeAutoSlide());
+      this.container.addEventListener("mouseenter", () =>
+        this.pauseAutoSlide()
+      );
+      this.container.addEventListener("mouseleave", () =>
+        this.resumeAutoSlide()
+      );
     }
-    
+
     // Touch events (mobile)
     let startX = 0;
     let endX = 0;
-    
+
     if (this.container) {
-      this.container.addEventListener('touchstart', (e) => {
+      this.container.addEventListener("touchstart", (e) => {
         startX = e.touches[0].clientX;
       });
-      
-      this.container.addEventListener('touchend', (e) => {
+
+      this.container.addEventListener("touchend", (e) => {
         endX = e.changedTouches[0].clientX;
         const diff = startX - endX;
-        
-        if (Math.abs(diff) > 50) { // Minimum swipe distance
+
+        if (Math.abs(diff) > 50) {
+          // Minimum swipe distance
           if (diff > 0) {
             this.slideNext();
           } else {
@@ -747,134 +757,141 @@ class NewsTicker {
       });
     }
   }
-  
+
   loadNews() {
     fetch("/api/news")
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         if (data.success && data.news && data.news.length > 0) {
           this.newsItems = data.news;
           this.updateNewsItems();
           this.startAutoSlide();
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Yangiliklar yuklashda xatolik:", error);
       });
   }
-  
+
   updateNewsItems() {
     if (!this.container || !this.newsItems.length) return;
-    
+
     // Yangiliklar HTMLini yaratish
-    let html = '';
-    
-    this.newsItems.forEach(item => {
-      const isAd = item.type === 'advertisement';
-      const hasImage = item.image_url && item.image_url.trim() !== '';
-      const hasVideo = item.video_url && item.video_url.trim() !== '';
-      
-      html += `<div class="news-item ${isAd ? 'advertisement' : 'news'}">`;
-      
+    let html = "";
+
+    this.newsItems.forEach((item) => {
+      const isAd = item.type === "advertisement";
+      const hasImage = item.image_url && item.image_url.trim() !== "";
+      const hasVideo = item.video_url && item.video_url.trim() !== "";
+      const hasYouTube = item.youtube_embed && item.youtube_embed.trim() !== "";
+
+      html += `<div class="news-item ${isAd ? "advertisement" : "news"}">`;
+
       // Rasm yoki video mavjud bo'lsa tepa qismda ko'rsatish
       if (hasImage) {
         html += `<img src="${item.image_url}" alt="${item.title}" class="news-media clickable-media" onclick="openMediaModal('${item.image_url}', 'image', '${item.title}')">`;
+      } else if (hasYouTube) {
+        // embed YouTube iframe thumbnail-sized in ticker (clickable to open modal)
+        html += `<div class="news-media youtube-embed" onclick="openMediaModal('${item.youtube_embed}', 'youtube', '${item.title}')">`;
+        html += `<iframe src="${item.youtube_embed}" frameborder="0" allowfullscreen style="width:100%;height:160px;border:0;border-radius:6px"></iframe>`;
+        html += `</div>`;
       } else if (hasVideo) {
         html += `<video src="${item.video_url}" class="news-media clickable-media" muted autoplay loop onclick="openMediaModal('${item.video_url}', 'video', '${item.title}')"></video>`;
       }
-      
+
       // Matn qismi
       html += '<div class="news-text-content">';
       html += `<div class="news-title">${item.title}</div>`;
-      
-      if (item.content && item.content.trim() !== '') {
+
+      if (item.content && item.content.trim() !== "") {
         html += `<div class="news-content">${item.content}</div>`;
       }
-      
-      html += '</div>'; // news-text-content ning oxiri
-      html += '</div>'; // news-item ning oxiri
+
+      html += "</div>"; // news-text-content ning oxiri
+      html += "</div>"; // news-item ning oxiri
     });
-    
+
     // HTMLni konteynerga joylashtirish
     this.container.innerHTML = html;
-    
+
     // Slider pozitsiyasini o'rnatish
     this.updateSliderPosition();
   }
-  
+
   slideNext() {
     if (!this.newsItems.length) return;
-    
+
     this.currentIndex = (this.currentIndex + 1) % this.newsItems.length;
     this.updateSliderPosition();
     this.restartAutoSlide();
   }
-  
+
   slidePrev() {
     if (!this.newsItems.length) return;
-    
-    this.currentIndex = this.currentIndex === 0 
-      ? this.newsItems.length - 1 
-      : this.currentIndex - 1;
+
+    this.currentIndex =
+      this.currentIndex === 0
+        ? this.newsItems.length - 1
+        : this.currentIndex - 1;
     this.updateSliderPosition();
     this.restartAutoSlide();
   }
-  
+
   updateSliderPosition() {
     if (!this.container || !this.newsItems.length) return;
-    
+
     const translateX = -(this.currentIndex * this.options.itemWidth);
     this.container.style.transform = `translateX(${translateX}px)`;
   }
-  
+
   startAutoSlide() {
     if (!this.options.autoSlide || !this.isPlaying) return;
-    
+
     this.stopAutoSlide();
     this.autoSlideTimer = setInterval(() => {
       this.slideNext();
     }, this.options.slideInterval);
   }
-  
+
   stopAutoSlide() {
     if (this.autoSlideTimer) {
       clearInterval(this.autoSlideTimer);
       this.autoSlideTimer = null;
     }
   }
-  
+
   pauseAutoSlide() {
     this.stopAutoSlide();
   }
-  
+
   resumeAutoSlide() {
     if (this.isPlaying) {
       this.startAutoSlide();
     }
   }
-  
+
   restartAutoSlide() {
     if (this.isPlaying) {
       this.startAutoSlide();
     }
   }
-  
+
   toggleAutoSlide() {
     this.isPlaying = !this.isPlaying;
-    
+
     if (this.isPlaying) {
       this.startAutoSlide();
-      if (this.playIcon) this.playIcon.textContent = '⏸️';
+      if (this.playIcon) this.playIcon.textContent = "⏸️";
     } else {
       this.stopAutoSlide();
-      if (this.playIcon) this.playIcon.textContent = '▶️';
+      if (this.playIcon) this.playIcon.textContent = "▶️";
     }
   }
 }
 
 // Yangiliklar tasmasini ishga tushirish
-document.addEventListener("DOMContentLoaded", function() {
-  console.log('Initializing News Ticker - DOM Content Loaded');
+document.addEventListener("DOMContentLoaded", function () {
+  console.log("Initializing News Ticker - DOM Content Loaded");
   // Asosiy yangiliklar tasmasi - Yangi Slider
   window.newsTicker = new NewsTicker(".news-ticker-content", {
     autoSlide: true,
@@ -882,19 +899,19 @@ document.addEventListener("DOMContentLoaded", function() {
     visibleItems: 4, // Desktop
     itemWidth: 300, // gap + padding bilan
     autoUpdate: true,
-    updateInterval: 60000 // 1 daqiqa
+    updateInterval: 60000, // 1 daqiqa
   });
-  
-  console.log('News Ticker initialized:', window.newsTicker);
-  
+
+  console.log("News Ticker initialized:", window.newsTicker);
+
   // Responsive item width
   function updateSliderSettings() {
     if (!window.newsTicker) return;
-    
+
     const width = window.innerWidth;
     let itemWidth = 300;
     let visibleItems = 4;
-    
+
     if (width <= 480) {
       itemWidth = 220;
       visibleItems = 1;
@@ -905,33 +922,33 @@ document.addEventListener("DOMContentLoaded", function() {
       itemWidth = 270;
       visibleItems = 3;
     }
-    
+
     window.newsTicker.options.itemWidth = itemWidth;
     window.newsTicker.options.visibleItems = visibleItems;
-    
+
     // Pozitsiyani qayta hisoblash
     if (window.newsTicker.updateSliderPosition) {
       window.newsTicker.updateSliderPosition();
     }
   }
-  
+
   // Initial call
   updateSliderSettings();
-  
+
   // Window resize listener
-  window.addEventListener('resize', updateSliderSettings);
+  window.addEventListener("resize", updateSliderSettings);
 });
 
 // Media Modal Functions for News Ticker
 function openMediaModal(mediaUrl, mediaType, title) {
-  console.log('Opening media modal:', mediaUrl, mediaType, title);
-  
+  console.log("Opening media modal:", mediaUrl, mediaType, title);
+
   // Create modal if it doesn't exist
-  let modal = document.getElementById('mediaModal');
+  let modal = document.getElementById("mediaModal");
   if (!modal) {
-    modal = document.createElement('div');
-    modal.id = 'mediaModal';
-    modal.className = 'media-modal-overlay';
+    modal = document.createElement("div");
+    modal.id = "mediaModal";
+    modal.className = "media-modal-overlay";
     modal.innerHTML = `
       <div class="media-modal-content">
         <div class="media-modal-header">
@@ -945,43 +962,46 @@ function openMediaModal(mediaUrl, mediaType, title) {
     `;
     document.body.appendChild(modal);
   }
-  
+
   // Set modal content
-  const titleElement = document.getElementById('mediaModalTitle');
-  const containerElement = document.getElementById('mediaModalContainer');
-  
-  titleElement.textContent = title || 'Медиа';
-  
-  if (mediaType === 'image') {
+  const titleElement = document.getElementById("mediaModalTitle");
+  const containerElement = document.getElementById("mediaModalContainer");
+
+  titleElement.textContent = title || "Медиа";
+
+  if (mediaType === "image") {
     containerElement.innerHTML = `<img src="${mediaUrl}" alt="${title}" class="modal-media-image">`;
-  } else if (mediaType === 'video') {
+  } else if (mediaType === "video") {
     containerElement.innerHTML = `<video src="${mediaUrl}" controls class="modal-media-video"></video>`;
+  } else if (mediaType === "youtube") {
+    // mediaUrl expected to be an embed URL like https://www.youtube.com/embed/VIDEO_ID
+    containerElement.innerHTML = `<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:8px;"><iframe src="${mediaUrl}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowfullscreen></iframe></div>`;
   }
-  
+
   // Show modal
-  modal.style.display = 'flex';
-  document.body.style.overflow = 'hidden';
+  modal.style.display = "flex";
+  document.body.style.overflow = "hidden";
 }
 
 function closeMediaModal() {
-  const modal = document.getElementById('mediaModal');
+  const modal = document.getElementById("mediaModal");
   if (modal) {
-    modal.style.display = 'none';
-    document.body.style.overflow = 'auto';
+    modal.style.display = "none";
+    document.body.style.overflow = "auto";
   }
 }
 
 // Close modal when clicking outside content
-document.addEventListener('click', function(e) {
-  const modal = document.getElementById('mediaModal');
+document.addEventListener("click", function (e) {
+  const modal = document.getElementById("mediaModal");
   if (modal && e.target === modal) {
     closeMediaModal();
   }
 });
 
 // Close modal with ESC key
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') {
+document.addEventListener("keydown", function (e) {
+  if (e.key === "Escape") {
     closeMediaModal();
   }
 });

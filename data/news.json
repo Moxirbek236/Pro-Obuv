@@ -9,22 +9,24 @@
       "display_order": 1,
       "image_url": "/static/uploads/oy.jpg",
       "video_url": "/static/uploads/shalom.mp4",
+      "youtube_embed": null,
       "created_at": "2024-01-15T10:00:00Z",
       "updated_at": "2024-01-15T10:00:00Z"
     },
-    { 
+    {
       "id": 2,
       "title": "🔥 50% Chegirma!",
       "content": "Barcha qishki poyafzallarga 50% gacha chegirma! Chegirma yanvar oyining oxirigacha amal qiladi.",
       "type": "advertisement",
       "is_active": true,
-      "display_order": 2,
+      "display_order": 99,
       "image_url": null,
       "video_url": "/static/uploads/shalom.mp4",
+      "youtube_embed": null,
       "created_at": "2024-01-10T09:30:00Z",
       "updated_at": "2024-01-10T09:30:00Z"
     },
-    { 
+    {
       "id": 3,
       "title": "🔥 50% Chegirma!",
       "content": "Barcha qishki poyafzallarga 50% gacha chegirma! ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Chegirma yanvar oyining oxirigacha amal qiladi.",
@@ -32,16 +34,82 @@
       "is_active": true,
       "display_order": 3,
       "image_url": null,
-      "youtube_url": "https://youtu.be/5860mTG8J_8?list=RDMA1zQbfT6ik",
+      "youtube_url": "https://youtu.be/8yyUJ8QiVno?list=RDPwQmPLjnSPo",
       "video_url": null,
+      "youtube_embed": null,
       "created_at": "2024-01-10T11:30:00Z",
       "updated_at": "2024-01-10T11:30:00Z"
+    },
+    {
+      "id": 4,
+      "title": "salom",
+      "content": "salom",
+      "type": "news",
+      "is_active": true,
+      "display_order": 0,
+      "image_url": "",
+      "video_url": "/static/media/news/videos/news_new_1759071426.mp4",
+      "youtube_embed": null,
+      "created_at": "2025-09-28T14:57:12.109196Z",
+      "updated_at": "2025-09-28T14:57:12.109196Z"
+    },
+    {
+      "id": 5,
+      "title": "salom",
+      "content": "test",
+      "type": "advertisement",
+      "is_active": true,
+      "display_order": 99,
+      "image_url": "/static/media/news/images/news_new_1759071902.jpg",
+      "video_url": "",
+      "youtube_embed": null,
+      "created_at": "2025-09-28T15:05:06.194232Z",
+      "updated_at": "2025-09-28T15:05:06.194232Z"
+    },
+    {
+      "id": 6,
+      "title": "youtube",
+      "content": "test",
+      "type": "news",
+      "is_active": true,
+      "display_order": 0,
+      "image_url": "",
+      "video_url": "https://youtu.be/__6sIqZk-DA?list=RD__6sIqZk-DA",
+      "created_at": "2025-09-28T15:19:42.857081Z",
+      "updated_at": "2025-09-28T15:19:42.857081Z",
+      "youtube_embed": "https://www.youtube.com/embed/__6sIqZk-DA"
+    },
+    {
+      "id": 7,
+      "title": "salom",
+      "content": "salom",
+      "type": "news",
+      "is_active": true,
+      "display_order": 0,
+      "image_url": "",
+      "video_url": "",
+      "created_at": "2025-09-28T15:22:20.177503Z",
+      "updated_at": "2025-09-28T15:22:20.177503Z",
+      "youtube_embed": null
+    },
+    {
+      "id": 8,
+      "title": "salom",
+      "content": "my_channel",
+      "type": "news",
+      "is_active": true,
+      "display_order": 0,
+      "image_url": "",
+      "video_url": "https://youtu.be/69GMK1G3LoA",
+      "created_at": "2025-09-28T15:41:41.297328Z",
+      "updated_at": "2025-09-28T15:41:41.298336Z",
+      "youtube_embed": "https://www.youtube.com/embed/69GMK1G3LoA"
     }
   ],
   "metadata": {
-    "total_count": 6,
-    "active_count": 6,
-    "last_updated": "2024-01-15T10:00:00Z",
+    "total_count": 8,
+    "active_count": 8,
+    "last_updated": "2025-09-28T15:41:41.300329Z",
     "version": "1.0"
   }
 }

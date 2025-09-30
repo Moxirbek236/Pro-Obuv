@@ -60,6 +60,31 @@ def save_news_data(data):
     """Yangiliklar ma'lumotlarini JSON faylga saqlash"""
     try:
         ensure_directories()
+        # Ensure each item carries a youtube_embed if the video_url is YouTube
+        def extract_youtube_embed_local(url: str):
+            try:
+                if not url:
+                    return None
+                import re
+
+                u = url.strip()
+                m = re.search(r'(?:v=|\/embed\/|youtu\.be\/)([A-Za-z0-9_\-]{11})', u)
+                if m:
+                    return f"https://www.youtube.com/embed/{m.group(1)}"
+            except Exception:
+                return None
+            return None
+
+        for i, n in enumerate(data.get("news", [])):
+            try:
+                n_obj = dict(n) if not isinstance(n, dict) else n
+                n_obj["youtube_embed"] = extract_youtube_embed_local(n_obj.get("video_url") or "")
+                data["news"][i] = n_obj
+            except Exception:
+                try:
+                    data["news"][i]["youtube_embed"] = None
+                except Exception:
+                    pass
 
         # Metadata yangilash
         data["metadata"]["last_updated"] = datetime.utcnow().isoformat() + "Z"

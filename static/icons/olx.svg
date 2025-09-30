@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="OLX">
+  <rect rx="10" width="48" height="48" fill="#1f2937"/>
+  <g transform="translate(6,12)" fill="white" font-weight="700" font-family="Arial, sans-serif">
+    <text x="0" y="18" font-size="18">olx</text>
+  </g>
+</svg>

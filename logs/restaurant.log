@@ -1104,3 +1104,1670 @@ MemoryError
 2025-09-26 17:10:20,318 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
 2025-09-26 17:11:20,313 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
 2025-09-26 17:11:20,320 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:12:20,312 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:12:20,326 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:13:20,312 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:13:20,321 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:14:20,316 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:14:20,338 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:15:20,317 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:15:20,323 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:15:20,540 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-26 17:16:20,313 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:16:20,323 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:17:20,316 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:17:20,316 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:18:20,320 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:18:20,327 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:19:20,324 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:19:20,330 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:20:20,322 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:20:20,332 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:21:20,310 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:21:20,407 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:22:20,317 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:22:20,323 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:23:20,322 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:23:20,328 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:24:20,313 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:24:20,321 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:25:20,309 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:25:20,316 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:26:20,312 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:26:20,322 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:27:23,909 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:27:24,352 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:30:27,870 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:30:48,313 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:31:08,316 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:31:28,304 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:31:48,315 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:32:08,316 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:32:28,316 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:32:48,312 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:33:08,325 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:33:28,314 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:33:48,303 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:34:08,308 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:34:28,305 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:34:48,313 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:35:08,319 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:35:28,318 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:36:20,319 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:37:20,312 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:38:20,321 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:39:20,317 | WARNING | restaurant_app | rate_limit_error:1245 | Rate limit exceeded: 127.0.0.1
+2025-09-26 17:50:07,299 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:8001/static/images/casual-sneakers.jpg
+2025-09-26 17:50:07,300 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:8001/static/images/work-boots.jpg
+2025-09-26 17:50:07,347 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:8001/static/images/leather-loafers.jpg
+2025-09-26 17:50:07,354 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:8001/static/images/summer-sandals.jpg
+2025-09-26 17:50:07,395 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:8001/static/images/sport-sandals.jpg
+2025-09-26 17:50:07,404 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:8001/static/images/bathroom-slippers.jpg
+2025-09-26 17:50:07,414 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:8001/static/images/house-slippers.jpg
+2025-09-26 17:50:07,819 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:8001/static/images/formal-shoes-black.jpg
+2025-09-26 17:50:07,820 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:8001/static/images/classic-heels.jpg
+2025-09-26 17:50:07,835 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:8001/static/images/high-heels.jpg
+2025-09-26 17:50:07,852 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:8001/static/images/business-shoes.jpg
+2025-09-26 17:50:07,941 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:8001/static/images/default-women.jpg
+2025-09-28 00:07:02,052 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 00:07:04,377 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-09-28 00:07:07,292 | ERROR | restaurant_app | staff_login:13897 | Staff row dict conversion error: [digital envelope routines: EVP_PBE_scrypt] malloc failure
+2025-09-28 00:08:33,609 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-09-28 00:08:37,004 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 00:08:39,559 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:08:39,572 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-28 00:08:39,789 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:08:39,844 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:08:39,868 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:08:39,868 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-28 00:08:39,868 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/high-heels.jpg
+2025-09-28 00:08:39,876 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:08:39,876 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-28 00:08:39,886 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/formal-shoes-black.jpg
+2025-09-28 00:08:39,903 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/classic-heels.jpg
+2025-09-28 00:08:40,203 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 00:08:48,935 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-28 00:08:48,935 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:08:49,225 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:08:49,247 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:08:49,262 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:08:49,265 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-28 00:08:49,281 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:08:49,298 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-28 00:08:49,318 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/high-heels.jpg
+2025-09-28 00:08:49,333 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/classic-heels.jpg
+2025-09-28 00:08:50,832 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 00:08:52,857 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-28 00:08:52,871 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:08:53,152 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:08:53,168 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:08:53,168 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:08:53,209 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-28 00:08:53,211 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:08:53,215 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/high-heels.jpg
+2025-09-28 00:08:53,241 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-28 00:08:53,246 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/classic-heels.jpg
+2025-09-28 00:08:53,432 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 00:08:59,061 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:08:59,074 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-28 00:08:59,415 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:08:59,416 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:08:59,453 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:08:59,461 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-28 00:08:59,461 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-28 00:08:59,473 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/classic-heels.jpg
+2025-09-28 00:08:59,489 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:08:59,729 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 00:09:01,832 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-28 00:09:01,837 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:09:02,134 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:09:02,145 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:09:02,168 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:09:02,170 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-28 00:09:02,184 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-28 00:09:02,197 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:09:02,360 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 00:09:12,679 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:09:12,695 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-28 00:09:12,703 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:09:12,711 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:09:12,743 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:09:12,758 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-28 00:09:12,774 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:09:12,774 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-28 00:09:12,790 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/formal-shoes-black.jpg
+2025-09-28 00:09:12,805 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/high-heels.jpg
+2025-09-28 00:09:12,828 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/classic-heels.jpg
+2025-09-28 00:09:12,956 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:09:12,956 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:09:20,121 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-28 00:09:20,125 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:09:20,142 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:09:20,155 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:09:20,375 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:09:20,383 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-28 00:09:20,395 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:09:20,410 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-28 00:09:20,421 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/formal-shoes-black.jpg
+2025-09-28 00:09:20,450 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/high-heels.jpg
+2025-09-28 00:09:20,472 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/classic-heels.jpg
+2025-09-28 00:09:20,483 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:09:20,521 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:09:30,925 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-28 00:09:30,929 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:09:31,133 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:09:31,152 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:09:31,165 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:09:31,179 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:09:31,194 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-28 00:09:31,416 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 00:09:59,523 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-28 00:09:59,547 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:09:59,663 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:09:59,663 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:09:59,695 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:09:59,705 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:09:59,723 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-28 00:10:00,140 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 00:10:05,704 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:10:05,705 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-28 00:10:05,720 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:10:05,730 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:10:06,256 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:10:06,256 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:10:06,256 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/formal-shoes-black.jpg
+2025-09-28 00:10:06,261 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-28 00:10:06,275 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-28 00:10:06,275 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/high-heels.jpg
+2025-09-28 00:10:06,320 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/classic-heels.jpg
+2025-09-28 00:10:06,419 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:10:06,466 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:10:09,420 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-28 00:10:09,421 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:10:09,443 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:10:09,451 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:10:09,739 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:10:09,740 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-28 00:10:09,740 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:10:09,745 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-28 00:10:09,754 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/high-heels.jpg
+2025-09-28 00:10:09,759 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/formal-shoes-black.jpg
+2025-09-28 00:10:09,781 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/classic-heels.jpg
+2025-09-28 00:10:09,903 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:10:09,909 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:10:18,371 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-09-28 00:10:28,232 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-28 00:10:28,240 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:10:28,245 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:10:28,253 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:10:28,268 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:10:28,281 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-28 00:10:28,295 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:10:28,305 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-28 00:10:28,311 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/formal-shoes-black.jpg
+2025-09-28 00:10:28,327 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/high-heels.jpg
+2025-09-28 00:10:28,346 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/classic-heels.jpg
+2025-09-28 00:10:28,570 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:10:28,578 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:10:49,597 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:10:49,610 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-28 00:10:49,627 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:10:49,633 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:10:49,647 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:10:49,660 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-28 00:10:49,674 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:10:49,688 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-28 00:10:49,702 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/formal-shoes-black.jpg
+2025-09-28 00:10:49,716 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/high-heels.jpg
+2025-09-28 00:10:49,731 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/classic-heels.jpg
+2025-09-28 00:10:49,938 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:10:49,971 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:10:59,605 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-28 00:10:59,605 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:10:59,689 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:10:59,786 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:10:59,987 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:11:00,000 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:11:00,006 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-28 00:11:00,236 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 00:11:13,950 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:11:13,950 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-28 00:11:13,970 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:11:13,979 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:11:13,987 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:11:13,998 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:11:14,015 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-28 00:11:20,394 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-28 00:11:20,406 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:11:20,424 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:11:20,438 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:11:20,719 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/formal-shoes-black.jpg
+2025-09-28 00:11:20,729 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/high-heels.jpg
+2025-09-28 00:11:20,729 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:11:20,735 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:11:20,752 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-28 00:11:20,760 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/bathroom-slippers.jpg
+2025-09-28 00:11:20,760 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/classic-heels.jpg
+2025-09-28 00:11:20,862 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:11:20,894 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:22:22,000 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 00:23:19,603 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:23:19,605 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-28 00:23:19,660 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:23:19,682 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:23:20,214 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:23:20,223 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:23:20,231 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-28 00:23:26,157 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-28 00:23:26,165 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:23:26,190 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:23:26,200 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:23:26,228 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:23:26,230 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-28 00:23:26,249 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:23:30,303 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:23:30,304 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:23:30,319 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:23:30,322 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:23:30,336 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:23:30,349 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-28 00:23:36,342 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-28 00:23:36,344 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:23:36,365 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:23:36,377 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:23:36,815 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:23:36,824 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:23:36,835 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-28 00:23:44,185 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:23:44,196 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/work-boots.jpg
+2025-09-28 00:23:44,196 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:23:44,204 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:23:44,212 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:23:44,220 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:23:44,228 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/business-shoes.jpg
+2025-09-28 00:23:53,617 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 00:24:16,415 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:24:16,422 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:24:16,434 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:24:16,438 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:24:16,452 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:24:19,279 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:24:19,279 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:24:19,295 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:24:19,295 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:24:19,890 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:24:42,736 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 00:25:03,759 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:25:03,759 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:25:03,774 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:25:03,774 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:25:03,786 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:25:10,037 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:25:10,037 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:25:10,045 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:25:10,045 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:25:10,061 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:25:10,280 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:25:10,286 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:25:14,709 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:25:14,717 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:25:14,725 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:25:14,733 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:25:14,750 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:25:14,904 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:25:14,914 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:25:29,623 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-09-28 00:25:33,742 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:25:33,742 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:25:33,758 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:25:33,758 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:25:33,774 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:25:34,025 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:25:34,033 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:25:52,772 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:25:52,772 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:25:52,796 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:25:52,804 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:25:52,812 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:25:52,912 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:25:52,921 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:26:04,868 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/api/user-sessions
+2025-09-28 00:26:16,525 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:26:16,526 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:26:16,544 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:26:16,548 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:26:16,563 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:26:16,953 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:26:16,955 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:26:30,395 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:26:30,396 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:26:30,413 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:26:30,414 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:26:30,429 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:26:30,624 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:26:30,645 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:27:36,620 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:27:36,627 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:27:36,636 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:27:36,642 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:27:36,655 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:28:08,909 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:28:08,920 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:28:08,921 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:28:08,934 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:28:08,946 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:28:20,390 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:28:20,406 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:28:20,416 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:28:20,424 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:28:20,888 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:28:21,127 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:28:21,135 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:28:24,748 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:28:24,761 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:28:24,763 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:28:24,775 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:28:25,060 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:28:25,214 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:28:25,223 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:28:29,067 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:28:29,067 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:28:29,085 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:28:29,088 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:28:29,101 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:28:29,446 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:28:29,472 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:28:36,836 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 00:28:36,852 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 00:28:36,868 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 00:28:36,868 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 00:28:36,993 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 00:28:37,399 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:28:37,408 | WARNING | restaurant_app | wrapper:1051 | CSRF token mismatch or missing
+2025-09-28 00:28:37,527 | WARNING | restaurant_app | not_found_error:1162 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 00:29:00,845 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 00:33:32,033 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-28 00:33:32,033 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-28 00:33:32,034 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-28 13:44:03,088 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 13:44:03,323 | ERROR | restaurant_app | handle_exception:1231 | Unhandled exception: name 'hashlib' is not defined - URL: http://127.0.0.1:5000/menu
+2025-09-28 13:44:03,329 | ERROR | restaurant_app | handle_exception:1233 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\app.py", line 6009, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\app.py", line 6023, in wrapper
+    cache_key = f"{f.__name__}:{hashlib.md5(str(args + tuple(kwargs.items())).encode()).hexdigest()}"
+                                ^^^^^^^
+NameError: name 'hashlib' is not defined
+
+2025-09-28 13:44:03,580 | WARNING | restaurant_app | not_found_error:1115 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-09-28 13:44:04,248 | ERROR | restaurant_app | handle_exception:1231 | Unhandled exception: name 'hashlib' is not defined - URL: http://127.0.0.1:5000/menu
+2025-09-28 13:44:04,249 | ERROR | restaurant_app | handle_exception:1233 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\app.py", line 6009, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\app.py", line 6023, in wrapper
+    cache_key = f"{f.__name__}:{hashlib.md5(str(args + tuple(kwargs.items())).encode()).hexdigest()}"
+                                ^^^^^^^
+NameError: name 'hashlib' is not defined
+
+2025-09-28 13:44:04,497 | WARNING | restaurant_app | not_found_error:1115 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-09-28 13:44:39,358 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 13:44:43,016 | ERROR | restaurant_app | handle_exception:1231 | Unhandled exception: name 'hashlib' is not defined - URL: http://127.0.0.1:5000/menu
+2025-09-28 13:44:43,022 | ERROR | restaurant_app | handle_exception:1233 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\app.py", line 6009, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\app.py", line 6023, in wrapper
+    cache_key = f"{f.__name__}:{hashlib.md5(str(args + tuple(kwargs.items())).encode()).hexdigest()}"
+                                ^^^^^^^
+NameError: name 'hashlib' is not defined
+
+2025-09-28 13:44:59,286 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 13:45:28,268 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 13:45:36,486 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 13:45:37,577 | WARNING | restaurant_app | not_found_error:1116 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 13:45:37,646 | WARNING | restaurant_app | not_found_error:1116 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 13:45:37,660 | WARNING | restaurant_app | not_found_error:1116 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 13:45:37,664 | WARNING | restaurant_app | not_found_error:1116 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 13:45:37,905 | WARNING | restaurant_app | not_found_error:1116 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 13:45:38,433 | WARNING | restaurant_app | not_found_error:1116 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 13:46:10,272 | WARNING | restaurant_app | not_found_error:1116 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-09-28 13:46:11,670 | WARNING | restaurant_app | not_found_error:1116 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 13:46:12,215 | WARNING | restaurant_app | not_found_error:1116 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 13:46:12,216 | WARNING | restaurant_app | not_found_error:1116 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 13:46:12,272 | WARNING | restaurant_app | not_found_error:1116 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 13:46:12,311 | WARNING | restaurant_app | not_found_error:1116 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 13:46:12,664 | WARNING | restaurant_app | not_found_error:1116 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 13:46:13,215 | ERROR | restaurant_app | handle_exception:1231 | Unhandled exception: name 'hashlib' is not defined - URL: http://127.0.0.1:8001/menu
+2025-09-28 13:46:13,252 | ERROR | restaurant_app | handle_exception:1233 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\app.py", line 6009, in wrapper
+    return redirect(url_for("index"))
+       ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\app.py", line 6023, in wrapper
+    # Cache key yaratish
+                        
+NameError: name 'hashlib' is not defined
+
+2025-09-28 13:46:14,900 | WARNING | restaurant_app | not_found_error:1115 | 404 Error: http://127.0.0.1:8001/favicon.ico
+2025-09-28 13:46:17,200 | ERROR | restaurant_app | staff_login:13997 | Staff row dict conversion error: name 'check_password_hash' is not defined
+2025-09-28 13:46:17,655 | WARNING | restaurant_app | not_found_error:1116 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-09-28 13:46:19,808 | ERROR | restaurant_app | staff_login:13997 | Staff row dict conversion error: name 'check_password_hash' is not defined
+2025-09-28 13:46:21,041 | ERROR | restaurant_app | staff_login:13997 | Staff row dict conversion error: name 'check_password_hash' is not defined
+2025-09-28 13:46:22,675 | WARNING | restaurant_app | not_found_error:1116 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-09-28 13:46:23,568 | ERROR | restaurant_app | staff_login:13997 | Staff row dict conversion error: name 'check_password_hash' is not defined
+2025-09-28 13:46:49,900 | ERROR | restaurant_app | staff_login:13997 | Staff row dict conversion error: name 'check_password_hash' is not defined
+2025-09-28 13:46:54,870 | ERROR | restaurant_app | staff_login:13997 | Staff row dict conversion error: name 'check_password_hash' is not defined
+2025-09-28 13:47:04,994 | ERROR | restaurant_app | staff_login:13997 | Staff row dict conversion error: name 'check_password_hash' is not defined
+2025-09-28 13:47:20,385 | WARNING | restaurant_app | wrapper:1005 | CSRF token mismatch or missing
+2025-09-28 13:47:20,397 | WARNING | restaurant_app | wrapper:1005 | CSRF token mismatch or missing
+2025-09-28 13:47:20,474 | WARNING | restaurant_app | not_found_error:1116 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 13:47:25,326 | WARNING | restaurant_app | wrapper:1005 | CSRF token mismatch or missing
+2025-09-28 13:47:25,356 | WARNING | restaurant_app | wrapper:1005 | CSRF token mismatch or missing
+2025-09-28 13:47:25,445 | WARNING | restaurant_app | not_found_error:1116 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 13:47:31,600 | WARNING | restaurant_app | not_found_error:1116 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 13:47:31,605 | WARNING | restaurant_app | not_found_error:1116 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 13:47:31,609 | WARNING | restaurant_app | not_found_error:1116 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 13:47:31,620 | WARNING | restaurant_app | not_found_error:1116 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 13:47:31,650 | WARNING | restaurant_app | not_found_error:1116 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 13:47:53,596 | WARNING | restaurant_app | wrapper:1005 | CSRF token mismatch or missing
+2025-09-28 13:47:53,640 | WARNING | restaurant_app | wrapper:1005 | CSRF token mismatch or missing
+2025-09-28 13:47:53,687 | WARNING | restaurant_app | not_found_error:1116 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 13:47:57,351 | WARNING | restaurant_app | wrapper:1005 | CSRF token mismatch or missing
+2025-09-28 13:47:57,363 | WARNING | restaurant_app | wrapper:1005 | CSRF token mismatch or missing
+2025-09-28 13:47:57,532 | WARNING | restaurant_app | not_found_error:1116 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 13:47:58,869 | WARNING | restaurant_app | wrapper:1005 | CSRF token mismatch or missing
+2025-09-28 13:47:58,883 | WARNING | restaurant_app | wrapper:1005 | CSRF token mismatch or missing
+2025-09-28 13:47:58,986 | WARNING | restaurant_app | not_found_error:1116 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 13:48:03,524 | WARNING | restaurant_app | wrapper:1005 | CSRF token mismatch or missing
+2025-09-28 13:48:03,545 | WARNING | restaurant_app | wrapper:1005 | CSRF token mismatch or missing
+2025-09-28 13:48:03,690 | WARNING | restaurant_app | not_found_error:1116 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 13:48:09,233 | WARNING | restaurant_app | wrapper:1005 | CSRF token mismatch or missing
+2025-09-28 13:48:09,233 | WARNING | restaurant_app | wrapper:1005 | CSRF token mismatch or missing
+2025-09-28 13:48:09,778 | WARNING | restaurant_app | not_found_error:1116 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 13:52:54,840 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 13:57:22,263 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 13:58:31,658 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 13:58:34,953 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 13:58:35,133 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 13:58:35,421 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 13:58:35,441 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 13:58:35,552 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 13:58:35,854 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 13:59:02,339 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 14:06:46,471 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 14:06:46,777 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 14:06:46,789 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 14:06:46,808 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 14:06:47,167 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 14:06:47,962 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:06:57,808 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 14:06:57,809 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 14:06:57,854 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 14:06:57,855 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 14:06:57,874 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 14:06:58,181 | WARNING | restaurant_app | wrapper:1035 | CSRF token mismatch or missing
+2025-09-28 14:06:58,181 | WARNING | restaurant_app | wrapper:1035 | CSRF token mismatch or missing
+2025-09-28 14:06:58,258 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:10:46,914 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 14:10:46,914 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 14:10:46,985 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 14:10:46,986 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 14:10:47,021 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 14:10:47,417 | WARNING | restaurant_app | wrapper:1035 | CSRF token mismatch or missing
+2025-09-28 14:10:47,425 | WARNING | restaurant_app | wrapper:1035 | CSRF token mismatch or missing
+2025-09-28 14:10:47,494 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:10:49,233 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:10:51,176 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 14:10:51,185 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 14:10:51,329 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 14:10:51,339 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 14:10:51,367 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 14:10:52,007 | WARNING | restaurant_app | wrapper:1035 | CSRF token mismatch or missing
+2025-09-28 14:10:52,025 | WARNING | restaurant_app | wrapper:1035 | CSRF token mismatch or missing
+2025-09-28 14:10:52,100 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:10:54,482 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:10:58,273 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:11:11,268 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:11:13,267 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 14:11:13,414 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 14:11:13,415 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 14:11:13,432 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 14:11:13,438 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 14:11:13,497 | WARNING | restaurant_app | wrapper:1035 | CSRF token mismatch or missing
+2025-09-28 14:11:13,515 | WARNING | restaurant_app | wrapper:1035 | CSRF token mismatch or missing
+2025-09-28 14:11:13,586 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:11:26,001 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:11:28,853 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-09-28 14:11:37,394 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 14:11:37,546 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 14:11:37,550 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 14:11:37,563 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 14:11:37,566 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 14:11:37,648 | WARNING | restaurant_app | wrapper:1035 | CSRF token mismatch or missing
+2025-09-28 14:11:37,650 | WARNING | restaurant_app | wrapper:1035 | CSRF token mismatch or missing
+2025-09-28 14:11:37,783 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:12:02,516 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:12:09,673 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:12:15,913 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/icons/uzum.svg
+2025-09-28 14:12:16,248 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:17:58,899 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/icons/uzum.svg
+2025-09-28 14:17:59,098 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:18:27,255 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/icons/uzum.svg
+2025-09-28 14:18:27,398 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:18:54,269 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-28 14:21:05,633 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/icons/uzum.svg
+2025-09-28 14:21:05,811 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:21:27,137 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/icons/uzum.svg
+2025-09-28 14:21:27,673 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:22:35,847 | ERROR | restaurant_app | handle_exception:1262 | Unhandled exception: Encountered unknown tag 'comment'. Jinja was looking for the following tags: 'endblock'. The innermost block that needs to be closed is 'block'. - URL: http://127.0.0.1:5000/contact
+2025-09-28 14:22:35,944 | ERROR | restaurant_app | handle_exception:1264 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\app.py", line 8349, in contact
+    return render_template("contact.html", current_page="contact")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 149, in render_template
+    template = app.jinja_env.get_or_select_template(template_name_or_list)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1087, in get_or_select_template
+    return self.get_template(template_name_or_list, parent, globals)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\loaders.py", line 138, in load
+    code = environment.compile(source, name, filename)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 771, in compile
+    self.handle_exception(source=source_hint)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\templates\contact.html", line 69, in template
+    {% comment %} <div class="contact-item">
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'comment'. Jinja was looking for the following tags: 'endblock'. The innermost block that needs to be closed is 'block'.
+
+2025-09-28 14:22:36,326 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-09-28 14:22:46,723 | ERROR | restaurant_app | handle_exception:1262 | Unhandled exception: Encountered unknown tag 'comment'. Jinja was looking for the following tags: 'endblock'. The innermost block that needs to be closed is 'block'. - URL: http://127.0.0.1:5000/contact
+2025-09-28 14:22:46,725 | ERROR | restaurant_app | handle_exception:1264 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\app.py", line 8349, in contact
+    return render_template("contact.html", current_page="contact")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 149, in render_template
+    template = app.jinja_env.get_or_select_template(template_name_or_list)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1087, in get_or_select_template
+    return self.get_template(template_name_or_list, parent, globals)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\loaders.py", line 138, in load
+    code = environment.compile(source, name, filename)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 771, in compile
+    self.handle_exception(source=source_hint)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\templates\contact.html", line 69, in template
+    {% comment %} <div class="contact-item">
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'comment'. Jinja was looking for the following tags: 'endblock'. The innermost block that needs to be closed is 'block'.
+
+2025-09-28 14:22:46,972 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-09-28 14:22:49,997 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/icons/uzum.svg
+2025-09-28 14:22:50,227 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:23:04,263 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/icons/uzum.svg
+2025-09-28 14:23:04,460 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:23:47,413 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/icons/uzum.svg
+2025-09-28 14:23:47,548 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:23:53,839 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/icons/uzum.svg
+2025-09-28 14:23:53,996 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:24:29,170 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/icons/uzum.svg
+2025-09-28 14:24:29,348 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:24:31,831 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/icons/uzum.svg
+2025-09-28 14:24:31,960 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:24:36,748 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-28 14:24:55,833 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-28 14:24:56,252 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/icons/uzum.svg
+2025-09-28 14:24:56,432 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:25:07,324 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/icons/uzum.svg
+2025-09-28 14:25:07,516 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:25:42,223 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 14:25:49,699 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 14:25:49,980 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 14:25:49,981 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 14:25:50,003 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 14:25:50,018 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 14:25:50,286 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:25:55,829 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/icons/uzum.svg
+2025-09-28 14:25:56,153 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:26:09,800 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-28 14:26:40,539 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-28 14:26:40,985 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/icons/uzum.svg
+2025-09-28 14:26:41,533 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:27:38,931 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/icons/uzum.svg
+2025-09-28 14:27:39,118 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:30:06,779 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/icons/uzum.svg
+2025-09-28 14:30:06,932 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:31:40,483 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/icons/uzum.svg
+2025-09-28 14:31:40,927 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:31:57,028 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/icons/uzum.svg
+2025-09-28 14:31:57,231 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:34:16,695 | ERROR | restaurant_app | handle_exception:1262 | Unhandled exception: Could not build url for endpoint 'contect'. Did you mean 'contact' instead? - URL: http://127.0.0.1:5000/contact
+2025-09-28 14:34:17,229 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-09-28 14:34:22,583 | ERROR | restaurant_app | handle_exception:1262 | Unhandled exception: Could not build url for endpoint 'contect'. Did you mean 'contact' instead? - URL: http://127.0.0.1:5000/contact
+2025-09-28 14:34:22,883 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-09-28 14:34:38,397 | ERROR | restaurant_app | handle_exception:1262 | Unhandled exception: Could not build url for endpoint 'contect'. Did you mean 'contact' instead? - URL: http://127.0.0.1:5000/contact
+2025-09-28 14:34:38,605 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-09-28 14:34:41,280 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/icons/uzum.svg
+2025-09-28 14:34:41,442 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:34:56,108 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/icons/uzum.svg
+2025-09-28 14:34:56,347 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:34:58,606 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/icons/uzum.svg
+2025-09-28 14:34:58,740 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:36:27,685 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/icons/uzum.svg
+2025-09-28 14:36:27,917 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:36:32,061 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:36:53,782 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-09-28 14:36:57,367 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 14:36:57,408 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 14:36:57,408 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 14:36:57,578 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 14:36:57,591 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 14:36:57,756 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:37:58,827 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 14:37:59,377 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 14:37:59,409 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 14:37:59,415 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 14:37:59,436 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 14:37:59,727 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:38:01,709 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 14:38:01,798 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 14:38:01,803 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 14:38:01,817 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 14:38:02,093 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 14:38:02,268 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:38:35,826 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 14:38:35,935 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 14:38:35,953 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 14:38:35,966 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 14:38:36,111 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 14:38:36,418 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:38:40,545 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 14:38:40,794 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 14:38:40,810 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 14:38:40,826 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 14:38:40,827 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 14:38:41,264 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:39:01,610 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 14:39:01,873 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 14:39:01,884 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 14:39:01,917 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 14:39:01,937 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 14:39:02,245 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:39:27,293 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 14:39:27,413 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 14:39:27,497 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 14:39:27,499 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 14:39:27,551 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 14:39:27,814 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:43:09,918 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 14:43:17,868 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 14:43:18,240 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 14:43:18,253 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 14:43:18,265 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 14:43:18,278 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 14:43:18,612 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:43:46,567 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:45:15,236 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:45:29,650 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:47:13,368 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:47:30,933 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:47:44,099 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 14:47:44,266 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 14:47:44,266 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 14:47:44,305 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 14:47:44,340 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 14:47:44,599 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:47:57,281 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 14:47:57,282 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 14:47:57,517 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 14:47:57,584 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 14:47:57,603 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 14:47:57,804 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:50:45,667 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 14:50:45,669 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 14:50:46,094 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 14:50:46,105 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 14:50:46,123 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 14:50:46,335 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:54:08,220 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 14:54:08,694 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 14:54:08,697 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 14:54:08,716 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 14:54:08,733 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 14:54:09,224 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:54:33,709 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 14:54:58,122 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:55:00,422 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:55:03,754 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:59:08,513 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 14:59:10,264 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 14:59:10,753 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 14:59:10,763 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 14:59:10,789 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 14:59:10,801 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 14:59:11,018 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:59:24,452 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 14:59:24,460 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 14:59:24,649 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 14:59:24,815 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 14:59:24,830 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 14:59:24,978 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:59:27,923 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:59:48,061 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 14:59:48,992 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 14:59:51,692 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 14:59:51,897 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 14:59:51,931 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 14:59:51,959 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 14:59:51,990 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 14:59:52,093 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 15:00:04,502 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-09-28 15:00:06,294 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 15:00:06,305 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 15:00:06,505 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 15:00:06,538 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 15:00:06,567 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 15:00:06,709 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 15:00:09,889 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 15:06:23,457 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 15:06:25,719 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 15:07:03,721 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 15:07:08,146 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 15:07:38,052 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 15:12:46,547 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 15:12:58,417 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 15:13:06,022 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 15:13:40,046 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 15:13:53,730 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 15:13:58,479 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 15:14:02,264 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 15:14:02,267 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 15:14:02,280 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 15:14:02,285 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 15:14:02,311 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 15:14:21,782 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 15:14:28,559 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 15:14:39,525 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 15:15:10,962 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 15:18:04,384 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 15:18:09,380 | ERROR | restaurant_app | api_super_admin_export_report:5739 | export-report error: name 'pd' is not defined - body_preview: b'{"branches":[],"customers":[],"products":[],"sales":[{"avg_order":720000,"cashback":0,"date":"2025-09-25","orders_count":1,"revenue":720000}],"staff":[],"summary":{"avg_check":720000,"growth_rate":-92.3,"new_customers":0,"total_orders":1,"total_revenue":720000}}'
+2025-09-28 15:18:40,312 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 15:18:52,735 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 15:22:05,995 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 15:22:10,786 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 15:22:10,786 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 15:22:10,787 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 15:22:10,787 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 15:22:10,816 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 15:22:34,707 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 15:22:38,959 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 15:22:39,154 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 15:22:39,158 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 15:22:39,174 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 15:22:39,188 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 15:22:39,435 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 15:26:39,870 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 15:26:40,039 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 15:26:40,071 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 15:26:40,089 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 15:26:40,271 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 15:26:40,557 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 15:27:08,243 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 15:27:08,371 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 15:27:08,377 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 15:27:08,512 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 15:27:08,559 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 15:27:08,783 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 15:27:48,899 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 15:27:49,343 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 15:27:49,345 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 15:27:49,409 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 15:27:49,410 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 15:27:49,812 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 15:29:06,730 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 15:29:06,731 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 15:29:06,797 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 15:29:06,798 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 15:29:06,835 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 15:29:07,067 | WARNING | restaurant_app | wrapper:1035 | CSRF token mismatch or missing
+2025-09-28 15:29:07,083 | WARNING | restaurant_app | wrapper:1035 | CSRF token mismatch or missing
+2025-09-28 15:29:07,142 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 15:29:15,371 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 15:29:15,451 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 15:29:15,467 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 15:29:15,572 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 15:29:15,616 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 15:29:15,704 | WARNING | restaurant_app | wrapper:1035 | CSRF token mismatch or missing
+2025-09-28 15:29:15,704 | WARNING | restaurant_app | wrapper:1035 | CSRF token mismatch or missing
+2025-09-28 15:29:15,765 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 15:30:25,178 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-28 15:58:23,298 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 15:59:21,538 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 16:04:58,680 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 16:04:58,729 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 16:04:58,740 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 16:04:58,790 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 16:04:58,827 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 16:04:59,188 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 16:11:11,707 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 16:11:13,596 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 16:11:13,882 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 16:11:13,882 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 16:11:13,904 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 16:11:13,905 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 16:11:14,211 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 16:12:18,318 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 16:12:27,534 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 16:12:31,500 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 16:12:35,556 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 16:12:37,179 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 16:13:03,979 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 16:13:04,247 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 16:13:04,272 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 16:13:04,274 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 16:13:04,283 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 16:13:04,495 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 16:13:43,976 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-09-28 16:13:49,212 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 16:13:49,250 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 16:13:49,259 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 16:13:49,265 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 16:13:49,278 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 16:13:49,434 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:00:12,023 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 19:00:12,056 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 19:00:12,080 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 19:00:12,096 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 19:00:12,163 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 19:00:12,416 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:00:23,831 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/api/user-sessions
+2025-09-28 19:00:23,954 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:00:27,848 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:00:35,891 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 19:00:36,152 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 19:00:36,171 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 19:00:36,174 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 19:00:36,193 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 19:00:36,366 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:03:07,519 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 19:03:07,917 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 19:03:07,925 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 19:03:07,955 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 19:03:08,967 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 19:03:09,199 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:17:33,519 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 19:17:34,434 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 19:17:34,480 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 19:17:34,484 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 19:17:34,579 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 19:17:35,077 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:17:49,154 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 19:17:49,158 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 19:17:49,331 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 19:17:49,343 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 19:17:49,469 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 19:17:49,608 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:17:54,711 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 19:17:54,719 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 19:17:54,900 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 19:17:54,906 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 19:17:54,917 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 19:17:55,145 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:17:57,847 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:18:02,683 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:18:04,563 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 19:18:04,698 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 19:18:04,706 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 19:18:04,722 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 19:18:04,770 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 19:18:04,858 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:18:08,335 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:18:09,843 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 19:18:09,997 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 19:18:10,008 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 19:18:10,047 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 19:18:10,063 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 19:18:10,167 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:21:00,127 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 19:21:00,469 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 19:21:00,471 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 19:21:00,485 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 19:21:00,508 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 19:21:01,137 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:22:55,631 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-28 19:23:51,447 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:23:57,299 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:24:05,208 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:24:07,897 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:25:30,045 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 19:25:30,566 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 19:25:30,578 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 19:25:30,592 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 19:25:30,615 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 19:25:30,994 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:25:35,153 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 19:25:35,314 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 19:25:35,359 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 19:25:35,367 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 19:25:35,402 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 19:25:35,616 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:28:17,928 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 19:28:18,568 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 19:28:18,579 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 19:28:18,619 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 19:28:25,803 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 19:28:26,390 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:28:44,676 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-28 19:31:38,449 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-28 19:31:38,665 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 19:31:38,730 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 19:31:38,742 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 19:31:38,754 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 19:31:39,108 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 19:31:39,869 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:35:20,290 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 19:35:20,611 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 19:35:20,613 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 19:35:20,669 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 19:35:20,730 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 19:35:21,736 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:36:02,330 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 19:36:02,449 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 19:36:02,450 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 19:36:02,599 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 19:36:02,626 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 19:36:02,860 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:36:10,492 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 19:36:10,686 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 19:36:10,694 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 19:36:10,718 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 19:36:10,734 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 19:36:10,982 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:36:15,759 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-28 19:40:01,583 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-09-28 19:40:11,576 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-09-28 19:40:23,022 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-09-28 19:40:24,190 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-09-28 19:40:24,506 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-09-28 19:40:28,661 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 19:40:28,995 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 19:40:28,996 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 19:40:29,028 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 19:40:29,051 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 19:40:29,335 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-09-28 19:40:29,459 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:40:49,569 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-09-28 19:40:55,467 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-09-28 19:41:01,582 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-09-28 19:41:09,571 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-09-28 19:41:29,570 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-09-28 19:41:35,738 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-09-28 19:41:37,896 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 19:41:38,419 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 19:41:38,453 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 19:41:38,456 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 19:41:38,471 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 19:41:38,701 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-09-28 19:41:38,793 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:41:43,050 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 19:41:43,218 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 19:41:43,231 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 19:41:43,250 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 19:41:43,331 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 19:41:43,485 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-09-28 19:41:43,564 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:41:48,496 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 19:41:48,497 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 19:41:48,679 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 19:41:48,683 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 19:41:48,731 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 19:41:49,034 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-09-28 19:41:49,143 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:41:58,102 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-09-28 19:42:01,577 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-09-28 19:42:05,246 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-09-28 19:42:09,051 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-09-28 19:42:25,993 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-09-28 19:42:26,913 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/casual-sneakers.jpg
+2025-09-28 19:42:27,580 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/leather-loafers.jpg
+2025-09-28 19:42:27,634 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/summer-sandals.jpg
+2025-09-28 19:42:27,635 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/sport-sandals.jpg
+2025-09-28 19:42:27,679 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/house-slippers.jpg
+2025-09-28 19:42:27,904 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-09-28 19:42:27,993 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:45:22,208 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 19:45:22,765 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-28 19:45:22,794 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-28 19:45:22,990 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-28 19:45:23,021 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-28 19:45:23,413 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:45:56,015 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 19:47:10,667 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:47:17,247 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-28 19:47:17,247 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-28 19:47:17,247 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-28 19:47:17,259 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-28 19:47:55,106 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:48:07,362 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:48:19,477 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-09-28 19:48:23,410 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:48:26,324 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-28 19:48:26,338 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-28 19:48:26,483 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-28 19:48:26,497 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-28 19:48:26,660 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:49:23,624 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-28 19:49:23,732 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-28 19:49:24,128 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-28 19:49:24,158 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-28 19:49:24,410 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:49:34,832 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-28 19:49:34,833 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-28 19:49:35,107 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-28 19:49:35,224 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-28 19:49:35,549 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:49:43,102 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-28 19:49:43,115 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-28 19:49:43,162 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-28 19:49:43,164 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-28 19:49:43,558 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:50:52,116 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-28 19:50:52,206 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-28 19:50:52,549 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-28 19:50:52,577 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-28 19:50:52,876 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:50:58,993 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:51:04,203 | WARNING | restaurant_app | super_admin_login:11054 | Super admin login failed for username: 1
+2025-09-28 19:51:04,560 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:51:06,373 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-28 19:51:06,379 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-28 19:51:06,670 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-28 19:51:06,693 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-28 19:51:06,833 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:51:10,147 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:51:16,069 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-28 19:51:16,081 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-28 19:51:16,304 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-28 19:51:16,319 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-28 19:51:16,524 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:53:56,122 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:54:00,954 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:54:03,357 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:54:06,223 | ERROR | restaurant_app | super_admin_get_system_stats:13890 | System stats error: name 'start_time' is not defined
+2025-09-28 19:54:06,333 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:54:16,274 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:56:31,921 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 19:56:46,473 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:56:52,530 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 19:57:14,598 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:57:33,940 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:57:35,956 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:57:39,077 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:57:40,242 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:57:43,690 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:57:48,340 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:57:55,137 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-28 19:57:55,151 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-28 19:57:55,178 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-28 19:57:55,182 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-28 19:57:55,280 | WARNING | restaurant_app | wrapper:1035 | CSRF token mismatch or missing
+2025-09-28 19:57:55,284 | WARNING | restaurant_app | wrapper:1035 | CSRF token mismatch or missing
+2025-09-28 19:57:55,352 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 19:57:58,485 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 20:04:26,093 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 20:04:27,100 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 20:04:35,475 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-09-28 20:04:37,972 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 20:04:38,046 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-28 20:04:38,065 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-28 20:04:38,393 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-28 20:04:38,434 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-28 20:04:38,609 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 20:04:39,919 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 20:04:41,885 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 20:04:44,360 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 20:04:48,103 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 20:05:07,816 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 20:05:19,135 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 20:05:20,576 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 20:06:11,823 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 20:06:13,598 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 20:07:29,149 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 20:11:38,556 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 20:12:14,575 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 20:12:18,217 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 20:12:20,177 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 20:12:23,308 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 20:12:24,634 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 20:12:26,442 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 20:12:29,524 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 20:13:09,164 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 20:15:26,329 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 20:16:05,170 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 20:16:07,530 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 20:17:28,060 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-28 20:19:14,534 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 20:19:15,314 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-28 20:19:20,215 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 20:19:44,209 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-28 20:19:45,763 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 20:20:19,312 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 20:21:09,994 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-28 20:22:21,732 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 20:41:20,982 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-28 20:41:42,899 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-28 20:41:44,060 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 20:42:43,781 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-28 20:42:43,790 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-28 20:42:43,844 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-28 20:42:43,845 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-28 20:42:44,359 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 20:50:36,385 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-28 20:50:36,398 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-28 20:50:36,880 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-28 20:50:36,881 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-28 20:50:37,358 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 20:52:33,537 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-28 20:53:35,196 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 20:54:03,251 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-28 20:54:03,347 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-28 20:54:03,529 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-28 20:54:03,813 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-28 20:54:04,090 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 20:54:17,934 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-28 20:54:17,937 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-28 20:54:18,204 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-28 20:54:18,228 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-28 20:54:18,596 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 20:54:40,602 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-28 20:54:47,245 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-28 20:54:47,490 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-28 20:54:47,492 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-28 20:54:47,747 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-28 20:54:47,748 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-28 20:54:48,325 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 21:50:28,252 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-28 21:50:28,627 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-28 21:50:28,664 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-28 21:50:28,675 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-28 21:50:28,687 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-28 21:50:28,700 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-28 21:50:28,720 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-28 21:50:28,738 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-28 21:50:28,743 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-28 21:50:28,753 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-28 21:50:28,764 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-28 21:50:28,773 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-28 21:50:28,782 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-28 21:50:28,793 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-28 21:50:28,804 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-28 21:50:28,826 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-28 21:50:28,870 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-28 21:50:28,884 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-28 21:50:28,908 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-28 21:50:28,932 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-28 21:50:28,955 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-28 21:50:28,977 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-28 21:50:29,010 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-28 21:55:00,052 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-28 21:55:00,076 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-28 21:55:00,129 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-28 21:55:00,148 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-28 21:55:00,162 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-09-28 21:59:44,799 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-28 21:59:45,894 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-28 21:59:45,895 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-28 21:59:46,132 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-28 21:59:46,138 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-28 21:59:48,446 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 22:00:45,019 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-28 22:04:08,449 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-28 22:04:08,452 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-28 22:04:08,768 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-28 22:04:08,780 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-28 22:04:09,304 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 22:07:23,113 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-28 22:09:47,447 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-28 22:09:47,448 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-28 22:09:47,819 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-28 22:09:48,070 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-28 22:09:48,099 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-28 22:09:49,107 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 22:12:06,013 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-28 22:32:04,048 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-28 22:32:04,523 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-28 22:32:04,570 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-28 22:32:05,522 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-28 22:32:05,542 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-28 22:32:08,204 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 22:35:17,788 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-28 22:35:17,805 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-28 22:35:18,225 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-28 22:35:18,262 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-28 22:35:19,148 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 22:35:40,932 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-28 22:37:22,122 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-28 22:37:22,129 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-28 22:37:24,598 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-28 22:37:24,610 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-28 22:37:25,896 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 22:37:43,955 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-28 22:43:00,213 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-28 22:43:56,671 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-28 22:45:37,016 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-28 22:45:37,024 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-28 22:45:37,378 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-28 22:45:37,426 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-28 22:45:37,706 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 22:45:47,796 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-28 22:45:47,911 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-28 22:45:47,932 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-28 22:45:48,094 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-28 22:45:48,928 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 22:46:00,643 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-28 22:46:00,651 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-28 22:46:00,875 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-28 22:46:00,890 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-28 22:46:01,307 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 22:46:14,364 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-28 22:46:14,376 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-28 22:46:14,591 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-28 22:46:14,608 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-28 22:46:15,113 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-28 22:46:24,461 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-28 22:46:24,465 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-28 22:46:24,638 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-28 22:46:24,650 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-28 22:46:25,203 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-29 16:25:44,451 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-29 16:25:45,917 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-29 16:25:45,924 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-29 16:25:45,933 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-29 16:25:45,938 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-29 16:25:46,564 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-29 16:26:56,460 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-29 16:26:56,481 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-29 16:26:57,329 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-29 16:26:57,369 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-29 16:26:57,739 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-29 16:27:02,741 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-29 16:27:02,768 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-29 16:27:03,016 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-29 16:27:03,024 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-29 16:27:03,719 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-29 16:30:27,754 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-29 16:30:27,776 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-29 16:30:27,974 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-29 16:30:27,974 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-29 16:30:28,936 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-29 16:33:56,782 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-29 16:33:56,791 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-29 16:33:57,080 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-29 16:33:57,083 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-29 16:33:57,461 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-29 16:47:23,846 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-29 16:47:23,953 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-29 16:47:24,378 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-29 16:47:24,499 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-29 16:47:25,109 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-29 16:47:38,675 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-29 16:56:19,618 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-29 17:11:36,271 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-29 17:11:36,777 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-29 17:11:36,800 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-29 17:11:36,828 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-29 17:11:36,838 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-29 17:11:37,550 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-29 17:38:54,463 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-29 17:38:54,470 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-29 17:38:54,627 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-29 17:38:54,629 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-29 17:38:55,023 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-29 17:41:20,826 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-29 17:41:20,845 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-29 17:41:20,848 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-29 17:41:20,875 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-29 17:41:22,536 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-29 17:42:43,843 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-29 17:43:05,139 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-29 17:43:07,159 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-09-29 17:43:10,050 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-29 17:43:10,992 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-29 17:43:13,928 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe1.jpg
+2025-09-29 17:43:13,950 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-29 17:43:14,499 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-29 17:43:14,529 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-29 17:43:14,634 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-29 17:43:15,498 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-29 17:43:22,570 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-29 17:43:22,747 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe3.jpg
+2025-09-29 17:43:22,770 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-29 17:43:23,135 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-29 17:43:24,086 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-29 17:43:27,379 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-29 17:43:27,418 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-29 17:43:27,429 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe2.jpg
+2025-09-29 17:43:28,136 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-29 17:43:34,507 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-29 17:43:34,566 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/shoe4.jpg
+2025-09-29 17:43:35,983 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-29 17:43:39,268 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-29 17:43:39,990 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-29 17:44:22,755 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-29 17:44:24,091 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-29 17:50:51,212 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-29 17:52:45,291 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-29 18:02:17,941 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-29 18:10:38,186 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-29 18:11:11,309 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-29 18:13:20,335 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-29 18:13:24,770 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-29 18:16:38,413 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-29 18:17:12,168 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-29 18:18:59,675 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-29 18:19:07,045 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-29 18:19:11,774 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-29 18:44:49,098 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-29 18:45:17,047 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-29 18:45:19,839 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-09-29 18:45:57,589 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-29 18:50:29,156 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-30 13:44:46,722 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-09-30 13:44:49,291 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-30 13:45:23,519 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-09-30 13:45:26,219 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-30 13:45:29,324 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-30 13:46:05,582 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/api/user-sessions
+2025-09-30 13:46:05,691 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-09-30 13:46:09,721 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg

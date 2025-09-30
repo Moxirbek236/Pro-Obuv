@@ -365,6 +365,21 @@
         transform: translateY(-1px);
       }
 
+      /* Make the navbar visually fixed and ensure content is padded below it.
+         We add a small helper class so we don't accidentally break bootstrap
+         behavior for off-canvas navbars. JS below will add the class at runtime
+         and compute the correct top padding for the main content. */
+      .fixed-top-custom {
+        position: fixed !important;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1050 !important;
+        width: 100%;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+        background-clip: padding-box;
+      }
+
       /* Qo'shimcha tungi rejim tuzatishlari */
       body.dark-theme .bg-white,
       body.dark-theme .bg-light {
@@ -669,6 +684,39 @@
         localStorage.setItem("theme_preference", "dark");
       }
     </script>
+    <script>
+      // Prevent accidental full-page reload loops on public menu page.
+      // Some admin/monitor templates call location.reload() periodically;
+      // ensure those reloads are disabled for the public /menu route.
+      try {
+        window.ALLOW_PAGE_RELOAD = true;
+        if (window.location && window.location.pathname && window.location.pathname.startsWith('/menu')) {
+          window.ALLOW_PAGE_RELOAD = false;
+          console.debug('Page reloads disabled on /menu to prevent continuous loading');
+        }
+      } catch (e) {
+        // ignore
+      }
+    </script>
+    <script>
+      // Override location.reload to respect ALLOW_PAGE_RELOAD flag.
+      try {
+        (function () {
+          var origReload = window.location && window.location.reload && window.location.reload.bind(window.location);
+          window.location.reload = function () {
+            try {
+              if (typeof window.ALLOW_PAGE_RELOAD !== 'undefined' && window.ALLOW_PAGE_RELOAD === false) {
+                console.debug('Blocked location.reload() because ALLOW_PAGE_RELOAD is false');
+                return;
+              }
+            } catch (e) {}
+            if (origReload) return origReload();
+          };
+        })();
+      } catch (e) {
+        // ignore
+      }
+    </script>
     <!-- Navigation Bar - SECURE ROLE CHECKING -->
     {% if show_nav %}
 
@@ -970,7 +1018,7 @@
               >
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('news_page') }}">📰 Yangiliklar</a>
+              <a class="nav-link" href="{{ url_for('news_page') }}"> Yangiliklar</a>
             </li>
           </ul>
 
@@ -981,7 +1029,7 @@
                 id="openMapGlobalBtn"
                 class="btn btn-sm btn-outline-light"
                 title="Haritani ochish">
-                🗺️
+                🗺️ Joylashni ko'rish
               </button>
             </li>
             <li class="nav-item d-flex align-items-center">
@@ -1107,14 +1155,15 @@
               </a>
             </li>
             {% endif %}
-            <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('contact') }}">📞 {{ _('nav.contact') }}</a>
+            <li class="nav-item d-flex align-items-center">
+              <a class="nav-link" href="{{ url_for('contact') }}">📞 {{ _('nav.contact') }}</a>
+              <a class="nav-link ms-1" href="https://maps.app.goo.gl/tQU6Axzj4JvLoGML8" target="_blank" title="Google Maps">🗺️ Xaritada joylashuvni ko'rish</a>
             </li>
             <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('news_page') }}">📰 {{ _('nav.news') }}</a>
+            <a class="nav-link" href="{{ url_for('news_page') }}"> {{ _('nav.news') }}</a>
             </li>
             <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('about') }}">❓ {{ _('nav.about') }}</a>
+              <a class="nav-link" href="{{ url_for('about') }}">❓ {{ _('nav.about') }}</a>
             </li>
             <li class="nav-item">
             <a class="nav-link" href="{{ url_for('downloads') }}">📱 {{ _('nav.downloads') }}</a>
@@ -1250,6 +1299,9 @@
             </li>
             {% endif %}
             <li class="nav-item">
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('contact') }}">📞 Aloqa</a>
+              </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('about') }}">❓ Savollar</a>
             </li>
@@ -1330,22 +1382,25 @@
       <div class="news-ticker-container">
         <div class="news-ticker-wrapper">
           <!-- Chap navigation tugmasi -->
+          
+          
           <button
             class="news-nav-btn news-nav-prev"
             id="newsPrevBtn"
-            title="Oldingi yangilik">
+            title="Oldingi yangilik"
+            aria-label="Oldingi yangilik"
+          >
             <span>‹</span>
           </button>
-
 
           <div class="news-ticker">
             <div class="news-ticker-viewport">
               <div class="news-ticker-content" id="news-ticker-content">
-                <!-- Yangiliklar JavaScript orqali yuklanadi -->
-                <div class="news-item news">📢 Sahifa yuklanmoqda...</div>
+                    <!-- Yangiliklar JavaScript orqali yuklanadi -->
+                    <div class="news-item news">📢 Sahifa yuklanmoqda...</div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
 
           <!-- O'ng navigation tugmasi -->
           <button
@@ -1426,11 +1481,43 @@
                     height="24" />
                 </a>
                 <a
+                  href="https://www.youtube.com/"
+                  target="_blank"
+                  class="social-icon-btn youtube"
+                  title="YouTube">
+                  <img
+                    src="{{ url_for('static', filename='icons/youtube.svg') }}"
+                    alt="YouTube"
+                    width="24"
+                    height="24" />
+                </a>
+                <a
+                  href="https://www.olx.uz/"
+                  target="_blank"
+                  class="social-icon-btn olx"
+                  title="OLX">
+                  <img
+                    src="{{ url_for('static', filename='icons/olx.svg') }}"
+                    alt="OLX"
+                    width="24"
+                    height="24" />
+                </a>
+                <a
                   href="mailto:premiumsafety@mail.ru"
                   class="social-icon-btn email"
                   title="Email">
                   <img
                     src="{{ url_for('static', filename='icons/gmail.png') }}"
+                    alt="Uzum Market"
+                    width="24"
+                    height="24" />
+                </a>
+                <a
+                  href="https://maps.app.goo.gl/Ezg462SRmBYLxfUY6"
+                  class="social-icon-btn email"
+                  title="Google Maps">
+                  <img
+                    src="{{ url_for('static', filename='icons/maps.png') }}"
                     alt="Uzum Market"
                     width="24"
                     height="24" />
@@ -1453,19 +1540,19 @@
               <h6 class="fw-bold mb-3 text-warning">🔗 {{ _('nav.quick_links') }}</h6>
               <ul class="list-unstyled">
                 <li class="mb-2">
-                  <a href="{{ url_for('index') }}" class="text-light text-decoration-none hover-text-warning">🏠 {{ _('nav.home') }}</a>
+                  <a href="{{ url_for('index') }}" class="text-light text-decoration-none hover-text-warning"> {{ _('nav.home') }}</a>
                 </li>
                 <li class="mb-2">
-                  <a href="{{ url_for('menu') }}" class="text-light text-decoration-none hover-text-warning">📋 {{ _('nav.menu') }}</a>
+                  <a href="{{ url_for('menu') }}" class="text-light text-decoration-none hover-text-warning"> {{ _('nav.menu') }}</a>
                 </li>
                 <li class="mb-2">
-                  <a href="{{ url_for('cart') }}" class="text-light text-decoration-none hover-text-warning">🛒 {{ _('nav.cart') }}</a>
+                  <a href="{{ url_for('cart') }}" class="text-light text-decoration-none hover-text-warning"> {{ _('nav.cart') }}</a>
                 </li>
                 <li class="mb-2">
-                  <a href="{{ url_for('about') }}" class="text-light text-decoration-none hover-text-warning">❓ {{ _('nav.about') }}</a>
+                  <a href="{{ url_for('about') }}" class="text-light text-decoration-none hover-text-warning"> {{ _('nav.about') }}</a>
                 </li>
                 <li class="mb-2">
-                  <a href="{{ url_for('contact') }}" class="text-light text-decoration-none hover-text-warning">📞 {{ _('nav.contact') }}</a>
+                  <a href="{{ url_for('contact') }}" class="text-light text-decoration-none hover-text-warning"> {{ _('nav.contact') }}</a>
                 </li>
               </ul>
             </div>
@@ -1528,7 +1615,11 @@
                 <div class="d-flex align-items-start mb-2">
                   <span class="me-2">📍</span>
                   <span class="text-light">
-                    Toshkent sh., Chilonzor t., Bunyodkor ko'chasi 12-uy
+                    <a
+                    href="https://maps.app.goo.gl/Ezg462SRmBYLxfUY6"
+                    class="text-light text-decoration-none">
+                    Toshkent, Sergeli tumani, Yuqori Darxon mahalla fuqarolar yig'ini
+                    </a>
                   </span>
                 </div>
               </div>
@@ -1733,6 +1824,16 @@
         box-shadow: 0 12px 35px rgba(124, 77, 255, 0.5);
       }
 
+      .social-icon-btn.youtube:hover {
+        background: linear-gradient(135deg, #ff0000 0%, #c20000 100%);
+        box-shadow: 0 12px 35px rgba(255, 0, 0, 0.45);
+      }
+
+      .social-icon-btn.olx:hover {
+        background: linear-gradient(135deg, #00a3e0 0%, #007bb5 100%);
+        box-shadow: 0 12px 35px rgba(0, 163, 224, 0.45);
+      }
+
       .social-icon-btn.email:hover {
         background: linear-gradient(135deg, #ea4335 0%, #d33b2c 100%);
         box-shadow: 0 12px 35px rgba(234, 67, 53, 0.5);
@@ -1904,6 +2005,8 @@
         margin: 0 auto;
         /* allow external CSS or small-screen media queries to control exact height */
         min-height: 100px;
+        /* allow nav buttons to overflow outside the ticker area */
+        overflow: visible;
       }
 
 
@@ -1945,8 +2048,13 @@
 
       /* Navigation tugmalari */
       .news-nav-btn {
-        width: 50px;
-        height: 50px;
+        /* positioned absolutely so prev/next can sit over the ticker */
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 1100; /* above ticker and other footer elements */
+        width: 56px;
+        height: 56px;
         border: none;
         background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
         color: #ffffff;
@@ -1955,13 +2063,26 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 24px;
-        font-weight: bold;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        border: 2px solid rgba(255, 255, 255, 0.1);
+        font-size: 22px;
+        font-weight: 700;
+        transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45);
+        border: 2px solid rgba(255, 255, 255, 0.12);
         backdrop-filter: blur(10px);
-        flex-shrink: 0;
+        /* increase hit area on touch devices */
+        padding: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* explicit positions for the prev/next buttons */
+      .news-nav-btn.news-nav-prev {
+        left: 14px;
+      }
+
+      .news-nav-btn.news-nav-next {
+        right: 14px;
       }
 
       .news-nav-btn:hover {
@@ -1987,8 +2108,8 @@
         align-items: center;
         justify-content: space-between;
         flex: 0 0 320px; /* fixed card width for carousel flow */
-        min-width: 220px;
-        height: 100%;
+        min-width: 260px;
+        height: 160px; /* consistent fixed height for ticker cards */
         padding: 12px;
         background: rgba(255, 255, 255, 0.08);
         border-radius: 15px;
@@ -2167,9 +2288,9 @@
         }
 
         .news-nav-btn {
-          width: 45px;
-          height: 45px;
-          font-size: 20px;
+          width: 48px;
+          height: 48px;
+          font-size: 18px;
         }
 
         .news-play-btn {
@@ -2203,9 +2324,9 @@
         }
 
         .news-nav-btn {
-          width: 40px;
-          height: 40px;
-          font-size: 18px;
+          width: 42px;
+          height: 42px;
+          font-size: 16px;
         }
 
         .news-play-btn {
@@ -2367,9 +2488,9 @@
         }
 
         .news-nav-btn {
-          width: 35px;
-          height: 35px;
-          font-size: 16px;
+          width: 38px;
+          height: 38px;
+          font-size: 15px;
         }
 
         .news-play-btn {
@@ -2501,8 +2622,7 @@
           max-height: 70vh;
         }
       }
-    </style>
-    </style>
+  </style>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='main.js') }}"></script>
@@ -3048,6 +3168,141 @@
     </a>
 
     {% block scripts %}{% endblock %}
+
+    <script>
+      (function () {
+        // 1) Make navbar fixed (adds class to the first visible .navbar)
+        try {
+          const navbar = document.querySelector('.navbar');
+          if (navbar) {
+            // Add our safer fixed class only if not already fixed
+            if (!navbar.classList.contains('fixed-top') && !navbar.classList.contains('fixed-top-custom')) {
+              navbar.classList.add('fixed-top-custom');
+            }
+
+            // Compute the navbar height and add padding to main to avoid overlap
+            const applyMainTopPadding = () => {
+              try {
+                const main = document.querySelector('main');
+                if (!main) return;
+                const rect = navbar.getBoundingClientRect();
+                // Use Math.ceil to avoid fractional subpixel issues
+                const h = Math.ceil(rect.height || 64);
+                main.style.paddingTop = (h + 16) + 'px'; // keep a small breathing gap
+              } catch (e) {}
+            };
+
+            // Apply immediately and on resize
+            applyMainTopPadding();
+            window.addEventListener('resize', applyMainTopPadding);
+          }
+        } catch (e) {
+          // ignore
+        }
+
+        // 2) Theme - ensure default dark, provide reliable toggle that persists to server
+        try {
+          // Session value already written by template into localStorage earlier in the file.
+          // Provide a function toggleTheme that other scripts or UI elements can call.
+          window.toggleTheme = function (forceDark) {
+            try {
+              const isDark = typeof forceDark === 'boolean' ? forceDark : !document.body.classList.contains('dark-theme');
+              if (isDark) {
+                document.body.classList.add('dark-theme');
+                document.body.classList.remove('light-theme');
+              } else {
+                document.body.classList.remove('dark-theme');
+                document.body.classList.add('light-theme');
+              }
+
+              // persist locally
+              try { localStorage.setItem('darkMode', isDark ? 'true' : 'false'); } catch (e) {}
+
+              // persist to server (best-effort, non-blocking)
+              fetch('/api/set-theme', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : ''
+                },
+                body: JSON.stringify({ theme: isDark ? 'dark' : 'light' })
+              }).catch(() => {});
+
+              // Update navbar classes for contrast
+              const navbar = document.querySelector('.navbar');
+              if (navbar) {
+                if (isDark) {
+                  navbar.classList.remove('navbar-light', 'bg-light');
+                  navbar.classList.add('navbar-dark', 'bg-dark');
+                } else {
+                  navbar.classList.remove('navbar-dark', 'bg-dark');
+                  navbar.classList.add('navbar-light', 'bg-light');
+                }
+              }
+            } catch (e) {}
+          };
+
+          // Expose a small helper to bind toggle buttons (elements with .theme-toggle)
+          document.addEventListener('click', function (e) {
+            if (e.target && e.target.classList && e.target.classList.contains('theme-toggle')) {
+              e.preventDefault();
+              window.toggleTheme();
+            }
+          });
+        } catch (e) {
+          // ignore
+        }
+
+        // 3) News-card equalization: make all .news-item match the tallest currently rendered
+        try {
+          function equalizeNewsItems() {
+            try {
+              const items = Array.from(document.querySelectorAll('.news-ticker-content .news-item'));
+              if (!items.length) return;
+
+              // Reset heights to auto to get natural content height
+              items.forEach(it => { it.style.height = 'auto'; it.style.minHeight = ''; });
+
+              // Measure and pick the maximum
+              let max = 0;
+              items.forEach(it => {
+                const h = it.getBoundingClientRect().height;
+                if (h > max) max = h;
+              });
+
+              if (max <= 0) return;
+              // Apply uniform height (use px to avoid cross-browser issues)
+              items.forEach(it => { it.style.height = Math.ceil(max) + 'px'; it.style.minHeight = Math.ceil(max) + 'px'; });
+            } catch (e) {}
+          }
+
+          // Run after news ticker updates or on DOMContentLoaded
+          document.addEventListener('DOMContentLoaded', function () {
+            // run after a short delay to allow async news load
+            setTimeout(equalizeNewsItems, 300);
+          });
+
+          // Also observe the news-ticker-content for changes and re-run equalization
+          const newsContainer = document.getElementById('news-ticker-content');
+          if (newsContainer) {
+            const mo = new MutationObserver(() => {
+              // small debounce
+              if (window._newsEqualizeTimer) clearTimeout(window._newsEqualizeTimer);
+              window._newsEqualizeTimer = setTimeout(equalizeNewsItems, 120);
+            });
+            mo.observe(newsContainer, { childList: true, subtree: true, attributes: true });
+          }
+
+          // Re-run on window resize
+          window.addEventListener('resize', function () {
+            if (window._newsEqualizeTimer) clearTimeout(window._newsEqualizeTimer);
+            window._newsEqualizeTimer = setTimeout(equalizeNewsItems, 120);
+          });
+        } catch (e) {
+          // ignore
+        }
+      })();
+    </script>
 
     <!-- Enhanced Telegram-style Chat Widget - Only for Staff, Courier, SuperAdmin -->
     {% if is_staff or is_courier or is_super_admin %}

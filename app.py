@@ -2,69 +2,121 @@ import time
 import string
 import secrets as secrets_module
 import secrets
-import hashlib
-from werkzeug.middleware.proxy_fix import ProxyFix
-from werkzeug.middleware.profiler import ProfilerMiddleware
-from dotenv import load_dotenv
+
+# Core stdlib imports used throughout the file
+import os
+import json
 import logging
-from logging.handlers import RotatingFileHandler
-import threading  # <-- added import for fallback threading
-import sys  # Import sys to check sys.modules
-import csv
+import datetime
+import sqlite3
+import threading
 import traceback
-from collections import defaultdict
-from concurrent.futures import ThreadPoolExecutor
-import pytz
+import hashlib
+import binascii
 from contextlib import contextmanager
 from functools import wraps
+from concurrent.futures import ThreadPoolExecutor
+from collections import defaultdict
 
-import os
-from flask import (
-    Flask,
-    render_template,
-    request,
-    redirect,
-    url_for,
-    session,
-    flash,
-    get_flashed_messages,
-    jsonify,
-    g,
-    send_file,
-    make_response,
-)
-from flask_cors import CORS
-from flask_compress import Compress
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
-from werkzeug.security import generate_password_hash, check_password_hash
-import datetime
-from datetime import timedelta
-import sqlite3
-import json
-import pandas as pd
+# Third-party imports (use safe fallbacks so the module can be parsed
+# even if some optional dependencies are not installed in the environment)
+try:
+    from flask import (
+        Flask,
+        request,
+        session,
+        g,
+        render_template,
+        redirect,
+        url_for,
+        flash,
+        jsonify,
+        send_from_directory,
+        Response,
+    )
+except Exception:
+    # Minimal fallbacks to allow static analysis / parsing; runtime will still
+    # require the real packages.
+    Flask = None
+    request = None
+    session = {}
+    g = type("G", (), {})()
+    def render_template(*a, **k):
+        return ""
+    def redirect(*a, **k):
+        return ""
+    def url_for(*a, **k):
+        return ""
+    def flash(*a, **k):
+        return None
+    def jsonify(obj=None):
+        return obj
+    def send_from_directory(*a, **k):
+        return ""
+    class Response:
+        pass
 
 try:
-    import requests
+    from werkzeug.middleware.proxy_fix import ProxyFix
 except Exception:
-    requests = None
+    ProxyFix = None
 
 try:
-    import qrcode
+    from flask_cors import CORS
 except Exception:
-    qrcode = None
+    CORS = lambda *a, **k: None
 
 try:
-    import base64
+    from flask_compress import Compress
 except Exception:
-    base64 = None
-
-from io import BytesIO
+    Compress = lambda *a, **k: None
 
 try:
-    from openpyxl import Workbook
+    from flask_limiter import Limiter
+    from flask_limiter.util import get_remote_address
 except Exception:
-    Workbook = None
+    # Provide simple placeholders so module can import; real rate limiting
+    # requires installing flask-limiter in the runtime environment.
+    class Limiter:
+        def __init__(self, *a, **k):
+            pass
+
+    def get_remote_address():
+        return lambda: None
+
+try:
+    from werkzeug.middleware.profiler import ProfilerMiddleware
+except Exception:
+    ProfilerMiddleware = None
+
+try:
+    # Preferred: use Werkzeug's secure password helpers
+    from werkzeug.security import generate_password_hash, check_password_hash
+except Exception:
+    # Fallback: lightweight PBKDF2-based helpers using stdlib so the app
+    # can run in environments without Werkzeug. These fallbacks are
+    # intentionally simple but reasonably secure for development/testing.
+    import os as _os
+
+    def generate_password_hash(password: str) -> str:
+        """Generate a PBKDF2-SHA256 hash stored as salt$digest_hex"""
+        if password is None:
+            password = ""
+        salt = _os.urandom(16)
+        dk = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt, 100000)
+        return binascii.hexlify(salt).decode() + "$" + binascii.hexlify(dk).decode()
+
+    def check_password_hash(stored_hash: str, password: str) -> bool:
+        try:
+            if not stored_hash:
+                return False
+            salt_hex, dk_hex = stored_hash.split("$", 1)
+            salt = binascii.unhexlify(salt_hex)
+            expected = binascii.unhexlify(dk_hex)
+            test = hashlib.pbkdf2_hmac("sha256", (password or "").encode("utf-8"), salt, 100000)
+            return binascii.hexlify(test) == binascii.hexlify(expected)
+        except Exception:
+            return False
 
 try:
     from flask_sqlalchemy import SQLAlchemy
@@ -72,91 +124,23 @@ except Exception:
     SQLAlchemy = None
 
 try:
-    from werkzeug.utils import secure_filename
+    import pytz
 except Exception:
-
-    def secure_filename(name):
-        return os.path.basename(name)
-
-
-import uuid as uuid_module
-
-uuid = uuid_module
-
-start_time = time.time()
+    pytz = None
 
 try:
     import redis
-
     REDIS_AVAILABLE = True
-except ImportError:
-    REDIS_AVAILABLE = False
+except Exception:
     redis = None
+    REDIS_AVAILABLE = False
 
-load_dotenv()
-print("DEBUG: load_dotenv done")
-
-import time
-from functools import wraps
-
-MEMORY_CACHE = {}
-CACHE_TIMEOUT = 300  # 5 минут
-
-
-def simple_cache(timeout=300):
-
-    def decorator(func):
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            cache_key = f"{func.__name__}_{hash(str(args) + str(kwargs))}"
-            current_time = time.time()
-
-            if cache_key in MEMORY_CACHE:
-                cached_time, cached_result = MEMORY_CACHE[cache_key]
-                if current_time - cached_time < timeout:
-                    return cached_result
-
-            result = func(*args, **kwargs)
-            MEMORY_CACHE[cache_key] = (current_time, result)
-
-            if len(MEMORY_CACHE) % 100 == 0:
-                cutoff = current_time - timeout * 2
-                MEMORY_CACHE.clear()  # Простое очищение
-
-            return result
-
-        return wrapper
-
-    return decorator
-
-
-def export_orders_report(period="day"):
-    """
-    period: 'day', 'month', 'year'
-    Buyurtmalar hisobotini Excel faylga eksport qiladi
-    """
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    cur = conn.cursor()
-    now = datetime.datetime.now()
-    if period == "day":
-        start = now.replace(hour=0, minute=0, second=0, microsecond=0)
-    elif period == "month":
-        start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    elif period == "year":
-        start = now.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
-    else:
-        raise ValueError("Period must be day, month, or year")
-    start_str = start.strftime("%Y-%m-%d %H:%M:%S")
-    query = "SELECT * FROM orders WHERE created_at >= ? ORDER BY created_at DESC"
-    cur.execute(query, (start_str,))
-    rows = cur.fetchall()
-    df = pd.DataFrame([dict(row) for row in rows])
-    filename = f"orders_report_{period}_{now.strftime('%Y%m%d_%H%M%S')}.xlsx"
-    filepath = os.path.join(os.path.dirname(__file__), filename)
-    df.to_excel(filepath, index=False)
-    conn.close()
-    return filepath
+# Bring logging handlers into top-level imports so setup_logging() can use them
+try:
+    from logging.handlers import RotatingFileHandler, SMTPHandler
+except Exception:
+    RotatingFileHandler = None
+    SMTPHandler = None
 
 
 app = Flask(__name__)
@@ -6026,6 +6010,89 @@ def admin_monitor():
         )
 
 
+# Admin utility: delete all products and seed 4 test products (super_admin only)
+@app.route('/admin/delete_all_products_and_seed', methods=['POST'])
+@role_required('super_admin')
+def admin_delete_all_products_and_seed():
+    """Dangerous admin endpoint: deletes all menu items, product_media, ratings,
+    favorites, cart items (best-effort), then inserts 4 simple test products.
+    Protected by super_admin role_required decorator.
+    """
+    try:
+        # Delete dependent tables entries safely inside a transaction
+        conn = get_db()
+        cur = conn.cursor()
+
+        # Keep a quick backup: dump existing menu_items count
+        cur.execute("SELECT COUNT(1) FROM menu_items")
+        before_count = cur.fetchone()[0] if cur.fetchone() is not None else 0
+
+        # Delete related data first
+        try:
+            cur.execute("DELETE FROM product_media")
+        except Exception:
+            pass
+        try:
+            cur.execute("DELETE FROM ratings")
+        except Exception:
+            pass
+        try:
+            cur.execute("DELETE FROM favorites")
+        except Exception:
+            pass
+        try:
+            cur.execute("DELETE FROM cart_items")
+        except Exception:
+            pass
+
+        # Delete menu items
+        try:
+            cur.execute("DELETE FROM menu_items")
+        except Exception:
+            pass
+
+        # Insert 4 test products
+        now = get_current_time().isoformat()
+        seed_items = [
+            ("Test Shoe Alpha", 100000, "shoes", "Alpha test shoe", "", 1, 10, 0, 0.0, 0.0, now),
+            ("Test Shoe Beta", 120000, "shoes", "Beta test shoe", "", 1, 8, 0, 0.0, 0.0, now),
+            ("Test Shoe Gamma", 90000, "shoes", "Gamma test shoe", "", 1, 15, 0, 0.0, 0.0, now),
+            ("Test Shoe Delta", 110000, "shoes", "Delta test shoe", "", 1, 5, 0, 0.0, 0.0, now),
+        ]
+
+        # Try multiple common INSERT shapes (some DBs expect different columns). Use a flexible insert.
+        try:
+            cur.executemany(
+                "INSERT INTO menu_items (name, price, category, description, image_url, available, stock_quantity, orders_count, rating, discount_percentage, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                seed_items,
+            )
+        except Exception:
+            # Fallback minimal insert
+            try:
+                cur.executemany(
+                    "INSERT INTO menu_items (name, price, category, description, created_at, available) VALUES (?,?,?,?,?,1)",
+                    [(s[0], s[1], s[2], s[3], now) for s in seed_items],
+                )
+            except Exception as e:
+                app_logger.error(f"Seeding fallback failed: {e}")
+
+        conn.commit()
+        conn.close()
+
+        # Clear menu cache if any
+        try:
+            cm = cache_manager or get_cache_manager()
+            if cm:
+                cm.delete("menu_items_active")
+        except Exception:
+            pass
+
+        return jsonify({"success": True, "message": "Menu wiped and 4 test products seeded"})
+    except Exception as e:
+        app_logger.error(f"admin_delete_all_products_and_seed error: {e}")
+        return jsonify({"success": False, "message": "Failed to reset menu", "details": str(e)}), 500
+
+
 # Advanced decorators
 def login_required(f):
     "Enhanced login decorator"
@@ -6405,10 +6472,23 @@ def api_menu_search():
         if items_raw:
             for r in items_raw:
                 try:
-                    items.append(dict(r))
+                    item = dict(r)
                 except Exception:
-                    # fallback if row proxy not dict-like
-                    items.append(r)
+                    item = r
+
+                # Attach media gallery for the item (images/videos)
+                try:
+                    media_rows = execute_query(
+                        "SELECT id, media_type, media_url, display_order, is_main FROM product_media WHERE menu_item_id = ? ORDER BY is_main DESC, display_order ASC",
+                        (item.get("id") if hasattr(item, 'get') else item[0],),
+                        fetch_all=True,
+                    )
+                    item_media = [dict(m) for m in media_rows] if media_rows else []
+                    item["media"] = item_media
+                except Exception:
+                    item["media"] = []
+
+                items.append(item)
 
         return jsonify({"success": True, "items": items})
     except Exception as e:
@@ -8895,7 +8975,17 @@ def admin_add_menu_item():
     try:
         name = request.form.get("name", "").strip()
         price = float(request.form.get("price", 0))
-        category = request.form.get("category", "footwear")
+        category = (request.form.get("category", "footwear") or "").strip()
+        # Normalize categories used in templates: map common backend names to frontend tokens
+        cat_map = {
+            'footwear': 'specobuv',
+            'specobuv': 'specobuv',
+            'shoes': 'specobuv',
+            'clothing': 'specodezhda',
+            'specodezhda': 'specodezhda',
+            'apparel': 'specodezhda'
+        }
+        category = cat_map.get(category.lower(), category)
         description = request.form.get("description", "").strip()
         sizes = request.form.get("sizes", "").strip()  # comma-separated
         colors = request.form.get("colors", "").strip()  # comma-separated
@@ -8929,6 +9019,10 @@ def admin_add_menu_item():
         if menu_item_id:
             # Ko'p rasm va videolarni yuklash
             media_files = request.files.getlist("media_files")  # Yangi input nomi
+            # Enforce 1..10 uploads if files were submitted
+            if media_files and len([f for f in media_files if f and f.filename]) > 10:
+                flash("Iltimos, bir mahsulotga bir vaqtning o'zida maksimal 10 ta fayl yuklang.", "error")
+                return redirect(url_for("staff_menu"))
             uploaded_media = []
             main_image_set = False
 
@@ -9011,6 +9105,12 @@ def admin_add_menu_item():
                     "Yangi mahsulot qo'shildi, lekin media fayllar yuklanmadi!",
                     "warning",
                 )
+            # Invalidate cache and write JSON
+            try:
+                invalidate_menu_cache()
+                write_menu_json()
+            except Exception:
+                pass
         else:
             flash("Mahsulot qo'shishda xatolik yuz berdi.", "error")
 
@@ -9034,6 +9134,17 @@ def admin_edit_menu_item(item_id):
         description = request.form.get("description", "").strip()
         sizes = request.form.get("sizes", "").strip()
         colors = request.form.get("colors", "").strip()
+        # Optional category normalization if provided
+        category_in = request.form.get("category")
+        if category_in is not None:
+            cat_map = {
+                'footwear': 'specobuv', 'specobuv': 'specobuv', 'shoes': 'specobuv',
+                'clothing': 'specodezhda', 'specodezhda': 'specodezhda', 'apparel': 'specodezhda'
+            }
+            category_norm = cat_map.get((category_in or '').strip().lower(), (category_in or '').strip())
+            # include category in update sql
+            sql_set += ", category = ?"
+            params.insert(-1, category_norm)
         discount_percentage = float(request.form.get("discount_percentage", 0) or 0)
 
         if not name or price <= 0:
@@ -9064,6 +9175,10 @@ def admin_edit_menu_item(item_id):
         # Yangi media fayllarni yuklash
         media_files = request.files.getlist("media_files")
         if media_files:
+            # Enforce max 10 new uploads
+            if len([f for f in media_files if f and f.filename]) > 10:
+                flash("Iltimos, bir mahsulotga bir vaqtning o'zida maksimal 10 ta fayl yuklang.", "error")
+                return redirect(url_for("staff_menu"))
             now = get_current_time().isoformat()
             uploaded_media = []
 
@@ -9157,6 +9272,12 @@ def admin_edit_menu_item(item_id):
                 )
             else:
                 flash("Mahsulot yangilandi!", "success")
+        # After editing, invalidate cache and update JSON
+        try:
+            invalidate_menu_cache()
+            write_menu_json()
+        except Exception:
+            pass
         else:
             flash("Mahsulot yangilandi!", "success")
 
@@ -9335,6 +9456,30 @@ def api_reorder_product_media():
         )
 
 
+    @app.route('/api/product-media/identify', methods=['POST'])
+    @role_required('staff')
+    def api_product_media_identify():
+        """Return product_media.id for a given media_url (and optional item_id)."""
+        try:
+            data = request.get_json() or {}
+            media_url = data.get('media_url')
+            item_id = data.get('item_id')
+            if not media_url:
+                return jsonify({'success': False, 'message': 'media_url required'}), 400
+
+            if item_id:
+                row = execute_query('SELECT id FROM product_media WHERE menu_item_id = ? AND media_url = ?', (item_id, media_url), fetch_one=True)
+            else:
+                row = execute_query('SELECT id FROM product_media WHERE media_url = ?', (media_url,), fetch_one=True)
+
+            if not row:
+                return jsonify({'success': False, 'message': 'not found'}), 404
+            return jsonify({'success': True, 'media_id': row['id']})
+        except Exception as e:
+            app_logger.error(f'Identify media error: {e}')
+            return jsonify({'success': False, 'message': 'server error'}), 500
+
+
 @app.route("/admin/toggle_menu_item/<int:item_id>", methods=["POST"])
 def admin_toggle_menu_item(item_id):
     "Toggle menu item availability"
@@ -9350,6 +9495,13 @@ def admin_toggle_menu_item(item_id):
         """,
             (item_id,),
         )
+
+        # Invalidate cache and update JSON so public menu updates immediately
+        try:
+            invalidate_menu_cache()
+            write_menu_json()
+        except Exception:
+            pass
 
         return jsonify({"success": True, "message": "Mahsulot holati o'zgartirildi"})
     except Exception as e:
@@ -9403,12 +9555,21 @@ def admin_delete_menu_item(item_id):
             f"Menu item o'chirildi: {item_name} (ID: {item_id}) by {staff_info}"
         )
 
-        return jsonify(
+        result = jsonify(
             {
                 "success": True,
                 "message": f"Mahsulot '{item_name}' muvaffaqiyatli o'chirildi",
             }
         )
+
+        # After successful delete, invalidate cache and update JSON
+        try:
+            invalidate_menu_cache()
+            write_menu_json()
+        except Exception:
+            pass
+
+        return result
 
     except Exception as e:
         app_logger.error(f"Delete menu item error: {str(e)}")
@@ -9418,6 +9579,57 @@ def admin_delete_menu_item(item_id):
             ),
             500,
         )
+
+
+@app.route('/admin/reset_menu_for_tests', methods=['POST'])
+def admin_reset_menu_for_tests():
+    """Developer/testing helper: remove all existing products and insert 4 test products.
+    Protected: only staff or super_admin can call this. Meant for local/dev use only.
+    """
+    if not session.get('staff_id') and not session.get('super_admin'):
+        return jsonify({'success': False, 'error': 'Admin huquqi talab qilinadi'}), 401
+
+    try:
+        # Delete related data first to avoid FK issues
+        execute_query('DELETE FROM cart_items')
+        execute_query('DELETE FROM order_details')
+        execute_query('DELETE FROM ratings')
+        execute_query('DELETE FROM favorites')
+        execute_query('DELETE FROM product_media')
+        execute_query('DELETE FROM menu_items')
+
+        now = get_current_time().isoformat()
+
+        sample = [
+            ('Test Oyoq kiyim A', 120000, 'specobuv', 'Test tavsifi A', None, 1, 10, 4.5, 0, '36,37,38', 'qora', now),
+            ('Test Oyoq kiyim B', 150000, 'specobuv', 'Test tavsifi B', None, 1, 5, 4.7, 0, '39,40,41', 'qora,yashil', now),
+            ('Test Kiyim A', 90000, 'specodezhda', 'Test tavsifi C', None, 1, 8, 4.2, 0, 'S,M,L', 'oq', now),
+            ('Test Kiyim B', 110000, 'specodezhda', 'Test tavsifi D', None, 1, 3, 3.9, 0, 'M,L,XL', 'qizil', now),
+        ]
+
+        for it in sample:
+            execute_query(
+                """
+                INSERT INTO menu_items (name, price, category, description, image_url, available, stock_quantity, rating, discount_percentage, sizes, colors, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                it,
+            )
+
+        # Try to invalidate cache / write menu JSON if helpers exist
+        try:
+            invalidate_menu_cache()
+        except Exception:
+            pass
+        try:
+            write_menu_json()
+        except Exception:
+            pass
+
+        return jsonify({'success': True, 'message': 'Menu resetlandi va 4 ta test mahsulot qo\'shildi.'})
+    except Exception as e:
+        app_logger.error(f"Reset menu for tests error: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 # API routes
@@ -9600,6 +9812,25 @@ def api_submit_rating():
                 )
             app_logger.error(f"Submit rating insert failed: {str(e)}")
             return jsonify({"success": False, "message": "Server error"}), 500
+
+        # If this was a menu item rating, recalc average and count to return to client
+        try:
+            if menu_item_id_int >= 0:
+                stats = execute_query(
+                    "SELECT AVG(rating) as avg_rating, COUNT(*) as cnt FROM ratings WHERE menu_item_id = ?",
+                    (menu_item_id_int,),
+                    fetch_one=True,
+                )
+                avg = float(stats.get('avg_rating') or 0.0) if hasattr(stats, 'get') else float(stats[0] or 0.0)
+                cnt = int(stats.get('cnt') or 0) if hasattr(stats, 'get') else int(stats[1] or 0)
+                # Also update menu_items.rating with latest average (best-effort)
+                try:
+                    execute_query('UPDATE menu_items SET rating = ? WHERE id = ?', (round(avg, 1), menu_item_id_int))
+                except Exception:
+                    pass
+                return jsonify({"success": True, "message": "Rahmat! Baho qabul qilindi.", "new_rating": round(avg,1), "total_ratings": cnt})
+        except Exception:
+            pass
 
         return jsonify({"success": True, "message": "Rahmat! Baho qabul qilindi."})
     except Exception as e:
@@ -10489,6 +10720,24 @@ def load_news():
     return []
 
 
+def extract_youtube_embed(url: str):
+    """If url is a YouTube link (watch or youtu.be or embed), return a safe embed URL, else None."""
+    try:
+        if not url:
+            return None
+        import re
+
+        u = url.strip()
+        # Common youtube id patterns (11 chars)
+        m = re.search(r'(?:v=|\/embed\/|youtu\.be\/)([A-Za-z0-9_\-]{11})', u)
+        if m:
+            vid = m.group(1)
+            return f"https://www.youtube.com/embed/{vid}"
+    except Exception:
+        return None
+    return None
+
+
 def save_news(list_of_items):
     try:
         d = os.path.dirname(NEWS_STORAGE_PATH)
@@ -10536,6 +10785,11 @@ def news_page():
                     "display_order": r[7],
                     "created_at": r[8],
                 }
+            # detect youtube embed
+            try:
+                item["youtube_embed"] = extract_youtube_embed(item.get("video_url") or "")
+            except Exception:
+                item["youtube_embed"] = None
             news_items.append(item)
 
         return render_template("news.html", news=news_items)
@@ -10548,8 +10802,47 @@ def news_page():
 @app.route("/super-admin/news", methods=["GET"])
 @role_required("super_admin")
 def super_admin_news_list():
-    news = load_news()
-    return render_template("admin/news_manage.html", news=news)
+    try:
+        # Prefer reading from DB so admin sees the canonical source of truth.
+        rows = (
+            execute_query(
+                "SELECT id, title, content, type, image_url, video_url, is_active, display_order, created_at FROM news ORDER BY display_order ASC, created_at DESC",
+                fetch_all=True,
+            )
+            or []
+        )
+
+        news_items = []
+        for r in rows:
+            if isinstance(r, dict):
+                item = r
+            else:
+                item = {
+                    "id": r[0],
+                    "title": r[1],
+                    "content": r[2],
+                    "type": r[3],
+                    "image_url": r[4],
+                    "video_url": r[5],
+                    "is_active": bool(r[6]),
+                    "display_order": r[7],
+                    "created_at": r[8],
+                }
+            try:
+                item["youtube_embed"] = extract_youtube_embed(item.get("video_url") or "")
+            except Exception:
+                item["youtube_embed"] = None
+            news_items.append(item)
+
+        return render_template("admin/news_manage.html", news=news_items)
+    except Exception as e:
+        try:
+            app_logger.error(f"super_admin_news_list DB read failed, falling back to JSON: {e}")
+        except Exception:
+            pass
+        # Fallback to JSON-backed loader for legacy setups
+        news = load_news()
+        return render_template("admin/news_manage.html", news=news)
 
 
 @app.route("/super-admin/news/add", methods=["POST"])
@@ -10567,28 +10860,105 @@ def super_admin_add_news():
             flash("Sarlavha majburiy.", "error")
             return redirect(url_for("super_admin_news_list"))
 
-        news = load_news()
-        new_id = max([n.get("id", 0) for n in news] or [0]) + 1
-        item = {
-            "id": new_id,
-            "title": title,
-            "image": image_url,
-            "youtube_url": youtube_url,
-            "video": video_url,
-            "description": description,
-            "published": published,
-            "created_at": get_current_time().isoformat(),
-        }
-        news.insert(0, item)
-        ok = save_news(news)
-        if ok:
-            flash("Yangilik qo'shildi.", "success")
-        else:
-            flash("Yangilikni saqlashda xatolik.", "error")
-        return redirect(url_for("super_admin_news_list"))
+        now = get_current_time().isoformat()
+
+        # Ensure news table exists and determine whether show_in_ticker exists
+        try:
+            cols = execute_query("PRAGMA table_info(news)", fetch_all=True)
+            has_show = False
+            if cols:
+                for c in cols:
+                    name = c[1] if isinstance(c, tuple) else c.get("name")
+                    if name == "show_in_ticker":
+                        has_show = True
+                        break
+        except Exception:
+            has_show = False
+
+        # Insert into DB so public endpoints see it
+        try:
+            if has_show:
+                execute_query(
+                    """INSERT INTO news (title, content, type, image_url, video_url, is_active, display_order, show_in_ticker, created_by, created_at, updated_at)
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                    (
+                        title,
+                        description,
+                        "news",
+                        image_url,
+                        video_url or youtube_url,
+                        1 if published else 0,
+                        0,
+                        0,
+                        1,
+                        now,
+                        now,
+                    ),
+                )
+            else:
+                execute_query(
+                    """INSERT INTO news (title, content, type, image_url, video_url, is_active, display_order, created_by, created_at, updated_at)
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                    (
+                        title,
+                        description,
+                        "news",
+                        image_url,
+                        video_url or youtube_url,
+                        1 if published else 0,
+                        0,
+                        1,
+                        now,
+                        now,
+                    ),
+                )
+        except Exception as db_err:
+            app_logger.error(f"Failed to insert news into DB: {db_err}")
+
+        # Sync DB -> JSON file for legacy admin UI and backups
+        try:
+            rows = (
+                execute_query(
+                    "SELECT id, title, content, type, image_url, video_url, is_active, display_order, created_at FROM news ORDER BY display_order ASC, created_at DESC",
+                    fetch_all=True,
+                )
+                or []
+            )
+            # Convert rows to serializable dicts
+            items = []
+            for r in rows:
+                if isinstance(r, dict):
+                    item = dict(r)
+                else:
+                    item = {
+                        "id": r[0],
+                        "title": r[1],
+                        "content": r[2],
+                        "type": r[3],
+                        "image_url": r[4],
+                        "video_url": r[5],
+                        "is_active": bool(r[6]),
+                        "display_order": r[7],
+                        "created_at": r[8],
+                    }
+                # compute youtube embed if video_url is a YouTube link
+                try:
+                    item["youtube_embed"] = extract_youtube_embed(item.get("video_url") or "")
+                except Exception:
+                    item["youtube_embed"] = None
+                items.append(item)
+            json_path = os.path.join(os.getcwd(), "data", "news.json")
+            os.makedirs(os.path.dirname(json_path), exist_ok=True)
+            with open(json_path, "w", encoding="utf-8") as f:
+                json.dump({"news": items, "metadata": {"last_updated": now}}, f, ensure_ascii=False, indent=2)
+        except Exception as _:
+            pass
     except Exception as e:
-        app_logger.error(f"Add news error: {e}")
-        flash("Yangilikni qo'shishda xatolik.", "error")
+        try:
+            app_logger.error(f"super_admin_add_news error: {e}")
+        except Exception:
+            pass
+        flash("Yangilik qo'shishda xatolik.", "error")
         return redirect(url_for("super_admin_news_list"))
 
 
@@ -10596,14 +10966,68 @@ def super_admin_add_news():
 @role_required("super_admin")
 def super_admin_delete_news(news_id):
     try:
-        news = load_news()
-        newlist = [n for n in news if int(n.get("id", 0)) != int(news_id)]
-        ok = save_news(newlist)
-        if ok:
-            flash("Yangilik o'chirildi.", "success")
-        else:
+        # Try to delete from DB first
+        try:
+            existing = execute_query(
+                "SELECT id FROM news WHERE id = ?", (news_id,), fetch_one=True
+            )
+            if existing:
+                execute_query("DELETE FROM news WHERE id = ?", (news_id,))
+                now = get_current_time().isoformat()
+                # Sync DB -> JSON file
+                try:
+                    rows = (
+                        execute_query(
+                            "SELECT id, title, content, type, image_url, video_url, is_active, display_order, created_at FROM news ORDER BY display_order ASC, created_at DESC",
+                            fetch_all=True,
+                        )
+                        or []
+                    )
+                    items = []
+                    for r in rows:
+                        if isinstance(r, dict):
+                            item = dict(r)
+                        else:
+                            item = {
+                                "id": r[0],
+                                "title": r[1],
+                                "content": r[2],
+                                "type": r[3],
+                                "image_url": r[4],
+                                "video_url": r[5],
+                                "is_active": bool(r[6]),
+                                "display_order": r[7],
+                                "created_at": r[8],
+                            }
+                        try:
+                            item["youtube_embed"] = extract_youtube_embed(item.get("video_url") or "")
+                        except Exception:
+                            item["youtube_embed"] = None
+                        items.append(item)
+                    json_path = os.path.join(os.getcwd(), "data", "news.json")
+                    os.makedirs(os.path.dirname(json_path), exist_ok=True)
+                    with open(json_path, "w", encoding="utf-8") as f:
+                        json.dump({"news": items, "metadata": {"last_updated": now}}, f, ensure_ascii=False, indent=2)
+                except Exception:
+                    pass
+                flash("Yangilik o'chirildi.", "success")
+                return redirect(url_for("super_admin_news_list"))
+        except Exception as db_e:
+            app_logger.warning(f"DB delete attempt failed: {db_e}")
+
+        # Fallback to JSON-based storage if DB path not available
+        try:
+            news = load_news()
+            newlist = [n for n in news if int(n.get("id", 0)) != int(news_id)]
+            ok = save_news(newlist)
+            if ok:
+                flash("Yangilik o'chirildi.", "success")
+            else:
+                flash("Yangilikni o'chirishda xatolik.", "error")
+            return redirect(url_for("super_admin_news_list"))
+        except Exception:
             flash("Yangilikni o'chirishda xatolik.", "error")
-        return redirect(url_for("super_admin_news_list"))
+            return redirect(url_for("super_admin_news_list"))
     except Exception as e:
         app_logger.error(f"Delete news error: {e}")
         flash("Yangilikni o'chirishda xatolik.", "error")
@@ -15574,10 +15998,26 @@ def reset_settings():
 def api_news():
     """Get all active news items for ticker"""
     try:
-        news_items = execute_query(
+        rows = execute_query(
             "SELECT * FROM news WHERE is_active = 1 ORDER BY display_order ASC, created_at DESC",
             fetch_all=True,
-        )
+        ) or []
+        news_items = []
+        for r in rows:
+            try:
+                if isinstance(r, dict):
+                    item = r
+                else:
+                    # convert tuple to dict assuming schema order matches
+                    item = dict(r)
+            except Exception:
+                item = r
+            # attach youtube embed if applicable
+            try:
+                item["youtube_embed"] = extract_youtube_embed(item.get("video_url") or "")
+            except Exception:
+                item["youtube_embed"] = None
+            news_items.append(item)
         return jsonify({"success": True, "news": news_items or []})
     except Exception as e:
         app_logger.error(f"API news error: {str(e)}")
@@ -15646,42 +16086,49 @@ def api_create_news():
                 ),
             )
         else:
-        news_id = execute_query(
-            """INSERT INTO news (title, content, type, image_url, video_url, is_active, display_order, created_by, created_at, updated_at)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-            (
-                title,
-                content,
-                news_type,
-                image_url or None,
-                video_url or None,
-                1 if is_active else 0,
-                display_order,
-                1,
-                now,
-                now,
-            ),
-        )
+            news_id = execute_query(
+                """INSERT INTO news (title, content, type, image_url, video_url, is_active, display_order, created_by, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                (
+                    title,
+                    content,
+                    news_type,
+                    image_url or None,
+                    video_url or None,
+                    1 if is_active else 0,
+                    display_order,
+                    1,
+                    now,
+                    now,
+                ),
+            )
 
         # Sync to JSON file
         try:
-            items = (
+            rows = (
                 execute_query(
                     "SELECT * FROM news ORDER BY display_order ASC, created_at DESC",
                     fetch_all=True,
                 )
                 or []
             )
+            items = []
+            for r in rows:
+                try:
+                    item = dict(r) if not isinstance(r, dict) else dict(r)
+                except Exception:
+                    item = r
+                try:
+                    item["youtube_embed"] = extract_youtube_embed(item.get("video_url") or "")
+                except Exception:
+                    item["youtube_embed"] = None
+                items.append(item)
+
             json_path = os.path.join(os.getcwd(), "data", "news.json")
             os.makedirs(os.path.dirname(json_path), exist_ok=True)
             with open(json_path, "w", encoding="utf-8") as f:
-                json.dump(
-                    {"news": items, "metadata": {"last_updated": now}},
-                    f,
-                    ensure_ascii=False,
-                    indent=2,
-                )
-        except Exception as _:
+                json.dump({"news": items, "metadata": {"last_updated": now}}, f, ensure_ascii=False, indent=2)
+        except Exception:
             pass
 
         return jsonify({"success": True, "message": "News item created", "id": news_id})
@@ -15752,41 +16199,48 @@ def api_update_news(news_id):
                 ),
             )
         else:
-        execute_query(
-            """UPDATE news SET title = ?, content = ?, type = ?, image_url = ?, video_url = ?, 
-               is_active = ?, display_order = ?, updated_at = ? WHERE id = ?""",
-            (
-                title,
-                content,
-                news_type,
-                image_url or None,
-                video_url or None,
-                1 if is_active else 0,
-                display_order,
-                now,
-                news_id,
-            ),
-        )
+            execute_query(
+                """UPDATE news SET title = ?, content = ?, type = ?, image_url = ?, video_url = ?, 
+                is_active = ?, display_order = ?, updated_at = ? WHERE id = ?""",
+                (
+                    title,
+                    content,
+                    news_type,
+                    image_url or None,
+                    video_url or None,
+                    1 if is_active else 0,
+                    display_order,
+                    now,
+                    news_id,
+                ),
+            )
 
         # Sync to JSON file
         try:
-            items = (
+            rows = (
                 execute_query(
                     "SELECT * FROM news ORDER BY display_order ASC, created_at DESC",
                     fetch_all=True,
                 )
                 or []
             )
+            items = []
+            for r in rows:
+                try:
+                    item = dict(r) if not isinstance(r, dict) else dict(r)
+                except Exception:
+                    item = r
+                try:
+                    item["youtube_embed"] = extract_youtube_embed(item.get("video_url") or "")
+                except Exception:
+                    item["youtube_embed"] = None
+                items.append(item)
+
             json_path = os.path.join(os.getcwd(), "data", "news.json")
             os.makedirs(os.path.dirname(json_path), exist_ok=True)
             with open(json_path, "w", encoding="utf-8") as f:
-                json.dump(
-                    {"news": items, "metadata": {"last_updated": now}},
-                    f,
-                    ensure_ascii=False,
-                    indent=2,
-                )
-        except Exception as _:
+                json.dump({"news": items, "metadata": {"last_updated": now}}, f, ensure_ascii=False, indent=2)
+        except Exception:
             pass
 
         return jsonify({"success": True, "message": "News item updated"})
@@ -15823,13 +16277,20 @@ def api_delete_news(news_id):
             now = get_current_time().isoformat()
             json_path = os.path.join(os.getcwd(), "data", "news.json")
             os.makedirs(os.path.dirname(json_path), exist_ok=True)
+            items_out = []
+            for r in items:
+                try:
+                    item = dict(r) if not isinstance(r, dict) else dict(r)
+                except Exception:
+                    item = r
+                try:
+                    item["youtube_embed"] = extract_youtube_embed(item.get("video_url") or "")
+                except Exception:
+                    item["youtube_embed"] = None
+                items_out.append(item)
+
             with open(json_path, "w", encoding="utf-8") as f:
-                json.dump(
-                    {"news": items, "metadata": {"last_updated": now}},
-                    f,
-                    ensure_ascii=False,
-                    indent=2,
-                )
+                json.dump({"news": items_out, "metadata": {"last_updated": now}}, f, ensure_ascii=False, indent=2)
         except Exception as _:
             pass
 
@@ -15872,6 +16333,20 @@ def api_admin_news():
             "SELECT * FROM news ORDER BY display_order ASC, created_at DESC",
             fetch_all=True,
         )
+
+        # normalize and attach youtube_embed
+        try:
+            norm = []
+            for r in news_items or []:
+                try:
+                    item = dict(r) if not isinstance(r, dict) else r
+                except Exception:
+                    item = r
+                item["youtube_embed"] = extract_youtube_embed(item.get("video_url") or "")
+                norm.append(item)
+            news_items = norm
+        except Exception:
+            pass
 
         # Auto-import from data/news.json if DB is empty and JSON exists
         if not news_items:

@@ -1,10 +1,11 @@
-{% extends "base.html" %} {% block title %}Mahsulotlar - Do'kon{% endblock %} {% block content %}
+{% extends "base.html" %} {% block title %}Mahsulotlar - Do'kon{% endblock %} {%
+block content %}
 <div class="menu-container">
   <div class="main-content">
     <!-- Left Sidebar Filters -->
     <div class="filter-sidebar">
       <h3 class="filter-title">🔍 Filter va qidiruv</h3>
-      
+
       <!-- Search -->
       <div class="filter-section">
         <label for="menuSearchInput">Qidirish</label>
@@ -61,7 +62,7 @@
       <button id="clearFiltersBtn" class="clear-btn">
         🗑️ Barchasini tozalash
       </button>
-      
+
       <!-- Links Section -->
       <div class="filter-links">
         <a href="{{ url_for('about') }}" class="filter-link">
@@ -77,135 +78,143 @@
     </div>
 
     <!-- Mobile Filter Toggle -->
-    <button class="mobile-filter-toggle d-md-none" onclick="toggleMobileFilter()">
+    <button
+      class="mobile-filter-toggle d-md-none"
+      onclick="toggleMobileFilter()">
       🔍 Filterlar
     </button>
-    
+
     <!-- Right Content Area -->
     <div class="content-area">
       <!-- professional-header and menu-title moved to templates/kafolatlar.html -->
-      
-      <!-- Kategoriya tugmalari -->
-      <div class="category-buttons">
-        <button
-          class="category-btn active"
-          onclick="showCategory('all')"
-          data-translate="all_categories">
-          🔄 Все товары
-        </button>
-        <button
-          class="category-btn"
-          onclick="showCategory('specobuv')"
-          data-translate="specobuv_category">
-          🥾 Спецобувь
-        </button>
-        <button
-          class="category-btn"
-          onclick="showCategory('specodezhda')"
-          data-translate="specodezhda_category">
-          🦺 Спецодежда
-        </button>
-      </div>
+
+      <!-- Kategoriya tugmalari va menyuni yangilash (moved into sidebar) -->
 
       <!-- Spetsial'naya odezhda i obuv' -->
       <div class="menu-section" id="products-section">
         <h2 class="section-title">🥾 Специальная одежда и обувь</h2>
+        <!-- Category buttons (also accessible from sidebar) -->
+        <div class="filter-section category-buttons-wrapper">
+          <div class="category-buttons">
+            <button
+              class="category-btn active"
+              data-cat="all"
+              onclick="showCategory(event, 'all')"
+              data-translate="all_categories">
+              🔄 Все товары
+            </button>
+            <button
+              class="category-btn"
+              data-cat="specobuv"
+              onclick="showCategory(event, 'specobuv')"
+              data-translate="specobuv_category">
+              🥾 Спецобувь
+            </button>
+            <button
+              class="category-btn"
+              data-cat="specodezhda"
+              onclick="showCategory(event, 'specodezhda')"
+              data-translate="specodezhda_category">
+              🦺 Спецодежда
+            </button>
+          </div>
+        </div>
         <div class="menu-grid">
-      {% for item in men %}
-      <div
-        class="menu-item"
-        data-category="{{ item.category if item.category else 'product' }}"
-        onclick="openItemModal({{ item.id }})">
-        <div class="item-image">
-          <img
-            src="{{ item.image_url or '/static/images/default-men.jpg' }}"
-            alt="{{ item.name }}"
-            onerror="this.src='/static/images/default-men.jpg'" />
-          <!-- Sevimli icon chap tepa burchakda -->
-          {% if session.user_id %}
-          <form
-            method="post"
-            action="{{ url_for('add_to_favorites', menu_item_id=item.id) }}"
-            class="favorite-form"
-            onclick="event.stopPropagation()">
-            <button type="submit" class="btn-favorite-top">❤️</button>
-          </form>
-          {% endif %}
-        </div>
-        <div class="item-content">
-          <h3 class="item-name">{{ item.name }}</h3>
-          <p class="item-description">
-            {{ item.description or 'Mahsulot haqida' }}
-          </p>
-
-          <!-- Baholar -->
-          <div class="rating-section">
-            <div class="stars">
-              {% for i in range(1, 6) %}
-              <span
-                class="star {% if i <= (item.rating or 0) %}filled{% endif %}"
-                >⭐</span
-              >
-              {% endfor %}
-            </div>
-            <span class="rating-text"
-              >{{ "%.1f"|format(item.rating or 0) }} ({{ item.orders_count or 0
-              }} buyurtma)</span
-            >
-          </div>
-
-          <div class="item-footer">
-
-            <!-- Miqdor va savatcha -->
-            <div class="add-to-cart-section">
+          {% for item in men %}
+          <div
+            class="menu-item"
+            data-id="{{ item.id }}"
+            data-category="{{ (item.category or 'product')|lower }}"
+            onclick="openItemModal({{ item.id }})">
+            <div class="item-image">
+              <img
+                src="{{ item.image_url or '/static/images/default-men.jpg' }}"
+                alt="{{ item.name }}"
+                onerror="this.src='/static/images/default-men.jpg'" />
+              <!-- Sevimli icon chap tepa burchakda -->
+              {% if session.user_id %}
               <form
-                method="POST"
-                action="{{ url_for('add_to_cart') }}"
+                method="post"
+                action="{{ url_for('add_to_favorites', menu_item_id=item.id) }}"
+                class="favorite-form"
                 onclick="event.stopPropagation()">
-                <input
-                  type="hidden"
-                  name="menu_item_id"
-                  value="{{ item.id }}" />
-                <div class="quantity-cart-controls">
-                  <button
-                    type="button"
-                    class="quantity-btn minus"
-                    onclick="decreaseQuantity(this)">
-                    −
-                  </button>
-                  <input
-                    type="number"
-                    name="quantity"
-                    value="1"
-                    min="1"
-                    max="99"
-                    class="quantity-input" />
-                  <button
-                    type="button"
-                    class="quantity-btn plus"
-                    onclick="increaseQuantity(this)">
-                    +
-                  </button>
-                  <button type="submit" class="btn-cart">🛒</button>
-                </div>
+                <button type="submit" class="btn-favorite-top">❤️</button>
               </form>
+              {% endif %}
             </div>
+            <div class="item-content">
+              <h3 class="item-name">{{ item.name }}</h3>
+              <p class="item-description">
+                {{ item.description or 'Mahsulot haqida' }}
+              </p>
 
-            <!-- Baholash tugmasi -->
-            {% if session.user_id %}
-            <div class="rating-button-section">
-              <button
-                type="button"
-                class="btn-rate"
-                onclick="openRatingModal({{ item.id }}, event)">
-                ⭐ Baholash
-              </button>
+              <!-- Baholar -->
+              <div class="rating-section">
+                <div class="stars">
+                  {% for i in range(1, 6) %}
+                  <span
+                    class="star {% if i <= (item.rating or 0) %}filled{% endif %}"
+                    >⭐</span
+                  >
+                  {% endfor %}
+                </div>
+                <span class="rating-text"
+                  >{{ "%.1f"|format(item.rating or 0) }} ({{ item.orders_count
+                  or 0 }} buyurtma)</span
+                >
+              </div>
+
+              <div class="item-footer">
+                <!-- Miqdor va savatcha -->
+                <div class="add-to-cart-section">
+                  <form
+                    method="POST"
+                    action="{{ url_for('add_to_cart') }}"
+                    onclick="event.stopPropagation()">
+                    <input
+                      type="hidden"
+                      name="menu_item_id"
+                      value="{{ item.id }}" />
+                    <div class="quantity-cart-controls">
+                      <button
+                        type="button"
+                        class="quantity-btn minus"
+                        onclick="decreaseQuantity(this)">
+                        −
+                      </button>
+                      <input
+                        type="number"
+                        name="quantity"
+                        value="1"
+                        min="1"
+                        max="99"
+                        class="quantity-input" />
+                      <button
+                        type="button"
+                        class="quantity-btn plus"
+                        onclick="increaseQuantity(this)">
+                        +
+                      </button>
+                      <button type="submit" class="btn-cart">🛒</button>
+                    </div>
+                  </form>
+                </div>
+
+                <!-- Baholash tugmasi -->
+                {% if session.user_id %}
+                <div class="rating-button-section">
+                  <button
+                    type="button"
+                    class="btn-rate"
+                    onclick="openRatingModal({{ item.id }}, event)">
+                    ⭐ Baholash
+                  </button>
+                </div>
+                {% endif %}
+              </div>
             </div>
-            {% endif %}
           </div>
-        </div>
-      </div>
-      {% endfor %}
+          {% endfor %}
         </div>
       </div>
     </div>
@@ -223,7 +232,24 @@
     </div>
     <div class="modal-body">
       <div class="modal-image">
-        <img id="modalImage" src="" alt="" />
+        <!-- Carousel container: will contain image or video elements inserted dynamically -->
+        <div id="modalMediaContainer" class="modal-media-container">
+          <!-- media elements inserted here -->
+        </div>
+        <button
+          id="modalPrevBtn"
+          class="modal-nav-btn"
+          aria-label="Previous"
+          style="display: none">
+          ‹
+        </button>
+        <button
+          id="modalNextBtn"
+          class="modal-nav-btn"
+          aria-label="Next"
+          style="display: none">
+          ›
+        </button>
       </div>
       <div class="modal-details">
         <p id="modalDescription"></p>
@@ -260,7 +286,7 @@
                   <div class="select-arrow">▼</div>
                 </div>
               </div>
-              
+
               <div class="modal-option-group">
                 <label for="modalColor" class="modal-option-label">
                   <span class="option-icon">🎨</span>
@@ -309,7 +335,7 @@
         </div>
       </div>
     </div>
-</div>
+  </div>
 </div>
 
 <style>
@@ -355,18 +381,18 @@
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
   }
-  
+
   /* Ensure proper z-index hierarchy */
   .navbar {
     z-index: 1050 !important;
     position: relative;
   }
-  
+
   .footer {
     z-index: 1000;
     position: relative;
   }
-  
+
   .news-ticker-container {
     z-index: 100 !important;
     position: relative;
@@ -447,7 +473,7 @@
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(245, 101, 101, 0.4);
   }
-  
+
   /* ================================
      MOBILE FILTER TOGGLE
      ================================ */
@@ -465,7 +491,7 @@
     transition: all 0.3s ease;
     box-shadow: 0 4px 12px rgba(66, 153, 225, 0.3);
   }
-  
+
   .mobile-filter-toggle:hover {
     background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
     transform: translateY(-2px);
@@ -542,7 +568,7 @@
     flex-direction: column;
     align-items: center; /* Center content horizontally */
   }
-  
+
   /* ================================
      PROFESSIONAL HEADER WITH ANIMATED CONSTRUCTION TAPE
      ================================ */
@@ -558,7 +584,7 @@
     background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   }
-  
+
   .construction-tape-container {
     position: absolute;
     top: 0;
@@ -568,7 +594,7 @@
     pointer-events: none;
     overflow: hidden;
   }
-  
+
   .construction-tape {
     position: absolute;
     background: repeating-linear-gradient(
@@ -580,12 +606,12 @@
     );
     transform-origin: center;
     border: 2px solid #e6b800;
-    box-shadow: 
+    box-shadow:
       inset 0 2px 4px rgba(255, 255, 255, 0.3),
       inset 0 -2px 4px rgba(0, 0, 0, 0.3),
       0 4px 12px rgba(0, 0, 0, 0.4);
   }
-  
+
   .tape-1 {
     width: 25px;
     height: 140%;
@@ -595,7 +621,7 @@
     border-radius: 12px;
     transform-style: preserve-3d;
   }
-  
+
   .tape-2 {
     width: 25px;
     height: 140%;
@@ -606,7 +632,7 @@
     transform-style: preserve-3d;
     animation-delay: -2s;
   }
-  
+
   .tape-3 {
     width: 140%;
     height: 25px;
@@ -617,7 +643,7 @@
     transform-style: preserve-3d;
     animation-delay: -4s;
   }
-  
+
   .tape-4 {
     width: 140%;
     height: 25px;
@@ -628,105 +654,105 @@
     transform-style: preserve-3d;
     animation-delay: -6s;
   }
-  
+
   /* Flexible ribbon-like wave animations */
   @keyframes tapeWaveVertical1 {
-    0% { 
+    0% {
       transform: rotateY(0deg) rotateZ(2deg) scaleY(0.98) translateX(5px);
       filter: brightness(1);
     }
-    25% { 
+    25% {
       transform: rotateY(15deg) rotateZ(-3deg) scaleY(1.02) translateX(-3px);
       filter: brightness(1.1);
     }
-    50% { 
+    50% {
       transform: rotateY(0deg) rotateZ(1deg) scaleY(0.99) translateX(7px);
       filter: brightness(0.9);
     }
-    75% { 
+    75% {
       transform: rotateY(-12deg) rotateZ(-2deg) scaleY(1.01) translateX(-4px);
       filter: brightness(1.05);
     }
-    100% { 
+    100% {
       transform: rotateY(0deg) rotateZ(2deg) scaleY(0.98) translateX(5px);
       filter: brightness(1);
     }
   }
-  
+
   @keyframes tapeWaveVertical2 {
-    0% { 
+    0% {
       transform: rotateY(0deg) rotateZ(-2deg) scaleY(1.01) translateX(-5px);
       filter: brightness(1.05);
     }
-    25% { 
+    25% {
       transform: rotateY(-15deg) rotateZ(3deg) scaleY(0.98) translateX(4px);
       filter: brightness(0.95);
     }
-    50% { 
+    50% {
       transform: rotateY(0deg) rotateZ(-1deg) scaleY(1.02) translateX(-6px);
       filter: brightness(1.1);
     }
-    75% { 
+    75% {
       transform: rotateY(12deg) rotateZ(2deg) scaleY(0.99) translateX(3px);
       filter: brightness(0.9);
     }
-    100% { 
+    100% {
       transform: rotateY(0deg) rotateZ(-2deg) scaleY(1.01) translateX(-5px);
       filter: brightness(1.05);
     }
   }
-  
+
   @keyframes tapeWaveHorizontal1 {
-    0% { 
+    0% {
       transform: rotateX(0deg) rotateZ(1deg) scaleX(0.99) translateY(4px);
       filter: brightness(1);
     }
-    25% { 
+    25% {
       transform: rotateX(12deg) rotateZ(-2deg) scaleX(1.01) translateY(-3px);
       filter: brightness(1.08);
     }
-    50% { 
+    50% {
       transform: rotateX(0deg) rotateZ(1.5deg) scaleX(0.98) translateY(6px);
       filter: brightness(0.92);
     }
-    75% { 
+    75% {
       transform: rotateX(-10deg) rotateZ(-1deg) scaleX(1.02) translateY(-2px);
       filter: brightness(1.06);
     }
-    100% { 
+    100% {
       transform: rotateX(0deg) rotateZ(1deg) scaleX(0.99) translateY(4px);
       filter: brightness(1);
     }
   }
-  
+
   @keyframes tapeWaveHorizontal2 {
-    0% { 
+    0% {
       transform: rotateX(0deg) rotateZ(-1deg) scaleX(1.01) translateY(-4px);
       filter: brightness(1.06);
     }
-    25% { 
+    25% {
       transform: rotateX(-12deg) rotateZ(2deg) scaleX(0.98) translateY(5px);
       filter: brightness(0.94);
     }
-    50% { 
+    50% {
       transform: rotateX(0deg) rotateZ(-1.5deg) scaleX(1.02) translateY(-5px);
       filter: brightness(1.1);
     }
-    75% { 
+    75% {
       transform: rotateX(10deg) rotateZ(1deg) scaleX(0.99) translateY(3px);
       filter: brightness(0.88);
     }
-    100% { 
+    100% {
       transform: rotateX(0deg) rotateZ(-1deg) scaleX(1.01) translateY(-4px);
       filter: brightness(1.06);
     }
   }
-  
+
   .main-title-container {
     position: relative;
     z-index: 10;
   }
-  
+
   .main-pro-obuv-title {
     font-size: 4.5rem;
     font-weight: 900;
@@ -738,19 +764,19 @@
     align-items: center;
     justify-content: center;
     gap: 20px;
-    text-shadow: 
+    text-shadow:
       0 0 20px rgba(255, 102, 0, 0.8),
       0 0 40px rgba(255, 102, 0, 0.6),
       0 0 60px rgba(255, 102, 0, 0.4),
       2px 2px 4px rgba(0, 0, 0, 0.8);
   }
-  
+
   .title-gradient {
-    background: linear-gradient(45deg, 
-      #ff6600 0%, 
-      #ffaa00 25%, 
-      #ffffff 50%, 
-      #ffaa00 75%, 
+    background: linear-gradient(45deg,
+      #ff6600 0%,
+      #ffaa00 25%,
+      #ffffff 50%,
+      #ffaa00 75%,
       #ff6600 100%);
     background-size: 200% 200%;
     -webkit-background-clip: text;
@@ -758,33 +784,33 @@
     background-clip: text;
     animation: titleGradientShift 3s ease-in-out infinite;
   }
-  
+
   .title-separator {
     font-size: 3rem;
     color: #ffcc00;
     animation: separatorPulse 2s ease-in-out infinite;
     text-shadow: 0 0 30px #ffcc00;
   }
-  
+
   @keyframes titleGradientShift {
     0%, 100% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
   }
-  
+
   @keyframes separatorPulse {
     0%, 100% { transform: scale(1); opacity: 1; }
     50% { transform: scale(1.2); opacity: 0.8; }
   }
-  
+
   .subtitle-masters {
     font-size: 1.2rem;
     font-weight: 600;
     color: #ffcc00;
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    background: linear-gradient(90deg, 
-      transparent 0%, 
-      rgba(255, 204, 0, 0.2) 50%, 
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 204, 0, 0.2) 50%,
       transparent 100%);
     padding: 10px 20px;
     border-radius: 25px;
@@ -792,7 +818,7 @@
     animation: subtitleGlow 4s ease-in-out infinite;
     text-shadow: 0 0 10px rgba(255, 204, 0, 0.8);
   }
-  
+
   @keyframes subtitleGlow {
     0%, 100% { box-shadow: 0 0 20px rgba(255, 204, 0, 0.3); }
     50% { box-shadow: 0 0 40px rgba(255, 204, 0, 0.6); }
@@ -809,7 +835,7 @@
     background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #404040 100%);
     border-radius: 15px;
     overflow: hidden;
-    box-shadow: 
+    box-shadow:
       0 20px 50px rgba(0, 0, 0, 0.4),
       inset 0 1px 0 rgba(255, 255, 255, 0.1),
       0 0 0 3px #ff6600;
@@ -817,14 +843,14 @@
     border: 3px solid #ff6600;
     animation: professionalGlow 4s ease-in-out infinite alternate;
   }
-  
+
   /* Professional Construction Header */
   .construction-header {
     position: relative;
     z-index: 2;
     margin-bottom: 25px;
   }
-  
+
   .safety-icons {
     display: flex;
     justify-content: center;
@@ -832,48 +858,48 @@
     margin-bottom: 20px;
     animation: iconsFloat 3s ease-in-out infinite alternate;
   }
-  
+
   .safety-icon {
     font-size: 2.5rem;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
     transition: all 0.3s ease;
     animation-delay: calc(var(--i, 0) * 0.2s);
   }
-  
+
   .safety-icon:nth-child(1) { --i: 0; }
   .safety-icon:nth-child(2) { --i: 1; }
   .safety-icon:nth-child(3) { --i: 2; }
   .safety-icon:nth-child(4) { --i: 3; }
   .safety-icon:nth-child(5) { --i: 4; }
-  
+
   /* Individual icon animations */
   .safety-icon.rotating {
     animation: iconRotate 3s linear infinite;
   }
-  
+
   .safety-icon.bouncing {
     animation: iconBounce 2s ease-in-out infinite;
   }
-  
+
   .safety-icon.waving {
     animation: iconWave 2.5s ease-in-out infinite;
   }
-  
+
   .safety-icon.scaling {
     animation: iconScale 2s ease-in-out infinite;
   }
-  
+
   .safety-icon.pulsing {
     animation: iconPulse 1.8s ease-in-out infinite;
   }
-  
+
   /* Professional Title Styling */
   .professional-title {
     font-size: 3rem;
     font-weight: 900;
     margin: 0;
     color: #ff6600 !important;
-    text-shadow: 
+    text-shadow:
       0 2px 4px rgba(0, 0, 0, 0.8),
       0 0 20px rgba(255, 102, 0, 0.5);
     position: relative;
@@ -884,13 +910,13 @@
     z-index: 2;
     animation: titleGlow 3s ease-in-out infinite alternate;
   }
-  
+
   /* PRO-OBUV Brand Name */
   .title-brand {
     font-size: 2.8rem;
     font-weight: 900;
     color: #ff6600 !important;
-    text-shadow: 
+    text-shadow:
       0 2px 4px rgba(0, 0, 0, 0.8),
       0 0 25px rgba(255, 102, 0, 0.8),
       0 0 35px rgba(255, 102, 0, 0.6);
@@ -902,29 +928,29 @@
     background-clip: text;
     margin-bottom: 10px;
   }
-  
+
   .title-main {
     font-size: 2.5rem;
     font-weight: 900;
     color: #ffffff !important;
-    text-shadow: 
+    text-shadow:
       0 2px 4px rgba(0, 0, 0, 0.8),
       0 0 15px rgba(255, 255, 255, 0.3);
     letter-spacing: 2px;
     animation: titlePulse 2s ease-in-out infinite alternate;
   }
-  
+
   .title-sub {
     font-size: 1.8rem;
     font-weight: 700;
     color: #ffcc00 !important;
-    text-shadow: 
+    text-shadow:
       0 2px 4px rgba(0, 0, 0, 0.8),
       0 0 15px rgba(255, 204, 0, 0.5);
     letter-spacing: 1px;
     animation: subtitleShine 3s ease-in-out infinite;
   }
-  
+
   .construction-badge.premium-badge {
     display: flex;
     align-items: center;
@@ -935,14 +961,14 @@
     border-radius: 30px;
     margin-top: 15px;
     border: 3px solid #ffffff;
-    box-shadow: 
+    box-shadow:
       0 4px 20px rgba(255, 102, 0, 0.5),
       inset 0 2px 4px rgba(255, 255, 255, 0.3);
     animation: premiumBadgePulse 2s ease-in-out infinite;
     position: relative;
     overflow: hidden;
   }
-  
+
   .premium-badge::before {
     content: '';
     position: absolute;
@@ -953,14 +979,14 @@
     background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
     animation: premiumShine 3s linear infinite;
   }
-  
+
   .badge-text {
     color: #ffffff;
     font-weight: 700;
     font-size: 0.9rem;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
   }
-  
+
   .badge-check.glowing {
     color: #ffffff;
     font-size: 1.2rem;
@@ -968,7 +994,7 @@
     animation: checkGlow 1.5s ease-in-out infinite;
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
   }
-  
+
   .professional-subtitle {
     display: flex;
     align-items: center;
@@ -981,7 +1007,7 @@
     border: 1px solid rgba(255, 102, 0, 0.3);
     backdrop-filter: blur(10px);
   }
-  
+
   .subtitle-left.gradient-text,
   .subtitle-right.gradient-text {
     font-size: 1.1rem;
@@ -993,14 +1019,14 @@
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
     animation: gradientShift 3s ease-in-out infinite;
   }
-  
+
   .subtitle-center.diamond {
     font-size: 1.5rem;
     color: #ff6600;
     animation: diamondSpin 2s ease-in-out infinite;
     text-shadow: 0 0 15px rgba(255, 102, 0, 0.8);
   }
-  
+
   .quality-indicators {
     display: flex;
     justify-content: center;
@@ -1008,7 +1034,7 @@
     margin-top: 25px;
     flex-wrap: wrap;
   }
-  
+
   .quality-item.enhanced {
     display: flex;
     flex-direction: column;
@@ -1025,7 +1051,7 @@
     position: relative;
     overflow: hidden;
   }
-  
+
   .quality-item.enhanced::before {
     content: '';
     position: absolute;
@@ -1037,24 +1063,24 @@
     animation: qualityShine 3s linear infinite;
     animation-delay: calc(var(--delay, 0) * 0.8s);
   }
-  
+
   .quality-item.enhanced:nth-child(1) { --delay: 0; }
   .quality-item.enhanced:nth-child(2) { --delay: 1; }
   .quality-item.enhanced:nth-child(3) { --delay: 2; }
   .quality-item.enhanced:nth-child(4) { --delay: 3; }
-  
+
   .quality-item:hover {
     transform: translateY(-5px) scale(1.05);
     background: rgba(255, 102, 0, 0.2);
     border-color: #ff6600;
     box-shadow: 0 10px 25px rgba(255, 102, 0, 0.3);
   }
-  
+
   .quality-icon {
     font-size: 2rem;
     animation: iconRotate 3s ease-in-out infinite;
   }
-  
+
   .quality-text {
     font-size: 0.9rem;
     font-weight: 700;
@@ -1062,7 +1088,7 @@
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
     letter-spacing: 1px;
   }
-  
+
   .title-glow {
     position: absolute;
     top: 50%;
@@ -1076,24 +1102,24 @@
     pointer-events: none;
     z-index: 0;
   }
-  
+
   /* Professional Keyframe Animations */
   @keyframes professionalGlow {
-    0% { 
-      box-shadow: 
+    0% {
+      box-shadow:
         0 20px 50px rgba(0, 0, 0, 0.4),
         inset 0 1px 0 rgba(255, 255, 255, 0.1),
         0 0 0 3px #ff6600;
     }
-    100% { 
-      box-shadow: 
+    100% {
+      box-shadow:
         0 25px 60px rgba(0, 0, 0, 0.5),
         inset 0 1px 0 rgba(255, 255, 255, 0.2),
         0 0 0 3px #ff8800,
         0 0 30px rgba(255, 102, 0, 0.3);
     }
   }
-  
+
   @keyframes iconsFloat {
     0%, 100% {
       transform: translateY(0px);
@@ -1102,7 +1128,7 @@
       transform: translateY(-8px);
     }
   }
-  
+
   @keyframes iconBounce {
     0%, 100% {
       transform: translateY(0px) scale(1);
@@ -1111,50 +1137,50 @@
       transform: translateY(-10px) scale(1.1);
     }
   }
-  
+
   @keyframes titleGlow {
     0% {
-      text-shadow: 
+      text-shadow:
         0 2px 4px rgba(0, 0, 0, 0.8),
         0 0 20px rgba(255, 102, 0, 0.5);
     }
     100% {
-      text-shadow: 
+      text-shadow:
         0 2px 4px rgba(0, 0, 0, 0.8),
         0 0 30px rgba(255, 102, 0, 0.8),
         0 0 40px rgba(255, 136, 0, 0.3);
     }
   }
-  
+
   @keyframes titlePulse {
     0%, 100% {
       transform: scale(1);
-      text-shadow: 
+      text-shadow:
         0 2px 4px rgba(0, 0, 0, 0.8),
         0 0 15px rgba(255, 255, 255, 0.3);
     }
     50% {
       transform: scale(1.05);
-      text-shadow: 
+      text-shadow:
         0 2px 4px rgba(0, 0, 0, 0.8),
         0 0 25px rgba(255, 255, 255, 0.5);
     }
   }
-  
+
   @keyframes subtitleShine {
     0%, 100% {
-      text-shadow: 
+      text-shadow:
         0 2px 4px rgba(0, 0, 0, 0.8),
         0 0 15px rgba(255, 204, 0, 0.5);
     }
     50% {
-      text-shadow: 
+      text-shadow:
         0 2px 4px rgba(0, 0, 0, 0.8),
         0 0 25px rgba(255, 204, 0, 0.8),
         0 0 35px rgba(255, 255, 0, 0.3);
     }
   }
-  
+
   @keyframes badgePulse {
     0%, 100% {
       transform: scale(1);
@@ -1165,7 +1191,7 @@
       box-shadow: 0 6px 20px rgba(40, 167, 69, 0.6);
     }
   }
-  
+
   @keyframes checkPulse {
     0%, 100% {
       transform: scale(1);
@@ -1176,18 +1202,18 @@
       opacity: 0.8;
     }
   }
-  
+
   @keyframes subtitleGlow {
     0%, 100% {
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
     }
     50% {
-      text-shadow: 
+      text-shadow:
         0 2px 4px rgba(0, 0, 0, 0.8),
         0 0 15px rgba(255, 255, 255, 0.4);
     }
   }
-  
+
   @keyframes dotPulse {
     0%, 100% {
       transform: scale(1);
@@ -1198,7 +1224,7 @@
       opacity: 0.7;
     }
   }
-  
+
   @keyframes qualityFloat {
     0%, 100% {
       transform: translateY(0px);
@@ -1207,7 +1233,7 @@
       transform: translateY(-5px);
     }
   }
-  
+
   @keyframes iconRotate {
     0%, 100% {
       transform: rotate(0deg) scale(1);
@@ -1219,38 +1245,38 @@
       transform: rotate(5deg) scale(1.1);
     }
   }
-  
+
   /* Responsive Animations for menu-title */
   @media (max-width: 768px) {
     .menu-title {
       padding: 40px 15px;
       margin-bottom: 30px;
     }
-    
+
     .menu-title h1 {
       font-size: 2.5rem;
     }
-    
+
     .menu-title::before,
     .menu-title::after {
       height: 40px;
     }
-    
+
     .title-subtitle {
       font-size: 1rem;
     }
   }
-  
+
   @media (max-width: 480px) {
     .menu-title h1 {
       font-size: 2rem;
     }
-    
+
     .menu-title::before,
     .menu-title::after {
       height: 30px;
     }
-    
+
     .title-subtitle {
       font-size: 0.9rem;
     }
@@ -1308,9 +1334,9 @@
     padding: 0;
     max-width: none;
   }
-  
+
   /* Universal Responsive Design - Comprehensive Media Queries */
-  
+
   /* Extra Large Screens (1920px and up) - Keep 3 columns */
   @media (min-width: 1920px) {
     .menu-grid {
@@ -1324,7 +1350,7 @@
       height: 400px;
     }
   }
-  
+
   /* Large Screens (1600px - 1919px) */
   @media (max-width: 1919px) and (min-width: 1600px) {
     .menu-grid {
@@ -1338,7 +1364,7 @@
       height: 350px;
     }
   }
-  
+
   /* Medium Large Screens (1400px - 1599px) */
   @media (max-width: 1599px) and (min-width: 1400px) {
     .menu-grid {
@@ -1352,7 +1378,7 @@
       height: 320px;
     }
   }
-  
+
   /* Medium Screens (1200px - 1399px) */
   @media (max-width: 1399px) and (min-width: 1200px) {
     .menu-grid {
@@ -1371,9 +1397,10 @@
     }
     .filter-sidebar {
       width: 260px;
+      display: flex;
     }
   }
-  
+
   /* Small Medium Screens (992px - 1199px) */
   @media (max-width: 1199px) and (min-width: 992px) {
     .menu-grid {
@@ -1395,7 +1422,7 @@
       max-height: calc(100vh - 300px);
     }
   }
-  
+
   /* Tablet Screens (768px - 991px) */
   @media (max-width: 991px) and (min-width: 768px) {
     .menu-grid {
@@ -1416,7 +1443,7 @@
       width: 100%;
     }
   }
-  
+
   /* Mobile Large (576px - 767px) */
   @media (max-width: 767px) and (min-width: 576px) {
     .menu-grid {
@@ -1440,7 +1467,7 @@
       display: none; /* Hide shoe icons on mobile */
     }
   }
-  
+
   /* Mobile Medium (480px - 575px) */
   @media (max-width: 575px) and (min-width: 480px) {
     .menu-grid {
@@ -1464,7 +1491,7 @@
       padding: 8px 16px;
     }
   }
-  
+
   /* Mobile Small (up to 479px) */
   @media (max-width: 479px) {
     .menu-grid {
@@ -2281,9 +2308,9 @@
       opacity: 1;
     }
   }
-  
+
   /* Mobile responsiv uchun floating cart */
-  
+
   /* ================================
      ENHANCED MODAL OPTIONS STYLING
      ================================ */
@@ -2297,13 +2324,13 @@
     border-radius: 16px;
     border: 1px solid #e2e8f0;
   }
-  
+
   .modal-option-group {
     display: flex;
     flex-direction: column;
     gap: 12px;
   }
-  
+
   .modal-option-label {
     display: flex;
     align-items: center;
@@ -2313,7 +2340,7 @@
     font-size: 1rem;
     margin-bottom: 8px;
   }
-  
+
   .option-icon {
     font-size: 1.2rem;
     display: flex;
@@ -2326,18 +2353,18 @@
     color: white;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   }
-  
+
   .option-text {
     font-size: 1rem;
     color: #4a5568;
   }
-  
+
   .select-wrapper {
     position: relative;
     display: flex;
     align-items: center;
   }
-  
+
   .modal-select {
     width: 100%;
     padding: 14px 50px 14px 16px;
@@ -2354,19 +2381,19 @@
     -moz-appearance: none;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
   }
-  
+
   .modal-select:focus {
     outline: none;
     border-color: #4299e1;
     box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1), 0 4px 12px rgba(0, 0, 0, 0.08);
     transform: translateY(-1px);
   }
-  
+
   .modal-select:hover {
     border-color: #cbd5e0;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
   }
-  
+
   .select-arrow {
     position: absolute;
     right: 16px;
@@ -2377,12 +2404,12 @@
     pointer-events: none;
     transition: transform 0.3s ease;
   }
-  
+
   .modal-select:focus + .select-arrow {
     transform: translateY(-50%) rotate(180deg);
     color: #4299e1;
   }
-  
+
   /* Special styling for when options are selected */
   .modal-select:not([value=""]) {
     background: linear-gradient(135deg, #f0fff4 0%, #e6fffa 100%);
@@ -2390,12 +2417,12 @@
     color: #2f855a;
     font-weight: 600;
   }
-  
+
   .modal-select:not([value=""]):focus {
     border-color: #38a169;
     box-shadow: 0 0 0 3px rgba(56, 161, 105, 0.1), 0 4px 12px rgba(0, 0, 0, 0.08);
   }
-  
+
   /* Beautiful option styling */
   .modal-select option {
     padding: 12px;
@@ -2403,12 +2430,12 @@
     color: #2d3748;
     font-weight: 500;
   }
-  
+
   .modal-select option:checked {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
   }
-  
+
   /* Color indicator styling */
   .color-option {
     display: flex;
@@ -2416,7 +2443,7 @@
     gap: 8px;
     padding: 8px 12px;
   }
-  
+
   .color-indicator {
     width: 20px;
     height: 20px;
@@ -2426,7 +2453,7 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     flex-shrink: 0;
   }
-  
+
   /* Predefined color styles */
   .color-indicator.black { background: #000000; border-color: #374151; }
   .color-indicator.white { background: #ffffff; border-color: #d1d5db; }
@@ -2442,58 +2469,58 @@
   .color-indicator.navy { background: #1e3a8a; border-color: #1e40af; }
   .color-indicator.maroon { background: #7f1d1d; border-color: #991b1b; }
   .color-indicator.beige { background: #fef3c7; border-color: #f59e0b; }
-  
+
   /* Responsive adjustments for modal options */
   @media (max-width: 768px) {
     .modal-options-container {
       padding: 16px;
       gap: 16px;
     }
-    
+
     .modal-select {
       padding: 12px 45px 12px 14px;
       font-size: 0.9rem;
     }
-    
+
     .option-icon {
       width: 28px;
       height: 28px;
       font-size: 1rem;
     }
-    
+
     .color-indicator {
       width: 16px;
       height: 16px;
     }
   }
-  
+
   /* Enhanced menu items */
   .menu-item {
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     border: 2px solid transparent;
   }
-  
+
   .menu-item:hover {
     transform: translateY(-8px) scale(1.02);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
     border-color: #4299e1;
   }
-  
+
   .menu-item .item-image img {
     transition: all 0.3s ease;
   }
-  
+
   .menu-item:hover .item-image img {
     transform: scale(1.05);
   }
-  
+
   /* Enhanced category buttons */
   .category-btn {
     position: relative;
     overflow: hidden;
     transition: all 0.3s ease;
   }
-  
+
   .category-btn::before {
     content: '';
     position: absolute;
@@ -2504,15 +2531,15 @@
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
     transition: left 0.5s ease;
   }
-  
+
   .category-btn:hover::before {
     left: 100%;
   }
-  
+
   .category-btn.active {
     box-shadow: 0 0 20px rgba(66, 153, 225, 0.4);
   }
-  
+
   /* Enhanced filter sidebar */
   .filter-sidebar::before {
     content: '';
@@ -2524,7 +2551,7 @@
     background: linear-gradient(90deg, #667eea, #764ba2);
     border-radius: 12px 12px 0 0;
   }
-  
+
   @media (max-width: 768px) {
     .floating-cart-icon {
       width: 55px;
@@ -2571,11 +2598,11 @@
       overflow-y: auto;
       box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
     }
-    
+
     .filter-sidebar.show {
       transform: translateX(0);
     }
-    
+
     .content-area {
       width: 100% !important;
       margin-left: 0 !important;
@@ -2617,7 +2644,7 @@
       width: 95vw;
       max-width: 450px;
     }
-    
+
     /* Mobile filter toggle improvements */
     .mobile-filter-toggle {
       position: sticky;
@@ -2727,1129 +2754,1679 @@
   body.dark-theme .toast-warning {
     background-color: #d69e2e !important;
   }
+
+  /* Modal media carousel styles */
+  .modal-media-container {
+    position: relative;
+    width: 100%;
+    height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: #f8fafc;
+    border-radius: 12px;
+  }
+
+  .modal-media-item {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    display: none;
+    object-fit: contain;
+  }
+
+  .modal-media-item.active {
+    display: block;
+  }
+
+  .modal-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.5);
+    color: white;
+    border: none;
+    width: 40px;
+    height: 60px;
+    font-size: 28px;
+    border-radius: 6px;
+    cursor: pointer;
+    z-index: 50;
+  }
+
+  #modalPrevBtn { left: 8px; }
+  #modalNextBtn { right: 8px; }
+
+  .media-toolbar {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    display: flex;
+    gap: 6px;
+    z-index: 60;
+  }
+
+  .media-toolbar .btn-small {
+    padding: 6px 8px;
+    background: rgba(255,255,255,0.9);
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  .media-toolbar .btn-danger { background: rgba(245,101,101,0.95); color: white; }
 </style>
 
 <script>
-  let menuData = {
-    // Faqat erkaklar uchun mahsulotlar - ayollar bo'limi olib tashlandi
+    // Build a safe menuData mapping using tojson so strings are properly escaped.
+    // This avoids breaking the JS if item names/descriptions contain quotes or newlines.
+    let menuData = {};
     {% for item in men %}
-    {{ item.id }}: {
-      name: "{{ item.name }}",
-      description: "{{ item.description or 'Mahsulot tavsifi' }}",
-      image: "{{ item.image_url or '/static/images/default-men.jpg' }}",
-      rating: {{ item.rating or 0 }},
-      orders_count: {{ item.orders_count or 0 }},
-      sizes: "{{ item.sizes or '' }}",
-      colors: "{{ item.colors or '' }}"
-    },
+    menuData[{{ item.id }}] = {{ {
+        "id": item.id,
+        "name": item.name,
+        "description": item.description or 'Mahsulot tavsifi',
+        "image_url": item.image_url or '/static/images/default-men.jpg',
+        "rating": item.rating or 0,
+        "orders_count": item.orders_count or 0,
+        "sizes": item.sizes or '',
+        "colors": item.colors or '',
+        "category": (item.category or 'product')|lower
+    } | tojson }};
     {% endfor %}
-  };
 
-  function showCategory(category) {
-      const items = document.querySelectorAll('.menu-item');
-      const buttons = document.querySelectorAll('.category-btn');
+    // Expose whether the current session is a staff session so JS can show staff-only controls
+    const IS_STAFF = {{ (session.get('staff_id') and True) | tojson }};
 
-      // Tugmalarni yangilash
-      buttons.forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
-
-      // Mahsulotlarni ko'rsatish/yashirish
-      items.forEach(item => {
-          const itemCategory = item.dataset.category || 'product';
-          if (category === 'all' || itemCategory === category) {
-              item.style.display = 'block';
-          } else {
-              item.style.display = 'none';
+    function showCategory(event, category) {
+        const items = document.querySelectorAll('.menu-item');
+        const buttons = document.querySelectorAll('.category-btn');
+    // Tugmalarni yangilash
+    buttons.forEach(btn => btn.classList.remove('active'));
+    // normalize requested category
+    const normCategory = slugifyCategory(String(category || 'all'));
+        try {
+          // Prefer marking the clicked button active. If called programmatically
+          // find the button with a matching data-cat attribute (normalized).
+          if (event && event.target && event.target.classList.contains('category-btn')) {
+            event.target.classList.add('active');
+          } else if (category) {
+            const match = Array.from(buttons).find(b => {
+              const bcat = b.getAttribute('data-cat') || '';
+              return slugifyCategory(bcat) === normCategory;
+            });
+            if (match) match.classList.add('active');
           }
-      });
+        } catch(e) { console.warn('showCategory button active error', e); }
 
-      // Filter kategoriyasini ham yangilash
-      const categorySelect = document.getElementById('filterCategory');
-      if (categorySelect && category !== 'all') {
-          categorySelect.value = category;
-      }
-  }
-
-  function openItemModal(itemId) {
-      const item = menuData[itemId];
-      if (!item) return;
-
-      // Modal ma'lumotlarini to'ldirish
-      document.getElementById('modalTitle').textContent = item.name;
-      document.getElementById('modalImage').src = item.image;
-      document.getElementById('modalDescription').textContent = item.description;
-      document.getElementById('modalItemId').value = itemId;
-
-      // Baholarni ko'rsatish
-      const modalStars = document.getElementById('modalStars');
-      modalStars.innerHTML = '';
-      for (let i = 1; i <= 5; i++) {
-          const star = document.createElement('span');
-          star.className = `star ${i <= item.rating ? 'filled' : ''}`;
-          star.textContent = '⭐';
-          modalStars.appendChild(star);
-      }
-      document.getElementById('modalRatingText').textContent = `${item.rating.toFixed(1)} (${item.orders_count} buyurtma)`;
-
-
-      // Sharhlarni yuklash
-      loadComments(itemId);
-
-      // Populate size and color selects
-      const sizeSelect = document.getElementById('modalSize');
-      const colorSelect = document.getElementById('modalColor');
-      // clear previous options (keep the first placeholder)
-      if (sizeSelect) {
-          sizeSelect.querySelectorAll('option:not(:first-child)').forEach(o => o.remove());
-          const sizes = (item.sizes || '').split(',').map(s => s.trim()).filter(s => s.length);
-          sizes.forEach(sz => {
-              const opt = document.createElement('option');
-              opt.value = sz;
-              opt.textContent = sz;
-              sizeSelect.appendChild(opt);
-          });
-      }
-      if (colorSelect) {
-          colorSelect.querySelectorAll('option:not(:first-child)').forEach(o => o.remove());
-          const colors = (item.colors || '').split(',').map(s => s.trim()).filter(s => s.length);
-          colors.forEach(clr => {
-              const opt = document.createElement('option');
-              opt.value = clr;
-              opt.textContent = getColorDisplayName(clr);
-              colorSelect.appendChild(opt);
-          });
-          
-          // Add color indicators to options
-          addColorIndicators(colorSelect, colors);
-      }
-
-    // Modalni ko'rsatish via centralized helper (keeps behavior consistent)
-    if (typeof showItemModal === 'function') {
-      showItemModal();
-    } else {
-      // Fallback if helper isn't available for some reason
-      document.getElementById('itemModal').style.display = 'flex';
-      document.body.style.overflow = 'hidden';
-    }
-
-    // If product has sizes/colors, mark selects as required so client validation
-    // can enable/disable the Add button accordingly. Also attach change listeners
-    // that toggle the modal Add button state.
-    try {
-      const addBtn = document.getElementById('modalAddToCartBtn');
-      // derive presence of sizes/colors from the item data (safe across scopes)
-      const hasSizes = (item && (item.sizes || '').toString().trim().length > 0);
-      const hasColors = (item && (item.colors || '').toString().trim().length > 0);
-
-      if (sizeSelect) {
-        sizeSelect.dataset.required = hasSizes ? 'true' : 'false';
-      }
-      if (colorSelect) {
-        colorSelect.dataset.required = hasColors ? 'true' : 'false';
-      }
-
-      function evaluateModalAddButton() {
-        // Determine whether required options were selected
-        const needSize = sizeSelect && sizeSelect.dataset.required === 'true';
-        const needColor = colorSelect && colorSelect.dataset.required === 'true';
-        const sizeVal = sizeSelect ? (sizeSelect.value || '') : '';
-        const colorVal = colorSelect ? (colorSelect.value || '') : '';
-
-        const enabled = (!needSize || (sizeVal && sizeVal.length > 0)) && (!needColor || (colorVal && colorVal.length > 0));
-        if (addBtn) {
-          addBtn.disabled = !enabled;
-          if (enabled) addBtn.classList.remove('disabled');
-          else addBtn.classList.add('disabled');
-        }
-      }
-
-      // Attach listeners (idempotent - remove then add)
-      if (sizeSelect) {
-        sizeSelect.removeEventListener('change', evaluateModalAddButton);
-        sizeSelect.addEventListener('change', evaluateModalAddButton);
-      }
-      if (colorSelect) {
-        colorSelect.removeEventListener('change', evaluateModalAddButton);
-        colorSelect.addEventListener('change', evaluateModalAddButton);
-      }
-
-      // Initial evaluation (in case product has no required options)
-      evaluateModalAddButton();
-    } catch (e) {
-      console.warn('Modal add button evaluation error:', e);
-    }
-  }
-
-  function closeItemModal() {
-      // Use centralized helper to hide modal so behavior is consistent
-      if (typeof hideItemModal === 'function') {
-        hideItemModal();
-      } else {
-        document.getElementById('itemModal').style.display = 'none';
-        document.body.style.overflow = 'auto';
-      }
-  }
-
-  // --------- Menu search & filter helpers ----------
-  function debounce(fn, wait) {
-    let t = null;
-    return function(...args) {
-      clearTimeout(t);
-      t = setTimeout(() => fn.apply(this, args), wait);
-    };
-  }
-
-  function renderMenuItems(items) {
-    const grid = document.querySelector('.menu-grid');
-    if (!grid) return;
-    grid.innerHTML = '';
-
+        // Mahsulotlarni ko'rsatish/yashirish
     items.forEach(item => {
-      const div = document.createElement('div');
-      div.className = 'menu-item';
-      div.dataset.category = item.category || 'product';
-      div.onclick = () => openItemModal(item.id);
-
-      div.innerHTML = `
-        <div class="item-image"><img src="${item.image_url || '/static/images/default-product.jpg'}" alt="${item.name}" onerror="this.src='/static/images/default-product.jpg'"/></div>
-        <div class="item-content">
-          <h3 class="item-name">${item.name}</h3>
-          <p class="item-description">${item.description || ''}</p>
-          <div class="rating-section"><div class="stars">${'<span class="star">⭐</span>'.repeat(5)}</div><span class="rating-text">${(parseFloat(item.rating)||0).toFixed(1)} (${item.orders_count||0} buyurtma)</span></div>
-          <div class="item-footer">
-            <div class="add-to-cart-section">
-              <form method="POST" action="/add_to_cart" onclick="event.stopPropagation()">
-                <input type="hidden" name="menu_item_id" value="${item.id}" />
-                <div class="quantity-cart-controls">
-                  <button type="button" class="quantity-btn minus" onclick="decreaseQuantity(this)">−</button>
-                  <input type="number" name="quantity" value="1" min="1" max="99" class="quantity-input" />
-                  <button type="button" class="quantity-btn plus" onclick="increaseQuantity(this)">+</button>
-                  <button type="submit" class="btn-cart">🛒</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      `;
-
-      grid.appendChild(div);
-    });
-  }
-
-  async function performMenuSearch() {
-    const q = document.getElementById('menuSearchInput').value.trim();
-    const category = document.getElementById('filterCategory').value;
-    const sort = document.getElementById('filterSort').value;
-    const size = document.getElementById('filterSize').value.trim();
-    const color = document.getElementById('filterColor').value.trim();
-
-    const params = new URLSearchParams();
-    if (q) params.set('q', q);
-    if (category) params.set('category', category);
-    if (sort) params.set('sort', sort);
-    if (size) params.set('size', size);
-    if (color) params.set('color', color);
-
-    try {
-      const res = await fetch('/api/menu-search?' + params.toString());
-      const data = await res.json();
-      if (data && data.success && Array.isArray(data.items)) {
-        renderMenuItems(data.items);
-        // Update local menuData cache for modal interactions
-        menuData = {};
-        data.items.forEach(it => { menuData[it.id] = it; });
+      // Normalize comparison: many items may have different casing or spacing
+      const itemCategory = slugifyCategory(item.dataset.category || 'product');
+      if (normCategory === 'all' || itemCategory === normCategory) {
+        item.style.display = 'block';
       } else {
-        // Fallback to client-side filtering if API fails
-        applyClientSideFilter();
+        item.style.display = 'none';
       }
-    } catch (e) {
-      console.warn('Search API failed, using client-side filter', e);
-      applyClientSideFilter();
-    }
-  }
-
-  function applyClientSideFilter() {
-    const q = document.getElementById('menuSearchInput').value.trim().toLowerCase();
-    const category = document.getElementById('filterCategory').value;
-    const size = document.getElementById('filterSize').value.trim().toLowerCase();
-    const color = document.getElementById('filterColor').value.trim().toLowerCase();
-
-    const allItems = Object.values(menuData || {});
-    const filtered = allItems.filter(it => {
-      if (category && it.category !== category) return false;
-      if (q && !(it.name.toLowerCase().includes(q) || (it.description||'').toLowerCase().includes(q))) return false;
-      if (size && !(it.sizes||'').toLowerCase().split(',').map(s=>s.trim()).includes(size)) return false;
-      if (color && !(it.colors||'').toLowerCase().split(',').map(s=>s.trim()).includes(color)) return false;
-      return true;
     });
-    renderMenuItems(filtered);
-  }
 
-  const debouncedSearch = debounce(performMenuSearch, 300);
-
-  // Wire inputs
-  document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('menuSearchInput');
+    // Filter kategoriyasini ham yangilash va client-side filtrni ishga tushur
     const categorySelect = document.getElementById('filterCategory');
-    const sortSelect = document.getElementById('filterSort');
-    const sizeInput = document.getElementById('filterSize');
-    const colorInput = document.getElementById('filterColor');
-    const clearBtn = document.getElementById('clearFiltersBtn');
+    if (categorySelect) {
+      categorySelect.value = category === 'all' ? '' : category;
+    }
 
-    if (searchInput) searchInput.addEventListener('input', debouncedSearch);
-    if (categorySelect) categorySelect.addEventListener('change', debouncedSearch);
-    if (sortSelect) sortSelect.addEventListener('change', debouncedSearch);
-    if (sizeInput) sizeInput.addEventListener('input', debouncedSearch);
-    if (colorInput) colorInput.addEventListener('input', debouncedSearch);
-    if (clearBtn) clearBtn.addEventListener('click', function() {
-      searchInput.value = '';
-      categorySelect.value = '';
-      sortSelect.value = '';
-      sizeInput.value = '';
-      colorInput.value = '';
-      // reload original menu by triggering search (empty)
-      debouncedSearch();
-    });
-  });
+    // Trigger client-side filter so clicks and select stay in sync
+    try { applyClientSideFilter(); } catch (e) { console.warn('applyClientSideFilter failed after showCategory', e); }
+    }
 
-  function increaseModalQuantity() {
-      const input = document.getElementById('modalQuantity');
-      const currentValue = parseInt(input.value) || 1;
-      if (currentValue < 99) {
-          input.value = currentValue + 1;
+    // Keep filter select and clear button in sync with the category buttons
+    try {
+      const catSelect = document.getElementById('filterCategory');
+      if (catSelect) {
+        catSelect.addEventListener('change', function() {
+          const val = this.value || 'all';
+          // Update buttons and visibility
+          showCategory(null, val);
+        });
       }
-  }
 
-  function decreaseModalQuantity() {
-      const input = document.getElementById('modalQuantity');
-      const currentValue = parseInt(input.value) || 1;
-      if (currentValue > 1) {
-          input.value = currentValue - 1;
-      }
-  }
+      const clearBtn = document.getElementById('clearFiltersBtn');
+      if (clearBtn) {
+        clearBtn.addEventListener('click', function() {
+          // Clear inputs
+          const search = document.getElementById('menuSearchInput');
+          const size = document.getElementById('filterSize');
+          const color = document.getElementById('filterColor');
+          const sort = document.getElementById('filterSort');
+          const cat = document.getElementById('filterCategory');
+          if (search) search.value = '';
+          if (size) size.value = '';
+          if (color) color.value = '';
+          if (sort) sort.value = '';
+          if (cat) cat.value = '';
 
-  function increaseQuantity(button) {
-      const input = button.parentElement.querySelector('input[name="quantity"]');
-      if (input) {
-          let currentValue = parseInt(input.value) || 1;
-          if (currentValue < 99) {
-              input.value = currentValue + 1;
-          }
-      }
-  }
+          // Show all items
+          showCategory(null, 'all');
 
-  function decreaseQuantity(button) {
-      const input = button.parentElement.querySelector('input[name="quantity"]');
-      if (input) {
-          let currentValue = parseInt(input.value) || 1;
-          if (currentValue > 1) {
-              input.value = currentValue - 1;
-          }
-      }
-  }
-
-  function loadComments(itemId) {
-      // Serverdan haqiqiy sharhlarni yuklash
-      fetch(`/api/get-menu-ratings/${itemId}`)
-          .then(response => response.json())
-          .then(data => {
-              const commentsContainer = document.getElementById('modalComments');
-
-              if (data.success && data.ratings && data.ratings.length > 0) {
-                  let commentsHtml = '';
-                  data.ratings.forEach(rating => {
-                      commentsHtml += `
-                          <div class="comment-item">
-                              <div class="comment-author">${rating.user_name} - ${'⭐'.repeat(rating.rating)}</div>
-                              <div class="comment-text">${rating.comment || 'Sharh qoldirilmagan'}</div>
-                              <div class="comment-date">${rating.created_at}</div>
-                          </div>
-                      `;
-                  });
-                  commentsContainer.innerHTML = commentsHtml;
-              } else {
-                  commentsContainer.innerHTML = `
-                      <div class="no-comments">
-                          <p style="text-align: center; color: #888; font-style: italic;">
-                              Hali hech kim sharh qoldirmagan. Birinchi bo'lib baholang! ⭐
-                          </p>
-                      </div>
-                  `;
-              }
-          })
-          .catch(error => {
-              console.error('Sharhlarni yuklashda xatolik:', error);
-              const commentsContainer = document.getElementById('modalComments');
-              commentsContainer.innerHTML = `
-                  <div class="error-message">
-                      <p style="text-align: center; color: #e53e3e;">
-                          Sharhlarni yuklashda xatolik yuz berdi.
-                      </p>
-                  </div>
-              `;
-          });
-  }
-
-  /* ESC tugmasi bilan modalni yopish */
-  document.addEventListener('keydown', function(event) {
-      if (event.key === 'Escape') {
-          closeItemModal();
-          closeRatingModal();
-      }
-  });
-
-  // Sahifa yuklangandan keyin cart sonini yangilash
-      window.addEventListener('DOMContentLoaded', function() {
+          // If we have a local menuData cache, re-render all items
           try {
-              updateCartCountDisplay();
-              updateFloatingCartIcon();
-          } catch (error) {
-              console.error('DOMContentLoaded da xatolik:', error);
-          }
-      });
-
-      // Floating cart iconini yangilash
-      function updateFloatingCartIcon() {
-          fetch('/api/cart-count')
-          .then(response => response.json())
-          .then(data => {
-              const floatingCartBadge = document.getElementById('cart-badge-floating');
-              const floatingCart = document.getElementById('floating-cart');
-
-              if (floatingCartBadge && floatingCart) {
-                  floatingCartBadge.textContent = data.count || 0;
-
-                  if (data.count > 0) {
-                      floatingCartBadge.classList.add('show');
-                      floatingCart.style.display = 'flex';
-                  } else {
-                      floatingCartBadge.classList.remove('show');
-                      // Cart bo'sh bo'lsa ham iconni ko'rsatish, faqat badge yashirish
-                      floatingCart.style.display = 'flex';
-                  }
-              }
-          })
-          .catch(error => {
-              console.error('Cart count olishda xatolik:', error);
-          });
+            if (menuData && Object.keys(menuData).length) {
+              const arr = Object.keys(menuData).map(k => menuData[k]);
+              renderMenuItems(arr);
+            }
+          } catch (e) { /* ignore */ }
+        });
       }
+    } catch (e) { console.warn('filter wiring error', e); }
 
-    // Unified addToCartAjax: always include optional size/color when provided
-    function addToCartAjax(menuItemId, quantity = 1, size = '', color = '') {
-      console.log('Adding to cart (ajax):', menuItemId, quantity, size, color);
+    function openItemModal(itemId) {
+    // Try to get the item from menuData, but if missing build a minimal
+    // fallback from the DOM so the modal can still open.
+    let item = (menuData && menuData[itemId]) ? menuData[itemId] : null;
+    if (!item) {
+      try {
+        const card = document.querySelector('.menu-item[data-id="' + itemId + '"]');
+        if (card) {
+          const name = (card.querySelector('.item-name')||{}).textContent || ('Item ' + itemId);
+          const desc = (card.querySelector('.item-description')||{}).textContent || '';
+          const imgEl = card.querySelector('.item-image img') || card.querySelector('.menu-item-image img') || null;
+          const img = imgEl ? (imgEl.getAttribute('src') || '') : '/static/images/default-product.jpg';
+          item = { id: parseInt(itemId,10), name: name.trim(), description: desc.trim(), image_url: img, image: img, rating: 0, orders_count: 0, sizes: '', colors: '' };
+        }
+      } catch (e) {
+        console.warn('openItemModal fallback build failed', e);
+      }
+    }
+    if (!item) return; // nothing we can do
 
-      const payload = {
-        menu_item_id: parseInt(menuItemId),
-        quantity: parseInt(quantity)
-      };
-      if (size !== undefined && size !== null && String(size).length > 0) payload.size = size;
-      if (color !== undefined && color !== null && String(color).length > 0) payload.color = color;
+        // Modal ma'lumotlarini to'ldirish
+        document.getElementById('modalTitle').textContent = item.name;
+        // Load media for this item (images/videos). We will fetch /api/product-media/<id>
+        const mediaContainer = document.getElementById('modalMediaContainer');
+        mediaContainer.innerHTML = '<div class="media-loading">Yuklanmoqda...</div>';
 
-      return fetch('/add_to_cart', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: JSON.stringify(payload)
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          showToast('Mahsulot savatchaga qo\'shildi! 🛒', 'success');
-          updateCartCountDisplay();
+        fetch(`/api/product-media/${itemId}`).then(r => r.json()).then(json => {
+          const media = (json && json.media) ? json.media : [];
+          mediaContainer.innerHTML = '';
 
-          if (data.cart_count !== undefined) {
-            const cartCountElements = document.querySelectorAll('#cart-count, #cart-badge-floating, .cart-badge');
-            cartCountElements.forEach(element => {
-              element.textContent = data.cart_count;
-              if (data.cart_count > 0) {
-                element.style.display = 'inline-block';
-                element.classList.add('show');
+          // If no media returned, fallback to the single image from menuData
+          if (!media || media.length === 0) {
+              const img = document.createElement('img');
+              img.src = item.image_url || item.image || '/static/images/default-product.jpg';
+              img.alt = item.name;
+              img.className = 'modal-media-item active';
+              mediaContainer.appendChild(img);
+            } else {
+            media.forEach((m, idx) => {
+              if (m.media_type && m.media_type.startsWith('video')) {
+                const vid = document.createElement('video');
+                vid.src = m.media_url;
+                vid.controls = true;
+                vid.className = 'modal-media-item';
+                if (idx === 0) vid.classList.add('active');
+                mediaContainer.appendChild(vid);
               } else {
-                element.style.display = 'none';
-                element.classList.remove('show');
+                const img = document.createElement('img');
+                img.src = m.media_url;
+                img.alt = item.name;
+                img.className = 'modal-media-item';
+                if (idx === 0) img.classList.add('active');
+                mediaContainer.appendChild(img);
               }
             });
           }
-        } else {
-          showToast(data.message || 'Xatolik yuz berdi', 'error');
-        }
-        return data;
-      })
-      .catch(error => {
-        console.error('Add to cart error:', error);
-        showToast('Savatchaga qo\'shishda xatolik yuz berdi', 'error');
-        throw error;
-      });
-    }
 
-      // Toast notification funksiyasi
-      function showToast(message, type = 'info') {
-        try {
-          // Ensure a persistent container exists so CSS stacking is predictable
-          let container = document.getElementById('toast-container');
-          if (!container) {
-            container = document.createElement('div');
-            container.id = 'toast-container';
-            // high z-index to appear above modals and overlays
-            container.style.position = 'fixed';
-            container.style.top = '20px';
-            container.style.right = '20px';
-            container.style.zIndex = '3000';
-            container.style.display = 'flex';
-            container.style.flexDirection = 'column';
-            container.style.gap = '10px';
-            document.body.appendChild(container);
+          // Setup navigation
+          const prevBtn = document.getElementById('modalPrevBtn');
+          const nextBtn = document.getElementById('modalNextBtn');
+          const items = mediaContainer.querySelectorAll('.modal-media-item');
+          let currentIndex = 0;
+
+          function updateNav() {
+            if (items.length <= 1) {
+              prevBtn.style.display = 'none';
+              nextBtn.style.display = 'none';
+            } else {
+              prevBtn.style.display = 'block';
+              nextBtn.style.display = 'block';
+            }
+            items.forEach((it, i) => {
+              if (i === currentIndex) {
+                it.classList.add('active');
+                if (it.tagName === 'VIDEO') it.play().catch(()=>{});
+              } else {
+                it.classList.remove('active');
+                if (it.tagName === 'VIDEO') { try { it.pause(); it.currentTime = 0; } catch(e){} }
+              }
+            });
           }
 
-          const toast = document.createElement('div');
-          toast.className = `toast-notification toast-${type}`;
-          toast.style.pointerEvents = 'auto';
-          toast.innerHTML = `
-            <div class="toast-content">
-              <span class="toast-icon">${type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'info' ? 'ℹ️' : '⚠️'}</span>
-              <span class="toast-message">${message}</span>
-            </div>
-          `;
+          prevBtn.onclick = (e) => { e.stopPropagation(); currentIndex = (currentIndex - 1 + items.length) % items.length; updateNav(); };
+          nextBtn.onclick = (e) => { e.stopPropagation(); currentIndex = (currentIndex + 1) % items.length; updateNav(); };
 
-          container.appendChild(toast);
-          console.log('[showToast] appended toast:', message, 'type=', type);
+          // Keyboard navigation
+          document.onkeydown = function(e) {
+            if (document.getElementById('itemModal').style.display !== 'flex') return;
+            if (e.key === 'ArrowLeft') prevBtn.click();
+            if (e.key === 'ArrowRight') nextBtn.click();
+          };
 
-          // Trigger CSS animation to show
-          requestAnimationFrame(() => {
-            toast.classList.add('show');
-          });
+          updateNav();
 
-          // Auto remove
-          setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => {
-              try {
-                if (toast.parentElement) toast.parentElement.removeChild(toast);
-              } catch (err) {
-                console.warn('[showToast] failed to remove toast:', err);
-              }
-            }, 300);
-          }, 3500);
-        } catch (e) {
-          // As a last resort, fallback to alert so user sees messages
-          console.error('[showToast] error:', e);
-          try {
-            alert(message);
-          } catch (__) {}
+          // Staff-only controls: show simple admin overlay allowing set-main/delete when staff
+          if (IS_STAFF) {
+            // Add media management toolbar (set main / delete) per media item
+            items.forEach((el, idx) => {
+              const toolbar = document.createElement('div');
+              toolbar.className = 'media-toolbar';
+              toolbar.innerHTML = `
+                <button class="btn-small" data-idx="${idx}" onclick="setMainMedia(event, ${itemId})">Set main</button>
+                <button class="btn-small btn-danger" data-idx="${idx}" onclick="deleteMedia(event)">Delete</button>
+              `;
+              el.style.position = 'relative';
+              el.parentElement.appendChild(toolbar);
+            });
+          }
+
+        }).catch(err => {
+          mediaContainer.innerHTML = '<div class="media-error">Media yuklashda xatolik</div>';
+          console.error('Error fetching media', err);
+        });
+  document.getElementById('modalDescription').textContent = item.description;
+        document.getElementById('modalItemId').value = itemId;
+
+        // Baholarni ko'rsatish
+        const modalStars = document.getElementById('modalStars');
+        modalStars.innerHTML = '';
+        for (let i = 1; i <= 5; i++) {
+            const star = document.createElement('span');
+            star.className = `star ${i <= item.rating ? 'filled' : ''}`;
+            star.textContent = '⭐';
+            modalStars.appendChild(star);
         }
+        document.getElementById('modalRatingText').textContent = `${item.rating.toFixed(1)} (${item.orders_count} buyurtma)`;
+
+
+        // Sharhlarni yuklash
+        loadComments(itemId);
+
+        // Populate size and color selects
+        const sizeSelect = document.getElementById('modalSize');
+        const colorSelect = document.getElementById('modalColor');
+        // clear previous options (keep the first placeholder)
+        if (sizeSelect) {
+            sizeSelect.querySelectorAll('option:not(:first-child)').forEach(o => o.remove());
+            const sizes = (item.sizes || '').split(',').map(s => s.trim()).filter(s => s.length);
+            sizes.forEach(sz => {
+                const opt = document.createElement('option');
+                opt.value = sz;
+                opt.textContent = sz;
+                sizeSelect.appendChild(opt);
+            });
+        }
+        if (colorSelect) {
+            colorSelect.querySelectorAll('option:not(:first-child)').forEach(o => o.remove());
+            const colors = (item.colors || '').split(',').map(s => s.trim()).filter(s => s.length);
+            colors.forEach(clr => {
+                const opt = document.createElement('option');
+                opt.value = clr;
+                opt.textContent = getColorDisplayName(clr);
+                colorSelect.appendChild(opt);
+            });
+
+            // Add color indicators to options
+            addColorIndicators(colorSelect, colors);
+        }
+
+      // Modalni ko'rsatish via centralized helper (keeps behavior consistent)
+      if (typeof showItemModal === 'function') {
+        showItemModal();
+      } else {
+        // Fallback if helper isn't available for some reason
+        document.getElementById('itemModal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
       }
 
-  // Savatcha badge-ni yangilash
-  function updateCartCountDisplay() {
-      fetch('/api/cart-count')
-          .then(response => response.json())
-          .then(data => {
-              const badge = document.getElementById('cart-badge-floating'); // Ensure correct ID
-              if (badge) {
-                  if (data.count > 0) {
-                      badge.textContent = data.count;
-                      badge.classList.add('show');
-                      badge.style.display = 'flex'; // Make sure it's visible
-                  } else {
-                      badge.classList.remove('show');
-                      badge.style.display = 'none'; // Hide if count is 0
-                  }
-              }
-          })
-          .catch(error => {
-              console.error('Cart count olishda xatolik:', error);
-          });
-  }
+      // If product has sizes/colors, mark selects as required so client validation
+      // can enable/disable the Add button accordingly. Also attach change listeners
+      // that toggle the modal Add button state.
+      try {
+        const addBtn = document.getElementById('modalAddToCartBtn');
+        // derive presence of sizes/colors from the item data (safe across scopes)
+        const hasSizes = (item && (item.sizes || '').toString().trim().length > 0);
+        const hasColors = (item && (item.colors || '').toString().trim().length > 0);
 
-  // Handle form submission for add to cart
-  function handleAddToCart(event, itemId) {
-    event.preventDefault();
+        if (sizeSelect) {
+          sizeSelect.dataset.required = hasSizes ? 'true' : 'false';
+        }
+        if (colorSelect) {
+          colorSelect.dataset.required = hasColors ? 'true' : 'false';
+        }
 
-    const form = event.target;
-    const quantityInput = form.querySelector('input[name="quantity"]');
-    const quantity = quantityInput ? quantityInput.value : 1;
+        function evaluateModalAddButton() {
+          // Determine whether required options were selected
+          const needSize = sizeSelect && sizeSelect.dataset.required === 'true';
+          const needColor = colorSelect && colorSelect.dataset.required === 'true';
+          const sizeVal = sizeSelect ? (sizeSelect.value || '') : '';
+          const colorVal = colorSelect ? (colorSelect.value || '') : '';
 
-    // If the product has sizes/colors, open modal to force selection
-    const item = menuData[itemId];
-    if (item) {
-      const hasSizes = (item.sizes || '').trim().length > 0;
-      const hasColors = (item.colors || '').trim().length > 0;
-      if (hasSizes || hasColors) {
-        openItemModal(itemId);
-        return false;
+          const enabled = (!needSize || (sizeVal && sizeVal.length > 0)) && (!needColor || (colorVal && colorVal.length > 0));
+          if (addBtn) {
+            addBtn.disabled = !enabled;
+            if (enabled) addBtn.classList.remove('disabled');
+            else addBtn.classList.add('disabled');
+          }
+        }
+
+        // Attach listeners (idempotent - remove then add)
+        if (sizeSelect) {
+          sizeSelect.removeEventListener('change', evaluateModalAddButton);
+          sizeSelect.addEventListener('change', evaluateModalAddButton);
+        }
+        if (colorSelect) {
+          colorSelect.removeEventListener('change', evaluateModalAddButton);
+          colorSelect.addEventListener('change', evaluateModalAddButton);
+        }
+
+        // Initial evaluation (in case product has no required options)
+        evaluateModalAddButton();
+      } catch (e) {
+        console.warn('Modal add button evaluation error:', e);
       }
     }
 
-    addToCartAjax(itemId, quantity);
-    return false; // Prevent default form submission
-  }
+    function closeItemModal() {
+        // Use centralized helper to hide modal so behavior is consistent
+        if (typeof hideItemModal === 'function') {
+          hideItemModal();
+        } else {
+          document.getElementById('itemModal').style.display = 'none';
+          document.body.style.overflow = 'auto';
+        }
+        // cleanup keyboard handler and pause any playing videos
+        try {
+          document.onkeydown = null;
+          const mediaContainer = document.getElementById('modalMediaContainer');
+          if (mediaContainer) {
+            mediaContainer.querySelectorAll('video').forEach(v => { try { v.pause(); v.currentTime = 0; } catch(e){} });
+          }
+        } catch (e) { /* ignore */ }
+    }
 
+    // Staff action: set a media file as main for the product
+    async function setMainMedia(ev, itemId) {
+      ev.stopPropagation();
+      try {
+        const idx = parseInt(ev.currentTarget.getAttribute('data-idx') || '0', 10);
+        const mediaContainer = document.getElementById('modalMediaContainer');
+        const items = mediaContainer.querySelectorAll('.modal-media-item');
+        const target = items[idx];
+        if (!target) return alert('Media topilmadi');
+        const mediaUrl = target.src;
+        const res1 = await fetch('/api/product-media/identify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ item_id: itemId, media_url: mediaUrl }) });
+        const j1 = await res1.json();
+        if (!j1 || !j1.media_id) return alert('Media ID topilmadi');
+        const res2 = await fetch(`/api/product-media/${j1.media_id}/set-main`, { method: 'POST' });
+        const j2 = await res2.json();
+        if (j2 && j2.success) { showToast('Asosiy rasm belgilandi', 'success'); openItemModal(itemId); } else { showToast('Xatolik', 'error'); }
+      } catch (e) { console.error(e); showToast('So' + "'" + 'rov bajarilmadi', 'error'); }
+    }
 
-  // NOTE: previous duplicate addToCartAjax removed. Use unified version above.
+    // Staff action: delete a media file
+    async function deleteMedia(ev) {
+      ev.stopPropagation();
+      if (!confirm('Haqiqatan ham bu media faylni o''chirmoqchimisiz?')) return;
+      try {
+        const toolbar = ev.currentTarget.closest('.media-toolbar');
+        if (!toolbar) return;
+        const mediaItem = toolbar.previousElementSibling || toolbar.parentElement.querySelector('.modal-media-item');
+        const mediaUrl = mediaItem && mediaItem.src;
+        if (!mediaUrl) return alert('Media manzili topilmadi');
+        const res1 = await fetch('/api/product-media/identify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ media_url: mediaUrl }) });
+        const j1 = await res1.json();
+        if (!j1 || !j1.media_id) return alert('Media ID topilmadi');
+        const res2 = await fetch(`/api/product-media/${j1.media_id}/delete`, { method: 'DELETE' });
+        const j2 = await res2.json();
+        if (j2 && j2.success) { showToast('Media o''chirildi', 'success'); // remove element
+          if (mediaItem && mediaItem.parentElement) mediaItem.parentElement.removeChild(mediaItem);
+          if (toolbar && toolbar.parentElement) toolbar.parentElement.removeChild(toolbar);
+        } else { showToast('O''chirish xatosi', 'error'); }
+      } catch (e) { console.error(e); showToast('So' + "'" + 'rov bajarilmadi', 'error'); }
+    }
 
-  // Savatcha qo'shilganda badge-ni yangilash
-  // Form submit eventni tinglash va AJAX chaqiruvini o'rash
-  document.querySelectorAll('form[action*="/add_to_cart"]').forEach(form => {
-    form.addEventListener('submit', function(e) {
-      e.preventDefault(); // Default submitni oldini olish
-      const menuItemId = this.querySelector('input[name="menu_item_id"]').value;
-      const quantityInput = this.querySelector('input[name="quantity"]');
+    // --------- Menu search & filter helpers ----------
+    function debounce(fn, wait) {
+      let t = null;
+      return function(...args) {
+        clearTimeout(t);
+        t = setTimeout(() => fn.apply(this, args), wait);
+      };
+    }
+
+    function renderMenuItems(items) {
+      const grid = document.querySelector('.menu-grid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      items.forEach(item => {
+        const div = document.createElement('div');
+  div.className = 'menu-item';
+  // ensure both data-id and data-category are available for robust selection
+  div.dataset.id = item.id;
+  // normalize category on dataset for consistent comparisons
+  div.dataset.category = (item.category || 'product').toString();
+        // ensure click opens modal even if inner elements call stopPropagation
+        div.onclick = () => openItemModal(item.id);
+        // ensure pointer events allowed
+        div.style.pointerEvents = 'auto';
+
+        div.innerHTML = `
+          <div class="item-image"><img src="${item.image_url || '/static/images/default-product.jpg'}" alt="${item.name}" onerror="this.src='/static/images/default-product.jpg'"/></div>
+          <div class="item-content">
+            <h3 class="item-name">${item.name}</h3>
+            <p class="item-description">${item.description || ''}</p>
+            <div class="rating-section"><div class="stars">${'<span class="star">⭐</span>'.repeat(5)}</div><span class="rating-text">${(parseFloat(item.rating)||0).toFixed(1)} (${item.orders_count||0} buyurtma)</span></div>
+            <div class="item-footer">
+              <div class="add-to-cart-section">
+                <form method="POST" action="/add_to_cart" onclick="event.stopPropagation()">
+                  <input type="hidden" name="menu_item_id" value="${item.id}" />
+                  <div class="quantity-cart-controls">
+                    <button type="button" class="quantity-btn minus" onclick="decreaseQuantity(this)">−</button>
+                    <input type="number" name="quantity" value="1" min="1" max="99" class="quantity-input" />
+                    <button type="button" class="quantity-btn plus" onclick="increaseQuantity(this)">+</button>
+                    <button type="submit" class="btn-cart">🛒</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        `;
+
+        grid.appendChild(div);
+      });
+      // After dynamically rendering, ensure handlers are attached for new cards
+      try { attachCardHandlers(); } catch (e) { console.warn('attachCardHandlers after render failed', e); }
+    }
+
+    // Normalize category strings to simple slugs for comparison
+    function slugifyCategory(cat) {
+      if (!cat) return 'all';
+      // Preserve unicode letters and numbers, replace other characters with '-'
+      try {
+        return cat.toString().trim().toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '-').replace(/(^-|-$)/g, '') || 'all';
+      } catch (e) {
+        // Fallback for older browsers: basic ASCII slug
+        return cat.toString().trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'all';
+      }
+    }
+
+    async function performMenuSearch() {
+      // Guard DOM access in case inputs are missing or removed by other scripts
+      const qEl = document.getElementById('menuSearchInput');
+      const catEl = document.getElementById('filterCategory');
+      const sortEl = document.getElementById('filterSort');
+      const sizeEl = document.getElementById('filterSize');
+      const colorEl = document.getElementById('filterColor');
+      const q = qEl ? (qEl.value || '').trim() : '';
+      const category = catEl ? (catEl.value || '') : '';
+      const sort = sortEl ? (sortEl.value || '') : '';
+      const size = sizeEl ? (sizeEl.value || '').trim() : '';
+      const color = colorEl ? (colorEl.value || '').trim() : '';
+
+      const params = new URLSearchParams();
+      if (q) params.set('q', q);
+      if (category) params.set('category', category);
+      if (sort) params.set('sort', sort);
+      if (size) params.set('size', size);
+      if (color) params.set('color', color);
+
+      try {
+        const res = await fetch('/api/menu-search?' + params.toString());
+        const data = await res.json();
+        if (data && data.success && Array.isArray(data.items)) {
+          renderMenuItems(data.items);
+          // Update local menuData cache for modal interactions
+          menuData = {};
+          data.items.forEach(it => { menuData[it.id] = it; });
+        } else {
+          // Fallback to client-side filtering if API fails
+          applyClientSideFilter();
+        }
+      } catch (e) {
+        console.warn('Search API failed, using client-side filter', e);
+        applyClientSideFilter();
+      }
+    }
+
+    function applyClientSideFilter() {
+      // Defensive DOM access
+      const qEl = document.getElementById('menuSearchInput');
+      const catEl = document.getElementById('filterCategory');
+      const sizeEl = document.getElementById('filterSize');
+      const colorEl = document.getElementById('filterColor');
+      const q = qEl ? (qEl.value || '').trim().toLowerCase() : '';
+      const category = catEl ? (catEl.value || '') : '';
+      const size = sizeEl ? (sizeEl.value || '').trim().toLowerCase() : '';
+      const color = colorEl ? (colorEl.value || '').trim().toLowerCase() : '';
+
+      const allItems = Object.values(menuData || {});
+      const filtered = allItems.filter(it => {
+        if (category && slugifyCategory(it.category || '') !== slugifyCategory(category)) return false;
+        if (q && !(it.name.toLowerCase().includes(q) || (it.description||'').toLowerCase().includes(q))) return false;
+        if (size && !(it.sizes||'').toLowerCase().split(',').map(s=>s.trim()).includes(size)) return false;
+        if (color && !(it.colors||'').toLowerCase().split(',').map(s=>s.trim()).includes(color)) return false;
+        return true;
+      });
+      renderMenuItems(filtered);
+    }
+
+    const debouncedSearch = debounce(performMenuSearch, 300);
+
+    // Wire inputs
+    document.addEventListener('DOMContentLoaded', function() {
+      const searchInput = document.getElementById('menuSearchInput');
+      const categorySelect = document.getElementById('filterCategory');
+      const sortSelect = document.getElementById('filterSort');
+      const sizeInput = document.getElementById('filterSize');
+      const colorInput = document.getElementById('filterColor');
+      const clearBtn = document.getElementById('clearFiltersBtn');
+
+      if (searchInput) searchInput.addEventListener('input', debouncedSearch);
+      if (categorySelect) categorySelect.addEventListener('change', debouncedSearch);
+      if (sortSelect) sortSelect.addEventListener('change', debouncedSearch);
+      if (sizeInput) sizeInput.addEventListener('input', debouncedSearch);
+      if (colorInput) colorInput.addEventListener('input', debouncedSearch);
+      if (clearBtn) clearBtn.addEventListener('click', function() {
+        searchInput.value = '';
+        categorySelect.value = '';
+        sortSelect.value = '';
+        sizeInput.value = '';
+        colorInput.value = '';
+        // reload original menu by triggering search (empty)
+        debouncedSearch();
+      });
+
+      // Ensure the select matches the active category button on initial load
+      try {
+        const activeBtn = document.querySelector('.category-btn.active');
+        if (activeBtn && categorySelect) {
+          const bcat = activeBtn.getAttribute('data-cat') || '';
+          if (bcat) categorySelect.value = bcat === 'all' ? '' : bcat;
+        }
+      } catch (e) { console.warn('initial category sync failed', e); }
+    });
+
+    function increaseModalQuantity() {
+        const input = document.getElementById('modalQuantity');
+        const currentValue = parseInt(input.value) || 1;
+        if (currentValue < 99) {
+            input.value = currentValue + 1;
+        }
+    }
+
+    function decreaseModalQuantity() {
+        const input = document.getElementById('modalQuantity');
+        const currentValue = parseInt(input.value) || 1;
+        if (currentValue > 1) {
+            input.value = currentValue - 1;
+        }
+    }
+
+    function increaseQuantity(button) {
+        const input = button.parentElement.querySelector('input[name="quantity"]');
+        if (input) {
+            let currentValue = parseInt(input.value) || 1;
+            if (currentValue < 99) {
+                input.value = currentValue + 1;
+            }
+        }
+    }
+
+    function decreaseQuantity(button) {
+        const input = button.parentElement.querySelector('input[name="quantity"]');
+        if (input) {
+            let currentValue = parseInt(input.value) || 1;
+            if (currentValue > 1) {
+                input.value = currentValue - 1;
+            }
+        }
+    }
+
+    function loadComments(itemId) {
+        // Serverdan haqiqiy sharhlarni yuklash
+        fetch(`/api/get-menu-ratings/${itemId}`)
+            .then(response => response.json())
+            .then(data => {
+                const commentsContainer = document.getElementById('modalComments');
+
+                if (data.success && data.ratings && data.ratings.length > 0) {
+                    let commentsHtml = '';
+                    data.ratings.forEach(rating => {
+                        commentsHtml += `
+                            <div class="comment-item">
+                                <div class="comment-author">${rating.user_name} - ${'⭐'.repeat(rating.rating)}</div>
+                                <div class="comment-text">${rating.comment || 'Sharh qoldirilmagan'}</div>
+                                <div class="comment-date">${rating.created_at}</div>
+                            </div>
+                        `;
+                    });
+                    commentsContainer.innerHTML = commentsHtml;
+                } else {
+                    commentsContainer.innerHTML = `
+                        <div class="no-comments">
+                            <p style="text-align: center; color: #888; font-style: italic;">
+                                Hali hech kim sharh qoldirmagan. Birinchi bo'lib baholang! ⭐
+                            </p>
+                        </div>
+                    `;
+                }
+            })
+            .catch(error => {
+                console.error('Sharhlarni yuklashda xatolik:', error);
+                const commentsContainer = document.getElementById('modalComments');
+                commentsContainer.innerHTML = `
+                    <div class="error-message">
+                        <p style="text-align: center; color: #e53e3e;">
+                            Sharhlarni yuklashda xatolik yuz berdi.
+                        </p>
+                    </div>
+                `;
+            });
+    }
+
+    /* ESC tugmasi bilan modalni yopish */
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeItemModal();
+            closeRatingModal();
+        }
+    });
+
+    // Sahifa yuklangandan keyin cart sonini yangilash
+        window.addEventListener('DOMContentLoaded', function() {
+            try {
+                updateCartCountDisplay();
+                updateFloatingCartIcon();
+            } catch (error) {
+                console.error('DOMContentLoaded da xatolik:', error);
+            }
+        });
+
+        // Floating cart iconini yangilash
+        function updateFloatingCartIcon() {
+            fetch('/api/cart-count')
+            .then(response => response.json())
+            .then(data => {
+                const floatingCartBadge = document.getElementById('cart-badge-floating');
+                const floatingCart = document.getElementById('floating-cart');
+
+                if (floatingCartBadge && floatingCart) {
+                    floatingCartBadge.textContent = data.count || 0;
+
+                    if (data.count > 0) {
+                        floatingCartBadge.classList.add('show');
+                        floatingCart.style.display = 'flex';
+                    } else {
+                        floatingCartBadge.classList.remove('show');
+                        // Cart bo'sh bo'lsa ham iconni ko'rsatish, faqat badge yashirish
+                        floatingCart.style.display = 'flex';
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Cart count olishda xatolik:', error);
+            });
+        }
+
+      // Unified addToCartAjax: always include optional size/color when provided
+      function addToCartAjax(menuItemId, quantity = 1, size = '', color = '') {
+        console.log('Adding to cart (ajax):', menuItemId, quantity, size, color);
+
+        const payload = {
+          menu_item_id: parseInt(menuItemId),
+          quantity: parseInt(quantity)
+        };
+        if (size !== undefined && size !== null && String(size).length > 0) payload.size = size;
+        if (color !== undefined && color !== null && String(color).length > 0) payload.color = color;
+
+        return fetch('/add_to_cart', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+          },
+          body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            showToast('Mahsulot savatchaga qo\'shildi! 🛒', 'success');
+            updateCartCountDisplay();
+
+            if (data.cart_count !== undefined) {
+              const cartCountElements = document.querySelectorAll('#cart-count, #cart-badge-floating, .cart-badge');
+              cartCountElements.forEach(element => {
+                element.textContent = data.cart_count;
+                if (data.cart_count > 0) {
+                  element.style.display = 'inline-block';
+                  element.classList.add('show');
+                } else {
+                  element.style.display = 'none';
+                  element.classList.remove('show');
+                }
+              });
+            }
+          } else {
+            showToast(data.message || 'Xatolik yuz berdi', 'error');
+          }
+          return data;
+        })
+        .catch(error => {
+          console.error('Add to cart error:', error);
+          showToast('Savatchaga qo\'shishda xatolik yuz berdi', 'error');
+          throw error;
+        });
+      }
+
+        // Toast notification funksiyasi
+        function showToast(message, type = 'info') {
+          try {
+            // Ensure a persistent container exists so CSS stacking is predictable
+            let container = document.getElementById('toast-container');
+            if (!container) {
+              container = document.createElement('div');
+              container.id = 'toast-container';
+              // high z-index to appear above modals and overlays
+              container.style.position = 'fixed';
+              container.style.top = '20px';
+              container.style.right = '20px';
+              container.style.zIndex = '3000';
+              container.style.display = 'flex';
+              container.style.flexDirection = 'column';
+              container.style.gap = '10px';
+              document.body.appendChild(container);
+            }
+
+            const toast = document.createElement('div');
+            toast.className = `toast-notification toast-${type}`;
+            toast.style.pointerEvents = 'auto';
+            toast.innerHTML = `
+              <div class="toast-content">
+                <span class="toast-icon">${type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'info' ? 'ℹ️' : '⚠️'}</span>
+                <span class="toast-message">${message}</span>
+              </div>
+            `;
+
+            container.appendChild(toast);
+            console.log('[showToast] appended toast:', message, 'type=', type);
+
+            // Trigger CSS animation to show
+            requestAnimationFrame(() => {
+              toast.classList.add('show');
+            });
+
+            // Auto remove
+            setTimeout(() => {
+              toast.classList.remove('show');
+              setTimeout(() => {
+                try {
+                  if (toast.parentElement) toast.parentElement.removeChild(toast);
+                } catch (err) {
+                  console.warn('[showToast] failed to remove toast:', err);
+                }
+              }, 300);
+            }, 3500);
+          } catch (e) {
+            // As a last resort, fallback to alert so user sees messages
+            console.error('[showToast] error:', e);
+            try {
+              alert(message);
+            } catch (__) {}
+          }
+        }
+
+    // Savatcha badge-ni yangilash
+    function updateCartCountDisplay() {
+        fetch('/api/cart-count')
+            .then(response => response.json())
+            .then(data => {
+                const badge = document.getElementById('cart-badge-floating'); // Ensure correct ID
+                if (badge) {
+                    if (data.count > 0) {
+                        badge.textContent = data.count;
+                        badge.classList.add('show');
+                        badge.style.display = 'flex'; // Make sure it's visible
+                    } else {
+                        badge.classList.remove('show');
+                        badge.style.display = 'none'; // Hide if count is 0
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Cart count olishda xatolik:', error);
+            });
+    }
+
+    // Handle form submission for add to cart
+    function handleAddToCart(event, itemId) {
+      event.preventDefault();
+
+      const form = event.target;
+      const quantityInput = form.querySelector('input[name="quantity"]');
       const quantity = quantityInput ? quantityInput.value : 1;
-      // try to find inline size/color selects (for cards that include them)
-      const sizeInput = this.querySelector('select[name="size"]') || this.querySelector('input[name="size"]');
-      const colorInput = this.querySelector('select[name="color"]') || this.querySelector('input[name="color"]');
-      const size = sizeInput ? sizeInput.value : '';
-      const color = colorInput ? colorInput.value : '';
 
-      // If product has options, force modal so user picks size/color
-      const item = menuData[menuItemId];
+      // If the product has sizes/colors, open modal to force selection
+      const item = menuData[itemId];
       if (item) {
         const hasSizes = (item.sizes || '').trim().length > 0;
         const hasColors = (item.colors || '').trim().length > 0;
         if (hasSizes || hasColors) {
-          openItemModal(menuItemId);
+          openItemModal(itemId);
           return false;
         }
       }
 
-      addToCartAjax(menuItemId, quantity, size, color);
-    });
-  });
+      addToCartAjax(itemId, quantity);
+      return false; // Prevent default form submission
+    }
 
-  // Modal form submitni tinglash
-  const modalCartForm = document.getElementById('modalCartForm');
-  if (modalCartForm) {
-    modalCartForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const menuItemId = document.getElementById('modalItemId').value;
-      const quantity = document.getElementById('modalQuantity').value || 1;
-      const size = document.getElementById('modalSize') ? document.getElementById('modalSize').value : '';
-      const color = document.getElementById('modalColor') ? document.getElementById('modalColor').value : '';
 
-      // Client validation: require selections when options exist
-      const sizeSelect = document.getElementById('modalSize');
-      const colorSelect = document.getElementById('modalColor');
-      const hasSizes = sizeSelect && sizeSelect.options && sizeSelect.options.length > 1;
-      const hasColors = colorSelect && colorSelect.options && colorSelect.options.length > 1;
-      if ((hasSizes && !size) || (hasColors && !color)) {
-        let msg = "Iltimos, ";
-        const parts = [];
-        if (hasSizes && !size) parts.push("o'lchamni tanlang");
-        if (hasColors && !color) parts.push('rangni tanlang');
-        msg += parts.join(' va ') + '.';
-        showToast(msg, 'error');
-        return false;
-      }
-      // Disable button to prevent duplicate clicks
-      const addBtn = document.getElementById('modalAddToCartBtn');
-      if (addBtn) {
-        addBtn.disabled = true;
-        addBtn.classList.add('disabled');
-      }
+    // NOTE: previous duplicate addToCartAjax removed. Use unified version above.
 
-      // Use the unified ajax; close modal only after success
-      addToCartAjax(menuItemId, quantity, size, color)
-        .then(result => {
-          // server returned success via JSON; close on success
-          if (result && result.success) {
-            closeItemModal();
-          } else {
-            // Re-enable and show message
-            if (addBtn) { addBtn.disabled = false; addBtn.classList.remove('disabled'); }
+    // Savatcha qo'shilganda badge-ni yangilash
+    // Form submit eventni tinglash va AJAX chaqiruvini o'rash
+    document.querySelectorAll('form[action*="/add_to_cart"]').forEach(form => {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault(); // Default submitni oldini olish
+        const menuItemId = this.querySelector('input[name="menu_item_id"]').value;
+        const quantityInput = this.querySelector('input[name="quantity"]');
+        const quantity = quantityInput ? quantityInput.value : 1;
+        // try to find inline size/color selects (for cards that include them)
+        const sizeInput = this.querySelector('select[name="size"]') || this.querySelector('input[name="size"]');
+        const colorInput = this.querySelector('select[name="color"]') || this.querySelector('input[name="color"]');
+        const size = sizeInput ? sizeInput.value : '';
+        const color = colorInput ? colorInput.value : '';
+
+        // If product has options, force modal so user picks size/color
+        const item = menuData[menuItemId];
+        if (item) {
+          const hasSizes = (item.sizes || '').trim().length > 0;
+          const hasColors = (item.colors || '').trim().length > 0;
+          if (hasSizes || hasColors) {
+            openItemModal(menuItemId);
+            return false;
           }
-        })
-        .catch(err => {
-          if (addBtn) { addBtn.disabled = false; addBtn.classList.remove('disabled'); }
-        });
+        }
+
+        addToCartAjax(menuItemId, quantity, size, color);
+      });
     });
-  }
 
-
-  // Color mapping for display names and indicators
-  function getColorDisplayName(color) {
-    const colorMap = {
-      'black': '🖤 Qora',
-      'white': '🤍 Oq',
-      'blue': '💙 Ko\'k',
-      'red': '❤️ Qizil',
-      'green': '💚 Yashil',
-      'yellow': '💛 Sariq',
-      'brown': '🤎 Jigarrang',
-      'gray': '🩶 Kulrang',
-      'grey': '🩶 Kulrang',
-      'pink': '🩷 Pushti',
-      'purple': '💜 Binafsha',
-      'orange': '🧡 Apelsin',
-      'navy': '💙 To\'q ko\'k',
-      'maroon': '❤️ To\'q qizil',
-      'beige': '🤎 Bej'
-    };
-    return colorMap[color.toLowerCase()] || `🎨 ${color}`;
-  }
-  
-  function getColorClass(color) {
-    const colorMap = {
-      'black': 'black',
-      'white': 'white', 
-      'blue': 'blue',
-      'red': 'red',
-      'green': 'green',
-      'yellow': 'yellow',
-      'brown': 'brown',
-      'gray': 'gray',
-      'grey': 'gray',
-      'pink': 'pink',
-      'purple': 'purple',
-      'orange': 'orange',
-      'navy': 'navy',
-      'maroon': 'maroon',
-      'beige': 'beige'
-    };
-    return colorMap[color.toLowerCase()] || 'gray';
-  }
-  
-  function addColorIndicators(selectElement, colors) {
-    // Create a custom dropdown wrapper
-    const wrapper = selectElement.parentElement;
-    let customDropdown = wrapper.querySelector('.custom-color-dropdown');
-    
-    if (customDropdown) {
-      customDropdown.remove();
-    }
-    
-    if (colors.length > 0) {
-      customDropdown = document.createElement('div');
-      customDropdown.className = 'custom-color-dropdown';
-      customDropdown.style.cssText = `
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: white;
-        border: 2px solid #e2e8f0;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        z-index: 1000;
-        max-height: 200px;
-        overflow-y: auto;
-        display: none;
-      `;
-      
-      colors.forEach(color => {
-        const option = document.createElement('div');
-        option.className = 'color-option';
-        option.style.cssText = `
-          padding: 8px 12px;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          cursor: pointer;
-          transition: all 0.2s ease;
-        `;
-        option.innerHTML = `
-          <span class="color-indicator ${getColorClass(color)}"></span>
-          <span>${getColorDisplayName(color)}</span>
-        `;
-        
-        option.addEventListener('click', () => {
-          selectElement.value = color;
-          selectElement.dispatchEvent(new Event('change'));
-          customDropdown.style.display = 'none';
-        });
-        
-        customDropdown.appendChild(option);
-      });
-      
-      wrapper.appendChild(customDropdown);
-      
-      // Toggle dropdown
-      selectElement.addEventListener('click', (e) => {
+    // Modal form submitni tinglash
+    const modalCartForm = document.getElementById('modalCartForm');
+    if (modalCartForm) {
+      modalCartForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        const isVisible = customDropdown.style.display === 'block';
-        customDropdown.style.display = isVisible ? 'none' : 'block';
-      });
-      
-      // Close dropdown when clicking outside
-      document.addEventListener('click', (e) => {
-        if (!wrapper.contains(e.target)) {
-          customDropdown.style.display = 'none';
+        const menuItemId = document.getElementById('modalItemId').value;
+        const quantity = document.getElementById('modalQuantity').value || 1;
+        const size = document.getElementById('modalSize') ? document.getElementById('modalSize').value : '';
+        const color = document.getElementById('modalColor') ? document.getElementById('modalColor').value : '';
+
+        // Client validation: require selections when options exist
+        const sizeSelect = document.getElementById('modalSize');
+        const colorSelect = document.getElementById('modalColor');
+        const hasSizes = sizeSelect && sizeSelect.options && sizeSelect.options.length > 1;
+        const hasColors = colorSelect && colorSelect.options && colorSelect.options.length > 1;
+        if ((hasSizes && !size) || (hasColors && !color)) {
+          let msg = "Iltimos, ";
+          const parts = [];
+          if (hasSizes && !size) parts.push("o'lchamni tanlang");
+          if (hasColors && !color) parts.push('rangni tanlang');
+          msg += parts.join(' va ') + '.';
+          showToast(msg, 'error');
+          return false;
         }
+        // Disable button to prevent duplicate clicks
+        const addBtn = document.getElementById('modalAddToCartBtn');
+        if (addBtn) {
+          addBtn.disabled = true;
+          addBtn.classList.add('disabled');
+        }
+
+        // Use the unified ajax; close modal only after success
+        addToCartAjax(menuItemId, quantity, size, color)
+          .then(result => {
+            // server returned success via JSON; close on success
+            if (result && result.success) {
+              closeItemModal();
+            } else {
+              // Re-enable and show message
+              if (addBtn) { addBtn.disabled = false; addBtn.classList.remove('disabled'); }
+            }
+          })
+          .catch(err => {
+            if (addBtn) { addBtn.disabled = false; addBtn.classList.remove('disabled'); }
+          });
       });
     }
-  }
 
-  // Add missing keyframes animations
-  const style = document.createElement('style');
-  style.textContent = `
-    /* Missing keyframe animations */
-    @keyframes brandGlow {
-      0% {
-        text-shadow: 
-          0 2px 4px rgba(0, 0, 0, 0.8),
-          0 0 25px rgba(255, 102, 0, 0.8),
-          0 0 35px rgba(255, 102, 0, 0.6);
-      }
-      100% {
-        text-shadow: 
-          0 2px 4px rgba(0, 0, 0, 0.8),
-          0 0 35px rgba(255, 102, 0, 1),
-          0 0 45px rgba(255, 102, 0, 0.8);
-      }
-    }
-    
-    @keyframes iconRotate {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-    
-    @keyframes iconWave {
-      0%, 100% { transform: rotate(0deg); }
-      25% { transform: rotate(-10deg); }
-      75% { transform: rotate(10deg); }
-    }
-    
-    @keyframes iconScale {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.2); }
-    }
-    
-    @keyframes iconPulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.1); opacity: 0.8; }
-    }
-    
-    @keyframes premiumBadgePulse {
-      0%, 100% {
-        transform: scale(1);
-        box-shadow: 0 4px 20px rgba(255, 102, 0, 0.5);
-      }
-      50% {
-        transform: scale(1.05);
-        box-shadow: 0 6px 25px rgba(255, 102, 0, 0.7);
-      }
-    }
-    
-    @keyframes premiumShine {
-      0% { transform: translateX(-200%); }
-      100% { transform: translateX(200%); }
-    }
-    
-    @keyframes checkGlow {
-      0%, 100% {
-        text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-        transform: scale(1);
-      }
-      50% {
-        text-shadow: 0 0 15px rgba(255, 255, 255, 1);
-        transform: scale(1.1);
-      }
-    }
-    
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    
-    @keyframes diamondSpin {
-      0%, 100% { transform: rotate(0deg); }
-      50% { transform: rotate(180deg); }
-    }
-    
-    @keyframes enhancedQualityFloat {
-      0%, 100% {
-        transform: translateY(0px);
-      }
-      50% {
-        transform: translateY(-10px);
-      }
-    }
-    
-    @keyframes qualityShine {
-      0% { left: -100%; }
-      100% { left: 100%; }
-    }
-  `;
-  document.head.appendChild(style);
 
-  // Initialize the page
-  document.addEventListener('DOMContentLoaded', function() {
-    updateCartCountDisplay();
-    loadMenuData();
-  });
-  
-  
-  // Helper function to create color dropdown for items
-  function createColorDropdown(selectElement, wrapper, colors) {
-    if (colors && colors.length > 0) {
-      const customDropdown = document.createElement('div');
-      customDropdown.className = 'custom-color-dropdown';
-      customDropdown.style.cssText = `
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: white;
-        border: 2px solid #e2e8f0;
-        border-top: none;
-        border-radius: 0 0 12px 12px;
-        max-height: 200px;
-        overflow-y: auto;
-        z-index: 1000;
-        display: none;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      `;
-      
-      colors.forEach(color => {
-        const option = document.createElement('div');
-        option.className = 'color-option';
-        option.style.cssText = `
-          padding: 10px 12px;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          transition: background 0.2s ease;
+    // Color mapping for display names and indicators
+    function getColorDisplayName(color) {
+      const colorMap = {
+        'black': '🖤 Qora',
+        'white': '🤍 Oq',
+        'blue': '💙 Ko\'k',
+        'red': '❤️ Qizil',
+        'green': '💚 Yashil',
+        'yellow': '💛 Sariq',
+        'brown': '🤎 Jigarrang',
+        'gray': '🩶 Kulrang',
+        'grey': '🩶 Kulrang',
+        'pink': '🩷 Pushti',
+        'purple': '💜 Binafsha',
+        'orange': '🧡 Apelsin',
+        'navy': '💙 To\'q ko\'k',
+        'maroon': '❤️ To\'q qizil',
+        'beige': '🤎 Bej'
+      };
+      return colorMap[color.toLowerCase()] || `🎨 ${color}`;
+    }
+
+    function getColorClass(color) {
+      const colorMap = {
+        'black': 'black',
+        'white': 'white',
+        'blue': 'blue',
+        'red': 'red',
+        'green': 'green',
+        'yellow': 'yellow',
+        'brown': 'brown',
+        'gray': 'gray',
+        'grey': 'gray',
+        'pink': 'pink',
+        'purple': 'purple',
+        'orange': 'orange',
+        'navy': 'navy',
+        'maroon': 'maroon',
+        'beige': 'beige'
+      };
+      return colorMap[color.toLowerCase()] || 'gray';
+    }
+
+    function addColorIndicators(selectElement, colors) {
+      // Create a custom dropdown wrapper
+      const wrapper = selectElement.parentElement;
+      let customDropdown = wrapper.querySelector('.custom-color-dropdown');
+
+      if (customDropdown) {
+        customDropdown.remove();
+      }
+
+      if (colors.length > 0) {
+        customDropdown = document.createElement('div');
+        customDropdown.className = 'custom-color-dropdown';
+        customDropdown.style.cssText = `
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          background: white;
+          border: 2px solid #e2e8f0;
+          border-radius: 8px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          z-index: 1000;
+          max-height: 200px;
+          overflow-y: auto;
+          display: none;
         `;
-        
-        const indicator = document.createElement('div');
-        indicator.className = `color-indicator ${getColorClass(color)}`;
-        
-        const text = document.createElement('span');
-        text.textContent = getColorDisplayName(color);
-        text.style.fontSize = '0.95rem';
-        
-        option.appendChild(indicator);
-        option.appendChild(text);
-        
-        option.addEventListener('mouseenter', () => {
-          option.style.background = '#f8fafc';
+
+        colors.forEach(color => {
+          const option = document.createElement('div');
+          option.className = 'color-option';
+          option.style.cssText = `
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+          `;
+          option.innerHTML = `
+            <span class="color-indicator ${getColorClass(color)}"></span>
+            <span>${getColorDisplayName(color)}</span>
+          `;
+
+          option.addEventListener('click', () => {
+            selectElement.value = color;
+            selectElement.dispatchEvent(new Event('change'));
+            customDropdown.style.display = 'none';
+          });
+
+          customDropdown.appendChild(option);
         });
-        
-        option.addEventListener('mouseleave', () => {
-          option.style.background = 'transparent';
+
+        wrapper.appendChild(customDropdown);
+
+        // Toggle dropdown
+        selectElement.addEventListener('click', (e) => {
+          e.preventDefault();
+          const isVisible = customDropdown.style.display === 'block';
+          customDropdown.style.display = isVisible ? 'none' : 'block';
         });
-        
-        option.addEventListener('click', () => {
-          selectElement.value = color;
-          selectElement.dispatchEvent(new Event('change'));
-          customDropdown.style.display = 'none';
-        });
-        
-        customDropdown.appendChild(option);
-      });
-      
-      wrapper.style.position = 'relative';
-      wrapper.appendChild(customDropdown);
-      
-      // Show/hide custom dropdown
-      selectElement.addEventListener('focus', () => {
-        if (colors.length > 0) {
-          customDropdown.style.display = 'block';
-        }
-      });
-      
-      selectElement.addEventListener('blur', (e) => {
-        // Delay hiding to allow clicking on options
-        setTimeout(() => {
-          if (!customDropdown.contains(document.activeElement)) {
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+          if (!wrapper.contains(e.target)) {
             customDropdown.style.display = 'none';
           }
-        }, 200);
-      });
-    }
-  }
-  
-  // Helper to set whether modal overlay is open and prevent body scroll
-  function showItemModal() {
-    const overlay = document.getElementById('itemModal');
-    if (!overlay) return;
-    overlay.style.display = 'flex';
-    overlay.classList.add('show');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function hideItemModal() {
-    const overlay = document.getElementById('itemModal');
-    if (!overlay) return;
-    overlay.style.display = 'none';
-    overlay.classList.remove('show');
-    document.body.style.overflow = 'auto';
-  }
-
-  /* NOTE: removed duplicate openItemModal/closeItemModal stubs so the
-     main implementation (above) is used. The helpers `showItemModal`
-     and `hideItemModal` are used by the main functions to centralize
-     modal show/hide behavior. */
-
-  // Baho berish modal
-  let currentRatingItemId = null;
-  let selectedMenuRating = 0;
-
-  function openRatingModal(itemId, event) {
-      event.stopPropagation();
-      currentRatingItemId = itemId;
-
-      const item = menuData[itemId];
-      if (!item) return;
-
-      // Rating modal yaratish
-      const ratingModal = document.createElement('div');
-      ratingModal.id = 'ratingModal';
-      ratingModal.className = 'modal-overlay rating-modal';
-      ratingModal.innerHTML = `
-          <div class="rating-modal-content" onclick="event.stopPropagation()">
-              <div class="rating-modal-header">
-                  <h3>${item.name} uchun baho bering</h3>
-                  <button class="modal-close" onclick="closeRatingModal()">✕</button>
-              </div>
-              <div class="rating-modal-body">
-                  <div class="rating-item-info">
-                      <img src="${item.image}" alt="${item.name}" class="rating-item-image">
-                      <p class="rating-item-name">${item.name}</p>
-                  </div>
-
-                  <div class="rating-form">
-                      <h4>Bahongizni bering:</h4>
-                      <div class="stars-rating">
-                          <span class="rating-star" data-rating="1">⭐</span>
-                          <span class="rating-star" data-rating="2">⭐</span>
-                          <span class="rating-star" data-rating="3">⭐</span>
-                          <span class="rating-star" data-rating="4">⭐</span>
-                          <span class="rating-star" data-rating="5">⭐</span>
-                      </div>
-                      <textarea id="ratingComment" placeholder="Mahsulot haqida fikringizni yozing..." rows="4"></textarea>
-                      <button onclick="submitRating()" class="btn-submit-rating" id="submit-rating" style="display: none;">
-                          📝 Baho berish
-                      </button>
-                  </div>
-              </div>
-          </div>
-      `;
-
-      document.body.appendChild(ratingModal);
-      ratingModal.style.display = 'flex';
-      document.body.style.overflow = 'hidden';
-
-      // Stars event listeners
-      selectedMenuRating = 0;
-      document.querySelectorAll('.rating-star').forEach(star => {
-          star.addEventListener('click', function() {
-              selectedMenuRating = parseInt(this.dataset.rating);
-              updateRatingStars(selectedMenuRating);
-              document.getElementById('submit-rating').style.display = 'block';
-          });
-
-          star.addEventListener('mouseover', function() {
-              const rating = parseInt(this.dataset.rating);
-              highlightRatingStars(rating);
-          });
-      });
-
-      document.querySelector('.rating-form').addEventListener('mouseleave', function() {
-          updateRatingStars(selectedMenuRating);
-      });
-  }
-
-  function closeRatingModal() {
-      const modal = document.getElementById('ratingModal');
-      if (modal) {
-          modal.remove();
-          document.body.style.overflow = 'auto';
+        });
       }
-      currentRatingItemId = null;
-      selectedMenuRating = 0;
-  }
+    }
 
-  function highlightRatingStars(rating) {
-      document.querySelectorAll('.rating-star').forEach((star, index) => {
-          if (index < rating) {
-              star.style.color = '#ffd700';
-              star.style.transform = 'scale(1.2)';
-          } else {
-              star.style.color = '#ddd';
-              star.style.transform = 'scale(1)';
-          }
-      });
-  }
+    // Add missing keyframes animations
+    const style = document.createElement('style');
+    style.textContent = `
+      /* Missing keyframe animations */
+      @keyframes brandGlow {
+        0% {
+          text-shadow:
+            0 2px 4px rgba(0, 0, 0, 0.8),
+            0 0 25px rgba(255, 102, 0, 0.8),
+            0 0 35px rgba(255, 102, 0, 0.6);
+        }
+        100% {
+          text-shadow:
+            0 2px 4px rgba(0, 0, 0, 0.8),
+            0 0 35px rgba(255, 102, 0, 1),
+            0 0 45px rgba(255, 102, 0, 0.8);
+        }
+      }
 
-  function updateRatingStars(rating) {
-      highlightRatingStars(rating);
-  }
+      @keyframes iconRotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
 
-  function submitRating() {
-      if (selectedMenuRating === 0) {
-          showToast('Iltimos, baho tanlang!', 'warning');
+      @keyframes iconWave {
+        0%, 100% { transform: rotate(0deg); }
+        25% { transform: rotate(-10deg); }
+        75% { transform: rotate(10deg); }
+      }
+
+      @keyframes iconScale {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+      }
+
+      @keyframes iconPulse {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.1); opacity: 0.8; }
+      }
+
+      @keyframes premiumBadgePulse {
+        0%, 100% {
+          transform: scale(1);
+          box-shadow: 0 4px 20px rgba(255, 102, 0, 0.5);
+        }
+        50% {
+          transform: scale(1.05);
+          box-shadow: 0 6px 25px rgba(255, 102, 0, 0.7);
+        }
+      }
+
+      @keyframes premiumShine {
+        0% { transform: translateX(-200%); }
+        100% { transform: translateX(200%); }
+      }
+
+      @keyframes checkGlow {
+        0%, 100% {
+          text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+          transform: scale(1);
+        }
+        50% {
+          text-shadow: 0 0 15px rgba(255, 255, 255, 1);
+          transform: scale(1.1);
+        }
+      }
+
+      @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+
+      @keyframes diamondSpin {
+        0%, 100% { transform: rotate(0deg); }
+        50% { transform: rotate(180deg); }
+      }
+
+      @keyframes enhancedQualityFloat {
+        0%, 100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+
+      @keyframes qualityShine {
+        0% { left: -100%; }
+        100% { left: 100%; }
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Safe loader for initial menu data. If server didn't render menu items
+    // into the DOM, build them from `menuData`. Keeps page robust to both
+    // server-side and client-side rendering modes.
+    function loadMenuData() {
+      try {
+        const existing = document.querySelectorAll('.menu-grid .menu-item');
+        if (existing && existing.length > 0) {
+          // Server already rendered items; nothing to do.
           return;
+        }
+
+        const items = Object.keys(menuData || {}).map(k => {
+          const it = menuData[k];
+          // ensure an id property
+          return Object.assign({ id: parseInt(k, 10) }, it);
+        });
+
+        if (items.length > 0) {
+          renderMenuItems(items);
+        }
+      } catch (e) {
+        console.warn('loadMenuData error', e);
       }
+    }
 
-      const comment = document.getElementById('ratingComment').value.trim();
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', function() {
+      updateCartCountDisplay();
+      try { loadMenuData(); } catch(e) { console.warn('loadMenuData failed', e); }
+      // If server rendered items exist, ensure menuData is populated from DOM
+      try { buildMenuDataFromDOM(); } catch(e) { console.warn('buildMenuDataFromDOM failed', e); }
+      // Instrumentation: helpful debug logs to capture whether handlers attach
+      try { console.log('DOMContentLoaded: menu-grid items', document.querySelectorAll('.menu-grid .menu-item').length); } catch(e) {}
+      try { console.log('DOMContentLoaded: menuData keys', Object.keys(menuData||{}).length); } catch(e) {}
+      // Fallback: ensure menu-item cards open modal when clicked (defensive)
+      try {
+        document.querySelectorAll('.menu-item').forEach(card => {
+          if (card._hasClickFallback) return;
+          card._hasClickFallback = true;
+          card.addEventListener('click', function(e) {
+            try {
+              const id = card.dataset && card.dataset.id ? card.dataset.id : (card.getAttribute && (card.getAttribute('onclick') || '').match(/openItemModal\((\d+)\)/) || [])[1];
+              if (id) openItemModal(parseInt(id, 10));
+            } catch(err) { console.warn('menu-item click fallback failed', err); }
+          });
+        });
+      } catch(err) { console.warn('menu-item fallback registration failed', err); }
+    });
 
-      fetch('/api/submit-rating', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-              'X-CSRF-Token': '{{ csrf_token }}'
-          },
-          body: JSON.stringify({
-              menu_item_id: currentRatingItemId,
-              rating: selectedMenuRating,
-              comment: comment,
-              csrf_token: '{{ csrf_token }}'
-          })
-      })
-      .then(response => response.json())
-      .then(data => {
-          if (data.success) {
-              showToast('Baho muvaffaqiyatli saqlandi! Rahmat!', 'success');
-              closeRatingModal();
-              // Sahifani yangilash
-              setTimeout(() => {
-                window.location.reload();
-              }, 1500);
-          } else {
-              showToast('Xatolik: ' + (data.message || 'Noma\'lum xatolik'), 'error');
+    // Build menuData from server-rendered DOM cards so client-side filters can work
+    function buildMenuDataFromDOM() {
+      try {
+        const cards = document.querySelectorAll('.menu-grid .menu-item');
+        if (!cards || cards.length === 0) return;
+        // Only build if menuData is empty to avoid overwriting dynamic loads
+        if (!menuData || Object.keys(menuData).length === 0) menuData = {};
+        cards.forEach(card => {
+          try {
+            const id = card.dataset && card.dataset.id ? parseInt(card.dataset.id, 10) : null;
+            if (!id) return;
+            const nameEl = card.querySelector('.item-name');
+            const descEl = card.querySelector('.item-description');
+            const imgEl = card.querySelector('.item-image img');
+            const ratingText = card.querySelector('.rating-text');
+            const ratingVal = ratingText ? parseFloat((ratingText.textContent||'').match(/([0-9]+\.?[0-9]*)/)?.[1] || '0') : 0;
+            const ordersMatch = ratingText ? (ratingText.textContent||'').match(/\((\d+) buyurtma\)/) : null;
+            const ordersCount = ordersMatch ? parseInt(ordersMatch[1], 10) : 0;
+            const category = card.dataset && card.dataset.category ? card.dataset.category : '';
+            menuData[id] = {
+              id: id,
+              name: nameEl ? nameEl.textContent.trim() : ('Item ' + id),
+              description: descEl ? descEl.textContent.trim() : '',
+              image_url: imgEl ? (imgEl.getAttribute('src') || '') : '',
+              rating: ratingVal || 0,
+              orders_count: ordersCount || 0,
+              sizes: '',
+              colors: '',
+              category: category || 'product'
+            };
+          } catch(e) { /* ignore individual card parse errors */ }
+        });
+      } catch (e) { console.warn('buildMenuDataFromDOM error', e); }
+    }
+
+    // Grid-level pointerup fallback: opens item modal if card click handlers fail
+    try {
+      const gridEl = document.querySelector('.menu-grid');
+      if (gridEl) {
+        // pointerup was passive previously; on some mobile browsers this
+        // can be swallowed or delayed. Add a capture-phase, non-passive
+        // pointerdown listener as a stronger fallback for touch interactions.
+        gridEl.addEventListener('pointerdown', function(e) {
+          try {
+            if (e.target.closest && e.target.closest('a, button, input, select, textarea, form')) return;
+            const card = e.target.closest && e.target.closest('.menu-item');
+            if (!card) return;
+            const id = card.dataset && card.dataset.id ? card.dataset.id : (card.getAttribute && (card.getAttribute('onclick') || '').match(/openItemModal\((\d+)\)/) || [])[1];
+            if (id) {
+              // debug
+              try { console.log('grid-level pointerup -> openItemModal', id); } catch(e){}
+              openItemModal(parseInt(id, 10));
+            }
+          } catch(err) { console.warn('grid pointerup fallback error', err); }
+        }, { passive: false, capture: true });
+      }
+    } catch(e) { console.warn('grid pointerup fallback registration failed', e); }
+
+
+    // Helper function to create color dropdown for items
+    function createColorDropdown(selectElement, wrapper, colors) {
+      if (colors && colors.length > 0) {
+        const customDropdown = document.createElement('div');
+        customDropdown.className = 'custom-color-dropdown';
+        customDropdown.style.cssText = `
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          background: white;
+          border: 2px solid #e2e8f0;
+          border-top: none;
+          border-radius: 0 0 12px 12px;
+          max-height: 200px;
+          overflow-y: auto;
+          z-index: 1000;
+          display: none;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        `;
+
+        colors.forEach(color => {
+          const option = document.createElement('div');
+          option.className = 'color-option';
+          option.style.cssText = `
+            padding: 10px 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.2s ease;
+          `;
+
+          const indicator = document.createElement('div');
+          indicator.className = `color-indicator ${getColorClass(color)}`;
+
+          const text = document.createElement('span');
+          text.textContent = getColorDisplayName(color);
+          text.style.fontSize = '0.95rem';
+
+          option.appendChild(indicator);
+          option.appendChild(text);
+
+          option.addEventListener('mouseenter', () => {
+            option.style.background = '#f8fafc';
+          });
+
+          option.addEventListener('mouseleave', () => {
+            option.style.background = 'transparent';
+          });
+
+          option.addEventListener('click', () => {
+            selectElement.value = color;
+            selectElement.dispatchEvent(new Event('change'));
+            customDropdown.style.display = 'none';
+          });
+
+          customDropdown.appendChild(option);
+        });
+
+        wrapper.style.position = 'relative';
+        wrapper.appendChild(customDropdown);
+
+        // Show/hide custom dropdown
+        selectElement.addEventListener('focus', () => {
+          if (colors.length > 0) {
+            customDropdown.style.display = 'block';
           }
-      })
-      .catch(error => {
-          console.error('Error:', error);
-          showToast('Baho berishda xatolik yuz berdi', 'error');
+        });
+
+        selectElement.addEventListener('blur', (e) => {
+          // Delay hiding to allow clicking on options
+          setTimeout(() => {
+            if (!customDropdown.contains(document.activeElement)) {
+              customDropdown.style.display = 'none';
+            }
+          }, 200);
+        });
+      }
+    }
+
+    // Helper to set whether modal overlay is open and prevent body scroll
+    function showItemModal() {
+      const overlay = document.getElementById('itemModal');
+      if (!overlay) return;
+      overlay.style.display = 'flex';
+      overlay.classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function hideItemModal() {
+      const overlay = document.getElementById('itemModal');
+      if (!overlay) return;
+      overlay.style.display = 'none';
+      overlay.classList.remove('show');
+      document.body.style.overflow = 'auto';
+    }
+
+    /* NOTE: removed duplicate openItemModal/closeItemModal stubs so the
+       main implementation (above) is used. The helpers `showItemModal`
+       and `hideItemModal` are used by the main functions to centralize
+       modal show/hide behavior. */
+
+    // Baho berish modal
+    let currentRatingItemId = null;
+    let selectedMenuRating = 0;
+
+    function openRatingModal(itemId, event) {
+        event.stopPropagation();
+        currentRatingItemId = itemId;
+
+        const item = menuData[itemId];
+        if (!item) return;
+
+        // Rating modal yaratish
+        const ratingModal = document.createElement('div');
+        ratingModal.id = 'ratingModal';
+        ratingModal.className = 'modal-overlay rating-modal';
+        ratingModal.innerHTML = `
+            <div class="rating-modal-content" onclick="event.stopPropagation()">
+                <div class="rating-modal-header">
+                    <h3>${item.name} uchun baho bering</h3>
+                    <button class="modal-close" onclick="closeRatingModal()">✕</button>
+                </div>
+                <div class="rating-modal-body">
+                    <div class="rating-item-info">
+                        <img src="${item.image}" alt="${item.name}" class="rating-item-image">
+                        <p class="rating-item-name">${item.name}</p>
+                    </div>
+
+                    <div class="rating-form">
+                        <h4>Bahongizni bering:</h4>
+                        <div class="stars-rating">
+                            <span class="rating-star" data-rating="1">⭐</span>
+                            <span class="rating-star" data-rating="2">⭐</span>
+                            <span class="rating-star" data-rating="3">⭐</span>
+                            <span class="rating-star" data-rating="4">⭐</span>
+                            <span class="rating-star" data-rating="5">⭐</span>
+                        </div>
+                        <textarea id="ratingComment" placeholder="Mahsulot haqida fikringizni yozing..." rows="4"></textarea>
+                        <button onclick="submitRating()" class="btn-submit-rating" id="submit-rating" style="display: none;">
+                            📝 Baho berish
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(ratingModal);
+        ratingModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+
+        // Stars event listeners
+        selectedMenuRating = 0;
+        document.querySelectorAll('.rating-star').forEach(star => {
+            star.addEventListener('click', function() {
+                selectedMenuRating = parseInt(this.dataset.rating);
+                updateRatingStars(selectedMenuRating);
+                document.getElementById('submit-rating').style.display = 'block';
+            });
+
+            star.addEventListener('mouseover', function() {
+                const rating = parseInt(this.dataset.rating);
+                highlightRatingStars(rating);
+            });
+        });
+
+        document.querySelector('.rating-form').addEventListener('mouseleave', function() {
+            updateRatingStars(selectedMenuRating);
+        });
+    }
+
+    function closeRatingModal() {
+        const modal = document.getElementById('ratingModal');
+        if (modal) {
+            modal.remove();
+            document.body.style.overflow = 'auto';
+        }
+        currentRatingItemId = null;
+        selectedMenuRating = 0;
+    }
+
+    function highlightRatingStars(rating) {
+        document.querySelectorAll('.rating-star').forEach((star, index) => {
+            if (index < rating) {
+                star.style.color = '#ffd700';
+                star.style.transform = 'scale(1.2)';
+            } else {
+                star.style.color = '#ddd';
+                star.style.transform = 'scale(1)';
+            }
+        });
+    }
+
+    function updateRatingStars(rating) {
+        highlightRatingStars(rating);
+    }
+
+    function submitRating() {
+        if (selectedMenuRating === 0) {
+            showToast('Iltimos, baho tanlang!', 'warning');
+            return;
+        }
+
+        const comment = document.getElementById('ratingComment').value.trim();
+
+        fetch('/api/submit-rating', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                menu_item_id: currentRatingItemId,
+                rating: selectedMenuRating,
+                comment: comment,
+                csrf_token: '{{ csrf_token }}'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast('Baho muvaffaqiyatli saqlandi! Rahmat!', 'success');
+                closeRatingModal();
+                // Update rating on product card (no reload)
+                if (menuData[currentRatingItemId]) {
+                  menuData[currentRatingItemId].rating = data.new_rating || selectedMenuRating;
+                  // Update the card's rating section
+          // Prefer finding the card by data-id which works for both server-rendered
+          // and client-rendered cards (onclick attribute string matching is unreliable).
+          const card = document.querySelector('.menu-item[data-id="' + currentRatingItemId + '"]');
+                  if (card) {
+                    const ratingSection = card.querySelector('.rating-section');
+                    if (ratingSection) {
+                      let starsHtml = '';
+                      for (let i = 1; i <= 5; i++) {
+                        starsHtml += `<span class="star${i <= menuData[currentRatingItemId].rating ? ' filled' : ''}">⭐</span>`;
+                      }
+                      ratingSection.querySelector('.stars').innerHTML = starsHtml;
+                      ratingSection.querySelector('.rating-text').textContent = `${menuData[currentRatingItemId].rating.toFixed(1)} (${menuData[currentRatingItemId].orders_count || 0} buyurtma)`;
+                    }
+                  }
+                }
+            } else {
+                showToast('Xatolik: ' + (data.message || 'Noma\'lum xatolik'), 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Baho berishda xatolik yuz berdi', 'error');
+        });
+      }
+
+    // Manual menu refresh function
+    function manualMenuRefresh() {
+      // Optionally show loading indicator
+      const btn = document.getElementById('manualMenuRefreshBtn');
+      if (btn) { btn.disabled = true; btn.textContent = '⏳ Yuklanmoqda...'; }
+    // Use the existing menu-search API (no params = full list)
+    fetch('/api/menu-search')
+        .then(r => r.json())
+        .then(data => {
+          if (data && data.success && Array.isArray(data.items)) {
+            renderMenuItems(data.items);
+            // Update menuData for modals, etc.
+            menuData = {};
+            data.items.forEach(it => { menuData[it.id] = it; });
+          } else {
+            showToast('Menyu yangilashda xatolik', 'error');
+          }
+        })
+        .catch(() => showToast('Menyu yangilashda xatolik', 'error'))
+        .finally(() => { if (btn) { btn.disabled = false; btn.textContent = '🔃 Menyuni yangilash'; } });
+    }
+
+      // Mobile filter toggle function
+      function toggleMobileFilter() {
+        const sidebar = document.querySelector('.filter-sidebar');
+        if (sidebar) {
+          sidebar.classList.toggle('show');
+        }
+      }
+
+      // Close mobile filter when clicking outside (for mobile)
+      document.addEventListener('click', function(event) {
+        const sidebar = document.querySelector('.filter-sidebar');
+        const toggleBtn = document.querySelector('.mobile-filter-toggle');
+
+        if (window.innerWidth <= 768 && sidebar && sidebar.classList.contains('show')) {
+          if (!sidebar.contains(event.target) && !toggleBtn.contains(event.target)) {
+            sidebar.classList.remove('show');
+          }
+        }
       });
-    }
 
-    // Mobile filter toggle function
-    function toggleMobileFilter() {
-      const sidebar = document.querySelector('.filter-sidebar');
-      if (sidebar) {
-        sidebar.classList.toggle('show');
-      }
-    }
-
-    // Close mobile filter when clicking outside (for mobile)
-    document.addEventListener('click', function(event) {
-      const sidebar = document.querySelector('.filter-sidebar');
-      const toggleBtn = document.querySelector('.mobile-filter-toggle');
-      
-      if (window.innerWidth <= 768 && sidebar && sidebar.classList.contains('show')) {
-        if (!sidebar.contains(event.target) && !toggleBtn.contains(event.target)) {
-          sidebar.classList.remove('show');
+      // Enhanced scroll behavior for fixed sidebar
+      window.addEventListener('scroll', function() {
+        const sidebar = document.querySelector('.filter-sidebar');
+        if (sidebar && window.innerWidth > 768) {
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+          if (scrollTop > 50) {
+            sidebar.style.top = '20px';
+          } else {
+            sidebar.style.top = '100px';
+          }
         }
-      }
-    });
+      });
 
-    // Enhanced scroll behavior for fixed sidebar
-    window.addEventListener('scroll', function() {
-      const sidebar = document.querySelector('.filter-sidebar');
-      if (sidebar && window.innerWidth > 768) {
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        if (scrollTop > 50) {
-          sidebar.style.top = '20px';
-        } else {
-          sidebar.style.top = '100px';
+      // Delegated click handler: use capture phase so we see clicks before inner
+      // controls call stopPropagation. Still ignore deliberate interactive
+      // elements (links, buttons, forms) so their normal behavior stays intact.
+      document.addEventListener('click', function(e) {
+        try {
+          // If the click is inside an interactive control, skip handling it here
+          if (e.target.closest && e.target.closest('a, button, input, select, textarea, form')) return;
+
+          const card = e.target.closest && e.target.closest('.menu-item');
+          if (!card) return;
+
+          // If the card has a data-id, use it; otherwise try to extract from onclick
+          const id = (card.dataset && card.dataset.id) ? card.dataset.id : (card.getAttribute && (card.getAttribute('onclick') || '').match(/openItemModal\((\d+)\)/) || [])[1];
+          if (id) {
+            // debug hook to aid troubleshooting in the browser console (use log so it's visible)
+            try { console.log('menu-item click -> openItemModal', id, e.target); } catch (e) {}
+            openItemModal(parseInt(id, 10));
+          }
+        } catch (err) {
+          console.warn('menu-item delegated click error', err);
         }
+      }, true); // use capture phase
+
+      // Attach robust handlers to individual cards: pointerdown (fires earlier)
+      // and keyboard support. This complements the delegated listener and helps
+      // in environments where child elements call stopPropagation.
+      function attachCardHandlers() {
+  const grid = document.querySelector('.menu-grid');
+  if (!grid) return;
+  const cards = grid.querySelectorAll('.menu-item');
+  try { console.log('attachCardHandlers: found', cards.length, 'cards'); } catch(e){}
+  cards.forEach(card => {
+          try {
+            if (card._hasPointerHandler) return; // idempotent
+            card._hasPointerHandler = true;
+            // make card keyboard-focusable / accessible
+            if (!card.hasAttribute('role')) card.setAttribute('role', 'button');
+            if (!card.hasAttribute('tabindex')) card.setAttribute('tabindex', '0');
+
+            card.addEventListener('pointerdown', function(e) {
+              // Ignore clicks that originate from interactive controls inside the card
+              if (e.target.closest && e.target.closest('a, button, input, select, textarea, form')) return;
+              const id = (card.dataset && card.dataset.id) ? card.dataset.id : (card.getAttribute && (card.getAttribute('onclick') || '').match(/openItemModal\((\d+)\)/) || [])[1];
+              if (id) {
+                console.log('menu-item pointerdown -> openItemModal', id, e.target);
+                try { openItemModal(parseInt(id, 10)); } catch (err) { console.warn('openItemModal error', err); }
+                e.preventDefault();
+              }
+            }, { capture: true });
+
+            // keyboard activation (Enter / Space)
+            card.addEventListener('keydown', function(e) {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                const id = (card.dataset && card.dataset.id) ? card.dataset.id : (card.getAttribute && (card.getAttribute('onclick') || '').match(/openItemModal\((\d+)\)/) || [])[1];
+                if (id) { try { openItemModal(parseInt(id, 10)); } catch (err) { console.warn('openItemModal error', err); } }
+              }
+            });
+          } catch (e) { console.warn('attachCardHandlers error', e); }
+        });
       }
-    });
+
+      // Run once now and whenever menu items are re-rendered dynamically
+    try { attachCardHandlers(); } catch (e) { console.warn('initial attachCardHandlers failed', e); }
+
+      const menuGrid = document.querySelector('.menu-grid');
+      if (menuGrid && window.MutationObserver) {
+        const mo = new MutationObserver(function() { attachCardHandlers(); });
+        mo.observe(menuGrid, { childList: true, subtree: true });
+        // Extra safety: some server-side templates or other scripts may modify
+        // the DOM after load. Retry building menuData a couple times to ensure
+        // client-side filtering has the cache it needs.
+        setTimeout(() => { try { buildMenuDataFromDOM(); } catch(e){} }, 250);
+        setTimeout(() => { try { buildMenuDataFromDOM(); } catch(e){} }, 1200);
+
+        // Additional click fallback on the grid (capture) to handle edge mobile cases
+        try {
+          menuGrid.addEventListener('click', function(e) {
+            try {
+              if (e.target.closest && e.target.closest('a, button, input, select, textarea, form')) return;
+              const card = e.target.closest && e.target.closest('.menu-item');
+              if (!card) return;
+              const id = card.dataset && card.dataset.id ? card.dataset.id : (card.getAttribute && (card.getAttribute('onclick') || '').match(/openItemModal\((\d+)\)/) || [])[1];
+              if (id) {
+                try { console.log('menu-grid click fallback -> openItemModal', id); } catch(e){}
+                openItemModal(parseInt(id, 10));
+              }
+            } catch(err) { console.warn('menuGrid click fallback error', err); }
+          }, { capture: true });
+        } catch (err) { /* ignore */ }
+      }
 </script>
 {% endblock %}

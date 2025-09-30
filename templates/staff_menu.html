@@ -23,14 +23,8 @@
           <label>Kategoriya:</label>
           <select name="category" required>
             <option value="">Tanlang</option>
-            <option value="tufli">👞 Tufli</option>
-            <option value="etik">🥾 Etik</option>
-            <option value="mokasima">🩴 Mokasima</option>
-            <option value="krosovka">👟 Krosovka</option>
-            <option value="botik">🩰 Botik</option>
-            <option value="tapochka">🏠 Tapochka</option>
-            <option value="sandal">👡 Sandal</option>
-            <option value="tuflya">👠 Tuflya</option>
+            <option value="specobuv">🥾 Спецобувь</option>
+            <option value="specodezhda">🦺 Спецодежда</option>
           </select>
         </div>
         <div>
@@ -41,7 +35,10 @@
             accept="image/*,video/*"
             multiple
             placeholder="Rasm va videolar tanlang" />
-          <small class="text-muted">Ko'p fayllarni birga tanlash mumkin. Birinchi rasm asosiy bo'ladi.</small>
+          <small class="text-muted"
+            >Ko'p fayllarni birga tanlash mumkin. Birinchi rasm asosiy
+            bo'ladi.</small
+          >
         </div>
         <div>
           <label>Chegirma (%):</label>
@@ -118,15 +115,13 @@
 
           <div class="item-info">
             <span class="category">
-              {% if item.category == 'tufli' %}👞 Tufli
-              {% elif item.category == 'etik' %}🥾 Etik
-              {% elif item.category == 'mokasima' %}🩴 Mokasima
-              {% elif item.category == 'krosovka' %}👟 Krosovka
-              {% elif item.category == 'botik' %}🩰 Botik
-              {% elif item.category == 'tapochka' %}🏠 Tapochka
-              {% elif item.category == 'sandal' %}👡 Sandal
-              {% elif item.category == 'tuflya' %}👠 Tuflya
-              {% else %}👟 Oyoq kiyim{% endif %}
+              {% if item.category == 'tufli' %}👞 Tufli {% elif item.category ==
+              'etik' %}🥾 Etik {% elif item.category == 'mokasima' %}🩴 Mokasima
+              {% elif item.category == 'krosovka' %}👟 Krosovka {% elif
+              item.category == 'botik' %}🩰 Botik {% elif item.category ==
+              'tapochka' %}🏠 Tapochka {% elif item.category == 'sandal' %}👡
+              Sandal {% elif item.category == 'tuflya' %}👠 Tuflya {% else %}👟
+              Oyoq kiyim{% endif %}
             </span>
             <span
               class="status {% if item.available %}available{% else %}unavailable{% endif %}">
@@ -192,7 +187,11 @@
                   name="colors"
                   value="{{ item.colors or '' }}"
                   placeholder="Ranglar (black,brown)" />
-                <input type="file" name="media_files" accept="image/*,video/*" multiple />
+                <input
+                  type="file"
+                  name="media_files"
+                  accept="image/*,video/*"
+                  multiple />
                 <textarea name="description" placeholder="Tavsif">
 {{ item.description }}</textarea
                 >
@@ -704,11 +703,19 @@
 
   function deleteMenuItem(itemId, itemName) {
     // Ikki marta tasdiqlash - xavfsizlik uchun
-    if (!confirm(`Haqiqatan ham '${itemName}' mahsulotini butunlay o'chirmoqchimisiz?\n\n⚠️ DIQQAT: Bu amalni bekor qilish mumkin emas!`)) {
+    if (
+      !confirm(
+        `Haqiqatan ham '${itemName}' mahsulotini butunlay o'chirmoqchimisiz?\n\n⚠️ DIQQAT: Bu amalni bekor qilish mumkin emas!`
+      )
+    ) {
       return;
     }
-    
-    if (!confirm("Oxirgi tasdiqlash: Mahsulot va unga bog'liq barcha ma'lumotlar (buyurtmalar, baholar, sevimlilar) o'chiriladi. Davom etasizmi?")) {
+
+    if (
+      !confirm(
+        "Oxirgi tasdiqlash: Mahsulot va unga bog'liq barcha ma'lumotlar (buyurtmalar, baholar, sevimlilar) o'chiriladi. Davom etasizmi?"
+      )
+    ) {
       return;
     }
 
