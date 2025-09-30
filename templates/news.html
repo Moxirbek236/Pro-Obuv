@@ -44,38 +44,82 @@
         transform: translateX(-100%);
       }
     }
+    /* Unified news card styles */
     .news-item {
-      margin-bottom: 28px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 220px; /* uniform card height for visual consistency */
+    }
+    .news-item .d-flex {
+      align-items: center;
+      gap: 10px;
     }
     .news-media {
-      margin-top: 12px;
-      margin-bottom: 12px;
+      margin-top: 6px;
+      margin-bottom: 6px;
+      width: 100%;
+      max-height: 360px;
+      overflow: hidden;
+      border-radius: 8px;
+      display: block;
+    }
+    .news-media img,
+    .news-media video,
+    .news-media iframe {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .news-body {
+      flex: 1 1 auto;
+      overflow: hidden;
+    }
+
+    /* Responsive stack for narrower screens */
+    @media (min-width: 900px) {
+      #news-list .news-item {
+        flex-direction: row;
+        align-items: stretch;
+        min-height: 180px;
+      }
+      .news-media {
+        width: 34%;
+        max-width: 420px;
+      }
+      .news-body {
+        width: 66%;
+        padding-left: 16px;
+      }
+    }
+    @media (max-width: 899px) {
+      .news-item {
+        min-height: auto;
+      }
+    }
+    /* Date positioning inside news card */
+    .news-card-date {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.6);
+      background: rgba(0, 0, 0, 0.15);
+      padding: 4px 8px;
+      border-radius: 6px;
     }
   </style>
 
   {% if news %}
   <div id="news-list">
     {% for item in news %}
-    <article class="news-item card p-3">
+    <article class="news-item card p-3 position-relative">
       <div class="d-flex justify-content-between align-items-center mb-2">
         <h3 class="h5 mb-0">{{ item.title }}</h3>
-        <small class="text-muted"
-          >{{ item.created_at.split('T')[0] if item.created_at else '' }}</small
-        >
       </div>
 
       <div class="news-media">
-        {% if item.image or item.image_url %}
-        <img
-          src="{{ item.image_url or item.image }}"
-          alt="{{ item.title }}"
-          style="
-            max-width: 100%;
-            height: auto;
-            border-radius: 6px;
-            border: 1px solid #eee;
-          " />
-        {% endif %} {% if item.youtube_url %}
+        {% if item.youtube_embed %}
         <div
           style="
             position: relative;
@@ -83,37 +127,43 @@
             height: 0;
             overflow: hidden;
             border-radius: 8px;
-            margin-top: 8px;
           ">
           <iframe
-            src="{{ item.youtube_url|replace('watch?v=','embed/') }}"
+            src="{{ item.youtube_embed }}"
             style="
               position: absolute;
-              top: 0;
-              left: 0;
+              inset: 0;
               width: 100%;
               height: 100%;
               border: 0;
             "
             allowfullscreen></iframe>
         </div>
-        {% endif %} {% if item.video or item.video_url %}
-        <video
-          controls
-          style="
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            margin-top: 8px;
-          ">
-          <source src="{{ item.video_url or item.video }}" />
-          Your browser does not support the video tag.
-        </video>
+        {% elif item.video or item.video_url %}
+        <div style="width: 100%; height: 100%">
+          <video
+            controls
+            style="
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+              border-radius: 8px;
+            ">
+            <source src="{{ item.video_url or item.video }}" />
+          </video>
+        </div>
+        {% elif item.image or item.image_url %}
+        <img src="{{ item.image_url or item.image }}" alt="{{ item.title }}" />
         {% endif %}
       </div>
 
       <div class="news-body">
         <p>{{ (item.description or item.content) | safe }}</p>
+      </div>
+      <div style="position: absolute; right: 12px; bottom: 12px">
+        <small class="text-muted news-card-date"
+          >{{ item.created_at.split('T')[0] if item.created_at else '' }}</small
+        >
       </div>
     </article>
     {% endfor %}
@@ -185,7 +235,7 @@
                 style="display: none; max-width: 180px; margin-top: 8px" />
             </div>
             <div class="col-md-6">
-              <label class="form-label">Video</label>
+              <label class="form-label">Video (yuklash yoki YouTube URL)</label>
               <input
                 type="file"
                 id="newsVideoFilePublic"
@@ -198,6 +248,43 @@
                 style="display: none; max-width: 180px; margin-top: 8px"
                 controls
                 muted></video>
+
+              <div class="mt-2">
+                <label class="form-label">YouTube URL (ixtiyoriy)</label>
+                <input
+                  type="url"
+                  id="newsYoutubeUrlPublic"
+                  class="form-control"
+                  placeholder="https://www.youtube.com/watch?v=..." />
+                <small class="form-text text-muted"
+                  >Agar YouTube havolasi kiritilsa, yuklangan video o'rniga shu
+                  manba ishlatiladi.</small
+                >
+
+                <div
+                  id="youtubePreviewPublicContainer"
+                  style="
+                    display: none;
+                    margin-top: 8px;
+                    position: relative;
+                    padding-bottom: 56.25%;
+                    height: 0;
+                    overflow: hidden;
+                    border-radius: 8px;
+                  ">
+                  <iframe
+                    id="youtubePreviewPublic"
+                    style="
+                      position: absolute;
+                      top: 0;
+                      left: 0;
+                      width: 100%;
+                      height: 100%;
+                      border: 0;
+                    "
+                    allowfullscreen></iframe>
+                </div>
+              </div>
             </div>
           </div>
           <div class="mb-3 mt-2">
@@ -241,6 +328,13 @@
     document.getElementById("videoPreviewPublic").style.display = "none";
     document.getElementById("newsImageUrlPublic").value = "";
     document.getElementById("newsVideoUrlPublic").value = "";
+    if (document.getElementById("newsYoutubeUrlPublic")) {
+      document.getElementById("newsYoutubeUrlPublic").value = "";
+      const ytCont = document.getElementById("youtubePreviewPublicContainer");
+      if (ytCont) ytCont.style.display = "none";
+      const ytIframe = document.getElementById("youtubePreviewPublic");
+      if (ytIframe) ytIframe.src = "";
+    }
   }
 
   function uploadMediaFilePublic(type) {
@@ -267,6 +361,13 @@
             const vid = document.getElementById("videoPreviewPublic");
             vid.src = data.file_url;
             vid.style.display = "block";
+            // clear youtube preview when uploading a file
+            const yt = document.getElementById("newsYoutubeUrlPublic");
+            if (yt) yt.value = "";
+            const ytCont = document.getElementById(
+              "youtubePreviewPublicContainer"
+            );
+            if (ytCont) ytCont.style.display = "none";
           }
         } else {
           alert("Upload xatosi: " + (data.message || ""));
@@ -285,12 +386,20 @@
       return;
     }
 
+    // Prefer YouTube URL over uploaded video file
+    const youtubeUrl =
+      (document.getElementById("newsYoutubeUrlPublic") &&
+        document.getElementById("newsYoutubeUrlPublic").value.trim()) ||
+      "";
+    const computedVideoUrl =
+      youtubeUrl || document.getElementById("newsVideoUrlPublic").value;
+
     const payload = {
       title: title,
       content: document.getElementById("newsContentPublic").value.trim(),
       type: document.getElementById("newsTypePublic").value,
       image_url: document.getElementById("newsImageUrlPublic").value,
-      video_url: document.getElementById("newsVideoUrlPublic").value,
+      video_url: computedVideoUrl,
       is_active: document.getElementById("newsIsActivePublic").checked,
       display_order: 0,
     };
@@ -319,5 +428,39 @@
         alert("Saqlashda xatolik");
       });
   }
+
+  // Show small YouTube preview when URL is entered in public modal
+  (function () {
+    const el = document.getElementById("newsYoutubeUrlPublic");
+    if (!el) return;
+    el.addEventListener("input", function () {
+      const v = el.value.trim();
+      const container = document.getElementById(
+        "youtubePreviewPublicContainer"
+      );
+      const iframe = document.getElementById("youtubePreviewPublic");
+      if (!v) {
+        iframe.src = "";
+        container.style.display = "none";
+        return;
+      }
+      try {
+        const m = v.match(/(?:v=|\/embed\/|youtu\.be\/)([A-Za-z0-9_\-]{11})/);
+        if (m && m[1]) {
+          iframe.src = "https://www.youtube.com/embed/" + m[1];
+          container.style.display = "block";
+          // hide uploaded video preview
+          const vp = document.getElementById("videoPreviewPublic");
+          if (vp) vp.style.display = "none";
+        } else {
+          iframe.src = "";
+          container.style.display = "none";
+        }
+      } catch (err) {
+        iframe.src = "";
+        container.style.display = "none";
+      }
+    });
+  })();
 </script>
 {% endif %} {% endblock %}

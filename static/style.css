@@ -325,7 +325,7 @@ a:hover {
 }
 
 .title-obuv {
-  color: #4CAF50 !important;
+  color: #4caf50 !important;
   animation-delay: 1s;
 }
 
@@ -347,25 +347,32 @@ a:hover {
   transform: translate(-50%, -50%);
   width: 200px;
   height: 200px;
-  background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(102, 126, 234, 0.1) 0%,
+    transparent 70%
+  );
   border-radius: 50%;
   animation: glow 4s ease-in-out infinite;
   z-index: -1;
 }
 
 @keyframes titleGlow {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
   }
   50% {
     transform: scale(1.05);
-    text-shadow: 0 0 20px rgba(102, 126, 234, 0.5), 2px 2px 4px rgba(0, 0, 0, 0.1);
+    text-shadow: 0 0 20px rgba(102, 126, 234, 0.5),
+      2px 2px 4px rgba(0, 0, 0, 0.1);
   }
 }
 
 @keyframes glow {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.3;
     transform: translate(-50%, -50%) scale(1);
   }
@@ -376,7 +383,8 @@ a:hover {
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {
@@ -415,7 +423,6 @@ a:hover {
   max-width: 1200px;
   margin: 0 auto;
 }
-}
 
 /* Responsive adjustments for content area */
 @media (max-width: 1400px) {
@@ -430,20 +437,20 @@ a:hover {
     max-width: 98%;
     padding: 0 var(--spacing-sm);
   }
-  
+
   .animated-title {
     font-size: 3rem;
   }
-  
+
   .title-subtitle {
     font-size: 1rem !important;
   }
-  
+
   .category-buttons {
     justify-content: center;
     gap: 8px;
   }
-  
+
   .menu-grid {
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 15px;
@@ -455,16 +462,16 @@ a:hover {
     max-width: 100%;
     padding: 0 var(--spacing-xs);
   }
-  
+
   .animated-title {
     font-size: 2.5rem;
   }
-  
+
   .category-buttons {
     flex-direction: column;
     align-items: center;
   }
-  
+
   .menu-grid {
     grid-template-columns: 1fr;
   }
@@ -733,23 +740,23 @@ a:hover {
     grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
     gap: var(--spacing-xl);
   }
-  
+
   .menu-item {
     min-height: 480px;
   }
-  
+
   .menu-item-content {
     padding: var(--spacing-xl);
   }
-  
+
   .menu-item-name {
     font-size: var(--font-size-xl);
   }
-  
+
   .menu-item-description {
     font-size: var(--font-size-base);
   }
-  
+
   .menu-item-price {
     font-size: var(--font-size-2xl);
   }
@@ -763,29 +770,29 @@ a:hover {
     max-width: 1800px;
     margin: 0 auto;
   }
-  
+
   .menu-item {
     min-height: 520px;
   }
-  
+
   .menu-item-image {
     height: 280px;
   }
-  
+
   .menu-item-content {
     padding: 2rem;
   }
-  
+
   .menu-item-name {
     font-size: 1.5rem;
     margin-bottom: 1rem;
   }
-  
+
   .menu-item-description {
     font-size: 1.1rem;
     margin-bottom: 1.5rem;
   }
-  
+
   .menu-item-price {
     font-size: 1.8rem;
     margin-bottom: 1.5rem;
@@ -802,6 +809,48 @@ a:hover {
   height: 350px;
   object-fit: cover;
   background-color: var(--bg-tertiary);
+}
+
+/* Backwards-compatible aliasing for server-rendered markup that uses
+   .item-image / .item-content naming. This ensures older templates still
+   get the intended styles without changing HTML. */
+.item-image {
+  width: 100%;
+  height: 350px;
+  object-fit: cover;
+  background-color: var(--bg-tertiary);
+}
+.item-image img,
+.item-image video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.item-content {
+  padding: var(--spacing-lg);
+}
+.item-name {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
+}
+.item-description {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--spacing-md);
+}
+.item-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+.rating-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .menu-item-content {

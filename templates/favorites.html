@@ -1,61 +1,42 @@
-{% extends "base.html" %} {% block title %}Sevimlilar - Oyoq kiyim do'koni{% endblock %} {% block content %}
-<div class="card">
-  <h2 data-translate="favorites_title">❤️ Sevimli taomlarim</h2>
+{% extends "base.html" %} {% block title %}Sevimlilar - Oyoq kiyim do'koni{%
+endblock %} {% block content %}
+<div class="card favorites-card p-3">
+  <h2 data-translate="favorites_title">❤️ Sevimlilar</h2>
 
   {% if favorites %}
-  <div class="menu-grid">
+  <div class="favorites-grid">
     {% for item in favorites %}
-    <div class="menu-item">
-      <h4>{{ item.name }}</h4>
-      <p class="description">{{ item.description or "" }}</p>
-      <p class="price">{{ "{:,.0f}".format(item.price) }} so'm</p>
-      <form method="post" action="{{ url_for('add_to_cart') }}">
-        <input type="hidden" name="menu_item_id" value="{{ item.id }}" />
-        <div
-          style="
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            justify-content: center;
-          ">
-          <div class="quantity-selector">
-            <button
-              type="button"
-              class="quantity-btn minus"
-              onclick="decreaseQuantity(this)">
-              −
+    <div class="favorite-card">
+      <div class="fav-media">
+        <img
+          src="{{ item.image_url or '/static/images/default-product.jpg' }}"
+          alt="{{ item.name }}"
+          onerror="this.src='/static/images/default-product.jpg'" />
+      </div>
+      <div class="fav-body">
+        <h4 class="fav-title">{{ item.name }}</h4>
+        <p class="description">{{ item.description or "" }}</p>
+        <div class="fav-meta">
+          <span class="price">{{ "{:,.0f}".format(item.price) }} so'm</span>
+          <form method="post" action="{{ url_for('add_to_cart') }}">
+            <input type="hidden" name="menu_item_id" value="{{ item.id }}" />
+            <button type="submit" class="btn btn-sm btn-success">
+              🛒 Qo'shish
             </button>
-            <input
-              type="number"
-              name="quantity"
-              value="1"
-              min="1"
-              max="99"
-              readonly />
-            <button
-              type="button"
-              class="quantity-btn plus"
-              onclick="increaseQuantity(this)">
-              +
-            </button>
-          </div>
-          <button type="submit" class="btn small">
-            <span>🛒 Qo'shish</span>
-          </button>
+          </form>
         </div>
-      </form>
-      <form
-        method="post"
-        action="{{ url_for('remove_from_favorites', menu_item_id=item.id) }}"
-        style="margin-top: 10px">
-        <button
-          type="submit"
-          class="btn small"
-          style="background: #dc3545"
-          onclick="return confirm('Sevimlilardan olib tashlaysizmi?')">
-          <span>🗑️ Olib tashlash</span>
-        </button>
-      </form>
+        <form
+          method="post"
+          action="{{ url_for('remove_from_favorites', menu_item_id=item.id) }}"
+          class="mt-2">
+          <button
+            type="submit"
+            class="btn btn-sm btn-danger"
+            onclick="return confirm('Sevimlilardan olib tashlaysizmi?')">
+            🗑️ Olib tashlash
+          </button>
+        </form>
+      </div>
     </div>
     {% endfor %}
   </div>
@@ -63,10 +44,63 @@
   <div class="text-center" style="padding: 50px">
     <h4>Sevimli mahsulotlaringiz yo'q</h4>
     <p>Mahsulotlarni sevimlilar ro'yxatiga qo'shish uchun katalogga o'ting</p>
-    <a href="{{ url_for('menu') }}" class="btn big">📋 Katalogga o'tish</a>
+    <a href="{{ url_for('menu') }}" class="btn btn-primary"
+      >📋 Katalogga o'tish</a
+    >
   </div>
   {% endif %}
 </div>
+
+<style>
+  .favorites-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 18px;
+  }
+  .favorite-card {
+    background: #fff;
+    border-radius: 10px;
+    display: flex;
+    overflow: hidden;
+    border: 1px solid #e6e6e6;
+  }
+  .fav-media img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+  }
+  .fav-body {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    justify-content: center;
+  }
+  .fav-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+  .fav-meta {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .price {
+    font-weight: 800;
+    color: #1f2937;
+  }
+  @media (max-width: 767px) {
+    .favorites-grid {
+      grid-template-columns: 1fr;
+    }
+    .fav-media img {
+      width: 100px;
+      height: 100px;
+    }
+  }
+</style>
 
 <script>
   function increaseQuantity(btn) {
