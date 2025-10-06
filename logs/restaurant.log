@@ -2771,3 +2771,778 @@ MemoryError
 2025-09-30 13:46:05,582 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/api/user-sessions
 2025-09-30 13:46:05,691 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
 2025-09-30 13:46:09,721 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:04:35,745 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-10-01 21:04:39,194 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:05:11,534 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:06:28,241 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:06:38,600 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:06:46,168 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-10-01 21:06:49,955 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:06:58,706 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:06:59,961 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:07:55,581 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:08:03,174 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:08:36,930 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:09:55,390 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:10:34,436 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-10-01 21:10:53,444 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:13:06,847 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:13:15,763 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:13:29,193 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:13:31,747 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:13:34,186 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:19:54,125 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:22:28,698 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-10-01 21:22:30,496 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:23:56,279 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:24:08,856 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:24:10,998 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:24:50,024 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:25:01,636 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:25:11,206 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-10-01 21:25:49,612 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-01 21:26:55,626 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:27:04,459 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:27:16,401 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:27:19,867 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:27:24,461 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:27:31,764 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-01 21:27:32,698 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:28:38,392 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:29:07,247 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:32:24,251 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-01 21:35:32,253 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-01 21:35:33,139 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:35:41,284 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-01 21:35:51,538 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:37:01,996 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-01 21:37:02,874 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:37:58,670 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:38:54,544 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:39:14,276 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 21:40:20,359 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:00:32,482 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:00:49,632 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:06:05,981 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-10-01 22:06:09,521 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-10-01 22:06:09,613 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:06:14,124 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-10-01 22:06:14,242 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:06:34,121 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-10-01 22:06:42,089 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-10-01 22:06:45,168 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-10-01 22:06:45,223 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:07:03,711 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-10-01 22:07:05,695 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-10-01 22:07:20,920 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-10-01 22:07:25,758 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-10-01 22:07:45,762 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-10-01 22:08:03,734 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-10-01 22:08:05,746 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-10-01 22:08:18,900 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-10-01 22:08:19,797 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-10-01 22:08:22,903 | WARNING | restaurant_app | rate_limit_error:1229 | Rate limit exceeded: 127.0.0.1
+2025-10-01 22:08:22,972 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:19:22,896 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-10-01 22:19:24,983 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:24:51,292 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-10-01 22:26:38,376 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-10-01 22:28:20,942 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:28:48,384 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:31:31,058 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-10-01 22:31:33,651 | WARNING | restaurant_app | not_found_error:1146 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:34:46,837 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-10-01 22:35:44,241 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:36:10,669 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-10-01 22:36:13,170 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:36:17,092 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:36:41,907 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-10-01 22:39:47,126 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-10-01 22:40:32,159 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-10-01 22:40:34,243 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:41:55,058 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:42:05,130 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:42:14,269 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:42:15,876 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:42:18,192 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:44:22,165 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:44:35,508 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:44:54,344 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:46:09,587 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-10-01 22:47:20,088 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-10-01 22:47:21,160 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:48:07,121 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:48:09,564 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:48:17,026 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:48:34,714 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:48:36,264 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:48:40,914 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:49:09,079 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:49:13,937 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:49:15,252 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:50:05,820 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:50:20,097 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:50:23,918 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:55:19,199 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:55:55,106 | WARNING | restaurant_app | wrapper:1036 | CSRF token mismatch or missing
+2025-10-01 22:55:55,107 | WARNING | restaurant_app | wrapper:1036 | CSRF token mismatch or missing
+2025-10-01 22:55:55,180 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:56:01,210 | WARNING | restaurant_app | wrapper:1036 | CSRF token mismatch or missing
+2025-10-01 22:56:01,224 | WARNING | restaurant_app | wrapper:1036 | CSRF token mismatch or missing
+2025-10-01 22:56:01,270 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:56:11,501 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:56:17,561 | WARNING | restaurant_app | wrapper:1036 | CSRF token mismatch or missing
+2025-10-01 22:56:17,561 | WARNING | restaurant_app | wrapper:1036 | CSRF token mismatch or missing
+2025-10-01 22:56:17,625 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:56:27,820 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-10-01 22:56:32,882 | WARNING | restaurant_app | wrapper:1036 | CSRF token mismatch or missing
+2025-10-01 22:56:32,892 | WARNING | restaurant_app | wrapper:1036 | CSRF token mismatch or missing
+2025-10-01 22:56:32,978 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 22:58:57,528 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-01 23:00:27,348 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 23:00:27,993 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 23:00:40,600 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 23:00:47,388 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 23:00:49,490 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 23:01:08,918 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/api/user-sessions
+2025-10-01 23:01:09,063 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 23:01:16,847 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 23:01:19,394 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 23:01:28,163 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 23:02:00,281 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-01 23:03:00,306 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-10-01 23:05:03,223 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-10-01 23:05:03,577 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-01 23:05:04,536 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 23:05:20,390 | ERROR | restaurant_app | handle_exception:1263 | Unhandled exception: 405 Method Not Allowed: The method is not allowed for the requested URL. - URL: http://localhost:5000/admin/reset_menu_for_tests?count=20
+2025-10-01 23:05:20,518 | ERROR | restaurant_app | handle_exception:1265 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 891, in dispatch_request
+    self.raise_routing_exception(req)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 500, in raise_routing_exception
+    raise request.routing_exception  # type: ignore[misc]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\ctx.py", line 362, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\routing\map.py", line 624, in match
+    raise MethodNotAllowed(valid_methods=list(e.have_match_for)) from None
+werkzeug.exceptions.MethodNotAllowed: 405 Method Not Allowed: The method is not allowed for the requested URL.
+
+2025-10-01 23:05:22,086 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://localhost:5000/favicon.ico
+2025-10-01 23:07:16,865 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-10-01 23:08:30,536 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-10-01 23:08:39,209 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://localhost:5000/favicon.ico
+2025-10-01 23:08:47,215 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 23:08:50,759 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://localhost:5000/favicon.ico
+2025-10-01 23:13:12,186 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 23:13:18,076 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-01 23:14:03,713 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-01 23:14:08,855 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-01 23:14:09,503 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 23:14:13,597 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 23:15:47,436 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 23:15:54,812 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-01 23:15:58,066 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-01 23:15:59,202 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 23:16:12,872 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-01 23:16:14,928 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 23:16:16,864 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-01 23:16:17,688 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 23:16:19,572 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-01 23:16:20,335 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 23:21:01,090 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-01 23:21:05,313 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 23:21:36,257 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 23:21:40,302 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 23:22:52,518 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 23:24:30,957 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 23:25:02,085 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-01 23:29:40,820 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-01 23:29:41,712 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 23:29:44,231 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-01 23:29:44,633 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-01 23:31:04,758 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-01 23:31:05,485 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:07:20,699 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:07:22,699 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:07:37,040 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:07:42,327 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:07:51,757 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:08:34,908 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:08:36,987 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:08:39,753 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:08:58,916 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://localhost:5000/favicon.ico
+2025-10-02 12:09:14,270 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-10-02 12:09:18,773 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:09:20,134 | ERROR | restaurant_app | super_admin_get_system_stats:14051 | System stats error: name 'start_time' is not defined
+2025-10-02 12:09:20,301 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:09:26,084 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:09:38,434 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:12:22,610 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:12:33,649 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:15:25,840 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:15:47,348 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:15:49,773 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:16:03,389 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:16:26,840 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:16:30,627 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:18:04,262 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:18:09,307 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:20:33,389 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:21:56,812 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:22:08,623 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:22:51,445 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:23:16,198 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:23:18,205 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:23:33,043 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:23:36,911 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-10-02 12:24:47,370 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://localhost:5000/favicon.ico
+2025-10-02 12:25:05,770 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 12:25:29,405 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 12:25:33,111 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 12:25:40,846 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 12:25:44,204 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 12:25:48,346 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 12:25:50,819 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 12:25:57,373 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 12:26:02,473 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 12:27:12,852 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:27:52,476 | WARNING | restaurant_app | not_found_error:1147 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:35:42,264 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-10-02 12:35:43,617 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:35:46,833 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:35:50,562 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:35:52,617 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:36:05,303 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-10-02 12:36:06,616 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:38:08,417 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:38:09,615 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:38:46,065 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:38:56,680 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:39:00,257 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:39:01,895 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:39:05,210 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:39:06,758 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:39:29,458 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:39:58,139 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:40:19,435 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:40:42,602 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:40:51,190 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:41:07,448 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:41:13,219 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:42:05,343 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:42:14,803 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:42:30,731 | WARNING | restaurant_app | wrapper:1039 | CSRF token mismatch or missing
+2025-10-02 12:42:30,739 | WARNING | restaurant_app | wrapper:1039 | CSRF token mismatch or missing
+2025-10-02 12:42:31,977 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:42:36,918 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:42:44,061 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:43:05,152 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:46:13,852 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:46:30,417 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:47:17,134 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:48:03,629 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:48:54,471 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:50:14,577 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:50:42,988 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:50:45,195 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:50:46,851 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:50:47,387 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:50:47,812 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:50:48,605 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:50:49,198 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:50:56,060 | WARNING | restaurant_app | wrapper:1039 | CSRF token mismatch or missing
+2025-10-02 12:50:56,071 | WARNING | restaurant_app | wrapper:1039 | CSRF token mismatch or missing
+2025-10-02 12:50:56,113 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:51:20,293 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:53:03,039 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:53:03,039 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:53:14,328 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:53:15,598 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:53:15,602 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:53:16,109 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:53:20,196 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:53:26,963 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:53:29,418 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:53:29,426 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:53:36,055 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:53:36,115 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:53:36,188 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:53:56,107 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:53:56,445 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:54:16,050 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:54:16,113 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:54:27,391 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 12:54:36,043 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:54:52,789 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:54:52,825 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:54:56,101 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:54:56,109 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:55:16,107 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:55:16,111 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:55:36,110 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:55:36,110 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:55:57,105 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:55:57,105 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:56:57,105 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:56:57,114 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:57:22,093 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:57:22,093 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:57:22,188 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:57:22,188 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:57:34,834 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:57:36,051 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:57:36,101 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:57:37,213 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:57:37,394 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:57:37,868 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:57:56,103 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:57:56,109 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:58:16,100 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:58:16,100 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:58:24,588 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:58:24,593 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:58:27,917 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:58:29,791 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:58:30,955 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:58:31,121 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:58:35,347 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 12:58:36,104 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:58:50,515 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:58:51,112 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:58:52,966 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:58:52,966 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:58:56,044 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:59:01,543 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:59:01,793 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 12:59:05,698 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 12:59:11,118 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:59:21,536 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:59:23,762 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:59:25,254 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:59:31,097 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:59:42,113 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:59:51,108 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:59:58,539 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:59:58,539 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 12:59:59,702 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:00:02,100 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:00:11,110 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:00:22,105 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:00:31,107 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:00:42,108 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:00:43,331 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:00:43,339 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:00:51,002 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:01:02,106 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:01:04,750 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:01:07,912 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:01:07,968 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:01:10,948 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:01:19,000 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:01:21,515 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:01:23,228 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 13:01:23,674 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:01:23,684 | WARNING | restaurant_app | wrapper:1039 | CSRF token mismatch or missing
+2025-10-02 13:01:23,705 | WARNING | restaurant_app | wrapper:1039 | CSRF token mismatch or missing
+2025-10-02 13:01:23,929 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 13:01:31,118 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:01:43,677 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:01:51,120 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:02:03,696 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:02:08,155 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:02:09,462 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:02:11,101 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:02:11,565 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:02:11,703 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:02:21,370 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:02:21,528 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 13:02:31,118 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:02:41,384 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:02:51,127 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:03:00,592 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:03:01,384 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:03:03,244 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:03:03,245 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:03:03,289 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:03:04,673 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:03:04,804 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 13:03:11,102 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:03:19,318 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:03:19,318 | WARNING | restaurant_app | wrapper:1039 | CSRF token mismatch or missing
+2025-10-02 13:03:19,366 | WARNING | restaurant_app | wrapper:1039 | CSRF token mismatch or missing
+2025-10-02 13:03:19,383 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 13:03:21,104 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:03:21,262 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 13:03:21,613 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:03:31,097 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:03:41,100 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:03:51,097 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:04:01,114 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:04:11,114 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:04:21,112 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:04:31,901 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:04:31,903 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:04:31,923 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:04:32,466 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:04:40,064 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:04:40,231 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 13:04:45,207 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 13:04:51,209 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:05:00,111 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:05:11,112 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:05:20,084 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:05:24,349 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:05:24,770 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 13:05:24,952 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:05:25,332 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 13:05:25,613 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:05:25,621 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:05:29,097 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:05:30,224 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:05:30,240 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:05:30,497 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:05:30,962 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:05:44,948 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:05:48,947 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:05:51,108 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:06:05,116 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:06:06,860 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:06:06,862 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:06:13,850 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:06:25,151 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:06:31,124 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:06:45,110 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:06:51,230 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:07:05,106 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:07:25,124 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:07:57,105 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:07:57,121 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:08:57,120 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:08:57,123 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:09:08,748 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:09:08,757 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:09:08,804 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:09:11,443 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 13:09:11,551 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:09:31,104 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:09:51,108 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:10:01,783 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:10:04,118 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:10:04,673 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:10:11,103 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:10:31,119 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:10:51,107 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:11:28,093 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:11:28,142 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:11:30,668 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:11:30,958 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 13:11:31,133 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:11:50,610 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:11:51,116 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:12:06,067 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:12:11,124 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:12:11,125 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:12:31,111 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:12:31,119 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:12:51,125 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:12:51,125 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:13:11,105 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:13:13,511 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:13:13,557 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:13:13,626 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:13:31,116 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:13:31,121 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:13:51,105 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:13:51,105 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:14:10,248 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:14:10,249 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:14:11,197 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:14:11,200 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:14:11,312 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:14:11,420 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:14:11,420 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:14:11,448 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:14:14,496 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:14:14,667 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 13:14:30,672 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:14:30,799 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 13:14:31,124 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:14:51,114 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:14:51,114 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:14:55,598 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:14:57,880 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:14:58,730 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:14:59,127 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:14:59,405 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:15:10,669 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:15:11,109 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:15:13,389 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:15:14,005 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:15:28,258 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:15:28,266 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:15:30,533 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:15:30,818 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 13:15:31,119 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:15:50,505 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:15:51,116 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:16:10,497 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:16:11,110 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:16:16,877 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:16:19,472 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:16:19,472 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:16:21,902 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:16:30,495 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:16:31,144 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:16:51,006 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:16:51,014 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:16:51,038 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:16:51,046 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:16:53,864 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:16:53,865 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:16:55,431 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:16:55,434 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:16:57,050 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:16:57,053 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:17:11,111 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:17:11,115 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:17:31,118 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:17:31,137 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:17:51,114 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:17:51,119 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:18:57,117 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:18:57,124 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:19:57,122 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:19:57,126 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:20:57,120 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:20:57,133 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:21:57,126 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:21:57,130 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:22:57,107 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:22:57,123 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:23:57,116 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:23:57,123 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:24:57,118 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:24:57,121 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:25:57,114 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:25:57,130 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:26:57,150 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:26:57,161 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:27:08,642 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:27:08,648 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:27:10,964 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:27:11,115 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:27:12,737 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 13:27:16,505 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:27:16,964 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 13:27:24,703 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:27:24,824 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 13:27:27,905 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:27:27,960 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 13:27:31,131 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:27:32,113 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:27:32,233 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 13:27:45,099 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:27:46,844 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:27:46,851 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:27:51,120 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:27:52,116 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:28:11,117 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:28:13,115 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:28:31,121 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:28:33,120 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:28:52,128 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:28:57,126 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:29:13,115 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:29:25,974 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:29:25,975 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:29:25,995 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:29:26,821 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:29:31,124 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:29:33,120 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:29:51,116 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:29:52,115 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:30:09,268 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:30:09,269 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:30:10,505 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:30:13,107 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:30:31,114 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:30:33,120 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:30:44,674 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:30:44,674 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:30:46,325 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:30:46,326 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:30:51,109 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:30:51,247 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:30:51,841 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 13:30:54,544 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:30:55,721 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:30:55,725 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:30:58,498 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:30:58,621 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 13:31:02,488 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:31:04,914 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:31:04,918 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:31:09,140 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:31:11,123 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:31:15,975 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:31:15,976 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:31:18,502 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:31:31,117 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:31:39,117 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:31:51,109 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:31:59,117 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:32:11,106 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:32:19,112 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:32:39,108 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:32:57,112 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:32:59,118 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:33:08,982 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:33:08,982 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:33:11,118 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:33:17,880 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:33:17,961 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 13:33:26,550 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:33:31,115 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:33:38,110 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:33:51,113 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:33:58,116 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:34:11,113 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:34:18,114 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:34:38,111 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:34:55,745 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:34:55,751 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:34:55,772 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:35:02,926 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:35:03,021 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 13:35:05,008 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:35:11,141 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:35:13,872 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:35:13,879 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:35:17,281 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:35:17,474 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 13:35:19,757 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:35:22,428 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:35:22,432 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:35:24,212 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:35:25,277 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:35:25,647 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:35:25,782 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 13:35:25,904 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/youtube-placeholder.png
+2025-10-02 13:35:31,102 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:35:32,430 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:35:32,521 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 13:35:32,779 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/youtube-placeholder.png
+2025-10-02 13:35:48,151 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:35:50,279 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:35:50,288 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:35:51,112 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:35:52,461 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:35:52,713 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 13:35:52,873 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/youtube-placeholder.png
+2025-10-02 13:35:57,389 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:35:58,191 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:35:58,192 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:36:02,073 | WARNING | restaurant_app | rate_limit_error:1233 | Rate limit exceeded: 127.0.0.1
+2025-10-02 13:36:08,744 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 13:36:09,111 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/youtube-placeholder.png
+2025-10-02 13:36:31,637 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 13:36:31,747 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/youtube-placeholder.png
+2025-10-02 13:36:40,951 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 13:36:48,939 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 13:36:57,365 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 13:37:07,564 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 13:37:27,460 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 15:04:57,353 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-10-02 16:49:45,289 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 16:51:57,058 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 16:52:26,259 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 16:52:29,438 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 16:53:22,572 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 16:53:45,982 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 16:53:48,736 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 16:53:51,690 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 16:55:41,907 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 16:55:52,195 | WARNING | restaurant_app | wrapper:1039 | CSRF token mismatch or missing
+2025-10-02 16:55:52,232 | WARNING | restaurant_app | wrapper:1039 | CSRF token mismatch or missing
+2025-10-02 16:55:52,276 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 16:56:10,175 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/mnews
+2025-10-02 16:56:10,465 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-10-02 16:56:14,763 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 16:56:26,068 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 16:56:29,006 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 16:56:39,989 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 16:56:50,111 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 17:01:55,764 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-10-02 17:01:57,449 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 17:02:08,515 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 17:02:48,361 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 17:02:53,713 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 17:08:20,708 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 17:08:23,276 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 17:10:41,211 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 17:10:43,275 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 17:11:01,792 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 17:11:03,068 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 17:11:54,760 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 17:11:56,071 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 17:14:11,751 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 17:14:13,665 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 17:15:36,637 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 17:15:39,237 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 17:20:01,407 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 17:20:04,017 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 17:20:12,396 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 17:21:20,452 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 17:21:22,117 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 17:24:18,923 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 17:24:21,069 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 17:24:22,078 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/api/menu-item/32
+2025-10-02 17:24:40,534 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/api/menu-item/32
+2025-10-02 17:25:13,605 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/stafff
+2025-10-02 17:25:13,858 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 17:25:14,630 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-10-02 17:25:16,775 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 17:25:22,355 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 17:25:23,754 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 17:25:25,887 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 17:25:26,903 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 17:25:38,953 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 17:25:40,063 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 17:25:41,856 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 17:25:43,078 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 17:25:54,468 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 17:25:55,512 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 17:26:29,937 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 17:26:31,616 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 17:27:05,108 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 17:27:06,279 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 17:27:15,757 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-02 17:27:16,971 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 17:27:18,941 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/api/menu-item/33
+2025-10-02 17:27:20,068 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/api/menu-item/33
+2025-10-02 17:29:53,653 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 18:24:57,020 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-02 18:25:17,021 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-04 16:50:56,959 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-10-04 17:10:38,826 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-04 17:10:57,498 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/menu/staff
+2025-10-04 17:10:57,769 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-10-04 17:11:04,965 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-04 17:11:08,793 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-04 17:12:35,578 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-04 17:13:00,234 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-04 17:13:18,641 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-04 17:13:41,366 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-04 17:13:54,183 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg

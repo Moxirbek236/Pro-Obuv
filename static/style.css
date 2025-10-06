@@ -1084,7 +1084,7 @@ body.dark-theme .alert-info {
 
 /* Modal */
 .modal {
-  margin-top: 200px;
+  margin-top: auto;
 }
 
 .modal-overlay {

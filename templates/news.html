@@ -3,6 +3,92 @@
 <div class="container mt-4">
   <h1 class="mb-3">📰 Yangiliklar</h1>
 
+  <style>
+    /* Force vertical stacked news cards on the news page */
+    #news-list .news-item.card {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: stretch !important;
+      padding: 16px !important;
+      gap: 12px !important;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #news-list .news-media {
+      order: 1;
+      width: 100%;
+      height: 360px;
+      max-height: 420px;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #000;
+    }
+
+    #news-list .news-title {
+      order: 2;
+      margin: 0;
+      font-size: 18px;
+      font-weight: 800;
+      color: #22d3ee;
+    }
+    #news-list .news-body {
+      order: 3;
+    }
+
+    /* keep the timestamp bottom-right inside each card */
+    #news-list .news-card-meta {
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+    }
+
+    @media (max-width: 768px) {
+      #news-list .news-media {
+        height: 220px;
+        max-height: 260px;
+      }
+      #news-list .news-item.card {
+        padding: 12px;
+        gap: 8px;
+      }
+      #news-list .news-title {
+        font-size: 16px;
+      }
+    }
+    /* Floating Add News button for quick access (superadmin only) */
+    .fab-add-news {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #22d3ee, #0891b2);
+      color: #072026;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 8px 26px rgba(0, 0, 0, 0.3);
+      border: none;
+      cursor: pointer;
+      z-index: 12000;
+    }
+    .fab-add-news:active {
+      transform: scale(0.98);
+    }
+    @media (max-width: 480px) {
+      .fab-add-news {
+        width: 48px;
+        height: 48px;
+        font-size: 20px;
+        right: 12px;
+        bottom: 12px;
+      }
+    }
+  </style>
+
   {% if session.get('super_admin') %}
   <div class="mb-3">
     <button
@@ -13,7 +99,16 @@
       ➕ Yangilik qo'shish
     </button>
   </div>
-  {% endif %}
+  {% endif %} {% if session.get('super_admin') %}
+  <!-- Floating Add News button -->
+  <button
+    class="fab-add-news"
+    title="Yangilik qo'shish"
+    aria-label="Yangilik qo'shish"
+    onclick="openNewsModalPublic()">
+    +
+  </button>
+  {% endif %}itemModal
 
   <!-- Simple ticker: recent titles -->
   <div
@@ -32,435 +127,360 @@
         white-space: nowrap;
         display: inline-block;
         animation: ticker 20s linear infinite;
+        padding: 4px 8px;
+        border-radius: 6px;
       "></div>
-  </div>
 
-  <style>
-    @keyframes ticker {
-      0% {
-        transform: translateX(100%);
-      }
-      100% {
-        transform: translateX(-100%);
-      }
-    }
-    /* Unified news card styles */
-    .news-item {
-      margin-bottom: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      min-height: 220px; /* uniform card height for visual consistency */
-    }
-    .news-item .d-flex {
-      align-items: center;
-      gap: 10px;
-    }
-    .news-media {
-      margin-top: 6px;
-      margin-bottom: 6px;
-      width: 100%;
-      max-height: 360px;
-      overflow: hidden;
-      border-radius: 8px;
-      display: block;
-    }
-    .news-media img,
-    .news-media video,
-    .news-media iframe {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
+    {% if news %}
+    <div id="news-list">
+      {% for item in news %}
+      <article class="news-item card p-3 position-relative">
+        <!-- Media at top -->
+        <div class="news-media">
+          {% if item.youtube_embed %}
+          <div class="youtube-embed-wrapper">
+            <iframe src="{{ item.youtube_embed }}" allowfullscreen></iframe>
+          </div>
+          {% elif item.video or item.video_url %}
+          <div class="video-wrapper">
+            <video controls>
+              <source src="{{ item.video_url or item.video }}" />
+            </video>
+          </div>
+          {% elif item.image or item.image_url %}
+          <img
+            src="{{ item.image_url or item.image }}"
+            alt="{{ item.title }}" />
+          {% endif %}
+        </div>
 
-    .news-body {
-      flex: 1 1 auto;
-      overflow: hidden;
-    }
+        <!-- Title -->
+        <div class="mt-3">
+          <h3 class="news-title">{{ item.title }}</h3>
+        </div>
 
-    /* Responsive stack for narrower screens */
-    @media (min-width: 900px) {
-      #news-list .news-item {
-        flex-direction: row;
-        align-items: stretch;
-        min-height: 180px;
-      }
-      .news-media {
-        width: 34%;
-        max-width: 420px;
-      }
-      .news-body {
-        width: 66%;
-        padding-left: 16px;
-      }
-    }
-    @media (max-width: 899px) {
-      .news-item {
-        min-height: auto;
-      }
-    }
-    /* Date positioning inside news card */
-    .news-card-date {
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.6);
-      background: rgba(0, 0, 0, 0.15);
-      padding: 4px 8px;
-      border-radius: 6px;
-    }
-  </style>
+        <!-- Description -->
+        <div class="news-body">
+          <p class="news-content">
+            {{ (item.description or item.content) | safe }}
+          </p>
+        </div>
 
-  {% if news %}
-  <div id="news-list">
-    {% for item in news %}
-    <article class="news-item card p-3 position-relative">
-      <div class="d-flex justify-content-between align-items-center mb-2">
-        <h3 class="h5 mb-0">{{ item.title }}</h3>
-      </div>
-
-      <div class="news-media">
-        {% if item.youtube_embed %}
+        <!-- Timestamp bottom-right -->
         <div
-          style="
-            position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
-            overflow: hidden;
-            border-radius: 8px;
-          ">
-          <iframe
-            src="{{ item.youtube_embed }}"
-            style="
-              position: absolute;
-              inset: 0;
-              width: 100%;
-              height: 100%;
-              border: 0;
-            "
-            allowfullscreen></iframe>
+          class="news-card-meta"
+          style="position: absolute; right: 12px; bottom: 12px">
+          <small class="text-muted news-card-date"
+            >{{ item.created_at.split('T')[0] if item.created_at else ''
+            }}</small
+          >
         </div>
-        {% elif item.video or item.video_url %}
-        <div style="width: 100%; height: 100%">
-          <video
-            controls
-            style="
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
-              border-radius: 8px;
-            ">
-            <source src="{{ item.video_url or item.video }}" />
-          </video>
-        </div>
-        {% elif item.image or item.image_url %}
-        <img src="{{ item.image_url or item.image }}" alt="{{ item.title }}" />
-        {% endif %}
-      </div>
-
-      <div class="news-body">
-        <p>{{ (item.description or item.content) | safe }}</p>
-      </div>
-      <div style="position: absolute; right: 12px; bottom: 12px">
-        <small class="text-muted news-card-date"
-          >{{ item.created_at.split('T')[0] if item.created_at else '' }}</small
-        >
-      </div>
-    </article>
-    {% endfor %}
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info">Hozircha yangiliklar mavjud emas.</div>
+    {% endif %}
   </div>
-  {% else %}
-  <div class="alert alert-info">Hozircha yangiliklar mavjud emas.</div>
-  {% endif %}
-</div>
 
-<script>
-  (function(){
-    const news = {{ (news|length if news else 0) }};
-    const items = [];
-    {% for it in news %}
-      items.push("{{ it.title|replace('"','\"') }}");
-    {% endfor %}
-    const ticker = document.getElementById('ticker-inner');
-    if(items.length){
-      ticker.innerText = items.join('  •  ');
-    } else {
-      ticker.innerText = 'Yangiliklar yo\'q';
-    }
-  })();
-</script>
+  <script>
+    (function(){
+      const news = {{ (news|length if news else 0) }};
+      const items = [];
+      {% for it in news %}
+        items.push("{{ it.title|replace('"','\"') }}");
+      {% endfor %}
+      const ticker = document.getElementById('ticker-inner');
+      if(items.length){
+        ticker.innerText = items.join('  •  ');
+      } else {
+        ticker.innerText = 'Yangiliklar yo\'q';
+      }
+    })();
+  </script>
 
-<!-- Public Add News Modal (for superadmin on /news page) -->
-{% if session.get('super_admin') %}
-<div class="modal fade" id="newsModalPublic" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Yangilik qo'shish</h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <form id="newsFormPublic">
-          <div class="mb-3">
-            <label class="form-label">Sarlavha *</label>
-            <input
-              type="text"
-              id="newsTitlePublic"
-              class="form-control"
-              required
-              maxlength="200" />
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Matn</label>
-            <textarea
-              id="newsContentPublic"
-              class="form-control"
-              rows="3"
-              maxlength="500"></textarea>
-          </div>
-          <div class="row">
-            <div class="col-md-6">
-              <label class="form-label">Rasm</label>
+  <!-- Public Add News Modal (for superadmin on /news page) -->
+  {% if session.get('super_admin') %}
+  <div class="modal fade" id="newsModalPublic" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Yangilik qo'shish</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="newsFormPublic">
+            <div class="mb-3">
+              <label class="form-label">Sarlavha *</label>
               <input
-                type="file"
-                id="newsImageFilePublic"
+                type="text"
+                id="newsTitlePublic"
                 class="form-control"
-                accept="image/*"
-                onchange="uploadMediaFilePublic('image')" />
-              <input type="hidden" id="newsImageUrlPublic" />
-              <img
-                id="imagePreviewPublic"
-                style="display: none; max-width: 180px; margin-top: 8px" />
+                required
+                maxlength="200" />
             </div>
-            <div class="col-md-6">
-              <label class="form-label">Video (yuklash yoki YouTube URL)</label>
-              <input
-                type="file"
-                id="newsVideoFilePublic"
+            <div class="mb-3">
+              <label class="form-label">Matn</label>
+              <textarea
+                id="newsContentPublic"
                 class="form-control"
-                accept="video/*"
-                onchange="uploadMediaFilePublic('video')" />
-              <input type="hidden" id="newsVideoUrlPublic" />
-              <video
-                id="videoPreviewPublic"
-                style="display: none; max-width: 180px; margin-top: 8px"
-                controls
-                muted></video>
-
-              <div class="mt-2">
-                <label class="form-label">YouTube URL (ixtiyoriy)</label>
+                rows="3"
+                maxlength="500"></textarea>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <label class="form-label">Rasm</label>
                 <input
-                  type="url"
-                  id="newsYoutubeUrlPublic"
+                  type="file"
+                  id="newsImageFilePublic"
                   class="form-control"
-                  placeholder="https://www.youtube.com/watch?v=..." />
-                <small class="form-text text-muted"
-                  >Agar YouTube havolasi kiritilsa, yuklangan video o'rniga shu
-                  manba ishlatiladi.</small
+                  accept="image/*"
+                  onchange="uploadMediaFilePublic('image')" />
+                <input type="hidden" id="newsImageUrlPublic" />
+                <img
+                  id="imagePreviewPublic"
+                  style="display: none; max-width: 180px; margin-top: 8px" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label"
+                  >Video (yuklash yoki YouTube URL)</label
                 >
+                <input
+                  type="file"
+                  id="newsVideoFilePublic"
+                  class="form-control"
+                  accept="video/*"
+                  onchange="uploadMediaFilePublic('video')" />
+                <input type="hidden" id="newsVideoUrlPublic" />
+                <video
+                  id="videoPreviewPublic"
+                  style="display: none; max-width: 180px; margin-top: 8px"
+                  controls
+                  muted></video>
 
-                <div
-                  id="youtubePreviewPublicContainer"
-                  style="
-                    display: none;
-                    margin-top: 8px;
-                    position: relative;
-                    padding-bottom: 56.25%;
-                    height: 0;
-                    overflow: hidden;
-                    border-radius: 8px;
-                  ">
-                  <iframe
-                    id="youtubePreviewPublic"
+                <div class="mt-2">
+                  <label class="form-label">YouTube URL (ixtiyoriy)</label>
+                  <input
+                    type="url"
+                    id="newsYoutubeUrlPublic"
+                    class="form-control"
+                    placeholder="https://www.youtube.com/watch?v=..." />
+                  <small class="form-text text-muted"
+                    >Agar YouTube havolasi kiritilsa, yuklangan video o'rniga
+                    shu manba ishlatiladi.</small
+                  >
+
+                  <div
+                    id="youtubePreviewPublicContainer"
                     style="
-                      position: absolute;
-                      top: 0;
-                      left: 0;
-                      width: 100%;
-                      height: 100%;
-                      border: 0;
-                    "
-                    allowfullscreen></iframe>
+                      display: none;
+                      margin-top: 8px;
+                      position: relative;
+                      padding-bottom: 56.25%;
+                      height: 0;
+                      overflow: hidden;
+                      border-radius: 8px;
+                    ">
+                    <iframe
+                      id="youtubePreviewPublic"
+                      style="
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        border: 0;
+                      "
+                      allowfullscreen></iframe>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="mb-3 mt-2">
-            <label class="form-label">Turi</label>
-            <select id="newsTypePublic" class="form-control">
-              <option value="news">📰 Yangilik</option>
-              <option value="advertisement">📢 Reklama</option>
-            </select>
-          </div>
-          <div class="form-check mb-3">
-            <input
-              type="checkbox"
-              id="newsIsActivePublic"
-              class="form-check-input"
-              checked />
-            <label for="newsIsActivePublic" class="form-check-label"
-              >Faol</label
-            >
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-          Bekor qilish
-        </button>
-        <button
-          type="button"
-          class="btn btn-primary"
-          onclick="saveNewsPublic()">
-          Saqlash
-        </button>
+            <div class="mb-3 mt-2">
+              <label class="form-label">Turi</label>
+              <select id="newsTypePublic" class="form-control">
+                <option value="news">📰 Yangilik</option>
+                <option value="advertisement">📢 Reklama</option>
+              </select>
+            </div>
+            <div class="form-check mb-3">
+              <input
+                type="checkbox"
+                id="newsIsActivePublic"
+                class="form-check-input"
+                checked />
+              <label for="newsIsActivePublic" class="form-check-label"
+                >Faol</label
+              >
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal">
+            Bekor qilish
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            onclick="saveNewsPublic()">
+            Saqlash
+          </button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<script>
-  function openNewsModalPublic() {
-    document.getElementById("newsFormPublic").reset();
-    document.getElementById("imagePreviewPublic").style.display = "none";
-    document.getElementById("videoPreviewPublic").style.display = "none";
-    document.getElementById("newsImageUrlPublic").value = "";
-    document.getElementById("newsVideoUrlPublic").value = "";
-    if (document.getElementById("newsYoutubeUrlPublic")) {
-      document.getElementById("newsYoutubeUrlPublic").value = "";
-      const ytCont = document.getElementById("youtubePreviewPublicContainer");
-      if (ytCont) ytCont.style.display = "none";
-      const ytIframe = document.getElementById("youtubePreviewPublic");
-      if (ytIframe) ytIframe.src = "";
-    }
-  }
-
-  function uploadMediaFilePublic(type) {
-    const fileInput = document.getElementById(
-      type === "image" ? "newsImageFilePublic" : "newsVideoFilePublic"
-    );
-    const file = fileInput.files[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("file", file);
-
-    fetch("/admin/upload-news-media", { method: "POST", body: formData })
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.success) {
-          if (type === "image") {
-            document.getElementById("newsImageUrlPublic").value = data.file_url;
-            const img = document.getElementById("imagePreviewPublic");
-            img.src = data.file_url;
-            img.style.display = "block";
-          } else {
-            document.getElementById("newsVideoUrlPublic").value = data.file_url;
-            const vid = document.getElementById("videoPreviewPublic");
-            vid.src = data.file_url;
-            vid.style.display = "block";
-            // clear youtube preview when uploading a file
-            const yt = document.getElementById("newsYoutubeUrlPublic");
-            if (yt) yt.value = "";
-            const ytCont = document.getElementById(
-              "youtubePreviewPublicContainer"
-            );
-            if (ytCont) ytCont.style.display = "none";
-          }
-        } else {
-          alert("Upload xatosi: " + (data.message || ""));
-        }
-      })
-      .catch((err) => {
-        console.error("Upload error", err);
-        alert("Fayl yuklashda xatolik");
-      });
-  }
-
-  function saveNewsPublic() {
-    const title = document.getElementById("newsTitlePublic").value.trim();
-    if (!title) {
-      alert("Sarlavha kiritilishi shart");
-      return;
+  <script>
+    function openNewsModalPublic() {
+      document.getElementById("newsFormPublic").reset();
+      document.getElementById("imagePreviewPublic").style.display = "none";
+      document.getElementById("videoPreviewPublic").style.display = "none";
+      document.getElementById("newsImageUrlPublic").value = "";
+      document.getElementById("newsVideoUrlPublic").value = "";
+      if (document.getElementById("newsYoutubeUrlPublic")) {
+        document.getElementById("newsYoutubeUrlPublic").value = "";
+        const ytCont = document.getElementById("youtubePreviewPublicContainer");
+        if (ytCont) ytCont.style.display = "none";
+        const ytIframe = document.getElementById("youtubePreviewPublic");
+        if (ytIframe) ytIframe.src = "";
+      }
     }
 
-    // Prefer YouTube URL over uploaded video file
-    const youtubeUrl =
-      (document.getElementById("newsYoutubeUrlPublic") &&
-        document.getElementById("newsYoutubeUrlPublic").value.trim()) ||
-      "";
-    const computedVideoUrl =
-      youtubeUrl || document.getElementById("newsVideoUrlPublic").value;
-
-    const payload = {
-      title: title,
-      content: document.getElementById("newsContentPublic").value.trim(),
-      type: document.getElementById("newsTypePublic").value,
-      image_url: document.getElementById("newsImageUrlPublic").value,
-      video_url: computedVideoUrl,
-      is_active: document.getElementById("newsIsActivePublic").checked,
-      display_order: 0,
-    };
-
-    fetch("/api/news", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    })
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.success) {
-          alert("Yangilik qo'shildi");
-          const modal = bootstrap.Modal.getInstance(
-            document.getElementById("newsModalPublic")
-          );
-          if (modal) modal.hide();
-          // reload page to show new item
-          window.location.reload();
-        } else {
-          alert("Xato: " + (data.message || ""));
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-        alert("Saqlashda xatolik");
-      });
-  }
-
-  // Show small YouTube preview when URL is entered in public modal
-  (function () {
-    const el = document.getElementById("newsYoutubeUrlPublic");
-    if (!el) return;
-    el.addEventListener("input", function () {
-      const v = el.value.trim();
-      const container = document.getElementById(
-        "youtubePreviewPublicContainer"
+    function uploadMediaFilePublic(type) {
+      const fileInput = document.getElementById(
+        type === "image" ? "newsImageFilePublic" : "newsVideoFilePublic"
       );
-      const iframe = document.getElementById("youtubePreviewPublic");
-      if (!v) {
-        iframe.src = "";
-        container.style.display = "none";
+      const file = fileInput.files[0];
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      fetch("/admin/upload-news-media", { method: "POST", body: formData })
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.success) {
+            if (type === "image") {
+              document.getElementById("newsImageUrlPublic").value =
+                data.file_url;
+              const img = document.getElementById("imagePreviewPublic");
+              img.src = data.file_url;
+              img.style.display = "block";
+            } else {
+              document.getElementById("newsVideoUrlPublic").value =
+                data.file_url;
+              const vid = document.getElementById("videoPreviewPublic");
+              vid.src = data.file_url;
+              vid.style.display = "block";
+              // clear youtube preview when uploading a file
+              const yt = document.getElementById("newsYoutubeUrlPublic");
+              if (yt) yt.value = "";
+              const ytCont = document.getElementById(
+                "youtubePreviewPublicContainer"
+              );
+              if (ytCont) ytCont.style.display = "none";
+            }
+          } else {
+            alert("Upload xatosi: " + (data.message || ""));
+          }
+        })
+        .catch((err) => {
+          console.error("Upload error", err);
+          alert("Fayl yuklashda xatolik");
+        });
+    }
+
+    function saveNewsPublic() {
+      const title = document.getElementById("newsTitlePublic").value.trim();
+      if (!title) {
+        alert("Sarlavha kiritilishi shart");
         return;
       }
-      try {
-        const m = v.match(/(?:v=|\/embed\/|youtu\.be\/)([A-Za-z0-9_\-]{11})/);
-        if (m && m[1]) {
-          iframe.src = "https://www.youtube.com/embed/" + m[1];
-          container.style.display = "block";
-          // hide uploaded video preview
-          const vp = document.getElementById("videoPreviewPublic");
-          if (vp) vp.style.display = "none";
-        } else {
+
+      // Prefer YouTube URL over uploaded video file
+      const youtubeUrl =
+        (document.getElementById("newsYoutubeUrlPublic") &&
+          document.getElementById("newsYoutubeUrlPublic").value.trim()) ||
+        "";
+      const computedVideoUrl =
+        youtubeUrl || document.getElementById("newsVideoUrlPublic").value;
+
+      const payload = {
+        title: title,
+        content: document.getElementById("newsContentPublic").value.trim(),
+        type: document.getElementById("newsTypePublic").value,
+        image_url: document.getElementById("newsImageUrlPublic").value,
+        video_url: computedVideoUrl,
+        is_active: document.getElementById("newsIsActivePublic").checked,
+        display_order: 0,
+        // Ensure public /news page adds go to the full news feed, not just the ticker
+        show_in_ticker: false,
+      };
+
+      fetch("/api/news", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.success) {
+            alert("Yangilik qo'shildi");
+            const modal = bootstrap.Modal.getInstance(
+              document.getElementById("newsModalPublic")
+            );
+            if (modal) modal.hide();
+            // reload page to show new item
+            window.location.reload();
+          } else {
+            alert("Xato: " + (data.message || ""));
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+          alert("Saqlashda xatolik");
+        });
+    }
+
+    // Show small YouTube preview when URL is entered in public modal
+    (function () {
+      const el = document.getElementById("newsYoutubeUrlPublic");
+      if (!el) return;
+      el.addEventListener("input", function () {
+        const v = el.value.trim();
+        const container = document.getElementById(
+          "youtubePreviewPublicContainer"
+        );
+        const iframe = document.getElementById("youtubePreviewPublic");
+        if (!v) {
+          iframe.src = "";
+          container.style.display = "none";
+          return;
+        }
+        try {
+          const m = v.match(/(?:v=|\/embed\/|youtu\.be\/)([A-Za-z0-9_\-]{11})/);
+          if (m && m[1]) {
+            iframe.src = "https://www.youtube.com/embed/" + m[1];
+            container.style.display = "block";
+            // hide uploaded video preview
+            const vp = document.getElementById("videoPreviewPublic");
+            if (vp) vp.style.display = "none";
+          } else {
+            iframe.src = "";
+            container.style.display = "none";
+          }
+        } catch (err) {
           iframe.src = "";
           container.style.display = "none";
         }
-      } catch (err) {
-        iframe.src = "";
-        container.style.display = "none";
-      }
-    });
-  })();
-</script>
-{% endif %} {% endblock %}
+      });
+    })();
+  </script>
+  {% endif %} {% endblock %}
+</div>

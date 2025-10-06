@@ -1,5 +1,31 @@
 {% extends "base.html" %} {% block title %}Mahsulotlar - Do'kon{% endblock %} {%
 block content %}
+<style>
+  /* Ensure category buttons are clearly visible and clickable */
+  .category-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .category-btn {
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid #e6e6e6;
+    background: #fff;
+    z-index: 10;
+  }
+  .category-btn.active {
+    background: #007bff;
+    color: #fff;
+    border-color: #0069d9;
+  }
+  .category-buttons-wrapper {
+    position: relative;
+    z-index: 5;
+  }
+</style>
 <div class="menu-container">
   <div class="main-content">
     <!-- Left Sidebar Filters -->
@@ -9,6 +35,103 @@ block content %}
       <!-- Search -->
       <div class="filter-section">
         <label for="menuSearchInput">Qidirish</label>
+
+        <!-- Diagnostic/wiring helper: prints status and re-wires category buttons & search input -->
+        <script>
+          // Defer diagnostics/wiring until DOMContentLoaded so we don't reference
+          // variables (like debouncedSearch) or elements before they're defined.
+          document.addEventListener(
+            "DOMContentLoaded",
+            function menuInitDiagnostics() {
+              try {
+                const btns = document.querySelectorAll(".category-btn");
+                const items = document.querySelectorAll(".menu-item");
+                const search = document.getElementById("menuSearchInput");
+                console.log(
+                  "[menuInit] categoryBtns=",
+                  btns.length,
+                  "menuItems=",
+                  items.length,
+                  "searchInput=",
+                  !!search,
+                  "menuDataKeys=",
+                  Object.keys(window.menuData || {}).length
+                );
+
+                btns.forEach((btn) => {
+                  if (btn._diagWired) return;
+                  btn._diagWired = true;
+                  btn.addEventListener("click", function (ev) {
+                    try {
+                      ev.preventDefault();
+                      const cat = this.getAttribute("data-cat") || "all";
+                      console.log("[menuInit] category click", cat);
+                      showCategory(null, cat);
+                    } catch (e) {
+                      console.warn(
+                        "[menuInit] category click handler error",
+                        e
+                      );
+                    }
+                  });
+                });
+
+                if (search) {
+                  try {
+                    if (typeof debouncedSearch === "function") {
+                      try {
+                        search.removeEventListener("input", debouncedSearch);
+                      } catch (_) {}
+                      search.addEventListener("input", debouncedSearch);
+                      console.log("[menuInit] search input wired (debounced)");
+                    } else {
+                      // fallback: wire a basic input handler until debouncedSearch is available
+                      search.addEventListener("input", function () {
+                        try {
+                          performMenuSearch();
+                        } catch (e) {}
+                      });
+                      console.log("[menuInit] search input wired (fallback)");
+                    }
+                  } catch (e) {
+                    console.warn("[menuInit] search wiring error", e);
+                  }
+                }
+
+                // Re-run attachCardHandlers in case previous attempts failed
+                try {
+                  if (typeof attachCardHandlers === "function")
+                    attachCardHandlers();
+                  console.log("[menuInit] attachCardHandlers invoked");
+                } catch (e) {
+                  console.warn("[menuInit] attachCardHandlers failed", e);
+                }
+
+                // Give a small visual hint in page (non-blocking) so user can see diagnostics
+                try {
+                  const debugEl = document.createElement("div");
+                  debugEl.id = "menu-diagnostics";
+                  debugEl.style.cssText =
+                    "position:fixed;left:8px;bottom:8px;background:rgba(0,0,0,0.6);color:#fff;padding:6px 10px;border-radius:6px;z-index:99999;font-size:12px;";
+                  debugEl.textContent = `Menu: ${btns.length} categories • ${
+                    items.length
+                  } cards • data:${Object.keys(window.menuData || {}).length}`;
+                  document.body.appendChild(debugEl);
+                  setTimeout(() => {
+                    try {
+                      debugEl.parentElement &&
+                        debugEl.parentElement.removeChild(debugEl);
+                    } catch (e) {}
+                  }, 3500);
+                } catch (e) {
+                  /* ignore UI hint errors */
+                }
+              } catch (e) {
+                console.warn("[menuInit] diagnostics error", e);
+              }
+            }
+          );
+        </script>
         <input
           id="menuSearchInput"
           type="search"
@@ -125,7 +248,7 @@ block content %}
             class="menu-item"
             data-id="{{ item.id }}"
             data-category="{{ (item.category or 'product')|lower }}"
-            onclick="openItemModal({{ item.id }})">
+            onclick="openItemModal({{ item.id }}, event)">
             <div class="item-image">
               <img
                 src="{{ item.image_url or '/static/images/default-men.jpg' }}"
@@ -144,6 +267,7 @@ block content %}
             </div>
             <div class="item-content">
               <h3 class="item-name">{{ item.name }}</h3>
+              <p class="item-category">{{ item.category or '' }}</p>
               <p class="item-description">
                 {{ item.description or 'Mahsulot haqida' }}
               </p>
@@ -216,6 +340,11 @@ block content %}
           </div>
           {% endfor %}
         </div>
+        <!-- Pagination controls will be inserted here by client JS -->
+        <div
+          id="menu-pagination"
+          class="menu-pagination"
+          aria-live="polite"></div>
       </div>
     </div>
   </div>
@@ -1528,18 +1657,19 @@ block content %}
 
   .menu-item {
     background: rgba(255, 255, 255, 0.98);
-    border-radius: 24px;
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
     overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
     cursor: pointer;
     position: relative;
-    min-height: 650px; /* Increased from 500px to 650px */
     display: flex;
     flex-direction: column;
-    border: 2px solid transparent;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 520px;
+    border: 1px solid rgba(0,0,0,0.04);
+    background-clip: padding-box;
   }
 
   .menu-item:hover {
@@ -1548,7 +1678,8 @@ block content %}
   }
 
   .item-image {
-    height: 350px; /* Increased from 280px to 350px */
+    width: 100%;
+    height: 320px;
     overflow: hidden;
     position: relative;
     background: linear-gradient(135deg, #f8fafc 0%, #edf2f7 100%);
@@ -1559,6 +1690,9 @@ block content %}
     height: 100%;
     object-fit: cover;
     transition: transform 0.3s ease;
+    display: block;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
   }
 
   .menu-item:hover .item-image img {
@@ -1574,15 +1708,15 @@ block content %}
   }
 
   .btn-favorite-top {
-    background: rgba(255, 255, 255, 0.9);
+    background: #ffffffcc;
     color: #e91e63;
     border: none;
     padding: 8px;
     border-radius: 50%;
     cursor: pointer;
-    font-size: 16px;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    font-size: 18px;
+    transition: transform 0.18s ease, background 0.18s ease;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
   }
 
   .btn-favorite-top:hover {
@@ -1592,32 +1726,45 @@ block content %}
   }
 
   .item-content {
-    padding: 30px; /* Increased from 25px */
-    flex: 1;
+    padding: 22px 26px 30px 26px;
+    flex: 1 1 auto;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
+    align-items: center;
+    text-align: center;
   }
 
   .item-name {
     color: #2d3748;
-    font-size: 1.4rem;
-    font-weight: 600;
-    margin-bottom: 10px;
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    text-transform: capitalize;
+  }
+  .item-category {
+    color: #9aa3b2;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    text-transform: lowercase;
+    letter-spacing: 0.02em;
   }
 
   .item-description {
-    color: #718096;
-    margin-bottom: 15px;
-    line-height: 1.5;
-    font-size: 0.9rem;
+    color: #6b7280;
+    margin-bottom: 12px;
+    line-height: 1.4;
+    font-size: 0.88rem;
+    max-width: 88%;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .rating-section {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
   }
 
   .stars {
@@ -1626,8 +1773,8 @@ block content %}
   }
 
   .star {
-    font-size: 16px;
-    color: #ddd;
+    font-size: 18px;
+    color: #ffd70033;
     transition: color 0.3s ease;
   }
 
@@ -1643,7 +1790,9 @@ block content %}
   .item-footer {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 14px;
+    width: 100%;
+    align-items: center;
   }
 
   .price-section {
@@ -1691,84 +1840,86 @@ block content %}
   .add-to-cart-section {
     display: flex;
     justify-content: center;
+    width: 100%;
   }
 
   .quantity-cart-controls {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 5px;
-    background: #f8f9fa;
-    border-radius: 25px;
-    padding: 5px;
-    border: 2px solid #e2e8f0;
+    gap: 10px;
+    background: transparent;
+    border-radius: 999px;
+    padding: 6px 8px;
+    border: none;
   }
 
   .quantity-btn {
-    background: #4299e1;
-    color: white;
+    background: #e6f0ff;
+    color: #2b6cb0;
     border: none;
-    width: 30px;
-    height: 30px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    transition: all 0.3s ease;
-    display: flex;
+    font-size: 20px;
+    font-weight: 700;
+    transition: transform 0.12s ease;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
   }
 
   .quantity-btn:hover {
-    background: #3182ce;
-    transform: scale(1.1);
+    transform: scale(1.06);
   }
 
   .quantity-input {
     border: none;
     background: transparent;
     text-align: center;
-    font-weight: bold;
-    width: 40px;
+    font-weight: 700;
+    width: 36px;
     font-size: 16px;
     color: #2d3748;
   }
 
   .btn-cart {
-    background: #38a169;
+    background: #2f9f6a;
     color: white;
     border: none;
-    padding: 8px 12px;
-    border-radius: 20px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
     cursor: pointer;
-    font-size: 16px;
-    transition: all 0.3s ease;
-    margin-left: 5px;
+    font-size: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 18px rgba(47,159,106,0.18);
   }
 
   .btn-cart:hover {
-    background: #2f855a;
-    transform: scale(1.05);
+    transform: translateY(-2px);
   }
 
   /* Baholash tugmasi stillari */
   .rating-button-section {
     display: flex;
     justify-content: center;
-    margin-top: 10px;
+    margin-top: 6px;
   }
 
   .btn-rate {
-    background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
-    color: #333;
+    background: linear-gradient(180deg,#ffd24d,#ffbf00);
+    color: #2d2d2d;
     border: none;
-    padding: 8px 15px;
-    border-radius: 20px;
+    padding: 12px 26px;
+    border-radius: 999px;
     cursor: pointer;
-    font-size: 14px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(255, 215, 0, 0.3);
+    font-size: 16px;
+    font-weight: 700;
+    transition: transform 0.12s ease;
+    box-shadow: 0 8px 20px rgba(255,191,0,0.18);
   }
 
   .btn-rate:hover {
@@ -2840,9 +2991,36 @@ block content %}
     // Expose whether the current session is a staff session so JS can show staff-only controls
     const IS_STAFF = {{ (session.get('staff_id') and True) | tojson }};
 
-    function showCategory(event, category) {
-        const items = document.querySelectorAll('.menu-item');
-        const buttons = document.querySelectorAll('.category-btn');
+  // Track whether the user has performed a real (trusted) interaction yet.
+  // We prefer a boolean flag set only when a trusted event occurs. This prevents
+  // programmatic or synthetic events from opening the modal during initial load.
+  let __lastUserInteraction = 0;
+  let __userHasInteracted = false;
+  ['pointerdown', 'click', 'keydown', 'touchstart'].forEach(evt => {
+    try {
+      window.addEventListener(evt, (e) => {
+        try {
+          // Only treat real user-initiated events as interactions
+          if (e && e.isTrusted) {
+            __userHasInteracted = true;
+            __lastUserInteraction = Date.now();
+          }
+        } catch (err) {}
+      }, { passive: true, capture: true });
+    } catch (e) {}
+  });
+
+  function showCategory(event, category) {
+    // Support both signatures:
+    //  - showCategory(event, category)
+    //  - showCategory(category)  (legacy callers may pass only the category string)
+    if (typeof event === 'string' && (category === undefined || category === null)) {
+      category = event;
+      event = null;
+    }
+
+    const items = document.querySelectorAll('.menu-item');
+    const buttons = document.querySelectorAll('.category-btn');
     // Tugmalarni yangilash
     buttons.forEach(btn => btn.classList.remove('active'));
     // normalize requested category
@@ -2922,10 +3100,73 @@ block content %}
       }
     } catch (e) { console.warn('filter wiring error', e); }
 
-    function openItemModal(itemId) {
-    // Try to get the item from menuData, but if missing build a minimal
-    // fallback from the DOM so the modal can still open.
-    let item = (menuData && menuData[itemId]) ? menuData[itemId] : null;
+    // Ensure category buttons also have robust programmatic listeners in case
+    // onclick attributes were removed or legacy calls use a single-arg form.
+    (function wireCategoryButtons() {
+      try {
+        document.querySelectorAll('.category-btn').forEach(btn => {
+          // avoid double-wiring
+          if (btn._categoryWired) return;
+          btn._categoryWired = true;
+          btn.addEventListener('click', function(ev) {
+            ev.preventDefault();
+            const cat = this.getAttribute('data-cat') || 'all';
+            showCategory(ev, cat);
+          });
+        });
+      } catch (e) { console.warn('wireCategoryButtons failed', e); }
+    })();
+
+    function openItemModal(itemId, evt) {
+      // Diagnostic: always log the invocation so we can trace unexpected callers.
+      try {
+        console.log('openItemModal invoked ->', { itemId: itemId, evtType: evt ? evt.type : null, isTrusted: evt ? !!evt.isTrusted : null, lastInteraction: __lastUserInteraction, userHasInteracted: !!__userHasInteracted });
+        // Print a stack so we can identify the caller during debugging
+        try { console.trace && console.trace(); } catch (e) {}
+      } catch (e) {}
+
+      // Prevent accidental auto-open: require a trusted event that originated
+      // from a .menu-item (or allow only after the user has already interacted).
+      try {
+        // If a user event is provided and it's trusted (real user click), update timestamp
+        if (evt && evt.isTrusted) {
+          try { __lastUserInteraction = Date.now(); } catch (e){}
+        }
+
+        // If no event is provided, block: we only open modals in response to real events
+        if (!evt) {
+          try { console.warn('openItemModal blocked: call missing event (preventing programmatic open) for', itemId); } catch(e){}
+          return;
+        }
+
+        // Ensure event is trusted and comes from (or within) a .menu-item unless user has already interacted
+        const fromCard = (evt.target && evt.target.closest && evt.target.closest('.menu-item')) || (evt.currentTarget && evt.currentTarget.closest && evt.currentTarget.closest('.menu-item'));
+        if (!(evt.isTrusted || __userHasInteracted) || !fromCard) {
+          try {
+            console.warn('openItemModal blocked: event not from card or not trusted', { itemId, isTrusted: !!(evt && evt.isTrusted), fromCard: !!fromCard, userHasInteracted: !!__userHasInteracted });
+            console.trace && console.trace();
+          } catch(e){}
+          return;
+        }
+      } catch (e) { /* ignore guard errors */ }
+    // Normalize and robustly lookup the item in menuData. Accept numeric
+    // or string keys and try fallback strategies.
+    const idStr = (itemId !== undefined && itemId !== null) ? String(itemId) : '';
+    const idNum = parseInt(itemId, 10);
+    let item = null;
+    try {
+      if (window.menuData) {
+        if (window.menuData[idStr]) item = window.menuData[idStr];
+        else if (!isNaN(idNum) && window.menuData[idNum]) item = window.menuData[idNum];
+        else {
+          // last resort: search values for matching id
+          for (const k in window.menuData) {
+            const v = window.menuData[k];
+            if (v && (v.id === idNum || String(v.id) === idStr)) { item = v; break; }
+          }
+        }
+      }
+    } catch (e) { console.warn('menuData lookup error', e); }
     if (!item) {
       try {
         const card = document.querySelector('.menu-item[data-id="' + itemId + '"]');
@@ -3171,7 +3412,7 @@ block content %}
         if (!j1 || !j1.media_id) return alert('Media ID topilmadi');
         const res2 = await fetch(`/api/product-media/${j1.media_id}/set-main`, { method: 'POST' });
         const j2 = await res2.json();
-        if (j2 && j2.success) { showToast('Asosiy rasm belgilandi', 'success'); openItemModal(itemId); } else { showToast('Xatolik', 'error'); }
+  if (j2 && j2.success) { showToast('Asosiy rasm belgilandi', 'success'); openItemModal(itemId, ev); } else { showToast('Xatolik', 'error'); }
       } catch (e) { console.error(e); showToast('So' + "'" + 'rov bajarilmadi', 'error'); }
     }
 
@@ -3218,8 +3459,8 @@ block content %}
   div.dataset.id = item.id;
   // normalize category on dataset for consistent comparisons
   div.dataset.category = (item.category || 'product').toString();
-        // ensure click opens modal even if inner elements call stopPropagation
-        div.onclick = () => openItemModal(item.id);
+  // ensure click opens modal even if inner elements call stopPropagation
+  div.addEventListener('click', function(e){ openItemModal(item.id, e); });
         // ensure pointer events allowed
         div.style.pointerEvents = 'auto';
 
@@ -3228,7 +3469,17 @@ block content %}
           <div class="item-content">
             <h3 class="item-name">${item.name}</h3>
             <p class="item-description">${item.description || ''}</p>
-            <div class="rating-section"><div class="stars">${'<span class="star">⭐</span>'.repeat(5)}</div><span class="rating-text">${(parseFloat(item.rating)||0).toFixed(1)} (${item.orders_count||0} buyurtma)</span></div>
+            <div class="rating-section">
+              <div class="stars">
+                ${(() => {
+                  const r = Math.round((parseFloat(item.rating)||0));
+                  let s = '';
+                  for (let i=1;i<=5;i++) s += `<span class="star ${i<=r?'filled':''}">⭐</span>`;
+                  return s;
+                })()}
+              </div>
+              <span class="rating-text">${(parseFloat(item.rating)||0).toFixed(1)} (${item.orders_count||0} buyurtma)</span>
+            </div>
             <div class="item-footer">
               <div class="add-to-cart-section">
                 <form method="POST" action="/add_to_cart" onclick="event.stopPropagation()">
@@ -3246,6 +3497,37 @@ block content %}
         `;
 
         grid.appendChild(div);
+        // Wire add-to-cart form in dynamically rendered card to use AJAX
+        try {
+          const dynForm = div.querySelector('form[action*="/add_to_cart"]');
+          if (dynForm && !dynForm._ajaxWired) {
+            dynForm._ajaxWired = true;
+            dynForm.addEventListener('submit', function(e) {
+              e.preventDefault();
+              const menuItemId = this.querySelector('input[name="menu_item_id"]').value;
+              const quantityInput = this.querySelector('input[name="quantity"]');
+              const quantity = quantityInput ? quantityInput.value : 1;
+              const sizeInput = this.querySelector('select[name="size"]') || this.querySelector('input[name="size"]');
+              const colorInput = this.querySelector('select[name="color"]') || this.querySelector('input[name="color"]');
+              const size = sizeInput ? sizeInput.value : '';
+              const color = colorInput ? colorInput.value : '';
+
+              // If the product has options require modal selection
+              const item = menuData && menuData[menuItemId] ? menuData[menuItemId] : null;
+                if (item) {
+                const hasSizes = (item.sizes || '').toString().trim().length > 0;
+                const hasColors = (item.colors || '').toString().trim().length > 0;
+                if (hasSizes || hasColors) {
+                  openItemModal(menuItemId, e);
+                  return false;
+                }
+              }
+
+              addToCartAjax(menuItemId, quantity, size, color);
+              return false;
+            });
+          }
+        } catch (e) { console.warn('wire dynamic add-to-cart failed', e); }
       });
       // After dynamically rendering, ensure handlers are attached for new cards
       try { attachCardHandlers(); } catch (e) { console.warn('attachCardHandlers after render failed', e); }
@@ -3263,7 +3545,12 @@ block content %}
       }
     }
 
-    async function performMenuSearch() {
+  // Pagination state: 10 items per page
+  let currentPage = 1;
+  const PAGE_SIZE = 10;
+  let lastTotalCount = 0;
+
+  async function performMenuSearch() {
       // Guard DOM access in case inputs are missing or removed by other scripts
       const qEl = document.getElementById('menuSearchInput');
       const catEl = document.getElementById('filterCategory');
@@ -3276,12 +3563,15 @@ block content %}
       const size = sizeEl ? (sizeEl.value || '').trim() : '';
       const color = colorEl ? (colorEl.value || '').trim() : '';
 
-      const params = new URLSearchParams();
+  const params = new URLSearchParams();
       if (q) params.set('q', q);
       if (category) params.set('category', category);
       if (sort) params.set('sort', sort);
       if (size) params.set('size', size);
       if (color) params.set('color', color);
+  // pagination params
+  params.set('limit', PAGE_SIZE);
+  params.set('offset', (currentPage - 1) * PAGE_SIZE);
 
       try {
         const res = await fetch('/api/menu-search?' + params.toString());
@@ -3291,6 +3581,9 @@ block content %}
           // Update local menuData cache for modal interactions
           menuData = {};
           data.items.forEach(it => { menuData[it.id] = it; });
+          // Pagination: render controls using total_count returned by API
+          lastTotalCount = parseInt(data.total_count || 0, 10) || 0;
+          renderPaginationControls(lastTotalCount, PAGE_SIZE, currentPage);
         } else {
           // Fallback to client-side filtering if API fails
           applyClientSideFilter();
@@ -3334,17 +3627,18 @@ block content %}
       const colorInput = document.getElementById('filterColor');
       const clearBtn = document.getElementById('clearFiltersBtn');
 
-      if (searchInput) searchInput.addEventListener('input', debouncedSearch);
-      if (categorySelect) categorySelect.addEventListener('change', debouncedSearch);
-      if (sortSelect) sortSelect.addEventListener('change', debouncedSearch);
-      if (sizeInput) sizeInput.addEventListener('input', debouncedSearch);
-      if (colorInput) colorInput.addEventListener('input', debouncedSearch);
+      if (searchInput) searchInput.addEventListener('input', function(){ currentPage = 1; debouncedSearch(); });
+      if (categorySelect) categorySelect.addEventListener('change', function(){ currentPage = 1; debouncedSearch(); });
+      if (sortSelect) sortSelect.addEventListener('change', function(){ currentPage = 1; debouncedSearch(); });
+      if (sizeInput) sizeInput.addEventListener('input', function(){ currentPage = 1; debouncedSearch(); });
+      if (colorInput) colorInput.addEventListener('input', function(){ currentPage = 1; debouncedSearch(); });
       if (clearBtn) clearBtn.addEventListener('click', function() {
         searchInput.value = '';
         categorySelect.value = '';
         sortSelect.value = '';
         sizeInput.value = '';
         colorInput.value = '';
+        currentPage = 1;
         // reload original menu by triggering search (empty)
         debouncedSearch();
       });
@@ -3357,7 +3651,61 @@ block content %}
           if (bcat) categorySelect.value = bcat === 'all' ? '' : bcat;
         }
       } catch (e) { console.warn('initial category sync failed', e); }
+      // initial load
+      debouncedSearch();
     });
+
+    // Render simple pagination controls inside #menu-pagination
+    function renderPaginationControls(total, perPage, current) {
+      const container = document.getElementById('menu-pagination');
+      if (!container) return;
+      container.innerHTML = '';
+      const pages = Math.max(1, Math.ceil((total || 0) / perPage));
+      if (pages <= 1) return;
+
+      const wrap = document.createElement('div');
+      wrap.className = 'pagination-controls';
+      // Previous
+      const prev = document.createElement('button');
+      prev.className = 'btn small';
+      prev.textContent = '◀';
+      prev.disabled = current <= 1;
+      prev.onclick = () => { if (current > 1) { currentPage = current - 1; performMenuSearch(); } };
+      wrap.appendChild(prev);
+
+      // Page numbers (simple list)
+      for (let p = 1; p <= pages; p++) {
+        const b = document.createElement('button');
+        b.className = 'btn small';
+        if (p === current) b.classList.add('active');
+        b.textContent = String(p);
+        b.onclick = (() => { const pp = p; return () => { if (pp === current) return; currentPage = pp; performMenuSearch(); }; })();
+        wrap.appendChild(b);
+      }
+
+      // Next
+      const next = document.createElement('button');
+      next.className = 'btn small';
+      next.textContent = '▶';
+      next.disabled = current >= pages;
+      next.onclick = () => { if (current < pages) { currentPage = current + 1; performMenuSearch(); } };
+      wrap.appendChild(next);
+
+      container.appendChild(wrap);
+    }
+
+    // Basic styles for pagination controls (inlined here for simplicity)
+    (function injectPaginationStyles(){
+      try {
+        const css = `
+          .pagination-controls { display:flex; gap:8px; align-items:center; justify-content:center; margin:18px 0; }
+          .pagination-controls .btn { background:#f0f0f0; border:1px solid #e0e0e0; padding:6px 10px; border-radius:6px; cursor:pointer; }
+          .pagination-controls .btn.active { background:#007bff; color:#fff; border-color:#0069d9; }
+          .pagination-controls .btn:disabled { opacity:0.5; cursor:default; }
+        `;
+        const style = document.createElement('style'); style.type = 'text/css'; style.appendChild(document.createTextNode(css)); document.head.appendChild(style);
+      } catch(e){}
+    })();
 
     function increaseModalQuantity() {
         const input = document.getElementById('modalQuantity');
@@ -3620,13 +3968,13 @@ block content %}
 
       // If the product has sizes/colors, open modal to force selection
       const item = menuData[itemId];
-      if (item) {
-        const hasSizes = (item.sizes || '').trim().length > 0;
-        const hasColors = (item.colors || '').trim().length > 0;
-        if (hasSizes || hasColors) {
-          openItemModal(itemId);
-          return false;
-        }
+          if (item) {
+                const hasSizes = (item.sizes || '').trim().length > 0;
+                const hasColors = (item.colors || '').trim().length > 0;
+                if (hasSizes || hasColors) {
+                  openItemModal(itemId, e);
+                  return false;
+                }
       }
 
       addToCartAjax(itemId, quantity);
@@ -3652,11 +4000,11 @@ block content %}
 
         // If product has options, force modal so user picks size/color
         const item = menuData[menuItemId];
-        if (item) {
+          if (item) {
           const hasSizes = (item.sizes || '').trim().length > 0;
           const hasColors = (item.colors || '').trim().length > 0;
           if (hasSizes || hasColors) {
-            openItemModal(menuItemId);
+            openItemModal(menuItemId, e);
             return false;
           }
         }
@@ -3955,6 +4303,27 @@ block content %}
       // Instrumentation: helpful debug logs to capture whether handlers attach
       try { console.log('DOMContentLoaded: menu-grid items', document.querySelectorAll('.menu-grid .menu-item').length); } catch(e) {}
       try { console.log('DOMContentLoaded: menuData keys', Object.keys(menuData||{}).length); } catch(e) {}
+      // If menuData is empty (server injection missing or user edits), fetch full menu as a fallback
+      try {
+        if (!menuData || Object.keys(menuData).length === 0) {
+          console.log('[menu-fallback] menuData empty - fetching /api/menu-search fallback');
+          fetch('/api/menu-search')
+            .then(r => r.json())
+            .then(data => {
+              if (data && data.success && Array.isArray(data.items)) {
+                // Populate cache and render
+                menuData = {};
+                data.items.forEach(it => { try { menuData[it.id] = it; } catch(e){} });
+                try { renderMenuItems(data.items); } catch(e) { console.warn('renderMenuItems fallback failed', e); }
+                try { buildMenuDataFromDOM(); } catch(e) {}
+                try { if (typeof attachCardHandlers === 'function') attachCardHandlers(); } catch(e) {}
+              } else {
+                console.warn('[menu-fallback] menu-search returned no items or error');
+              }
+            })
+            .catch(err => { console.warn('[menu-fallback] fetch failed', err); });
+        }
+      } catch(e) { console.warn('menuData fallback error', e); }
       // Fallback: ensure menu-item cards open modal when clicked (defensive)
       try {
         document.querySelectorAll('.menu-item').forEach(card => {
@@ -3963,11 +4332,23 @@ block content %}
           card.addEventListener('click', function(e) {
             try {
               const id = card.dataset && card.dataset.id ? card.dataset.id : (card.getAttribute && (card.getAttribute('onclick') || '').match(/openItemModal\((\d+)\)/) || [])[1];
-              if (id) openItemModal(parseInt(id, 10));
+              if (id) openItemModal(parseInt(id, 10), e);
             } catch(err) { console.warn('menu-item click fallback failed', err); }
           });
         });
       } catch(err) { console.warn('menu-item fallback registration failed', err); }
+
+      // Ensure category buttons are wired even if inline handlers were removed
+      try {
+        document.querySelectorAll('.category-btn').forEach(btn => {
+          if (btn._wiredByFallback) return; btn._wiredByFallback = true;
+          btn.addEventListener('click', function(ev) {
+            ev.preventDefault();
+            const cat = this.getAttribute('data-cat') || 'all';
+            showCategory(null, cat);
+          });
+        });
+      } catch(e) { console.warn('category button fallback wiring failed', e); }
     });
 
     // Build menuData from server-rendered DOM cards so client-side filters can work
@@ -4021,12 +4402,35 @@ block content %}
             if (id) {
               // debug
               try { console.log('grid-level pointerup -> openItemModal', id); } catch(e){}
-              openItemModal(parseInt(id, 10));
+              openItemModal(parseInt(id, 10), e);
             }
           } catch(err) { console.warn('grid pointerup fallback error', err); }
         }, { passive: false, capture: true });
       }
     } catch(e) { console.warn('grid pointerup fallback registration failed', e); }
+
+    // Additional fallback: use elementFromPoint on pointerup to ensure we can
+    // detect the topmost .menu-item even when child elements consume events.
+    try {
+      window.addEventListener('pointerup', function(ev) {
+        try {
+          // only run on short taps/clicks
+          if (!ev || ev.type !== 'pointerup') return;
+          const x = ev.clientX || (ev.touches && ev.touches[0] && ev.touches[0].clientX);
+          const y = ev.clientY || (ev.touches && ev.touches[0] && ev.touches[0].clientY);
+          if (typeof x !== 'number' || typeof y !== 'number') return;
+          const el = document.elementFromPoint(x, y);
+          if (!el) return;
+          const card = el.closest && el.closest('.menu-item');
+          if (!card) return;
+          const id = card.dataset && card.dataset.id ? card.dataset.id : (card.getAttribute && (card.getAttribute('onclick') || '').match(/openItemModal\((\d+)\)/) || [])[1];
+          if (id) {
+            try { console.log('pointerup elementFromPoint -> openItemModal', id); } catch(e){}
+            openItemModal(parseInt(id, 10), ev);
+          }
+        } catch (e) { /* ignore */ }
+      }, { passive: true, capture: true });
+    } catch (e) { console.warn('elementFromPoint pointerup fallback failed', e); }
 
 
     // Helper function to create color dropdown for items
@@ -4353,7 +4757,7 @@ block content %}
           if (id) {
             // debug hook to aid troubleshooting in the browser console (use log so it's visible)
             try { console.log('menu-item click -> openItemModal', id, e.target); } catch (e) {}
-            openItemModal(parseInt(id, 10));
+            openItemModal(parseInt(id, 10), e);
           }
         } catch (err) {
           console.warn('menu-item delegated click error', err);
@@ -4382,17 +4786,17 @@ block content %}
               const id = (card.dataset && card.dataset.id) ? card.dataset.id : (card.getAttribute && (card.getAttribute('onclick') || '').match(/openItemModal\((\d+)\)/) || [])[1];
               if (id) {
                 console.log('menu-item pointerdown -> openItemModal', id, e.target);
-                try { openItemModal(parseInt(id, 10)); } catch (err) { console.warn('openItemModal error', err); }
+                try { openItemModal(parseInt(id, 10), e); } catch (err) { console.warn('openItemModal error', err); }
                 e.preventDefault();
               }
             }, { capture: true });
 
             // keyboard activation (Enter / Space)
             card.addEventListener('keydown', function(e) {
-              if (e.key === 'Enter' || e.key === ' ') {
+                if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
                 const id = (card.dataset && card.dataset.id) ? card.dataset.id : (card.getAttribute && (card.getAttribute('onclick') || '').match(/openItemModal\((\d+)\)/) || [])[1];
-                if (id) { try { openItemModal(parseInt(id, 10)); } catch (err) { console.warn('openItemModal error', err); } }
+                if (id) { try { openItemModal(parseInt(id, 10), e); } catch (err) { console.warn('openItemModal error', err); } }
               }
             });
           } catch (e) { console.warn('attachCardHandlers error', e); }
@@ -4422,11 +4826,37 @@ block content %}
               const id = card.dataset && card.dataset.id ? card.dataset.id : (card.getAttribute && (card.getAttribute('onclick') || '').match(/openItemModal\((\d+)\)/) || [])[1];
               if (id) {
                 try { console.log('menu-grid click fallback -> openItemModal', id); } catch(e){}
-                openItemModal(parseInt(id, 10));
+                openItemModal(parseInt(id, 10), e);
               }
             } catch(err) { console.warn('menuGrid click fallback error', err); }
           }, { capture: true });
         } catch (err) { /* ignore */ }
       }
+
+      // Capture-phase backup for category buttons: this runs before
+      // bubble-phase handlers and ensures category selection works even
+      // when other scripts stop propagation or modify handlers.
+      try {
+        const catContainer = document.querySelector('.category-buttons');
+        if (catContainer && !catContainer._captureWired) {
+          catContainer._captureWired = true;
+          catContainer.addEventListener('click', function(ev) {
+            try {
+              const btn = ev.target && ev.target.closest ? ev.target.closest('.category-btn') : null;
+              if (!btn) return;
+              // normalize category and trigger the canonical function
+              const cat = btn.getAttribute('data-cat') || 'all';
+              // keep UI in sync
+              try { document.querySelectorAll('.category-btn').forEach(b=>b.classList.remove('active')); } catch(e){}
+              try { btn.classList.add('active'); } catch(e){}
+              // Call the central handler (uses defensive checks internally)
+              try { showCategory(null, cat); } catch(e) { /* ignore */ }
+              // Prevent other handlers from interfering further
+              ev.preventDefault();
+              ev.stopPropagation();
+            } catch (e) { /* ignore per-page robustness */ }
+          }, { capture: true });
+        }
+      } catch (e) { console.warn('category buttons capture wiring failed', e); }
 </script>
 {% endblock %}

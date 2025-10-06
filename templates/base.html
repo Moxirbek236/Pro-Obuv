@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{% block title %}Restoran tizimi{% endblock %}</title>
+  <title>Safety / Pro Obuv - {% block title %}Restoran tizimi{% endblock %}</title>
     <link
       rel="apple-touch-icon"
       sizes="180x180"
@@ -485,6 +485,39 @@
         background-color: #2d2d2d !important;
         color: #ffffff !important;
         border-bottom-color: #3d3d3d !important;
+      }
+    </style>
+
+    <style>
+      /* Hide menu/product prices globally for the public site by default.
+         This keeps price data out of the immediate UI while preserving the
+         DOM for scripts and accessibility.
+
+         Use the utility class `show-prices` on <body> to reveal prices when
+         needed (e.g., admin preview or A/B test). */
+      .item-price, .menu-item-price, .price-section, .price-label {
+        visibility: hidden !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+      }
+
+      /* Keep screen readers informed: mark price elements as hidden */
+      .item-price[aria-hidden]::after, .menu-item-price[aria-hidden]::after {
+        content: '';
+      }
+
+      /* Reveal prices when body has .show-prices (developer/admin opt-in) */
+      body.show-prices .item-price,
+      body.show-prices .menu-item-price,
+      body.show-prices .price-section,
+      body.show-prices .price-label {
+        visibility: visible !important;
+        height: auto !important;
+        margin: initial !important;
+        padding: initial !important;
+        overflow: visible !important;
       }
     </style>
 
@@ -1157,7 +1190,9 @@
             {% endif %}
             <li class="nav-item d-flex align-items-center">
               <a class="nav-link" href="{{ url_for('contact') }}">📞 {{ _('nav.contact') }}</a>
-              <a class="nav-link ms-1" href="https://maps.app.goo.gl/tQU6Axzj4JvLoGML8" target="_blank" title="Google Maps">🗺️ Xaritada joylashuvni ko'rish</a>
+            </li>
+            <li>
+              <a class="nav-link" href="https://maps.app.goo.gl/tQU6Axzj4JvLoGML8"> 🗺️ Manzil</a>
             </li>
             <li class="nav-item">
             <a class="nav-link" href="{{ url_for('news_page') }}"> {{ _('nav.news') }}</a>
@@ -1168,11 +1203,7 @@
             <li class="nav-item">
             <a class="nav-link" href="{{ url_for('downloads') }}">📱 {{ _('nav.downloads') }}</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('user_360_room') }}"
-                >🔄 360 Room</a
-              >
-            </li>
+            <!-- 360 Room removed -->
           </ul>
 
           <ul class="navbar-nav">
@@ -1313,11 +1344,7 @@
                 >📱 Yuklamalar</a
               >
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('user_360_room') }}"
-                >🔄 360 Room</a
-              >
-            </li>
+            <!-- 360 Room removed -->
           </ul>
 
           <ul class="navbar-nav">
@@ -1384,6 +1411,18 @@
           <!-- Chap navigation tugmasi -->
           
           
+          <!-- Superadmin: quick add to news ticker (only appears in footer ticker) -->
+          {% if session.get('super_admin') %}
+          <button
+            class="btn btn-sm btn-outline-light ms-2"
+            id="addTickerNewsBtn"
+            title="Yangilik qo'shish (tasma)"
+            onclick="openTickerNewsModal()"
+          >
+            ➕ Yangilik (Tasma)
+          </button>
+          {% endif %}
+
           <button
             class="news-nav-btn news-nav-prev"
             id="newsPrevBtn"
@@ -2123,7 +2162,8 @@
       }
 
       .news-item:hover {
-        transform: translateY(-3px) scale(1.02);
+        /* Avoid scaling to keep all cards fixed to equalized height */
+        transform: translateY(-3px);
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
         background: rgba(255, 255, 255, 0.12);
         border-color: rgba(255, 255, 255, 0.25);
@@ -2175,12 +2215,12 @@
         text-align: center;
         line-height: 1.2;
         text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
+        /* Allow multiline titles and preserve newlines */
+        overflow-wrap: break-word;
+        word-break: break-word;
+        white-space: pre-wrap; /* preserves newlines \n */
         -webkit-box-orient: vertical;
-        max-height: 36px;
+        max-height: none; /* height will be equalized by JS */
       }
 
       .news-content {
@@ -2189,11 +2229,10 @@
         text-align: center;
         line-height: 1.3;
         margin-top: 4px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
+        /* Allow content to wrap across multiple lines and preserve newlines */
+        overflow-wrap: break-word;
+        word-break: break-word;
+        white-space: pre-wrap;
       }
 
       .news-item.advertisement .news-title {
@@ -2214,6 +2253,8 @@
         opacity: 0.8;
         animation: pulse 2s infinite;
       }
+
+      /* .news-badge removed per user request (branding moved to <title>) */
 
       .news-item.advertisement::before {
         background: #fbbf24;
@@ -4870,5 +4911,173 @@
     </script>
     {% endif %}
     <!-- End chat widget for staff/courier/superadmin -->
+
+    <!-- Ticker quick-add modal DOM (superadmin only) -->
+    <div class="modal fade" id="tickerNewsModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Yangilik qo'shish</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="tickerNewsForm">
+              <div class="mb-3">
+                <label class="form-label">Sarlavha *</label>
+                <input type="text" id="tickerNewsTitle" class="form-control" required maxlength="200" />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Matn</label>
+                <textarea id="tickerNewsContent" class="form-control" rows="4" maxlength="500"></textarea>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <label class="form-label">Rasm</label>
+                  <input type="file" id="tickerImageFile" class="form-control" accept="image/*" onchange="uploadMediaFileTicker('image')" />
+                  <input type="hidden" id="tickerImageUrl" />
+                  <img id="tickerImagePreview" style="display:none; max-width:180px; margin-top:8px" />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Video (yuklash yoki YouTube URL)</label>
+                  <input type="file" id="tickerVideoFile" class="form-control" accept="video/*" onchange="uploadMediaFileTicker('video')" />
+                  <input type="hidden" id="tickerVideoUrl" />
+                  <video id="tickerVideoPreview" style="display:none; max-width:180px; margin-top:8px" controls muted></video>
+
+                  <div class="mt-2">
+                    <label class="form-label">YouTube URL (ixtiyoriy)</label>
+                    <input type="url" id="tickerYoutubeUrl" class="form-control" placeholder="https://www.youtube.com/watch?v=..." />
+                    <small class="form-text text-muted">Agar YouTube havolasi kiritilsa, yuklangan video o'rniga shu manba ishlatiladi.</small>
+
+                    <div id="tickerYoutubePreviewContainer" style="display:none; margin-top:8px; position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:8px;">
+                      <iframe id="tickerYoutubePreview" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" allowfullscreen></iframe>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mb-3 mt-2">
+                <label class="form-label">Turi</label>
+                <select id="tickerNewsType" class="form-control">
+                  <option value="news">📰 Yangilik</option>
+                  <option value="advertisement">📢 Reklama</option>
+                </select>
+              </div>
+              <div class="form-check mb-3">
+                <input type="checkbox" id="tickerNewsIsActive" class="form-check-input" checked />
+                <label for="tickerNewsIsActive" class="form-check-label">Faol</label>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+            <button type="button" class="btn btn-primary" id="saveTickerNewsBtn">Saqlash</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+          // Ticker quick-add modal handlers (superadmin only)
+      function openTickerNewsModal(){
+            // reset fields
+            const form = document.getElementById('tickerNewsForm');
+            if(form) form.reset();
+            document.getElementById('tickerImagePreview').style.display = 'none';
+            document.getElementById('tickerVideoPreview').style.display = 'none';
+            const modalEl = document.getElementById('tickerNewsModal');
+            const bs = new bootstrap.Modal(modalEl);
+            bs.show();
+          }
+
+          function saveTickerNews(){
+            const title = (document.getElementById('tickerNewsTitle')||{}).value||'';
+            if(!title.trim()){ alert('Sarlavha kiritilishi shart'); return; }
+            const content = (document.getElementById('tickerNewsContent')||{}).value||'';
+            const type = (document.getElementById('tickerNewsType')||{}).value||'news';
+            const image_url = (document.getElementById('tickerImageUrl')||{}).value||'';
+            const video_url = (document.getElementById('tickerVideoUrl')||{}).value||'';
+            const youtube = (document.getElementById('tickerYoutubeUrl')||{}).value||'';
+            const is_active = !!(document.getElementById('tickerNewsIsActive')||{}).checked;
+
+            const payload = {
+              title: title.trim(),
+              content: content.trim(),
+              type: type,
+              image_url: image_url,
+              video_url: youtube || video_url,
+              is_active: is_active,
+              display_order: 0,
+              show_in_ticker: true
+            };
+
+            fetch('/api/news', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            }).then(r=>r.json()).then(data=>{
+              if(data && data.success){
+                alert('Yangilik tasmaga qo\'shildi');
+                const bs = bootstrap.Modal.getInstance(document.getElementById('tickerNewsModal'));
+                if(bs) bs.hide();
+                // refresh ticker content
+                const evt = new Event('refreshNewsTicker');
+                window.dispatchEvent(evt);
+              } else {
+                alert('Xato: '+(data && data.message||'')); 
+              }
+            }).catch(e=>{ console.error(e); alert('Saqlashda xatolik'); });
+          }
+
+          // Upload handler reusing the admin upload endpoint
+          function uploadMediaFileTicker(type){
+            const fileInput = document.getElementById(type === 'image' ? 'tickerImageFile' : 'tickerVideoFile');
+            const file = fileInput && fileInput.files && fileInput.files[0];
+            if(!file) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/admin/upload-news-media', { method: 'POST', body: formData })
+              .then(r=>r.json())
+              .then(data=>{
+                if(data && data.success){
+                  if(type === 'image'){
+                    document.getElementById('tickerImageUrl').value = data.file_url;
+                    const img = document.getElementById('tickerImagePreview'); img.src = data.file_url; img.style.display = 'block';
+                  } else {
+                    document.getElementById('tickerVideoUrl').value = data.file_url;
+                    const vid = document.getElementById('tickerVideoPreview'); vid.src = data.file_url; vid.style.display = 'block';
+                    const yt = document.getElementById('tickerYoutubeUrl'); if(yt) yt.value = '';
+                    const ytCont = document.getElementById('tickerYoutubePreviewContainer'); if(ytCont) ytCont.style.display = 'none';
+                  }
+                } else {
+                  alert('Upload xatosi: '+(data && data.message||''));
+                }
+              }).catch(err=>{ console.error('Upload error', err); alert('Fayl yuklashda xatolik'); });
+          }
+
+          // YouTube preview binding
+          (function(){
+            const el = document.getElementById('tickerYoutubeUrl');
+            if(!el) return;
+            el.addEventListener('input', function(){
+              const v = el.value.trim();
+              const container = document.getElementById('tickerYoutubePreviewContainer');
+              const iframe = document.getElementById('tickerYoutubePreview');
+              if(!v){ iframe.src = ''; if(container) container.style.display = 'none'; return; }
+              try{
+                const m = v.match(/(?:v=|\/embed\/|youtu\.be\/)([A-Za-z0-9_\-]{11})/);
+                if(m && m[1]){ iframe.src = 'https://www.youtube.com/embed/'+m[1]; if(container) container.style.display = 'block'; const vp = document.getElementById('tickerVideoPreview'); if(vp) vp.style.display='none'; }
+                else { iframe.src = ''; if(container) container.style.display = 'none'; }
+              }catch(e){ iframe.src = ''; if(container) container.style.display = 'none'; }
+            });
+          })();
+
+          // Bind save button
+          (function(){
+            const btn = document.getElementById('saveTickerNewsBtn');
+            if(btn) btn.addEventListener('click', saveTickerNews);
+          })();
+    </script>
   </body>
 </html>

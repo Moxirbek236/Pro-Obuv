@@ -530,6 +530,13 @@ document.addEventListener("DOMContentLoaded", function () {
     // Setup menu item clicks
     setupMenuItemClicks();
 
+    // Setup menu search + rendering (if menu page present)
+    try {
+      if (document.getElementById("menuSearchInput")) {
+        initMenuClient();
+      }
+    } catch (e) {}
+
     // Setup form submissions
     setupFormSubmissions();
 
@@ -601,6 +608,552 @@ function formatPrice(price) {
   }).format(price);
 }
 
+// Render star rating HTML (used by client-side menu rendering)
+function renderStars(rating) {
+  const r = Math.max(0, Math.round(Number(rating) || 0));
+  let s = "";
+  for (let i = 1; i <= 5; i++) {
+    s += `<span class="star${i <= r ? " filled" : ""}">⭐</span>`;
+  }
+  return s;
+}
+
+// Provide safe global fallbacks for functions that may be defined in
+// page-specific templates (templates/menu.html) but are sometimes unavailable
+// due to load order. These fallbacks are no-ops or minimal behavior so pages
+// that include `static/main.js` won't throw ReferenceError.
+if (typeof window.openItemModal === "undefined") {
+  window.openItemModal = function (itemId, evt) {
+    console.warn("Fallback openItemModal called for item:", itemId);
+    try {
+      const id = String(itemId || "");
+      let item = null;
+      // Prefer client-side cached menuData if available
+      if (window.menuData) {
+        if (window.menuData[id]) item = window.menuData[id];
+        else if (window.menuData[parseInt(id, 10)])
+          item = window.menuData[parseInt(id, 10)];
+        else {
+          for (const k in window.menuData) {
+            const v = window.menuData[k];
+            if (v && (String(v.id) === id || v.id === parseInt(id, 10))) {
+              item = v;
+              break;
+            }
+          }
+        }
+      }
+
+      // Try DOM card fallback
+      if (!item) {
+        const card = document.querySelector(`.menu-item[data-id="${id}"]`);
+        if (card) {
+          const nameEl = card.querySelector(".item-name");
+          const descEl = card.querySelector(".item-description");
+          const imgEl =
+            card.querySelector(".item-image img") ||
+            card.querySelector(".menu-item-image img");
+          item = {
+            id: parseInt(id, 10),
+            name: nameEl ? nameEl.textContent.trim() : `Item ${id}`,
+            description: descEl ? descEl.textContent.trim() : "",
+            image_url: imgEl
+              ? imgEl.getAttribute("src") || ""
+              : "/static/images/default-product.jpg",
+            rating: 0,
+            orders_count: 0,
+            sizes: "",
+            colors: "",
+          };
+        }
+      }
+
+      if (!item) {
+        // Nothing to show
+        console.warn(
+          "Fallback openItemModal: item not found locally for id",
+          id
+        );
+        return;
+      }
+
+      // Populate modal DOM if present
+      const modal = document.getElementById("itemModal");
+      if (modal) {
+        const titleEl = document.getElementById("modalTitle");
+        const descEl = document.getElementById("modalDescription");
+        const starsEl = document.getElementById("modalStars");
+        const ratingTextEl = document.getElementById("modalRatingText");
+        const itemIdInput = document.getElementById("modalItemId");
+        const mediaContainer = document.getElementById("modalMediaContainer");
+
+        if (titleEl) titleEl.textContent = item.name || "";
+        if (descEl) descEl.textContent = item.description || "";
+        if (starsEl)
+          starsEl.innerHTML =
+            typeof renderStars === "function"
+              ? renderStars(item.rating || 0)
+              : "";
+        if (ratingTextEl)
+          ratingTextEl.textContent = `${
+            (item.rating || 0).toFixed
+              ? (item.rating || 0).toFixed(1)
+              : item.rating || 0
+          } (${item.orders_count || 0} buyurtma)`;
+        if (itemIdInput) itemIdInput.value = item.id || "";
+
+        if (mediaContainer) {
+          mediaContainer.innerHTML = "";
+          const img = document.createElement("img");
+          img.src =
+            item.image_url ||
+            item.image ||
+            "/static/images/default-product.jpg";
+          img.alt = item.name || "";
+          img.className = "modal-media-item active";
+          mediaContainer.appendChild(img);
+        }
+
+        // Populate sizes select if present
+        try {
+          const sizeSelect = document.getElementById("modalSize");
+          const colorSelect = document.getElementById("modalColor");
+          const addBtn = document.getElementById("modalAddToCartBtn");
+
+          function clearOptionsKeepPlaceholder(sel) {
+            if (!sel) return;
+            // keep the first option (placeholder) if present
+            while (sel.options && sel.options.length > 1) {
+              sel.remove(sel.options.length - 1);
+            }
+            // reset value
+            sel.value = "";
+          }
+
+          function ensureOptionsFromCSV(sel, csv) {
+            if (!sel) return [];
+            const arr = String(csv || "")
+              .split(",")
+              .map((s) => s.trim())
+              .filter(Boolean);
+            arr.forEach((val) => {
+              const opt = document.createElement("option");
+              opt.value = val;
+              opt.text = val;
+              sel.appendChild(opt);
+            });
+            return arr;
+          }
+
+          clearOptionsKeepPlaceholder(sizeSelect);
+          clearOptionsKeepPlaceholder(colorSelect);
+
+          const sizes = ensureOptionsFromCSV(sizeSelect, item.sizes || "");
+          const colors = ensureOptionsFromCSV(colorSelect, item.colors || "");
+
+          // If page provides addColorIndicators helper (from template), call it
+          if (typeof addColorIndicators === "function" && colorSelect) {
+            try {
+              addColorIndicators(colorSelect, colors);
+            } catch (e) {
+              // ignore
+            }
+          }
+
+          // mark as required via dataset (used by template logic)
+          if (sizeSelect)
+            sizeSelect.dataset.required = sizes.length > 0 ? "true" : "false";
+          if (colorSelect)
+            colorSelect.dataset.required = colors.length > 0 ? "true" : "false";
+
+          // enable/disable add button depending on required selections
+          function evaluateAddButton() {
+            if (!addBtn) return;
+            const sizeOk =
+              !sizeSelect ||
+              sizeSelect.dataset.required !== "true" ||
+              (sizeSelect.value && sizeSelect.value !== "");
+            const colorOk =
+              !colorSelect ||
+              colorSelect.dataset.required !== "true" ||
+              (colorSelect.value && colorSelect.value !== "");
+            addBtn.disabled = !(sizeOk && colorOk);
+          }
+
+          if (sizeSelect)
+            sizeSelect.addEventListener("change", evaluateAddButton);
+          if (colorSelect)
+            colorSelect.addEventListener("change", evaluateAddButton);
+          // initial evaluation
+          evaluateAddButton();
+        } catch (e) {
+          /* ignore select population errors */
+        }
+
+        // Show modal
+        modal.style.display = "flex";
+        try {
+          modal.classList.add("show");
+        } catch (e) {}
+        document.body.style.overflow = "hidden";
+        // focus close button if present
+        setTimeout(() => {
+          const closeBtn = modal.querySelector(".modal-close");
+          if (closeBtn) closeBtn.focus();
+        }, 50);
+        return;
+      }
+
+      // If modal DOM isn't present, fallback to a simple alert
+      alert(`${item.name || "Item " + id}\n\n${item.description || ""}`);
+    } catch (e) {
+      console.warn("Fallback openItemModal error", e);
+    }
+  };
+}
+
+if (typeof window.showCategory === "undefined") {
+  window.showCategory = function (ev, category) {
+    const cat =
+      typeof ev === "string"
+        ? ev
+        : category ||
+          (ev &&
+            ev.target &&
+            ev.target.getAttribute &&
+            ev.target.getAttribute("data-cat")) ||
+          "";
+    try {
+      const sel = document.getElementById("filterCategory");
+      if (sel) sel.value = cat === "all" ? "" : cat;
+      if (
+        typeof MenuClient !== "undefined" &&
+        MenuClient &&
+        typeof MenuClient.setState === "function"
+      ) {
+        MenuClient.setState({ category: cat === "all" ? "" : cat });
+        if (typeof MenuClient.fetchAndRender === "function")
+          MenuClient.fetchAndRender();
+        return;
+      }
+      if (typeof window.debouncedSearch === "function")
+        window.debouncedSearch();
+    } catch (e) {
+      console.warn("showCategory fallback failed", e);
+    }
+  };
+}
+
+if (typeof window.attachCardHandlers === "undefined") {
+  window.attachCardHandlers = function () {
+    try {
+      document.querySelectorAll(".add-to-cart-btn").forEach((btn) => {
+        if (btn._wiredByAttach) return;
+        btn._wiredByAttach = true;
+        btn.addEventListener("click", function (ev) {
+          ev.stopPropagation();
+          const id = btn.getAttribute("data-item-id") || btn.dataset.itemId;
+          if (!id) return;
+          if (typeof addToCart === "function") {
+            addToCart(parseInt(id, 10));
+          } else if (
+            window.cartManager &&
+            typeof window.cartManager.add === "function"
+          ) {
+            window.cartManager.add(parseInt(id, 10));
+          } else {
+            console.log("addToCart not available, item id:", id);
+          }
+        });
+      });
+    } catch (e) {
+      /* ignore */
+    }
+  };
+}
+
+// --------------------
+// Menu client (search, filters, pagination)
+// --------------------
+function debounce(fn, wait) {
+  let t;
+  return function (...args) {
+    clearTimeout(t);
+    t = setTimeout(() => fn.apply(this, args), wait);
+  };
+}
+
+const MenuClient = (function () {
+  let state = {
+    q: "",
+    category: "",
+    size: "",
+    color: "",
+    sort: "",
+    limit: 24,
+    offset: 0,
+    total: 0,
+  };
+
+  function buildQuery() {
+    const params = new URLSearchParams();
+    if (state.q) params.set("q", state.q);
+    if (state.category) params.set("category", state.category);
+    if (state.size) params.set("size", state.size);
+    if (state.color) params.set("color", state.color);
+    if (state.sort) params.set("sort", state.sort);
+    params.set("limit", state.limit);
+    params.set("offset", state.offset);
+    return params.toString();
+  }
+
+  async function fetchAndRender() {
+    try {
+      const q = buildQuery();
+      const res = await fetch("/api/menu-search?" + q);
+      if (!res.ok) return;
+      const data = await res.json();
+      if (!data || !data.success) return;
+      state.total = data.total_count || 0;
+      renderMenuItems(data.items || []);
+      renderPagination();
+    } catch (e) {
+      console.warn("MenuClient fetch error", e);
+    }
+  }
+
+  function renderMenuItems(items) {
+    const grid = document.querySelector(".menu-grid");
+    if (!grid) return;
+    grid.innerHTML = "";
+    if (!items.length) {
+      grid.innerHTML =
+        '<div class="no-results">Hech qanday mahsulot topilmadi.</div>';
+      return;
+    }
+
+    items.forEach((item) => {
+      const div = document.createElement("div");
+      div.className = "menu-item";
+      div.setAttribute("data-id", item.id || "");
+      div.setAttribute("data-category", (item.category || "").toLowerCase());
+      div.onclick = function (e) {
+        openItemModal(item.id, e);
+      };
+
+      const imgUrl = item.image_url || "/static/images/default-men.jpg";
+      div.innerHTML = `
+        <div class="item-image"><img src="${imgUrl}" alt="${escapeHtml(
+        item.name || ""
+      )}" onerror="this.src='/static/images/default-men.jpg'"/></div>
+        <div class="item-content">
+          <h3 class="item-name">${escapeHtml(item.name || "")}</h3>
+          <p class="item-description">${escapeHtml(item.description || "")}</p>
+          <div class="rating-section">
+            <div class="stars">${renderStars(
+              item.avg_rating || item.rating || 0
+            )}</div>
+            <span class="rating-text">${(
+              item.avg_rating ||
+              item.rating ||
+              0
+            ).toFixed(1)} (${item.orders_count || 0} buyurtma)</span>
+          </div>
+          <div class="item-footer">
+            <div class="price-section"><span class="item-price">${formatPrice(
+              item.price || 0
+            )}</span></div>
+            <div class="add-to-cart-section"><button class="btn-cart add-to-cart-btn" data-item-id="${
+              item.id
+            }">🛒</button></div>
+          </div>
+        </div>`;
+
+      grid.appendChild(div);
+    });
+
+    // Reattach handlers for new DOM
+    attachCardHandlers &&
+      typeof attachCardHandlers === "function" &&
+      attachCardHandlers();
+  }
+
+  function renderPagination() {
+    try {
+      // Prefer page-provided pagination renderer (templates/menu.html)
+      if (typeof renderPaginationControls === "function") {
+        renderPaginationControls(
+          state.total,
+          state.limit,
+          Math.floor(state.offset / state.limit) + 1
+        );
+        return;
+      }
+      // Fallback: if there's a #menu-pagination element, clear/show simple info
+      const container = document.getElementById("menu-pagination");
+      if (!container) return;
+      const pages = Math.max(1, Math.ceil((state.total || 0) / state.limit));
+      container.innerHTML = `<div class="pagination-summary">${
+        Math.floor(state.offset / state.limit) + 1
+      } / ${pages} sahifa</div>`;
+    } catch (e) {
+      console.warn("renderPagination fallback failed", e);
+    }
+  }
+
+  function openNewsDetail(item) {
+    if (!item) return;
+
+    let modal = document.getElementById("newsDetailModal");
+    if (!modal) {
+      modal = document.createElement("div");
+      modal.id = "newsDetailModal";
+      modal.className = "news-detail-modal-overlay";
+      modal.innerHTML = `
+        <div class="news-detail-modal">
+          <div class="news-detail-header">
+            <h4 id="newsDetailTitle"></h4>
+            <button class="news-detail-close" onclick="closeNewsDetail()" tabindex="0">&times;</button>
+          </div>
+          <div class="news-detail-body" id="newsDetailBody"></div>
+          <div class="news-detail-footer"><small id="newsDetailTime" class="text-muted"></small></div>
+        </div>`;
+      document.body.appendChild(modal);
+      // Overlay click closes modal
+      modal.addEventListener("mousedown", function (e) {
+        if (e.target === modal) closeNewsDetail();
+      });
+    }
+
+    const titleEl = document.getElementById("newsDetailTitle");
+    const bodyEl = document.getElementById("newsDetailBody");
+    const timeEl = document.getElementById("newsDetailTime");
+
+    // Preprocess title: insert break opportunities into very long unbroken sequences and cap extreme lengths
+    (function () {
+      let t = item.title || "";
+      if (t.length > 800) t = t.slice(0, 800) + "...";
+      // insert zero-width space after runs of 40+ non-space chars so browser can wrap
+      t = t.replace(/(\S{40})(?=\S)/g, "$1\u200B");
+      titleEl.textContent = t;
+    })();
+
+    // Build media + content
+    let mediaHtml = "";
+    if (item.youtube_embed) {
+      mediaHtml = `<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:8px;margin-bottom:12px;"><iframe src="${item.youtube_embed}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowfullscreen></iframe></div>`;
+    } else if (item.video_url) {
+      mediaHtml = `<video controls style="width:100%;height:auto;max-height:420px;border-radius:8px;margin-bottom:12px;"><source src="${item.video_url}"></video>`;
+    } else if (item.image_url) {
+      mediaHtml = `<img src="${
+        item.image_url
+      }" style="width:100%;height:auto;max-height:420px;border-radius:8px;margin-bottom:12px;" alt="${
+        item.title || ""
+      }" />`;
+    }
+
+    const contentHtml = `<div class="news-detail-content">${
+      item.content || ""
+    }</div>`;
+
+    bodyEl.innerHTML = mediaHtml + contentHtml;
+    timeEl.textContent = item.created_at ? item.created_at.split("T")[0] : "";
+
+    modal.style.display = "flex";
+    document.body.style.overflow = "hidden";
+    // Focus close button for accessibility
+    setTimeout(() => {
+      const closeBtn = modal.querySelector(".news-detail-close");
+      if (closeBtn) closeBtn.focus();
+    }, 50);
+  }
+
+  function setState(updates) {
+    state = { ...state, ...updates };
+    // reset offset when filters change
+    if (
+      updates.q !== undefined ||
+      updates.category !== undefined ||
+      updates.size !== undefined ||
+      updates.color !== undefined ||
+      updates.sort !== undefined
+    ) {
+      state.offset = 0;
+    }
+  }
+
+  return {
+    init: function () {
+      // wire inputs
+      const search = document.getElementById("menuSearchInput");
+      const cat = document.getElementById("filterCategory");
+      const size = document.getElementById("filterSize");
+      const color = document.getElementById("filterColor");
+      const sort = document.getElementById("filterSort");
+      const clearBtn = document.getElementById("clearFiltersBtn");
+
+      const deb = debounce(function () {
+        setState({ q: search.value.trim() });
+        fetchAndRender();
+      }, 350);
+
+      if (search) search.addEventListener("input", deb);
+      if (cat)
+        cat.addEventListener("change", function () {
+          setState({ category: this.value });
+          fetchAndRender();
+        });
+      if (size)
+        size.addEventListener("change", function () {
+          setState({ size: this.value });
+          fetchAndRender();
+        });
+      if (color)
+        color.addEventListener("change", function () {
+          setState({ color: this.value });
+          fetchAndRender();
+        });
+      if (sort)
+        sort.addEventListener("change", function () {
+          setState({ sort: this.value });
+          fetchAndRender();
+        });
+      if (clearBtn)
+        clearBtn.addEventListener("click", function () {
+          setState({ q: "", category: "", size: "", color: "", sort: "" });
+          document.getElementById("menuSearchInput") &&
+            (document.getElementById("menuSearchInput").value = "");
+          document.getElementById("filterCategory") &&
+            (document.getElementById("filterCategory").value = "");
+          document.getElementById("filterSize") &&
+            (document.getElementById("filterSize").value = "");
+          document.getElementById("filterColor") &&
+            (document.getElementById("filterColor").value = "");
+          document.getElementById("filterSort") &&
+            (document.getElementById("filterSort").value = "");
+          fetchAndRender();
+        });
+
+      // initial fetch
+      fetchAndRender();
+    },
+    setState,
+    fetchAndRender,
+  };
+})();
+
+function initMenuClient() {
+  try {
+    MenuClient.init();
+    // Expose debouncedSearch for menu.html diagnostic wiring
+    window.debouncedSearch = debounce(function () {
+      MenuClient.fetchAndRender();
+    }, 350);
+  } catch (e) {
+    console.warn("initMenuClient failed", e);
+  }
+}
+
 function formatDate(date) {
   return new Intl.DateTimeFormat("uz-UZ", {
     year: "numeric",
@@ -609,6 +1162,17 @@ function formatDate(date) {
     hour: "2-digit",
     minute: "2-digit",
   }).format(new Date(date));
+}
+
+// Safe HTML escaping for inserting text into the DOM
+function escapeHtml(s) {
+  if (s === null || s === undefined) return "";
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 // Global error handler
@@ -759,25 +1323,54 @@ class NewsTicker {
   }
 
   loadNews() {
-    fetch("/api/news")
+    fetch("/api/news?ticker=1")
       .then((response) => response.json())
       .then((data) => {
-        if (data.success && data.news && data.news.length > 0) {
-          this.newsItems = data.news;
-          this.updateNewsItems();
-          this.startAutoSlide();
+        if (data && data.news) {
+          this.newsItems = data.news || [];
+        } else {
+          this.newsItems = [];
         }
+        this.updateNewsItems();
+        if (this.newsItems.length > 0) this.startAutoSlide();
       })
       .catch((error) => {
         console.error("Yangiliklar yuklashda xatolik:", error);
+        this.newsItems = [];
+        this.updateNewsItems(true);
       });
   }
 
-  updateNewsItems() {
-    if (!this.container || !this.newsItems.length) return;
+  updateNewsItems(isError) {
+    if (!this.container) return;
 
-    // Yangiliklar HTMLini yaratish
-    let html = "";
+    // Build DOM nodes (instead of raw innerHTML) so we preserve multiline
+    // text (newlines) and can attach load listeners for media to equalize
+    // heights accurately.
+    // Clear container first
+    while (this.container.firstChild)
+      this.container.removeChild(this.container.firstChild);
+
+    if (!this.newsItems || this.newsItems.length === 0) {
+      const empty = document.createElement("div");
+      empty.className = "news-item loading";
+      empty.innerHTML = `<div class="news-text"><div class="news-title">${
+        isError
+          ? "Yangiliklarni yuklashda xatolik yuz berdi"
+          : "Hozircha yangiliklar mavjud emas."
+      }</div><div class="news-content">${
+        isError
+          ? '<button id="retryNewsBtn" class="btn btn-sm btn-light mt-2">Qayta yuklash</button>'
+          : ""
+      }</div></div>`;
+      this.container.appendChild(empty);
+      // retry button
+      setTimeout(() => {
+        const btn = document.getElementById("retryNewsBtn");
+        if (btn) btn.addEventListener("click", () => this.loadNews());
+      }, 50);
+      return;
+    }
 
     this.newsItems.forEach((item) => {
       const isAd = item.type === "advertisement";
@@ -785,34 +1378,116 @@ class NewsTicker {
       const hasVideo = item.video_url && item.video_url.trim() !== "";
       const hasYouTube = item.youtube_embed && item.youtube_embed.trim() !== "";
 
-      html += `<div class="news-item ${isAd ? "advertisement" : "news"}">`;
+      const card = document.createElement("div");
+      card.className = `news-item ${isAd ? "advertisement" : "news"}`;
 
-      // Rasm yoki video mavjud bo'lsa tepa qismda ko'rsatish
+      // Media
       if (hasImage) {
-        html += `<img src="${item.image_url}" alt="${item.title}" class="news-media clickable-media" onclick="openMediaModal('${item.image_url}', 'image', '${item.title}')">`;
+        const img = document.createElement("img");
+        img.src = item.image_url;
+        img.alt = item.title || "";
+        img.className = "news-media clickable-media";
+        img.addEventListener("click", (e) => {
+          // prevent bubbling to card click (which opens detail)
+          e.stopPropagation();
+          openMediaModal(item.image_url, "image", item.title);
+        });
+        // when image loads, re-run equalizer to account for natural size
+        img.addEventListener("load", () => {
+          try {
+            if (typeof window.equalizeNewsItems === "function")
+              window.equalizeNewsItems();
+          } catch (e) {}
+        });
+        card.appendChild(img);
       } else if (hasYouTube) {
-        // embed YouTube iframe thumbnail-sized in ticker (clickable to open modal)
-        html += `<div class="news-media youtube-embed" onclick="openMediaModal('${item.youtube_embed}', 'youtube', '${item.title}')">`;
-        html += `<iframe src="${item.youtube_embed}" frameborder="0" allowfullscreen style="width:100%;height:160px;border:0;border-radius:6px"></iframe>`;
-        html += `</div>`;
+        const wrapper = document.createElement("div");
+        wrapper.className = "news-media youtube-embed";
+        wrapper.addEventListener("click", (e) => {
+          e.stopPropagation();
+          openMediaModal(item.youtube_embed, "youtube", item.title);
+        });
+        const iframe = document.createElement("iframe");
+        iframe.src = item.youtube_embed;
+        iframe.setAttribute("frameborder", "0");
+        iframe.setAttribute("allowfullscreen", "");
+        iframe.style.width = "100%";
+        iframe.style.height = "160px";
+        iframe.style.border = "0";
+        iframe.style.borderRadius = "6px";
+        wrapper.appendChild(iframe);
+        card.appendChild(wrapper);
+        // re-equalize after iframe loads (best-effort)
+        iframe.addEventListener("load", () => {
+          try {
+            if (typeof window.equalizeNewsItems === "function")
+              window.equalizeNewsItems();
+          } catch (e) {}
+        });
       } else if (hasVideo) {
-        html += `<video src="${item.video_url}" class="news-media clickable-media" muted autoplay loop onclick="openMediaModal('${item.video_url}', 'video', '${item.title}')"></video>`;
+        const vid = document.createElement("video");
+        vid.src = item.video_url;
+        vid.className = "news-media clickable-media";
+        vid.muted = true;
+        vid.autoplay = true;
+        vid.loop = true;
+        vid.addEventListener("click", (e) => {
+          e.stopPropagation();
+          openMediaModal(item.video_url, "video", item.title);
+        });
+        vid.addEventListener("loadedmetadata", () => {
+          try {
+            if (typeof window.equalizeNewsItems === "function")
+              window.equalizeNewsItems();
+          } catch (e) {}
+        });
+        card.appendChild(vid);
       }
 
-      // Matn qismi
-      html += '<div class="news-text-content">';
-      html += `<div class="news-title">${item.title}</div>`;
+      // Text container
+      const textWrap = document.createElement("div");
+      textWrap.className = "news-text-content";
+
+      // badge removed: page <title> will carry 'Safety / Pro Obuv' branding
+
+      // Title: preserve newlines by using textContent and CSS white-space: pre-wrap
+      const titleEl = document.createElement("div");
+      titleEl.className = "news-title";
+      titleEl.textContent = item.title || "";
+      textWrap.appendChild(titleEl);
 
       if (item.content && item.content.trim() !== "") {
-        html += `<div class="news-content">${item.content}</div>`;
+        const contentEl = document.createElement("div");
+        contentEl.className = "news-content";
+        contentEl.textContent = item.content;
+        textWrap.appendChild(contentEl);
       }
 
-      html += "</div>"; // news-text-content ning oxiri
-      html += "</div>"; // news-item ning oxiri
+      card.appendChild(textWrap);
+      // clicking the whole card opens the detailed news view
+      card.addEventListener("click", () => {
+        try {
+          openNewsDetail(item);
+        } catch (e) {
+          console.error("openNewsDetail error", e);
+        }
+      });
+      this.container.appendChild(card);
     });
 
-    // HTMLni konteynerga joylashtirish
-    this.container.innerHTML = html;
+    // If a page-level equalizer is available, call it to make news items uniform height
+    try {
+      if (typeof window.equalizeNewsItems === "function") {
+        // run after a microtask to ensure layout updated
+        setTimeout(() => {
+          try {
+            window.equalizeNewsItems();
+          } catch (e) {}
+        }, 50);
+      }
+    } catch (e) {
+      /* ignore */
+    }
 
     // Slider pozitsiyasini o'rnatish
     this.updateSliderPosition();
@@ -937,6 +1612,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Window resize listener
   window.addEventListener("resize", updateSliderSettings);
+
+  // Listen for external requests to refresh the ticker (e.g. after adding a ticker-only news item)
+  window.addEventListener("refreshNewsTicker", function () {
+    try {
+      if (
+        window.newsTicker &&
+        typeof window.newsTicker.loadNews === "function"
+      ) {
+        console.log("Refreshing news ticker due to external event");
+        window.newsTicker.loadNews();
+      }
+    } catch (e) {
+      console.error("Failed to refresh news ticker", e);
+    }
+  });
 });
 
 // Media Modal Functions for News Ticker
@@ -1011,3 +1701,89 @@ window.showNotification = showNotification;
 window.NewsTicker = NewsTicker;
 window.openMediaModal = openMediaModal;
 window.closeMediaModal = closeMediaModal;
+
+// Detailed News Modal (for clicking a ticker card)
+function openNewsDetail(item) {
+  if (!item) return;
+
+  let modal = document.getElementById("newsDetailModal");
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "newsDetailModal";
+    modal.className = "news-detail-modal-overlay";
+    modal.innerHTML = `
+      <div class="news-detail-modal">
+        <div class="news-detail-header">
+          <h4 id="newsDetailTitle"></h4>
+          <button class="news-detail-close" onclick="closeNewsDetail()">&times;</button>
+        </div>
+        <div class="news-detail-body" id="newsDetailBody"></div>
+        <div class="news-detail-footer"><small id="newsDetailTime" class="text-muted"></small></div>
+      </div>`;
+    document.body.appendChild(modal);
+  }
+
+  const titleEl = document.getElementById("newsDetailTitle");
+  const bodyEl = document.getElementById("newsDetailBody");
+  const timeEl = document.getElementById("newsDetailTime");
+
+  titleEl.textContent = item.title || "";
+
+  // Build media + content
+  let mediaHtml = "";
+  if (item.youtube_embed) {
+    mediaHtml = `<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:8px;margin-bottom:12px;"><iframe src="${item.youtube_embed}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowfullscreen></iframe></div>`;
+  } else if (item.video_url) {
+    mediaHtml = `<video controls style="width:100%;height:auto;max-height:420px;border-radius:8px;margin-bottom:12px;"><source src="${item.video_url}"></video>`;
+  } else if (item.image_url) {
+    mediaHtml = `<img src="${
+      item.image_url
+    }" style="width:100%;height:auto;max-height:420px;border-radius:8px;margin-bottom:12px;" alt="${
+      item.title || ""
+    }" />`;
+  }
+
+  const contentHtml = `<div class="news-detail-content">${
+    item.content || ""
+  }</div>`;
+
+  bodyEl.innerHTML = mediaHtml + contentHtml;
+  timeEl.textContent = item.created_at ? item.created_at.split("T")[0] : "";
+
+  modal.style.display = "flex";
+  document.body.style.overflow = "hidden";
+}
+
+function closeNewsDetail() {
+  const modal = document.getElementById("newsDetailModal");
+  if (modal) {
+    modal.style.display = "none";
+    document.body.style.overflow = "auto";
+  }
+}
+
+// Basic styles for the news detail modal (inject into head if not present)
+if (!document.getElementById("newsDetailModalStyle")) {
+  const s = document.createElement("style");
+  s.id = "newsDetailModalStyle";
+  s.textContent = `
+    .news-detail-modal-overlay{display:none;position:fixed;inset:0;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:12000;padding:0 0 0 0;}
+    .news-detail-modal{background:#0f1724;color:#fff;max-width:860px;width:100%;border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,0.6);overflow:hidden;display:flex;flex-direction:column;max-height:96vh;}
+    /* Header allows wrapping title and keeps close button visible */
+    .news-detail-header{display:flex;align-items:flex-start;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.04);position:sticky;top:0;z-index:2;background:#0f1724;position:relative;padding-right:64px;}
+    .news-detail-header h4{flex:1 1 auto;margin:0;color:inherit;font-size:18px;line-height:1.2;white-space:normal;word-break:break-word;overflow-wrap:anywhere;padding-right:8px}
+    .news-detail-close{position:absolute;right:12px;top:12px;background:rgba(0,0,0,0.18);border:0;color:#fff;font-size:28px;cursor:pointer;line-height:1;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.18);transition:background 0.15s;z-index:20}
+    .news-detail-close:hover,.news-detail-close:focus{background:rgba(34,211,238,0.18);outline:2px solid #22d3ee;}
+    .news-detail-body{padding:16px 18px;overflow:auto;flex:1 1 auto;min-height:60px;max-height:60vh;}
+    .news-detail-footer{padding:10px 18px;border-top:1px solid rgba(255,255,255,0.03);text-align:right;position:sticky;bottom:0;z-index:2;background:#0f1724;}
+    .news-detail-content{white-space:pre-wrap;line-height:1.6;color:rgba(255,255,255,0.95);word-break:break-word;}
+    @media(max-width:640px){ .news-detail-modal{max-width:98vw;} .news-detail-header,.news-detail-footer{padding:10px 8px;} .news-detail-body{padding:10px 8px;} }
+  `;
+  document.head.appendChild(s);
+}
+// Overlay and ESC key close for news detail modal
+document.addEventListener("keydown", function (e) {
+  if (e.key === "Escape") {
+    closeNewsDetail();
+  }
+});

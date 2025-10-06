@@ -228,6 +228,8 @@
   margin-bottom: 6px;
   color: #22d3ee;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  white-space: normal; /* allow wrapping */
+  overflow-wrap: anywhere;
 }
 
 .news-content {
@@ -676,6 +678,63 @@
     gap: 10px;
   }
 
+  /* Mobile-friendly news item: stack content vertically, larger readable title and clearer spacing */
+  .news-item {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    padding: 10px 12px !important;
+    border-radius: 10px !important;
+    min-height: auto !important;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+  }
+
+  .news-media {
+    order: 1;
+    width: 100% !important;
+    height: auto !important;
+    max-height: 220px !important;
+    margin: 0 0 10px 0 !important;
+    border-radius: 8px !important;
+  }
+
+  .news-text {
+    order: 2;
+  }
+
+  .news-title {
+    font-size: 16px !important;
+    color: #22d3ee !important;
+    margin-bottom: 8px !important;
+    line-height: 1.2 !important;
+  }
+
+  .news-content {
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    font-size: 13px !important;
+  }
+
+  /* Hide decorative icon on mobile to save space */
+  .news-icon {
+    display: none !important;
+  }
+
+  /* Reserve space for timestamp and place it bottom-right inside the card */
+  .news-item {
+    padding-bottom: 44px !important;
+  }
+  .news-card-date {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.7);
+    background: rgba(0, 0, 0, 0.25);
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+
   /* Stack media under text and make full-width for readability */
   .news-media {
     display: block;
@@ -789,3 +848,59 @@ body.dark-theme .news-title,
 }
 
 /* cleanup accidental trailing token removed */
+
+/* Compact ticker item styles (used inside the horizontal ticker) */
+.ticker-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  min-width: 260px;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+.ticker-thumb {
+  width: 84px;
+  height: 56px;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #0b0b0b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ticker-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.ticker-no-thumb {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #111, #222);
+}
+.ticker-text {
+  font-weight: 700;
+  color: #e6f9fb;
+  font-size: 14px;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .ticker-item {
+    min-width: 180px;
+    padding: 8px;
+  }
+  .ticker-thumb {
+    width: 64px;
+    height: 48px;
+  }
+  .ticker-text {
+    font-size: 13px;
+  }
+}

@@ -169,6 +169,11 @@
                   value="{{ item.price }}"
                   placeholder="Narxi"
                   required />
+                <select name="category" required>
+                  <option value="">Tanlang</option>
+                  <option value="specobuv" {% if item.category == 'specobuv' %}selected{% endif %}>🥾 Спецобувь</option>
+                  <option value="specodezhda" {% if item.category == 'specodezhda' %}selected{% endif %}>🦺 Спецодежда</option>
+                </select>
                 <input
                   type="number"
                   name="discount_percentage"
@@ -213,6 +218,9 @@
           <div class="item-actions">
             <button class="btn small" onclick="toggleEdit({{ item.id }})">
               ✏️ Tahrirlash
+            </button>
+            <button class="btn small" onclick="openStaffMediaModal({{ item.id }})">
+              📷 Media
             </button>
             <button
               type="button"
@@ -401,6 +409,107 @@
     grid-column: 1 / -1;
     resize: vertical;
     min-height: 60px;
+  }
+
+  /* Improve visibility and layout of edit form controls */
+  .edit-form {
+    background: #ffffff; /* brighter background for contrast */
+    padding: 18px;
+    border-radius: 6px;
+    margin: 12px 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    border: 1px solid rgba(0,0,0,0.06);
+    z-index: 20; /* make sure it sits above other elements */
+  }
+
+  .edit-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    align-items: start;
+  }
+
+  .edit-grid input,
+  .edit-grid select,
+  .edit-grid textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    background: #fff;
+    color: #222;
+    box-sizing: border-box;
+    font-size: 0.95rem;
+  }
+
+  /* Make file inputs and buttons clearer */
+  .edit-grid input[type="file"] {
+    padding: 6px 8px;
+    background: #fafafa;
+    border: 1px dashed #ddd;
+  }
+
+  .edit-grid label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #333;
+  }
+
+  .edit-buttons {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .item-actions .btn,
+  .edit-buttons .btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background .12s ease;
+  }
+
+  .item-actions .btn.small {
+    padding: 6px 10px;
+    font-size: 0.85em;
+  }
+
+  .item-actions .btn:hover,
+  .edit-buttons .btn:hover {
+    background: #0069d9;
+  }
+
+  /* Ensure price/size fields aren't collapsed on some browsers */
+  .price,
+  .price-with-discount,
+  .original-price,
+  .discount-price {
+    display: block;
+    line-height: 1.2;
+  }
+
+  /* Improve category and status visibility */
+  .item-info .category {
+    background: #f1f3f5;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.9em;
+    color: #333;
+  }
+
+  /* Make rating info clearer */
+  .rating-info {
+    margin: 10px 0;
+    padding: 12px;
+    background: #fff9e6;
+    border-radius: 8px;
+    border-left: 4px solid #ffd700;
   }
 
   .edit-buttons {
@@ -754,6 +863,127 @@
         button.innerHTML = originalText;
         button.disabled = false;
       });
+  }
+</script>
+<!-- Staff media modal -->
+<div id="staffMediaModal" class="ratings-modal" style="display:none;">
+  <div class="ratings-modal-content" style="max-width:800px;">
+    <div class="ratings-header">
+      <h3 id="staffMediaTitle">Mahsulot media</h3>
+      <button class="close-btn" onclick="closeStaffMediaModal()">✕</button>
+    </div>
+    <div class="ratings-list" id="staffMediaList" style="display:flex;flex-wrap:wrap;gap:10px;padding:16px;">
+      <!-- media thumbnails injected here -->
+    </div>
+  </div>
+</div>
+
+<script>
+  async function openStaffMediaModal(itemId) {
+    try {
+      const modal = document.getElementById('staffMediaModal');
+      const title = document.getElementById('staffMediaTitle');
+      const list = document.getElementById('staffMediaList');
+      title.textContent = 'Mahsulot media (ID: ' + itemId + ')';
+      list.innerHTML = '<div style="padding:12px">Yuklanmoqda...</div>';
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+
+      const res = await fetch('/api/product-media/' + itemId);
+      const j = await res.json();
+      const media = (j && j.media) ? j.media : [];
+      if (!media || media.length === 0) {
+        list.innerHTML = '<div class="no-ratings">Media mavjud emas</div>';
+        return;
+      }
+
+      list.innerHTML = '';
+      media.forEach(m => {
+        const wrap = document.createElement('div');
+        wrap.style.width = '160px';
+        wrap.style.border = '1px solid #eee';
+        wrap.style.borderRadius = '8px';
+        wrap.style.overflow = 'hidden';
+        wrap.style.background = '#fff';
+        wrap.style.boxShadow = '0 1px 3px rgba(0,0,0,0.04)';
+        wrap.style.display = 'flex';
+        wrap.style.flexDirection = 'column';
+
+        if (m.media_type && m.media_type.startsWith('video')) {
+          const v = document.createElement('video');
+          v.src = m.media_url;
+          v.controls = true;
+          v.style.width = '100%';
+          v.style.height = '120px';
+          v.style.objectFit = 'cover';
+          v.style.cursor = 'pointer';
+          v.onclick = function(e) { try { closeStaffMediaModal(); openItemModal(itemId, e); } catch(e){} };
+          wrap.appendChild(v);
+        } else {
+          const img = document.createElement('img');
+          img.src = m.media_url;
+          img.style.width = '100%';
+          img.style.height = '120px';
+          img.style.objectFit = 'cover';
+          img.style.cursor = 'pointer';
+          img.onclick = function(e) { try { closeStaffMediaModal(); openItemModal(itemId, e); } catch(e){} };
+          wrap.appendChild(img);
+        }
+
+        const meta = document.createElement('div');
+        meta.style.padding = '8px';
+        meta.style.display = 'flex';
+        meta.style.gap = '8px';
+        meta.style.justifyContent = 'space-between';
+
+        const setMainBtn = document.createElement('button');
+        setMainBtn.className = 'btn small';
+        setMainBtn.textContent = m.is_main ? 'Asosiy' : 'Set main';
+        setMainBtn.onclick = async (ev) => {
+          ev.stopPropagation();
+          try {
+            // Identify media id
+            const resp = await fetch('/api/product-media/identify', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ item_id: itemId, media_url: m.media_url }) });
+            const jj = await resp.json();
+            if (jj && jj.media_id) {
+              await fetch(`/api/product-media/${jj.media_id}/set-main`, { method: 'POST' });
+              openStaffMediaModal(itemId); // refresh
+            } else alert('Media ID topilmadi');
+          } catch (e) { console.error(e); alert('Xatolik'); }
+        };
+
+        const delBtn = document.createElement('button');
+        delBtn.className = 'btn small btn-danger';
+        delBtn.textContent = 'O\'chirish';
+        delBtn.onclick = async (ev) => {
+          ev.stopPropagation();
+          if (!confirm('Bu faylni o\'chirmoqchimisiz?')) return;
+          try {
+            const resp = await fetch('/api/product-media/identify', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ media_url: m.media_url }) });
+            const jj = await resp.json();
+            if (jj && jj.media_id) {
+              await fetch(`/api/product-media/${jj.media_id}/delete`, { method: 'DELETE' });
+              openStaffMediaModal(itemId);
+            } else alert('Media ID topilmadi');
+          } catch (e) { console.error(e); alert('Xatolik'); }
+        };
+
+        meta.appendChild(setMainBtn);
+        meta.appendChild(delBtn);
+        wrap.appendChild(meta);
+        list.appendChild(wrap);
+      });
+
+    } catch (e) {
+      console.error('openStaffMediaModal error', e);
+      alert('Media yuklashda xatolik');
+    }
+  }
+
+  function closeStaffMediaModal() {
+    const modal = document.getElementById('staffMediaModal');
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto';
   }
 </script>
 {% endblock %}

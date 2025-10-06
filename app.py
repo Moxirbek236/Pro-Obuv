@@ -8,6 +8,7 @@ import os
 import json
 import logging
 import datetime
+from datetime import timedelta
 import sqlite3
 import threading
 import traceback
@@ -146,6 +147,9 @@ except Exception:
 app = Flask(__name__)
 
 print("DEBUG: Flask app created")
+
+# Application start timestamp used for uptime calculations
+APP_START_TIME = time.time()
 
 try:
     from api.news_api import register_news_api
@@ -1489,8 +1493,16 @@ if Config.DATABASE_URL.startswith("postgresql"):
 else:
     db = None  # Use custom SQLite connection pool instead
 
-# O'zbekiston vaqt zonasi
-TASHKENT_TZ = pytz.timezone("Asia/Tashkent")
+# O'zbekiston vaqt zonasi (robust fallback when pytz not available)
+try:
+    if pytz:
+        TASHKENT_TZ = pytz.timezone("Asia/Tashkent")
+    else:
+        # Fallback to fixed-offset timezone (UTC+5) when pytz is missing
+        TASHKENT_TZ = datetime.timezone(timedelta(hours=5))
+except Exception:
+    # As a last resort, use UTC+5 fixed offset
+    TASHKENT_TZ = datetime.timezone(timedelta(hours=5))
 
 
 def get_current_time():
@@ -6465,9 +6477,25 @@ def api_menu_search():
             order_by = "ORDER BY rating DESC"
 
         where_sql = " AND ".join(where_clauses) if where_clauses else "1"
-        sql = f"SELECT * FROM menu_items WHERE {where_sql} {order_by} LIMIT 200"
+        # Pagination support: limit & offset
+        try:
+            limit = int(request.args.get('limit', 50))
+        except Exception:
+            limit = 50
+        try:
+            offset = int(request.args.get('offset', 0))
+        except Exception:
+            offset = 0
 
-        items_raw = execute_query(sql, params, fetch_all=True)
+        # Cap limit to avoid heavy responses
+        if limit <= 0:
+            limit = 50
+        if limit > 500:
+            limit = 500
+
+        sql = f"SELECT * FROM menu_items WHERE {where_sql} {order_by} LIMIT ? OFFSET ?"
+
+        items_raw = execute_query(sql, params + [limit, offset], fetch_all=True)
         items = []
         if items_raw:
             for r in items_raw:
@@ -6490,7 +6518,36 @@ def api_menu_search():
 
                 items.append(item)
 
-        return jsonify({"success": True, "items": items})
+                # Ensure rating and orders_count are present and typed for API consumers
+                try:
+                    item_rating = None
+                    if isinstance(item, dict):
+                        item_rating = item.get('rating')
+                    else:
+                        # if row-like, try index access (best-effort)
+                        try:
+                            item_rating = item[8]  # fallback - not reliable
+                        except Exception:
+                            item_rating = None
+                    item['rating'] = float(item_rating or 0.0)
+                except Exception:
+                    item['rating'] = 0.0
+
+                try:
+                    orders_val = item.get('orders_count') if isinstance(item, dict) else None
+                    item['orders_count'] = int(orders_val or 0)
+                except Exception:
+                    item['orders_count'] = 0
+
+        # Also return total matching count for pagination UI
+        try:
+            count_sql = f"SELECT COUNT(*) as cnt FROM menu_items WHERE {where_sql}"
+            count_row = execute_query(count_sql, params, fetch_one=True)
+            total_count = int(count_row.get('cnt') if hasattr(count_row, 'get') else (count_row[0] if count_row else 0))
+        except Exception:
+            total_count = len(items)
+
+        return jsonify({"success": True, "items": items, "total_count": total_count, "limit": limit, "offset": offset})
     except Exception as e:
         app_logger.error(f"api_menu_search error: {str(e)}")
         return jsonify({"success": False, "message": "Search failed"}), 500
@@ -9130,22 +9187,21 @@ def admin_edit_menu_item(item_id):
 
     try:
         name = request.form.get("name", "").strip()
-        price = float(request.form.get("price", 0))
+        price = float(request.form.get("price", 0) or 0)
         description = request.form.get("description", "").strip()
-        sizes = request.form.get("sizes", "").strip()
-        colors = request.form.get("colors", "").strip()
+        sizes = request.form.get("sizes", "")
+        colors = request.form.get("colors", "")
+        discount_percentage = float(request.form.get("discount_percentage", 0) or 0)
+
         # Optional category normalization if provided
         category_in = request.form.get("category")
+        category_norm = None
         if category_in is not None:
             cat_map = {
                 'footwear': 'specobuv', 'specobuv': 'specobuv', 'shoes': 'specobuv',
                 'clothing': 'specodezhda', 'specodezhda': 'specodezhda', 'apparel': 'specodezhda'
             }
             category_norm = cat_map.get((category_in or '').strip().lower(), (category_in or '').strip())
-            # include category in update sql
-            sql_set += ", category = ?"
-            params.insert(-1, category_norm)
-        discount_percentage = float(request.form.get("discount_percentage", 0) or 0)
 
         if not name or price <= 0:
             flash("Nomi va narxi to'g'ri bo'lishi kerak.", "error")
@@ -9160,6 +9216,28 @@ def admin_edit_menu_item(item_id):
         if colors is not None:
             sql_set += ", colors = ?"
             params.append(colors)
+        # Include category if present
+        if category_norm is not None:
+            # Ensure DB has 'category' column
+            try:
+                cols = execute_query("PRAGMA table_info(menu_items)", fetch_all=True)
+                has_category = False
+                if cols:
+                    for c in cols:
+                        name_col = c[1] if isinstance(c, tuple) else c.get('name')
+                        if name_col == 'category':
+                            has_category = True
+                            break
+                if not has_category:
+                    try:
+                        execute_query("ALTER TABLE menu_items ADD COLUMN category TEXT DEFAULT ''")
+                    except Exception:
+                        pass
+            except Exception:
+                pass
+
+            sql_set += ", category = ?"
+            params.append(category_norm)
 
         params.append(item_id)
 
@@ -9581,7 +9659,8 @@ def admin_delete_menu_item(item_id):
         )
 
 
-@app.route('/admin/reset_menu_for_tests', methods=['POST'])
+@app.route('/admin/reset_menu_for_tests', methods=['GET', 'POST', 'OPTIONS', 'HEAD'])
+@app.route('/admin/reset_menu_for_tests/', methods=['GET', 'POST', 'OPTIONS', 'HEAD'])
 def admin_reset_menu_for_tests():
     """Developer/testing helper: remove all existing products and insert 4 test products.
     Protected: only staff or super_admin can call this. Meant for local/dev use only.
@@ -9589,6 +9668,7 @@ def admin_reset_menu_for_tests():
     if not session.get('staff_id') and not session.get('super_admin'):
         return jsonify({'success': False, 'error': 'Admin huquqi talab qilinadi'}), 401
 
+    app_logger.debug(f"admin_reset_menu_for_tests called: method={request.method} args={request.args} form_keys={list(request.form.keys())}")
     try:
         # Delete related data first to avoid FK issues
         execute_query('DELETE FROM cart_items')
@@ -9600,20 +9680,31 @@ def admin_reset_menu_for_tests():
 
         now = get_current_time().isoformat()
 
-        sample = [
-            ('Test Oyoq kiyim A', 120000, 'specobuv', 'Test tavsifi A', None, 1, 10, 4.5, 0, '36,37,38', 'qora', now),
-            ('Test Oyoq kiyim B', 150000, 'specobuv', 'Test tavsifi B', None, 1, 5, 4.7, 0, '39,40,41', 'qora,yashil', now),
-            ('Test Kiyim A', 90000, 'specodezhda', 'Test tavsifi C', None, 1, 8, 4.2, 0, 'S,M,L', 'oq', now),
-            ('Test Kiyim B', 110000, 'specodezhda', 'Test tavsifi D', None, 1, 3, 3.9, 0, 'M,L,XL', 'qizil', now),
-        ]
+        # Accept optional 'count' to insert a variable number of test items (for dev/testing only)
+        try:
+            requested = int(request.args.get('count') or request.form.get('count') or 4)
+        except Exception:
+            requested = 4
 
-        for it in sample:
+        sample_categories = ['specobuv', 'specodezhda']
+        for i in range(1, max(1, min(500, requested)) + 1):
+            cat = sample_categories[i % sample_categories.__len__()]
+            name = f"Test Mahsulot {i} {'Oyoq kiyim' if cat=='specobuv' else 'Kiyim'}"
+            price = 50000 + (i * 1000)
+            desc = f"Avtomatik test mahsuloti #{i}"
+            image = '/static/images/default-men.jpg'
+            available = 1
+            stock = 10 + (i % 10)
+            rating = round(3.5 + (i % 5) * 0.2, 1)
+            discount = 0
+            sizes = '36,37,38,39' if cat == 'specobuv' else 'S,M,L'
+            colors = 'qora,oq,yashil'
             execute_query(
                 """
                 INSERT INTO menu_items (name, price, category, description, image_url, available, stock_quantity, rating, discount_percentage, sizes, colors, created_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
-                it,
+                (name, price, cat, desc, image, available, stock, rating, discount, sizes, colors, now),
             )
 
         # Try to invalidate cache / write menu JSON if helpers exist
@@ -9626,7 +9717,9 @@ def admin_reset_menu_for_tests():
         except Exception:
             pass
 
-        return jsonify({'success': True, 'message': 'Menu resetlandi va 4 ta test mahsulot qo\'shildi.'})
+        # determine how many items were actually inserted (clamped between 1 and 500)
+        inserted_count = max(1, min(500, requested))
+        return jsonify({'success': True, 'message': f"Menu resetlandi va {inserted_count} ta test mahsulot qo'shildi."})
     except Exception as e:
         app_logger.error(f"Reset menu for tests error: {str(e)}")
         return jsonify({'success': False, 'error': str(e)}), 500
@@ -13897,11 +13990,14 @@ def super_admin_get_system_stats():
         import os
 
         # System stats
-        uptime_seconds = time.time() - start_time
+        # Prefer per-request start time (g.start_time) if present, otherwise
+        # fall back to the process-wide APP_START_TIME so uptime is defined.
+        start_ts = getattr(g, 'start_time', globals().get('APP_START_TIME', time.time()))
+        uptime_seconds = time.time() - start_ts
         uptime_days = int(uptime_seconds // 86400)
         uptime_hours = int((uptime_seconds % 86400) // 3600)
 
-        # Memory va CPU
+        # Memory and CPU
         memory = psutil.virtual_memory()
         cpu_percent = psutil.cpu_percent(interval=1)
 
@@ -15998,10 +16094,18 @@ def reset_settings():
 def api_news():
     """Get all active news items for ticker"""
     try:
-        rows = execute_query(
-            "SELECT * FROM news WHERE is_active = 1 ORDER BY display_order ASC, created_at DESC",
-            fetch_all=True,
-        ) or []
+        # If caller requested ticker-only items (e.g. footer ticker), honor show_in_ticker flag.
+        ticker_only = str(request.args.get('ticker') or '').lower() in ('1', 'true', 'yes')
+        if ticker_only:
+            rows = execute_query(
+                "SELECT * FROM news WHERE is_active = 1 AND COALESCE(show_in_ticker,0)=1 ORDER BY display_order ASC, created_at DESC",
+                fetch_all=True,
+            ) or []
+        else:
+            rows = execute_query(
+                "SELECT * FROM news WHERE is_active = 1 ORDER BY display_order ASC, created_at DESC",
+                fetch_all=True,
+            ) or []
         news_items = []
         for r in rows:
             try:
@@ -17009,28 +17113,7 @@ def api_delete_360_photo(photo_id):
         return jsonify({"success": False, "message": "O'chirish xatoligi"}), 500
 
 
-@app.route("/360-room")
-def user_360_room():
-    """360 Room page for users - Public"""
-    try:
-        # Get active 360 photos
-        photos_360 = execute_query(
-            "SELECT id, title, image_url, is_active, created_at FROM photos_360 WHERE is_active = 1 ORDER BY created_at DESC",
-            fetch_all=True,
-        )
-
-        # If no active photos, get all photos for demo
-        if not photos_360:
-            photos_360 = execute_query(
-                "SELECT id, title, image_url, is_active, created_at FROM photos_360 ORDER BY created_at DESC LIMIT 5",
-                fetch_all=True,
-            )
-
-        return render_template("360_room.html", photos_360=photos_360 or [])
-    except Exception as e:
-        app_logger.error(f"360 room page error: {str(e)}")
-        flash("Sahifani yuklashda xatolik yuz berdi", "danger")
-        return redirect(url_for("index"))
+# Public 360-room page removed per request. Admin APIs remain for managing photos.
 
 
 @app.route("/data/<path:filename>")
