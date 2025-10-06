@@ -3546,3 +3546,4 @@ MemoryError
 2025-10-04 17:13:18,641 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
 2025-10-04 17:13:41,366 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
 2025-10-04 17:13:54,183 | WARNING | restaurant_app | not_found_error:1150 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
+2025-10-06 13:06:54,609 | WARNING | werkzeug | _log:97 |  * Debugger is active!
