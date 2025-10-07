@@ -1,13 +1,15 @@
-{% extends "base.html" %}
-{% block title %}Sevimlilar - Pro Obuv{% endblock %}
+{% extends "base.html" %} {% block title %}Sevimlilar - Pro Obuv{% endblock %}
 {% block seo_meta %}
-<meta name="description" content="Siz saqlab qo'ygan sevimli mahsulotlar — Pro Obuv. Tez buyurtma va oson boshqaruv.">
-<meta property="og:title" content="Sevimlilar - Pro Obuv">
-<meta property="og:description" content="Siz saqlab qo'ygan sevimli mahsulotlar — Pro Obuv.">
-{% endblock %}
-{% block content %}
+<meta
+  name="description"
+  content="Siz saqlab qo'ygan sevimli mahsulotlar — Pro Obuv. Tez buyurtma va oson boshqaruv." />
+<meta property="og:title" content="Sevimlilar - Pro Obuv" />
+<meta
+  property="og:description"
+  content="Siz saqlab qo'ygan sevimli mahsulotlar — Pro Obuv." />
+{% endblock %} {% block content %}
 <div class="card favorites-card p-3">
-  <h2 data-translate="favorites_title"> Sevimlilar</h2>
+  <h2 data-translate="favorites_title">Sevimlilar</h2>
 
   {% if favorites %}
   <div class="favorites-grid">
@@ -27,7 +29,7 @@
           <form method="post" action="{{ url_for('add_to_cart') }}">
             <input type="hidden" name="menu_item_id" value="{{ item.id }}" />
             <button type="submit" class="btn btn-sm btn-success">
-               Qo'shish
+              Qo'shish
             </button>
           </form>
         </div>
@@ -39,7 +41,7 @@
             type="submit"
             class="btn btn-sm btn-danger"
             onclick="return confirm('Sevimlilardan olib tashlaysizmi?')">
-             Olib tashlash
+            Olib tashlash
           </button>
         </form>
       </div>
@@ -50,8 +52,8 @@
   <div class="text-center" style="padding: 50px">
     <h4>Sevimli mahsulotlaringiz yo'q</h4>
     <p>Mahsulotlarni sevimlilar ro'yxatiga qo'shish uchun katalogga o'ting</p>
-    <a href="{{ url_for('menu') }}" class="btn btn-primary"
-      > Katalogga o'tish</a
+    <a href="{{ url_for('menu') }}" class="btn btn-primary">
+      Katalogga o'tish</a
     >
   </div>
   {% endif %}
