@@ -2,11 +2,16 @@
 {% extends "base.html" %}
 
 {% block title %}Savollar - Pro Obuv{% endblock %}
+{% block seo_meta %}
+<meta name="description" content="Ko'p so'raladigan savollar va yordam — Pro Obuv mijozlari uchun tezkor javoblar va yo'riqnomalar.">
+<meta property="og:title" content="Savollar - Pro Obuv">
+<meta property="og:description" content="Ko'p so'raladigan savollar va yordam — Pro Obuv mijozlari uchun tezkor javoblar.">
+{% endblock %}
 
 {% block content %}
 <div class="faq-page-container">
   <div class="faq-hero-section">
-    <h1 class="faq-hero-title animate-fade-in">❓ Ko'p so'raladigan savollar</h1>
+    <h1 class="faq-hero-title animate-fade-in"> Ko'p so'raladigan savollar</h1>
     <p class="faq-hero-subtitle animate-fade-in">Sizni qiziqtirgan savollarning javoblarini toping</p>
   </div>
   
@@ -14,22 +19,22 @@
   
   <div class="faq-section">
     <div class="faq-item">
-      <h4>👟 Buyurtma qanday beriladi?</h4>
+      <h4> Buyurtma qanday beriladi?</h4>
       <p>Saytdan ro'yxatdan o'tib, mahsulotlarni ko'rib chiqing va kerakli oyoq kiyimni savatchangizga qo'shing. Keyin buyurtma bering.</p>
     </div>
     
     <div class="faq-item">
-      <h4>🚚 Yetkazib berish xizmati bormi?</h4>
+      <h4> Yetkazib berish xizmati bormi?</h4>
       <p>Ha, bizda yetkazib berish xizmati mavjud. Buyurtma berishda yetkazib berish manzilini ko'rsatishingiz mumkin.</p>
     </div>
     
     <div class="faq-item">
-      <h4>💳 To'lov usullari qanday?</h4>
+      <h4> To'lov usullari qanday?</h4>
       <p>Naqd pul, plastik karta, Click, Payme va bank o'tkazmasi usullari mavjud.</p>
     </div>
     
     <div class="faq-item">
-      <h4>📏 O'lcham jadvali bormi?</h4>
+      <h4> O'lcham jadvali bormi?</h4>
       <p>Ha, har bir mahsulot sahifasida o'lcham jadvali mavjud. Shuningdek, do'konimizga kelib o'lchamingizni aniqlay olasiz.</p>
     </div>
     
@@ -39,7 +44,7 @@
     </div>
     
     <div class="faq-item">
-      <h4>📞 Qanday bog'lanishim mumkin?</h4>
+      <h4> Qanday bog'lanishim mumkin?</h4>
       <p>Telefon: +998 97 719 57 70<br>
          Email: premiumsafety@mail.ru<br>
          Telegram: @specobuv</p>
@@ -47,9 +52,9 @@
   </div>
   
   <div class="mt-4">
-    <h4>❓ Boshqa savolingiz bormi?</h4>
+    <h4> Boshqa savolingiz bormi?</h4>
     <p>Agar yuqoridagi javoblar sizni qoniqtirmasa, bizga savol yuboring:</p>
-    <a href="{{ url_for('contact') }}" class="btn big">📨 Savol yuborish</a>
+    <a href="{{ url_for('contact') }}" class="btn big"> Savol yuborish</a>
   </div>
 </div>
 </div> <!-- End faq-page-container -->

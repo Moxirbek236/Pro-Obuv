@@ -1,7 +1,7 @@
 {% extends "base.html" %} {% block title %}Yangiliklar - PRO-OBUV{% endblock %}
 {% block content %}
 <div class="container mt-4">
-  <h1 class="mb-3">📰 Yangiliklar</h1>
+  <h1 class="mb-3"> Yangiliklar</h1>
 
   <style>
     /* Force vertical stacked news cards on the news page */
@@ -96,7 +96,7 @@
       data-bs-toggle="modal"
       data-bs-target="#newsModalPublic"
       onclick="openNewsModalPublic()">
-      ➕ Yangilik qo'shish
+       Yangilik qo'shish
     </button>
   </div>
   {% endif %} {% if session.get('super_admin') %}
@@ -302,8 +302,8 @@
             <div class="mb-3 mt-2">
               <label class="form-label">Turi</label>
               <select id="newsTypePublic" class="form-control">
-                <option value="news">📰 Yangilik</option>
-                <option value="advertisement">📢 Reklama</option>
+                <option value="news"> Yangilik</option>
+                <option value="advertisement"> Reklama</option>
               </select>
             </div>
             <div class="form-check mb-3">

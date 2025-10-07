@@ -1,19 +1,25 @@
-{% extends "base.html" %} {% block title %}Buyurtma muvaffaqiyatli - Oyoq kiyim
-do'koni{% endblock %} {% block content %}
+{% extends "base.html" %}
+{% block title %}Buyurtma muvaffaqiyatli - Pro Obuv{% endblock %}
+{% block seo_meta %}
+<meta name="description" content="Sizning buyurtmangiz muvaffaqiyatli qabul qilindi. Buyurtma ma'lumotlari va yetkazib berish statistikasi.">
+<meta property="og:title" content="Buyurtma muvaffaqiyatli — Pro Obuv">
+<meta property="og:description" content="Sizning buyurtmangiz muvaffaqiyatli qabul qilindi. Buyurtma ma'lumotlari va yetkazib berish statistikasi.">
+{% endblock %}
+{% block content %}
 <div class="success-container">
   <!-- Buyurtma muvaffaqiyatli card -->
   <div class="success-header">
     <div class="success-icon">
-      <div class="checkmark">✅</div>
+      <div class="checkmark"></div>
     </div>
-    <h1>🎉 Buyurtma muvaffaqiyatli qabul qilindi!</h1>
+    <h1>Buyurtma muvaffaqiyatli qabul qilindi!</h1>
     <p>Sizning buyurtmangiz tizimga kiritildi va tez orada tayyorlanadi</p>
   </div>
 
   <!-- Buyurtma holati -->
   <div class="status-card">
     <div class="status-header">
-      <h3>📊 Buyurtma holati</h3>
+      <h3>Buyurtma holati</h3>
       <div class="status-indicator" id="statusIndicator">
         <div class="pulse"></div>
       </div>
@@ -21,28 +27,28 @@ do'koni{% endblock %} {% block content %}
 
     <div class="status-timeline">
       <div class="timeline-item active" id="timeline-ordered">
-        <div class="timeline-icon">📝</div>
+        <div class="timeline-icon"></div>
         <div class="timeline-content">
           <h4>Buyurtma qabul qilindi</h4>
           <p>{{ order.created_at[:19].replace('T', ' ') }}</p>
         </div>
       </div>
       <div class="timeline-item" id="timeline-preparing">
-        <div class="timeline-icon">👨‍🍳</div>
+        <div class="timeline-icon"></div>
         <div class="timeline-content">
           <h4>Qadoqlanmoqda</h4>
           <p>Buyurtma qadoqlanmoqda</p>
         </div>
       </div>
       <div class="timeline-item" id="timeline-ready">
-        <div class="timeline-icon">✅</div>
+        <div class="timeline-icon"></div>
         <div class="timeline-content">
           <h4>Tayyor</h4>
           <p>Olib ketishga tayyor</p>
         </div>
       </div>
       <div class="timeline-item" id="timeline-served">
-        <div class="timeline-icon">👟</div>
+        <div class="timeline-icon"></div>
         <div class="timeline-content">
           <h4>Berildi</h4>
           <p>Rahmat! Xaridingiz uchun</p>
@@ -52,7 +58,10 @@ do'koni{% endblock %} {% block content %}
 
     <div class="order-status">
       <span class="status-badge status-waiting" id="currentStatus"
-        >⏳ Buyurtmangiz tayyorlanmoqda...</span
+        ><i
+          class="bi bi-hourglass-split ui-icon ui-icon--muted"
+          aria-hidden="true"></i>
+        Buyurtmangiz tayyorlanmoqda...</span
       >
     </div>
 
@@ -66,7 +75,7 @@ do'koni{% endblock %} {% block content %}
     class="admin-contact-card"
     id="adminContact"
     style="display: none; margin-top: 18px">
-    <h3>⚠️ Buyurtma tasdiqlanishi kerak</h3>
+    <h3>Buyurtma tasdiqlanishi kerak</h3>
     <p>
       Buyurtmangiz super-admin tomonidan tasdiqlanadi. Iltimos, biroz kuting
       yoki murojaat qiling:
@@ -106,11 +115,11 @@ do'koni{% endblock %} {% block content %}
 
   <!-- Buyurtma ma'lumotlari -->
   <div class="order-details-card">
-    <h3>📋 Buyurtma ma'lumotlari</h3>
+    <h3>Buyurtma ma'lumotlari</h3>
 
     <div class="order-info-grid">
       <div class="info-item">
-        <span class="info-icon">🎫</span>
+        <span class="info-icon"></span>
         <div class="info-content">
           <span class="info-label">Buyurtma raqami</span>
           <span class="info-value ticket-number">{{ order.ticket_no }}</span>
@@ -118,7 +127,7 @@ do'koni{% endblock %} {% block content %}
       </div>
 
       <div class="info-item">
-        <span class="info-icon">👤</span>
+        <span class="info-icon"></span>
         <div class="info-content">
           <span class="info-label">Mijoz</span>
           <span class="info-value">{{ order.customer_name }}</span>
@@ -126,7 +135,9 @@ do'koni{% endblock %} {% block content %}
       </div>
 
       <div class="info-item">
-        <span class="info-icon">⏰</span>
+        <span class="info-icon"
+          ><i class="bi bi-clock ui-icon ui-icon--muted" aria-hidden="true"></i
+        ></span>
         <div class="info-content">
           <span class="info-label">Buyurtma vaqti</span>
           <span class="info-value"
@@ -136,7 +147,7 @@ do'koni{% endblock %} {% block content %}
       </div>
 
       <div class="info-item">
-        <span class="info-icon">🕐</span>
+        <span class="info-icon"></span>
         <div class="info-content">
           <span class="info-label">Taxminiy tayyor vaqti</span>
           <span class="info-value">{{ eta_hhmm }}</span>
@@ -145,7 +156,7 @@ do'koni{% endblock %} {% block content %}
 
       {% if order.order_type == 'delivery' %}
       <div class="info-item">
-        <span class="info-icon">🚚</span>
+        <span class="info-icon"></span>
         <div class="info-content">
           <span class="info-label">Yetkazib berish</span>
           <span class="info-value"
@@ -158,7 +169,7 @@ do'koni{% endblock %} {% block content %}
 
     {% if order_items %}
     <div class="order-items">
-      <h4>🛍️ Buyurtma mahsulotlari</h4>
+      <h4>Buyurtma mahsulotlari</h4>
       <div class="items-list">
         {% for item in order_items %}
         <div class="order-item">
@@ -183,40 +194,40 @@ do'koni{% endblock %} {% block content %}
     <a
       href="{{ url_for('view_receipt', ticket_no=order.ticket_no) }}"
       class="action-btn primary">
-      <span class="btn-icon">🧾</span>
+      <span class="btn-icon"></span>
       <span class="btn-text">Chek va QR kod</span>
     </a>
     <a href="{{ url_for('menu') }}" class="action-btn secondary">
-      <span class="btn-icon">👟</span>
+      <span class="btn-icon"></span>
       <span class="btn-text">Yana xarid qilish</span>
     </a>
     <a href="{{ url_for('index') }}" class="action-btn tertiary">
-      <span class="btn-icon">🏠</span>
+      <span class="btn-icon"></span>
       <span class="btn-text">Bosh sahifa</span>
     </a>
   </div>
 
   <!-- Tips and info -->
   <div class="tips-card">
-    <h4>💡 Foydali ma'lumotlar</h4>
+    <h4>Foydali ma'lumotlar</h4>
     <div class="tips-grid">
       <div class="tip">
-        <span class="tip-icon">📱</span>
+        <span class="tip-icon"></span>
         <p>Buyurtma holati haqida SMS orqali xabar beramiz</p>
       </div>
       <div class="tip">
-        <span class="tip-icon">⏱️</span>
+        <span class="tip-icon">⏱</span>
         <p>Bu sahifa avtomatik yangilanib turadi</p>
       </div>
       <div class="tip">
-        <span class="tip-icon">🎫</span>
+        <span class="tip-icon"></span>
         <p>
           Buyurtma raqamingizni eslab qoling:
           <strong>{{ order.ticket_no }}</strong>
         </p>
       </div>
       <div class="tip">
-        <span class="tip-icon">📞</span>
+        <span class="tip-icon"></span>
         <p>Savollar bo'lsa, xodimlarimizga murojaat qiling</p>
       </div>
     </div>
@@ -225,16 +236,16 @@ do'koni{% endblock %} {% block content %}
   <!-- Rating section (if order is completed) -->
   {% if order.status in ['served', 'delivered'] %}
   <div class="rating-section" id="ratingSection">
-    <h3>⭐ Xizmat sifatini baholang</h3>
+    <h3>
+      <i class="bi bi-star-fill ui-icon ui-icon--accent" aria-hidden="true"></i>
+      Xizmat sifatini baholang
+    </h3>
     <p>Buyurtmangiz sifati bilan qanchalik rozi edingiz?</p>
 
     <div class="rating-form">
       <div class="stars-container">
-        <span class="star" data-rating="1">⭐</span>
-        <span class="star" data-rating="2">⭐</span>
-        <span class="star" data-rating="3">⭐</span>
-        <span class="star" data-rating="4">⭐</span>
-        <span class="star" data-rating="5">⭐</span>
+        <!-- stars will be rendered by shared renderStars() helper -->
+        <div id="orderRatingStars"></div>
       </div>
 
       <textarea
@@ -247,12 +258,83 @@ do'koni{% endblock %} {% block content %}
         class="rating-btn"
         id="submit-rating"
         style="display: none">
-        📝 Baho berish
+        Baho berish
       </button>
     </div>
   </div>
   {% endif %}
 </div>
+
+<script>
+  // Render average rating on page load using the shared helper if available
+  document.addEventListener("DOMContentLoaded", function () {
+    try {
+      const avg = parseFloat("{{ order.rating or 0 }}") || 0;
+      const container = document.getElementById("orderRatingStars");
+      if (container) {
+        if (typeof renderStars === "function") {
+          container.innerHTML = renderStars(avg);
+        } else {
+          // fallback simple rendering
+          let html = "";
+          for (let i = 1; i <= 5; i++)
+            html += `<span class="star ${
+              i <= Math.round(avg) ? "filled" : ""
+            }"><i class="bi ${
+              i <= Math.round(avg) ? "bi-star-fill" : "bi-star"
+            } ui-icon ${
+              i <= Math.round(avg) ? "ui-icon--accent" : "ui-icon--muted"
+            }"></i></span>`;
+          container.innerHTML = html;
+        }
+      }
+
+      // Interactive rating controls (preview on hover, set on click)
+      const starsContainer = document.querySelector(".rating-form");
+      let selected = 0;
+      if (starsContainer) {
+        starsContainer.addEventListener("mouseover", function (e) {
+          const s = e.target.closest && e.target.closest(".star");
+          if (s && s.dataset && s.dataset.rating) {
+            const r = parseInt(s.dataset.rating, 10);
+            try {
+              highlightStars(r);
+            } catch (e) {}
+          }
+        });
+        starsContainer.addEventListener("mouseout", function (e) {
+          try {
+            highlightStars(selected);
+          } catch (e) {}
+        });
+        starsContainer.addEventListener("click", function (e) {
+          const s = e.target.closest && e.target.closest(".star");
+          if (s && s.dataset && s.dataset.rating) {
+            selected = parseInt(s.dataset.rating, 10);
+            document.getElementById("submit-rating").style.display =
+              "inline-block";
+            // store selection in a hidden field or global
+            window.selectedOrderRating = selected;
+            highlightStars(selected);
+          }
+        });
+      }
+
+      function highlightStars(n) {
+        const all = document.querySelectorAll(
+          ".rating-form .star, #orderRatingStars .star"
+        );
+        all.forEach((st) => {
+          const r = parseInt(st.dataset.rating || 0, 10);
+          if (r <= n) st.classList.add("filled");
+          else st.classList.remove("filled");
+        });
+      }
+    } catch (e) {
+      console.warn("rating init error", e);
+    }
+  });
+</script>
 
 <!-- Insert a small role-based navbar (renders when role_nav provided) -->
 {% if role_nav %}
@@ -1004,7 +1086,7 @@ do'koni{% endblock %} {% block content %}
                 updateTimeline('preparing');
                 break;
             case 'ready':
-                statusText = '✅ Buyurtmangiz tayyor! Olib ketishingiz mumkin.';
+                statusText = ' Buyurtmangiz tayyor! Olib ketishingiz mumkin.';
                 statusClass = 'status-ready';
                 updateTimeline('ready');
                 // Notification
@@ -1016,12 +1098,12 @@ do'koni{% endblock %} {% block content %}
                 }
                 break;
             case 'served':
-                statusText = '🎉 Buyurtmangiz berildi! Yoqimli ishtaha!';
+                statusText = ' Buyurtmangiz berildi! Yoqimli ishtaha!';
                 statusClass = 'status-served';
                 updateTimeline('served');
                 break;
             case 'cancelled':
-                statusText = '❌ Buyurtmangiz bekor qilindi.';
+                statusText = ' Buyurtmangiz bekor qilindi.';
                 statusClass = 'status-cancelled';
                 break;
         }

@@ -308,10 +308,10 @@ endblock %} {% block additional_css %}
     <nav aria-label="breadcrumb" class="mb-4">
       <ol class="breadcrumb">
         <li class="breadcrumb-item">
-          <a href="{{ url_for('super_admin_dashboard') }}">🏠 Dashboard</a>
+          <a href="{{ url_for('super_admin_dashboard') }}"> Dashboard</a>
         </li>
         <li class="breadcrumb-item active" aria-current="page">
-          📰 Yangiliklar
+           Yangiliklar
         </li>
       </ol>
     </nav>
@@ -321,34 +321,34 @@ endblock %} {% block additional_css %}
       <ul class="nav nav-pills justify-content-center">
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('super_admin_dashboard') }}"
-            >🏠 Dashboard</a
+            > Dashboard</a
           >
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('super_admin_analytics') }}"
-            >📀 Analytics</a
+            > Analytics</a
           >
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('super_admin_reports') }}"
-            >📈 Hisobotlar</a
+            > Hisobotlar</a
           >
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('super_admin_system') }}"
-            >⚙️ Tizim</a
+            > Tizim</a
           >
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('super_admin_logs') }}"
-            >📝 Loglar</a
+            > Loglar</a
           >
         </li>
         <li class="nav-item">
           <a
             class="nav-link active"
             href="{{ url_for('admin_news_management') }}"
-            >📰 Yangiliklar</a
+            > Yangiliklar</a
           >
         </li>
       </ul>
@@ -356,7 +356,7 @@ endblock %} {% block additional_css %}
 
     <!-- Header -->
     <div class="admin-header text-center">
-      <h1 class="mb-3">📰 Yangiliklar boshqaruvi</h1>
+      <h1 class="mb-3"> Yangiliklar boshqaruvi</h1>
       <p class="mb-0">Saytdagi yangiliklar va reklamalarni boshqaring</p>
       <!-- Debug info -->
       <div class="mt-2" style="font-size: 12px; opacity: 0.8">
@@ -537,8 +537,8 @@ endblock %} {% block additional_css %}
               <div class="mb-3">
                 <label for="newsType" class="form-label">Turi</label>
                 <select class="form-control" id="newsType">
-                  <option value="news">📰 Yangilik</option>
-                  <option value="advertisement">📢 Reklama</option>
+                  <option value="news"> Yangilik</option>
+                  <option value="advertisement"> Reklama</option>
                 </select>
               </div>
             </div>
@@ -1125,12 +1125,12 @@ endblock %} {% block additional_css %}
 
         const typeLabel =
           item.type === "advertisement"
-            ? '<span class="news-type-advertisement">📢 Reklama</span>'
-            : '<span class="news-type-news">📰 Yangilik</span>';
+            ? '<span class="news-type-advertisement"> Reklama</span>'
+            : '<span class="news-type-news"> Yangilik</span>';
 
         const statusLabel = item.is_active
-          ? '<span class="news-status-active">✅ Faol</span>'
-          : '<span class="news-status-inactive">❌ Nofaol</span>';
+          ? '<span class="news-status-active"> Faol</span>'
+          : '<span class="news-status-inactive"> Nofaol</span>';
 
         const createdAt = new Date(item.created_at).toLocaleDateString(
           "uz-UZ",
@@ -1231,14 +1231,14 @@ endblock %} {% block additional_css %}
   // Utility functions for table formatting
   function formatNewsType(type) {
     return type === "advertisement"
-      ? '<span class="news-type-advertisement">📢 Reklama</span>'
-      : '<span class="news-type-news">📰 Yangilik</span>';
+      ? '<span class="news-type-advertisement"> Reklama</span>'
+      : '<span class="news-type-news"> Yangilik</span>';
   }
 
   function formatActiveStatus(isActive) {
     return isActive
-      ? '<span class="news-status-active">✅ Faol</span>'
-      : '<span class="news-status-inactive">❌ Nofaol</span>';
+      ? '<span class="news-status-active"> Faol</span>'
+      : '<span class="news-status-inactive"> Nofaol</span>';
   }
 
   function formatDate(dateString) {

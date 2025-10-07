@@ -6,7 +6,7 @@
 {% block content %}
 <div class="logs-container">
     <div class="logs-header">
-        <h1>📝 Tizim Loglari</h1>
+        <h1> Tizim Loglari</h1>
         <div class="breadcrumb">
             <a href="{{ url_for('super_admin_dashboard') }}">Dashboard</a> / Loglar
         </div>
@@ -31,19 +31,19 @@
         </div>
 
         <div class="filter-group">
-            <button class="btn btn-primary" onclick="refreshLogs()">🔄 Yangilash</button>
-            <button class="btn btn-success" onclick="downloadLogs()">📄 Yuklab olish</button>
+            <button class="btn btn-primary" onclick="refreshLogs()"> Yangilash</button>
+            <button class="btn btn-success" onclick="downloadLogs()"> Yuklab olish</button>
         </div>
     </div>
 
     <!-- Real-time Logs -->
     <div class="logs-section">
         <div class="logs-header-controls">
-            <h3>📊 Real-time Logs</h3>
+            <h3> Real-time Logs</h3>
             <div class="log-controls">
-                <button class="btn btn-sm btn-success" onclick="startAutoRefresh()">▶️ Auto Refresh</button>
-                <button class="btn btn-sm btn-warning" onclick="stopAutoRefresh()">⏸️ Stop</button>
-                <button class="btn btn-sm btn-danger" onclick="clearLogDisplay()">🗑️ Clear Display</button>
+                <button class="btn btn-sm btn-success" onclick="startAutoRefresh()">▶ Auto Refresh</button>
+                <button class="btn btn-sm btn-warning" onclick="stopAutoRefresh()">⏸ Stop</button>
+                <button class="btn btn-sm btn-danger" onclick="clearLogDisplay()"> Clear Display</button>
             </div>
         </div>
 
@@ -58,28 +58,28 @@
 
     <!-- System Performance -->
     <div class="performance-section">
-        <h3>📈 Tizim Performance</h3>
+        <h3> Tizim Performance</h3>
         <div class="performance-grid">
             <div class="perf-card">
-                <h4>🚀 Response Time</h4>
+                <h4> Response Time</h4>
                 <div class="perf-value" id="responseTime">0ms</div>
                 <div class="perf-subtitle">O'rtacha javob vaqti</div>
             </div>
 
             <div class="perf-card">
-                <h4>💾 Memory Usage</h4>
+                <h4> Memory Usage</h4>
                 <div class="perf-value" id="memoryUsage">0%</div>
                 <div class="perf-subtitle">Xotira foydalanishi</div>
             </div>
 
             <div class="perf-card">
-                <h4>🔢 Active Sessions</h4>
+                <h4> Active Sessions</h4>
                 <div class="perf-value" id="activeSessions">0</div>
                 <div class="perf-subtitle">Faol sessiyalar</div>
             </div>
 
             <div class="perf-card">
-                <h4>⚠️ Error Rate</h4>
+                <h4> Error Rate</h4>
                 <div class="perf-value" id="errorRate">0%</div>
                 <div class="perf-subtitle">Xatoliklar darajasi</div>
             </div>
@@ -88,7 +88,7 @@
 
     <!-- Error Summary -->
     <div class="errors-section">
-        <h3>🚨 Oxirgi Xatoliklar</h3>
+        <h3> Oxirgi Xatoliklar</h3>
         <div id="errorsSummary" class="errors-list">
             <p class="text-center">Xatoliklar yuklanmoqda...</p>
         </div>
@@ -96,7 +96,7 @@
 
     <!-- Recent Activity -->
     <div class="activity-section">
-        <h3>🔄 So'nggi faollik</h3>
+        <h3> So'nggi faollik</h3>
         <div id="recentActivity" class="activity-list">
             <div class="activity-item">
                 <span class="activity-time">15:30:45</span>

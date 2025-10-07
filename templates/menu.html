@@ -1,4 +1,12 @@
-{% extends "base.html" %} {% block title %}Mahsulotlar - Do'kon{% endblock %} {%
+{% extends "base.html" %}
+{% block title %}Mahsulotlar - Do'kon{% endblock %}
+{% block seo_meta %}
+<meta name="description" content="Mahsulotlar — Pro Obuv do'koni. Keng assortiment, to'liq tavsiflar va tez yetkazib berish.">
+<meta property="og:title" content="Mahsulotlar — Pro Obuv">
+<meta property="og:description" content="Mahsulotlar — Pro Obuv do'koni. Keng assortiment, to'liq tavsiflar va tez yetkazib berish.">
+<meta name="twitter:card" content="summary_large_image">
+{% endblock %}
+{%
 block content %}
 <style>
   /* Ensure category buttons are clearly visible and clickable */
@@ -26,11 +34,260 @@ block content %}
     z-index: 5;
   }
 </style>
+<style>
+  /* Card grid */
+  .menu-grid {
+    display: grid;
+    /* slightly larger minimum card width so cards appear more prominent on desktop */
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+    padding: 18px 0;
+  }
+
+  .menu-item-card {
+    background: #ffffff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 8px 28px rgba(16, 24, 40, 0.06);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    /* increase bottom padding slightly so the action area sits lower like the design */
+    padding-bottom: 28px;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+  .menu-item-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 40px rgba(16, 24, 40, 0.12);
+  }
+
+  .menu-item-card .card-image {
+    width: 100%;
+    /* larger image area to match the screenshot */
+    height: 320px;
+    background: #f3f6fb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  }
+
+  .menu-item-card .card-image img {
+    max-width: 92%;
+    max-height: 92%;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+
+  .menu-item-card .card-body {
+    padding: 10px 14px 8px 14px;
+    width: 100%;
+  }
+
+  /* Strong overrides to ensure .menu-item-card takes precedence over legacy .menu-item rules */
+  .menu-grid .menu-item-card {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    background: #f2f4f6 !important;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08) !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+  }
+
+  .card-title {
+    font-weight: 700;
+    margin: 8px 0 4px 0;
+    color: var(--text-color);
+    font-size: 18px;
+  }
+  .card-category {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .card-description {
+    display: none;
+  }
+
+  .card-rating {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin: 8px 0;
+  }
+  .card-rating .stars {
+    color: #ddd;
+  }
+  .card-rating .stars .star {
+    font-size: 20px;
+    margin: 0 3px;
+    color: #e6e9eb;
+  }
+  .card-rating .stars .star.filled {
+    color: var(--accent-color);
+  }
+  /* Ensure half-star visuals use an overlay technique */
+  .stars .star.half {
+    position: relative;
+  }
+  .stars .star.half i {
+    color: #e6e9eb;
+  }
+  .stars .star.half i::before {
+    content: "\00a0";
+  }
+  .stars .star.half i.fa-star-half {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+  /* Make stars clearly visible even if legacy rules set color or opacity */
+  .menu-grid .menu-item-card .card-rating .stars .star,
+  .menu-grid .menu-item-card .card-rating .stars .star.filled {
+    color: #e6e9eb !important;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
+    display: inline-block !important;
+  }
+  .menu-grid .menu-item-card .card-rating .stars .star.filled {
+    color: #ffd166 !important;
+  }
+  .card-rating .rating-text {
+    font-size: 13px;
+    color: #475569;
+  }
+
+  .card-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    justify-content: center;
+    margin-top: 12px;
+  }
+
+  .qty-controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .qty-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: #f1f5fb;
+    color: var(--primary-color);
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .qty-input {
+    width: 44px;
+    text-align: center;
+    border-radius: 8px;
+    border: 1px solid #e6e6e6;
+    padding: 6px;
+  }
+
+  .btn-add-cart {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: none;
+    background: var(--primary-color);
+    color: #fff;
+    font-size: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 10px 24px rgba(25, 118, 210, 0.12);
+  }
+
+  .btn-favorite-top {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(16, 24, 40, 0.06);
+  }
+
+  /* Small responsive tweaks */
+  @media (max-width: 480px) {
+    .menu-item-card .card-image {
+      /* keep compact on very small screens but slightly taller for better visuals */
+      height: 160px;
+    }
+    .qty-btn {
+      width: 32px;
+      height: 32px;
+    }
+    .card-title {
+      font-size: 14px;
+    }
+    .card-category {
+      font-size: 12px;
+    }
+  }
+
+  /* Laptop and phone focused responsive rules */
+  @media (min-width: 1024px) {
+    /* laptop: slightly denser grid */
+    .menu-grid {
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 28px;
+    }
+    .menu-item-card .card-image {
+      /* larger hero image for laptop/desktop */
+      height: 480px;
+    }
+    .card-title {
+      font-size: 20px;
+    }
+  }
+  @media (max-width: 767px) {
+    /* phone: single-column focus */
+    .menu-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+      padding: 10px 0;
+    }
+    .menu-item-card {
+      padding-bottom: 12px;
+      border-radius: 12px;
+    }
+    .menu-item-card .card-image {
+      /* slightly taller on narrow phones/tablets to improve image presence */
+      height: 220px;
+    }
+    .btn-add-cart {
+      width: 46px;
+      height: 46px;
+    }
+  }
+</style>
 <div class="menu-container">
   <div class="main-content">
+    <!-- cart button removed (use navbar cart) -->
     <!-- Left Sidebar Filters -->
     <div class="filter-sidebar">
-      <h3 class="filter-title">🔍 Filter va qidiruv</h3>
+      <h3 class="filter-title">Filter va qidiruv</h3>
 
       <!-- Search -->
       <div class="filter-section">
@@ -45,7 +302,7 @@ block content %}
             function menuInitDiagnostics() {
               try {
                 const btns = document.querySelectorAll(".category-btn");
-                const items = document.querySelectorAll(".menu-item");
+                const items = document.querySelectorAll(".menu-item-card");
                 const search = document.getElementById("menuSearchInput");
                 console.log(
                   "[menuInit] categoryBtns=",
@@ -144,8 +401,8 @@ block content %}
         <label for="filterCategory">Kategoriya</label>
         <select id="filterCategory" class="filter-select">
           <option value="">Barcha turdagi</option>
-          <option value="specobuv">🥾 Спецобувь</option>
-          <option value="specodezhda">🦺 Спецодежда</option>
+          <option value="specobuv">Спецобувь</option>
+          <option value="specodezhda">Спецодежда</option>
         </select>
       </div>
 
@@ -183,28 +440,63 @@ block content %}
 
       <!-- Clear Filters -->
       <button id="clearFiltersBtn" class="clear-btn">
-        🗑️ Barchasini tozalash
+        Barchasini tozalash
       </button>
 
       <!-- Links Section -->
       <div class="filter-links">
-        <a href="{{ url_for('about') }}" class="filter-link">
-          📋 Biz haqimizda
-        </a>
-        <a href="{{ url_for('contact') }}" class="filter-link">
-          📞 Bog'lanish
-        </a>
-        <a href="{{ url_for('index') }}" class="filter-link">
-          🏠 Bosh sahifa
-        </a>
+        <a href="{{ url_for('about') }}" class="filter-link"> Biz haqimizda </a>
+        <a href="{{ url_for('contact') }}" class="filter-link"> Bog'lanish </a>
+        <a href="{{ url_for('index') }}" class="filter-link"> Bosh sahifa </a>
       </div>
     </div>
 
     <!-- Mobile Filter Toggle -->
+    <script>
+      // Early safe fallbacks for functions referenced by inline onclick attributes.
+      // These will be replaced by the page's full implementations later if present.
+      (function () {
+        if (!window.increaseModalQuantity) {
+          window.increaseModalQuantity = function () {
+            try {
+              const input = document.getElementById("modalQuantity");
+              if (!input) return;
+              const v = parseInt(input.value, 10) || 1;
+              input.value = Math.min(99, v + 1);
+            } catch (e) {
+              console.warn("increaseModalQuantity fallback error", e);
+            }
+          };
+        }
+        if (!window.decreaseModalQuantity) {
+          window.decreaseModalQuantity = function () {
+            try {
+              const input = document.getElementById("modalQuantity");
+              if (!input) return;
+              const v = parseInt(input.value, 10) || 1;
+              input.value = Math.max(1, v - 1);
+            } catch (e) {
+              console.warn("decreaseModalQuantity fallback error", e);
+            }
+          };
+        }
+        if (!window.toggleMobileFilter) {
+          window.toggleMobileFilter = function () {
+            try {
+              const sidebar = document.querySelector(".filter-sidebar");
+              if (sidebar) sidebar.classList.toggle("show");
+            } catch (e) {
+              console.warn("toggleMobileFilter fallback error", e);
+            }
+          };
+        }
+      })();
+    </script>
+
     <button
       class="mobile-filter-toggle d-md-none"
       onclick="toggleMobileFilter()">
-      🔍 Filterlar
+      Filterlar
     </button>
 
     <!-- Right Content Area -->
@@ -215,7 +507,7 @@ block content %}
 
       <!-- Spetsial'naya odezhda i obuv' -->
       <div class="menu-section" id="products-section">
-        <h2 class="section-title">🥾 Специальная одежда и обувь</h2>
+        <h2 class="section-title">Специальная одежда и обувь</h2>
         <!-- Category buttons (also accessible from sidebar) -->
         <div class="filter-section category-buttons-wrapper">
           <div class="category-buttons">
@@ -224,116 +516,133 @@ block content %}
               data-cat="all"
               onclick="showCategory(event, 'all')"
               data-translate="all_categories">
-              🔄 Все товары
+              Все товары
             </button>
             <button
               class="category-btn"
               data-cat="specobuv"
               onclick="showCategory(event, 'specobuv')"
               data-translate="specobuv_category">
-              🥾 Спецобувь
+              Спецобувь
             </button>
             <button
               class="category-btn"
               data-cat="specodezhda"
               onclick="showCategory(event, 'specodezhda')"
               data-translate="specodezhda_category">
-              🦺 Спецодежда
+              Спецодежда
             </button>
           </div>
         </div>
         <div class="menu-grid">
           {% for item in men %}
           <div
-            class="menu-item"
+            class="menu-item-card"
             data-id="{{ item.id }}"
             data-category="{{ (item.category or 'product')|lower }}"
             onclick="openItemModal({{ item.id }}, event)">
-            <div class="item-image">
+            <div class="card-image">
               <img
-                src="{{ item.image_url or '/static/images/default-men.jpg' }}"
+                src="{{ item.image_url or '/static/defoult.jpg' }}"
                 alt="{{ item.name }}"
-                onerror="this.src='/static/images/default-men.jpg'" />
-              <!-- Sevimli icon chap tepa burchakda -->
+                onerror="this.src='/static/defoult.jpg'" />
+            </div>
+            <div class="card-body">
               {% if session.user_id %}
               <form
                 method="post"
                 action="{{ url_for('add_to_favorites', menu_item_id=item.id) }}"
                 class="favorite-form"
                 onclick="event.stopPropagation()">
-                <button type="submit" class="btn-favorite-top">❤️</button>
+                <button type="submit" class="btn-favorite-top"></button>
               </form>
               {% endif %}
-            </div>
-            <div class="item-content">
-              <h3 class="item-name">{{ item.name }}</h3>
-              <p class="item-category">{{ item.category or '' }}</p>
-              <p class="item-description">
-                {{ item.description or 'Mahsulot haqida' }}
-              </p>
-
-              <!-- Baholar -->
-              <div class="rating-section">
-                <div class="stars">
-                  {% for i in range(1, 6) %}
+              <h3 class="card-title">{{ item.name }}</h3>
+              <p class="card-category">{{ item.category or '' }}</p>
+              <p class="card-description">{{ item.description or '' }}</p>
+              <!-- Show available sizes and colors on the card -->
+              <div class="card-options">
+                {% if item.sizes %}
+                <div class="card-sizes" aria-label="Available sizes">
+                  {% for s in (item.sizes or '').split(',') %} {% if s and
+                  s|trim %}
+                  <span class="option-badge">{{ s|trim }}</span>
+                  {% endif %} {% endfor %}
+                </div>
+                {% endif %} {% if item.colors %}
+                <div class="card-colors" aria-label="Available colors">
+                  {% for c in (item.colors or '').split(',') %} {% if c and
+                  c|trim %}
                   <span
-                    class="star {% if i <= (item.rating or 0) %}filled{% endif %}"
-                    >⭐</span
-                  >
+                    class="color-badge"
+                    title="{{ c|trim }}"
+                    style="background: {{ c|trim }};"></span>
+                  {% endif %} {% endfor %}
+                </div>
+                {% endif %}
+              </div>
+              <div class="card-rating">
+                <div class="stars">
+                  {% for i in range(1,6) %}
+                  <span
+                    class="star {% if i <= (item.rating or 0) %}filled{% endif %}">
+                    <i
+                      class="bi bi-star-fill ui-icon ui-icon--accent"
+                      aria-hidden="true"></i>
+                  </span>
                   {% endfor %}
                 </div>
-                <span class="rating-text"
-                  >{{ "%.1f"|format(item.rating or 0) }} ({{ item.orders_count
-                  or 0 }} buyurtma)</span
-                >
+                <div class="rating-text">
+                  {{ "%.1f"|format(item.rating or 0) }} ({{ item.orders_count or
+                  0 }} buyurtma)
+                </div>
               </div>
 
-              <div class="item-footer">
-                <!-- Miqdor va savatcha -->
-                <div class="add-to-cart-section">
-                  <form
-                    method="POST"
-                    action="{{ url_for('add_to_cart') }}"
-                    onclick="event.stopPropagation()">
+              <div class="card-actions">
+                <form
+                  method="POST"
+                  action="{{ url_for('add_to_cart') }}"
+                  onclick="event.stopPropagation()">
+                  <input
+                    type="hidden"
+                    name="menu_item_id"
+                    value="{{ item.id }}" />
+                  <div class="qty-controls">
+                    <button
+                      type="button"
+                      class="qty-btn minus"
+                      onclick="decreaseQuantity(this)">
+                      −
+                    </button>
                     <input
-                      type="hidden"
-                      name="menu_item_id"
-                      value="{{ item.id }}" />
-                    <div class="quantity-cart-controls">
-                      <button
-                        type="button"
-                        class="quantity-btn minus"
-                        onclick="decreaseQuantity(this)">
-                        −
-                      </button>
-                      <input
-                        type="number"
-                        name="quantity"
-                        value="1"
-                        min="1"
-                        max="99"
-                        class="quantity-input" />
-                      <button
-                        type="button"
-                        class="quantity-btn plus"
-                        onclick="increaseQuantity(this)">
-                        +
-                      </button>
-                      <button type="submit" class="btn-cart">🛒</button>
-                    </div>
-                  </form>
-                </div>
-
-                <!-- Baholash tugmasi -->
-                {% if session.user_id %}
-                <div class="rating-button-section">
+                      type="number"
+                      name="quantity"
+                      value="1"
+                      min="1"
+                      max="99"
+                      class="qty-input" />
+                    <button
+                      type="button"
+                      class="qty-btn plus"
+                      onclick="increaseQuantity(this)">
+                      +
+                    </button>
+                  </div>
                   <button
-                    type="button"
-                    class="btn-rate"
-                    onclick="openRatingModal({{ item.id }}, event)">
-                    ⭐ Baholash
-                  </button>
-                </div>
+                    type="submit"
+                    class="btn-add-cart"
+                    title="Savatchaga qo'shish"></button>
+                </form>
+                {% if session.user_id %}
+                <button
+                  type="button"
+                  class="btn-rate"
+                  onclick="openRatingModal({{ item.id }}, event)">
+                  <i
+                    class="bi bi-star-fill ui-icon ui-icon--accent"
+                    aria-hidden="true"></i>
+                  Baholash
+                </button>
                 {% endif %}
               </div>
             </div>
@@ -357,7 +666,7 @@ block content %}
   <div class="modal-content" onclick="event.stopPropagation()">
     <div class="modal-header">
       <h2 id="modalTitle"></h2>
-      <button class="modal-close" onclick="closeItemModal()">✕</button>
+      <button class="modal-close" onclick="closeItemModal()">X</button>
     </div>
     <div class="modal-body">
       <div class="modal-image">
@@ -365,20 +674,27 @@ block content %}
         <div id="modalMediaContainer" class="modal-media-container">
           <!-- media elements inserted here -->
         </div>
-        <button
-          id="modalPrevBtn"
-          class="modal-nav-btn"
-          aria-label="Previous"
-          style="display: none">
-          ‹
-        </button>
-        <button
-          id="modalNextBtn"
-          class="modal-nav-btn"
-          aria-label="Next"
-          style="display: none">
-          ›
-        </button>
+        <div class="modal-media-controls">
+          <button
+            id="modalPrevBtn"
+            class="modal-nav-btn"
+            aria-label="Previous"
+            style="display: none">
+            ‹
+          </button>
+          <button
+            id="modalZoomBtn"
+            class="modal-zoom-btn"
+            aria-label="Zoom"
+            style="display: none"></button>
+          <button
+            id="modalNextBtn"
+            class="modal-nav-btn"
+            aria-label="Next"
+            style="display: none">
+            ›
+          </button>
+        </div>
       </div>
       <div class="modal-details">
         <p id="modalDescription"></p>
@@ -400,7 +716,7 @@ block content %}
             <div class="modal-options-container">
               <div class="modal-option-group">
                 <label for="modalSize" class="modal-option-label">
-                  <span class="option-icon">📏</span>
+                  <span class="option-icon"></span>
                   <span class="option-text">O'lcham tanlang</span>
                 </label>
                 <div class="select-wrapper">
@@ -418,7 +734,7 @@ block content %}
 
               <div class="modal-option-group">
                 <label for="modalColor" class="modal-option-label">
-                  <span class="option-icon">🎨</span>
+                  <span class="option-icon"></span>
                   <span class="option-text">Rang tanlang</span>
                 </label>
                 <div class="select-wrapper">
@@ -450,7 +766,7 @@ block content %}
               class="btn-add-cart"
               id="modalAddToCartBtn"
               disabled>
-              🛒 Savatchaga qo'shish
+              Savatchaga qo'shish
             </button>
           </form>
         </div>
@@ -1527,6 +1843,9 @@ block content %}
     .filter-sidebar {
       width: 260px;
       display: flex;
+      flex-wrap: nowrap;
+      flex-direction: column;
+      max-height: calc(100vh - 300px);
     }
   }
 
@@ -2910,45 +3229,40 @@ block content %}
   .modal-media-container {
     position: relative;
     width: 100%;
-    height: 320px;
+    height: auto;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
     background: #f8fafc;
     border-radius: 12px;
+    padding: 8px;
   }
 
   .modal-media-item {
     max-width: 100%;
-    max-height: 100%;
-    width: auto;
+    width: 100%;
+    max-height: 75vh;
     height: auto;
     display: none;
     object-fit: contain;
+    cursor: zoom-in;
   }
 
   .modal-media-item.active {
     display: block;
   }
 
-  .modal-nav-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(0,0,0,0.5);
-    color: white;
-    border: none;
-    width: 40px;
-    height: 60px;
-    font-size: 28px;
-    border-radius: 6px;
-    cursor: pointer;
-    z-index: 50;
-  }
+  .modal-media-controls { position: absolute; top: 8px; left: 0; right: 0; display:flex; align-items:center; justify-content:center; gap:12px; pointer-events:none; z-index:60; }
+  .modal-nav-btn, .modal-zoom-btn { pointer-events:auto; background: rgba(0,0,0,0.75); color:white; border:none; padding:8px 12px; border-radius:8px; font-size:20px; cursor:pointer; box-shadow: 0 6px 18px rgba(0,0,0,0.4); }
+  .modal-nav-btn { font-weight:700; }
+  #modalPrevBtn { margin-right: auto; margin-left: 12px; }
+  #modalNextBtn { margin-left: auto; margin-right: 12px; }
+  .modal-media-item.zoomed { transform: scale(1.3); cursor: zoom-out; }
 
-  #modalPrevBtn { left: 8px; }
-  #modalNextBtn { right: 8px; }
+  /* Ensure modal controls sit above other overlays and are visible on mobile */
+  .modal-nav-btn, .modal-zoom-btn { z-index: 1200 !important; }
+  .modal-media-container { z-index: 1100; }
 
   .media-toolbar {
     position: absolute;
@@ -2979,7 +3293,7 @@ block content %}
         "id": item.id,
         "name": item.name,
         "description": item.description or 'Mahsulot tavsifi',
-        "image_url": item.image_url or '/static/images/default-men.jpg',
+  "image_url": item.image_url or '/static/defoult.jpg',
         "rating": item.rating or 0,
         "orders_count": item.orders_count or 0,
         "sizes": item.sizes or '',
@@ -2996,6 +3310,10 @@ block content %}
   // programmatic or synthetic events from opening the modal during initial load.
   let __lastUserInteraction = 0;
   let __userHasInteracted = false;
+  // Prevent automatic modal opens immediately after page load (flash/mask issue).
+  // Allow trusted user events to bypass this. Duration is short to avoid
+  // blocking rapid real user interactions (800ms by default).
+  const __modalGuardUntil = Date.now() + 800;
   ['pointerdown', 'click', 'keydown', 'touchstart'].forEach(evt => {
     try {
       window.addEventListener(evt, (e) => {
@@ -3019,7 +3337,7 @@ block content %}
       event = null;
     }
 
-    const items = document.querySelectorAll('.menu-item');
+  const items = document.querySelectorAll('.menu-item-card');
     const buttons = document.querySelectorAll('.category-btn');
     // Tugmalarni yangilash
     buttons.forEach(btn => btn.classList.remove('active'));
@@ -3120,7 +3438,7 @@ block content %}
     function openItemModal(itemId, evt) {
       // Diagnostic: always log the invocation so we can trace unexpected callers.
       try {
-        console.log('openItemModal invoked ->', { itemId: itemId, evtType: evt ? evt.type : null, isTrusted: evt ? !!evt.isTrusted : null, lastInteraction: __lastUserInteraction, userHasInteracted: !!__userHasInteracted });
+      console.log('openItemModal invoked ->', { itemId: itemId, evtType: evt ? evt.type : null, isTrusted: evt ? !!evt.isTrusted : null, lastInteraction: __lastUserInteraction, userHasInteracted: !!__userHasInteracted, modalGuardUntil: __modalGuardUntil });
         // Print a stack so we can identify the caller during debugging
         try { console.trace && console.trace(); } catch (e) {}
       } catch (e) {}
@@ -3128,6 +3446,12 @@ block content %}
       // Prevent accidental auto-open: require a trusted event that originated
       // from a .menu-item (or allow only after the user has already interacted).
       try {
+        // Early-load guard: block modal opens that occur during initial script
+        // startup (commonly caused by other scripts or synthetic events).
+        if (Date.now() < __modalGuardUntil && !(evt && evt.isTrusted) && !__userHasInteracted) {
+          try { console.warn('openItemModal blocked by early-load guard', { itemId, timeNow: Date.now(), modalGuardUntil: __modalGuardUntil }); } catch(e){}
+          return;
+        }
         // If a user event is provided and it's trusted (real user click), update timestamp
         if (evt && evt.isTrusted) {
           try { __lastUserInteraction = Date.now(); } catch (e){}
@@ -3139,8 +3463,8 @@ block content %}
           return;
         }
 
-        // Ensure event is trusted and comes from (or within) a .menu-item unless user has already interacted
-        const fromCard = (evt.target && evt.target.closest && evt.target.closest('.menu-item')) || (evt.currentTarget && evt.currentTarget.closest && evt.currentTarget.closest('.menu-item'));
+  // Ensure event is trusted and comes from (or within) a .menu-item-card unless user has already interacted
+  const fromCard = (evt.target && evt.target.closest && evt.target.closest('.menu-item-card')) || (evt.currentTarget && evt.currentTarget.closest && evt.currentTarget.closest('.menu-item-card'));
         if (!(evt.isTrusted || __userHasInteracted) || !fromCard) {
           try {
             console.warn('openItemModal blocked: event not from card or not trusted', { itemId, isTrusted: !!(evt && evt.isTrusted), fromCard: !!fromCard, userHasInteracted: !!__userHasInteracted });
@@ -3169,12 +3493,12 @@ block content %}
     } catch (e) { console.warn('menuData lookup error', e); }
     if (!item) {
       try {
-        const card = document.querySelector('.menu-item[data-id="' + itemId + '"]');
+        const card = document.querySelector('.menu-item-card[data-id="' + itemId + '"]');
         if (card) {
-          const name = (card.querySelector('.item-name')||{}).textContent || ('Item ' + itemId);
-          const desc = (card.querySelector('.item-description')||{}).textContent || '';
-          const imgEl = card.querySelector('.item-image img') || card.querySelector('.menu-item-image img') || null;
-          const img = imgEl ? (imgEl.getAttribute('src') || '') : '/static/images/default-product.jpg';
+          const name = (card.querySelector('.card-title')||{}).textContent || ('Item ' + itemId);
+          const desc = (card.querySelector('.card-description')||{}).textContent || '';
+          const imgEl = card.querySelector('.card-image img') || null;
+          const img = imgEl ? (imgEl.getAttribute('src') || '') : '/static/defoult.jpg';
           item = { id: parseInt(itemId,10), name: name.trim(), description: desc.trim(), image_url: img, image: img, rating: 0, orders_count: 0, sizes: '', colors: '' };
         }
       } catch (e) {
@@ -3194,9 +3518,9 @@ block content %}
           mediaContainer.innerHTML = '';
 
           // If no media returned, fallback to the single image from menuData
-          if (!media || media.length === 0) {
-              const img = document.createElement('img');
-              img.src = item.image_url || item.image || '/static/images/default-product.jpg';
+      if (!media || media.length === 0) {
+        const img = document.createElement('img');
+        img.src = item.image_url || item.image || '/static/defoult.jpg';
               img.alt = item.name;
               img.className = 'modal-media-item active';
               mediaContainer.appendChild(img);
@@ -3211,7 +3535,7 @@ block content %}
                 mediaContainer.appendChild(vid);
               } else {
                 const img = document.createElement('img');
-                img.src = m.media_url;
+                img.src = m.media_url || item.image_url || '/static/defoult.jpg';
                 img.alt = item.name;
                 img.className = 'modal-media-item';
                 if (idx === 0) img.classList.add('active');
@@ -3257,6 +3581,36 @@ block content %}
 
           updateNav();
 
+          // Zoom button logic: show zoom only when a single media item (or when you prefer)
+          const zoomBtn = document.getElementById('modalZoomBtn');
+          try { console.log('[itemModal] media items:', items.length, 'zoomBtnExists:', !!zoomBtn); } catch(e) {}
+          if (zoomBtn) {
+            if (items.length <= 1) {
+              zoomBtn.style.display = 'block';
+              prevBtn.style.display = 'none';
+              nextBtn.style.display = 'none';
+            } else {
+              zoomBtn.style.display = 'none';
+            }
+
+            // toggle zoom on active media
+            zoomBtn.onclick = function(ev) {
+              ev.stopPropagation();
+              const active = mediaContainer.querySelector('.modal-media-item.active');
+              if (!active) return;
+              active.classList.toggle('zoomed');
+            };
+
+            // Also allow click on image to toggle zoom
+            items.forEach(it => {
+              it.addEventListener('click', function(ev) {
+                if (items.length <= 1) {
+                  this.classList.toggle('zoomed');
+                }
+              });
+            });
+          }
+
           // Staff-only controls: show simple admin overlay allowing set-main/delete when staff
           if (IS_STAFF) {
             // Add media management toolbar (set main / delete) per media item
@@ -3279,16 +3633,20 @@ block content %}
   document.getElementById('modalDescription').textContent = item.description;
         document.getElementById('modalItemId').value = itemId;
 
-        // Baholarni ko'rsatish
+        // Baholarni ko'rsatish (safe: handle missing/null/NaN ratings)
         const modalStars = document.getElementById('modalStars');
         modalStars.innerHTML = '';
-        for (let i = 1; i <= 5; i++) {
-            const star = document.createElement('span');
-            star.className = `star ${i <= item.rating ? 'filled' : ''}`;
-            star.textContent = '⭐';
-            modalStars.appendChild(star);
-        }
-        document.getElementById('modalRatingText').textContent = `${item.rating.toFixed(1)} (${item.orders_count} buyurtma)`;
+    // ensure rating is a valid number between 0 and 5
+    const rawRating = (item && item.rating !== undefined && item.rating !== null) ? Number(item.rating) : 0;
+    const rating = (isNaN(rawRating) ? 0 : Math.max(0, Math.min(5, rawRating)));
+    const orders = (item && item.orders_count) ? Number(item.orders_count) : 0;
+    for (let i = 1; i <= 5; i++) {
+      const star = document.createElement('span');
+      star.className = `star ${i <= Math.round(rating) ? 'filled' : ''}`;
+      star.innerHTML = '<i class="bi bi-star-fill ui-icon ui-icon--accent" aria-hidden="true"></i>';
+      modalStars.appendChild(star);
+    }
+        document.getElementById('modalRatingText').textContent = `${rating.toFixed(1)} (${orders} buyurtma)`;
 
 
         // Sharhlarni yuklash
@@ -3419,7 +3777,7 @@ block content %}
     // Staff action: delete a media file
     async function deleteMedia(ev) {
       ev.stopPropagation();
-      if (!confirm('Haqiqatan ham bu media faylni o''chirmoqchimisiz?')) return;
+  if (!confirm('Haqiqatan ham bu media faylni o\'chirmoqchimisiz?')) return;
       try {
         const toolbar = ev.currentTarget.closest('.media-toolbar');
         if (!toolbar) return;
@@ -3431,10 +3789,10 @@ block content %}
         if (!j1 || !j1.media_id) return alert('Media ID topilmadi');
         const res2 = await fetch(`/api/product-media/${j1.media_id}/delete`, { method: 'DELETE' });
         const j2 = await res2.json();
-        if (j2 && j2.success) { showToast('Media o''chirildi', 'success'); // remove element
+  if (j2 && j2.success) { showToast('Media o\'chirildi', 'success'); // remove element
           if (mediaItem && mediaItem.parentElement) mediaItem.parentElement.removeChild(mediaItem);
           if (toolbar && toolbar.parentElement) toolbar.parentElement.removeChild(toolbar);
-        } else { showToast('O''chirish xatosi', 'error'); }
+  } else { showToast('O\'chirish xatosi', 'error'); }
       } catch (e) { console.error(e); showToast('So' + "'" + 'rov bajarilmadi', 'error'); }
     }
 
@@ -3453,8 +3811,8 @@ block content %}
       grid.innerHTML = '';
 
       items.forEach(item => {
-        const div = document.createElement('div');
-  div.className = 'menu-item';
+    const div = document.createElement('div');
+  div.className = 'menu-item-card';
   // ensure both data-id and data-category are available for robust selection
   div.dataset.id = item.id;
   // normalize category on dataset for consistent comparisons
@@ -3465,33 +3823,33 @@ block content %}
         div.style.pointerEvents = 'auto';
 
         div.innerHTML = `
-          <div class="item-image"><img src="${item.image_url || '/static/images/default-product.jpg'}" alt="${item.name}" onerror="this.src='/static/images/default-product.jpg'"/></div>
-          <div class="item-content">
-            <h3 class="item-name">${item.name}</h3>
-            <p class="item-description">${item.description || ''}</p>
-            <div class="rating-section">
+          <div class="card-image"><img src="${item.image_url || '/static/defoult.jpg'}" alt="${item.name}" onerror="this.src='/static/defoult.jpg'"/></div>
+          <div class="card-body">
+            <h3 class="card-title">${item.name}</h3>
+            <p class="card-category">${item.category || ''}</p>
+            <p class="card-description">${item.description || ''}</p>
+            <div class="card-rating">
               <div class="stars">
                 ${(() => {
                   const r = Math.round((parseFloat(item.rating)||0));
                   let s = '';
-                  for (let i=1;i<=5;i++) s += `<span class="star ${i<=r?'filled':''}">⭐</span>`;
+                  for (let i=1;i<=5;i++) s += `<span class="star ${i<=r?'filled':''}"><i class="bi bi-star-fill ui-icon ui-icon--accent" aria-hidden="true"></i></span>`;
                   return s;
                 })()}
               </div>
-              <span class="rating-text">${(parseFloat(item.rating)||0).toFixed(1)} (${item.orders_count||0} buyurtma)</span>
+              <div class="rating-text">${(parseFloat(item.rating)||0).toFixed(1)} (${item.orders_count||0} buyurtma)</div>
             </div>
-            <div class="item-footer">
-              <div class="add-to-cart-section">
-                <form method="POST" action="/add_to_cart" onclick="event.stopPropagation()">
-                  <input type="hidden" name="menu_item_id" value="${item.id}" />
-                  <div class="quantity-cart-controls">
-                    <button type="button" class="quantity-btn minus" onclick="decreaseQuantity(this)">−</button>
-                    <input type="number" name="quantity" value="1" min="1" max="99" class="quantity-input" />
-                    <button type="button" class="quantity-btn plus" onclick="increaseQuantity(this)">+</button>
-                    <button type="submit" class="btn-cart">🛒</button>
-                  </div>
-                </form>
-              </div>
+            <div class="card-actions">
+              <form method="POST" action="/add_to_cart" onclick="event.stopPropagation()">
+                <input type="hidden" name="menu_item_id" value="${item.id}" />
+                <div class="qty-controls">
+                  <button type="button" class="qty-btn minus" onclick="decreaseQuantity(this)">−</button>
+                  <input type="number" name="quantity" value="1" min="1" max="99" class="qty-input" />
+                  <button type="button" class="qty-btn plus" onclick="increaseQuantity(this)">+</button>
+                </div>
+                <button type="submit" class="btn-add-cart"></button>
+              </form>
+              <button type="button" class="btn-rate" onclick="openRatingModal(${item.id}, event)"><i class="bi bi-star-fill ui-icon ui-icon--accent" aria-hidden="true"></i> Baholash</button>
             </div>
           </div>
         `;
@@ -3755,7 +4113,7 @@ block content %}
                     data.ratings.forEach(rating => {
                         commentsHtml += `
                             <div class="comment-item">
-                                <div class="comment-author">${rating.user_name} - ${'⭐'.repeat(rating.rating)}</div>
+                                <div class="comment-author">${rating.user_name} - ${'<i class="bi bi-star-fill ui-icon ui-icon--accent"></i>'.repeat(rating.rating)}</div>
                                 <div class="comment-text">${rating.comment || 'Sharh qoldirilmagan'}</div>
                                 <div class="comment-date">${rating.created_at}</div>
                             </div>
@@ -3766,7 +4124,7 @@ block content %}
                     commentsContainer.innerHTML = `
                         <div class="no-comments">
                             <p style="text-align: center; color: #888; font-style: italic;">
-                                Hali hech kim sharh qoldirmagan. Birinchi bo'lib baholang! ⭐
+                                Hali hech kim sharh qoldirmagan. Birinchi bo'lib baholang! <i class="bi bi-star-fill ui-icon ui-icon--accent"></i>
                             </p>
                         </div>
                     `;
@@ -3851,7 +4209,7 @@ block content %}
         .then(response => response.json())
         .then(data => {
           if (data.success) {
-            showToast('Mahsulot savatchaga qo\'shildi! 🛒', 'success');
+            showToast('Mahsulot savatchaga qo\'shildi!', 'success');
             updateCartCountDisplay();
 
             if (data.cart_count !== undefined) {
@@ -3903,7 +4261,7 @@ block content %}
             toast.style.pointerEvents = 'auto';
             toast.innerHTML = `
               <div class="toast-content">
-                <span class="toast-icon">${type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'info' ? 'ℹ️' : '⚠️'}</span>
+                <span class="toast-icon"></span>
                 <span class="toast-message">${message}</span>
               </div>
             `;
@@ -4065,23 +4423,23 @@ block content %}
     // Color mapping for display names and indicators
     function getColorDisplayName(color) {
       const colorMap = {
-        'black': '🖤 Qora',
-        'white': '🤍 Oq',
-        'blue': '💙 Ko\'k',
-        'red': '❤️ Qizil',
-        'green': '💚 Yashil',
-        'yellow': '💛 Sariq',
-        'brown': '🤎 Jigarrang',
-        'gray': '🩶 Kulrang',
-        'grey': '🩶 Kulrang',
-        'pink': '🩷 Pushti',
-        'purple': '💜 Binafsha',
-        'orange': '🧡 Apelsin',
-        'navy': '💙 To\'q ko\'k',
-        'maroon': '❤️ To\'q qizil',
-        'beige': '🤎 Bej'
+  'black': 'Qora',
+  'white': 'Oq',
+  'blue': 'Ko\'k',
+  'red': 'Qizil',
+  'green': 'Yashil',
+  'yellow': 'Sariq',
+  'brown': 'Jigarrang',
+  'gray': 'Kulrang',
+  'grey': 'Kulrang',
+  'pink': 'Pushti',
+  'purple': 'Binafsha',
+  'orange': 'Apelsin',
+  'navy': 'To\'q ko\'k',
+  'maroon': 'To\'q qizil',
+  'beige': 'Bej'
       };
-      return colorMap[color.toLowerCase()] || `🎨 ${color}`;
+  return colorMap[color.toLowerCase()] || `${color}`;
     }
 
     function getColorClass(color) {
@@ -4274,7 +4632,7 @@ block content %}
     // server-side and client-side rendering modes.
     function loadMenuData() {
       try {
-        const existing = document.querySelectorAll('.menu-grid .menu-item');
+  const existing = document.querySelectorAll('.menu-grid .menu-item-card');
         if (existing && existing.length > 0) {
           // Server already rendered items; nothing to do.
           return;
@@ -4301,7 +4659,7 @@ block content %}
       // If server rendered items exist, ensure menuData is populated from DOM
       try { buildMenuDataFromDOM(); } catch(e) { console.warn('buildMenuDataFromDOM failed', e); }
       // Instrumentation: helpful debug logs to capture whether handlers attach
-      try { console.log('DOMContentLoaded: menu-grid items', document.querySelectorAll('.menu-grid .menu-item').length); } catch(e) {}
+  try { console.log('DOMContentLoaded: menu-grid items', document.querySelectorAll('.menu-grid .menu-item-card').length); } catch(e) {}
       try { console.log('DOMContentLoaded: menuData keys', Object.keys(menuData||{}).length); } catch(e) {}
       // If menuData is empty (server injection missing or user edits), fetch full menu as a fallback
       try {
@@ -4326,7 +4684,7 @@ block content %}
       } catch(e) { console.warn('menuData fallback error', e); }
       // Fallback: ensure menu-item cards open modal when clicked (defensive)
       try {
-        document.querySelectorAll('.menu-item').forEach(card => {
+  document.querySelectorAll('.menu-item-card').forEach(card => {
           if (card._hasClickFallback) return;
           card._hasClickFallback = true;
           card.addEventListener('click', function(e) {
@@ -4354,17 +4712,17 @@ block content %}
     // Build menuData from server-rendered DOM cards so client-side filters can work
     function buildMenuDataFromDOM() {
       try {
-        const cards = document.querySelectorAll('.menu-grid .menu-item');
-        if (!cards || cards.length === 0) return;
+  const cards = document.querySelectorAll('.menu-grid .menu-item-card');
+  if (!cards || cards.length === 0) return;
         // Only build if menuData is empty to avoid overwriting dynamic loads
         if (!menuData || Object.keys(menuData).length === 0) menuData = {};
         cards.forEach(card => {
           try {
             const id = card.dataset && card.dataset.id ? parseInt(card.dataset.id, 10) : null;
             if (!id) return;
-            const nameEl = card.querySelector('.item-name');
-            const descEl = card.querySelector('.item-description');
-            const imgEl = card.querySelector('.item-image img');
+            const nameEl = card.querySelector('.card-title');
+            const descEl = card.querySelector('.card-description');
+            const imgEl = card.querySelector('.card-image img');
             const ratingText = card.querySelector('.rating-text');
             const ratingVal = ratingText ? parseFloat((ratingText.textContent||'').match(/([0-9]+\.?[0-9]*)/)?.[1] || '0') : 0;
             const ordersMatch = ratingText ? (ratingText.textContent||'').match(/\((\d+) buyurtma\)/) : null;
@@ -4387,16 +4745,16 @@ block content %}
     }
 
     // Grid-level pointerup fallback: opens item modal if card click handlers fail
-    try {
-      const gridEl = document.querySelector('.menu-grid');
-      if (gridEl) {
+      try {
+        const gridEl = document.querySelector('.menu-grid');
+        if (gridEl) {
         // pointerup was passive previously; on some mobile browsers this
         // can be swallowed or delayed. Add a capture-phase, non-passive
         // pointerdown listener as a stronger fallback for touch interactions.
         gridEl.addEventListener('pointerdown', function(e) {
           try {
             if (e.target.closest && e.target.closest('a, button, input, select, textarea, form')) return;
-            const card = e.target.closest && e.target.closest('.menu-item');
+            const card = e.target.closest && e.target.closest('.menu-item-card');
             if (!card) return;
             const id = card.dataset && card.dataset.id ? card.dataset.id : (card.getAttribute && (card.getAttribute('onclick') || '').match(/openItemModal\((\d+)\)/) || [])[1];
             if (id) {
@@ -4421,7 +4779,7 @@ block content %}
           if (typeof x !== 'number' || typeof y !== 'number') return;
           const el = document.elementFromPoint(x, y);
           if (!el) return;
-          const card = el.closest && el.closest('.menu-item');
+          const card = el.closest && el.closest('.menu-item-card');
           if (!card) return;
           const id = card.dataset && card.dataset.id ? card.dataset.id : (card.getAttribute && (card.getAttribute('onclick') || '').match(/openItemModal\((\d+)\)/) || [])[1];
           if (id) {
@@ -4555,7 +4913,7 @@ block content %}
             <div class="rating-modal-content" onclick="event.stopPropagation()">
                 <div class="rating-modal-header">
                     <h3>${item.name} uchun baho bering</h3>
-                    <button class="modal-close" onclick="closeRatingModal()">✕</button>
+                    <button class="modal-close" onclick="closeRatingModal()">X</button>
                 </div>
                 <div class="rating-modal-body">
                     <div class="rating-item-info">
@@ -4566,15 +4924,15 @@ block content %}
                     <div class="rating-form">
                         <h4>Bahongizni bering:</h4>
                         <div class="stars-rating">
-                            <span class="rating-star" data-rating="1">⭐</span>
-                            <span class="rating-star" data-rating="2">⭐</span>
-                            <span class="rating-star" data-rating="3">⭐</span>
-                            <span class="rating-star" data-rating="4">⭐</span>
-                            <span class="rating-star" data-rating="5">⭐</span>
+                            <span class="rating-star" data-rating="1"><i class="bi bi-star-fill ui-icon ui-icon--accent" aria-hidden="true"></i></span>
+                            <span class="rating-star" data-rating="2"><i class="bi bi-star-fill ui-icon ui-icon--accent" aria-hidden="true"></i></span>
+                            <span class="rating-star" data-rating="3"><i class="bi bi-star-fill ui-icon ui-icon--accent" aria-hidden="true"></i></span>
+                            <span class="rating-star" data-rating="4"><i class="bi bi-star-fill ui-icon ui-icon--accent" aria-hidden="true"></i></span>
+                            <span class="rating-star" data-rating="5"><i class="bi bi-star-fill ui-icon ui-icon--accent" aria-hidden="true"></i></span>
                         </div>
                         <textarea id="ratingComment" placeholder="Mahsulot haqida fikringizni yozing..." rows="4"></textarea>
                         <button onclick="submitRating()" class="btn-submit-rating" id="submit-rating" style="display: none;">
-                            📝 Baho berish
+                            Baho berish
                         </button>
                     </div>
                 </div>
@@ -4663,16 +5021,13 @@ block content %}
                   // Update the card's rating section
           // Prefer finding the card by data-id which works for both server-rendered
           // and client-rendered cards (onclick attribute string matching is unreliable).
-          const card = document.querySelector('.menu-item[data-id="' + currentRatingItemId + '"]');
+          const card = document.querySelector('.menu-item-card[data-id="' + currentRatingItemId + '"]');
                   if (card) {
-                    const ratingSection = card.querySelector('.rating-section');
+                    const ratingSection = card.querySelector('.card-rating') || card.querySelector('.rating-section');
                     if (ratingSection) {
-                      let starsHtml = '';
-                      for (let i = 1; i <= 5; i++) {
-                        starsHtml += `<span class="star${i <= menuData[currentRatingItemId].rating ? ' filled' : ''}">⭐</span>`;
-                      }
-                      ratingSection.querySelector('.stars').innerHTML = starsHtml;
-                      ratingSection.querySelector('.rating-text').textContent = `${menuData[currentRatingItemId].rating.toFixed(1)} (${menuData[currentRatingItemId].orders_count || 0} buyurtma)`;
+                      // Use shared helper to render stars (supports halves)
+                      ratingSection.querySelector('.stars').innerHTML = renderStars(menuData[currentRatingItemId].rating || 0);
+                      ratingSection.querySelector('.rating-text').textContent = `${(menuData[currentRatingItemId].rating || 0).toFixed(1)} (${menuData[currentRatingItemId].orders_count || 0} buyurtma)`;
                     }
                   }
                 }
@@ -4705,7 +5060,7 @@ block content %}
           }
         })
         .catch(() => showToast('Menyu yangilashda xatolik', 'error'))
-        .finally(() => { if (btn) { btn.disabled = false; btn.textContent = '🔃 Menyuni yangilash'; } });
+  .finally(() => { if (btn) { btn.disabled = false; btn.textContent = 'Menyuni yangilash'; } });
     }
 
       // Mobile filter toggle function
@@ -4749,7 +5104,7 @@ block content %}
           // If the click is inside an interactive control, skip handling it here
           if (e.target.closest && e.target.closest('a, button, input, select, textarea, form')) return;
 
-          const card = e.target.closest && e.target.closest('.menu-item');
+          const card = e.target.closest && e.target.closest('.menu-item-card');
           if (!card) return;
 
           // If the card has a data-id, use it; otherwise try to extract from onclick
@@ -4770,7 +5125,7 @@ block content %}
       function attachCardHandlers() {
   const grid = document.querySelector('.menu-grid');
   if (!grid) return;
-  const cards = grid.querySelectorAll('.menu-item');
+  const cards = grid.querySelectorAll('.menu-item-card');
   try { console.log('attachCardHandlers: found', cards.length, 'cards'); } catch(e){}
   cards.forEach(card => {
           try {
@@ -4806,6 +5161,29 @@ block content %}
       // Run once now and whenever menu items are re-rendered dynamically
     try { attachCardHandlers(); } catch (e) { console.warn('initial attachCardHandlers failed', e); }
 
+    // Quantity control helpers for product cards
+    function increaseQuantity(btn) {
+      try {
+  const input = btn.parentElement.querySelector('.qty-input') || btn.parentElement.querySelector('.quantity-input');
+        if (!input) return;
+        let val = parseInt(input.value) || 1;
+        const max = parseInt(input.max) || 99;
+        if (val < max) val += 1;
+        input.value = val;
+      } catch (e) { console.warn('increaseQuantity error', e); }
+    }
+
+    function decreaseQuantity(btn) {
+      try {
+  const input = btn.parentElement.querySelector('.qty-input') || btn.parentElement.querySelector('.quantity-input');
+        if (!input) return;
+        let val = parseInt(input.value) || 1;
+        const min = parseInt(input.min) || 1;
+        if (val > min) val -= 1;
+        input.value = val;
+      } catch (e) { console.warn('decreaseQuantity error', e); }
+    }
+
       const menuGrid = document.querySelector('.menu-grid');
       if (menuGrid && window.MutationObserver) {
         const mo = new MutationObserver(function() { attachCardHandlers(); });
@@ -4821,7 +5199,7 @@ block content %}
           menuGrid.addEventListener('click', function(e) {
             try {
               if (e.target.closest && e.target.closest('a, button, input, select, textarea, form')) return;
-              const card = e.target.closest && e.target.closest('.menu-item');
+              const card = e.target.closest && e.target.closest('.menu-item-card');
               if (!card) return;
               const id = card.dataset && card.dataset.id ? card.dataset.id : (card.getAttribute && (card.getAttribute('onclick') || '').match(/openItemModal\((\d+)\)/) || [])[1];
               if (id) {

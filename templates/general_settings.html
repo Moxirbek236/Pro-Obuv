@@ -364,14 +364,14 @@ block head %}
           onclick="selectTheme(false)">
           <input type="radio" name="theme" value="light" {{ 'checked' if not
           session.get('dark_theme', False) }}>
-          <div>☀️ Yorug' mavzu</div>
+          <div> Yorug' mavzu</div>
         </div>
         <div
           class="theme-option {{ 'active' if session.get('dark_theme', False) }}"
           onclick="selectTheme(true)">
           <input type="radio" name="theme" value="dark" {{ 'checked' if
           session.get('dark_theme', False) }}>
-          <div>🌙 Qorong'u mavzu</div>
+          <div> Qorong'u mavzu</div>
         </div>
       </div>
 
@@ -405,42 +405,42 @@ block head %}
 
     <!-- Bildirishnoma sozlamalari -->
     <div class="settings-section">
-      <h5>🔔 Bildirishnoma sozlamalari</h5>
+      <h5> Bildirishnoma sozlamalari</h5>
       <div class="notification-options">
         <div
           class="notification-option {{ 'active' if session.get('notifications_enabled', True) }}"
           onclick="toggleNotification('notifications_enabled')">
           <input type="checkbox" name="notifications_enabled" {{ 'checked' if
           session.get('notifications_enabled', True) }}>
-          <div>📱 Push bildirishnomalar</div>
+          <div> Push bildirishnomalar</div>
         </div>
         <div
           class="notification-option {{ 'active' if session.get('email_notifications', True) }}"
           onclick="toggleNotification('email_notifications')">
           <input type="checkbox" name="email_notifications" {{ 'checked' if
           session.get('email_notifications', True) }}>
-          <div>📧 Email bildirishnomalar</div>
+          <div> Email bildirishnomalar</div>
         </div>
         <div
           class="notification-option {{ 'active' if session.get('sms_notifications', False) }}"
           onclick="toggleNotification('sms_notifications')">
           <input type="checkbox" name="sms_notifications" {{ 'checked' if
           session.get('sms_notifications', False) }}>
-          <div>📱 SMS bildirishnomalar</div>
+          <div> SMS bildirishnomalar</div>
         </div>
         <div
           class="notification-option {{ 'active' if session.get('order_updates', True) }}"
           onclick="toggleNotification('order_updates')">
           <input type="checkbox" name="order_updates" {{ 'checked' if
           session.get('order_updates', True) }}>
-          <div>📦 Buyurtma yangilanishlari</div>
+          <div> Buyurtma yangilanishlari</div>
         </div>
       </div>
     </div>
 
     <!-- Ko'rinish namunasi -->
     <div class="settings-section">
-      <h5>👁️ Ko'rinish namunasi</h5>
+      <h5> Ko'rinish namunasi</h5>
       <div class="preview-area">
         <div class="preview-text" id="previewText">
           {{ _('preview.default') }}

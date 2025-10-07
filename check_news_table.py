@@ -20,7 +20,7 @@ def check_and_create_news_table():
         news_table = cursor.fetchone()
         
         if news_table:
-            print("✅ News table exists")
+            print(" News table exists")
             
             # Show table structure
             cursor.execute("PRAGMA table_info(news)")
@@ -35,7 +35,7 @@ def check_and_create_news_table():
             print(f"News records count: {count}")
             
         else:
-            print("❌ News table does not exist. Creating it...")
+            print(" News table does not exist. Creating it...")
             
             # Create news table
             create_table_sql = '''
@@ -55,14 +55,14 @@ def check_and_create_news_table():
             
             cursor.execute(create_table_sql)
             conn.commit()
-            print("✅ News table created successfully")
+            print(" News table created successfully")
             
             # Insert sample data
             now = "2024-01-15T10:00:00Z"
             sample_news = [
-                ("🎉 Yangi Kolleksiya Keldi!", "2024 yilgi eng yangi poyafzal kolleksiyasi do'konimizga keldi.", "news", 1, 1, None, None, now, now),
-                ("🔥 50% Chegirma!", "Barcha qishki poyafzallarga 50% gacha chegirma!", "advertisement", 1, 2, None, None, now, now),
-                ("🚚 Bepul Yetkazib Berish", "100,000 so'mdan yuqori xaridlarga bepul yetkazib berish.", "advertisement", 1, 3, None, None, now, now),
+                (" Yangi Kolleksiya Keldi!", "2024 yilgi eng yangi poyafzal kolleksiyasi do'konimizga keldi.", "news", 1, 1, None, None, now, now),
+                (" 50% Chegirma!", "Barcha qishki poyafzallarga 50% gacha chegirma!", "advertisement", 1, 2, None, None, now, now),
+                (" Bepul Yetkazib Berish", "100,000 so'mdan yuqori xaridlarga bepul yetkazib berish.", "advertisement", 1, 3, None, None, now, now),
             ]
             
             cursor.executemany("""
@@ -71,12 +71,12 @@ def check_and_create_news_table():
             """, sample_news)
             
             conn.commit()
-            print("✅ Sample news data inserted")
+            print(" Sample news data inserted")
             
         conn.close()
         
     except Exception as e:
-        print(f"❌ Error: {str(e)}")
+        print(f" Error: {str(e)}")
 
 if __name__ == "__main__":
     check_and_create_news_table()

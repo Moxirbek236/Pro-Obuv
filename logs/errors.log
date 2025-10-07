@@ -530,3 +530,235 @@ Traceback (most recent call last):
     data = self.rfile.read(10_000_000)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 MemoryError
+2025-10-06 15:52:10,853 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-10-06 15:52:10,854 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-10-06 15:52:10,854 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-10-06 21:44:11,066 | ERROR | restaurant_app | menu:6459 | Menu endpoint error: Encountered unknown tag 'endblock'.
+2025-10-06 21:44:11,101 | ERROR | restaurant_app | menu:6474 | Menu fallback error: Encountered unknown tag 'endblock'.
+2025-10-06 21:47:43,297 | ERROR | restaurant_app | staff_dashboard:14597 | Staff dashboard error: block 'head' defined twice
+2025-10-06 21:47:54,840 | ERROR | restaurant_app | staff_dashboard:14597 | Staff dashboard error: block 'head' defined twice
+2025-10-06 21:48:06,925 | ERROR | restaurant_app | handle_exception:1326 | Unhandled exception: block 'head' defined twice - URL: http://127.0.0.1:5000/super-admin-master-login-z9x4m
+2025-10-06 21:48:07,006 | ERROR | restaurant_app | handle_exception:1328 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\app.py", line 11303, in super_admin_login
+    return render_template("super_admin_login.html")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\templates\super_admin_login.html", line 2, in top-level template code
+    {% extends "base.html" %}
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\templates\base.html", line 597, in template
+    {% block head %} {% set yandex_key = (config.get('YANDEX_MAPS_API') or '')
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.TemplateAssertionError: block 'head' defined twice
+
+2025-10-06 21:51:51,170 | ERROR | restaurant_app | handle_exception:1326 | Unhandled exception: block 'content' defined twice - URL: http://127.0.0.1:5000/super-admin-master-login-z9x4m
+2025-10-06 21:51:51,172 | ERROR | restaurant_app | handle_exception:1328 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\app.py", line 11303, in super_admin_login
+    return render_template("super_admin_login.html")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\templates\super_admin_login.html", line 2, in top-level template code
+    {% extends "base.html" %}
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\templates\base.html", line 1452, in template
+    {% endif %} {% endwith %} {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.TemplateAssertionError: block 'content' defined twice
+
+2025-10-06 21:51:53,278 | ERROR | restaurant_app | staff_dashboard:14597 | Staff dashboard error: block 'content' defined twice
+2025-10-06 21:52:03,172 | ERROR | restaurant_app | staff_dashboard:14597 | Staff dashboard error: block 'content' defined twice
+2025-10-06 21:52:05,104 | ERROR | restaurant_app | staff_dashboard:14597 | Staff dashboard error: block 'content' defined twice
+2025-10-06 21:52:06,631 | ERROR | restaurant_app | menu:6459 | Menu endpoint error: Encountered unknown tag 'endblock'.
+2025-10-06 21:52:06,655 | ERROR | restaurant_app | menu:6474 | Menu fallback error: Encountered unknown tag 'endblock'.
+2025-10-06 22:27:15,840 | ERROR | restaurant_app | menu:6459 | Menu endpoint error: Encountered unknown tag 'endblock'.
+2025-10-06 22:27:15,865 | ERROR | restaurant_app | menu:6474 | Menu fallback error: Encountered unknown tag 'endblock'.
+2025-10-06 23:36:51,202 | ERROR | restaurant_app | menu:6459 | Menu endpoint error: Encountered unknown tag 'endblock'.
+2025-10-06 23:36:51,225 | ERROR | restaurant_app | menu:6474 | Menu fallback error: Encountered unknown tag 'endblock'.
+2025-10-06 23:36:57,118 | ERROR | restaurant_app | menu:6459 | Menu endpoint error: Encountered unknown tag 'endblock'.
+2025-10-06 23:36:57,132 | ERROR | restaurant_app | menu:6474 | Menu fallback error: Encountered unknown tag 'endblock'.
+2025-10-06 23:49:46,454 | ERROR | restaurant_app | menu:6459 | Menu endpoint error: Encountered unknown tag 'endblock'.
+2025-10-06 23:49:46,470 | ERROR | restaurant_app | menu:6474 | Menu fallback error: Encountered unknown tag 'endblock'.
+2025-10-06 23:54:17,299 | ERROR | restaurant_app | handle_exception:1326 | Unhandled exception: Encountered unknown tag 'endblock'. You probably made a nesting mistake. Jinja is expecting this tag, but currently looking for 'endif'. The innermost block that needs to be closed is 'if'. - URL: http://127.0.0.1:5000/settings
+2025-10-06 23:54:17,412 | ERROR | restaurant_app | handle_exception:1328 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\app.py", line 7828, in general_settings
+    return render_template(
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\templates\general_settings.html", line 1, in top-level template code
+    {% extends "base.html" %} {% block title %}Umumiy sozlamalar{% endblock %} {%
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\templates\base.html", line 193, in template
+    {% endif %} {% endblock %} {% block extra_head %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'endblock'. You probably made a nesting mistake. Jinja is expecting this tag, but currently looking for 'endif'. The innermost block that needs to be closed is 'if'.
+
+2025-10-06 23:55:27,374 | ERROR | restaurant_app | handle_exception:1326 | Unhandled exception: Encountered unknown tag 'elif'. Jinja was looking for the following tags: 'endif'. The innermost block that needs to be closed is 'if'. - URL: http://127.0.0.1:5000/settings
+2025-10-06 23:55:27,377 | ERROR | restaurant_app | handle_exception:1328 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\app.py", line 7828, in general_settings
+    return render_template(
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\templates\general_settings.html", line 1, in top-level template code
+    {% extends "base.html" %} {% block title %}Umumiy sozlamalar{% endblock %} {%
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\templates\base.html", line 61, in template
+    {% elif session.get('courier_id') and not session.get('user_id') and not
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'elif'. Jinja was looking for the following tags: 'endif'. The innermost block that needs to be closed is 'if'.
+
+2025-10-06 23:55:42,827 | ERROR | restaurant_app | handle_exception:1326 | Unhandled exception: Encountered unknown tag 'elif'. Jinja was looking for the following tags: 'endif'. The innermost block that needs to be closed is 'if'. - URL: http://127.0.0.1:5000/settings
+2025-10-06 23:55:42,833 | ERROR | restaurant_app | handle_exception:1328 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\app.py", line 7828, in general_settings
+    return render_template(
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\templates\general_settings.html", line 1, in top-level template code
+    {% extends "base.html" %} {% block title %}Umumiy sozlamalar{% endblock %} {%
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\templates\base.html", line 61, in template
+    {% elif session.get('courier_id') and not session.get('user_id') and not
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'elif'. Jinja was looking for the following tags: 'endif'. The innermost block that needs to be closed is 'if'.
+
+2025-10-07 00:04:25,550 | ERROR | restaurant_app | menu:6459 | Menu endpoint error: Encountered unknown tag 'endblock'.
+2025-10-07 00:04:25,579 | ERROR | restaurant_app | menu:6474 | Menu fallback error: Encountered unknown tag 'endblock'.
+2025-10-07 08:04:28,492 | ERROR | restaurant_app | handle_exception:1326 | Unhandled exception: Encountered unknown tag 'else'. - URL: http://127.0.0.1:5000/contact
+2025-10-07 08:04:28,504 | ERROR | restaurant_app | handle_exception:1328 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\app.py", line 8570, in contact
+    return render_template("contact.html", current_page="contact")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\templates\contact.html", line 1, in top-level template code
+    {% extends "base.html" %} {% block title %}Aloqa - Pro Obuv{% endblock %} {%
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\templates\base.html", line 102, in template
+    {% else %}
+jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'else'.
+

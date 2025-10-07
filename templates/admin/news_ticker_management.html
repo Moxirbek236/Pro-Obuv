@@ -1,7 +1,7 @@
 {% extends "base.html" %} {% block title %}Yangiliklar tasmasi boshqaruvi -
 Admin{% endblock %} {% block content %}
 <div class="container mt-4">
-  <h1>📢 Yangiliklar tasmasi</h1>
+  <h1> Yangiliklar tasmasi</h1>
   <p class="text-muted">
     Tasmada ko'rsatiladigan elementlarni alohida boshqaring
   </p>
@@ -13,7 +13,7 @@ Admin{% endblock %} {% block content %}
         <a
           href="{{ url_for('admin_news_management') }}"
           class="btn btn-outline-secondary"
-          >📰 Yangiliklarni boshqarish</a
+          > Yangiliklarni boshqarish</a
         >
       </div>
 
@@ -103,8 +103,8 @@ Admin{% endblock %} {% block content %}
   }
 
   function renderRow(it) {
-    const type = it.type === "advertisement" ? "📢 Reklama" : "📰 Yangilik";
-    const status = it.is_active ? "✅ Faol" : "❌ Nofaol";
+    const type = it.type === "advertisement" ? " Reklama" : " Yangilik";
+    const status = it.is_active ? " Faol" : " Nofaol";
     return `
       <tr>
         <td>${it.id}</td>

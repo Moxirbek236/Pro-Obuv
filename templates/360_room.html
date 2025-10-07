@@ -136,7 +136,7 @@
 }
 
 .btn-view-360::before {
-    content: '🔄';
+    content: '';
     position: absolute;
     left: -30px;
     top: 50%;
@@ -371,7 +371,7 @@ body.dark-theme .room-description {
     <div class="container">
         <!-- Header -->
         <div class="room-header">
-            <h1 class="room-title">🔄 360° Room</h1>
+            <h1 class="room-title"> 360° Room</h1>
             <p class="room-subtitle">Pro-Obuv do'konining virtual ko'rinishini 360 gradusda ko'ring!</p>
         </div>
 
@@ -388,7 +388,7 @@ body.dark-theme .room-description {
 
         <!-- Empty State -->
         <div class="empty-state" id="empty-state" style="display: none;">
-            <div class="icon">📷</div>
+            <div class="icon"></div>
             <h2>Hali 360° rasmlar mavjud emas</h2>
             <p>Do'konimizning 360° virtual ko'rinishlari tez orada qo'shiladi. Kuting va eng yaxshi tajribani olishga tayyorlaning!</p>
         </div>
@@ -400,11 +400,11 @@ body.dark-theme .room-description {
     <div class="photo360-viewer">
         <div class="photo360-controls">
             <div class="photo360-title" id="photo360-title">360° Ko'rinish</div>
-            <button class="photo360-close" onclick="closePhoto360Viewer()">✕</button>
+            <button class="photo360-close" onclick="closePhoto360Viewer()"></button>
         </div>
         <img class="photo360-image" id="photo360-image" src="" alt="360° rasm" draggable="false">
         <div class="photo360-instructions">
-            🖱️ Sichqonchani bosib suring yoki ekranni teginib suring
+             Sichqonchani bosib suring yoki ekranni teginib suring
         </div>
     </div>
 </div>

@@ -210,15 +210,15 @@ if __name__ == "__main__":
     
     # Run migration
     if migrate_categories():
-        print("✅ Category migration successful")
+        print(" Category migration successful")
         
         # Add additional sample data
         if add_sample_data():
-            print("✅ Sample data added successfully")
+            print(" Sample data added successfully")
         else:
-            print("⚠️  Sample data addition failed")
+            print("  Sample data addition failed")
     else:
-        print("❌ Category migration failed")
+        print(" Category migration failed")
         sys.exit(1)
     
-    print("\n🎉 Migration completed successfully!")
+    print("\n Migration completed successfully!")

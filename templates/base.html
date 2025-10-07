@@ -3,7 +3,15 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Safety / Pro Obuv - {% block title %}Restoran tizimi{% endblock %}</title>
+  <title>Safety / Pro Obuv - {% block title %}Do'kon{% endblock %}</title>
+  {# SEO meta block: page templates intended for customers may override this block to inject page-specific meta tags #}
+  {% block seo_meta %}
+  <meta name="description" content="Pro Obuv - sifatli oyoq kiyim va aksessuarlar. Onlayn buyurtma qilish, tez yetkazib berish va qulay to'lov imkoniyatlari.">
+  <meta property="og:site_name" content="Pro Obuv">
+  <meta property="og:title" content="Pro Obuv - Do'kon">
+  <meta property="og:description" content="Pro Obuv - sifatli oyoq kiyim va aksessuarlar">
+  <meta name="twitter:card" content="summary_large_image">
+  {% endblock %}
     <link
       rel="apple-touch-icon"
       sizes="180x180"
@@ -46,6 +54,9 @@
       rel="stylesheet" />
     <!-- Responsive overrides for phone & laptop (cleanup) -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive-cleanup.css') }}" />
+
+  <!-- Menu & product card improved styles (load late to override legacy rules) -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/menu-cards.css') }}" />
 
     <!-- Global sozlamalar uchun CSS -->
     <style>
@@ -1547,7 +1558,7 @@
                   title="Email">
                   <img
                     src="{{ url_for('static', filename='icons/gmail.png') }}"
-                    alt="Uzum Market"
+                    alt="Email"
                     width="24"
                     height="24" />
                 </a>
@@ -1557,7 +1568,7 @@
                   title="Google Maps">
                   <img
                     src="{{ url_for('static', filename='icons/maps.png') }}"
-                    alt="Uzum Market"
+                    alt="Google Maps"
                     width="24"
                     height="24" />
                 </a>
@@ -1566,8 +1577,8 @@
                   class="social-icon-btn phone"
                   title="Telefon">
                   <img
-                    src="{{ url_for('static', filename='icons/phone.jpg') }}"
-                    alt="Uzum Market"
+                    src="{{ url_for('static', filename='icons/phone.png') }}"
+                    alt="Phone"
                     width="24"
                     height="24" />
                 </a>

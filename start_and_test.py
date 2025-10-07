@@ -13,7 +13,7 @@ import sys
 def start_flask_app():
     """Start Flask app in background."""
     try:
-        print("🚀 Starting Flask app...")
+        print(" Starting Flask app...")
         # Start app.py with no buffer and environment set
         process = subprocess.Popen([
             sys.executable, "app.py"
@@ -28,12 +28,12 @@ def start_flask_app():
         for line in iter(process.stdout.readline, ''):
             print(f"[FLASK] {line.rstrip()}")
             if "Running on" in line or "Dastur quyidagi URLda" in line:
-                print("✅ Flask app appears to be starting...")
+                print(" Flask app appears to be starting...")
                 break
         
         return process
     except Exception as e:
-        print(f"❌ Error starting Flask app: {e}")
+        print(f" Error starting Flask app: {e}")
         return None
 
 def test_payment_api():
@@ -41,22 +41,22 @@ def test_payment_api():
     max_retries = 10
     for attempt in range(max_retries):
         try:
-            print(f"🔍 Testing payment API (attempt {attempt + 1}/{max_retries})...")
+            print(f" Testing payment API (attempt {attempt + 1}/{max_retries})...")
             response = requests.get('http://127.0.0.1:5000/api/payment-methods', timeout=10)
             
             if response.status_code == 200:
                 data = response.json()
-                print("✅ API Response received!")
+                print(" API Response received!")
                 print(json.dumps(data, indent=2, ensure_ascii=False))
                 
                 # Analyze payment methods
                 if 'payment_methods' in data:
                     methods = data['payment_methods']
-                    print("\n📋 Payment Methods Analysis:")
+                    print("\n Payment Methods Analysis:")
                     for method_name, method_data in methods.items():
                         available = method_data.get('available', False)
                         name = method_data.get('name', method_name)
-                        status = "✅ Available" if available else "❌ Not Available"
+                        status = " Available" if available else " Not Available"
                         print(f"  {method_name.upper()}: {status} - {name}")
                         
                         if method_name == 'card' and available:
@@ -69,20 +69,20 @@ def test_payment_api():
                 
                 return True
             else:
-                print(f"❌ API Error: {response.status_code} - {response.text}")
+                print(f" API Error: {response.status_code} - {response.text}")
                 
         except requests.exceptions.ConnectionError:
             print(f"⏳ Connection failed, retrying in 2 seconds...")
             time.sleep(2)
         except Exception as e:
-            print(f"❌ Request error: {e}")
+            print(f" Request error: {e}")
             time.sleep(2)
     
-    print("❌ Failed to connect to Flask app after all retries")
+    print(" Failed to connect to Flask app after all retries")
     return False
 
 def main():
-    print("🎯 Pro-Obuv Payment Methods Test")
+    print(" Pro-Obuv Payment Methods Test")
     print("=" * 50)
     
     # Start Flask app in background thread
@@ -98,18 +98,18 @@ def main():
         success = test_payment_api()
         
         if success:
-            print("\n🎉 Payment API test completed successfully!")
-            print("✅ All payment methods should be working now.")
+            print("\n Payment API test completed successfully!")
+            print(" All payment methods should be working now.")
         else:
-            print("\n💥 Payment API test failed!")
+            print("\n Payment API test failed!")
     
     except KeyboardInterrupt:
-        print("\n🛑 Test interrupted by user")
+        print("\n Test interrupted by user")
     
     finally:
         # Clean up
         if flask_process:
-            print("\n🔄 Stopping Flask app...")
+            print("\n Stopping Flask app...")
             flask_process.terminate()
             try:
                 flask_process.wait(timeout=5)

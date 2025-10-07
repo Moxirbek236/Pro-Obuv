@@ -110,7 +110,7 @@ args = "export PYTHONPATH=$PYTHONPATH:$(pwd)"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "echo \"🚀 Dependencies o'rnatilmoqda...\""
+args = "echo \" Dependencies o'rnatilmoqda...\""
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
@@ -118,7 +118,7 @@ args = "pip install -q flask werkzeug python-dotenv flask-sqlalchemy bcrypt pytz
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "echo \"📊 Database setup...\""
+args = "echo \" Database setup...\""
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
@@ -126,7 +126,7 @@ args = "python -c \"from app import safe_init_database; safe_init_database()\""
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "echo \"🎯 Starting server...\""
+args = "echo \" Starting server...\""
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
@@ -151,7 +151,7 @@ args = "export PYTHONPATH=$PYTHONPATH:$(pwd)"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "echo \"🚀 Starting Fixed Restaurant Server...\""
+args = "echo \" Starting Fixed Restaurant Server...\""
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
@@ -176,7 +176,7 @@ args = "export PYTHONPATH=$PYTHONPATH:$(pwd)"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "echo \"🚀 Starting Fixed Restaurant Server v2...\""
+args = "echo \" Starting Fixed Restaurant Server v2...\""
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
@@ -201,7 +201,7 @@ args = "export PYTHONPATH=$PYTHONPATH:$(pwd)"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "echo \"🚀 Starting Fixed Restaurant Server v3 (duplicate functions resolved)...\""
+args = "echo \" Starting Fixed Restaurant Server v3 (duplicate functions resolved)...\""
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
@@ -226,7 +226,7 @@ args = "export PYTHONPATH=$PYTHONPATH:$(pwd)"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "echo \"🚀 Starting Restaurant Server (Fixed SQL and duplicates)...\""
+args = "echo \" Starting Restaurant Server (Fixed SQL and duplicates)...\""
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
@@ -272,11 +272,11 @@ args = "export PYTHONPATH=$PYTHONPATH:$(pwd)"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "echo \"🔧 Fixing SQL syntax and duplicate routes...\""
+args = "echo \" Fixing SQL syntax and duplicate routes...\""
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "echo \"🚀 Starting Fixed Restaurant Server...\""
+args = "echo \" Starting Fixed Restaurant Server...\""
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
@@ -297,7 +297,7 @@ args = "export FLASK_APP=app.py"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "echo \"🚀 Starting Restaurant Management System...\""
+args = "echo \" Starting Restaurant Management System...\""
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
@@ -322,15 +322,15 @@ args = "export PYTHONPATH=$PYTHONPATH:$(pwd)"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "echo \"🔧 Debug mode: checking for errors...\""
+args = "echo \" Debug mode: checking for errors...\""
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python -c \"import app; print('✅ Import successful')\""
+args = "python -c \"import app; print(' Import successful')\""
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "echo \"🚀 Starting server in debug mode...\""
+args = "echo \" Starting server in debug mode...\""
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
@@ -343,7 +343,7 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "echo \"🔍 Checking Python and dependencies...\""
+args = "echo \" Checking Python and dependencies...\""
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
@@ -351,11 +351,11 @@ args = "python --version"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "echo \"📂 Current directory: $(pwd)\""
+args = "echo \" Current directory: $(pwd)\""
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "echo \"📋 Files in directory:\""
+args = "echo \" Files in directory:\""
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
@@ -363,15 +363,15 @@ args = "ls -la"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "echo \"🧪 Testing import...\""
+args = "echo \" Testing import...\""
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python -c \"import app; print('✅ Import successful')\""
+args = "python -c \"import app; print(' Import successful')\""
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "echo \"🚀 Starting Restaurant Management System...\""
+args = "echo \" Starting Restaurant Management System...\""
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
@@ -396,7 +396,7 @@ args = "export PYTHONPATH=$PYTHONPATH:$(pwd)"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "echo \"🚀 Starting Fixed Restaurant Server v4 (all routes working)...\""
+args = "echo \" Starting Fixed Restaurant Server v4 (all routes working)...\""
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
@@ -421,11 +421,11 @@ args = "export PYTHONPATH=$PYTHONPATH:$(pwd)"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "echo \"🔧 Applying database fixes for staff table...\""
+args = "echo \" Applying database fixes for staff table...\""
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "echo \"🚀 Starting Fixed Restaurant Server v5 (staff table fixed)...\""
+args = "echo \" Starting Fixed Restaurant Server v5 (staff table fixed)...\""
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"

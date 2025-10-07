@@ -52,7 +52,7 @@
   </head>
   <body>
     <div class="register-card">
-      <h2 class="text-center mb-4">📝 Ro'yxatdan o'tish</h2>
+      <h2 class="text-center mb-4"> Ro'yxatdan o'tish</h2>
 
       {% with messages = get_flashed_messages(with_categories=true) %} {% if
       messages %} {% for category, message in messages %}
@@ -70,7 +70,7 @@
       <form method="POST">
         <div class="row">
           <div class="col-md-6 mb-3">
-            <label for="first_name" class="form-label">👤 Ism</label>
+            <label for="first_name" class="form-label"> Ism</label>
             <input
               type="text"
               class="form-control"
@@ -79,7 +79,7 @@
               required />
           </div>
           <div class="col-md-6 mb-3">
-            <label for="last_name" class="form-label">👤 Familiya</label>
+            <label for="last_name" class="form-label"> Familiya</label>
             <input
               type="text"
               class="form-control"
@@ -90,7 +90,7 @@
         </div>
 
         <div class="mb-3">
-          <label for="email" class="form-label">📧 Email</label>
+          <label for="email" class="form-label"> Email</label>
           <input
             type="email"
             class="form-control"
@@ -100,7 +100,7 @@
         </div>
 
         <div class="mb-3">
-          <label for="phone" class="form-label">📱 Telefon</label>
+          <label for="phone" class="form-label"> Telefon</label>
           <input
             type="tel"
             class="form-control"
@@ -111,7 +111,7 @@
 
         <!-- Xarita bilan manzil tanlash -->
         <div class="mb-3">
-          <label for="address" class="form-label">📍 Yashash manzili</label>
+          <label for="address" class="form-label"> Yashash manzili</label>
           <div class="mb-2">
             <input
               type="text"
@@ -139,7 +139,7 @@
         </div>
 
         <div class="mb-3">
-          <label for="password" class="form-label">🔑 Parol</label>
+          <label for="password" class="form-label"> Parol</label>
           <input
             type="password"
             class="form-control"
@@ -150,7 +150,7 @@
 
         <div class="mb-3">
           <label for="confirm_password" class="form-label"
-            >🔑 Parolni tasdiqlash</label
+            > Parolni tasdiqlash</label
           >
           <input
             type="password"
@@ -161,14 +161,14 @@
         </div>
 
         <button type="submit" class="btn btn-register">
-          ✅ Ro'yxatdan o'tish
+           Ro'yxatdan o'tish
         </button>
       </form>
 
       <div class="text-center mt-3">
         <p>Akkauntingiz bormi? <a href="{{ url_for('login_page') }}">Kirish</a></p>
         <a href="{{ url_for('index') }}" class="btn btn-outline-secondary"
-          >⬅️ Bosh sahifa</a
+          >⬅ Bosh sahifa</a
         >
       </div>
     </div>

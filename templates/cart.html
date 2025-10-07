@@ -1,8 +1,14 @@
-{% extends "base.html" %} {% block title %}Savatcha - Oyoq kiyim do'koni{%
-endblock %} {% block head %} {% endblock %} {% block content %}
+{% extends "base.html" %}
+{% block title %}Savatcha - Pro Obuv{% endblock %}
+{% block seo_meta %}
+<meta name="description" content="Sizning savatchangiz — mahsulotlarni ko'ring, o'zgartiring va buyurtma qiling. Tez va ishonchli to'lov imkoniyatlari.">
+<meta property="og:title" content="Savatcha — Pro Obuv">
+<meta property="og:description" content="Sizning savatchangiz — mahsulotlarni ko'ring, o'zgartiring va buyurtma qiling.">
+{% endblock %}
+{% block head %}{% endblock %} {% block content %}
 <div class="cart-page-container">
   <div class="cart-hero-section">
-    <h1 class="cart-hero-title animate-fade-in">🛒 Savatcha</h1>
+    <h1 class="cart-hero-title animate-fade-in">Savatcha</h1>
     <p class="cart-hero-subtitle animate-fade-in">
       Tanlagan mahsulotlaringizni ko'ring va buyurtma bering
     </p>
@@ -46,7 +52,7 @@ endblock %} {% block head %} {% endblock %} {% block content %}
             type="submit"
             class="btn small danger"
             onclick="return confirm('Rostdan ham olib tashlamoqchimisiz?')">
-            🗑️ O'chirish
+            O'chirish
           </button>
         </form>
       </div>
@@ -60,7 +66,7 @@ endblock %} {% block head %} {% endblock %} {% block content %}
         action="{{ url_for('place_order') }}"
         onsubmit="return validateOrder()">
         <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
-        <h3>📋 Buyurtma berish</h3>
+        <h3>Buyurtma berish</h3>
 
         <!-- Removed in-store pickup option per request; default to delivery -->
         <input type="hidden" name="order_type" value="delivery" />
@@ -69,19 +75,17 @@ endblock %} {% block head %} {% endblock %} {% block content %}
           id="delivery-fields"
           class="delivery-section"
           style="display: none">
-          <h4>📍 Yetkazib berish ma'lumotlari:</h4>
+          <h4>Yetkazib berish ma'lumotlari:</h4>
 
           <!-- Ko'rsatma -->
           <div class="delivery-instructions">
             <div class="instruction-card">
-              <h5>📍 Qanday foydalanish kerak:</h5>
+              <h5>Qanday foydalanish kerak:</h5>
               <ul class="instruction-list">
-                <li>🗺️ Xaritada o'zingizning joylashuvingizni tanlang</li>
-                <li>🔍 Yoki quyidagi qidiruv orqali manzilni kiriting</li>
-                <li>
-                  ✅ Tanlangan joylashuv asosida eng yaqin filial aniqlanadi
-                </li>
-                <li>🚚 Yetkazib berish narxi va vaqti avtomatik hisoblanadi</li>
+                <li>Xaritada o'zingizning joylashuvingizni tanlang</li>
+                <li>Yoki quyidagi qidiruv orqali manzilni kiriting</li>
+                <li>Tanlangan joylashuv asosida eng yaqin filial aniqlanadi</li>
+                <li>Yetkazib berish narxi va vaqti avtomatik hisoblanadi</li>
               </ul>
             </div>
           </div>
@@ -97,13 +101,13 @@ endblock %} {% block head %} {% endblock %} {% block content %}
               type="button"
               onclick="searchAddressOnMap()"
               class="btn btn-search">
-              🔍 Qidirish
+              Qidirish
             </button>
           </div>
 
           <!-- Xarita -->
           <div class="map-container">
-            <h5>🗺️ Joylashuvingizni xaritadan tanlang:</h5>
+            <h5>Joylashuvingizni xaritadan tanlang:</h5>
             <div
               id="map"
               style="
@@ -113,7 +117,6 @@ endblock %} {% block head %} {% endblock %} {% block content %}
                 margin-top: 10px;
               "></div>
             <p class="map-hint">
-              💡
               <em
                 >Xaritaga bosib o'zingizning aniq joylashuvingizni belgilang
                 yoki GPS orqali avtomatik aniqlang</em
@@ -133,64 +136,88 @@ endblock %} {% block head %} {% endblock %} {% block content %}
                 type="button"
                 onclick="getCurrentLocation()"
                 class="btn btn-info">
-                📍 Joriy joylashuvni aniqlash
+                Joriy joylashuvni aniqlash
               </button>
               <button
                 type="button"
                 onclick="searchNearbyPlaces('do\'kon')"
                 class="btn btn-secondary">
-                🏪 Yaqin do'konlar
+                Yaqin do'konlar
               </button>
               <button
                 type="button"
                 onclick="searchNearbyPlaces('do\'kon')"
                 class="btn btn-secondary">
-                🛒 Yaqin do'konlar
+                Yaqin do'konlar
               </button>
             </div>
           </div>
 
           <!-- Yetkazib berish ma'lumotlari -->
           <div id="delivery-info" class="delivery-info" style="display: none">
-            <h4>📦 Yetkazib berish ma'lumotlari</h4>
+            <h4>Yetkazib berish ma'lumotlari</h4>
             <div class="info-grid">
               <div class="info-item">
-                <span class="info-icon">🏢</span>
+                <span class="info-icon"
+                  ><i
+                    class="bi bi-geo-alt ui-icon ui-icon--muted"
+                    aria-hidden="true"></i
+                ></span>
                 <div class="info-content">
                   <span class="info-label">Eng yaqin filial:</span>
                   <span id="branch-name" class="info-value">-</span>
                 </div>
               </div>
               <div class="info-item">
-                <span class="info-icon">📏</span>
+                <span class="info-icon"
+                  ><i
+                    class="bi bi-signpost-split ui-icon ui-icon--muted"
+                    aria-hidden="true"></i
+                ></span>
                 <div class="info-content">
                   <span class="info-label">Masofa:</span>
                   <span id="distance-display" class="info-value">-</span>
                 </div>
               </div>
               <div class="info-item">
-                <span class="info-icon">💰</span>
+                <span class="info-icon"
+                  ><i
+                    class="bi bi-currency-dollar ui-icon ui-icon--muted"
+                    aria-hidden="true"></i
+                ></span>
                 <div class="info-content">
                   <span class="info-label">Yetkazish narxi:</span>
                   <span id="delivery-price-display" class="info-value">-</span>
                 </div>
               </div>
               <div class="info-item">
-                <span class="info-icon">⏱️</span>
+                <span class="info-icon"
+                  ><i
+                    class="bi bi-clock ui-icon ui-icon--muted"
+                    aria-hidden="true"></i
+                ></span>
                 <div class="info-content">
                   <span class="info-label">Yetkazish vaqti:</span>
                   <span id="delivery-time-display" class="info-value">-</span>
                 </div>
               </div>
               <div class="info-item">
-                <span class="info-icon">📱</span>
+                <span class="info-icon"
+                  ><i
+                    class="bi bi-telephone ui-icon ui-icon--muted"
+                    aria-hidden="true"></i
+                ></span>
                 <div class="info-content">
                   <span class="info-label">Filial telefoni:</span>
                   <span id="branch-phone" class="info-value">-</span>
                 </div>
               </div>
               <div class="info-item">
-                <span class="info-icon">⭐</span>
+                <span class="info-icon"
+                  ><i
+                    class="bi bi-star-fill ui-icon ui-icon--accent"
+                    aria-hidden="true"></i
+                ></span>
                 <div class="info-content">
                   <span class="info-label">Filial reytingi:</span>
                   <span id="branch-rating" class="info-value">-</span>
@@ -200,17 +227,17 @@ endblock %} {% block head %} {% endblock %} {% block content %}
 
             <!-- Yetkazish haritasi -->
             <div class="delivery-route-info">
-              <h5>🗺️ Yetkazish yo'li</h5>
+              <h5>Yetkazish yo'li</h5>
               <div class="route-details">
                 <div class="route-item">
-                  <span class="route-icon">📍</span>
+                  <span class="route-icon"></span>
                   <span class="route-text"
                     >Boshlang'ich nuqta:
                     <span id="branch-address">-</span></span
                   >
                 </div>
                 <div class="route-item">
-                  <span class="route-icon">🏠</span>
+                  <span class="route-icon"></span>
                   <span class="route-text"
                     >Yetkazish manzili:
                     <span id="delivery-address-display">-</span></span
@@ -221,12 +248,12 @@ endblock %} {% block head %} {% endblock %} {% block content %}
 
             <!-- Yetkazish shartlari -->
             <div class="delivery-terms">
-              <h6>📋 Yetkazib berish shartlari:</h6>
+              <h6>Yetkazib berish shartlari:</h6>
               <ul class="terms-list">
-                <li>✅ Minimal buyurtma summasi: 50,000 so'm</li>
-                <li>✅ Yetkazib berish radiusi: 15 km gacha</li>
-                <li>✅ Taxminiy yetkazib berish vaqti ko'rsatilgan</li>
-                <li>✅ To'lov naqd yoki kartada</li>
+                <li>Minimal buyurtma summasi: 50,000 so'm</li>
+                <li>Yetkazib berish radiusi: 15 km gacha</li>
+                <li>Taxminiy yetkazib berish vaqti ko'rsatilgan</li>
+                <li>To'lov naqd yoki kartada</li>
               </ul>
             </div>
           </div>
@@ -275,7 +302,7 @@ endblock %} {% block head %} {% endblock %} {% block content %}
             name="payment_data"
             value="" />
           <button type="submit" class="btn checkout-btn">
-            🛒 Buyurtma berish
+            Buyurtma berish
           </button>
         </div>
       </form>
@@ -373,7 +400,7 @@ endblock %} {% block head %} {% endblock %} {% block content %}
                 fallback.style.borderRadius = "8px";
                 fallback.innerHTML = `
                     <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start">
-                        <strong>⚠️ Xarita yuklanmadi</strong>
+                        <strong> Xarita yuklanmadi</strong>
                         <div>Xatolik sababli Yandex Maps yuklanmadi. Xarita o'rniga tashqi xizmatda ko'rish mumkin.</div>
                         <div style="display:flex;gap:8px;margin-top:6px">
                             <button id="openYandexExternal" class="btn btn-sm btn-primary">Xaritani Yandex-da ochish</button>
@@ -624,7 +651,7 @@ endblock %} {% block head %} {% endblock %} {% block content %}
 
                 showLocationLoading(false);
                 showNotification(
-                  "🎯 Joylashuvingiz muvaffaqiyatli aniqlandi!",
+                  " Joylashuvingiz muvaffaqiyatli aniqlandi!",
                   "success"
                 );
               },
@@ -646,7 +673,7 @@ endblock %} {% block head %} {% endblock %} {% block content %}
                     break;
                 }
 
-                showNotification("❌ " + errorMessage, "error");
+                showNotification(" " + errorMessage, "error");
               },
               {
                 enableHighAccuracy: true,
@@ -656,7 +683,7 @@ endblock %} {% block head %} {% endblock %} {% block content %}
             );
           } else {
             showNotification(
-              "❌ GPS bu brauzerda qo'llab-quvvatlanmaydi",
+              " GPS bu brauzerda qo'llab-quvvatlanmaydi",
               "error"
             );
           }
@@ -665,7 +692,7 @@ endblock %} {% block head %} {% endblock %} {% block content %}
         // Yaqin joylarni qidirish
         function searchNearbyPlaces(query) {
           if (!map) {
-            showNotification("❌ Xarita yuklanmadi", "error");
+            showNotification(" Xarita yuklanmadi", "error");
             return;
           }
 
@@ -715,7 +742,7 @@ endblock %} {% block head %} {% endblock %} {% block content %}
                     placeMarker.events.add("click", function () {
                       setUserLocation([place.latitude, place.longitude]);
                       showNotification(
-                        `📍 ${place.name || query} tanlandi`,
+                        ` ${place.name || query} tanlandi`,
                         "success"
                       );
                     });
@@ -723,12 +750,12 @@ endblock %} {% block head %} {% endblock %} {% block content %}
                 });
 
                 showNotification(
-                  `🎯 ${data.places.length} ta ${query} topildi`,
+                  ` ${data.places.length} ta ${query} topildi`,
                   "success"
                 );
               } else {
                 showNotification(
-                  `❌ Yaqin atrofda ${query} topilmadi`,
+                  ` Yaqin atrofda ${query} topilmadi`,
                   "warning"
                 );
               }
@@ -736,7 +763,7 @@ endblock %} {% block head %} {% endblock %} {% block content %}
             .catch((error) => {
               showLocationLoading(false);
               console.error("Yaqin joylarni qidirishda xatolik:", error);
-              showNotification("❌ Qidirishda xatolik yuz berdi", "error");
+              showNotification(" Qidirishda xatolik yuz berdi", "error");
             });
         }
 
@@ -784,12 +811,12 @@ endblock %} {% block head %} {% endblock %} {% block content %}
         <div class="d-flex align-items-center">
             <span style="margin-right: 8px;">${
               type === "success"
-                ? "✅"
+                ? '<i class="bi bi-check-circle ui-icon ui-icon--positive" aria-hidden="true"></i>'
                 : type === "error"
-                ? "❌"
+                ? '<i class="bi bi-x-circle ui-icon ui-icon--warn" aria-hidden="true"></i>'
                 : type === "warning"
-                ? "⚠️"
-                : "ℹ️"
+                ? '<i class="bi bi-exclamation-triangle ui-icon ui-icon--warn" aria-hidden="true"></i>'
+                : '<i class="bi bi-info-circle ui-icon ui-icon--muted" aria-hidden="true"></i>'
             }</span>
             <span>${message}</span>
             <button type="button" class="btn-close ms-auto" onclick="this.parentElement.parentElement.remove()"></button>
@@ -842,10 +869,12 @@ endblock %} {% block head %} {% endblock %} {% block content %}
                     balloonContent: `
                     <div style="max-width: 200px;">
                         <strong>${data.branch.name}</strong><br>
-                        📍 ${data.branch.address}<br>
-                        📞 ${data.branch.phone || "Telefon noma'lum"}<br>
-                        ⭐ Reyting: ${data.branch.rating || "N/A"}<br>
-                        🕒 ${data.branch.working_hours || "09:00-22:00"}
+                         ${data.branch.address}<br>
+                         ${data.branch.phone || "Telefon noma'lum"}<br>
+                        <i class="bi bi-star-fill ui-icon ui-icon--accent" aria-hidden="true"></i> Reyting: ${
+                          data.branch.rating || "N/A"
+                        }<br>
+                         ${data.branch.working_hours || "09:00-22:00"}
                     </div>
                 `,
                   },
@@ -966,7 +995,7 @@ endblock %} {% block head %} {% endblock %} {% block content %}
 
                     updateDeliveryInfo(fallbackData);
                     showNotification(
-                      "⚠️ Aniq yo'l aniqlanmadi, taxminiy ma'lumotlar ko'rsatildi",
+                      " Aniq yo'l aniqlanmadi, taxminiy ma'lumotlar ko'rsatildi",
                       "warning"
                     );
                   });
@@ -975,7 +1004,7 @@ endblock %} {% block head %} {% endblock %} {% block content %}
                 document.getElementById("delivery-info").style.display = "none";
 
                 showNotification(
-                  "⚠️ Yaqin atrofda faol filial topilmadi",
+                  " Yaqin atrofda faol filial topilmadi",
                   "warning"
                 );
               }
@@ -983,7 +1012,7 @@ endblock %} {% block head %} {% endblock %} {% block content %}
             .catch((error) => {
               console.error("Filial topishda xatolik:", error);
               showNotification(
-                "❌ Filial ma'lumotlarini yuklashda xatolik",
+                " Filial ma'lumotlarini yuklashda xatolik",
                 "error"
               );
             });
@@ -1059,7 +1088,7 @@ endblock %} {% block head %} {% endblock %} {% block content %}
 
           // Muvaffaqiyatli bildirishnoma
           showNotification(
-            `✅ Eng yaqin filial topildi: ${data.branch.name} (${data.distance} km)`,
+            ` Eng yaqin filial topildi: ${data.branch.name} (${data.distance} km)`,
             "success"
           );
         }
@@ -1328,18 +1357,23 @@ endblock %} {% block head %} {% endblock %} {% block content %}
       <div class="alert alert-warning">
         <p>Buyurtma berish uchun avval tizimga kiring</p>
         <div style="display: flex; gap: 10px">
-          <a href="{{ url_for('menu') }}" class="btn">⬅️ Menuga qaytish</a>
+          <a href="{{ url_for('menu') }}" class="btn"
+            ><i
+              class="bi bi-arrow-left ui-icon ui-icon--muted"
+              aria-hidden="true"></i>
+            Menuga qaytish</a
+          >
           <a
             href="{{ url_for('login_page') }}"
             class="btn big"
-            style="background: #4caf50"
-            >🔐 Foydalanuvchi kirishi</a
+            style="background: #4caf50">
+            Foydalanuvchi kirishi</a
           >
           <a
             href="{{ url_for('register') }}"
             class="btn big"
-            style="background: #2196f3"
-            >📝 Ro'yxatdan o'tish</a
+            style="background: #2196f3">
+            Ro'yxatdan o'tish</a
           >
         </div>
       </div>
@@ -1348,7 +1382,7 @@ endblock %} {% block head %} {% endblock %} {% block content %}
     {% else %}
     <div class="empty-cart">
       <p>Savatchangiz bo'sh</p>
-      <a href="{{ url_for('menu') }}" class="btn big">👟 Mahsulot tanlash</a>
+      <a href="{{ url_for('menu') }}" class="btn big"> Mahsulot tanlash</a>
     </div>
     {% endif %}
   </div>
@@ -1946,7 +1980,7 @@ endblock %} {% block head %} {% endblock %} {% block content %}
   }
 
   .payment-method.selected::before {
-    content: "✓";
+    content: "";
     position: absolute;
     top: 8px;
     right: 12px;

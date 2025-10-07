@@ -26,23 +26,23 @@ def test_database_tables():
         # Check if card_payment_settings table exists
         result = execute_query("SELECT name FROM sqlite_master WHERE type='table' AND name='card_payment_settings'", fetch_one=True)
         if result:
-            print("✓ card_payment_settings table exists")
+            print(" card_payment_settings table exists")
         else:
-            print("✗ card_payment_settings table missing")
+            print(" card_payment_settings table missing")
         
         # Check if photos_360 table exists
         result = execute_query("SELECT name FROM sqlite_master WHERE type='table' AND name='photos_360'", fetch_one=True)
         if result:
-            print("✓ photos_360 table exists")
+            print(" photos_360 table exists")
         else:
-            print("✗ photos_360 table missing")
+            print(" photos_360 table missing")
             
         # Check if news table exists
         result = execute_query("SELECT name FROM sqlite_master WHERE type='table' AND name='news'", fetch_one=True)
         if result:
-            print("✓ news table exists")
+            print(" news table exists")
         else:
-            print("✗ news table missing")
+            print(" news table missing")
             
     except Exception as e:
         print(f"Database test error: {e}")
@@ -55,23 +55,23 @@ def test_admin_routes():
         # Test admin news route (should redirect to login if not authenticated)
         response = client.get('/admin/news')
         if response.status_code in [200, 302]:  # 200 if logged in, 302 if redirect to login
-            print("✓ /admin/news route accessible")
+            print(" /admin/news route accessible")
         else:
-            print(f"✗ /admin/news route error: {response.status_code}")
+            print(f" /admin/news route error: {response.status_code}")
             
         # Test card management route
         response = client.get('/admin/card-management')
         if response.status_code in [200, 302]:
-            print("✓ /admin/card-management route accessible")
+            print(" /admin/card-management route accessible")
         else:
-            print(f"✗ /admin/card-management route error: {response.status_code}")
+            print(f" /admin/card-management route error: {response.status_code}")
             
         # Test 360 management route
         response = client.get('/admin/360-management')
         if response.status_code in [200, 302]:
-            print("✓ /admin/360-management route accessible")
+            print(" /admin/360-management route accessible")
         else:
-            print(f"✗ /admin/360-management route error: {response.status_code}")
+            print(f" /admin/360-management route error: {response.status_code}")
 
 def test_api_routes():
     """Test API routes (should require authentication)"""
@@ -81,21 +81,21 @@ def test_api_routes():
         # Test news API
         response = client.get('/api/news/admin')
         if response.status_code == 401:  # Should require authentication
-            print("✓ /api/news/admin properly protected")
+            print(" /api/news/admin properly protected")
         else:
             print(f"! /api/news/admin status: {response.status_code}")
             
         # Test card data API
         response = client.get('/api/card-data')
         if response.status_code == 401:
-            print("✓ /api/card-data properly protected")
+            print(" /api/card-data properly protected")
         else:
             print(f"! /api/card-data status: {response.status_code}")
             
         # Test 360 photos API
         response = client.get('/api/360-photos')
         if response.status_code == 401:
-            print("✓ /api/360-photos properly protected")
+            print(" /api/360-photos properly protected")
         else:
             print(f"! /api/360-photos status: {response.status_code}")
 

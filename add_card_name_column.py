@@ -15,39 +15,39 @@ def add_card_name_column():
         cur.execute("PRAGMA table_info(payment_cards)")
         columns = [row[1] for row in cur.fetchall()]
 
-        print(f"🔍 Current columns in payment_cards: {columns}")
+        print(f" Current columns in payment_cards: {columns}")
 
         changes_made = False
 
         if "card_name" not in columns:
-            print("🔧 Adding card_name column to payment_cards table...")
+            print(" Adding card_name column to payment_cards table...")
             cur.execute(
                 "ALTER TABLE payment_cards ADD COLUMN card_name TEXT NOT NULL DEFAULT 'Default Card'"
             )
             changes_made = True
         else:
-            print("✅ card_name column already exists")
+            print(" card_name column already exists")
 
         if "bank_name" not in columns:
-            print("🔧 Adding bank_name column to payment_cards table...")
+            print(" Adding bank_name column to payment_cards table...")
             cur.execute("ALTER TABLE payment_cards ADD COLUMN bank_name TEXT")
             changes_made = True
         else:
-            print("✅ bank_name column already exists")
+            print(" bank_name column already exists")
 
         # Add created_by column if missing
         if "created_by" not in columns:
-            print("🔧 Adding created_by column to payment_cards table...")
+            print(" Adding created_by column to payment_cards table...")
             cur.execute(
                 "ALTER TABLE payment_cards ADD COLUMN created_by INTEGER NOT NULL DEFAULT 1"
             )
             changes_made = True
         else:
-            print("✅ created_by column already exists")
+            print(" created_by column already exists")
 
         if changes_made:
 
-            print("📝 Updating existing records with card names and bank names...")
+            print(" Updating existing records with card names and bank names...")
             cur.execute(
                 """
                 UPDATE payment_cards 
@@ -70,7 +70,7 @@ def add_card_name_column():
             )
 
             conn.commit()
-            print("💾 Changes committed to database")
+            print(" Changes committed to database")
 
         cur.execute("PRAGMA table_info(payment_cards)")
         new_columns = [row[1] for row in cur.fetchall()]
@@ -82,7 +82,7 @@ def add_card_name_column():
 
         if not missing_cols:
             print(
-                "✅ Successfully ensured all required columns exist in payment_cards table"
+                " Successfully ensured all required columns exist in payment_cards table"
             )
 
             cur.execute(
@@ -90,24 +90,24 @@ def add_card_name_column():
             )
             records = cur.fetchall()
             if records:
-                print("\n📋 Updated payment cards:")
+                print("\n Updated payment cards:")
                 for record in records:
                     print(
                         f"  - ID: {record[0]}, Name: {record[1]}, Number: {record[2]}, Type: {record[3]}, Bank: {record[4]}"
                     )
             else:
-                print("📋 No payment card records found")
+                print(" No payment card records found")
 
             return True
         else:
-            print(f"❌ Failed to add columns: {missing_cols}")
+            print(f" Failed to add columns: {missing_cols}")
             return False
 
     except sqlite3.Error as e:
-        print(f"❌ Database error: {e}")
+        print(f" Database error: {e}")
         return False
     except Exception as e:
-        print(f"❌ Unexpected error: {e}")
+        print(f" Unexpected error: {e}")
         return False
     finally:
         if conn:
@@ -115,14 +115,14 @@ def add_card_name_column():
 
 
 if __name__ == "__main__":
-    print("🚀 Starting payment_cards table migration...")
+    print(" Starting payment_cards table migration...")
     success = add_card_name_column()
 
     if success:
-        print("\n🎉 Migration completed successfully!")
-        print("✅ The app should now work without the column errors.")
+        print("\n Migration completed successfully!")
+        print(" The app should now work without the column errors.")
         sys.exit(0)
     else:
-        print("\n💥 Migration failed!")
-        print("❌ Please check the error messages above.")
+        print("\n Migration failed!")
+        print(" Please check the error messages above.")
         sys.exit(1)

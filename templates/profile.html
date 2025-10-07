@@ -202,9 +202,9 @@
       <div class="profile-avatar">
         {% if user and user.avatar %}
         <img src="{{ user.avatar }}" alt="Profil rasmi" />
-        {% else %} {% if session.get('super_admin') %} 👑 {% elif
-        session.get('staff_id') %} 👨‍💼 {% elif session.get('courier_id') %} 🚚 {%
-        else %} 👤 {% endif %} {% endif %}
+        {% else %} {% if session.get('super_admin') %}  {% elif
+        session.get('staff_id') %}  {% elif session.get('courier_id') %}  {%
+        else %}  {% endif %} {% endif %}
       </div>
       <div class="profile-name">
         {% if user and user.first_name %} {{ user.first_name }} {{
@@ -233,14 +233,14 @@
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-number">{{ orders|length }}</div>
-        <div class="stat-label">📦 Jami buyurtmalar</div>
+        <div class="stat-label"> Jami buyurtmalar</div>
       </div>
       <div class="stat-card">
         <div class="stat-number">
           {% if orders %} {{ orders|selectattr('status', 'equalto',
           'delivered')|list|length }} {% else %} 0 {% endif %}
         </div>
-        <div class="stat-label">✅ Yetkazilgan</div>
+        <div class="stat-label"> Yetkazilgan</div>
       </div>
       <div class="stat-card">
         <div class="stat-number">
@@ -254,13 +254,13 @@
           {% if orders %} {{ "%.0f"|format(orders|sum(attribute='total_amount')
           or 0) }} {% else %} 0 {% endif %}
         </div>
-        <div class="stat-label">💰 Jami summa (so'm)</div>
+        <div class="stat-label"> Jami summa (so'm)</div>
       </div>
     </div>
 
     <!-- Shaxsiy ma'lumotlar -->
     <div class="profile-section">
-      <h4>📋 Shaxsiy ma'lumotlar</h4>
+      <h4> Shaxsiy ma'lumotlar</h4>
       <form method="POST" action="{{ url_for('update_profile') }}">
         <div class="row">
           <div class="col-md-6 mb-3">
@@ -315,13 +315,13 @@
             value="{{ user.card_number if user else session.get('user_card_number', '') }}"
             placeholder="XXXX-XXXX-XXXX-XXXX" />
         </div>
-        <button type="submit" class="btn btn-update">💾 Saqlash</button>
+        <button type="submit" class="btn btn-update"> Saqlash</button>
       </form>
     </div>
 
     <!-- Manzil -->
     <div class="profile-section">
-      <h4>📍 Yashash manzili</h4>
+      <h4> Yashash manzili</h4>
       <form method="POST" action="{{ url_for('update_address') }}">
         <div class="mb-3">
           <label for="address" class="form-label">Manzil</label>
@@ -353,14 +353,14 @@
           name="address_longitude"
           value="{{ user.address_longitude if user else session.get('user_address_longitude', '') }}" />
         <button type="submit" class="btn btn-update">
-          📍 Manzilni yangilash
+           Manzilni yangilash
         </button>
       </form>
     </div>
 
     <!-- Parolni o'zgartirish -->
     <div class="profile-section">
-      <h4>🔐 Parolni o'zgartirish</h4>
+      <h4> Parolni o'zgartirish</h4>
       <form method="POST" action="{{ url_for('change_password') }}">
         <div class="row">
           <div class="col-md-6 mb-3">
@@ -394,14 +394,14 @@
             required />
         </div>
         <button type="submit" class="btn btn-update">
-          🔑 Parolni o'zgartirish
+           Parolni o'zgartirish
         </button>
       </form>
     </div>
 
     <!-- Buyurtmalar tarixi -->
     <div class="profile-section">
-      <h4>📦 Buyurtmalar tarixi</h4>
+      <h4> Buyurtmalar tarixi</h4>
       {% if orders %}
       <div class="table-responsive">
         <table class="table table-striped table-hover">
@@ -426,13 +426,13 @@
                 {% if order.status == 'waiting' %}
                 <span class="badge bg-warning">⏳ Tayyorlanmoqda</span>
                 {% elif order.status == 'ready' %}
-                <span class="badge bg-success">✅ Tayyor</span>
+                <span class="badge bg-success"> Tayyor</span>
                 {% elif order.status == 'served' %}
-                <span class="badge bg-primary">🎉 Berildi</span>
+                <span class="badge bg-primary"> Berildi</span>
                 {% elif order.status == 'delivered' %}
-                <span class="badge bg-info">🚚 Yetkazildi</span>
+                <span class="badge bg-info"> Yetkazildi</span>
                 {% elif order.status == 'cancelled' %}
-                <span class="badge bg-danger">❌ Bekor qilindi</span>
+                <span class="badge bg-danger"> Bekor qilindi</span>
                 {% else %}
                 <span class="badge bg-secondary">{{ order.status }}</span>
                 {% endif %}
@@ -446,7 +446,7 @@
                 <a
                   href="{{ url_for('view_receipt', ticket_no=order.ticket_no) }}"
                   class="btn btn-sm btn-outline-primary"
-                  >📄 Chek</a
+                  > Chek</a
                 >
               </td>
             </tr>
@@ -463,7 +463,7 @@
         </div>
         <p class="text-muted">Sizda hali buyurtmalar yo'q.</p>
         <a href="{{ url_for('menu') }}" class="btn btn-primary"
-          >🍽️ Menuga o'tish</a
+          > Menuga o'tish</a
         >
       </div>
       {% endif %}
@@ -471,7 +471,7 @@
 
     <!-- Faol sessiyalar -->
     <div class="profile-section">
-      <h4>🔒 Faol sessiyalar</h4>
+      <h4> Faol sessiyalar</h4>
       {% if sessions %}
       <div class="mb-3">
         {% for s in sessions %}
@@ -495,8 +495,8 @@
               <button
                 class="btn btn-sm btn-danger"
                 onclick="terminateSession('{{ s.session_id }}', {{ 'true' if s.session_id == session.session_id else 'false' }})">
-                {% if s.session_id == session.session_id %} 🔄 Tugatish va
-                chiqish {% else %} ❌ Tugatish {% endif %}
+                {% if s.session_id == session.session_id %}  Tugatish va
+                chiqish {% else %}  Tugatish {% endif %}
               </button>
             </div>
           </div>
@@ -515,15 +515,15 @@
     <!-- Navigatsiya tugmalari -->
     <div class="text-center">
       <a href="{{ url_for('index') }}" class="btn btn-outline-secondary me-2"
-        >🏠 Bosh sahifa</a
+        > Bosh sahifa</a
       >
       <a
         href="{{ url_for('profile_settings') }}"
         class="btn btn-outline-primary me-2"
-        >⚙️ Sozlamalar</a
+        > Sozlamalar</a
       >
       <a href="{{ url_for('logout') }}" class="btn btn-outline-danger"
-        >🚪 Chiqish</a
+        > Chiqish</a
       >
     </div>
   </div>

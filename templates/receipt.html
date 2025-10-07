@@ -135,7 +135,7 @@
     <div class="receipt-container">
       <!-- Header -->
       <div class="receipt-header">
-        <h2>🧾 RASMIY CHEK</h2>
+        <h2> RASMIY CHEK</h2>
         <p class="mb-0">Chek raqami: {{ order.receipt_number }}</p>
         <small>Oyoq kiyim do'koni</small>
       </div>
@@ -143,36 +143,36 @@
       <!-- Body -->
       <div class="receipt-body">
         <div class="mb-3">
-          <strong>📋 Buyurtma #{{ order.ticket_no }}</strong><br />
+          <strong> Buyurtma #{{ order.ticket_no }}</strong><br />
           <small class="text-muted"
             >{{ order.created_at[:19].replace('T', ' ') }}</small
           >
         </div>
 
         <div class="mb-3">
-          <strong>👤 Mijoz:</strong> {{ order.customer_name }}<br />
+          <strong> Mijoz:</strong> {{ order.customer_name }}<br />
           {% if order.customer_phone %}
-          <strong>📞 Telefon:</strong> {{ order.customer_phone }}<br />
+          <strong> Telefon:</strong> {{ order.customer_phone }}<br />
           {% endif %}
-          <strong>📍 Buyurtma turi:</strong>
-          {% if order.order_type == 'delivery' %} 🚚 Yetkazib berish {% if
+          <strong> Buyurtma turi:</strong>
+          {% if order.order_type == 'delivery' %}  Yetkazib berish {% if
           order.delivery_address %}
-          <br /><small>📍 Manzil: {{ order.delivery_address }}</small>
+          <br /><small> Manzil: {{ order.delivery_address }}</small>
           {% endif %} {% if order.delivery_distance > 0 %}
-          <br /><small>📏 Masofa: {{ order.delivery_distance }} km</small>
+          <br /><small> Masofa: {{ order.delivery_distance }} km</small>
           {% endif %} {% if order.delivery_price > 0 %}
           <br /><small
-            >🚚 Yetkazish narxi: {{ "{:,.0f}".format(order.delivery_price) }}
+            > Yetkazish narxi: {{ "{:,.0f}".format(order.delivery_price) }}
             so'm</small
           >
-          {% endif %} {% else %} 🏪 Restoranda iste'mol qilish {% endif %}
+          {% endif %} {% else %}  Restoranda iste'mol qilish {% endif %}
         </div>
 
         <hr />
 
         <!-- Buyurtma mahsulotlari -->
         <div class="mb-3">
-          <strong>👟 Buyurtma tarkibi:</strong>
+          <strong> Buyurtma tarkibi:</strong>
           {% if order_items %} {% for item in order_items %}
           <div class="receipt-item">
             <span>{{ item }}</span>
@@ -206,7 +206,7 @@
           <hr />
           {% endif %}
           <div class="d-flex justify-content-between">
-            <span>💰 Jami summa:</span>
+            <span> Jami summa:</span>
             <span>{{ "{:,.0f}".format(order.total_amount) }} so'm</span>
           </div>
         </div>
@@ -214,7 +214,7 @@
         <!-- Keshbek bo'limi -->
         {% if order.cashback_amount > 0 %}
         <div class="cashback-section">
-          <div><strong>🎁 KESHBEK MUKOFOTI!</strong></div>
+          <div><strong> KESHBEK MUKOFOTI!</strong></div>
           <div style="font-size: 20px; margin: 10px 0">
             {{ order.cashback_percentage }}% = {{
             "{:,.2f}".format(order.cashback_amount) }} so'm
@@ -226,7 +226,7 @@
         <!-- QR kod bo'limi -->
         {% if qr_code %}
         <div class="qr-section">
-          <h4>📱 SOLIQ.UZ uchun QR kod</h4>
+          <h4> SOLIQ.UZ uchun QR kod</h4>
           <div class="qr-code">
             <img
               src="data:image/png;base64,{{ qr_code }}"
@@ -234,7 +234,7 @@
               style="max-width: 200px" />
           </div>
           <div class="qr-instructions">
-            <h5>🔍 Qanday foydalanish:</h5>
+            <h5> Qanday foydalanish:</h5>
             <ol>
               <li>Soliq.uz ilovasini oching</li>
               <li>QR kod skanerini faollashtiring</li>
@@ -242,7 +242,7 @@
               <li>1% cashback avtomatik hisobingizga qo'shiladi</li>
             </ol>
             <p>
-              <strong>💡 Eslatma:</strong> QR kodni 30 kun ichida skanlash
+              <strong> Eslatma:</strong> QR kodni 30 kun ichida skanlash
               mumkin!
             </p>
           </div>
@@ -252,8 +252,8 @@
 
       <!-- Footer -->
       <div class="receipt-footer">
-        <p class="mb-2">🙏 Do'konimizni tanlaganingiz uchun rahmat!</p>
-        <p class="mb-2">📞 Aloqa: +998 90 123 45 67</p>
+        <p class="mb-2"> Do'konimizni tanlaganingiz uchun rahmat!</p>
+        <p class="mb-2"> Aloqa: +998 90 123 45 67</p>
         <small>© 2025 Oyoq kiyim do'koni</small>
       </div>
 
@@ -261,10 +261,10 @@
       <div class="p-3 no-print">
         <div class="btn-group">
           <button onclick="window.print()" class="btn-custom btn-print">
-            🖨️ Chop etish
+             Chop etish
           </button>
           <a href="{{ url_for('index') }}" class="btn-custom btn-home"
-            >🏠 Bosh sahifa</a
+            > Bosh sahifa</a
           >
         </div>
       </div>
@@ -275,7 +275,7 @@
       document.addEventListener('DOMContentLoaded', function() {
           {% if order.cashback_amount > 0 %}
           setTimeout(function() {
-              if (confirm('🎉 Tabriklaymiz! Sizga {{ "{:,.0f}".format(order.cashback_amount) }} so\'m cashback berildi!\n\n📱 QR kodni soliq.uz da skanerlaysizmi?')) {
+              if (confirm(' Tabriklaymiz! Sizga {{ "{:,.0f}".format(order.cashback_amount) }} so\'m cashback berildi!\n\n QR kodni soliq.uz da skanerlaysizmi?')) {
                   document.querySelector('.qr-section').scrollIntoView({ behavior: 'smooth' });
               }
           }, 1000);

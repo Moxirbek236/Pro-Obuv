@@ -2,7 +2,7 @@
 {% block content %}
 <div class="analytics-container">
   <div class="analytics-header">
-    <h1>📊 Biznes Analytics va Statistika</h1>
+    <h1> Biznes Analytics va Statistika</h1>
     <div class="breadcrumb">
       <a href="{{ url_for('super_admin_dashboard') }}">Dashboard</a> / Analytics
     </div>
@@ -11,7 +11,7 @@
   <!-- Asosiy metrikalar -->
   <div class="metrics-grid">
     <div class="metric-card revenue">
-      <div class="metric-icon">💰</div>
+      <div class="metric-icon"></div>
       <div class="metric-content">
         <h4>Jami Daromad</h4>
         <div class="metric-value">
@@ -22,7 +22,7 @@
     </div>
 
     <div class="metric-card orders">
-      <div class="metric-icon">📦</div>
+      <div class="metric-icon"></div>
       <div class="metric-content">
         <h4>Jami Buyurtmalar</h4>
         <div class="metric-value">{{ analytics.monthly.orders }}</div>
@@ -31,7 +31,7 @@
     </div>
 
     <div class="metric-card daily">
-      <div class="metric-icon">📅</div>
+      <div class="metric-icon"></div>
       <div class="metric-content">
         <h4>Bugungi Daromad</h4>
         <div class="metric-value">
@@ -42,7 +42,7 @@
     </div>
 
     <div class="metric-card weekly">
-      <div class="metric-icon">📈</div>
+      <div class="metric-icon"></div>
       <div class="metric-content">
         <h4>Haftalik O'sish</h4>
         <div class="metric-value">
@@ -62,25 +62,25 @@
       <button
         class="analytics-tab active"
         onclick="showAnalyticsTab('revenue')">
-        💰 Daromad Tahlili
+         Daromad Tahlili
       </button>
       <button class="analytics-tab" onclick="showAnalyticsTab('orders')">
-        📊 Buyurtmalar Tahlili
+         Buyurtmalar Tahlili
       </button>
       <button class="analytics-tab" onclick="showAnalyticsTab('products')">
-        🍽️ Mahsulotlar
+         Mahsulotlar
       </button>
       <button class="analytics-tab" onclick="showAnalyticsTab('customers')">
-        👥 Mijozlar
+         Mijozlar
       </button>
       <button class="analytics-tab" onclick="showAnalyticsTab('performance')">
-        ⚡ Performance
+         Performance
       </button>
     </div>
 
     <!-- Daromad tahlili -->
     <div id="revenue-analytics" class="analytics-section active">
-      <h3>💰 Daromad Tahlili</h3>
+      <h3> Daromad Tahlili</h3>
       <div class="revenue-stats">
         <div class="revenue-chart" id="revenueChart">
           <canvas id="revenueChartCanvas" width="400" height="200"></canvas>
@@ -111,7 +111,7 @@
 
     <!-- Buyurtmalar tahlili -->
     <div id="orders-analytics" class="analytics-section">
-      <h3>📊 Buyurtmalar Tahlili</h3>
+      <h3> Buyurtmalar Tahlili</h3>
       <div class="orders-overview" id="ordersData">
         <p class="text-center">Ma'lumotlar yuklanmoqda...</p>
       </div>
@@ -119,7 +119,7 @@
 
     <!-- Mahsulotlar tahlili -->
     <div id="products-analytics" class="analytics-section">
-      <h3>🍽️ Mahsulotlar Tahlili</h3>
+      <h3> Mahsulotlar Tahlili</h3>
       <div class="products-overview" id="productsData">
         <p class="text-center">Ma'lumotlar yuklanmoqda...</p>
       </div>
@@ -127,7 +127,7 @@
 
     <!-- Mijozlar tahlili -->
     <div id="customers-analytics" class="analytics-section">
-      <h3>👥 Mijozlar Tahlili</h3>
+      <h3> Mijozlar Tahlili</h3>
       <div class="customers-overview" id="customersData">
         <p class="text-center">Ma'lumotlar yuklanmoqda...</p>
       </div>
@@ -135,11 +135,11 @@
 
     <!-- Performance tahlili -->
     <div id="performance-analytics" class="analytics-section">
-      <h3>⚡ Performance Tahlili</h3>
+      <h3> Performance Tahlili</h3>
       <div class="performance-overview">
         <div class="performance-metrics">
           <div class="perf-metric">
-            <h4>🚀 Server Performance</h4>
+            <h4> Server Performance</h4>
             <div class="perf-indicator good">Yaxshi</div>
             <div class="perf-details">
               <div>CPU: 45%</div>
@@ -149,7 +149,7 @@
           </div>
 
           <div class="perf-metric">
-            <h4>📊 Database Performance</h4>
+            <h4> Database Performance</h4>
             <div class="perf-indicator excellent">A'lo</div>
             <div class="perf-details">
               <div>Query time: 15ms</div>
@@ -164,7 +164,7 @@
 
   <div class="back-button">
     <a href="{{ url_for('super_admin_dashboard') }}" class="btn btn-primary"
-      >⬅️ Dashboard ga qaytish</a
+      >⬅ Dashboard ga qaytish</a
     >
   </div>
 </div>

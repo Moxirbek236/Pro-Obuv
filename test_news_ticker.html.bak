@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="utf-8" />
+    <title>News Ticker Test</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      /* News Ticker Styles */
+      .news-ticker-container {
+        background: linear-gradient(135deg, #0a0a0b 0%, #1a1b23 50%, #0f1419 100%);
+        border-top: 2px solid #2d3748;
+        position: relative;
+        z-index: 100;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+      }
+
+      .news-ticker-wrapper {
+        display: flex;
+        align-items: center;
+        height: 220px;
+        padding: 30px 40px;
+        position: relative;
+        gap: 30px;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .news-ticker-title {
+        background: linear-gradient(135deg, #22d3ee 0%, #0891b2 100%);
+        color: #0f1419;
+        padding: 15px 30px;
+        border-radius: 20px;
+        font-weight: 800;
+        min-width: 220px;
+        text-align: center;
+        font-size: 16px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        box-shadow: 0 8px 25px rgba(34, 211, 238, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .news-ticker {
+        flex: 1;
+        height: 160px;
+        position: relative;
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      .news-ticker-viewport {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        position: relative;
+        border-radius: 15px;
+      }
+
+      .news-ticker-content {
+        display: flex;
+        align-items: stretch;
+        height: 160px;
+        position: relative;
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        gap: 20px;
+        padding: 20px;
+      }
+
+      .news-item {
+        flex: none;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 15px 20px;
+        position: relative;
+        overflow: hidden;
+        backdrop-filter: blur(10px);
+        color: #ffffff;
+        font-size: 14px;
+        line-height: 1.4;
+        width: 280px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .news-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        border-color: rgba(34, 211, 238, 0.5);
+      }
+
+      .news-nav-btn {
+        background: linear-gradient(135deg, rgba(34, 211, 238, 0.8) 0%, rgba(8, 145, 178, 0.9) 100%);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        backdrop-filter: blur(15px);
+        box-shadow: 0 8px 20px rgba(34, 211, 238, 0.3);
+        color: #ffffff;
+        font-size: 24px;
+        font-weight: bold;
+      }
+
+      .news-nav-btn:hover {
+        background: linear-gradient(135deg, #22d3ee 0%, #0891b2 100%);
+        box-shadow: 0 12px 30px rgba(34, 211, 238, 0.5);
+        transform: scale(1.1) translateY(-2px);
+        border-color: rgba(255, 255, 255, 0.4);
+      }
+    </style>
+</head>
+<body style="background: #1a202c; color: white; font-family: Arial, sans-serif;">
+    
+    <div class="container mt-5">
+        <h1>News Ticker Test</h1>
+        
+        <!-- News Ticker -->
+        <div class="news-ticker-container">
+            <div class="news-ticker-wrapper">
+                <!-- Left navigation button -->
+                <button class="news-nav-btn news-nav-prev" id="newsPrevBtn" title="Previous news">
+                    <span>‹</span>
+                </button>
+                
+                <div class="news-ticker-title">
+                    📰 Latest News
+                </div>
+                
+                <div class="news-ticker">
+                    <div class="news-ticker-viewport">
+                        <div class="news-ticker-content" id="news-ticker-content">
+                            <!-- News loaded via JavaScript -->
+                            <div class="news-item news">📢 Loading...</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right navigation button -->
+                <button class="news-nav-btn news-nav-next" id="newsNextBtn" title="Next news">
+                    <span>›</span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <h2>Test Controls</h2>
+            <button onclick="testAPI()" class="btn btn-primary">Test API</button>
+            <button onclick="testSlider()" class="btn btn-secondary">Test Slider</button>
+            <div id="status" class="mt-3"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Simple test version of NewsTicker
+        class TestNewsTicker {
+            constructor() {
+                this.container = document.querySelector('#news-ticker-content');
+                this.currentIndex = 0;
+                this.newsItems = [];
+                this.init();
+            }
+            
+            init() {
+                this.prevBtn = document.getElementById('newsPrevBtn');
+                this.nextBtn = document.getElementById('newsNextBtn');
+                
+                if (this.prevBtn) {
+                    this.prevBtn.addEventListener('click', () => {
+                        console.log('Prev button clicked');
+                        this.slidePrev();
+                    });
+                }
+                
+                if (this.nextBtn) {
+                    this.nextBtn.addEventListener('click', () => {
+                        console.log('Next button clicked');
+                        this.slideNext();
+                    });
+                }
+                
+                this.loadNews();
+            }
+            
+            loadNews() {
+                fetch("/api/news")
+                    .then(response => {
+                        console.log('API response status:', response.status);
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('API data:', data);
+                        if (data.success && data.news && data.news.length > 0) {
+                            this.newsItems = data.news;
+                            this.updateNewsItems();
+                        } else {
+                            console.log('No news data available');
+                            this.showTestData();
+                        }
+                    })
+                    .catch(error => {
+                        console.error("News loading error:", error);
+                        this.showTestData();
+                    });
+            }
+            
+            showTestData() {
+                this.newsItems = [
+                    {title: '🎉 Test News 1', content: 'This is test news item 1', type: 'news'},
+                    {title: '🚚 Test News 2', content: 'This is test news item 2', type: 'news'},
+                    {title: '⭐ Test News 3', content: 'This is test news item 3', type: 'advertisement'},
+                    {title: '💳 Test News 4', content: 'This is test news item 4', type: 'advertisement'}
+                ];
+                this.updateNewsItems();
+            }
+            
+            updateNewsItems() {
+                if (!this.container || !this.newsItems.length) return;
+                
+                let html = '';
+                this.newsItems.forEach(item => {
+                    html += `<div class="news-item ${item.type || 'news'}">`;
+                    html += `<div class="news-title">${item.title}</div>`;
+                    if (item.content) {
+                        html += `<div class="news-content">${item.content}</div>`;
+                    }
+                    html += '</div>';
+                });
+                
+                this.container.innerHTML = html;
+                this.updateSliderPosition();
+            }
+            
+            slideNext() {
+                if (!this.newsItems.length) return;
+                this.currentIndex = (this.currentIndex + 1) % this.newsItems.length;
+                this.updateSliderPosition();
+            }
+            
+            slidePrev() {
+                if (!this.newsItems.length) return;
+                this.currentIndex = this.currentIndex === 0 
+                    ? this.newsItems.length - 1 
+                    : this.currentIndex - 1;
+                this.updateSliderPosition();
+            }
+            
+            updateSliderPosition() {
+                if (!this.container || !this.newsItems.length) return;
+                const translateX = -(this.currentIndex * 300);
+                this.container.style.transform = `translateX(${translateX}px)`;
+                console.log('Slider position updated:', translateX, 'Current index:', this.currentIndex);
+            }
+        }
+        
+        // Test functions
+        function testAPI() {
+            const status = document.getElementById('status');
+            status.innerHTML = 'Testing API...';
+            
+            fetch('/api/news')
+                .then(response => response.json())
+                .then(data => {
+                    status.innerHTML = `<pre>API Response: ${JSON.stringify(data, null, 2)}</pre>`;
+                })
+                .catch(error => {
+                    status.innerHTML = `API Error: ${error.message}`;
+                });
+        }
+        
+        function testSlider() {
+            const status = document.getElementById('status');
+            if (window.testTicker) {
+                window.testTicker.slideNext();
+                status.innerHTML = 'Slider next called';
+            } else {
+                status.innerHTML = 'Slider not initialized';
+            }
+        }
+        
+        // Initialize on DOM ready
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing test ticker');
+            window.testTicker = new TestNewsTicker();
+        });
+    </script>
+</body>
+</html>

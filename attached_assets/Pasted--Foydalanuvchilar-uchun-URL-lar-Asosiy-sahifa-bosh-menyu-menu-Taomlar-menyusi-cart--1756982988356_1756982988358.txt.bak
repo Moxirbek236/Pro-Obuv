@@ -1,0 +1,40 @@
+👥 Foydalanuvchilar uchun URL'lar:
+/ - Asosiy sahifa (bosh menyu)
+/menu - Taomlar menyusi
+/cart - Savatcha ko'rish
+/user - Buyurtma berish (POST)
+/user/success/<int:ticket_no> - Buyurtma muvaffaqiyatli berilgandan keyin
+/user/status/<int:ticket_no> - Buyurtma holatini tekshirish (JSON API)
+/user/cancel/<int:ticket_no> - Buyurtmani bekor qilish (POST)
+🛒 Savatcha API'lari:
+/add_to_cart - Savatchaga mahsulot qo'shish (POST)
+/remove_from_cart/<int:cart_item_id> - Savatchadan olib tashlash (POST)
+/get_cart_count - Savatchadagi mahsulotlar sonini olish (JSON API)
+👨‍💼 Xodimlar uchun URL'lar:
+/staff-secure-login-w7m2k - Xodim kirish sahifasi
+/staff-register-secure-k3x8p - Yangi xodim ro'yxatdan o'tish
+/admin/dashboard - Xodim boshqaruv paneli (buyurtmalarni boshqarish)
+/admin/menu - Menyu boshqaruvi
+/admin/employees - Xodimlar ro'yxati
+/admin/logout - Xodim chiqish
+📋 Xodim amallar URL'lari:
+/admin/add_menu_item - Menyu mahsuloti qo'shish (POST)
+/admin/toggle_menu_item/<int:item_id> - Mahsulot holatini o'zgartirish (POST)
+/admin/order/<int:order_id>/served - Buyurtmani "berildi" deb belgilash (POST)
+/admin/order/<int:order_id>/ready - Buyurtmani "tayyor" deb belgilash (POST)
+/admin/order/<int:order_id>/cancel - Buyurtmani bekor qilish (POST)
+/admin/orders.json - Barcha buyurtmalar (JSON API)
+🏢 Tizim boshqaruv URL'lari:
+/system-management-panel-x8k2m - Admin panel kirish sahifasi
+/display-monitor-tv-screen-z9p4n - Katta ekran monitor (buyurtmalar ko'rsatish)
+👑 Super Admin URL'lari:
+/super-admin-control-panel-master-z8x9k - Super admin kirish sahifasi
+/super-admin-dashboard-ultimate-m4st3r - Super admin boshqaruv paneli
+/super-admin/delete-staff/<int:staff_id> - Xodimni o'chirish (POST)
+/super-admin/add-staff - Yangi xodim qo'shish (POST)
+/super-admin/delete-user - Foydalanuvchini o'chirish (POST)
+/super-admin/logout - Super admin chiqish
+📱 URL'lar ierarxiyasi:
+Oddiy foydalanuvchilar - /, /menu, /cart, /user/*
+Xodimlar - /staff-*, /admin/*
+Super Admin - /super-admin*

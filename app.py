@@ -320,6 +320,66 @@ except Exception:
 # Professional middleware stack
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
+
+# WSGI middleware to proactively reject overly large requests and handle MemoryError
+class MemoryLimitMiddleware:
+    """WSGI middleware that checks CONTENT_LENGTH before the request body is read
+    and returns HTTP 413 if the length exceeds app config MAX_CONTENT_LENGTH.
+
+    It also catches MemoryError raised while processing the request and returns
+    a 413 JSON response instead of allowing the server to crash.
+    """
+
+    def __init__(self, app, max_content_length=None):
+        self.app = app
+        # store bytes limit (None or int)
+        self.max_content_length = int(max_content_length) if max_content_length else None
+
+    def __call__(self, environ, start_response):
+        try:
+            # Inspect Content-Length header if present (available without reading body)
+            cl = environ.get("CONTENT_LENGTH")
+            if cl:
+                try:
+                    content_length = int(cl)
+                except Exception:
+                    content_length = None
+
+                if (
+                    content_length is not None
+                    and self.max_content_length is not None
+                    and content_length > self.max_content_length
+                ):
+                    # Immediate 413 response
+                    status = "413 Payload Too Large"
+                    headers = [("Content-Type", "application/json")]
+                    start_response(status, headers)
+                    return [b'{"success": false, "message": "Request entity too large"}']
+
+            # Delegate to the next WSGI app callable
+            return self.app(environ, start_response)
+
+        except MemoryError:
+            # If the server runs out of memory while reading the request body,
+            # return a friendly 413 response rather than crashing.
+            try:
+                # Use app logger if available
+                try:
+                    app_logger.warning("MemoryError while reading request - returning 413")
+                except Exception:
+                    pass
+            except Exception:
+                pass
+
+            status = "413 Payload Too Large"
+            headers = [("Content-Type", "application/json")]
+            start_response(status, headers)
+            return [b'{"success": false, "message": "Request payload too large or server out of memory"}']
+
+
+# Wrap the WSGI app so Content-Length is checked before Werkzeug attempts large reads
+app.wsgi_app = MemoryLimitMiddleware(app.wsgi_app, app.config.get("MAX_CONTENT_LENGTH"))
+
 # CORS support
 CORS(app, origins=["*"], methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
 
@@ -2598,7 +2658,7 @@ def init_db():
         now = get_current_time().isoformat()
         sample_news = [
             (
-                "🎉 Yangi kolleksiya!",
+                "Yangi kolleksiya!",
                 "Bahorgi yangi oyoq kiyimlar kolleksiyasi do'konimizga keldi! 50% gacha chegirmalar.",
                 "advertisement",
                 "/static/images/default-men.jpg",
@@ -2610,7 +2670,7 @@ def init_db():
                 now,
             ),
             (
-                "🚚 Bepul yetkazib berish",
+                "Bepul yetkazib berish",
                 "Endi 300,000 so'mdan yuqori xaridlar uchun bepul yetkazib berish xizmati!",
                 "news",
                 None,
@@ -2634,7 +2694,7 @@ def init_db():
                 now,
             ),
             (
-                "💳 Click va Payme orqali to'lov",
+                "Click va Payme orqali to'lov",
                 "Endi sizlar uchun yanada qulay - Click va Payme orqali to'lov imkoni!",
                 "advertisement",
                 "/static/images/default-product.jpg",
@@ -3582,7 +3642,7 @@ def fix_news_table():
             now = get_current_time().isoformat()
             sample_news = [
                 (
-                    "🎉 Yangi kolleksiya!",
+                    "Yangi kolleksiya!",
                     "Bahorgi yangi oyoq kiyimlar kolleksiyasi do'konimizga keldi! 50% gacha chegirmalar.",
                     "advertisement",
                     "/static/images/default-men.jpg",
@@ -3594,7 +3654,7 @@ def fix_news_table():
                     now,
                 ),
                 (
-                    "🚚 Bepul yetkazib berish",
+                    "Bepul yetkazib berish",
                     "Endi 300,000 so'mdan yuqori xaridlar uchun bepul yetkazib berish xizmati!",
                     "news",
                     None,
@@ -3618,7 +3678,7 @@ def fix_news_table():
                     now,
                 ),
                 (
-                    "💳 Click va Payme orqali to'lov",
+                    "Click va Payme orqali to'lov",
                     "Endi sizlar uchun yanada qulay - Click va Payme orqali to'lov imkoni!",
                     "advertisement",
                     "/static/images/default-product.jpg",
@@ -5101,7 +5161,7 @@ def send_order_notifications(order_id, order_status, customer_name, total_amount
                         notification_type="new_order",
                         recipient_type="staff",
                         recipient_id=staff_id,
-                        title="🆕 Yangi buyurtma",
+                        title="Yangi buyurtma",
                         body=f"Yangi buyurtma: {customer_name} - {total_amount:,} so'm",
                     )
 
@@ -5117,7 +5177,7 @@ def send_order_notifications(order_id, order_status, customer_name, total_amount
                         notification_type="order_ready",
                         recipient_type="courier",
                         recipient_id=courier_id,
-                        title="📦 Buyurtma tayyor",
+                        title="Buyurtma tayyor",
                         body=f"Buyurtma tayyor: {customer_name} - {total_amount:,} so'm",
                     )
 
@@ -5125,11 +5185,11 @@ def send_order_notifications(order_id, order_status, customer_name, total_amount
         customer_id = order.get("user_id")
         if customer_id:
             status_messages = {
-                "confirmed": "✅ Buyurtmangiz tasdiqlandi",
-                "preparing": "👨‍🍳 Buyurtmangiz tayyorlanmoqda",
-                "ready": "📦 Buyurtmangiz tayyor",
-                "delivered": "🚚 Buyurtmangiz yetkazib berildi",
-                "cancelled": "❌ Buyurtmangiz bekor qilindi",
+                "confirmed": "Buyurtmangiz tasdiqlandi",
+                "preparing": "Buyurtmangiz tayyorlanmoqda",
+                "ready": "Buyurtmangiz tayyor",
+                "delivered": "Buyurtmangiz yetkazib berildi",
+                "cancelled": "Buyurtmangiz bekor qilindi",
             }
 
             if order_status in status_messages:
@@ -5169,7 +5229,7 @@ def send_system_notifications():
                             notification_type="low_inventory",
                             recipient_type="staff",
                             recipient_id=staff_id,
-                            title="⚠️ Mahsulot kam qoldi",
+                            title="Mahsulot kam qoldi",
                             body=f"{item_name} - {quantity} dona qoldi",
                         )
 
@@ -6251,7 +6311,26 @@ def menu():
             menu_items = []
             for row in menu_items_raw:
                 try:
-                    menu_items.append(dict(row))
+                    item = dict(row)
+
+                    # Normalize rating and orders_count columns for templates and JS
+                    try:
+                        # avg_rating may be returned as 'avg_rating' or 'rating'
+                        avg = item.get('avg_rating') if 'avg_rating' in item else item.get('rating')
+                        item['rating'] = float(avg or 0.0)
+                    except Exception:
+                        try:
+                            item['rating'] = float(item.get('rating') or 0.0)
+                        except Exception:
+                            item['rating'] = 0.0
+
+                    try:
+                        # orders_count may exist on menu_items table
+                        item['orders_count'] = int(item.get('orders_count') or 0)
+                    except Exception:
+                        item['orders_count'] = 0
+
+                    menu_items.append(item)
                 except Exception as e:
                     app_logger.warning(f"Menu item row processing error: {str(e)}")
                     continue  # Skip problematic row
@@ -6551,6 +6630,8 @@ def api_menu_search():
     except Exception as e:
         app_logger.error(f"api_menu_search error: {str(e)}")
         return jsonify({"success": False, "message": "Search failed"}), 500
+
+
 
 
 @app.route("/add_to_cart", methods=["POST"])
@@ -9368,7 +9449,6 @@ def admin_edit_menu_item(item_id):
 
 # Media fayllarni boshqarish API'lari
 @app.route("/api/product-media/<int:item_id>", methods=["GET"])
-@role_required("staff")
 def api_get_product_media(item_id):
     """Mahsulot media fayllarini olish"""
     try:
@@ -10117,23 +10197,23 @@ def api_get_payment_methods():
     """Get available payment methods for cart"""
     try:
         payment_methods = {
-            "cash": {"available": True, "name": "Naqd pul", "icon": "💵"},
+            "cash": {"available": True, "name": "Naqd pul", "icon": ""},
             "card": {
                 "available": False,
                 "name": "Bank kartasi",
-                "icon": "💳",
+                "icon": "",
                 "cards": [],
             },
             "click": {
                 "available": False,
                 "name": "Click",
-                "icon": "🟦",
+                "icon": "",
                 "qr_url": None,
             },
             "payme": {
                 "available": False,
                 "name": "Payme",
-                "icon": "🟨",
+                "icon": "",
                 "qr_url": None,
             },
         }
@@ -10173,7 +10253,7 @@ def api_get_payment_methods():
                     "success": False,
                     "message": "To'lov usullari yuklanmadi",
                     "payment_methods": {
-                        "cash": {"available": True, "name": "Naqd pul", "icon": "💵"}
+                        "cash": {"available": True, "name": "Naqd pul", "icon": ""}
                     },
                 }
             ),
@@ -11815,7 +11895,7 @@ def super_admin_send_notification():
                 recipient_type = "all"
 
         # Enhanced notification with emoji and formatting
-        enhanced_title = f"📢 {title}"
+        enhanced_title = f"{title}"
         enhanced_body = f"[ADMIN] {body}"
 
         # If recipient_id is provided -> targeted single recipient
@@ -16534,7 +16614,7 @@ def api_admin_news():
                 now = get_current_time().isoformat()
                 defaults = [
                     (
-                        "🎉 PRO-OBUV yangiliklari",
+                        "PRO-OBUV yangiliklari",
                         "Do'konimizda yangilanishlar!",
                         "news",
                         1,
@@ -16545,7 +16625,7 @@ def api_admin_news():
                         now,
                     ),
                     (
-                        "🔥 Chegirmalar",
+                        "Chegirmalar",
                         "Ayrim mahsulotlarda chegirmalar mavjud.",
                         "advertisement",
                         1,

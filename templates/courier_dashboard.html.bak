@@ -1,0 +1,778 @@
+{% extends 'base.html' %} {% block title %}Kuryer Dashboard{% endblock %} {% block content %}
+<style>
+  /* Courier-specific improvements */
+  .courier-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .courier-actions .btn {
+    margin-left: 8px;
+  }
+  .orders-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(35, 40, 50, 0.06);
+    padding: 12px;
+  }
+  .orders-table th,
+  .orders-table td {
+    vertical-align: middle;
+  }
+  .badge-status-ready {
+    background: #0d6efd;
+    color: #fff;
+  }
+  .badge-status-on_way {
+    background: #198754;
+    color: #fff;
+  }
+  .map-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    z-index: 2000;
+  }
+  .map-container {
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    position: relative;
+  }
+  .map-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+  }
+  .map-full {
+    height: 100vh;
+  }
+
+  /* Notifications Styles */
+  .notifications-section {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e9ecef;
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .section-header h3 {
+    margin: 0;
+    color: #212529;
+  }
+
+  .notification-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .notifications-container {
+    max-height: 500px;
+    overflow-y: auto;
+  }
+
+  .notification-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 15px;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .notification-item.unread {
+    background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+    border-color: #2196f3;
+    box-shadow: 0 4px 15px rgba(33, 150, 243, 0.2);
+  }
+
+  .notification-item.read {
+    background: #f8f9fa;
+    border-color: #e9ecef;
+  }
+
+  .notification-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  .notification-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  }
+
+  .notification-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+
+  .notification-title {
+    font-weight: 600;
+    color: #212529;
+    margin: 0;
+    font-size: 1.1rem;
+  }
+
+  .notification-time {
+    color: #6c757d;
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+
+  .notification-body {
+    color: #495057;
+    margin: 0 0 8px 0;
+    line-height: 1.5;
+  }
+
+  .notification-sender {
+    color: #6c757d;
+    font-style: italic;
+  }
+
+  .notification-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .no-notifications {
+    text-align: center;
+    padding: 60px 20px;
+    color: #6c757d;
+  }
+
+  .no-notifications-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+    opacity: 0.5;
+  }
+
+  .no-notifications h5 {
+    margin-bottom: 10px;
+    color: #495057;
+  }
+
+  .no-notifications p {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+
+  /* Unread indicator */
+  .notification-item.unread::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(135deg, #2196f3 0%, #21cbf3 100%);
+    border-radius: 0 2px 2px 0;
+  }
+</style>
+
+<div class="container mt-3">
+  <div class="courier-header">
+    <div>
+      <h3 class="mb-0">🚚 Kuryer Dashboard</h3>
+      <small class="text-muted">{{ orders|length }} ta buyurtma</small>
+    </div>
+
+    <div class="courier-actions">
+      <button class="btn btn-outline-secondary" onclick="refreshOrders()">
+        🔄 Yangilash
+      </button>
+      <!-- Map open button shown on courier page -->
+      <button id="openMapBtn" class="btn btn-primary">
+        🗺️ Haritani ochish
+      </button>
+    </div>
+  </div>
+
+  <!-- Notifications Section -->
+  <div class="notifications-section">
+    <div class="section-header">
+      <h3>🔔 Bildirishnomalar</h3>
+      <div class="notification-controls">
+        <button
+          class="btn btn-outline-primary btn-sm"
+          onclick="markAllAsRead()">
+          ✅ Barchasini o'qilgan deb belgilash
+        </button>
+        <button
+          class="btn btn-outline-secondary btn-sm"
+          onclick="refreshNotifications()">
+          🔄 Yangilash
+        </button>
+      </div>
+    </div>
+
+    <div class="notifications-container">
+      {% if notifications %} {% for notification in notifications %}
+      <div
+        class="notification-item {{ 'unread' if not notification.is_read else 'read' }}"
+        data-notification-id="{{ notification.id }}">
+        <div class="notification-icon">
+          {% if notification.sender_type == 'super_admin' %} 👑 {% elif
+          notification.sender_type == 'system' %} 🤖 {% elif
+          notification.sender_type == 'staff' %} 👨‍💼 {% elif
+          notification.sender_type == 'courier' %} 🚚 {% else %} 📢 {% endif %}
+        </div>
+        <div class="notification-content">
+          <div class="notification-header">
+            <h6 class="notification-title">{{ notification.title }}</h6>
+            <span class="notification-time">{{ notification.time_ago }}</span>
+          </div>
+          <p class="notification-body">{{ notification.body }}</p>
+          {% if notification.sender_name %}
+          <small class="notification-sender"
+            >Kimdan: {{ notification.sender_name }}</small
+          >
+          {% endif %}
+        </div>
+        <div class="notification-actions">
+          {% if not notification.is_read %}
+          <button
+            class="btn btn-sm btn-outline-primary"
+            onclick="markAsRead({{ notification.id }})">
+            O'qildi
+          </button>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %} {% else %}
+      <div class="no-notifications">
+        <div class="no-notifications-icon">🔔</div>
+        <h5>Bildirishnomalar yo'q</h5>
+        <p>Hozircha yangi bildirishnomalar yo'q</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="orders-card">
+    <div class="table-responsive">
+      <table class="table orders-table table-hover align-middle">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Mijoz</th>
+            <th>Telefon</th>
+            <th>Manzil</th>
+            <th>Manzil nuqtasi</th>
+            <th>Masofa</th>
+            <th>Mahsulotlar</th>
+            <th>Holat</th>
+            <th>Vaqt</th>
+            <th>Narx</th>
+            <th>Amallar</th>
+            <th>Yo'nalish</th>
+          </tr>
+        </thead>
+        <tbody id="ordersTable">
+          {% if orders %} {% for order in orders %}
+          <tr data-order-id="{{ order.id }}">
+            <td><strong>#{{ order.ticket_no }}</strong></td>
+            <td>{{ order.customer_name }}</td>
+            <td>
+              {% if order.customer_phone %}
+              <a href="tel:{{ order.customer_phone }}"
+                >📞 {{ order.customer_phone }}</a
+              >
+              {% else %}
+              <span class="text-muted">N/A</span>
+              {% endif %}
+            </td>
+            <td style="min-width: 220px">
+              {{ order.delivery_address or 'N/A' }}
+            </td>
+            <td>
+              {% if order.delivery_lat and order.delivery_lon %} Lat: {{
+              order.delivery_lat }}, Lng: {{ order.delivery_lon }} {% else %}
+              <span class="text-muted">N/A</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if order.delivery_distance and order.delivery_distance > 0 %}
+              {{ "%.1f" | format(order.delivery_distance) }} km {% else %}
+              <span class="text-muted">N/A</span>
+              {% endif %}
+            </td>
+            <td style="max-width: 240px">
+              {{ order.order_items or 'Ma\'lumot yo\'q' }}
+            </td>
+            <td>
+              {% if order.status == 'ready' %}
+              <span class="badge badge-status-ready">{{ order.status }}</span>
+              {% elif order.status == 'on_way' %}
+              <span class="badge badge-status-on_way">{{ order.status }}</span>
+              {% else %}
+              <span class="badge bg-secondary">{{ order.status }}</span>
+              {% endif %}
+            </td>
+            <td>
+              {{ order.created_at[:16].replace('T',' ') if order.created_at else
+              '' }}
+            </td>
+            <td>
+              {% if order.courier_price and order.courier_price > 0 %} {{
+              "{:,}".format(order.courier_price) }} so'm {% elif
+              order.delivery_price and order.delivery_price > 0 %} {{
+              "{:,}".format(order.delivery_price) }} so'm {% else %} -- {% endif
+              %}
+            </td>
+            <td>
+              {% if order.status == 'ready' %}
+              <form
+                method="POST"
+                action="{{ url_for('courier_take_order', order_id=order.id) }}"
+                style="display: inline">
+                <button class="btn btn-sm btn-success" type="submit">
+                  🚚 Olish
+                </button>
+              </form>
+              {% elif order.status == 'on_way' %}
+              <form
+                method="POST"
+                action="{{ url_for('courier_mark_delivered', order_id=order.id) }}"
+                style="display: inline">
+                <button class="btn btn-sm btn-primary" type="submit">
+                  ✅ Yetkazildi
+                </button>
+              </form>
+              {% endif %} {% if order.customer_phone %}
+              <button
+                class="btn btn-sm btn-outline-secondary"
+                onclick="callCustomer('{{ order.customer_phone }}')">
+                📞
+              </button>
+              {% endif %}
+              <!-- Open this order on map: pass order data as JSON in data-order -->
+              <button
+                class="btn btn-sm btn-outline-info map-open-order"
+                data-order="{{ order|tojson | safe }}"
+                title="Xaritada ochish">
+                🗺️
+              </button>
+            </td>
+            <td style="min-width: 140px">
+              {% if order.delivery_lat and order.delivery_lon %}
+              <div class="d-flex gap-1 align-items-center">
+                <select
+                  class="form-select form-select-sm transport-mode"
+                  style="width: 120px">
+                  <option value="auto">Avtomobil</option>
+                  <option value="pedestrian">Piyoda</option>
+                  <option value="publicTransport">Jamoat tashuvchilar</option>
+                </select>
+                <button
+                  class="btn btn-sm btn-outline-primary open-external-directions"
+                  data-lat="{{ order.delivery_lat }}"
+                  data-lon="{{ order.delivery_lon }}"
+                  title="Yandex xaritalarda yo'nalish ochish">
+                  ➡️
+                </button>
+              </div>
+              {% else %}
+              <span class="text-muted">N/A</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %} {% else %}
+          <tr>
+            <td colspan="10" class="text-center text-muted">
+              Hozircha yetkazib berish uchun buyurtmalar yo'q
+            </td>
+          </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Map modal (hidden until opened) -->
+  <div id="mapModal" class="map-modal" style="display: none">
+    <div class="map-container map-full" role="dialog" aria-modal="true">
+      <button class="btn btn-light map-close" id="closeMap">✖</button>
+      <div id="yandexMap" style="width: 100%; height: 100%"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Yandex Maps API is included in base.html (do not include here to avoid duplicate namespace) -->
+<script>
+  function callCustomer(phone) {
+    if (confirm(`Telefon: ${phone} ga qo'ng'iroq qilasizmi?`))
+      window.location.href = `tel:${phone}`;
+  }
+  function refreshOrders() {
+    location.reload();
+  }
+
+  // Map handling
+  let ymapsReady = false;
+  let mapInstance = null;
+  let placedPlacemarks = [];
+
+  function openMap() {
+    const modal = document.getElementById("mapModal");
+    modal.style.display = "flex";
+    document.body.style.overflow = "hidden";
+    if (ymapsReady && !mapInstance) initMap();
+  }
+
+  function closeMap() {
+    const modal = document.getElementById("mapModal");
+    modal.style.display = "none";
+    document.body.style.overflow = "";
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const openBtn = document.getElementById("openMapBtn");
+    const closeBtn = document.getElementById("closeMap");
+    if (openBtn) openBtn.addEventListener("click", openMap);
+    if (closeBtn) closeBtn.addEventListener("click", closeMap);
+    // Delegated handler: respond to clicks on map-open-order buttons even
+    // if ymaps isn't initialized yet. This avoids missing handlers when the
+    // user clicks quickly.
+    document.addEventListener("click", function (ev) {
+      const btn = ev.target.closest && ev.target.closest(".map-open-order");
+      if (!btn) return;
+      try {
+        const orderData = btn.getAttribute("data-order") || "{}";
+        const order = orderData ? JSON.parse(orderData) : {};
+        if (!order.delivery_lat || !order.delivery_lon)
+          return alert("Bu buyurtma uchun koordinatalar mavjud emas");
+        openMap();
+        const tryRoute = () => {
+          if (!mapInstance) return setTimeout(tryRoute, 200);
+          drawRouteTo([order.delivery_lat, order.delivery_lon], order);
+        };
+        tryRoute();
+      } catch (e) {
+        console.error("Failed to handle map-open-order click", e);
+      }
+    });
+  });
+
+  // Initialize Yandex map when API ready; if the script didn't load, wait for global flag
+  const ensureYMapsThenInit = () => {
+    if (window.ymaps) {
+      ymapsReady = true;
+      try {
+        initMap();
+      } catch (e) {
+        console.error("initMap failed on ymaps.ready", e);
+      }
+      return;
+    }
+    // If base.html set a loading flag, wait for it
+    if (window.YANDEX_MAPS_LOADED === true && window.ymaps) {
+      ymapsReady = true;
+      try {
+        initMap();
+      } catch (e) {
+        console.error("initMap failed after YANDEX_MAPS_LOADED", e);
+      }
+      return;
+    }
+    let attempts = 0;
+    const maxAttempts = 25;
+    const iv = setInterval(() => {
+      attempts += 1;
+      if (window.ymaps) {
+        clearInterval(iv);
+        ymapsReady = true;
+        try {
+          initMap();
+        } catch (e) {
+          console.error("initMap failed after delayed ymaps", e);
+        }
+        return;
+      }
+      if (attempts >= maxAttempts) {
+        clearInterval(iv);
+        // console.warn(
+        //   "Yandex Maps not available; courier map will not be initialized"
+        // );
+      }
+    }, 200);
+  };
+
+  // Try the normal ymaps.ready path, but also fallback to our ensure function
+  try {
+    if (typeof ymaps !== "undefined" && ymaps && ymaps.ready) {
+      ymaps.ready(() => {
+        ensureYMapsThenInit();
+      });
+    } else {
+      ensureYMapsThenInit();
+    }
+  } catch (e) {
+    ensureYMapsThenInit();
+  }
+
+  function initMap() {
+    // avoid double initialization
+    if (mapInstance) return;
+    if (!ymapsReady) return setTimeout(initMap, 200);
+    const defaultCenter = [41.311151, 69.279737];
+    const mapDiv = document.getElementById("yandexMap");
+    if (!mapDiv) return;
+    mapInstance = new ymaps.Map(mapDiv, {
+      center: defaultCenter,
+      zoom: 12,
+      controls: ["zoomControl", "fullscreenControl"],
+    });
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        function (pos) {
+          const coords = [pos.coords.latitude, pos.coords.longitude];
+          mapInstance.setCenter(coords, 13);
+          const myPlacemark = new ymaps.Placemark(
+            coords,
+            { hintContent: "Sizning joyingiz" },
+            { preset: "islands#redDotIcon" }
+          );
+          mapInstance.geoObjects.add(myPlacemark);
+        },
+        function () {},
+        { enableHighAccuracy: true, timeout: 5000 }
+      );
+    }
+
+    try {
+      const orders = JSON.parse(`{{ orders|tojson | safe }}`);
+      orders.forEach((o) => {
+        if (o.delivery_lat && o.delivery_lon) {
+          const placemark = new ymaps.Placemark(
+            [o.delivery_lat, o.delivery_lon],
+            {
+              balloonContent: `<strong>#${o.ticket_no}</strong><br>${
+                o.customer_name
+              }<br>${o.delivery_address || ""}`,
+            },
+            { preset: "islands#blueDotIcon" }
+          );
+          mapInstance.geoObjects.add(placemark);
+          placedPlacemarks.push(placemark);
+        }
+      });
+    } catch (e) {}
+
+    // Add handler for per-order map-open buttons
+    document.querySelectorAll(".map-open-order").forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const orderData = this.getAttribute("data-order") || "{}";
+        const order = orderData ? JSON.parse(orderData) : {};
+        if (!order.delivery_lat || !order.delivery_lon)
+          return alert("Bu buyurtma uchun koordinatalar mavjud emas");
+        openMap();
+        // ensure map is initialized and then draw route
+        const tryRoute = () => {
+          if (!mapInstance) return setTimeout(tryRoute, 200);
+          drawRouteTo([order.delivery_lat, order.delivery_lon], order);
+        };
+        tryRoute();
+      });
+    });
+  }
+
+  // Draw route from courier (or current position) to destination coords
+  function drawRouteTo(destCoords, order) {
+    if (!ymapsReady || !mapInstance)
+      return setTimeout(() => drawRouteTo(destCoords, order), 200);
+    // remove previous route if any
+    if (mapInstance.route) {
+      mapInstance.geoObjects.remove(mapInstance.route);
+      mapInstance.route = null;
+    }
+
+    // get courier position (try geolocation)
+    const getCourierPos = (cb) => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          function (pos) {
+            cb([pos.coords.latitude, pos.coords.longitude]);
+          },
+          function () {
+            cb(null);
+          },
+          { enableHighAccuracy: true, timeout: 5000 }
+        );
+      } else cb(null);
+    };
+
+    getCourierPos(function (start) {
+      const startPoint = start || mapInstance.getCenter();
+      ymaps.route([startPoint, destCoords], { mapStateAutoApply: true }).then(
+        function (route) {
+          mapInstance.route = route; // keep reference
+          route.getPaths().options.set("strokeWidth", 5);
+          route.getPaths().options.set("strokeColor", "#ff6b00");
+          route.getWayPoints().options.set("preset", "islands#redStretchyIcon");
+          route.getViaPoints().options.set("preset", "islands#blueIcon");
+          mapInstance.geoObjects.add(route);
+          // open balloon with order info
+          const props = {
+            balloonContentHeader: `<strong>#${order.ticket_no}</strong>`,
+            balloonContentBody: `${order.customer_name}<br>${
+              order.delivery_address || ""
+            }`,
+          };
+          route.options.set(
+            "routeBalloonContentLayout",
+            ymaps.templateLayoutFactory.createClass(
+              "<div>$[properties.balloonContentHeader]<br>$[properties.balloonContentBody]</div>"
+            )
+          );
+        },
+        function (err) {
+          console.error("Route error", err);
+          alert("Yo‘lni topishda xato");
+        }
+      );
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    try {
+      document.getElementById("availableOrders").textContent =
+        document.querySelectorAll(".status-ready").length;
+    } catch (e) {}
+    // External Yandex directions handler
+    document.querySelectorAll(".open-external-directions").forEach((btn) => {
+      btn.addEventListener("click", (ev) => {
+        const lat = btn.getAttribute("data-lat");
+        const lon = btn.getAttribute("data-lon");
+        // Find transport mode from the nearest selector
+        const row = btn.closest("tr");
+        let mode = "auto";
+        try {
+          const sel = row.querySelector(".transport-mode");
+          if (sel) mode = sel.value || "auto";
+        } catch (e) {}
+
+        if (!lat || !lon) return alert("Koordinatalar topilmadi");
+
+        // Map transport-mode to Yandex web directions mode
+        // 'auto' -> 'driving', 'pedestrian' -> 'walking', 'publicTransport' -> 'transit'
+        let tmode = "driving";
+        if (mode === "pedestrian") tmode = "walking";
+        if (mode === "publicTransport") tmode = "transit";
+
+        // Build Yandex Maps directions URL (open in new tab)
+        // Example: https://yandex.com/maps/?rtext=~41.3,69.2&rtt=auto
+        const rtext = `~${lat},${lon}`;
+        const rtt =
+          tmode === "driving"
+            ? "auto"
+            : tmode === "walking"
+            ? "pedestrian"
+            : "transport";
+        const url = `https://yandex.com/maps/?rtext=${encodeURIComponent(
+          rtext
+        )}&rtt=${encodeURIComponent(rtt)}`;
+        window.open(url, "_blank");
+      });
+    });
+
+    // Notification functions
+    function markAsRead(notificationId) {
+      fetch(`/api/notifications/${notificationId}/read`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            const notificationItem = document.querySelector(
+              `[data-notification-id="${notificationId}"]`
+            );
+            if (notificationItem) {
+              notificationItem.classList.remove("unread");
+              notificationItem.classList.add("read");
+              const actionBtn = notificationItem.querySelector(
+                ".notification-actions button"
+              );
+              if (actionBtn) {
+                actionBtn.remove();
+              }
+            }
+          }
+        })
+        .catch((error) => {
+          console.error("Error marking notification as read:", error);
+        });
+    }
+
+    function markAllAsRead() {
+      if (
+        confirm("Barcha bildirishnomalarni o'qilgan deb belgilamoqchimisiz?")
+      ) {
+        fetch("/api/notifications/mark-all-read", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              // Reload page to show updated notifications
+              location.reload();
+            } else {
+              alert("Xatolik: " + data.message);
+            }
+          })
+          .catch((error) => {
+            console.error("Error marking all notifications as read:", error);
+            alert("Xatolik yuz berdi");
+          });
+      }
+    }
+
+    function refreshNotifications() {
+      location.reload();
+    }
+  });
+</script>
+
+{% endblock %}

@@ -208,17 +208,17 @@
 <div class="container mt-3">
   <div class="courier-header">
     <div>
-      <h3 class="mb-0">🚚 Kuryer Dashboard</h3>
+      <h3 class="mb-0"> Kuryer Dashboard</h3>
       <small class="text-muted">{{ orders|length }} ta buyurtma</small>
     </div>
 
     <div class="courier-actions">
       <button class="btn btn-outline-secondary" onclick="refreshOrders()">
-        🔄 Yangilash
+         Yangilash
       </button>
       <!-- Map open button shown on courier page -->
       <button id="openMapBtn" class="btn btn-primary">
-        🗺️ Haritani ochish
+         Haritani ochish
       </button>
     </div>
   </div>
@@ -226,17 +226,17 @@
   <!-- Notifications Section -->
   <div class="notifications-section">
     <div class="section-header">
-      <h3>🔔 Bildirishnomalar</h3>
+      <h3> Bildirishnomalar</h3>
       <div class="notification-controls">
         <button
           class="btn btn-outline-primary btn-sm"
           onclick="markAllAsRead()">
-          ✅ Barchasini o'qilgan deb belgilash
+           Barchasini o'qilgan deb belgilash
         </button>
         <button
           class="btn btn-outline-secondary btn-sm"
           onclick="refreshNotifications()">
-          🔄 Yangilash
+           Yangilash
         </button>
       </div>
     </div>
@@ -247,10 +247,10 @@
         class="notification-item {{ 'unread' if not notification.is_read else 'read' }}"
         data-notification-id="{{ notification.id }}">
         <div class="notification-icon">
-          {% if notification.sender_type == 'super_admin' %} 👑 {% elif
-          notification.sender_type == 'system' %} 🤖 {% elif
-          notification.sender_type == 'staff' %} 👨‍💼 {% elif
-          notification.sender_type == 'courier' %} 🚚 {% else %} 📢 {% endif %}
+          {% if notification.sender_type == 'super_admin' %}  {% elif
+          notification.sender_type == 'system' %}  {% elif
+          notification.sender_type == 'staff' %}  {% elif
+          notification.sender_type == 'courier' %}  {% else %}  {% endif %}
         </div>
         <div class="notification-content">
           <div class="notification-header">
@@ -276,7 +276,7 @@
       </div>
       {% endfor %} {% else %}
       <div class="no-notifications">
-        <div class="no-notifications-icon">🔔</div>
+        <div class="no-notifications-icon"></div>
         <h5>Bildirishnomalar yo'q</h5>
         <p>Hozircha yangi bildirishnomalar yo'q</p>
       </div>
@@ -311,7 +311,7 @@
             <td>
               {% if order.customer_phone %}
               <a href="tel:{{ order.customer_phone }}"
-                >📞 {{ order.customer_phone }}</a
+                > {{ order.customer_phone }}</a
               >
               {% else %}
               <span class="text-muted">N/A</span>
@@ -362,7 +362,7 @@
                 action="{{ url_for('courier_take_order', order_id=order.id) }}"
                 style="display: inline">
                 <button class="btn btn-sm btn-success" type="submit">
-                  🚚 Olish
+                   Olish
                 </button>
               </form>
               {% elif order.status == 'on_way' %}
@@ -371,14 +371,14 @@
                 action="{{ url_for('courier_mark_delivered', order_id=order.id) }}"
                 style="display: inline">
                 <button class="btn btn-sm btn-primary" type="submit">
-                  ✅ Yetkazildi
+                   Yetkazildi
                 </button>
               </form>
               {% endif %} {% if order.customer_phone %}
               <button
                 class="btn btn-sm btn-outline-secondary"
                 onclick="callCustomer('{{ order.customer_phone }}')">
-                📞
+                
               </button>
               {% endif %}
               <!-- Open this order on map: pass order data as JSON in data-order -->
@@ -386,7 +386,7 @@
                 class="btn btn-sm btn-outline-info map-open-order"
                 data-order="{{ order|tojson | safe }}"
                 title="Xaritada ochish">
-                🗺️
+                
               </button>
             </td>
             <td style="min-width: 140px">
@@ -404,7 +404,7 @@
                   data-lat="{{ order.delivery_lat }}"
                   data-lon="{{ order.delivery_lon }}"
                   title="Yandex xaritalarda yo'nalish ochish">
-                  ➡️
+                  
                 </button>
               </div>
               {% else %}
@@ -427,7 +427,7 @@
   <!-- Map modal (hidden until opened) -->
   <div id="mapModal" class="map-modal" style="display: none">
     <div class="map-container map-full" role="dialog" aria-modal="true">
-      <button class="btn btn-light map-close" id="closeMap">✖</button>
+      <button class="btn btn-light map-close" id="closeMap"></button>
       <div id="yandexMap" style="width: 100%; height: 100%"></div>
     </div>
   </div>

@@ -1,0 +1,521 @@
+{% extends "base.html" %}
+{% block title %}Karta ma'lumotlari - Admin{% endblock %}
+
+{% block additional_css %}
+<style>
+.card-management-container {
+    min-height: calc(100vh - 200px);
+    padding: 20px 0;
+}
+
+.admin-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px 0;
+    margin-bottom: 30px;
+    border-radius: 12px;
+}
+
+.card-section {
+    background: var(--bg-color);
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card-display {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    border-radius: 12px;
+    padding: 20px;
+    color: white;
+    margin-bottom: 20px;
+    min-height: 180px;
+    position: relative;
+    overflow: hidden;
+}
+
+.card-display::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 100px;
+    height: 100px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+}
+
+.card-number {
+    font-family: 'Courier New', monospace;
+    font-size: 1.4rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin: 20px 0;
+}
+
+.card-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-top: 30px;
+}
+
+.qr-section {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.qr-item {
+    flex: 1;
+    min-width: 250px;
+    text-align: center;
+    padding: 20px;
+    border: 2px dashed #e0e0e0;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.qr-item:hover {
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.qr-preview {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.qr-placeholder {
+    width: 150px;
+    height: 150px;
+    background: #f5f5f5;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-size: 3rem;
+    margin: 0 auto 15px;
+}
+
+.btn-upload {
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-upload:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+}
+
+.btn-save {
+    background: linear-gradient(135deg, #2196F3, #1976D2);
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(33, 150, 243, 0.4);
+}
+
+.form-control {
+    border-radius: 8px;
+    border: 2px solid #e0e0e0;
+    padding: 12px 16px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 8px;
+}
+
+.upload-area {
+    position: relative;
+    display: inline-block;
+}
+
+.upload-input {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.success-message {
+    background: #d4edda;
+    color: #155724;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #c3e6cb;
+    margin-bottom: 20px;
+    display: none;
+}
+
+.error-message {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #f5c6cb;
+    margin-bottom: 20px;
+    display: none;
+}
+
+/* Dark theme support */
+body.dark-theme .card-section {
+    background: #2d2d2d !important;
+    color: #ffffff !important;
+}
+
+body.dark-theme .qr-item {
+    border-color: #555 !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+
+body.dark-theme .qr-item:hover {
+    border-color: #667eea !important;
+    background: rgba(102, 126, 234, 0.1) !important;
+}
+
+body.dark-theme .qr-placeholder {
+    background: #404040 !important;
+    color: #888 !important;
+}
+
+body.dark-theme .form-control {
+    background: #404040 !important;
+    color: #ffffff !important;
+    border-color: #555 !important;
+}
+
+body.dark-theme .form-control:focus {
+    background: #404040 !important;
+    border-color: #667eea !important;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container card-management-container">
+    <!-- Header -->
+    <div class="admin-header text-center">
+        <h1 class="mb-0">💳 Karta ma'lumotlari boshqaruvi</h1>
+        <p class="mb-0 mt-2">To'lov tizimi uchun karta va QR kod ma'lumotlarini boshqaring</p>
+    </div>
+
+    <div id="success-alert" class="success-message">
+        <strong>Muvaffaqiyatli!</strong> Ma'lumotlar saqlandi.
+    </div>
+
+    <div id="error-alert" class="error-message">
+        <strong>Xatolik!</strong> <span id="error-text"></span>
+    </div>
+
+    <!-- Card Information Section -->
+    <div class="card-section">
+        <h3 class="mb-4">🏦 Karta ma'lumotlari</h3>
+        
+        <!-- Card Preview -->
+        <div class="card-display" id="card-preview">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h5 class="mb-0">💳 Pro-Obuv</h5>
+                    <small style="opacity: 0.8;">Oyoq kiyimlar do'koni</small>
+                </div>
+                <div style="font-size: 1.5rem;">🏧</div>
+            </div>
+            <div class="card-number" id="card-number-preview">
+                **** **** **** ****
+            </div>
+            <div class="card-name" id="card-name-preview">
+                KARTA EGASI ISMI
+            </div>
+        </div>
+
+        <!-- Card Form -->
+        <form id="card-form">
+            <div class="row">
+                <div class="col-md-8">
+                    <label class="form-label" for="card_number">Karta raqami</label>
+                    <input type="text" class="form-control" id="card_number" name="card_number" 
+                           placeholder="1234 5678 9012 3456" maxlength="19" 
+                           pattern="[0-9\s]{13,19}" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" for="card_name">Karta egasi ismi</label>
+                    <input type="text" class="form-control" id="card_name" name="card_name" 
+                           placeholder="JOHN DOE" style="text-transform: uppercase;" required>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- QR Codes Section -->
+    <div class="card-section">
+        <h3 class="mb-4">📱 QR Kodlar</h3>
+        <div class="qr-section">
+            <!-- Click QR -->
+            <div class="qr-item">
+                <h5 class="mb-3">💙 Click to'lovi</h5>
+                <div id="click-qr-preview">
+                    <div class="qr-placeholder">📷</div>
+                </div>
+                <div class="upload-area">
+                    <button type="button" class="btn-upload">
+                        📤 Click QR yuklash
+                    </button>
+                    <input type="file" class="upload-input" id="click-qr-upload" 
+                           accept="image/*" onchange="handleQRUpload(this, 'click')">
+                </div>
+            </div>
+
+            <!-- Payme QR -->
+            <div class="qr-item">
+                <h5 class="mb-3">💚 Payme to'lovi</h5>
+                <div id="payme-qr-preview">
+                    <div class="qr-placeholder">📷</div>
+                </div>
+                <div class="upload-area">
+                    <button type="button" class="btn-upload">
+                        📤 Payme QR yuklash
+                    </button>
+                    <input type="file" class="upload-input" id="payme-qr-upload" 
+                           accept="image/*" onchange="handleQRUpload(this, 'payme')">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Save Button -->
+    <div class="text-center">
+        <button type="button" class="btn-save" onclick="saveCardData()">
+            💾 Ma'lumotlarni saqlash
+        </button>
+    </div>
+</div>
+
+<script>
+let cardData = {
+    card_number: '',
+    card_name: '',
+    click_qr_url: '',
+    payme_qr_url: ''
+};
+
+// Load existing data on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadCardData();
+    
+    // Add event listeners for real-time card preview
+    document.getElementById('card_number').addEventListener('input', updateCardPreview);
+    document.getElementById('card_name').addEventListener('input', updateCardPreview);
+});
+
+function loadCardData() {
+    fetch('/api/card-data')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.data) {
+                cardData = data.data;
+                
+                // Fill form
+                document.getElementById('card_number').value = cardData.card_number || '';
+                document.getElementById('card_name').value = cardData.card_name || '';
+                
+                // Update previews
+                updateCardPreview();
+                updateQRPreview('click', cardData.click_qr_url);
+                updateQRPreview('payme', cardData.payme_qr_url);
+            }
+        })
+        .catch(error => {
+            console.error('Error loading card data:', error);
+        });
+}
+
+function updateCardPreview() {
+    const cardNumber = document.getElementById('card_number').value;
+    const cardName = document.getElementById('card_name').value;
+    
+    // Format card number
+    const formattedNumber = cardNumber.replace(/\s/g, '').replace(/(.{4})/g, '$1 ').trim();
+    if (formattedNumber.length > 0) {
+        document.getElementById('card-number-preview').textContent = formattedNumber;
+    } else {
+        document.getElementById('card-number-preview').textContent = '**** **** **** ****';
+    }
+    
+    // Update card name
+    if (cardName.length > 0) {
+        document.getElementById('card-name-preview').textContent = cardName.toUpperCase();
+    } else {
+        document.getElementById('card-name-preview').textContent = 'KARTA EGASI ISMI';
+    }
+}
+
+function handleQRUpload(input, type) {
+    const file = input.files[0];
+    if (!file) return;
+    
+    if (!file.type.startsWith('image/')) {
+        showError('Faqat rasm fayllari qabul qilinadi');
+        return;
+    }
+    
+    if (file.size > 5 * 1024 * 1024) { // 5MB
+        showError('Fayl hajmi 5MB dan oshmasligi kerak');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('type', type);
+    
+    // Show loading
+    const preview = document.getElementById(`${type}-qr-preview`);
+    preview.innerHTML = '<div class="qr-placeholder">⏳</div>';
+    
+    fetch('/api/upload-qr', {
+        method: 'POST',
+        headers: {
+            'X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : ''
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            cardData[`${type}_qr_url`] = data.url;
+            updateQRPreview(type, data.url);
+            showSuccess('QR kod muvaffaqiyatli yuklandi');
+        } else {
+            showError(data.message || 'QR kod yuklashda xatolik');
+            updateQRPreview(type, ''); // Reset on error
+        }
+    })
+    .catch(error => {
+        console.error('Upload error:', error);
+        showError('QR kod yuklashda xatolik yuz berdi');
+        updateQRPreview(type, '');
+    });
+}
+
+function updateQRPreview(type, url) {
+    const preview = document.getElementById(`${type}-qr-preview`);
+    if (url) {
+        preview.innerHTML = `<img src="${url}" class="qr-preview" alt="${type} QR">`;
+    } else {
+        preview.innerHTML = '<div class="qr-placeholder">📷</div>';
+    }
+}
+
+function saveCardData() {
+    const cardNumber = document.getElementById('card_number').value.trim();
+    const cardName = document.getElementById('card_name').value.trim();
+    
+    if (!cardNumber || !cardName) {
+        showError('Karta raqami va egasi ismi kiritilishi shart');
+        return;
+    }
+    
+    // Validate card number (basic check)
+    const cleanCardNumber = cardNumber.replace(/\s/g, '');
+    if (cleanCardNumber.length < 13 || cleanCardNumber.length > 19) {
+        showError('Karta raqami noto\'g\'ri formatda');
+        return;
+    }
+    
+    const data = {
+        card_number: cardNumber,
+        card_name: cardName,
+        click_qr_url: cardData.click_qr_url,
+        payme_qr_url: cardData.payme_qr_url
+    };
+    
+    fetch('/api/save-card-data', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : ''
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            showSuccess('Karta ma\'lumotlari muvaffaqiyatli saqlandi');
+            cardData = data;
+        } else {
+            showError(result.message || 'Ma\'lumotlarni saqlashda xatolik');
+        }
+    })
+    .catch(error => {
+        console.error('Save error:', error);
+        showError('Ma\'lumotlarni saqlashda xatolik yuz berdi');
+    });
+}
+
+function showSuccess(message) {
+    const alert = document.getElementById('success-alert');
+    alert.querySelector('span') ? alert.querySelector('span').textContent = message : null;
+    alert.style.display = 'block';
+    
+    setTimeout(() => {
+        alert.style.display = 'none';
+    }, 5000);
+    
+    // Hide error if showing
+    document.getElementById('error-alert').style.display = 'none';
+}
+
+function showError(message) {
+    const alert = document.getElementById('error-alert');
+    document.getElementById('error-text').textContent = message;
+    alert.style.display = 'block';
+    
+    setTimeout(() => {
+        alert.style.display = 'none';
+    }, 5000);
+    
+    // Hide success if showing
+    document.getElementById('success-alert').style.display = 'none';
+}
+
+// Format card number input
+document.getElementById('card_number').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
+    let formattedInputValue = value.match(/.{1,4}/g)?.join(' ');
+    if (value.length <= 16) {
+        e.target.value = formattedInputValue || value;
+    }
+});
+</script>
+{% endblock %}

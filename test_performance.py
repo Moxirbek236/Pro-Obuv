@@ -27,7 +27,7 @@ def test_endpoint(url, num_requests=10):
         except Exception:
             errors += 1
     
-    print(f"🧪 Тестируем {url} с {num_requests} запросами...")
+    print(f" Тестируем {url} с {num_requests} запросами...")
     
     # Запускаем запросы в потоках
     threads = []
@@ -45,11 +45,11 @@ def test_endpoint(url, num_requests=10):
     end_time = time.time()
     duration = end_time - start_time
     
-    print(f"  ✅ Успешных: {success}/{num_requests}")
-    print(f"  🚫 Rate limited (429): {rate_limited}")  
-    print(f"  ❌ Ошибок: {errors}")
-    print(f"  ⏱️ Время: {duration:.2f} секунд")
-    print(f"  📈 RPS: {num_requests/duration:.2f}")
+    print(f"   Успешных: {success}/{num_requests}")
+    print(f"   Rate limited (429): {rate_limited}")  
+    print(f"   Ошибок: {errors}")
+    print(f"  ⏱ Время: {duration:.2f} секунд")
+    print(f"   RPS: {num_requests/duration:.2f}")
     print()
     
     return success, rate_limited, errors
@@ -57,15 +57,15 @@ def test_endpoint(url, num_requests=10):
 def main():
     base_url = "http://127.0.0.1:5000"
     
-    print("🚀 ТЕСТ ПРОИЗВОДИТЕЛЬНОСТИ PRO-OBUV")
+    print(" ТЕСТ ПРОИЗВОДИТЕЛЬНОСТИ PRO-OBUV")
     print("=" * 50)
     
     # Простой тест доступности
     try:
         response = requests.get(base_url, timeout=10)
-        print(f"✅ Сервер доступен (статус: {response.status_code})")
+        print(f" Сервер доступен (статус: {response.status_code})")
     except Exception as e:
-        print(f"❌ Сервер недоступен: {e}")
+        print(f" Сервер недоступен: {e}")
         return
     
     print()
@@ -83,12 +83,12 @@ def main():
         success, rate_limited, errors = test_endpoint(url, 20)
         
         if rate_limited > 0:
-            print(f"⚠️  ВНИМАНИЕ: {endpoint} имеет rate limiting!")
+            print(f"  ВНИМАНИЕ: {endpoint} имеет rate limiting!")
         else:
-            print(f"✅ {endpoint} - rate limits работают корректно")
+            print(f" {endpoint} - rate limits работают корректно")
     
     print("=" * 50)
-    print("🎯 РЕЗУЛЬТАТ:")
+    print(" РЕЗУЛЬТАТ:")
     print("  - Если нет сообщений '429 - Juda ko'p so'rov' = УСПЕХ!")
     print("  - Высокая производительность достигнута!")
 

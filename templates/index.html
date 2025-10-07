@@ -3,7 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Oyoq-Kiyim Tizimi - Bosh sahifa</title>
+  <title>Pro Obuv - Bosh sahifa</title>
+  <meta name="description" content="Pro Obuv — sifatli oyoq kiyimlar, aksessuarlar va onlayn buyurtma imkoniyati.">
+  <meta property="og:title" content="Pro Obuv - Bosh sahifa">
+  <meta property="og:description" content="Pro Obuv — sifatli oyoq kiyimlar, aksessuarlar va onlayn buyurtma imkoniyati.">
     <link
       rel="apple-touch-icon"
       sizes="180x180"
@@ -271,7 +274,7 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
       <div class="container">
-        <a class="navbar-brand" href="{{ url_for('index') }}">👟 Pro_Obuv</a>
+        <a class="navbar-brand" href="{{ url_for('index') }}"> Pro_Obuv</a>
         <button
           class="navbar-toggler"
           type="button"
@@ -282,42 +285,42 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav me-auto">
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('menu') }}">📋 Menyu</a>
+              <a class="nav-link" href="{{ url_for('menu') }}"> Menyu</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('favorites') }}"
-                >❤️ Sevimlilar</a
+                > Sevimlilar</a
               >
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('contact') }}">📞 Aloqa</a>
+              <a class="nav-link" href="{{ url_for('contact') }}"> Aloqa</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('about') }}">❓ Savollar</a>
+              <a class="nav-link" href="{{ url_for('about') }}"> Savollar</a>
             </li>
           </ul>
           <ul class="navbar-nav">
             {% if session.get('user_id') %}
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('cart') }}">🛒 Savatcha</a>
+              <a class="nav-link" href="{{ url_for('cart') }}"> Savatcha</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('profile') }}"
-                >👤 {{ session.get('user_name') }}</a
+                > {{ session.get('user_name') }}</a
               >
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('logout') }}">🚪 Chiqish</a>
+              <a class="nav-link" href="{{ url_for('logout') }}"> Chiqish</a>
             </li>
             {% else %}
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('login_page') }}"
-                >🔐 Kirish</a
+                > Kirish</a
               >
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('register') }}"
-                >📝 Ro'yxatdan o'tish</a
+                > Ro'yxatdan o'tish</a
               >
             </li>
             {% endif %}
@@ -330,7 +333,7 @@
     <div class="hero-section">
       <div class="container">
         <h1 class="display-4 fw-bold mb-4" data-translate="welcome">
-          👟 Pro Obuv - Sizning Ishonchli Oyoq Kiyim Do'koningiz!
+           Pro Obuv - Sizning Ishonchli Oyoq Kiyim Do'koningiz!
         </h1>
         <p class="lead" data-translate="best_shoes">
           Eng sifatli oyoq kiyimlar va professional xizmat ko'rsatish
@@ -343,7 +346,7 @@
       <div class="row">
         <div class="col-md-6">
           <div class="service-card">
-            <div class="service-icon">🏪</div>
+            <div class="service-icon"></div>
             <h3 data-translate="shoe_catalog">
                Oyoq Kiyim Katalogi
             </h3>
@@ -354,13 +357,13 @@
               href="{{ url_for('menu') }}"
               class="btn-service"
               data-translate="browse_shoes"
-              >👟 Katalogni ko'rish</a
+              > Katalogni ko'rish</a
             >
           </div>
         </div>
         <div class="col-md-6">
           <div class="service-card">
-            <div class="service-icon">🚚</div>
+            <div class="service-icon"></div>
             <h3 data-translate="delivery_service">Yetkazib Berish Xizmati</h3>
             <p data-translate="delivery_desc">
               Toshkent bo'ylab tez va ishonchli yetkazib berish xizmati
@@ -369,7 +372,7 @@
               href="{{ url_for('menu') }}"
               class="btn-service"
               data-translate="order_now"
-              >🚚 Buyurtma berish</a
+              > Buyurtma berish</a
             >
           </div>
         </div>
@@ -382,7 +385,7 @@
     <!-- Contact Section -->
     <div class="container mt-5" id="contact">
       <div class="service-card">
-        <h3 data-translate="contact_us">📞 Biz bilan bog'lanish</h3>
+        <h3 data-translate="contact_us"> Biz bilan bog'lanish</h3>
         <p><strong>Ism:</strong> Moxirbek</p>
         <p><strong>Telefon:</strong> +998 99 145 96 86</p>
         <p><strong>Email:</strong> nasimjonnasimjon46@gmail.com</p>

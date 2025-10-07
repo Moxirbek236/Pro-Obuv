@@ -337,15 +337,15 @@ body.dark-theme .progress-bar {
 <div class="container photo360-management-container">
     <!-- Header -->
     <div class="admin-header text-center">
-        <h1 class="mb-0">🔄 360° Rasm boshqaruvi</h1>
+        <h1 class="mb-0"> 360° Rasm boshqaruvi</h1>
         <p class="mb-0 mt-2">Foydalanuvchilar uchun 360° rasm gallereyasini boshqaring</p>
     </div>
 
     <!-- Upload Section -->
     <div class="upload-section">
-        <h3 class="mb-4">📤 Yangi 360° rasm yuklash</h3>
+        <h3 class="mb-4"> Yangi 360° rasm yuklash</h3>
         <div class="upload-area" id="upload-area">
-            <div class="upload-icon">🔄</div>
+            <div class="upload-icon"></div>
             <div class="upload-text">360° rasmni bu yerga tashlang yoki yuklash uchun bosing</div>
             <div class="upload-subtext">JPG, PNG fayllar qabul qilinadi. Maksimal hajm: 10MB</div>
             <input type="file" class="file-input" id="file-input" accept="image/*" multiple>
@@ -363,14 +363,14 @@ body.dark-theme .progress-bar {
 
     <!-- Gallery Section -->
     <div class="gallery-section">
-        <h3 class="mb-4">🖼️ 360° Rasm gallereyasi</h3>
+        <h3 class="mb-4"> 360° Rasm gallereyasi</h3>
         
         <div class="photo360-gallery" id="photo360-gallery">
             <!-- Photos will be loaded here dynamically -->
         </div>
 
         <div class="empty-state" id="empty-state" style="display: none;">
-            <div class="icon">📷</div>
+            <div class="icon"></div>
             <h4>Hech qanday 360° rasm topilmadi</h4>
             <p>Birinchi 360° rasmni yuklang</p>
         </div>
@@ -382,7 +382,7 @@ body.dark-theme .progress-bar {
     <div class="photo360-viewer">
         <div class="photo360-controls">
             <div class="photo360-title" id="photo360-title">360° Rasm</div>
-            <button class="photo360-close" onclick="closePhoto360Viewer()">✕</button>
+            <button class="photo360-close" onclick="closePhoto360Viewer()"></button>
         </div>
         <img class="photo360-image" id="photo360-image" src="" alt="360° rasm">
     </div>
@@ -531,13 +531,13 @@ function renderPhotos360() {
                 </div>
                 <div class="photo360-actions">
                     <button class="btn-preview" onclick="openPhoto360Viewer('${photo.image_url}', '${photo.title}')">
-                        👁️ Ko'rish
+                         Ko'rish
                     </button>
                     ${!photo.is_active ? `<button class="btn-set-active" onclick="setActive360Photo(${photo.id})">
-                        ✅ Faollashtirish
+                         Faollashtirish
                     </button>` : ''}
                     <button class="btn-delete" onclick="delete360Photo(${photo.id})">
-                        🗑️ O'chirish
+                         O'chirish
                     </button>
                 </div>
             </div>

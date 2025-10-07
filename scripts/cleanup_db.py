@@ -16,10 +16,10 @@ def cleanup_database():
         conn.commit()
         conn.close()
         
-        print(f"✅ Cleaned up {deleted_count} old non-footwear items")
+        print(f" Cleaned up {deleted_count} old non-footwear items")
         return True
     except Exception as e:
-        print(f"❌ Cleanup failed: {e}")
+        print(f" Cleanup failed: {e}")
         return False
 
 if __name__ == "__main__":

@@ -10,73 +10,73 @@ window.currentPath = window.currentPath || window.location.pathname;
 if (typeof window.translations === "undefined") {
   window.translations = {
     uz: {
-      menu: "📋 Menyu",
-      favorites: "❤️ Sevimlilar",
-      contact: "📞 Aloqa",
-      about: "❓ Savollar",
-      downloads: "📱 Yuklamalar",
-      cart: "🛒 Savatcha",
-      profile_info: "👤 Profil ma'lumotlari",
-      profile_settings: "⚙️ Profil sozlamalari",
-      settings: "🔧 Sozlamalar",
-      logout: "🚪 Chiqish",
-      login: "🔐 Kirish",
-      register: "📝 Ro'yxat",
-      user: "👤 Foydalanuvchi",
-      staff: "👨‍💼 Xodim",
-      courier: "🚚 Kuryer",
-      admin: "🔧 Admin",
-      dashboard: "🏠 Dashboard",
-      analytics: "📊 Analytics",
-      reports: "📈 Hisobotlar",
-      system: "⚙️ Tizim",
-      logs: "📝 Loglar",
+      menu: " Menyu",
+      favorites: " Sevimlilar",
+      contact: " Aloqa",
+      about: " Savollar",
+      downloads: " Yuklamalar",
+      cart: " Savatcha",
+      profile_info: " Profil ma'lumotlari",
+      profile_settings: " Profil sozlamalari",
+      settings: " Sozlamalar",
+      logout: " Chiqish",
+      login: " Kirish",
+      register: " Ro'yxat",
+      user: " Foydalanuvchi",
+      staff: " Xodim",
+      courier: " Kuryer",
+      admin: " Admin",
+      dashboard: " Dashboard",
+      analytics: " Analytics",
+      reports: " Hisobotlar",
+      system: " Tizim",
+      logs: " Loglar",
     },
     ru: {
-      menu: "📋 Меню",
-      favorites: "❤️ Избранное",
-      contact: "📞 Контакты",
-      about: "❓ Вопросы",
-      downloads: "📱 Загрузки",
-      cart: "🛒 Корзина",
-      profile_info: "👤 Данные профиля",
-      profile_settings: "⚙️ Настройки профиля",
-      settings: "🔧 Настройки",
-      logout: "🚪 Выход",
-      login: "🔐 Вход",
-      register: "📝 Регистрация",
-      user: "👤 Пользователь",
-      staff: "👨‍💼 Сотрудник",
-      courier: "🚚 Курьер",
-      admin: "🔧 Админ",
-      dashboard: "🏠 Панель",
-      analytics: "📊 Аналитика",
-      reports: "📈 Отчеты",
-      system: "⚙️ Система",
-      logs: "📝 Логи",
+      menu: " Меню",
+      favorites: " Избранное",
+      contact: " Контакты",
+      about: " Вопросы",
+      downloads: " Загрузки",
+      cart: " Корзина",
+      profile_info: " Данные профиля",
+      profile_settings: " Настройки профиля",
+      settings: " Настройки",
+      logout: " Выход",
+      login: " Вход",
+      register: " Регистрация",
+      user: " Пользователь",
+      staff: " Сотрудник",
+      courier: " Курьер",
+      admin: " Админ",
+      dashboard: " Панель",
+      analytics: " Аналитика",
+      reports: " Отчеты",
+      system: " Система",
+      logs: " Логи",
     },
     en: {
-      menu: "📋 Menu",
-      favorites: "❤️ Favorites",
-      contact: "📞 Contact",
-      about: "❓ About",
-      downloads: "📱 Downloads",
-      cart: "🛒 Cart",
-      profile_info: "👤 Profile Info",
-      profile_settings: "⚙️ Profile Settings",
-      settings: "🔧 Settings",
-      logout: "🚪 Logout",
-      login: "🔐 Login",
-      register: "📝 Register",
-      user: "👤 User",
-      staff: "👨‍💼 Staff",
-      courier: "🚚 Courier",
-      admin: "🔧 Admin",
-      dashboard: "🏠 Dashboard",
-      analytics: "📊 Analytics",
-      reports: "📈 Reports",
-      system: "⚙️ System",
-      logs: "📝 Logs",
+      menu: " Menu",
+      favorites: " Favorites",
+      contact: " Contact",
+      about: " About",
+      downloads: " Downloads",
+      cart: " Cart",
+      profile_info: " Profile Info",
+      profile_settings: " Profile Settings",
+      settings: " Settings",
+      logout: " Logout",
+      login: " Login",
+      register: " Register",
+      user: " User",
+      staff: " Staff",
+      courier: " Courier",
+      admin: " Admin",
+      dashboard: " Dashboard",
+      analytics: " Analytics",
+      reports: " Reports",
+      system: " System",
+      logs: " Logs",
     },
   };
 }
@@ -198,7 +198,7 @@ class UniversalThemeManager {
 
     // Cart link
     const cartLink = document.querySelector('a[href*="cart"]');
-    if (cartLink && cartLink.innerHTML.includes("🛒")) {
+    if (cartLink && cartLink.innerHTML.includes("")) {
       const cartBadge =
         cartLink.querySelector(".cart-badge") ||
         cartLink.querySelector("#cart-count");
@@ -462,7 +462,7 @@ function showNotification(message, type = "info") {
     notification.innerHTML = `
       <div style="display:flex;align-items:center;gap:10px">
         <div style="font-size:18px">${
-          type === "success" ? "✅" : type === "error" ? "❌" : "ℹ️"
+          type === "success" ? "" : type === "error" ? "" : "ℹ"
         }</div>
         <div style="flex:1">${message}</div>
       </div>
@@ -610,12 +610,22 @@ function formatPrice(price) {
 
 // Render star rating HTML (used by client-side menu rendering)
 function renderStars(rating) {
-  const r = Math.max(0, Math.round(Number(rating) || 0));
-  let s = "";
+  // Accept numeric rating (can be float) and render 5 star icons
+  const val = Math.max(0, Number(rating) || 0);
+  const full = Math.floor(val);
+  const frac = val - full;
+  let html = "";
   for (let i = 1; i <= 5; i++) {
-    s += `<span class="star${i <= r ? " filled" : ""}">⭐</span>`;
+    if (i <= full) {
+      html += `<span class="star filled" data-rating="${i}"><i class="bi bi-star-fill ui-icon ui-icon--accent" aria-hidden="true"></i></span>`;
+    } else if (i === full + 1 && frac >= 0.5) {
+      // half star
+      html += `<span class="star half" data-rating="${i}"><i class="bi bi-star-half ui-icon ui-icon--accent" aria-hidden="true"></i></span>`;
+    } else {
+      html += `<span class="star" data-rating="${i}"><i class="bi bi-star ui-icon ui-icon--muted" aria-hidden="true"></i></span>`;
+    }
   }
-  return s;
+  return html;
 }
 
 // Provide safe global fallbacks for functions that may be defined in
@@ -703,15 +713,130 @@ if (typeof window.openItemModal === "undefined") {
         if (itemIdInput) itemIdInput.value = item.id || "";
 
         if (mediaContainer) {
-          mediaContainer.innerHTML = "";
-          const img = document.createElement("img");
-          img.src =
-            item.image_url ||
-            item.image ||
-            "/static/images/default-product.jpg";
-          img.alt = item.name || "";
-          img.className = "modal-media-item active";
-          mediaContainer.appendChild(img);
+          // Try to fetch product media via API (works now that endpoint is public)
+          mediaContainer.innerHTML =
+            '<div class="media-loading">Yuklanmoqda...</div>';
+          const apiId = encodeURIComponent(item.id || id);
+          fetch(`/api/product-media/${apiId}`)
+            .then((r) => r.json())
+            .then((json) => {
+              const media = json && json.media ? json.media : [];
+              mediaContainer.innerHTML = "";
+
+              // Build media elements
+              const items = [];
+              media.forEach((m, idx) => {
+                if (m.media_type && m.media_type.startsWith("video")) {
+                  const vid = document.createElement("video");
+                  vid.src = m.media_url;
+                  vid.controls = true;
+                  vid.className = "modal-media-item";
+                  if (idx === 0) vid.classList.add("active");
+                  mediaContainer.appendChild(vid);
+                  items.push(vid);
+                } else {
+                  const img = document.createElement("img");
+                  img.src =
+                    m.media_url ||
+                    item.image_url ||
+                    item.image ||
+                    "/static/images/default-product.jpg";
+                  img.alt = item.name || "";
+                  img.className = "modal-media-item";
+                  if (idx === 0) img.classList.add("active");
+                  mediaContainer.appendChild(img);
+                  items.push(img);
+                }
+              });
+
+              // If no media returned, fallback to single image
+              if (!items.length) {
+                const img = document.createElement("img");
+                img.src =
+                  item.image_url ||
+                  item.image ||
+                  "/static/images/default-product.jpg";
+                img.alt = item.name || "";
+                img.className = "modal-media-item active";
+                mediaContainer.appendChild(img);
+                items.push(img);
+              }
+
+              // Setup prev/next buttons
+              try {
+                const prevBtn = document.getElementById("modalPrevBtn");
+                const nextBtn = document.getElementById("modalNextBtn");
+                let currentIndex = 0;
+
+                function updateNav() {
+                  if (items.length <= 1) {
+                    if (prevBtn) prevBtn.style.display = "none";
+                    if (nextBtn) nextBtn.style.display = "none";
+                  } else {
+                    if (prevBtn) prevBtn.style.display = "block";
+                    if (nextBtn) nextBtn.style.display = "block";
+                  }
+                  items.forEach((it, i) => {
+                    if (i === currentIndex) {
+                      it.classList.add("active");
+                      if (it.tagName === "VIDEO")
+                        try {
+                          it.play().catch(() => {});
+                        } catch (e) {}
+                    } else {
+                      it.classList.remove("active");
+                      if (it.tagName === "VIDEO")
+                        try {
+                          it.pause();
+                          it.currentTime = 0;
+                        } catch (e) {}
+                    }
+                  });
+                }
+
+                if (prevBtn)
+                  prevBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    currentIndex =
+                      (currentIndex - 1 + items.length) % items.length;
+                    updateNav();
+                  };
+                if (nextBtn)
+                  nextBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    currentIndex = (currentIndex + 1) % items.length;
+                    updateNav();
+                  };
+
+                // Keyboard navigation
+                document.onkeydown = function (e) {
+                  const modalEl = document.getElementById("itemModal");
+                  if (!modalEl || modalEl.style.display !== "flex") return;
+                  if (e.key === "ArrowLeft") {
+                    if (prevBtn) prevBtn.click();
+                  }
+                  if (e.key === "ArrowRight") {
+                    if (nextBtn) nextBtn.click();
+                  }
+                };
+
+                updateNav();
+              } catch (e) {
+                // ignore nav setup errors
+              }
+            })
+            .catch((err) => {
+              // fallback to single image
+              mediaContainer.innerHTML = "";
+              const img = document.createElement("img");
+              img.src =
+                item.image_url ||
+                item.image ||
+                "/static/images/default-product.jpg";
+              img.alt = item.name || "";
+              img.className = "modal-media-item active";
+              mediaContainer.appendChild(img);
+            });
         }
 
         // Populate sizes select if present
@@ -844,6 +969,44 @@ if (typeof window.showCategory === "undefined") {
   };
 }
 
+// Ensure closeItemModal exists so templates relying on it won't break if
+// the template-level implementation failed to load. This hides the modal
+// and stops any playing media.
+if (typeof window.closeItemModal === "undefined") {
+  window.closeItemModal = function () {
+    try {
+      const modal = document.getElementById("itemModal");
+      if (modal) {
+        modal.style.display = "none";
+      }
+      // release scroll lock
+      try {
+        document.body.style.overflow = "auto";
+      } catch (e) {}
+
+      // cleanup keyboard handler
+      try {
+        document.onkeydown = null;
+      } catch (e) {}
+
+      // pause any playing video
+      try {
+        const mediaContainer = document.getElementById("modalMediaContainer");
+        if (mediaContainer) {
+          mediaContainer.querySelectorAll("video").forEach((v) => {
+            try {
+              v.pause();
+              v.currentTime = 0;
+            } catch (e) {}
+          });
+        }
+      } catch (e) {}
+    } catch (e) {
+      console.warn("Fallback closeItemModal error", e);
+    }
+  };
+}
+
 if (typeof window.attachCardHandlers === "undefined") {
   window.attachCardHandlers = function () {
     try {
@@ -965,7 +1128,7 @@ const MenuClient = (function () {
             )}</span></div>
             <div class="add-to-cart-section"><button class="btn-cart add-to-cart-btn" data-item-id="${
               item.id
-            }">🛒</button></div>
+            }"></button></div>
           </div>
         </div>`;
 
@@ -1556,10 +1719,10 @@ class NewsTicker {
 
     if (this.isPlaying) {
       this.startAutoSlide();
-      if (this.playIcon) this.playIcon.textContent = "⏸️";
+      if (this.playIcon) this.playIcon.textContent = "⏸";
     } else {
       this.stopAutoSlide();
-      if (this.playIcon) this.playIcon.textContent = "▶️";
+      if (this.playIcon) this.playIcon.textContent = "▶";
     }
   }
 }

@@ -1,0 +1,989 @@
+{% extends "base.html" %} {% block content %}
+<div class="card">
+  <h2>📋 Mahsulotlar boshqaruvi</h2>
+  <p class="muted">Do'kon mahsulotlarini boshqaring</p>
+
+  <div style="margin-bottom: 30px">
+    <h3>Yangi mahsulot qo'shish</h3>
+    <form
+      method="post"
+      action="{{ url_for('admin_add_menu_item') }}"
+      class="add-item-form"
+      enctype="multipart/form-data">
+      <div class="form-grid">
+        <div>
+          <label>Nomi:</label>
+          <input type="text" name="name" required placeholder="Mahsulot nomi" />
+        </div>
+        <div>
+          <label>Narxi (so'm):</label>
+          <input type="number" name="price" required placeholder="25000" />
+        </div>
+        <div>
+          <label>Kategoriya:</label>
+          <select name="category" required>
+            <option value="">Tanlang</option>
+            <option value="specobuv">🥾 Спецобувь</option>
+            <option value="specodezhda">🦺 Спецодежда</option>
+          </select>
+        </div>
+        <div>
+          <label>Mahsulot rasmlari va videolar:</label>
+          <input
+            type="file"
+            name="media_files"
+            accept="image/*,video/*"
+            multiple
+            placeholder="Rasm va videolar tanlang" />
+          <small class="text-muted"
+            >Ko'p fayllarni birga tanlash mumkin. Birinchi rasm asosiy
+            bo'ladi.</small
+          >
+        </div>
+        <div>
+          <label>Chegirma (%):</label>
+          <input
+            type="number"
+            name="discount_percentage"
+            step="0.1"
+            min="0"
+            max="100"
+            placeholder="0" />
+        </div>
+        <div>
+          <label>O'lchamlar (vergul bilan):</label>
+          <input type="text" name="sizes" placeholder="e.g. 36,37,38,39" />
+        </div>
+        <div>
+          <label>Ranglar (vergul bilan):</label>
+          <input
+            type="text"
+            name="colors"
+            placeholder="e.g. black,brown,white" />
+        </div>
+        <div>
+          <label>Tavsif:</label>
+          <textarea
+            name="description"
+            placeholder="Mahsulot haqida qisqacha ma'lumot"
+            rows="2"></textarea>
+        </div>
+        <div style="display: flex; align-items: end">
+          <button type="submit" class="btn">➕ Qo'shish</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="menu-items">
+    <h3>Mavjud mahsulotlar</h3>
+    <div class="menu-items-grid">
+      {% for item in menu_items %}
+      <div
+        class="menu-item-card {% if not item.available %}unavailable{% endif %}">
+        <div class="item-image">
+          <img
+            src="{{ item.image_url or 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&h=200&fit=crop' }}"
+            alt="{{ item.name }}"
+            onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&h=200&fit=crop'" />
+        </div>
+
+        <div class="item-details">
+          <h4>{{ item.name }}</h4>
+          <p class="item-description">
+            {{ item.description or 'Tavsif mavjud emas' }}
+          </p>
+
+          <div class="price-section">
+            {% if item.discount_percentage and item.discount_percentage > 0 %}
+            <div class="price-with-discount">
+              <span class="original-price"
+                >{{ "{:,.0f}".format(item.price) }} so'm</span
+              >
+              <span class="discount-price"
+                >{{ "{:,.0f}".format(item.price * (100 -
+                item.discount_percentage) / 100) }} so'm</span
+              >
+              <span class="discount-badge"
+                >-{{ item.discount_percentage }}%</span
+              >
+            </div>
+            {% else %}
+            <span class="price">{{ "{:,.0f}".format(item.price) }} so'm</span>
+            {% endif %}
+          </div>
+
+          <div class="item-info">
+            <span class="category">
+              {% if item.category == 'tufli' %}👞 Tufli {% elif item.category ==
+              'etik' %}🥾 Etik {% elif item.category == 'mokasima' %}🩴 Mokasima
+              {% elif item.category == 'krosovka' %}👟 Krosovka {% elif
+              item.category == 'botik' %}🩰 Botik {% elif item.category ==
+              'tapochka' %}🏠 Tapochka {% elif item.category == 'sandal' %}👡
+              Sandal {% elif item.category == 'tuflya' %}👠 Tuflya {% else %}👟
+              Oyoq kiyim{% endif %}
+            </span>
+            <span
+              class="status {% if item.available %}available{% else %}unavailable{% endif %}">
+              {% if item.available %}✅ Mavjud{% else %}❌ Mavjud emas{% endif
+              %}
+            </span>
+          </div>
+
+          <!-- Baho ko'rsatish -->
+          <div class="rating-info">
+            <div class="rating-display">
+              <span class="rating-stars">
+                {% for i in range(1, 6) %} {% if i <= (item.rating or 0) %}⭐{%
+                else %}☆{% endif %} {% endfor %}
+              </span>
+              <span class="rating-text"
+                >{{ "%.1f"|format(item.rating or 0) }} ({{ item.orders_count or
+                0 }} buyurtma)</span
+              >
+            </div>
+            <button class="btn small" onclick="showItemRatings({{ item.id }})">
+              📊 Baholarni ko'rish
+            </button>
+          </div>
+
+          <!-- Tahrirlash forması -->
+          <div
+            class="edit-form"
+            id="edit-form-{{ item.id }}"
+            style="display: none">
+            <form
+              method="post"
+              action="{{ url_for('admin_edit_menu_item', item_id=item.id) }}"
+              enctype="multipart/form-data">
+              <div class="edit-grid">
+                <input
+                  type="text"
+                  name="name"
+                  value="{{ item.name }}"
+                  placeholder="Nomi"
+                  required />
+                <input
+                  type="number"
+                  name="price"
+                  value="{{ item.price }}"
+                  placeholder="Narxi"
+                  required />
+                <select name="category" required>
+                  <option value="">Tanlang</option>
+                  <option value="specobuv" {% if item.category == 'specobuv' %}selected{% endif %}>🥾 Спецобувь</option>
+                  <option value="specodezhda" {% if item.category == 'specodezhda' %}selected{% endif %}>🦺 Спецодежда</option>
+                </select>
+                <input
+                  type="number"
+                  name="discount_percentage"
+                  value="{{ item.discount_percentage or 0 }}"
+                  placeholder="Skidka %"
+                  min="0"
+                  max="100"
+                  step="0.1" />
+                <input
+                  type="text"
+                  name="sizes"
+                  value="{{ item.sizes or '' }}"
+                  placeholder="O'lchamlar (36,37,38)" />
+                <input
+                  type="text"
+                  name="colors"
+                  value="{{ item.colors or '' }}"
+                  placeholder="Ranglar (black,brown)" />
+                <input
+                  type="file"
+                  name="media_files"
+                  accept="image/*,video/*"
+                  multiple />
+                <textarea name="description" placeholder="Tavsif">
+{{ item.description }}</textarea
+                >
+                <div class="edit-buttons">
+                  <button type="submit" class="btn small success">
+                    💾 Saqlash
+                  </button>
+                  <button
+                    type="button"
+                    class="btn small"
+                    onclick="toggleEdit({{ item.id }})">
+                    ❌ Bekor qilish
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <div class="item-actions">
+            <button class="btn small" onclick="toggleEdit({{ item.id }})">
+              ✏️ Tahrirlash
+            </button>
+            <button class="btn small" onclick="openStaffMediaModal({{ item.id }})">
+              📷 Media
+            </button>
+            <button
+              type="button"
+              class="btn small"
+              onclick="toggleMenuItem({{ item.id }})">
+              {% if item.available %}Yashirish{% else %}Ko'rsatish{% endif %}
+            </button>
+            <button
+              type="button"
+              class="btn small danger"
+              onclick="deleteMenuItem({{ item.id }}, '{{ item.name }}')">
+              🗑️ O'chirish
+            </button>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div style="margin-top: 20px">
+    <a href="{{ url_for('staff_dashboard') }}" class="btn"
+      >⬅️ Bosh sahifaga qaytish</a
+    >
+  </div>
+</div>
+
+<style>
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 15px;
+    align-items: end;
+  }
+
+  .form-grid label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+
+  .form-grid input,
+  .form-grid select,
+  .form-grid textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+
+  .menu-items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+  }
+
+  .menu-item-card {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .menu-item-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .menu-item-card.unavailable {
+    opacity: 0.6;
+    background: #f5f5f5;
+  }
+
+  .item-image {
+    height: 200px;
+    overflow: hidden;
+  }
+
+  .item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .item-details {
+    padding: 15px;
+  }
+
+  .item-details h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 1.2em;
+  }
+
+  .item-description {
+    color: #666;
+    font-size: 0.9em;
+    margin-bottom: 10px;
+    line-height: 1.4;
+  }
+
+  .price-section {
+    margin-bottom: 10px;
+  }
+
+  .price {
+    color: #28a745;
+    font-weight: bold;
+    font-size: 1.1em;
+  }
+
+  .price-with-discount {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .original-price {
+    color: #999;
+    text-decoration: line-through;
+    font-size: 0.9em;
+  }
+
+  .discount-price {
+    color: #28a745;
+    font-weight: bold;
+    font-size: 1.1em;
+  }
+
+  .discount-badge {
+    background: #dc3545;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: bold;
+  }
+
+  .item-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    font-size: 0.9em;
+  }
+
+  .category {
+    color: #666;
+  }
+
+  .status.available {
+    color: #4caf50;
+    font-weight: bold;
+  }
+
+  .status.unavailable {
+    color: #f44336;
+    font-weight: bold;
+  }
+
+  .edit-form {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    margin: 10px 0;
+  }
+
+  .edit-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .edit-grid input,
+  .edit-grid textarea {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+
+  .edit-grid textarea {
+    grid-column: 1 / -1;
+    resize: vertical;
+    min-height: 60px;
+  }
+
+  /* Improve visibility and layout of edit form controls */
+  .edit-form {
+    background: #ffffff; /* brighter background for contrast */
+    padding: 18px;
+    border-radius: 6px;
+    margin: 12px 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    border: 1px solid rgba(0,0,0,0.06);
+    z-index: 20; /* make sure it sits above other elements */
+  }
+
+  .edit-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    align-items: start;
+  }
+
+  .edit-grid input,
+  .edit-grid select,
+  .edit-grid textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    background: #fff;
+    color: #222;
+    box-sizing: border-box;
+    font-size: 0.95rem;
+  }
+
+  /* Make file inputs and buttons clearer */
+  .edit-grid input[type="file"] {
+    padding: 6px 8px;
+    background: #fafafa;
+    border: 1px dashed #ddd;
+  }
+
+  .edit-grid label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #333;
+  }
+
+  .edit-buttons {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .item-actions .btn,
+  .edit-buttons .btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background .12s ease;
+  }
+
+  .item-actions .btn.small {
+    padding: 6px 10px;
+    font-size: 0.85em;
+  }
+
+  .item-actions .btn:hover,
+  .edit-buttons .btn:hover {
+    background: #0069d9;
+  }
+
+  /* Ensure price/size fields aren't collapsed on some browsers */
+  .price,
+  .price-with-discount,
+  .original-price,
+  .discount-price {
+    display: block;
+    line-height: 1.2;
+  }
+
+  /* Improve category and status visibility */
+  .item-info .category {
+    background: #f1f3f5;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.9em;
+    color: #333;
+  }
+
+  /* Make rating info clearer */
+  .rating-info {
+    margin: 10px 0;
+    padding: 12px;
+    background: #fff9e6;
+    border-radius: 8px;
+    border-left: 4px solid #ffd700;
+  }
+
+  .edit-buttons {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 10px;
+  }
+
+  .item-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .btn.small {
+    padding: 6px 12px;
+    font-size: 0.85em;
+  }
+
+  .btn.success {
+    background: #28a745;
+    color: white;
+  }
+
+  .btn.success:hover {
+    background: #218838;
+  }
+
+  .btn.danger {
+    background: #dc3545;
+    color: white;
+  }
+
+  .btn.danger:hover {
+    background: #c82333;
+  }
+
+  .rating-info {
+    margin: 10px 0;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #ffd700;
+  }
+
+  .rating-display {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .rating-stars {
+    font-size: 16px;
+  }
+
+  .rating-text {
+    font-size: 0.9rem;
+    color: #666;
+  }
+
+  /* Baholar modali */
+  .ratings-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ratings-modal-content {
+    background: white;
+    border-radius: 15px;
+    max-width: 600px;
+    width: 90vw;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  .ratings-header {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8f9fa;
+    border-radius: 15px 15px 0 0;
+  }
+
+  .close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+  }
+
+  .close-btn:hover {
+    background: #f0f0f0;
+    color: #333;
+  }
+
+  .ratings-summary {
+    padding: 15px 20px;
+    background: #fff3cd;
+    border-left: 4px solid #ffd700;
+    margin: 0;
+  }
+
+  .ratings-list {
+    padding: 20px;
+  }
+
+  .rating-item {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    background: #f8f9fa;
+  }
+
+  .rating-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .rating-user {
+    font-weight: bold;
+    color: #4299e1;
+  }
+
+  .rating-date {
+    font-size: 0.8rem;
+    color: #999;
+  }
+
+  .rating-comment {
+    color: #555;
+    line-height: 1.5;
+    margin-top: 10px;
+    padding: 10px;
+    background: white;
+    border-radius: 5px;
+  }
+
+  .no-ratings {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 20px;
+  }
+
+  @media (max-width: 768px) {
+    .menu-items-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .edit-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .item-actions {
+      justify-content: center;
+    }
+
+    .rating-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 5px;
+    }
+  }
+</style>
+
+<script>
+  function toggleEdit(itemId) {
+    const editForm = document.getElementById("edit-form-" + itemId);
+    if (editForm.style.display === "none") {
+      editForm.style.display = "block";
+    } else {
+      editForm.style.display = "none";
+    }
+  }
+
+  function showItemRatings(itemId) {
+    fetch(`/api/get-menu-ratings/${itemId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          let ratingsHtml = `
+                    <div class="ratings-modal">
+                        <div class="ratings-modal-content">
+                            <div class="ratings-header">
+                                <h3>Mahsulot baholari</h3>
+                                <button onclick="closeRatingsModal()" class="close-btn">✕</button>
+                            </div>
+                            <div class="ratings-summary">
+                                <p><strong>O'rtacha baho:</strong> ${data.average_rating}/5 (${data.total_ratings} baho)</p>
+                            </div>
+                            <div class="ratings-list">
+                `;
+
+          if (data.ratings.length > 0) {
+            data.ratings.forEach((rating) => {
+              ratingsHtml += `
+                            <div class="rating-item">
+                                <div class="rating-header">
+                                    <span class="rating-user">${
+                                      rating.user_name
+                                    }</span>
+                                    <span class="rating-stars">${"⭐".repeat(
+                                      rating.rating
+                                    )}${"☆".repeat(5 - rating.rating)}</span>
+                                    <span class="rating-date">${
+                                      rating.created_at
+                                    }</span>
+                                </div>
+                                ${
+                                  rating.comment
+                                    ? `<div class="rating-comment">${rating.comment}</div>`
+                                    : ""
+                                }
+                            </div>
+                        `;
+            });
+          } else {
+            ratingsHtml += '<p class="no-ratings">Hali baholar yo\'q</p>';
+          }
+
+          ratingsHtml += `
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+          document.body.insertAdjacentHTML("beforeend", ratingsHtml);
+        } else {
+          alert("Baholarni yuklashda xatolik: " + data.message);
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("Baholarni yuklashda xatolik");
+      });
+  }
+
+  function closeRatingsModal() {
+    const modal = document.querySelector(".ratings-modal");
+    if (modal) {
+      modal.remove();
+    }
+  }
+
+  function toggleMenuItem(itemId) {
+    if (!confirm("Mahsulot holatini o'zgartirishni xohlaysizmi?")) {
+      return;
+    }
+
+    fetch(`/admin/toggle_menu_item/${itemId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-Token": typeof CSRF_TOKEN !== "undefined" ? CSRF_TOKEN : "",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          // Sahifani qayta yuklash
+          location.reload();
+        } else {
+          alert(
+            "Xatolik: " + (data.message || data.error || "Noma'lum xatolik")
+          );
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("Xatolik yuz berdi");
+      });
+  }
+
+  function deleteMenuItem(itemId, itemName) {
+    // Ikki marta tasdiqlash - xavfsizlik uchun
+    if (
+      !confirm(
+        `Haqiqatan ham '${itemName}' mahsulotini butunlay o'chirmoqchimisiz?\n\n⚠️ DIQQAT: Bu amalni bekor qilish mumkin emas!`
+      )
+    ) {
+      return;
+    }
+
+    if (
+      !confirm(
+        "Oxirgi tasdiqlash: Mahsulot va unga bog'liq barcha ma'lumotlar (buyurtmalar, baholar, sevimlilar) o'chiriladi. Davom etasizmi?"
+      )
+    ) {
+      return;
+    }
+
+    // Loading indicator
+    const button = event.target;
+    const originalText = button.innerHTML;
+    button.innerHTML = "⏳ O'chirilmoqda...";
+    button.disabled = true;
+
+    fetch(`/admin/delete_menu_item/${itemId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-Token": typeof CSRF_TOKEN !== "undefined" ? CSRF_TOKEN : "",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          alert("✅ " + (data.message || "Mahsulot muvaffaqiyatli o'chirildi"));
+          // Sahifani qayta yuklash
+          location.reload();
+        } else {
+          alert(
+            "❌ Xatolik: " + (data.message || data.error || "Noma'lum xatolik")
+          );
+          // Button holatini tiklash
+          button.innerHTML = originalText;
+          button.disabled = false;
+        }
+      })
+      .catch((error) => {
+        console.error("Delete error:", error);
+        alert("❌ Mahsulotni o'chirishda xatolik yuz berdi");
+        // Button holatini tiklash
+        button.innerHTML = originalText;
+        button.disabled = false;
+      });
+  }
+</script>
+<!-- Staff media modal -->
+<div id="staffMediaModal" class="ratings-modal" style="display:none;">
+  <div class="ratings-modal-content" style="max-width:800px;">
+    <div class="ratings-header">
+      <h3 id="staffMediaTitle">Mahsulot media</h3>
+      <button class="close-btn" onclick="closeStaffMediaModal()">✕</button>
+    </div>
+    <div class="ratings-list" id="staffMediaList" style="display:flex;flex-wrap:wrap;gap:10px;padding:16px;">
+      <!-- media thumbnails injected here -->
+    </div>
+  </div>
+</div>
+
+<script>
+  async function openStaffMediaModal(itemId) {
+    try {
+      const modal = document.getElementById('staffMediaModal');
+      const title = document.getElementById('staffMediaTitle');
+      const list = document.getElementById('staffMediaList');
+      title.textContent = 'Mahsulot media (ID: ' + itemId + ')';
+      list.innerHTML = '<div style="padding:12px">Yuklanmoqda...</div>';
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+
+      const res = await fetch('/api/product-media/' + itemId);
+      const j = await res.json();
+      const media = (j && j.media) ? j.media : [];
+      if (!media || media.length === 0) {
+        list.innerHTML = '<div class="no-ratings">Media mavjud emas</div>';
+        return;
+      }
+
+      list.innerHTML = '';
+      media.forEach(m => {
+        const wrap = document.createElement('div');
+        wrap.style.width = '160px';
+        wrap.style.border = '1px solid #eee';
+        wrap.style.borderRadius = '8px';
+        wrap.style.overflow = 'hidden';
+        wrap.style.background = '#fff';
+        wrap.style.boxShadow = '0 1px 3px rgba(0,0,0,0.04)';
+        wrap.style.display = 'flex';
+        wrap.style.flexDirection = 'column';
+
+        if (m.media_type && m.media_type.startsWith('video')) {
+          const v = document.createElement('video');
+          v.src = m.media_url;
+          v.controls = true;
+          v.style.width = '100%';
+          v.style.height = '120px';
+          v.style.objectFit = 'cover';
+          v.style.cursor = 'pointer';
+          v.onclick = function(e) { try { closeStaffMediaModal(); openItemModal(itemId, e); } catch(e){} };
+          wrap.appendChild(v);
+        } else {
+          const img = document.createElement('img');
+          img.src = m.media_url;
+          img.style.width = '100%';
+          img.style.height = '120px';
+          img.style.objectFit = 'cover';
+          img.style.cursor = 'pointer';
+          img.onclick = function(e) { try { closeStaffMediaModal(); openItemModal(itemId, e); } catch(e){} };
+          wrap.appendChild(img);
+        }
+
+        const meta = document.createElement('div');
+        meta.style.padding = '8px';
+        meta.style.display = 'flex';
+        meta.style.gap = '8px';
+        meta.style.justifyContent = 'space-between';
+
+        const setMainBtn = document.createElement('button');
+        setMainBtn.className = 'btn small';
+        setMainBtn.textContent = m.is_main ? 'Asosiy' : 'Set main';
+        setMainBtn.onclick = async (ev) => {
+          ev.stopPropagation();
+          try {
+            // Identify media id
+            const resp = await fetch('/api/product-media/identify', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ item_id: itemId, media_url: m.media_url }) });
+            const jj = await resp.json();
+            if (jj && jj.media_id) {
+              await fetch(`/api/product-media/${jj.media_id}/set-main`, { method: 'POST' });
+              openStaffMediaModal(itemId); // refresh
+            } else alert('Media ID topilmadi');
+          } catch (e) { console.error(e); alert('Xatolik'); }
+        };
+
+        const delBtn = document.createElement('button');
+        delBtn.className = 'btn small btn-danger';
+        delBtn.textContent = 'O\'chirish';
+        delBtn.onclick = async (ev) => {
+          ev.stopPropagation();
+          if (!confirm('Bu faylni o\'chirmoqchimisiz?')) return;
+          try {
+            const resp = await fetch('/api/product-media/identify', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ media_url: m.media_url }) });
+            const jj = await resp.json();
+            if (jj && jj.media_id) {
+              await fetch(`/api/product-media/${jj.media_id}/delete`, { method: 'DELETE' });
+              openStaffMediaModal(itemId);
+            } else alert('Media ID topilmadi');
+          } catch (e) { console.error(e); alert('Xatolik'); }
+        };
+
+        meta.appendChild(setMainBtn);
+        meta.appendChild(delBtn);
+        wrap.appendChild(meta);
+        list.appendChild(wrap);
+      });
+
+    } catch (e) {
+      console.error('openStaffMediaModal error', e);
+      alert('Media yuklashda xatolik');
+    }
+  }
+
+  function closeStaffMediaModal() {
+    const modal = document.getElementById('staffMediaModal');
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+  }
+</script>
+{% endblock %}

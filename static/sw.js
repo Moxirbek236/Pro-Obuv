@@ -16,7 +16,15 @@ const urlsToCache = [
 self.addEventListener("install", function (event) {
   event.waitUntil(
     caches.open(CACHE_NAME).then(function (cache) {
-      return cache.addAll(urlsToCache);
+      return cache.addAll(urlsToCache).catch(function (err) {
+        console.warn("Service worker cache.addAll failed:", err);
+        // Optionally, try to add files one by one
+        return Promise.all(
+          urlsToCache.map((url) =>
+            cache.add(url).catch((e) => console.warn("Failed to cache", url, e))
+          )
+        );
+      });
     })
   );
 });

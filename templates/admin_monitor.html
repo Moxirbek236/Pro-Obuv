@@ -302,7 +302,7 @@
 
     <!-- Weather Widget -->
     <div class="weather-widget">
-        <div class="weather-location">🏙️ Toshkent</div>
+        <div class="weather-location"> Toshkent</div>
         <div id="temperature" class="temperature">--°C</div>
         <div id="weatherDesc" class="weather-desc">Yuklanmoqda...</div>
         <div id="weatherDetails" class="weather-details"></div>
@@ -315,7 +315,7 @@
 
     <div class="monitor-container">
         <div class="monitor-header">
-            <h1>📺 Buyurtmalar Monitori</h1>
+            <h1> Buyurtmalar Monitori</h1>
             <p style="margin: 10px 0 0 0; font-size: 1.3rem;">TV ko'rinish - Avtomatik yangilanadi</p>
         </div>
 
@@ -348,7 +348,7 @@
                                     <tr class="table-warning">
                                         <td colspan="4">
                                             <div class="order-items">
-                                                <strong>📋 Buyurtma:</strong> {{ o['order_items'] }}
+                                                <strong> Buyurtma:</strong> {{ o['order_items'] }}
                                             </div>
                                         </td>
                                     </tr>
@@ -357,7 +357,7 @@
                                 {% else %}
                                     <tr>
                                         <td colspan="4" class="no-orders">
-                                            🎉 Kutayotgan buyurtmalar yo'q
+                                             Kutayotgan buyurtmalar yo'q
                                         </td>
                                     </tr>
                                 {% endif %}
@@ -371,7 +371,7 @@
             <div class="col-12 col-lg-4">
                 <div class="monitor-section ready-section">
                     <div class="status-counter">{{ ready|length }}</div>
-                    <h4 class="section-title">✅ Tayyor</h4>
+                    <h4 class="section-title"> Tayyor</h4>
                     <div class="table-responsive">
                         <table class="monitor-table">
                             <thead>
@@ -395,7 +395,7 @@
                                     <tr class="table-success">
                                         <td colspan="4">
                                             <div class="order-items">
-                                                <strong>📋 Mahsulotlar:</strong> {{ o['order_items'] }}
+                                                <strong> Mahsulotlar:</strong> {{ o['order_items'] }}
                                             </div>
                                         </td>
                                     </tr>
@@ -404,7 +404,7 @@
                                 {% else %}
                                     <tr>
                                         <td colspan="4" class="no-orders">
-                                            🔄 Tayyor buyurtmalar yo'q
+                                             Tayyor buyurtmalar yo'q
                                         </td>
                                     </tr>
                                 {% endif %}
@@ -418,7 +418,7 @@
             <div class="col-12 col-lg-4">
                 <div class="monitor-section served-section">
                     <div class="status-counter">{{ served_recent|length }}</div>
-                    <h4 class="section-title">🍽️ Berildi (So'nggi 5 daqiqa)</h4>
+                    <h4 class="section-title"> Berildi (So'nggi 5 daqiqa)</h4>
                     <div class="table-responsive">
                         <table class="monitor-table">
                             <thead>
@@ -442,7 +442,7 @@
                                     <tr class="table-info">
                                         <td colspan="4">
                                             <div class="order-items">
-                                                <strong>📋 Mahsulotlar:</strong> {{ o['order_items'] }}
+                                                <strong> Mahsulotlar:</strong> {{ o['order_items'] }}
                                             </div>
                                         </td>
                                     </tr>
@@ -451,7 +451,7 @@
                                 {% else %}
                                     <tr>
                                         <td colspan="4" class="no-orders">
-                                            ✨ So'nggi 5 daqiqada berilgan buyurtmalar yo'q
+                                             So'nggi 5 daqiqada berilgan buyurtmalar yo'q
                                         </td>
                                     </tr>
                                 {% endif %}
@@ -509,7 +509,7 @@
 
                     document.getElementById('temperature').textContent = `${temp}°C`;
                     document.getElementById('weatherDesc').textContent = `${getWeatherIcon(data.weather[0].main)} ${description}`;
-                    document.getElementById('weatherDetails').innerHTML = `💧 ${humidity}% | 💨 ${windSpeed} m/s`;
+                    document.getElementById('weatherDetails').innerHTML = ` ${humidity}% |  ${windSpeed} m/s`;
                 })
                 .catch(error => {
                     console.log('Weather API failed, using simulation');
@@ -520,25 +520,25 @@
         // Weather icons
         function getWeatherIcon(main) {
             const icons = {
-                'Clear': '☀️',
-                'Clouds': '☁️',
-                'Rain': '🌧️',
-                'Drizzle': '🌦️',
-                'Thunderstorm': '⛈️',
-                'Snow': '❄️',
-                'Mist': '🌫️',
-                'Fog': '🌫️'
+                'Clear': '',
+                'Clouds': '',
+                'Rain': '',
+                'Drizzle': '',
+                'Thunderstorm': '',
+                'Snow': '',
+                'Mist': '',
+                'Fog': ''
             };
-            return icons[main] || '🌤️';
+            return icons[main] || '';
         }
 
         // Weather simulation
         function simulateWeather() {
             const seasons = {
-                winter: { temp: [0, 10], conditions: ['☁️ Bulutli', '❄️ Qorli', '🌫️ Tumanli'] },
-                spring: { temp: [15, 25], conditions: ['🌤️ Qisman bulutli', '☀️ Quyoshli', '🌧️ Yomg\'irli'] },
-                summer: { temp: [25, 40], conditions: ['☀️ Quyoshli', '🌤️ Issiq', '⛅ Qisman bulutli'] },
-                autumn: { temp: [10, 20], conditions: ['🍂 Kuzgi', '☁️ Bulutli', '🌧️ Yomg\'irli'] }
+                winter: { temp: [0, 10], conditions: [' Bulutli', ' Qorli', ' Tumanli'] },
+                spring: { temp: [15, 25], conditions: [' Qisman bulutli', ' Quyoshli', ' Yomg\'irli'] },
+                summer: { temp: [25, 40], conditions: [' Quyoshli', ' Issiq', ' Qisman bulutli'] },
+                autumn: { temp: [10, 20], conditions: [' Kuzgi', ' Bulutli', ' Yomg\'irli'] }
             };
 
             const month = new Date().getMonth();
@@ -556,7 +556,7 @@
 
             document.getElementById('temperature').textContent = `${temp}°C`;
             document.getElementById('weatherDesc').textContent = condition;
-            document.getElementById('weatherDetails').innerHTML = `💧 ${humidity}% | 💨 ${windSpeed} m/s`;
+            document.getElementById('weatherDetails').innerHTML = ` ${humidity}% |  ${windSpeed} m/s`;
         }
 
         // Auto refresh countdown

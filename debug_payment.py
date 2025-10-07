@@ -22,7 +22,7 @@ def get_db():
 
 def debug_payment_methods():
     """Debug payment methods similar to the app logic."""
-    print("🔍 Debugging payment methods...")
+    print(" Debugging payment methods...")
     
     try:
         with get_db() as conn:
@@ -30,16 +30,16 @@ def debug_payment_methods():
             
             # Initialize payment methods structure
             payment_methods = {
-                'cash': {'available': True, 'name': 'Naqd pul', 'icon': '💵'},
-                'card': {'available': False, 'name': 'Bank kartasi', 'icon': '💳', 'cards': []},
-                'click': {'available': False, 'name': 'Click', 'icon': '🟦', 'qr_url': None},
-                'payme': {'available': False, 'name': 'Payme', 'icon': '🟨', 'qr_url': None}
+                'cash': {'available': True, 'name': 'Naqd pul', 'icon': ''},
+                'card': {'available': False, 'name': 'Bank kartasi', 'icon': '', 'cards': []},
+                'click': {'available': False, 'name': 'Click', 'icon': '', 'qr_url': None},
+                'payme': {'available': False, 'name': 'Payme', 'icon': '', 'qr_url': None}
             }
             
-            print("✅ Basic payment methods structure initialized")
+            print(" Basic payment methods structure initialized")
             
             # Check for active payment cards
-            print("\n🔍 Checking payment cards...")
+            print("\n Checking payment cards...")
             cards_query = "SELECT id, card_name, card_number, card_holder_name, bank_name FROM payment_cards WHERE is_active = 1 ORDER BY display_order ASC"
             
             try:
@@ -53,15 +53,15 @@ def debug_payment_methods():
                 if cards:
                     payment_methods['card']['available'] = True
                     payment_methods['card']['cards'] = [dict(card) for card in cards]
-                    print("✅ Card payments enabled")
+                    print(" Card payments enabled")
                 else:
-                    print("❌ No active cards found")
+                    print(" No active cards found")
                     
             except Exception as e:
-                print(f"❌ Error querying payment cards: {e}")
+                print(f" Error querying payment cards: {e}")
             
             # Check for QR codes
-            print("\n🔍 Checking QR settings...")
+            print("\n Checking QR settings...")
             qr_query = "SELECT click_qr_url, payme_qr_url FROM card_payment_settings WHERE id = 1"
             
             try:
@@ -76,24 +76,24 @@ def debug_payment_methods():
                     if qr_settings['click_qr_url']:
                         payment_methods['click']['available'] = True
                         payment_methods['click']['qr_url'] = qr_settings['click_qr_url']
-                        print("✅ Click payments enabled")
+                        print(" Click payments enabled")
                         
                     if qr_settings['payme_qr_url']:
                         payment_methods['payme']['available'] = True
                         payment_methods['payme']['qr_url'] = qr_settings['payme_qr_url']
-                        print("✅ Payme payments enabled")
+                        print(" Payme payments enabled")
                 else:
-                    print("❌ No QR settings found")
+                    print(" No QR settings found")
                     
             except Exception as e:
-                print(f"❌ Error querying QR settings: {e}")
+                print(f" Error querying QR settings: {e}")
             
             # Final summary
-            print("\n📋 FINAL PAYMENT METHODS STATUS:")
+            print("\n FINAL PAYMENT METHODS STATUS:")
             for method_name, method_data in payment_methods.items():
                 available = method_data.get('available', False)
                 name = method_data.get('name', method_name)
-                status = "✅ Available" if available else "❌ Not Available"
+                status = " Available" if available else " Not Available"
                 print(f"  {method_name.upper()}: {status} - {name}")
                 
                 if method_name == 'card' and available:
@@ -107,7 +107,7 @@ def debug_payment_methods():
             return payment_methods
             
     except Exception as e:
-        print(f"💥 Critical error: {e}")
+        print(f" Critical error: {e}")
         return None
 
 if __name__ == "__main__":

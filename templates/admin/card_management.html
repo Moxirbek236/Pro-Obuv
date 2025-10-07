@@ -226,7 +226,7 @@ body.dark-theme .form-control:focus {
 <div class="container card-management-container">
     <!-- Header -->
     <div class="admin-header text-center">
-        <h1 class="mb-0">💳 Karta ma'lumotlari boshqaruvi</h1>
+        <h1 class="mb-0"> Karta ma'lumotlari boshqaruvi</h1>
         <p class="mb-0 mt-2">To'lov tizimi uchun karta va QR kod ma'lumotlarini boshqaring</p>
     </div>
 
@@ -240,16 +240,16 @@ body.dark-theme .form-control:focus {
 
     <!-- Card Information Section -->
     <div class="card-section">
-        <h3 class="mb-4">🏦 Karta ma'lumotlari</h3>
+        <h3 class="mb-4"> Karta ma'lumotlari</h3>
         
         <!-- Card Preview -->
         <div class="card-display" id="card-preview">
             <div class="d-flex justify-content-between align-items-start">
                 <div>
-                    <h5 class="mb-0">💳 Pro-Obuv</h5>
+                    <h5 class="mb-0"> Pro-Obuv</h5>
                     <small style="opacity: 0.8;">Oyoq kiyimlar do'koni</small>
                 </div>
-                <div style="font-size: 1.5rem;">🏧</div>
+                <div style="font-size: 1.5rem;"></div>
             </div>
             <div class="card-number" id="card-number-preview">
                 **** **** **** ****
@@ -279,17 +279,17 @@ body.dark-theme .form-control:focus {
 
     <!-- QR Codes Section -->
     <div class="card-section">
-        <h3 class="mb-4">📱 QR Kodlar</h3>
+        <h3 class="mb-4"> QR Kodlar</h3>
         <div class="qr-section">
             <!-- Click QR -->
             <div class="qr-item">
-                <h5 class="mb-3">💙 Click to'lovi</h5>
+                <h5 class="mb-3"> Click to'lovi</h5>
                 <div id="click-qr-preview">
-                    <div class="qr-placeholder">📷</div>
+                    <div class="qr-placeholder"></div>
                 </div>
                 <div class="upload-area">
                     <button type="button" class="btn-upload">
-                        📤 Click QR yuklash
+                         Click QR yuklash
                     </button>
                     <input type="file" class="upload-input" id="click-qr-upload" 
                            accept="image/*" onchange="handleQRUpload(this, 'click')">
@@ -298,13 +298,13 @@ body.dark-theme .form-control:focus {
 
             <!-- Payme QR -->
             <div class="qr-item">
-                <h5 class="mb-3">💚 Payme to'lovi</h5>
+                <h5 class="mb-3"> Payme to'lovi</h5>
                 <div id="payme-qr-preview">
-                    <div class="qr-placeholder">📷</div>
+                    <div class="qr-placeholder"></div>
                 </div>
                 <div class="upload-area">
                     <button type="button" class="btn-upload">
-                        📤 Payme QR yuklash
+                         Payme QR yuklash
                     </button>
                     <input type="file" class="upload-input" id="payme-qr-upload" 
                            accept="image/*" onchange="handleQRUpload(this, 'payme')">
@@ -316,7 +316,7 @@ body.dark-theme .form-control:focus {
     <!-- Save Button -->
     <div class="text-center">
         <button type="button" class="btn-save" onclick="saveCardData()">
-            💾 Ma'lumotlarni saqlash
+             Ma'lumotlarni saqlash
         </button>
     </div>
 </div>
@@ -432,7 +432,7 @@ function updateQRPreview(type, url) {
     if (url) {
         preview.innerHTML = `<img src="${url}" class="qr-preview" alt="${type} QR">`;
     } else {
-        preview.innerHTML = '<div class="qr-placeholder">📷</div>';
+        preview.innerHTML = '<div class="qr-placeholder"></div>';
     }
 }
 

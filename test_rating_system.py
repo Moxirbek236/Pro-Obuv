@@ -101,10 +101,10 @@ def test_rating_insert():
             "INSERT INTO ratings (menu_item_id, branch_id, user_id, rating, comment, created_at) VALUES (?, NULL, ?, ?, ?, ?)",
             (menu_item_id, user_id, 5, "Test rating", now)
         )
-        print("✓ Direct rating insert successful")
+        print(" Direct rating insert successful")
         return True
     except Exception as e:
-        print(f"✗ Direct rating insert failed: {str(e)}")
+        print(f" Direct rating insert failed: {str(e)}")
         return False
 
 def test_rating_api_with_app():
@@ -140,10 +140,10 @@ def test_rating_api_with_app():
             print(f"API Response Data: {response.get_json()}")
             
             if response.status_code == 200:
-                print("✓ Rating API test successful")
+                print(" Rating API test successful")
                 return True
             else:
-                print("✗ Rating API test failed")
+                print(" Rating API test failed")
                 return False
 
 def test_get_ratings_api():
@@ -161,10 +161,10 @@ def test_get_ratings_api():
         print(f"Get Ratings API Data: {response.get_json()}")
         
         if response.status_code == 200:
-            print("✓ Get ratings API test successful")
+            print(" Get ratings API test successful")
             return True
         else:
-            print("✗ Get ratings API test failed")
+            print(" Get ratings API test failed")
             return False
 
 def main():
@@ -184,17 +184,17 @@ def main():
         
         print("\n" + "=" * 50)
         print("SUMMARY:")
-        print(f"✓ Schema check: {'PASS' if schema_ok else 'FAIL'}")
-        print(f"✓ Direct insert: {'PASS' if insert_ok else 'FAIL'}")
-        print(f"✓ Submit API: {'PASS' if api_ok else 'FAIL'}")
-        print(f"✓ Get ratings API: {'PASS' if get_api_ok else 'FAIL'}")
+        print(f" Schema check: {'PASS' if schema_ok else 'FAIL'}")
+        print(f" Direct insert: {'PASS' if insert_ok else 'FAIL'}")
+        print(f" Submit API: {'PASS' if api_ok else 'FAIL'}")
+        print(f" Get ratings API: {'PASS' if get_api_ok else 'FAIL'}")
         
         if all([schema_ok, insert_ok, api_ok, get_api_ok]):
-            print("\n🎉 Rating system appears to be working correctly!")
+            print("\n Rating system appears to be working correctly!")
         else:
-            print("\n❌ Rating system has issues that need to be fixed.")
+            print("\n Rating system has issues that need to be fixed.")
     else:
-        print("\n❌ Cannot proceed due to schema issues.")
+        print("\n Cannot proceed due to schema issues.")
 
 if __name__ == '__main__':
     main()

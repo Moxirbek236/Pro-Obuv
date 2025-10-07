@@ -1,0 +1,597 @@
+{% extends "base.html" %}
+{% block title %}360° Room - Pro-Obuv{% endblock %}
+
+{% block additional_css %}
+<style>
+.room360-container {
+    min-height: calc(100vh - 200px);
+    padding: 20px 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #667eea 100%);
+    background-size: 200% 200%;
+    animation: gradientMove 10s ease-in-out infinite;
+}
+
+@keyframes gradientMove {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.room-header {
+    text-align: center;
+    color: white;
+    margin-bottom: 40px;
+}
+
+.room-title {
+    font-size: 3.5rem;
+    font-weight: 900;
+    margin-bottom: 20px;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    animation: titleFloat 3s ease-in-out infinite;
+}
+
+@keyframes titleFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+.room-subtitle {
+    font-size: 1.3rem;
+    opacity: 0.9;
+    margin-bottom: 30px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.room-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.room-item {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 25px;
+    text-align: center;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.room-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.5s;
+}
+
+.room-item:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+}
+
+.room-item:hover::before {
+    left: 100%;
+}
+
+.room-preview {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.room-preview:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.room-info h3 {
+    color: #2d3748;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.room-description {
+    color: #718096;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.btn-view-360 {
+    background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 20px rgba(66, 153, 225, 0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-view-360:hover {
+    background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(66, 153, 225, 0.5);
+}
+
+.btn-view-360::before {
+    content: '🔄';
+    position: absolute;
+    left: -30px;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: left 0.3s ease;
+}
+
+.btn-view-360:hover::before {
+    left: 10px;
+}
+
+.btn-view-360 span {
+    transition: all 0.3s ease;
+}
+
+.btn-view-360:hover span {
+    transform: translateX(20px);
+}
+
+/* 360 Photo Viewer Modal */
+.photo360-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+}
+
+.photo360-viewer {
+    width: 95%;
+    max-width: 1000px;
+    height: 80%;
+    background: #000;
+    border-radius: 15px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.photo360-controls {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 20px;
+    background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, transparent 100%);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+}
+
+.photo360-title {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.photo360-close {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.photo360-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+}
+
+.photo360-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: grab;
+    user-select: none;
+    transition: transform 0.1s ease-out;
+}
+
+.photo360-image:active {
+    cursor: grabbing;
+}
+
+.photo360-instructions {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    text-align: center;
+    animation: instructionsFade 3s ease-in-out;
+}
+
+@keyframes instructionsFade {
+    0%, 80% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+.empty-state {
+    text-align: center;
+    color: white;
+    padding: 100px 20px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.empty-state .icon {
+    font-size: 5rem;
+    margin-bottom: 30px;
+    opacity: 0.7;
+}
+
+.empty-state h2 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+.empty-state p {
+    font-size: 1.2rem;
+    opacity: 0.8;
+    line-height: 1.6;
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Dark theme support */
+body.dark-theme .room-item {
+    background: rgba(45, 45, 45, 0.95) !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+body.dark-theme .room-info h3 {
+    color: #ffffff !important;
+}
+
+body.dark-theme .room-description {
+    color: #e0e0e0 !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .room-title {
+        font-size: 2.5rem;
+    }
+    
+    .room-gallery {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 0 15px;
+    }
+    
+    .room-item {
+        padding: 20px;
+    }
+    
+    .room-preview {
+        height: 200px;
+    }
+    
+    .photo360-viewer {
+        width: 98%;
+        height: 85%;
+    }
+    
+    .photo360-controls {
+        padding: 15px;
+    }
+    
+    .photo360-title {
+        font-size: 1.2rem;
+    }
+    
+    .photo360-close {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .room-title {
+        font-size: 2rem;
+    }
+    
+    .room-subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .btn-view-360 {
+        padding: 10px 25px;
+        font-size: 0.9rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="room360-container">
+    <div class="container">
+        <!-- Header -->
+        <div class="room-header">
+            <h1 class="room-title">🔄 360° Room</h1>
+            <p class="room-subtitle">Pro-Obuv do'konining virtual ko'rinishini 360 gradusda ko'ring!</p>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div class="text-center" id="loading-section">
+            <div class="loading-spinner"></div>
+            <p style="color: white; margin-top: 10px;">360° rasmlar yuklanmoqda...</p>
+        </div>
+
+        <!-- Gallery -->
+        <div class="room-gallery" id="room-gallery" style="display: none;">
+            <!-- Photos will be loaded here dynamically -->
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="empty-state" style="display: none;">
+            <div class="icon">📷</div>
+            <h2>Hali 360° rasmlar mavjud emas</h2>
+            <p>Do'konimizning 360° virtual ko'rinishlari tez orada qo'shiladi. Kuting va eng yaxshi tajribani olishga tayyorlaning!</p>
+        </div>
+    </div>
+</div>
+
+<!-- 360 Photo Viewer Modal -->
+<div class="photo360-modal" id="photo360-modal">
+    <div class="photo360-viewer">
+        <div class="photo360-controls">
+            <div class="photo360-title" id="photo360-title">360° Ko'rinish</div>
+            <button class="photo360-close" onclick="closePhoto360Viewer()">✕</button>
+        </div>
+        <img class="photo360-image" id="photo360-image" src="" alt="360° rasm" draggable="false">
+        <div class="photo360-instructions">
+            🖱️ Sichqonchani bosib suring yoki ekranni teginib suring
+        </div>
+    </div>
+</div>
+
+<script>
+let photos360 = [];
+let dragStartX = 0;
+let currentRotationX = 0;
+let isDragging = false;
+
+// Load photos on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Use server-side data instead of API call
+    photos360 = {{ photos_360|tojson|safe }} || [];
+    
+    setTimeout(() => {
+        document.getElementById('loading-section').style.display = 'none';
+        
+        if (photos360.length > 0) {
+            renderPhotos360();
+        } else {
+            showEmptyState();
+        }
+    }, 1000); // Add a small delay for better UX
+});
+
+function renderPhotos360() {
+    const gallery = document.getElementById('room-gallery');
+    gallery.style.display = 'grid';
+    
+    gallery.innerHTML = photos360.map((photo, index) => `
+        <div class="room-item" style="animation-delay: ${index * 0.2}s">
+            <img src="${photo.image_url}" alt="${photo.title || '360° Ko\'rinish'}" 
+                 class="room-preview" onclick="openPhoto360Viewer('${photo.image_url}', '${photo.title || '360° Ko\'rinish'}')">
+            <div class="room-info">
+                <h3>${photo.title || 'Nomsiz 360° Ko\'rinish'}</h3>
+                <p class="room-description">
+                    ${photo.description || 'Pro-Obuv do\'konining ajoyib 360° ko\'rinishini kashf eting!'}
+                </p>
+                <button class="btn-view-360" onclick="openPhoto360Viewer('${photo.image_url}', '${photo.title || '360° Ko\'rinish'}')">
+                    <span>360° Ko'rish</span>
+                </button>
+            </div>
+        </div>
+    `).join('');
+    
+    // Add entrance animations
+    const items = gallery.querySelectorAll('.room-item');
+    items.forEach((item, index) => {
+        setTimeout(() => {
+            item.style.animation = 'fadeInUp 0.6s ease-out forwards';
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(30px)';
+            
+            // Animate in
+            setTimeout(() => {
+                item.style.opacity = '1';
+                item.style.transform = 'translateY(0)';
+            }, 50);
+        }, index * 200);
+    });
+}
+
+function showEmptyState() {
+    document.getElementById('empty-state').style.display = 'block';
+}
+
+function openPhoto360Viewer(imageUrl, title) {
+    const modal = document.getElementById('photo360-modal');
+    const image = document.getElementById('photo360-image');
+    const titleElement = document.getElementById('photo360-title');
+    
+    titleElement.textContent = title || '360° Ko\'rinish';
+    image.src = imageUrl;
+    modal.style.display = 'flex';
+    
+    // Reset rotation
+    currentRotationX = 0;
+    image.style.transform = 'rotateY(0deg)';
+    
+    // Add event listeners for 360 interaction
+    setup360Interaction();
+    
+    // Prevent body scroll
+    document.body.style.overflow = 'hidden';
+}
+
+function setup360Interaction() {
+    const image = document.getElementById('photo360-image');
+    
+    // Mouse events
+    image.addEventListener('mousedown', start360Drag);
+    document.addEventListener('mousemove', do360Drag);
+    document.addEventListener('mouseup', end360Drag);
+    
+    // Touch events for mobile
+    image.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        const touch = e.touches[0];
+        start360Drag({ clientX: touch.clientX });
+    });
+    
+    document.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        if (e.touches.length > 0) {
+            const touch = e.touches[0];
+            do360Drag({ clientX: touch.clientX });
+        }
+    });
+    
+    document.addEventListener('touchend', end360Drag);
+}
+
+function start360Drag(e) {
+    isDragging = true;
+    dragStartX = e.clientX;
+    document.getElementById('photo360-image').style.cursor = 'grabbing';
+    
+    // Hide instructions after first interaction
+    const instructions = document.querySelector('.photo360-instructions');
+    if (instructions) {
+        instructions.style.display = 'none';
+    }
+}
+
+function do360Drag(e) {
+    if (!isDragging) return;
+    
+    const deltaX = e.clientX - dragStartX;
+    currentRotationX += deltaX * 0.5; // Adjust sensitivity
+    
+    const image = document.getElementById('photo360-image');
+    image.style.transform = `rotateY(${currentRotationX}deg)`;
+    
+    dragStartX = e.clientX;
+}
+
+function end360Drag() {
+    isDragging = false;
+    const image = document.getElementById('photo360-image');
+    if (image) {
+        image.style.cursor = 'grab';
+    }
+}
+
+function closePhoto360Viewer() {
+    const modal = document.getElementById('photo360-modal');
+    modal.style.display = 'none';
+    
+    // Remove event listeners
+    const image = document.getElementById('photo360-image');
+    image.removeEventListener('mousedown', start360Drag);
+    document.removeEventListener('mousemove', do360Drag);
+    document.removeEventListener('mouseup', end360Drag);
+    
+    // Restore body scroll
+    document.body.style.overflow = 'auto';
+}
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closePhoto360Viewer();
+    }
+});
+
+// Close modal when clicking outside
+document.getElementById('photo360-modal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closePhoto360Viewer();
+    }
+});
+
+// Add CSS animations
+const style = document.createElement('style');
+style.textContent = `
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+`;
+document.head.appendChild(style);
+</script>
+{% endblock %}

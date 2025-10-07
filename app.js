@@ -71,8 +71,8 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT, HOST, () => {
-  console.log("✅ Server successfully started!");
-  console.log(`🌍 Host: ${HOST}`);
-  console.log(`🚪 Port: ${PORT}`);
-  console.log(`🔗 URL: http://${HOST}:${PORT}/`);
+  console.log(" Server successfully started!");
+  console.log(` Host: ${HOST}`);
+  console.log(` Port: ${PORT}`);
+  console.log(` URL: http://${HOST}:${PORT}/`);
 });

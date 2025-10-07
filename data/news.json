@@ -2,7 +2,7 @@
   "news": [
     {
       "id": 1,
-      "title": "🎉 Yangi Kolleksiya Keldi!",
+      "title": " Yangi Kolleksiya Keldi!",
       "content": "2024 yilgi eng yangi poyafzal kolleksiyasi do'konimizga keldi. Erkaklar va ayollar uchun zamonaviy va shinam poyafzallar.",
       "type": "news",
       "is_active": true,
@@ -15,7 +15,7 @@
     },
     {
       "id": 2,
-      "title": "🔥 50% Chegirma!",
+      "title": " 50% Chegirma!",
       "content": "Barcha qishki poyafzallarga 50% gacha chegirma! Chegirma yanvar oyining oxirigacha amal qiladi.",
       "type": "advertisement",
       "is_active": true,
@@ -28,7 +28,7 @@
     },
     {
       "id": 3,
-      "title": "🔥 50% Chegirma!",
+      "title": " 50% Chegirma!",
       "content": "Barcha qishki poyafzallarga 50% gacha chegirma! ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Chegirma yanvar oyining oxirigacha amal qiladi.",
       "type": "advertisement",
       "is_active": true,

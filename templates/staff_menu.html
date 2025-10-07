@@ -1,6 +1,6 @@
 {% extends "base.html" %} {% block content %}
 <div class="card">
-  <h2>📋 Mahsulotlar boshqaruvi</h2>
+  <h2> Mahsulotlar boshqaruvi</h2>
   <p class="muted">Do'kon mahsulotlarini boshqaring</p>
 
   <div style="margin-bottom: 30px">
@@ -23,8 +23,8 @@
           <label>Kategoriya:</label>
           <select name="category" required>
             <option value="">Tanlang</option>
-            <option value="specobuv">🥾 Спецобувь</option>
-            <option value="specodezhda">🦺 Спецодежда</option>
+            <option value="specobuv"> Спецобувь</option>
+            <option value="specodezhda"> Спецодежда</option>
           </select>
         </div>
         <div>
@@ -69,7 +69,7 @@
             rows="2"></textarea>
         </div>
         <div style="display: flex; align-items: end">
-          <button type="submit" class="btn">➕ Qo'shish</button>
+          <button type="submit" class="btn"> Qo'shish</button>
         </div>
       </div>
     </form>
@@ -115,17 +115,17 @@
 
           <div class="item-info">
             <span class="category">
-              {% if item.category == 'tufli' %}👞 Tufli {% elif item.category ==
-              'etik' %}🥾 Etik {% elif item.category == 'mokasima' %}🩴 Mokasima
-              {% elif item.category == 'krosovka' %}👟 Krosovka {% elif
-              item.category == 'botik' %}🩰 Botik {% elif item.category ==
-              'tapochka' %}🏠 Tapochka {% elif item.category == 'sandal' %}👡
-              Sandal {% elif item.category == 'tuflya' %}👠 Tuflya {% else %}👟
+              {% if item.category == 'tufli' %} Tufli {% elif item.category ==
+              'etik' %} Etik {% elif item.category == 'mokasima' %} Mokasima
+              {% elif item.category == 'krosovka' %} Krosovka {% elif
+              item.category == 'botik' %} Botik {% elif item.category ==
+              'tapochka' %} Tapochka {% elif item.category == 'sandal' %}
+              Sandal {% elif item.category == 'tuflya' %} Tuflya {% else %}
               Oyoq kiyim{% endif %}
             </span>
             <span
               class="status {% if item.available %}available{% else %}unavailable{% endif %}">
-              {% if item.available %}✅ Mavjud{% else %}❌ Mavjud emas{% endif
+              {% if item.available %} Mavjud{% else %} Mavjud emas{% endif
               %}
             </span>
           </div>
@@ -135,7 +135,7 @@
             <div class="rating-display">
               <span class="rating-stars">
                 {% for i in range(1, 6) %} {% if i <= (item.rating or 0) %}⭐{%
-                else %}☆{% endif %} {% endfor %}
+                else %}{% endif %} {% endfor %}
               </span>
               <span class="rating-text"
                 >{{ "%.1f"|format(item.rating or 0) }} ({{ item.orders_count or
@@ -143,7 +143,7 @@
               >
             </div>
             <button class="btn small" onclick="showItemRatings({{ item.id }})">
-              📊 Baholarni ko'rish
+               Baholarni ko'rish
             </button>
           </div>
 
@@ -171,8 +171,8 @@
                   required />
                 <select name="category" required>
                   <option value="">Tanlang</option>
-                  <option value="specobuv" {% if item.category == 'specobuv' %}selected{% endif %}>🥾 Спецобувь</option>
-                  <option value="specodezhda" {% if item.category == 'specodezhda' %}selected{% endif %}>🦺 Спецодежда</option>
+                  <option value="specobuv" {% if item.category == 'specobuv' %}selected{% endif %}> Спецобувь</option>
+                  <option value="specodezhda" {% if item.category == 'specodezhda' %}selected{% endif %}> Спецодежда</option>
                 </select>
                 <input
                   type="number"
@@ -202,13 +202,13 @@
                 >
                 <div class="edit-buttons">
                   <button type="submit" class="btn small success">
-                    💾 Saqlash
+                     Saqlash
                   </button>
                   <button
                     type="button"
                     class="btn small"
                     onclick="toggleEdit({{ item.id }})">
-                    ❌ Bekor qilish
+                     Bekor qilish
                   </button>
                 </div>
               </div>
@@ -217,10 +217,10 @@
 
           <div class="item-actions">
             <button class="btn small" onclick="toggleEdit({{ item.id }})">
-              ✏️ Tahrirlash
+               Tahrirlash
             </button>
             <button class="btn small" onclick="openStaffMediaModal({{ item.id }})">
-              📷 Media
+               Media
             </button>
             <button
               type="button"
@@ -232,7 +232,7 @@
               type="button"
               class="btn small danger"
               onclick="deleteMenuItem({{ item.id }}, '{{ item.name }}')">
-              🗑️ O'chirish
+               O'chirish
             </button>
           </div>
         </div>
@@ -243,7 +243,7 @@
 
   <div style="margin-top: 20px">
     <a href="{{ url_for('staff_dashboard') }}" class="btn"
-      >⬅️ Bosh sahifaga qaytish</a
+      >⬅ Bosh sahifaga qaytish</a
     >
   </div>
 </div>
@@ -722,7 +722,7 @@
                         <div class="ratings-modal-content">
                             <div class="ratings-header">
                                 <h3>Mahsulot baholari</h3>
-                                <button onclick="closeRatingsModal()" class="close-btn">✕</button>
+                                <button onclick="closeRatingsModal()" class="close-btn"></button>
                             </div>
                             <div class="ratings-summary">
                                 <p><strong>O'rtacha baho:</strong> ${data.average_rating}/5 (${data.total_ratings} baho)</p>
@@ -740,7 +740,7 @@
                                     }</span>
                                     <span class="rating-stars">${"⭐".repeat(
                                       rating.rating
-                                    )}${"☆".repeat(5 - rating.rating)}</span>
+                                    )}${"".repeat(5 - rating.rating)}</span>
                                     <span class="rating-date">${
                                       rating.created_at
                                     }</span>
@@ -814,7 +814,7 @@
     // Ikki marta tasdiqlash - xavfsizlik uchun
     if (
       !confirm(
-        `Haqiqatan ham '${itemName}' mahsulotini butunlay o'chirmoqchimisiz?\n\n⚠️ DIQQAT: Bu amalni bekor qilish mumkin emas!`
+        `Haqiqatan ham '${itemName}' mahsulotini butunlay o'chirmoqchimisiz?\n\n DIQQAT: Bu amalni bekor qilish mumkin emas!`
       )
     ) {
       return;
@@ -844,12 +844,12 @@
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          alert("✅ " + (data.message || "Mahsulot muvaffaqiyatli o'chirildi"));
+          alert(" " + (data.message || "Mahsulot muvaffaqiyatli o'chirildi"));
           // Sahifani qayta yuklash
           location.reload();
         } else {
           alert(
-            "❌ Xatolik: " + (data.message || data.error || "Noma'lum xatolik")
+            " Xatolik: " + (data.message || data.error || "Noma'lum xatolik")
           );
           // Button holatini tiklash
           button.innerHTML = originalText;
@@ -858,7 +858,7 @@
       })
       .catch((error) => {
         console.error("Delete error:", error);
-        alert("❌ Mahsulotni o'chirishda xatolik yuz berdi");
+        alert(" Mahsulotni o'chirishda xatolik yuz berdi");
         // Button holatini tiklash
         button.innerHTML = originalText;
         button.disabled = false;
@@ -870,7 +870,7 @@
   <div class="ratings-modal-content" style="max-width:800px;">
     <div class="ratings-header">
       <h3 id="staffMediaTitle">Mahsulot media</h3>
-      <button class="close-btn" onclick="closeStaffMediaModal()">✕</button>
+      <button class="close-btn" onclick="closeStaffMediaModal()"></button>
     </div>
     <div class="ratings-list" id="staffMediaList" style="display:flex;flex-wrap:wrap;gap:10px;padding:16px;">
       <!-- media thumbnails injected here -->

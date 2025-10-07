@@ -9,19 +9,19 @@ print("=== INITIALIZING DATABASE ===")
 try:
     print("1. Running safe_init_database()...")
     safe_init_database()
-    print("✓ Safe init database completed")
+    print(" Safe init database completed")
     
     print("2. Running init_db()...")
     init_db()
-    print("✓ Database initialization completed")
+    print(" Database initialization completed")
     
     print("3. Running fix_news_table()...")
     fix_news_table()
-    print("✓ News table fix completed")
+    print(" News table fix completed")
     
     print("\n=== DATABASE INITIALIZATION SUCCESS ===")
     
 except Exception as e:
-    print(f"\n❌ ERROR: {e}")
+    print(f"\n ERROR: {e}")
     import traceback
     traceback.print_exc()

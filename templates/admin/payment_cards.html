@@ -168,7 +168,7 @@
     <div class="container">
         <!-- Header -->
         <div class="admin-header text-center">
-            <h1 class="mb-3">💳 To'lov Kartalari Boshqaruvi</h1>
+            <h1 class="mb-3"> To'lov Kartalari Boshqaruvi</h1>
             <p class="mb-0">Savatchada ko'rinadigan to'lov kartalarini boshqaring</p>
         </div>
 
@@ -210,10 +210,10 @@
                             <div class="mb-3">
                                 <label for="cardType" class="form-label">Karta Turi</label>
                                 <select class="form-control" id="cardType" required>
-                                    <option value="uzcard">💳 UzCard</option>
-                                    <option value="humo">💚 Humo</option>
-                                    <option value="visa">💙 Visa</option>
-                                    <option value="mastercard">❤️ MasterCard</option>
+                                    <option value="uzcard"> UzCard</option>
+                                    <option value="humo"> Humo</option>
+                                    <option value="visa"> Visa</option>
+                                    <option value="mastercard"> MasterCard</option>
                                 </select>
                             </div>
                         </div>
@@ -320,17 +320,17 @@ function createCardElement(card) {
     cardDiv.className = `payment-card ${card.card_type}`;
     
     const typeEmoji = {
-        'uzcard': '💳',
-        'humo': '💚', 
-        'visa': '💙',
-        'mastercard': '❤️'
+        'uzcard': '',
+        'humo': '', 
+        'visa': '',
+        'mastercard': ''
     };
 
     cardDiv.innerHTML = `
         <div class="card-status ${card.is_active ? 'status-active' : 'status-inactive'}">
             ${card.is_active ? 'Faol' : 'Nofaol'}
         </div>
-        <div class="card-type-logo">${typeEmoji[card.card_type] || '💳'}</div>
+        <div class="card-type-logo">${typeEmoji[card.card_type] || ''}</div>
         <div class="card-name">${card.card_name}</div>
         <div class="card-number">${card.card_number}</div>
         <div class="card-holder">${card.card_holder_name}</div>
