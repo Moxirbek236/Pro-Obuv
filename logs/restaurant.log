@@ -4248,3 +4248,4 @@ jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'else'.
 2025-10-07 14:40:01,131 | WARNING | restaurant_app | not_found_error:1210 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
 2025-10-07 14:40:01,264 | WARNING | restaurant_app | not_found_error:1210 | 404 Error: http://127.0.0.1:5000/static/images/default-women.jpg
 2025-10-07 15:10:28,565 | WARNING | werkzeug | _log:97 |  * Debugger is active!
+2025-10-07 15:10:36,021 | WARNING | werkzeug | _log:97 |  * Debugger is active!
