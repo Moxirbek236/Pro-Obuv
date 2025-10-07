@@ -17206,6 +17206,10 @@ def serve_data_file(filename):
     except Exception as e:
         app_logger.error(f"Error serving data file {filename}: {str(e)}")
         return jsonify({"error": "File not found"}), 404
+    
+@app.route('/sitemap.xml')
+def sitemap():
+    return send_from_directory('static', 'sitemap.xml')
 
 
 # Flask app runner
