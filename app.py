@@ -12,6 +12,8 @@ from datetime import timedelta
 import sqlite3
 import threading
 import traceback
+import subprocess
+import sys
 import hashlib
 import binascii
 from contextlib import contextmanager
@@ -129,12 +131,10 @@ try:
 except Exception:
     pytz = None
 
-try:
-    import redis
-    REDIS_AVAILABLE = True
-except Exception:
-    redis = None
-    REDIS_AVAILABLE = False
+# Defer importing `redis` until we actually need it to avoid blocking imports
+# in environments where the redis package may try to import heavy async components.
+redis = None
+REDIS_AVAILABLE = False
 
 # Bring logging handlers into top-level imports so setup_logging() can use them
 try:
@@ -525,30 +525,52 @@ class CacheManager:
         self._init_redis()
 
     def _init_redis(self):
-        "Redis connection (agar mavjud bo'lsa)"
         try:
-            # If redis is not installed or REDIS_URL indicates memory backend, skip trying to connect.
-            if not REDIS_AVAILABLE:
-                return
-
+            # Decide whether to attempt a Redis connection based on REDIS_URL.
             redis_url = os.environ.get("REDIS_URL", "memory://")
-            if not redis_url or redis_url.startswith("memory"):
+            if not redis_url or str(redis_url).lower().startswith("memory"):
                 # Explicitly configured to use in-memory cache
                 return
 
-            # Attempt to create a client with a short connect timeout. Do not treat a failure as an error
-            # that needs frequent logging; use INFO level so it's less noisy in typical deployments.
+            # Try to import redis lazily. Some redis installations (async parts)
+            # may perform heavy imports; doing this at runtime reduces startup cost
+            # when Redis is not actually used.
+            global redis, REDIS_AVAILABLE
+            try:
+                if redis is None:
+                    import importlib
+
+                    redis = importlib.import_module("redis")
+                REDIS_AVAILABLE = True
+            except Exception as imp_e:
+                # If import fails, log once and fall back to memory cache
+                try:
+                    app_logger.info(
+                        f"Redis module import failed, falling back to memory cache: {imp_e}"
+                    )
+                except Exception:
+                    pass
+                REDIS_AVAILABLE = False
+                return
+
+            # Attempt to create a client with a short connect timeout.
             try:
                 # short connect timeout to avoid hanging processes when Redis is unreachable
                 self.redis_client = redis.from_url(redis_url, socket_connect_timeout=2)
                 # Try a quick ping; failures are expected if Redis isn't present and are handled silently.
                 self.redis_client.ping()
-                app_logger.info("Redis cache connected")
+                try:
+                    app_logger.info("Redis cache connected")
+                except Exception:
+                    pass
             except Exception as conn_err:
                 # Keep it quiet: informational message and fall back to memory cache.
-                app_logger.info(
-                    f"Redis not available, falling back to in-memory cache: {str(conn_err)}"
-                )
+                try:
+                    app_logger.info(
+                        f"Redis not available, falling back to in-memory cache: {str(conn_err)}"
+                    )
+                except Exception:
+                    pass
                 self.redis_client = None
         except Exception as e:
             # As a last resort, do not spam warnings for Redis problems during normal operation.
@@ -6476,6 +6498,277 @@ def menu():
             return redirect(url_for("index"))
 
 
+@app.route('/product/<int:item_id>')
+@rate_limit(max_requests=5000, window=60)
+def product_detail(item_id):
+    """Render a single product detail page.
+
+    This gathers the menu item, associated media and recent comments and
+    renders templates/product.html.
+    """
+    try:
+        item_row = execute_query(
+            "SELECT * FROM menu_items WHERE id = ? AND available = 1",
+            (item_id,),
+            fetch_one=True,
+        )
+        if not item_row:
+            flash("Mahsulot topilmadi.", "error")
+            return redirect(url_for("menu"))
+
+        # Normalize to dict if needed
+        try:
+            item = dict(item_row)
+        except Exception:
+            item = item_row
+
+        # Load media for the item
+        try:
+            media_rows = execute_query(
+                "SELECT id, media_type, media_url, display_order, is_main FROM product_media WHERE menu_item_id = ? ORDER BY is_main DESC, display_order ASC",
+                (item_id,),
+                fetch_all=True,
+            )
+            media = [dict(m) for m in media_rows] if media_rows else []
+        except Exception:
+            media = []
+
+        # Load recent comments and ratings (best-effort).
+        comments = []
+        try:
+            # Legacy comments from 'comments' table (if present)
+            tbl = execute_query("SELECT name FROM sqlite_master WHERE type='table' AND name='comments'", fetch_one=True)
+            if tbl:
+                comments_raw = execute_query(
+                    "SELECT author, text, rating, created_at FROM comments WHERE menu_item_id = ?",
+                    (item_id,),
+                    fetch_all=True,
+                )
+                if comments_raw:
+                    for r in comments_raw:
+                        try:
+                            row = dict(r)
+                        except Exception:
+                            # tuple fallback
+                            row = {
+                                'author': r[0] if len(r) > 0 else None,
+                                'text': r[1] if len(r) > 1 else None,
+                                'rating': r[2] if len(r) > 2 else None,
+                                'created_at': r[3] if len(r) > 3 else None,
+                            }
+                        comments.append(row)
+        except Exception:
+            pass
+
+        # Also include recent entries from 'ratings' table (preferred). Join users to get readable names.
+        try:
+            ratings_raw = execute_query(
+                """
+                SELECT r.rating as rating, r.comment as text, r.created_at as created_at,
+                       COALESCE(trim(u.first_name || ' ' || u.last_name), u.email) as user_name
+                FROM ratings r
+                LEFT JOIN users u ON r.user_id = u.id
+                WHERE r.menu_item_id = ?
+                """,
+                (item_id,),
+                fetch_all=True,
+            )
+            if ratings_raw:
+                for rr in ratings_raw:
+                    try:
+                        row = dict(rr)
+                    except Exception:
+                        row = {
+                            'rating': rr[0] if len(rr) > 0 else None,
+                            'text': rr[1] if len(rr) > 1 else None,
+                            'created_at': rr[2] if len(rr) > 2 else None,
+                            'user_name': rr[3] if len(rr) > 3 else None,
+                        }
+                    comments.append(row)
+        except Exception:
+            pass
+
+        # Normalize comment entries: prefer user_name/author for display, and text/comment for body
+        try:
+            for c in comments:
+                # normalize author
+                if not c.get('author'):
+                    c['author'] = c.get('user_name') or c.get('author') or 'Guest'
+                # normalize text
+                if not c.get('text'):
+                    c['text'] = c.get('comment') or ''
+        except Exception:
+            pass
+
+        # Sort by created_at descending (ISO timestamps sort lexicographically); limit to 20
+        try:
+            comments = sorted([c for c in comments if c.get('created_at')], key=lambda x: x.get('created_at'), reverse=True)[:20]
+        except Exception:
+            # fallback: keep original order and trim
+            comments = comments[:20]
+
+        # Ensure numeric fields are typed for templates
+        try:
+            item['rating'] = float(item.get('rating') or 0)
+        except Exception:
+            item['rating'] = 0.0
+        try:
+            item['orders_count'] = int(item.get('orders_count') or 0)
+        except Exception:
+            item['orders_count'] = 0
+
+        return render_template('product.html', item=item, media=media, comments=comments, current_page='product')
+    except Exception as e:
+        app_logger.error(f"product_detail error for id={item_id}: {str(e)}")
+        flash('Mahsulotni ochishda xatolik yuz berdi.', 'error')
+        return redirect(url_for('menu'))
+
+
+
+@app.route('/product/<int:item_id>/comment', methods=['POST'])
+def post_comment(item_id):
+    try:
+        # Determine author: prefer logged-in user's real name, then form fields, then session values, fall back to 'Guest'
+        author = None
+        user_id = session.get('user_id')
+        if user_id:
+            try:
+                user_row = execute_query(
+                    "SELECT first_name, last_name, email FROM users WHERE id = ?",
+                    (user_id,),
+                    fetch_one=True,
+                )
+                if user_row:
+                    if hasattr(user_row, 'get'):
+                        first = (user_row.get('first_name') or '').strip()
+                        last = (user_row.get('last_name') or '').strip()
+                        uname = ''
+                        email = (user_row.get('email') or '').strip()
+                    else:
+                        # tuple/row fallback
+                        try:
+                            first = (user_row[0] or '').strip()
+                        except Exception:
+                            first = ''
+                        try:
+                            last = (user_row[1] or '').strip()
+                        except Exception:
+                            last = ''
+                        try:
+                            uname = ''
+                        except Exception:
+                            uname = ''
+                        try:
+                            email = (user_row[2] or '').strip()
+                        except Exception:
+                            email = ''
+
+                    full = (first + ' ' + last).strip()
+                    author = full or uname or email
+            except Exception:
+                author = None
+
+        # final fallbacks (allow form-provided name or session values)
+        if not author:
+            author = (
+                request.form.get('author')
+                or request.form.get('user_name')
+                or session.get('user_name')
+                or session.get('user_email')
+                or 'Guest'
+            )[:128]
+
+        rating = int(request.form.get('rating') or 0)
+        comment = (request.form.get('comment') or '').strip()
+
+        # ensure comments table exists (simple safe schema)
+        try:
+            execute_query("SELECT name FROM sqlite_master WHERE type='table' AND name='comments'", fetch_one=True)
+            # create table if not present
+            execute_query(
+                "CREATE TABLE IF NOT EXISTS comments (id INTEGER PRIMARY KEY AUTOINCREMENT, menu_item_id INTEGER, author TEXT, text TEXT, rating INTEGER, created_at TEXT)"
+            )
+        except Exception:
+            # best-effort: attempt to create
+            try:
+                execute_query(
+                    "CREATE TABLE IF NOT EXISTS comments (id INTEGER PRIMARY KEY AUTOINCREMENT, menu_item_id INTEGER, author TEXT, text TEXT, rating INTEGER, created_at TEXT)"
+                )
+            except Exception:
+                pass
+
+        # insert comment into legacy comments table (best-effort)
+        try:
+            execute_query(
+                "INSERT INTO comments (menu_item_id, author, text, rating, created_at) VALUES (?, ?, ?, ?, datetime('now'))",
+                (item_id, author, comment, rating)
+            )
+        except Exception as ie:
+            app_logger.debug(f"Legacy comments insert skipped or failed: {ie}")
+
+        # Also insert into unified ratings table (preferred) and recalc average
+        try:
+            user_id = session.get('user_id')
+            # If session doesn't contain numeric user_id but we have identifying
+            # info (email or user_name), try to look up the user and resolve id.
+            if not user_id:
+                try:
+                    sess_email = session.get('user_email')
+                    sess_name = session.get('user_name')
+                    if sess_email:
+                        row = execute_query('SELECT id FROM users WHERE email = ?', (sess_email,), fetch_one=True)
+                        if row and row.get('id'):
+                            user_id = row.get('id')
+                    if not user_id and sess_name:
+                        # try match by username or concatenated name
+                        row = execute_query('SELECT id FROM users WHERE (first_name || " " || last_name) = ? OR email = ?', (sess_name, sess_name), fetch_one=True)
+                        if row and row.get('id'):
+                            user_id = row.get('id')
+                except Exception:
+                    user_id = session.get('user_id')
+            now_iso = get_current_time().isoformat()
+            # Ensure ratings table exists
+            try:
+                execute_query("CREATE TABLE IF NOT EXISTS ratings (id INTEGER PRIMARY KEY AUTOINCREMENT, menu_item_id INTEGER, branch_id INTEGER, user_id INTEGER, rating INTEGER, comment TEXT, created_at TEXT)")
+            except Exception:
+                pass
+
+            execute_query(
+                "INSERT INTO ratings (menu_item_id, user_id, rating, comment, created_at) VALUES (?, ?, ?, ?, ?)",
+                (item_id, user_id, rating, comment, now_iso)
+            )
+
+            # Recalculate average and count
+            try:
+                stats = execute_query(
+                    "SELECT AVG(rating) as avg_rating, COUNT(*) as cnt FROM ratings WHERE menu_item_id = ?",
+                    (item_id,),
+                    fetch_one=True,
+                )
+                avg = float(stats.get('avg_rating') or 0.0) if hasattr(stats, 'get') else float(stats[0] or 0.0)
+                cnt = int(stats.get('cnt') or 0) if hasattr(stats, 'get') else int(stats[1] or 0)
+                # persist rounded average to menu_items.rating
+                try:
+                    execute_query('UPDATE menu_items SET rating = ? WHERE id = ?', (round(avg, 1), item_id))
+                except Exception:
+                    pass
+
+                flash('Sharhingiz qabul qilindi. Rahmat!', 'success')
+            except Exception as e:
+                app_logger.error(f"Failed to recalc rating for item {item_id}: {e}")
+                flash('Sharh qabul qilindi, ammo baho yangilanmadi.', 'warning')
+
+        except Exception as ie:
+            app_logger.error(f"Failed to insert rating for item {item_id}: {ie}")
+            flash('Sharhni saqlashda xatolik yuz berdi.', 'error')
+
+        return redirect(url_for('product_detail', item_id=item_id))
+    except Exception as e:
+        app_logger.error(f"post_comment error: {e}")
+        flash('Sharh yuborishda xatolik yuz berdi.', 'error')
+        return redirect(url_for('product_detail', item_id=item_id))
+
+
 @app.route("/api/menu-search", methods=["GET"])
 @rate_limit(max_requests=5000, window=60)  # Высокий лимит для API
 @cached(
@@ -9135,6 +9428,18 @@ def admin_add_menu_item():
 
         now = get_current_time().isoformat()
 
+        # Require at least one image upload for staff/super_admin when creating a product
+        media_files_check = request.files.getlist("media_files")
+        image_extensions = {"png", "jpg", "jpeg", "gif", "webp"}
+        has_image_uploaded = any(
+            f and getattr(f, 'filename', '') and f.filename.rsplit('.', 1)[-1].lower() in image_extensions
+            for f in media_files_check
+        )
+
+        if not has_image_uploaded:
+            flash("Iltimos, mahsulot uchun kamida bitta rasm yuklang.", "error")
+            return redirect(url_for("staff_menu"))
+
         # Birinchi mahsulotni qo'shamiz (image_url ni hozircha None bilan)
         menu_item_id = execute_query(
             """
@@ -9614,28 +9919,51 @@ def api_reorder_product_media():
         )
 
 
-    @app.route('/api/product-media/identify', methods=['POST'])
-    @role_required('staff')
-    def api_product_media_identify():
-        """Return product_media.id for a given media_url (and optional item_id)."""
+@app.route('/api/product-media/identify', methods=['POST'])
+@role_required('staff')
+def api_product_media_identify():
+    """Return product_media.id for a given media_url (and optional item_id)."""
+    try:
+        data = request.get_json() or {}
+        media_url = data.get('media_url')
+        item_id = data.get('item_id')
+        if not media_url:
+            return jsonify({'success': False, 'message': 'media_url required'}), 400
+
+        # Try exact match first
+        row = None
         try:
-            data = request.get_json() or {}
-            media_url = data.get('media_url')
-            item_id = data.get('item_id')
-            if not media_url:
-                return jsonify({'success': False, 'message': 'media_url required'}), 400
-
             if item_id:
-                row = execute_query('SELECT id FROM product_media WHERE menu_item_id = ? AND media_url = ?', (item_id, media_url), fetch_one=True)
+                row = execute_query('SELECT id, media_url FROM product_media WHERE menu_item_id = ? AND media_url = ?', (item_id, media_url), fetch_one=True)
             else:
-                row = execute_query('SELECT id FROM product_media WHERE media_url = ?', (media_url,), fetch_one=True)
+                row = execute_query('SELECT id, media_url FROM product_media WHERE media_url = ?', (media_url,), fetch_one=True)
+        except Exception:
+            row = None
 
-            if not row:
-                return jsonify({'success': False, 'message': 'not found'}), 404
-            return jsonify({'success': True, 'media_id': row['id']})
-        except Exception as e:
-            app_logger.error(f'Identify media error: {e}')
-            return jsonify({'success': False, 'message': 'server error'}), 500
+        # Fallbacks: sometimes stored media_url differs by host, protocol, or has querystring.
+        # Try matching by path-only (strip scheme+host) and by basename.
+        if not row:
+            try:
+                from urllib.parse import urlparse, unquote
+
+                parsed = urlparse(media_url)
+                path_only = unquote(parsed.path or media_url)
+                basename = path_only.split('/')[-1]
+
+                # Try path-only match
+                if item_id:
+                    row = execute_query('SELECT id, media_url FROM product_media WHERE menu_item_id = ? AND (media_url = ? OR media_url LIKE ?)', (item_id, path_only, '%' + basename), fetch_one=True)
+                else:
+                    row = execute_query('SELECT id, media_url FROM product_media WHERE media_url = ? OR media_url LIKE ?', (path_only, '%' + basename), fetch_one=True)
+            except Exception:
+                row = None
+
+        if not row:
+            return jsonify({'success': False, 'message': 'not found'}), 404
+        return jsonify({'success': True, 'media_id': row['id']})
+    except Exception as e:
+        app_logger.error(f'Identify media error: {e}')
+        return jsonify({'success': False, 'message': 'server error'}), 500
 
 
 @app.route("/admin/toggle_menu_item/<int:item_id>", methods=["POST"])
@@ -10009,6 +10337,122 @@ def api_submit_rating():
     except Exception as e:
         app_logger.error(f"Submit rating error: {str(e)}")
         return jsonify({"success": False, "message": "Server error"}), 500
+
+
+@app.route('/api/chat/receive', methods=['POST'])
+def api_chat_receive():
+    """Receive incoming chat message from Telegram bot or other integration.
+    Expects JSON: { sender: str, text: str }
+    This endpoint stores minimal message info and triggers AI responder.
+    """
+    try:
+        data = request.get_json() or {}
+        sender = (data.get('sender') or 'guest')[:128]
+        text = (data.get('text') or '').strip()
+        if not text:
+            return jsonify({'success': False, 'message': 'text required'}), 400
+
+        # Persist to a lightweight chat_messages table (create if missing)
+        try:
+            execute_query('CREATE TABLE IF NOT EXISTS chat_messages (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, text TEXT, source TEXT, created_at TEXT)')
+        except Exception:
+            pass
+
+        now = get_current_time().isoformat()
+        try:
+            execute_query('INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)', (sender, text, 'incoming', now))
+        except Exception:
+            pass
+
+        # Trigger AI responder (synchronously simple reply)
+        reply = ai_respond(text, sender=sender)
+
+        # store reply
+        try:
+            execute_query('INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)', ('ai', reply, 'outgoing', get_current_time().isoformat()))
+        except Exception:
+            pass
+
+        return jsonify({'success': True, 'reply': reply})
+    except Exception as e:
+        app_logger.error(f'chat_receive error: {e}')
+        return jsonify({'success': False, 'message': 'server error'}), 500
+
+
+@app.route('/api/chat/send', methods=['POST'])
+def api_chat_send():
+    """Web frontend posts here when a user sends a message from site chat widget.
+    JSON: { text: str, sender_name: str }
+    Returns: { success: True, reply: str }
+    """
+    try:
+        data = request.get_json() or {}
+        text = (data.get('text') or '').strip()
+        sender_name = (data.get('sender_name') or session.get('user_name') or 'Guest')[:128]
+        if not text:
+            return jsonify({'success': False, 'message': 'text required'}), 400
+
+        now = get_current_time().isoformat()
+        try:
+            execute_query('INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)', (sender_name, text, 'web', now))
+        except Exception:
+            pass
+
+        reply = ai_respond(text, sender=sender_name)
+
+        try:
+            execute_query('INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)', ('ai', reply, 'outgoing', get_current_time().isoformat()))
+        except Exception:
+            pass
+
+        return jsonify({'success': True, 'reply': reply})
+    except Exception as e:
+        app_logger.error(f'chat_send error: {e}')
+        return jsonify({'success': False, 'message': 'server error'}), 500
+
+
+def ai_respond(text, sender='guest'):
+    """Simple AI responder.
+    If OPENAI_API_KEY is set in env, use OpenAI ChatCompletion. Otherwise use
+    a lightweight multilingual fallback (Uz/Ru/En simple intents).
+    """
+    try:
+        OPENAI_KEY = os.environ.get('OPENAI_API_KEY')
+        if OPENAI_KEY:
+            # Use requests to call OpenAI if package not installed
+            try:
+                payload = {
+                    'model': 'gpt-4o-mini',
+                    'messages': [
+                        {'role': 'system', 'content': 'You are a helpful assistant that speaks Uzbek, Russian, and English. Keep replies concise.'},
+                        {'role': 'user', 'content': text}
+                    ],
+                    'temperature': 0.2,
+                }
+                headers = {'Authorization': f'Bearer {OPENAI_KEY}', 'Content-Type': 'application/json'}
+                resp = requests.post('https://api.openai.com/v1/chat/completions', json=payload, headers=headers, timeout=8)
+                j = resp.json()
+                reply = ''
+                if j and 'choices' in j and len(j['choices'])>0:
+                    reply = j['choices'][0].get('message', {}).get('content','')
+                return reply or 'Kechirasiz, hozir javob topilmadi.'
+            except Exception:
+                pass
+
+        # Fallback simple responder: detect language and simple intents
+        lower = text.lower()
+        # greetings
+        if any(w in lower for w in ['salom','assalomu','hello','hi','privet','здравствуйте']):
+            return 'Salom! Qanday yordam bera olaman? Siz: ism, telefon, mahsulotlar, savatcha, manzil yoki aloqa buyrug\'ini tanlashingiz mumkin.'
+        if 'mahsulot' in lower or 'product' in lower or 'products' in lower:
+            return 'Mahsulotlar tugmasini bosing yoki saytimizdagi /products bo\'limiga o\'ting. Mahsulotlar staff tomonidan qo\'shiladi.'
+        if any(w in lower for w in ['telefon','contact','aloqa','phone','email']):
+            return 'Aloqa: +998 90 000 00 00, email: info@example.com. Bizning telegram kanal: https://t.me/example'
+        # fallback: short generic reply
+        return 'Kechirasiz, men buni tushunmadim. Iltimos, "mahsulotlar", "savatcha", yoki "aloqa" kabi so\'zlarni yuboring.'
+    except Exception as e:
+        app_logger.error(f'ai_respond error: {e}')
+        return 'Kechirasiz, AI javob bera olmadi.'
 
 
 @app.route("/api/status")
@@ -11533,8 +11977,20 @@ def super_admin_add_menu_item():
             flash("Nomi va narxi to'g'ri bo'lishi kerak.", "error")
             return redirect(url_for("super_admin_dashboard"))
 
+        # Require at least one image upload for super_admin when creating a product
+        media_files_check = request.files.getlist("media_files")
+        image_extensions = {"png", "jpg", "jpeg", "gif", "webp"}
+        has_image_uploaded = any(
+            f and getattr(f, 'filename', '') and f.filename.rsplit('.', 1)[-1].lower() in image_extensions
+            for f in media_files_check
+        )
+
+        if not has_image_uploaded:
+            flash("Iltimos, mahsulot uchun kamida bitta rasm yuklang.", "error")
+            return redirect(url_for("super_admin_dashboard"))
+
         now = get_current_time().isoformat()
-        execute_query(
+        menu_item_id = execute_query(
             """
             INSERT INTO menu_items (name, price, category, description, created_at, available)
             VALUES (?, ?, ?, ?, ?, 1)
@@ -11542,12 +11998,82 @@ def super_admin_add_menu_item():
             (name, price, category, description, now),
         )
 
+        # If images were uploaded, save them similarly to the staff flow so the new item has media
+        if menu_item_id:
+            upload_dir = os.path.join(app.root_path, "static", "uploads", "products")
+            os.makedirs(upload_dir, exist_ok=True)
+            now_iso = now
+            from werkzeug.utils import secure_filename
+            import uuid
+
+            for idx, file in enumerate(media_files_check):
+                if file and getattr(file, 'filename', ''):
+                    try:
+                        ext = file.filename.rsplit('.', 1)[1].lower() if '.' in file.filename else ''
+                        if ext not in image_extensions:
+                            continue
+                        unique_filename = f"{menu_item_id}_{uuid.uuid4().hex}.{ext}"
+                        save_path = os.path.join(upload_dir, unique_filename)
+                        file.save(save_path)
+                        media_url = f"/static/uploads/products/{unique_filename}"
+                        is_main = idx == 0
+                        if is_main:
+                            execute_query("UPDATE menu_items SET image_url = ? WHERE id = ?", (media_url, menu_item_id))
+                        execute_query(
+                            """
+                            INSERT INTO product_media (menu_item_id, media_type, media_url, display_order, is_main, created_at, updated_at)
+                            VALUES (?, ?, ?, ?, ?, ?, ?)
+                            """,
+                            (menu_item_id, 'image', media_url, idx, 1 if is_main else 0, now_iso, now_iso),
+                        )
+                    except Exception as e:
+                        app_logger.warning(f"Super admin media upload error: {e}")
+
         flash("Yangi mahsulot qo'shildi!", "success")
     except Exception as e:
         app_logger.error(f"Super admin add menu item error: {str(e)}")
         flash("Mahsulot qo'shishda xatolik yuz berdi.", "error")
 
     return redirect(url_for("super_admin_dashboard"))
+
+
+@app.route("/admin/repair-missing-images", methods=["POST"])
+def admin_repair_missing_images():
+    """One-off administrative endpoint to set a default image for menu_items missing image_url.
+    Protected: staff or super_admin only.
+    This will update menu_items.image_url to a static default and insert a product_media row pointing to it.
+    """
+    if not session.get("staff_id") and not session.get("super_admin"):
+        flash("Xodim huquqi kerak.", "error")
+        return redirect(url_for("staff_login"))
+
+    default_image = "/static/images/default-product.jpg"
+    try:
+        rows = execute_query("SELECT id FROM menu_items WHERE image_url IS NULL OR image_url = ''", fetch_all=True)
+        item_ids = [r[0] if isinstance(r, tuple) else r.get('id') for r in rows] if rows else []
+        now = get_current_time().isoformat()
+        repaired = 0
+        for item_id in item_ids:
+            try:
+                execute_query("UPDATE menu_items SET image_url = ? WHERE id = ?", (default_image, item_id))
+                # Insert a product_media row pointing to the default image so APIs return something
+                execute_query(
+                    """
+                    INSERT INTO product_media (menu_item_id, media_type, media_url, display_order, is_main, created_at, updated_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (item_id, 'image', default_image, 0, 1, now, now),
+                )
+                repaired += 1
+            except Exception:
+                continue
+
+        flash(f"{repaired} ta mahsulotlarga standart rasm o'rnatildi.", "success")
+    except Exception as e:
+        app_logger.error(f"Repair missing images error: {e}")
+        flash("Rasmni tiklashda xatolik yuz berdi.", "error")
+
+    return redirect(url_for("staff_menu"))
 
 
 @app.route("/super-admin/add-branch", methods=["POST"])
@@ -17217,4 +17743,154 @@ if __name__ == "__main__":
     host = "127.0.0.1"
     port = 5000
     print(f"\nDastur quyidagi URLda ishga tushdi: http://{host}:{port}\n")
+
+    # Optionally start the Telegram bot as a separate process when the app starts.
+    # Set START_TELEGRAM_BOT=0 in the environment to disable automatic bot startup.
+    # When Flask debug reloader is enabled, the module is imported twice (parent and child).
+    # Only spawn the bot in the reloader child process (WERKZEUG_RUN_MAIN=='true') or when debug is off.
+    try:
+        should_start_bot = os.environ.get('START_TELEGRAM_BOT', '1') != '0'
+        is_reloader_child = os.environ.get('WERKZEUG_RUN_MAIN') == 'true'
+        if should_start_bot and (not app.debug or is_reloader_child):
+            bot_script = os.path.join(os.path.dirname(__file__), 'bot', 'telegram_bot.py')
+            if os.path.exists(bot_script):
+                python_exe = sys.executable or 'python'
+                log_path = os.path.join('logs', 'telegram_bot.log')
+                pid_path = os.path.join('logs', 'telegram_bot.pid')
+                try:
+                    lf = open(log_path, 'a', encoding='utf-8')
+                    # Start the bot as a child process and detach its stdin; keep stdout/stderr in log file
+                    proc = subprocess.Popen([python_exe, bot_script], stdout=lf, stderr=lf, stdin=subprocess.DEVNULL)
+                    app_logger.info(f"Started telegram bot subprocess (pid={proc.pid}), logs -> {log_path}")
+                    try:
+                        with open(pid_path, 'w', encoding='utf-8') as pf:
+                            pf.write(str(proc.pid))
+                    except Exception:
+                        pass
+                except Exception as e:
+                    app_logger.error(f"Failed to start telegram bot subprocess: {e}")
+    except Exception as e:
+        app_logger.error(f"Telegram bot auto-start logic failed: {e}")
+
     app.run(debug=True, host=host, port=port)
+
+
+# Ensure the telegram bot is also started when the Flask app is launched via other entrypoints
+# (for example: `flask run`) by spawning it on the first request. This is safe because it
+# respects START_TELEGRAM_BOT and the PID file guard in the bot script itself.
+def _maybe_start_telegram_bot_logic():
+    """Shared logic to decide whether to spawn the bot and to launch it.
+
+    This function is safe to call from different contexts (decorator or import-time
+    fallback). It performs PID checks and spawns the bot subprocess in a background
+    thread so it does not block request handling.
+    """
+    try:
+        should_start_bot = os.environ.get('START_TELEGRAM_BOT', '1') != '0'
+        if not should_start_bot:
+            try:
+                app_logger.info('START_TELEGRAM_BOT=0 -> skipping telegram bot auto-start')
+            except Exception:
+                pass
+            return
+
+        # If bot script missing, skip
+        bot_script = os.path.join(os.path.dirname(__file__), 'bot', 'telegram_bot.py')
+        if not os.path.exists(bot_script):
+            try:
+                app_logger.info('telegram_bot.py not found; skipping bot auto-start')
+            except Exception:
+                pass
+            return
+
+        # If PID file exists and points to a running process, assume bot is already running
+        pid_path = os.path.join('logs', 'telegram_bot.pid')
+        if os.path.exists(pid_path):
+            try:
+                pid = int(open(pid_path, 'r', encoding='utf-8').read().strip())
+                try:
+                    os.kill(pid, 0)
+                    try:
+                        app_logger.info(f'Telegram bot already running (pid={pid}), not starting another')
+                    except Exception:
+                        pass
+                    return
+                except Exception:
+                    # stale PID file - remove and continue
+                    try:
+                        os.remove(pid_path)
+                    except Exception:
+                        pass
+            except Exception:
+                try:
+                    os.remove(pid_path)
+                except Exception:
+                    pass
+
+        # Spawn the bot in a background thread to avoid blocking the request
+        def _spawn_bot():
+            try:
+                python_exe = sys.executable or 'python'
+                log_path = os.path.join('logs', 'telegram_bot.log')
+                try:
+                    lf = open(log_path, 'a', encoding='utf-8')
+                except Exception:
+                    lf = None
+                try:
+                    proc = subprocess.Popen([python_exe, bot_script], stdout=lf or subprocess.DEVNULL, stderr=lf or subprocess.DEVNULL, stdin=subprocess.DEVNULL)
+                    try:
+                        app_logger.info(f"Started telegram bot subprocess (pid={proc.pid}), logs -> {log_path}")
+                    except Exception:
+                        pass
+                    try:
+                        with open(pid_path, 'w', encoding='utf-8') as pf:
+                            pf.write(str(proc.pid))
+                    except Exception:
+                        pass
+                except Exception as e:
+                    try:
+                        app_logger.error(f'Failed to spawn telegram bot subprocess: {e}')
+                    except Exception:
+                        pass
+            except Exception as e:
+                try:
+                    app_logger.error(f'Unexpected error spawning telegram bot: {e}')
+                except Exception:
+                    pass
+
+        try:
+            import threading
+
+            t = threading.Thread(target=_spawn_bot, daemon=True)
+            t.start()
+        except Exception as e:
+            try:
+                app_logger.error(f'Failed to start background thread for telegram bot: {e}')
+            except Exception:
+                pass
+    except Exception as e:
+        try:
+            app_logger.error(f'_maybe_start_telegram_bot_logic failed: {e}')
+        except Exception:
+            pass
+
+
+# Prefer to register as a Flask before_first_request handler when available; otherwise
+# fall back to an import-time background spawn so that `flask run` and other entrypoints
+# are still covered even if the Flask object doesn't expose before_first_request
+# (some test/mocked environments replace Flask with minimal stubs).
+if hasattr(app, 'before_first_request') and callable(getattr(app, 'before_first_request')):
+    @app.before_first_request
+    def _maybe_start_telegram_bot_on_first_request():
+        _maybe_start_telegram_bot_logic()
+else:
+    # Import-time fallback: start the bot in background thread (best-effort).
+    try:
+        import threading
+
+        threading.Thread(target=_maybe_start_telegram_bot_logic, daemon=True).start()
+    except Exception:
+        try:
+            app_logger.warning('Failed to start telegram bot via import-time fallback')
+        except Exception:
+            pass

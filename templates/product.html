@@ -1,0 +1,479 @@
+{% extends 'base.html' %} {% block title %}{{ item.name }} — Mahsulot{% endblock
+%} {% block content %}
+<style>
+  .product-container {
+    max-width: 1100px;
+    margin: 20px auto;
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    gap: 28px;
+    align-items: start;
+  }
+
+  @media (max-width: 900px) {
+    .product-container {
+      grid-template-columns: 1fr;
+      padding: 0 12px;
+    }
+    .product-media {
+      order: 1;
+    }
+    .product-details {
+      order: 2;
+    }
+  }
+
+  .product-media {
+    background: #fff;
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  }
+
+  .media-stage {
+    position: relative;
+    background: #f8fafc;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 420px;
+  }
+
+  .media-stage img,
+  .media-stage video {
+    max-width: 100%;
+    max-height: 78vh;
+    display: block;
+    object-fit: contain;
+  }
+
+  .media-btn {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 20px;
+  }
+
+  .media-btn.left {
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .media-btn.right {
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .media-btn.zoom {
+    left: 12px;
+    bottom: 12px;
+    top: auto;
+    transform: none;
+  }
+
+  .thumbnails {
+    margin-top: 12px;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+  }
+  .thumb {
+    width: 72px;
+    height: 72px;
+    border-radius: 8px;
+    overflow: hidden;
+    flex: 0 0 auto;
+    cursor: pointer;
+    border: 1px solid #e6e6e6;
+  }
+  .thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .product-details {
+    padding: 10px 6px;
+  }
+  .product-details h1 {
+    margin: 0 0 8px 0;
+    font-size: 24px;
+  }
+  .product-details p.description {
+    color: #475569;
+    margin: 8px 0 14px;
+  }
+
+  .rating-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .stars {
+    color: #ffd166;
+    font-size: 18px;
+  }
+
+  .options-row {
+    display: flex;
+    gap: 12px;
+    align-items: start;
+    margin-bottom: 14px;
+  }
+  .select-wrapper {
+    flex: 1;
+  }
+  .select-wrapper label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  select.form-select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #e6e6e6;
+  }
+
+  .quantity-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .qty-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: none;
+    background: #f1f5f9;
+    cursor: pointer;
+    font-size: 20px;
+  }
+  .qty-input {
+    width: 64px;
+    text-align: center;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #e6e6e6;
+  }
+
+  .add-cart-btn {
+    background: #21a366;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 700;
+  }
+
+  /* Zoom overlay */
+  .zoom-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1200;
+  }
+  .zoom-overlay img {
+    max-width: 95%;
+    max-height: 95%;
+    object-fit: contain;
+    border-radius: 6px;
+  }
+</style>
+
+<div class="product-container">
+  <div class="product-media">
+    <div class="media-stage" id="mediaStage">
+      <!-- main media inserted by JS; fallback image below -->
+      {% if media and media|length > 0 %} {% set first = media[0] %} {% if
+      first.media_type and first.media_type.startswith('video') %}
+      <video id="mainMedia" src="{{ first.media_url }}" controls muted></video>
+      {% else %}
+      <img id="mainMedia" src="{{ first.media_url }}" alt="{{ item.name }}" />
+      {% endif %} {% else %}
+      <img
+        id="mainMedia"
+        src="{{ item.image_url or '/static/defoult.jpg' }}"
+        alt="{{ item.name }}" />
+      {% endif %}
+
+      <button class="media-btn left" id="prevBtn" title="Oldingi">‹</button>
+      <button class="media-btn right" id="nextBtn" title="Keyingi">›</button>
+      <button class="media-btn zoom" id="zoomBtn" title="Kattalashtirish">
+        🔍
+      </button>
+    </div>
+
+    <div class="thumbnails" id="thumbnails">
+      {% set all_media = media if media else [] %} {% if all_media|length == 0
+      and item.image_url %} {% set all_media = [{'media_url': item.image_url,
+      'media_type':'image'}] %} {% endif %} {% for m in all_media %}
+      <div class="thumb" data-idx="{{ loop.index0 }}">
+        <img src="{{ m.media_url }}" alt="thumb" />
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="product-details">
+    <h1>{{ item.name }}</h1>
+    <p class="description">{{ item.description or '' }}</p>
+
+    <div class="rating-row">
+      <!-- Fractional star display: two layered elements. .stars-inner width reflects rating/5*100% -->
+      <style>
+        .stars-wrap { display:inline-block; position:relative; font-size:20px; line-height:1; }
+        .stars-bottom, .stars-top { color: #e6e6e6; }
+        .stars-top { color: #ffb648; position:absolute; left:0; top:0; overflow:hidden; white-space:nowrap; }
+        .stars-bottom { white-space:nowrap; }
+        /* clickable rating in comment form */
+        .rating-input-stars { cursor:pointer; display:inline-block; }
+        .rating-input-stars .star{ font-size:26px; color:#e6e6e6; }
+        .rating-input-stars .star.hovered, .rating-input-stars .star.selected{ color:#ffb648; }
+      </style>
+
+      <div class="stars-wrap" aria-hidden="true" title="{{ "%.1f"|format(item.rating|float(0)) }}">
+        <div class="stars-bottom">★★★★★</div>
+        <div class="stars-top" id="starsTop" style="width:{{ ((item.rating|float(0))/5.0)*100 }}%">★★★★★</div>
+      </div>
+      <div class="rating-text" id="ratingText">
+        {{ "%.1f"|format(item.rating|float(0)) }} ({{ item.orders_count or 0 }} buyurtma)
+      </div>
+    </div>
+
+    <form
+      method="POST"
+      action="{{ url_for('add_to_cart') }}"
+      id="addToCartForm">
+      <input type="hidden" name="menu_item_id" value="{{ item.id }}" />
+
+      <div class="options-row">
+        <div class="select-wrapper">
+          <label for="sizeSelect">O'lcham</label>
+          <select id="sizeSelect" name="size" class="form-select">
+            <option value="">— O'lcham tanlang —</option>
+            {% set _sizes = (item.sizes or '').split(',') %}
+            {% for s in _sizes %}
+              {% if s|trim %}
+                <option value="{{ s|trim }}">{{ s|trim }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="select-wrapper" style="flex: 0 0 160px">
+          <label for="colorSelect">Rang</label>
+          <select id="colorSelect" name="color" class="form-select">
+            <option value="">— Rang tanlang —</option>
+            {% set _colors = (item.colors or '').split(',') %}
+            {% for c in _colors %}
+              {% if c|trim %}
+                <option value="{{ c|trim }}">{{ c|trim }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="quantity-row">
+        <label style="min-width: 70px; font-weight: 600">Miqdor</label>
+        <button type="button" class="qty-btn" id="decQty">−</button>
+        <input
+          type="number"
+          name="quantity"
+          id="quantityInput"
+          class="qty-input"
+          value="1"
+          min="1"
+          max="99" />
+        <button type="button" class="qty-btn" id="incQty">+</button>
+      </div>
+
+      <div style="margin-top: 16px">
+        <button type="submit" class="add-cart-btn">
+          🛒 Savatchaga qo'shish
+        </button>
+      </div>
+    </form>
+
+    <!-- Comments: submission form + list -->
+    <div
+      class="comments-section"
+      style="margin-top: 24px; border-top: 1px solid #eee; padding-top: 18px">
+      <h3>Mijozlar sharhlari</h3>
+
+      <form method="POST" action="{{ url_for('post_comment', item_id=item.id) }}" id="commentForm" style="margin-top:12px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <label style="min-width:70px;font-weight:600">Rating</label>
+          <input type="hidden" name="rating" id="ratingInputBottom" value="5" />
+          <div class="rating-input-stars" id="ratingStarsBottom" aria-label="Select rating for comment">
+            <span class="star" data-value="1">★</span>
+            <span class="star" data-value="2">★</span>
+            <span class="star" data-value="3">★</span>
+            <span class="star" data-value="4">★</span>
+            <span class="star" data-value="5">★</span>
+          </div>
+          <div id="ratingSelectedTextBottom" style="margin-left:8px;color:#444;font-weight:600">5</div>
+        </div>
+
+        <div style="margin-bottom: 8px">
+          <label style="font-weight: 600">Sharhingiz</label>
+          <textarea name="comment" rows="3" placeholder="Sharh yozing..." style="width:100%;padding:8px;border-radius:6px;border:1px solid #e6e6e6;"></textarea>
+        </div>
+
+        <div style="text-align: right">
+          <button type="submit" class="add-cart-btn">Sharh yuborish</button>
+        </div>
+      </form>
+
+      <div id="commentsList" class="comments-list" style="margin-top: 18px">
+        {% if comments and comments|length > 0 %} {% for c in comments %}
+        <div
+          class="comment-item"
+          style="
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background: #fff;
+          ">
+          <div
+            class="comment-author"
+            style="font-weight: 700; color: #2d3748; margin-bottom: 6px">
+            {{ c.author or c.user_name or 'Anonim' }} — {{ '⭐' * (c.rating|int
+            if c.rating is not none else 0) }}
+          </div>
+          <div class="comment-text" style="color: #475569; margin-bottom: 6px">
+            {{ c.text or c.comment or '' }}
+          </div>
+          <div class="comment-date" style="font-size: 12px; color: #9aa3b2">
+            {{ c.created_at }}
+          </div>
+        </div>
+        {% endfor %} {% else %}
+        <div
+          class="no-comments"
+          style="
+            color: #666;
+            padding: 12px;
+            border: 1px dashed #e6e6e6;
+            border-radius: 8px;
+          ">
+          Hozircha sharhlar yo'q — birinchi bo'lib fikr qoldiring.
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Zoom overlay -->
+<div
+  class="zoom-overlay"
+  id="zoomOverlay"
+  onclick="document.getElementById('zoomOverlay').style.display='none'">
+  <img id="zoomImg" src="" alt="zoom" />
+</div>
+
+<script>
+  // Media data from server
+  const mediaData = {{ (media or [])|tojson }};
+  const defaultImage = '{{ item.image_url or '/static/defoult.jpg' }}';
+  let currentIndex = 0;
+
+  const mainEl = document.getElementById('mainMedia');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const zoomBtn = document.getElementById('zoomBtn');
+  const thumbs = document.getElementById('thumbnails');
+
+  function updateMain(index) {
+    currentIndex = (index + (mediaData.length || 1)) % (mediaData.length || 1);
+    const m = (mediaData && mediaData.length) ? mediaData[currentIndex] : {media_url: defaultImage, media_type: 'image'};
+    // replace element if type differs
+    const existing = document.getElementById('mainMedia');
+    if (m.media_type && m.media_type.startsWith('video')) {
+      const vid = document.createElement('video');
+      vid.id = 'mainMedia'; vid.src = m.media_url; vid.controls = true; vid.autoplay = false; vid.muted = true;
+      existing.replaceWith(vid);
+    } else {
+      const img = document.createElement('img');
+      img.id = 'mainMedia'; img.src = m.media_url || defaultImage; img.alt = '{{ item.name }}';
+      existing.replaceWith(img);
+    }
+    // highlight thumbnail
+    Array.from(thumbs.children).forEach((t,i)=> t.style.outline = (i===currentIndex)?'2px solid #21a366':'' );
+  }
+
+  prevBtn.addEventListener('click', function(e){ e.stopPropagation(); updateMain(currentIndex-1); });
+  nextBtn.addEventListener('click', function(e){ e.stopPropagation(); updateMain(currentIndex+1); });
+
+  // click thumbnails
+  Array.from(document.querySelectorAll('.thumb')).forEach(function(el){
+    el.addEventListener('click', function(){ updateMain(parseInt(this.dataset.idx,10) || 0); });
+  });
+
+  // zoom
+  zoomBtn.addEventListener('click', function(e){ e.stopPropagation(); const m = (mediaData && mediaData.length)? mediaData[currentIndex] : {media_url: defaultImage}; document.getElementById('zoomImg').src = m.media_url || defaultImage; document.getElementById('zoomOverlay').style.display = 'flex'; });
+
+  // quantity controls
+  const dec = document.getElementById('decQty');
+  const inc = document.getElementById('incQty');
+  const qtyInput = document.getElementById('quantityInput');
+  dec.addEventListener('click', ()=> { qtyInput.value = Math.max(1, parseInt(qtyInput.value||1,10)-1); });
+  inc.addEventListener('click', ()=> { qtyInput.value = Math.min(99, parseInt(qtyInput.value||1,10)+1); });
+
+  // initial thumbnail highlight
+  updateMain(0);
+
+  // Graceful fallback: if mediaData empty, hide prev/next
+  if (!mediaData || mediaData.length <= 1) {
+    prevBtn.style.display = 'none'; nextBtn.style.display = 'none';
+  }
+
+  // Rating stars input widget
+  (function(){
+    function wire(widgetId, inputId, textId){
+      const starsWrap = document.getElementById(widgetId);
+      const input = document.getElementById(inputId);
+      const text = document.getElementById(textId);
+      if(!starsWrap || !input) return;
+      let selected = parseInt(input.value||5,10);
+      function refresh(){
+        Array.from(starsWrap.querySelectorAll('.star')).forEach(s=>{
+          const v = parseInt(s.dataset.value,10)||0;
+          s.classList.toggle('selected', v<=selected);
+        });
+        if(text) text.textContent = selected;
+        input.value = selected;
+      }
+      starsWrap.addEventListener('click', function(e){ const s = e.target.closest('.star'); if(!s) return; selected = parseInt(s.dataset.value,10)||selected; refresh(); });
+      starsWrap.addEventListener('mouseover', function(e){ const s = e.target.closest('.star'); if(!s) return; const hover = parseInt(s.dataset.value,10)||0; Array.from(starsWrap.querySelectorAll('.star')).forEach(st=> st.classList.toggle('hovered', (parseInt(st.dataset.value,10)||0)<=hover)); });
+      starsWrap.addEventListener('mouseout', function(){ Array.from(starsWrap.querySelectorAll('.star.hovered')).forEach(st=> st.classList.remove('hovered')); });
+      refresh();
+    }
+
+    wire('ratingStars','ratingInput','ratingSelectedText');
+    wire('ratingStarsBottom','ratingInputBottom','ratingSelectedTextBottom');
+  })();
+</script>
+
+{% endblock %}

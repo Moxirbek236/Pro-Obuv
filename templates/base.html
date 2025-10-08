@@ -7,25 +7,29 @@
   {# SEO meta block: page templates intended for customers may override this block to inject page-specific meta tags #}
   {% block seo_meta %}
   <meta name="description" content="Pro Obuv - sifatli oyoq kiyim va aksessuarlar. Onlayn buyurtma qilish, tez yetkazib berish va qulay to'lov imkoniyatlari.">
+  <meta name="keywords" content="pro obuv, obuv, safety, pro guard, guard, oyoq kiyim, buyurtma, yetkazib berish">
   <meta property="og:site_name" content="Pro Obuv">
   <meta property="og:title" content="Pro Obuv - Do'kon">
   <meta property="og:description" content="Pro Obuv - sifatli oyoq kiyim va aksessuarlar">
   <meta name="twitter:card" content="summary_large_image">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Pro Obuv",
+    "url": "{{ request.url_root }}",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "{{ request.url_root }}search?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
   {% endblock %}
-    <link
-      rel="apple-touch-icon"
-      sizes="180x180"
-      href="{{ url_for('static', filename='apple-touch-icon.png') }}" />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="32x32"
-      href="{{ url_for('static', filename='favicon-32x32.png') }}" />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="16x16"
-      href="{{ url_for('static', filename='favicon-16x16.png') }}" />
+    <!-- Use the project's default static image for app/icon as requested -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='defoult.jpg') }}" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='defoult.jpg') }}" />
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='defoult.jpg') }}" />
     <link
       rel="manifest"
       href="{{ url_for('static', filename='site.webmanifest') }}" />
@@ -556,6 +560,8 @@
     {% block head %} {% set yandex_key = (config.get('YANDEX_MAPS_API') or '')
     %} {% if yandex_key and yandex_key != 'None' %}
     <script>
+  <!-- Public chat widget -->
+  <script src="/static/chat_widget.js"></script>
       // Masked debug: show whether a Yandex key exists (last 4 chars) without revealing full key
       try {
         const _y = "{{ yandex_key }}" || "";
@@ -648,10 +654,10 @@
             mo.observe(nav, { childList: true, subtree: true });
           }
 
-          // Close handlers to set aria-hidden
+              // Close handlers to set aria-hidden
           const closeViewer = document.getElementById("notifyCloseViewer");
           if (closeViewer) {
-            closeViewer.addEventListener("click", () => {
+            closeViewer.addEventListener("click", function () {
               const m = document.getElementById("notifyModal");
               if (m) {
                 m.style.display = "none";
@@ -662,7 +668,7 @@
           // Also ensure cancel buttons set aria-hidden
           const cancelBtn = document.getElementById("notifyCancelBtn");
           if (cancelBtn) {
-            cancelBtn.addEventListener("click", () => {
+            cancelBtn.addEventListener("click", function () {
               const m = document.getElementById("notifyModal");
               if (m) {
                 m.style.display = "none";
@@ -741,6 +747,28 @@
       } catch (e) {
         // ignore
       }
+    </script>
+    <script>
+      // Defensive: explicitly disable any legacy "menu rotation" helpers.
+      // Some older templates injected a rotating menu or multiple menu instances
+      // via setInterval or by calling startMenuRotation(). We prefer a single
+      // static menu; provide no-op shims so stray calls are harmless.
+      try {
+        if (window.location && window.location.pathname && window.location.pathname.startsWith('/menu')) {
+          window.startMenuRotation = function() { console.debug('startMenuRotation blocked on /menu'); };
+          window.stopMenuRotation = function() { /* noop */ };
+          window.rotateMenu = function() { /* noop */ };
+          // Also ensure location.reload is neutralized (respecting ALLOW_PAGE_RELOAD above)
+          const origReload = window.location && window.location.reload && window.location.reload.bind(window.location);
+          window.location.reload = function() {
+            if (typeof window.ALLOW_PAGE_RELOAD !== 'undefined' && window.ALLOW_PAGE_RELOAD === false) {
+              console.debug('Blocked location.reload() on /menu');
+              return;
+            }
+            if (origReload) return origReload();
+          };
+        }
+      } catch (e) { /* ignore */ }
     </script>
     <script>
       // Override location.reload to respect ALLOW_PAGE_RELOAD flag.
@@ -3524,6 +3552,34 @@
         background: #e3f2fd;
         border-left-color: #0088cc;
       }
+      /* Public AI chat widget styles */
+      .public-chat-fab {
+        position: fixed;
+        right: 20px;
+        bottom: 100px;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: linear-gradient(135deg,#6f42c1,#8a63d2);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2001;
+        cursor: pointer;
+        font-size: 22px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+      }
+      .public-chat-panel { position: fixed; right: 20px; bottom: 170px; width: 360px; max-width: calc(100% - 40px); height: 520px; background: white; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); display: none; z-index:2002; flex-direction:column; overflow:hidden; }
+      .public-chat-panel.open { display:flex; }
+      .public-chat-header{ background:linear-gradient(135deg,#6f42c1,#8a63d2); color:white; padding:10px 12px; font-weight:600; display:flex; justify-content:space-between; align-items:center }
+      .public-chat-body{ padding:12px; flex:1; overflow:auto }
+      .public-chat-input{ padding:8px; border-top:1px solid #eee; display:flex; gap:8px }
+      .public-chat-input input{ flex:1; padding:8px 10px; border-radius:8px; border:1px solid #e6e6e6 }
+      .public-chat-input button{ background:#6f42c1;color:white;border:none;padding:8px 12px;border-radius:8px }
+      .msg{ margin-bottom:8px; padding:8px 10px; border-radius:8px; max-width:80%; }
+      .msg.ai{ background:#f1f5f9; align-self:flex-start }
+      .msg.me{ background:#dcf8c6; align-self:flex-end }
 
       .chat-item-avatar {
         width: 40px;

@@ -4,242 +4,95 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
 <meta
   name="description"
   content="Safety.uz – Pro Obuv do‘koni. Spetsobuv, ish kiyimlari va himoya poyabzallari keng tanlovda. Sifatli mahsulotlar, tez yetkazib berish." />
-<meta
-  property="og:title"
-  content="Pro Obuv — Spetsobuv va Ish kiyimlari do'koni" />
-<meta
-  property="og:description"
-  content="Safety.uz – Pro Obuv va ish kiyimlari do‘koni. Eng sifatli mahsulotlar va xavfsizlik poyabzallari bizda." />
-{% endblock %} {% block content %}
 <style>
-  /* Ensure category buttons are clearly visible and clickable */
-  .category-buttons {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-  .category-btn {
-    cursor: pointer;
-    padding: 6px 10px;
-    border-radius: 8px;
-    border: 1px solid #e6e6e6;
-    background: #fff;
-    z-index: 10;
-  }
-  .category-btn.active {
-    background: #007bff;
-    color: #fff;
-    border-color: #0069d9;
-  }
-  .category-buttons-wrapper {
-    position: relative;
-    z-index: 5;
-  }
-</style>
-<style>
-  /* Card grid */
+  /* Enforce strict, predictable grid breakpoints requested by product owner:
+     phone = 1 column (default/mobile-first)
+     tablet = 2 columns (>=576px)
+     laptop = 3 columns (>=992px)
+     tv/large = 4 columns (>=1400px)
+  */
   .menu-grid {
     display: grid;
-    /* slightly larger minimum card width so cards appear more prominent on desktop */
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 24px;
-    padding: 18px 0;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 0;
+    max-width: none;
   }
 
-  .menu-item-card {
-    background: #ffffff;
-    border-radius: 14px;
-    overflow: hidden;
-    box-shadow: 0 8px 28px rgba(16, 24, 40, 0.06);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    position: relative;
-    /* increase bottom padding slightly so the action area sits lower like the design */
-    padding-bottom: 28px;
-    transition: transform 0.18s ease, box-shadow 0.18s ease;
-  }
-  .menu-item-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 18px 40px rgba(16, 24, 40, 0.12);
+  @media (min-width: 576px) {
+    .menu-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 22px;
+    }
   }
 
+  @media (min-width: 992px) {
+    .menu-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 26px;
+    }
+  }
+
+  @media (min-width: 1400px) {
+    .menu-grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 30px;
+    }
+  }
+
+  /* Card image heights - responsive but consistent */
   .menu-item-card .card-image {
-    width: 100%;
-    /* larger image area to match the screenshot */
-    height: 320px;
-    background: #f3f6fb;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    height: 260px;
+    overflow: hidden;
+  }
+  @media (min-width: 992px) {
+    .menu-item-card .card-image {
+      height: 360px;
+    }
+  }
+  @media (min-width: 1400px) {
+    .menu-item-card .card-image {
+      height: 420px;
+    }
   }
 
-  .menu-item-card .card-image img {
-    max-width: 92%;
-    max-height: 92%;
-    object-fit: cover;
-    border-radius: 10px;
-  }
-
-  .menu-item-card .card-body {
-    padding: 10px 14px 8px 14px;
-    width: 100%;
-  }
-
-  /* Strong overrides to ensure .menu-item-card takes precedence over legacy .menu-item rules */
-  .menu-grid .menu-item-card {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    text-align: center !important;
-    background: #f2f4f6 !important;
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08) !important;
-    border-radius: 16px !important;
-    overflow: hidden !important;
-  }
-
-  .card-title {
-    font-weight: 700;
-    margin: 8px 0 4px 0;
-    color: var(--text-color);
-    font-size: 18px;
-  }
-  .card-category {
-    font-size: 14px;
-    color: var(--muted);
-    margin-bottom: 8px;
-    font-weight: 600;
-  }
-  .card-description {
-    display: none;
-  }
-
-  .card-rating {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    margin: 8px 0;
-  }
-  .card-rating .stars {
-    color: #ddd;
-  }
+  /* Rating star visuals */
   .card-rating .stars .star {
-    font-size: 20px;
-    margin: 0 3px;
-    color: #e6e9eb;
+    color: #dcdcdc;
+    font-size: 18px;
+    display: inline-block;
+    margin-right: 2px;
   }
   .card-rating .stars .star.filled {
-    color: var(--accent-color);
-  }
-  /* Ensure half-star visuals use an overlay technique */
-  .stars .star.half {
-    position: relative;
-  }
-  .stars .star.half i {
-    color: #e6e9eb;
-  }
-  .stars .star.half i::before {
-    content: "\00a0";
-  }
-  .stars .star.half i.fa-star-half {
-    position: absolute;
-    left: 0;
-    top: 0;
-  }
-  /* Make stars clearly visible even if legacy rules set color or opacity */
-  .menu-grid .menu-item-card .card-rating .stars .star,
-  .menu-grid .menu-item-card .card-rating .stars .star.filled {
-    color: #e6e9eb !important;
-    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
-    display: inline-block !important;
-  }
-  .menu-grid .menu-item-card .card-rating .stars .star.filled {
-    color: #ffd166 !important;
-  }
-  .card-rating .rating-text {
-    font-size: 13px;
-    color: #475569;
+    color: #ffd700;
   }
 
-  .card-actions {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    justify-content: center;
-    margin-top: 12px;
-  }
-
+  /* Quantity controls (visible on cards) */
   .qty-controls {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-  }
-  .qty-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    border: none;
-    background: #f1f5fb;
-    color: var(--primary-color);
-    font-weight: 700;
-    cursor: pointer;
     display: inline-flex;
     align-items: center;
-    justify-content: center;
+    gap: 6px;
   }
-  .qty-input {
-    width: 44px;
+  .qty-controls .qty-input {
+    width: 56px;
     text-align: center;
-    border-radius: 8px;
-    border: 1px solid #e6e6e6;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
     padding: 6px;
   }
-
-  .btn-add-cart {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    border: none;
-    background: var(--primary-color);
-    color: #fff;
-    font-size: 20px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 10px 24px rgba(25, 118, 210, 0.12);
-  }
-
-  .btn-favorite-top {
-    position: absolute;
-    left: 10px;
-    top: 10px;
-    background: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.06);
+  .qty-controls .qty-btn {
     width: 36px;
     height: 36px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    background: #fff;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(16, 24, 40, 0.06);
   }
 
-  /* Small responsive tweaks */
+  /* Small screens tweaks */
   @media (max-width: 480px) {
     .menu-item-card .card-image {
-      /* keep compact on very small screens but slightly taller for better visuals */
-      height: 160px;
-    }
-    .qty-btn {
-      width: 32px;
-      height: 32px;
+      height: 200px;
     }
     .card-title {
       font-size: 14px;
@@ -247,44 +100,22 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
     .card-category {
       font-size: 12px;
     }
+    .qty-controls .qty-btn {
+      width: 32px;
+      height: 32px;
+    }
   }
 
-  /* Laptop and phone focused responsive rules */
-  @media (min-width: 1024px) {
-    /* laptop: slightly denser grid */
-    .menu-grid {
-      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-      gap: 28px;
-    }
-    .menu-item-card .card-image {
-      /* larger hero image for laptop/desktop */
-      height: 480px;
-    }
-    .card-title {
-      font-size: 20px;
-    }
-  }
+  /* Ensure add-to-cart button sizing remains usable on phones */
   @media (max-width: 767px) {
-    /* phone: single-column focus */
-    .menu-grid {
-      grid-template-columns: 1fr;
-      gap: 16px;
-      padding: 10px 0;
-    }
-    .menu-item-card {
-      padding-bottom: 12px;
-      border-radius: 12px;
-    }
-    .menu-item-card .card-image {
-      /* slightly taller on narrow phones/tablets to improve image presence */
-      height: 220px;
-    }
     .btn-add-cart {
       width: 46px;
       height: 46px;
     }
   }
 </style>
+{% endblock %} {% block content %}
+
 <div class="menu-container">
   <div class="main-content">
     <!-- cart button removed (use navbar cart) -->
@@ -543,12 +374,19 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
             class="menu-item-card"
             data-id="{{ item.id }}"
             data-category="{{ (item.category or 'product')|lower }}"
-            onclick="openItemModal({{ item.id }}, event)">
+            onclick="event.stopPropagation(); window.location.href='{{ url_for('product_detail', item_id=item.id) }}';">
             <div class="card-image">
-              <img
-                src="{{ item.image_url or '/static/defoult.jpg' }}"
-                alt="{{ item.name }}"
-                onerror="this.src='/static/defoult.jpg'" />
+              <a
+                href="{{ url_for('product_detail', item_id=item.id) }}"
+                onclick="event.stopPropagation();">
+                <img
+                  src="{{ item.image_url or '/static/defoult.jpg' }}"
+                  alt="{{ item.name }}"
+                  title="{{ item.name }}"
+                  loading="lazy"
+                  decoding="async"
+                  onerror="this.src='/static/defoult.jpg'" />
+              </a>
             </div>
             <div class="card-body">
               {% if session.user_id %}
@@ -560,7 +398,13 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
                 <button type="submit" class="btn-favorite-top"></button>
               </form>
               {% endif %}
-              <h3 class="card-title">{{ item.name }}</h3>
+              <h3 class="card-title">
+                <a
+                  href="{{ url_for('product_detail', item_id=item.id) }}"
+                  onclick="event.stopPropagation();"
+                  >{{ item.name }}</a
+                >
+              </h3>
               <p class="card-category">{{ item.category or '' }}</p>
               <p class="card-description">{{ item.description or '' }}</p>
               <!-- Show available sizes and colors on the card -->
@@ -585,20 +429,17 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
                 {% endif %}
               </div>
               <div class="card-rating">
-                <div class="stars">
-                  {% for i in range(1,6) %}
-                  <span
-                    class="star {% if i <= (item.rating or 0) %}filled{% endif %}">
-                    <i
-                      class="bi bi-star-fill ui-icon ui-icon--accent"
-                      aria-hidden="true"></i>
-                  </span>
-                  {% endfor %}
+                <style>
+                  .card-stars-wrap{display:inline-block;position:relative;font-size:16px;line-height:1}
+                  .card-stars-bottom,.card-stars-top{white-space:nowrap}
+                  .card-stars-bottom{color:#e6e6e6}
+                  .card-stars-top{color:#ffd700;position:absolute;left:0;top:0;overflow:hidden}
+                </style>
+                <div class="card-stars-wrap" title="{{ "%.1f"|format(item.rating or 0) }}">
+                  <div class="card-stars-bottom">★★★★★</div>
+                  <div class="card-stars-top" style="width:{{ ((item.rating or 0)/5.0)*100 }}%">★★★★★</div>
                 </div>
-                <div class="rating-text">
-                  {{ "%.1f"|format(item.rating or 0) }} ({{ item.orders_count or
-                  0 }} buyurtma)
-                </div>
+                <div class="rating-text">{{ "%.1f"|format(item.rating or 0) }} ({{ item.orders_count or 0 }} buyurtma)</div>
               </div>
 
               <div class="card-actions">
@@ -615,7 +456,7 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
                       type="button"
                       class="qty-btn minus"
                       onclick="decreaseQuantity(this)">
-                      −
+                      -
                     </button>
                     <input
                       type="number"
@@ -663,128 +504,6 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
 </div>
 
 <!-- Floating Cart Icon -->
-
-<!-- Modal oyna mahsulot tafsilotlari uchun -->
-<div id="itemModal" class="modal-overlay" onclick="closeItemModal()">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <div class="modal-header">
-      <h2 id="modalTitle"></h2>
-      <button class="modal-close" onclick="closeItemModal()">X</button>
-    </div>
-    <div class="modal-body">
-      <div class="modal-image">
-        <!-- Carousel container: will contain image or video elements inserted dynamically -->
-        <div id="modalMediaContainer" class="modal-media-container">
-          <!-- media elements inserted here -->
-        </div>
-        <div class="modal-media-controls">
-          <button
-            id="modalPrevBtn"
-            class="modal-nav-btn"
-            aria-label="Previous"
-            style="display: none">
-            ‹
-          </button>
-          <button
-            id="modalZoomBtn"
-            class="modal-zoom-btn"
-            aria-label="Zoom"
-            style="display: none"></button>
-          <button
-            id="modalNextBtn"
-            class="modal-nav-btn"
-            aria-label="Next"
-            style="display: none">
-            ›
-          </button>
-        </div>
-      </div>
-      <div class="modal-details">
-        <p id="modalDescription"></p>
-        <div class="modal-rating">
-          <div class="stars" id="modalStars"></div>
-          <span id="modalRatingText"></span>
-        </div>
-        <div class="modal-actions">
-          <form
-            id="modalCartForm"
-            method="POST"
-            action="{{ url_for('add_to_cart') }}">
-            <input
-              type="hidden"
-              id="modalItemId"
-              name="menu_item_id"
-              value="" />
-            <!-- Enhanced Size and color selections with beautiful styling -->
-            <div class="modal-options-container">
-              <div class="modal-option-group">
-                <label for="modalSize" class="modal-option-label">
-                  <span class="option-icon"></span>
-                  <span class="option-text">O'lcham tanlang</span>
-                </label>
-                <div class="select-wrapper">
-                  <select
-                    id="modalSize"
-                    name="size"
-                    aria-label="O'lcham"
-                    data-required="false"
-                    class="modal-select">
-                    <option value="" selected disabled>O'lcham tanlang</option>
-                  </select>
-                  <div class="select-arrow">▼</div>
-                </div>
-              </div>
-
-              <div class="modal-option-group">
-                <label for="modalColor" class="modal-option-label">
-                  <span class="option-icon"></span>
-                  <span class="option-text">Rang tanlang</span>
-                </label>
-                <div class="select-wrapper">
-                  <select
-                    id="modalColor"
-                    name="color"
-                    aria-label="Rang"
-                    data-required="false"
-                    class="modal-select">
-                    <option value="" selected disabled>Rang tanlang</option>
-                  </select>
-                  <div class="select-arrow">▼</div>
-                </div>
-              </div>
-            </div>
-            <div class="quantity-selector">
-              <button type="button" onclick="decreaseModalQuantity()">-</button>
-              <input
-                type="number"
-                id="modalQuantity"
-                name="quantity"
-                value="1"
-                min="1"
-                max="99" />
-              <button type="button" onclick="increaseModalQuantity()">+</button>
-            </div>
-            <button
-              type="submit"
-              class="btn-add-cart"
-              id="modalAddToCartBtn"
-              disabled>
-              Savatchaga qo'shish
-            </button>
-          </form>
-        </div>
-
-        <!-- Sharhlar bo'limi -->
-        <div class="comments-section">
-          <h3>Mijozlar sharhlari</h3>
-          <div id="modalComments" class="comments-list">
-            <!-- Sharhlar bu yerda dinamik yuklash -->
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
 <style>
 
@@ -1014,7 +733,7 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
     margin-right: auto; /* Center the content area */
     display: flex;
     flex-direction: column;
-    align-items: center; /* Center content horizontally */
+    align-items: stretch !important; /* allow children (menu-grid) to fill full width */
   }
 
   /* ================================
@@ -1775,205 +1494,47 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
     text-align: center;
   }
 
+  /* Mobile-first: phone = 1 column */
   .menu-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* Always 3 columns on desktop */
-    gap: 30px;
+    grid-template-columns: 1fr;
+    gap: 24px;
     padding: 0;
     max-width: none;
   }
 
-  /* Universal Responsive Design - Comprehensive Media Queries */
-
-  /* Extra Large Screens (1920px and up) - Keep 3 columns */
-  @media (min-width: 1920px) {
-    .menu-grid {
-      grid-template-columns: repeat(3, 1fr);
-      gap: 40px;
-    }
-    .menu-item {
-      min-height: 700px;
-    }
-    .item-image {
-      height: 400px;
-    }
-  }
-
-  /* Large Screens (1600px - 1919px) */
-  @media (max-width: 1919px) and (min-width: 1600px) {
-    .menu-grid {
-      grid-template-columns: repeat(3, 1fr);
-      gap: 45px;
-    }
-    .menu-item {
-      min-height: 650px;
-    }
-    .item-image {
-      height: 350px;
-    }
-  }
-
-  /* Medium Large Screens (1400px - 1599px) */
-  @media (max-width: 1599px) and (min-width: 1400px) {
-    .menu-grid {
-      grid-template-columns: repeat(3, 1fr);
-      gap: 40px;
-    }
-    .menu-item {
-      min-height: 600px;
-    }
-    .item-image {
-      height: 320px;
-    }
-  }
-
-  /* Medium Screens (1200px - 1399px) */
-  @media (max-width: 1399px) and (min-width: 1200px) {
+  /* Tablet: 2 columns (>=576px and <992px) */
+  @media (min-width: 576px) and (max-width: 991px) {
     .menu-grid {
       grid-template-columns: repeat(2, 1fr);
-      gap: 35px;
+      gap: 26px;
     }
     .menu-item {
-      min-height: 580px;
+      min-height: 480px;
     }
     .item-image {
       height: 300px;
     }
-    .content-area {
-      margin-left: 300px;
-      width: calc(100% - 300px);
-    }
-    .filter-sidebar {
-      width: 260px;
-      display: flex;
-      flex-wrap: nowrap;
-      flex-direction: column;
-      max-height: calc(100vh - 300px);
-    }
   }
 
-  /* Small Medium Screens (992px - 1199px) */
-  @media (max-width: 1199px) and (min-width: 992px) {
+  /* Notebook / Desktop: 3 columns (>=992px) */
+  @media (min-width: 992px) {
     .menu-grid {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 30px;
     }
     .menu-item {
-      min-height: 550px;
+      min-height: 560px;
     }
     .item-image {
-      height: 280px;
+      height: 560px;
     }
     .content-area {
-      margin-left: 280px;
-      width: calc(100% - 280px);
+      margin-left: 320px;
+      width: calc(100% - 360px);
     }
     .filter-sidebar {
-      width: 250px;
-      max-height: calc(100vh - 300px);
-    }
-  }
-
-  /* Tablet Screens (768px - 991px) */
-  @media (max-width: 991px) and (min-width: 768px) {
-    .menu-grid {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 25px;
-    }
-    .menu-item {
-      min-height: 500px;
-    }
-    .item-image {
-      height: 250px;
-    }
-    .item-content {
-      padding: 20px;
-    }
-    .content-area {
-      margin-left: 0;
-      width: 100%;
-    }
-  }
-
-  /* Mobile Large (576px - 767px) */
-  @media (max-width: 767px) and (min-width: 576px) {
-    .menu-grid {
-      grid-template-columns: 1fr;
-      gap: 20px;
-    }
-    .menu-item {
-      min-height: 450px;
-    }
-    .item-image {
-      height: 220px;
-    }
-    .item-content {
-      padding: 18px;
-    }
-    .menu-title {
-      font-size: 2.5rem;
-    }
-    .menu-title::before,
-    .menu-title::after {
-      display: none; /* Hide shoe icons on mobile */
-    }
-  }
-
-  /* Mobile Medium (480px - 575px) */
-  @media (max-width: 575px) and (min-width: 480px) {
-    .menu-grid {
-      grid-template-columns: 1fr;
-      gap: 18px;
-    }
-    .menu-item {
-      min-height: 420px;
-    }
-    .item-image {
-      height: 200px;
-    }
-    .item-content {
-      padding: 16px;
-    }
-    .menu-title {
-      font-size: 2.2rem;
-    }
-    .category-btn {
-      font-size: 0.8rem;
-      padding: 8px 16px;
-    }
-  }
-
-  /* Mobile Small (up to 479px) */
-  @media (max-width: 479px) {
-    .menu-grid {
-      grid-template-columns: 1fr;
-      gap: 15px;
-    }
-    .menu-item {
-      min-height: 380px;
-    }
-    .item-image {
-      height: 180px;
-    }
-    .item-content {
-      padding: 15px;
-    }
-    .menu-title {
-      font-size: 2rem;
-    }
-    .category-buttons {
-      padding: 10px;
-      gap: 8px;
-    }
-    .category-btn {
-      font-size: 0.75rem;
-      padding: 6px 12px;
-    }
-    .item-name {
-      font-size: 1.2rem;
-    }
-    .item-price {
-      font-size: 1.1rem;
+      width: 320px;
     }
   }
 
@@ -2001,16 +1562,20 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
 
   .item-image {
     width: 100%;
-    height: 320px;
+    height: 380px;
     overflow: hidden;
     position: relative;
     background: linear-gradient(135deg, #f8fafc 0%, #edf2f7 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .item-image img {
-    width: 100%;
+    /* Let images scale within the card while preserving aspect ratio */
+    width: auto;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     transition: transform 0.3s ease;
     display: block;
     border-top-left-radius: 20px;
@@ -2250,161 +1815,9 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
     box-shadow: 0 4px 8px rgba(255, 165, 0, 0.4);
   }
 
-  /* Modal stillari */
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    z-index: 1000;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    overflow-y: auto;
-  }
-
-  .modal-content {
-    background: white;
-    border-radius: 15px;
-    max-width: 90vw;
-    max-height: 90vh;
-    width: 600px;
-    overflow-y: auto;
-    position: relative;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  }
-
-  /* Tungi rejim uchun modal tuzatishlari */
-  body.dark-theme .modal-content {
-    background: #1a1a1a !important;
-    color: #ffffff !important;
-    border: 1px solid #3d3d3d !important;
-  }
-
-  body.dark-theme .modal-header {
-    background: #2d2d2d !important;
-    color: #ffffff !important;
-    border-bottom-color: #3d3d3d !important;
-  }
-
-  body.dark-theme .modal-header h2 {
-    color: #ffffff !important;
-  }
-
-  body.dark-theme .modal-close:hover {
-    background: #3d3d3d !important;
-    color: #ffffff !important;
-  }
-
-  body.dark-theme .modal-details p {
-    color: #e0e0e0 !important;
-  }
-
-  body.dark-theme .comments-section h3 {
-    color: #ffffff !important;
-  }
-
-  body.dark-theme .comment-item {
-    background: #2d2d2d !important;
-    color: #ffffff !important;
-    border-color: #3d3d3d !important;
-  }
-
-  body.dark-theme .comment-text {
-    color: #e0e0e0 !important;
-  }
-
-  body.dark-theme .quantity-selector button {
-    background: #2d2d2d !important;
-    color: #ffffff !important;
-  }
-
-  body.dark-theme .quantity-selector button:hover {
-    background: #4299e1 !important;
-    color: #ffffff !important;
-  }
-
-  body.dark-theme .quantity-selector input {
-    background: #2d2d2d !important;
-    color: #ffffff !important;
-    border-color: #3d3d3d !important;
-  }
-
-  .modal-header {
-    padding: 20px;
-    border-bottom: 1px solid #eee;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #f8f9fa;
-    border-radius: 15px 15px 0 0;
-  }
-
-  .modal-header h2 {
-    margin: 0;
-    color: #2d3748;
-  }
-
-  .modal-close {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: #666;
-    padding: 0;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    transition: all 0.3s ease;
-  }
-
-  .modal-close:hover {
-    background: #f0f0f0;
-    color: #333;
-  }
-
-  .modal-body {
-    padding: 20px;
-  }
-
-  .modal-image {
-    margin-bottom: 20px;
-    text-align: center;
-  }
-
-  .modal-image img {
-    max-width: 100%;
-    max-height: 300px;
-    border-radius: 10px;
-    object-fit: cover;
-  }
-
-  .modal-details p {
-    font-size: 1rem;
-    line-height: 1.6;
-    color: #555;
-    margin-bottom: 15px;
-  }
-
-  .modal-rating {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 15px;
-  }
-
-  .modal-price {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #38a169;
-    margin-bottom: 20px;
-    text-align: center;
-  }
+  /* Item modal removed: product preview modal CSS was intentionally removed
+     in favor of dedicated product pages at /product/<id>. Remaining modal
+     styles are provided globally in base templates or static CSS files. */
 
   .modal-actions {
     border-top: 1px solid #eee;
@@ -2477,6 +1890,39 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
   .comments-list {
     max-height: 200px;
     overflow-y: auto;
+  }
+
+  /* Responsive grid adjustments: phone=1, tablet=2, notebook=3, tv=4 */
+  .menu-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    width: 100% !important; /* ensure grid stretches across the content area */
+  }
+
+  @media (min-width: 576px) {
+    .menu-grid { grid-template-columns: repeat(2, 1fr); gap: 22px; }
+  }
+
+  @media (min-width: 992px) {
+    .menu-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 26px !important; }
+    /* Ensure cards fill their grid column instead of being artificially narrow */
+    .menu-item-card { max-width: none !important; margin: 0 !important; width: 100% !important; box-sizing: border-box !important; }
+  }
+
+  @media (min-width: 1900px) {
+    .menu-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 30px !important; }
+  }
+
+  /* Force image visibility and sizing to avoid accidental hiding */
+  .menu-item-card .card-image img,
+  .menu-item .item-image img {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: auto !important;
+    height: 100% !important;
+    object-fit: contain !important;
   }
 
   .comment-item {
@@ -2778,12 +2224,10 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
       opacity: 0;
     }
     to {
-      opacity: 1;
+          const id = item.id !== undefined ? item.id : "";
     }
   }
-
-  /* Mobile responsiv uchun floating cart */
-
+          console.warn('navigation failed', err);
   /* ================================
      ENHANCED MODAL OPTIONS STYLING
      ================================ */
@@ -3255,17 +2699,35 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
   .modal-media-item.active {
     display: block;
   }
+  /* Media items inside modal */
+  .modal-media-controls { position: absolute; inset: 0; pointer-events: none; z-index: 1200; }
 
-  .modal-media-controls { position: absolute; top: 8px; left: 0; right: 0; display:flex; align-items:center; justify-content:center; gap:12px; pointer-events:none; z-index:60; }
-  .modal-nav-btn, .modal-zoom-btn { pointer-events:auto; background: rgba(0,0,0,0.75); color:white; border:none; padding:8px 12px; border-radius:8px; font-size:20px; cursor:pointer; box-shadow: 0 6px 18px rgba(0,0,0,0.4); }
-  .modal-nav-btn { font-weight:700; }
-  #modalPrevBtn { margin-right: auto; margin-left: 12px; }
-  #modalNextBtn { margin-left: auto; margin-right: 12px; }
+  /* overlay nav/zoom buttons on top of image */
+  .modal-nav-btn, .modal-zoom-btn {
+    position: absolute;
+    background: rgba(0,0,0,0.65);
+    color: #fff;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 20px;
+    z-index: 1300;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+    pointer-events: auto;
+  }
+
+  /* Prev/Next centered vertically on left/right edges */
+  .modal-nav-btn[aria-label="Previous"] { left: 12px; top: 50%; transform: translateY(-50%); }
+  .modal-nav-btn[aria-label="Next"] { right: 12px; top: 50%; transform: translateY(-50%); }
+
+  /* Zoom in bottom-left corner of the media container */
+  .modal-zoom-btn { left: 12px; bottom: 12px; top: auto; transform: none; }
+
   .modal-media-item.zoomed { transform: scale(1.3); cursor: zoom-out; }
 
   /* Ensure modal controls sit above other overlays and are visible on mobile */
-  .modal-nav-btn, .modal-zoom-btn { z-index: 1200 !important; }
-  .modal-media-container { z-index: 1100; }
+  .modal-media-container { z-index: 1100; position: relative; }
 
   .media-toolbar {
     position: absolute;
@@ -3438,325 +2900,43 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
       } catch (e) { console.warn('wireCategoryButtons failed', e); }
     })();
 
+    // openItemModal kept as a compatibility shim for older scripts.
+    // It now navigates to the dedicated product page instead of opening a modal.
     function openItemModal(itemId, evt) {
-      // Diagnostic: always log the invocation so we can trace unexpected callers.
-      try {
-      console.log('openItemModal invoked ->', { itemId: itemId, evtType: evt ? evt.type : null, isTrusted: evt ? !!evt.isTrusted : null, lastInteraction: __lastUserInteraction, userHasInteracted: !!__userHasInteracted, modalGuardUntil: __modalGuardUntil });
-        // Print a stack so we can identify the caller during debugging
-        try { console.trace && console.trace(); } catch (e) {}
-      } catch (e) {}
-
-      // Prevent accidental auto-open: require a trusted event that originated
-      // from a .menu-item (or allow only after the user has already interacted).
-      try {
-        // Early-load guard: block modal opens that occur during initial script
-        // startup (commonly caused by other scripts or synthetic events).
-        if (Date.now() < __modalGuardUntil && !(evt && evt.isTrusted) && !__userHasInteracted) {
-          try { console.warn('openItemModal blocked by early-load guard', { itemId, timeNow: Date.now(), modalGuardUntil: __modalGuardUntil }); } catch(e){}
-          return;
-        }
-        // If a user event is provided and it's trusted (real user click), update timestamp
-        if (evt && evt.isTrusted) {
-          try { __lastUserInteraction = Date.now(); } catch (e){}
-        }
-
-        // If no event is provided, block: we only open modals in response to real events
-        if (!evt) {
-          try { console.warn('openItemModal blocked: call missing event (preventing programmatic open) for', itemId); } catch(e){}
-          return;
-        }
-
-  // Ensure event is trusted and comes from (or within) a .menu-item-card unless user has already interacted
-  const fromCard = (evt.target && evt.target.closest && evt.target.closest('.menu-item-card')) || (evt.currentTarget && evt.currentTarget.closest && evt.currentTarget.closest('.menu-item-card'));
-        if (!(evt.isTrusted || __userHasInteracted) || !fromCard) {
-          try {
-            console.warn('openItemModal blocked: event not from card or not trusted', { itemId, isTrusted: !!(evt && evt.isTrusted), fromCard: !!fromCard, userHasInteracted: !!__userHasInteracted });
-            console.trace && console.trace();
-          } catch(e){}
-          return;
-        }
-      } catch (e) { /* ignore guard errors */ }
-    // Normalize and robustly lookup the item in menuData. Accept numeric
-    // or string keys and try fallback strategies.
-    const idStr = (itemId !== undefined && itemId !== null) ? String(itemId) : '';
-    const idNum = parseInt(itemId, 10);
-    let item = null;
-    try {
-      if (window.menuData) {
-        if (window.menuData[idStr]) item = window.menuData[idStr];
-        else if (!isNaN(idNum) && window.menuData[idNum]) item = window.menuData[idNum];
-        else {
-          // last resort: search values for matching id
-          for (const k in window.menuData) {
-            const v = window.menuData[k];
-            if (v && (v.id === idNum || String(v.id) === idStr)) { item = v; break; }
-          }
-        }
-      }
-    } catch (e) { console.warn('menuData lookup error', e); }
-    if (!item) {
-      try {
-        const card = document.querySelector('.menu-item-card[data-id="' + itemId + '"]');
-        if (card) {
-          const name = (card.querySelector('.card-title')||{}).textContent || ('Item ' + itemId);
-          const desc = (card.querySelector('.card-description')||{}).textContent || '';
-          const imgEl = card.querySelector('.card-image img') || null;
-          const img = imgEl ? (imgEl.getAttribute('src') || '') : '/static/defoult.jpg';
-          item = { id: parseInt(itemId,10), name: name.trim(), description: desc.trim(), image_url: img, image: img, rating: 0, orders_count: 0, sizes: '', colors: '' };
-        }
-      } catch (e) {
-        console.warn('openItemModal fallback build failed', e);
-      }
+      try { window.location.href = '/product/' + encodeURIComponent(itemId); } catch (err) { console.warn('navigation failed', err); }
     }
-    if (!item) return; // nothing we can do
-
-        // Modal ma'lumotlarini to'ldirish
-        document.getElementById('modalTitle').textContent = item.name;
-        // Load media for this item (images/videos). We will fetch /api/product-media/<id>
-        const mediaContainer = document.getElementById('modalMediaContainer');
-        mediaContainer.innerHTML = '<div class="media-loading">Yuklanmoqda...</div>';
-
-        fetch(`/api/product-media/${itemId}`).then(r => r.json()).then(json => {
-          const media = (json && json.media) ? json.media : [];
-          mediaContainer.innerHTML = '';
-
-          // If no media returned, fallback to the single image from menuData
-      if (!media || media.length === 0) {
-        const img = document.createElement('img');
-        img.src = item.image_url || item.image || '/static/defoult.jpg';
-              img.alt = item.name;
-              img.className = 'modal-media-item active';
-              mediaContainer.appendChild(img);
-            } else {
-            media.forEach((m, idx) => {
-              if (m.media_type && m.media_type.startsWith('video')) {
-                const vid = document.createElement('video');
-                vid.src = m.media_url;
-                vid.controls = true;
-                vid.className = 'modal-media-item';
-                if (idx === 0) vid.classList.add('active');
-                mediaContainer.appendChild(vid);
-              } else {
-                const img = document.createElement('img');
-                img.src = m.media_url || item.image_url || '/static/defoult.jpg';
-                img.alt = item.name;
-                img.className = 'modal-media-item';
-                if (idx === 0) img.classList.add('active');
-                mediaContainer.appendChild(img);
-              }
-            });
-          }
-
-          // Setup navigation
-          const prevBtn = document.getElementById('modalPrevBtn');
-          const nextBtn = document.getElementById('modalNextBtn');
-          const items = mediaContainer.querySelectorAll('.modal-media-item');
-          let currentIndex = 0;
-
-          function updateNav() {
-            if (items.length <= 1) {
-              prevBtn.style.display = 'none';
-              nextBtn.style.display = 'none';
-            } else {
-              prevBtn.style.display = 'block';
-              nextBtn.style.display = 'block';
-            }
-            items.forEach((it, i) => {
-              if (i === currentIndex) {
-                it.classList.add('active');
-                if (it.tagName === 'VIDEO') it.play().catch(()=>{});
-              } else {
-                it.classList.remove('active');
-                if (it.tagName === 'VIDEO') { try { it.pause(); it.currentTime = 0; } catch(e){} }
-              }
-            });
-          }
-
-          prevBtn.onclick = (e) => { e.stopPropagation(); currentIndex = (currentIndex - 1 + items.length) % items.length; updateNav(); };
-          nextBtn.onclick = (e) => { e.stopPropagation(); currentIndex = (currentIndex + 1) % items.length; updateNav(); };
-
-          // Keyboard navigation
-          document.onkeydown = function(e) {
-            if (document.getElementById('itemModal').style.display !== 'flex') return;
-            if (e.key === 'ArrowLeft') prevBtn.click();
-            if (e.key === 'ArrowRight') nextBtn.click();
-          };
-
-          updateNav();
-
-          // Zoom button logic: show zoom only when a single media item (or when you prefer)
-          const zoomBtn = document.getElementById('modalZoomBtn');
-          try { console.log('[itemModal] media items:', items.length, 'zoomBtnExists:', !!zoomBtn); } catch(e) {}
-          if (zoomBtn) {
-            if (items.length <= 1) {
-              zoomBtn.style.display = 'block';
-              prevBtn.style.display = 'none';
-              nextBtn.style.display = 'none';
-            } else {
-              zoomBtn.style.display = 'none';
-            }
-
-            // toggle zoom on active media
-            zoomBtn.onclick = function(ev) {
-              ev.stopPropagation();
-              const active = mediaContainer.querySelector('.modal-media-item.active');
-              if (!active) return;
-              active.classList.toggle('zoomed');
-            };
-
-            // Also allow click on image to toggle zoom
-            items.forEach(it => {
-              it.addEventListener('click', function(ev) {
-                if (items.length <= 1) {
-                  this.classList.toggle('zoomed');
-                }
-              });
-            });
-          }
-
-          // Staff-only controls: show simple admin overlay allowing set-main/delete when staff
-          if (IS_STAFF) {
-            // Add media management toolbar (set main / delete) per media item
-            items.forEach((el, idx) => {
-              const toolbar = document.createElement('div');
-              toolbar.className = 'media-toolbar';
-              toolbar.innerHTML = `
-                <button class="btn-small" data-idx="${idx}" onclick="setMainMedia(event, ${itemId})">Set main</button>
-                <button class="btn-small btn-danger" data-idx="${idx}" onclick="deleteMedia(event)">Delete</button>
-              `;
-              el.style.position = 'relative';
-              el.parentElement.appendChild(toolbar);
-            });
-          }
-
-        }).catch(err => {
-          mediaContainer.innerHTML = '<div class="media-error">Media yuklashda xatolik</div>';
-          console.error('Error fetching media', err);
-        });
-  document.getElementById('modalDescription').textContent = item.description;
-        document.getElementById('modalItemId').value = itemId;
-
-        // Baholarni ko'rsatish (safe: handle missing/null/NaN ratings)
-        const modalStars = document.getElementById('modalStars');
-        modalStars.innerHTML = '';
-    // ensure rating is a valid number between 0 and 5
-    const rawRating = (item && item.rating !== undefined && item.rating !== null) ? Number(item.rating) : 0;
-    const rating = (isNaN(rawRating) ? 0 : Math.max(0, Math.min(5, rawRating)));
-    const orders = (item && item.orders_count) ? Number(item.orders_count) : 0;
-    for (let i = 1; i <= 5; i++) {
-      const star = document.createElement('span');
-      star.className = `star ${i <= Math.round(rating) ? 'filled' : ''}`;
-      star.innerHTML = '<i class="bi bi-star-fill ui-icon ui-icon--accent" aria-hidden="true"></i>';
-      modalStars.appendChild(star);
-    }
-        document.getElementById('modalRatingText').textContent = `${rating.toFixed(1)} (${orders} buyurtma)`;
-
-
-        // Sharhlarni yuklash
-        loadComments(itemId);
-
-        // Populate size and color selects
-        const sizeSelect = document.getElementById('modalSize');
-        const colorSelect = document.getElementById('modalColor');
-        // clear previous options (keep the first placeholder)
-        if (sizeSelect) {
-            sizeSelect.querySelectorAll('option:not(:first-child)').forEach(o => o.remove());
-            const sizes = (item.sizes || '').split(',').map(s => s.trim()).filter(s => s.length);
-            sizes.forEach(sz => {
-                const opt = document.createElement('option');
-                opt.value = sz;
-                opt.textContent = sz;
-                sizeSelect.appendChild(opt);
-            });
-        }
-        if (colorSelect) {
-            colorSelect.querySelectorAll('option:not(:first-child)').forEach(o => o.remove());
-            const colors = (item.colors || '').split(',').map(s => s.trim()).filter(s => s.length);
-            colors.forEach(clr => {
-                const opt = document.createElement('option');
-                opt.value = clr;
-                opt.textContent = getColorDisplayName(clr);
-                colorSelect.appendChild(opt);
-            });
-
-            // Add color indicators to options
-            addColorIndicators(colorSelect, colors);
-        }
-
-      // Modalni ko'rsatish via centralized helper (keeps behavior consistent)
-      if (typeof showItemModal === 'function') {
-        showItemModal();
-      } else {
-        // Fallback if helper isn't available for some reason
-        document.getElementById('itemModal').style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-      }
-
-      // If product has sizes/colors, mark selects as required so client validation
-      // can enable/disable the Add button accordingly. Also attach change listeners
-      // that toggle the modal Add button state.
-      try {
-        const addBtn = document.getElementById('modalAddToCartBtn');
-        // derive presence of sizes/colors from the item data (safe across scopes)
-        const hasSizes = (item && (item.sizes || '').toString().trim().length > 0);
-        const hasColors = (item && (item.colors || '').toString().trim().length > 0);
-
-        if (sizeSelect) {
-          sizeSelect.dataset.required = hasSizes ? 'true' : 'false';
-        }
-        if (colorSelect) {
-          colorSelect.dataset.required = hasColors ? 'true' : 'false';
-        }
-
-        function evaluateModalAddButton() {
-          // Determine whether required options were selected
-          const needSize = sizeSelect && sizeSelect.dataset.required === 'true';
-          const needColor = colorSelect && colorSelect.dataset.required === 'true';
-          const sizeVal = sizeSelect ? (sizeSelect.value || '') : '';
-          const colorVal = colorSelect ? (colorSelect.value || '') : '';
-
-          const enabled = (!needSize || (sizeVal && sizeVal.length > 0)) && (!needColor || (colorVal && colorVal.length > 0));
-          if (addBtn) {
-            addBtn.disabled = !enabled;
-            if (enabled) addBtn.classList.remove('disabled');
-            else addBtn.classList.add('disabled');
-          }
-        }
-
-        // Attach listeners (idempotent - remove then add)
-        if (sizeSelect) {
-          sizeSelect.removeEventListener('change', evaluateModalAddButton);
-          sizeSelect.addEventListener('change', evaluateModalAddButton);
-        }
-        if (colorSelect) {
-          colorSelect.removeEventListener('change', evaluateModalAddButton);
-          colorSelect.addEventListener('change', evaluateModalAddButton);
-        }
-
-        // Initial evaluation (in case product has no required options)
-        evaluateModalAddButton();
-      } catch (e) {
-        console.warn('Modal add button evaluation error:', e);
-      }
+    function getInterfaceLanguage() {
+      const htmlLang = document.documentElement && document.documentElement.lang;
+      if (htmlLang) return htmlLang.split('-')[0];
+      const cls = (document.body && document.body.className) || '';
+      const m = cls.match(/lang-(uz|ru|en)/);
+      return (m && m[1]) ? m[1] : 'uz';
     }
 
-    function closeItemModal() {
-        // Use centralized helper to hide modal so behavior is consistent
-        if (typeof hideItemModal === 'function') {
-          hideItemModal();
-        } else {
-          document.getElementById('itemModal').style.display = 'none';
-          document.body.style.overflow = 'auto';
-        }
-        // cleanup keyboard handler and pause any playing videos
-        try {
-          document.onkeydown = null;
-          const mediaContainer = document.getElementById('modalMediaContainer');
-          if (mediaContainer) {
-            mediaContainer.querySelectorAll('video').forEach(v => { try { v.pause(); v.currentTime = 0; } catch(e){} });
-          }
-        } catch (e) { /* ignore */ }
+    // Robust parser for option lists: accept arrays, JSON strings, comma lists
+    function parseOptionList(raw) {
+      if (!raw && raw !== 0) return [];
+      // If already an array, normalize to strings/objects
+      if (Array.isArray(raw)) return raw.slice();
+      // If object map (e.g. { value: 'red', labels: { en:'Red' } })
+      if (typeof raw === 'object') return [raw];
+      if (typeof raw !== 'string') return [];
+      const s = raw.trim();
+      // Try JSON parse when looks like JSON
+      if (s.startsWith('[') || s.startsWith('{')) {
+      try { const parsed = JSON.parse(s); return Array.isArray(parsed) ? parsed : [parsed]; } catch (e) { /* fallthrough */ }
+      }
+      // Fallback: comma separated
+      return s.split(',').map(x => x.trim()).filter(x => x.length);
     }
+
+    // Modal UI and initialization removed. Product option selection now happens on
+    // the dedicated product page (/product/<id>), so client-side modal wiring is no
+    // longer required here. Keeping stubs and guarded references elsewhere to
+    // avoid runtime errors in other scripts that may still call modal helpers.
+
+    // Modal removed: closeItemModal is a noop now
+    function closeItemModal() { try { console.log('closeItemModal called but modal removed'); } catch(e){} }
 
     // Staff action: set a media file as main for the product
     async function setMainMedia(ev, itemId) {
@@ -3773,7 +2953,7 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
         if (!j1 || !j1.media_id) return alert('Media ID topilmadi');
         const res2 = await fetch(`/api/product-media/${j1.media_id}/set-main`, { method: 'POST' });
         const j2 = await res2.json();
-  if (j2 && j2.success) { showToast('Asosiy rasm belgilandi', 'success'); openItemModal(itemId, ev); } else { showToast('Xatolik', 'error'); }
+  if (j2 && j2.success) { showToast('Asosiy rasm belgilandi', 'success'); try { window.location.href = '/product/' + encodeURIComponent(itemId); } catch(e){ console.warn('navigation failed', e); } } else { showToast('Xatolik', 'error'); }
       } catch (e) { console.error(e); showToast('So' + "'" + 'rov bajarilmadi', 'error'); }
     }
 
@@ -3821,12 +3001,12 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
   // normalize category on dataset for consistent comparisons
   div.dataset.category = (item.category || 'product').toString();
   // ensure click opens modal even if inner elements call stopPropagation
-  div.addEventListener('click', function(e){ openItemModal(item.id, e); });
+  div.addEventListener('click', function(e){ try { window.location.href = '/product/' + encodeURIComponent(item.id); } catch(err) { console.warn('navigation failed', err); } });
         // ensure pointer events allowed
         div.style.pointerEvents = 'auto';
 
         div.innerHTML = `
-          <div class="card-image"><img src="${item.image_url || '/static/defoult.jpg'}" alt="${item.name}" onerror="this.src='/static/defoult.jpg'"/></div>
+          <div class="card-image"><img src="${item.image_url || '/static/defoult.jpg'}" alt="${escapeHtml(item.name || 'Mahsulot rasm') }" title="${escapeHtml(item.name || 'Mahsulot')}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.jpg'"/></div>
           <div class="card-body">
             <h3 class="card-title">${item.name}</h3>
             <p class="card-category">${item.category || ''}</p>
@@ -3879,7 +3059,8 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
                 const hasSizes = (item.sizes || '').toString().trim().length > 0;
                 const hasColors = (item.colors || '').toString().trim().length > 0;
                 if (hasSizes || hasColors) {
-                  openItemModal(menuItemId, e);
+                  // Navigate to product page to select options
+                  try { window.location.href = '/product/' + encodeURIComponent(menuItemId); } catch(err) { console.warn('navigation failed', err); }
                   return false;
                 }
               }
@@ -3933,6 +3114,30 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
   // pagination params
   params.set('limit', PAGE_SIZE);
   params.set('offset', (currentPage - 1) * PAGE_SIZE);
+
+      // Special shortcut: allow users to type queries like "pro obuv - about" to jump
+      // directly to known site pages. This helps when users try 'pro obuv - about' in search.
+      try {
+          if (id) {
+            // navigate to product page instead of opening modal
+            try { console.log('menu-item click -> navigate to product', id, e.target); } catch (e) {}
+            try { window.location.href = '/product/' + encodeURIComponent(id); } catch(err) { console.warn('navigation failed', err); }
+          }
+              'about': '/about',
+              'menu': '/menu',
+              'contact': '/contact',
+              'cart': '/cart',
+              'news': '/news',
+              'login': '/login',
+              'favorites': '/favorites'
+            };
+            if (redirectMap[slug]) {
+              window.location.href = redirectMap[slug];
+              return;
+            }
+          }
+        }
+      } catch (e) { /* ignore and fall back to normal search */ }
 
       try {
         const res = await fetch('/api/menu-search?' + params.toString());
@@ -4068,21 +3273,7 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
       } catch(e){}
     })();
 
-    function increaseModalQuantity() {
-        const input = document.getElementById('modalQuantity');
-        const currentValue = parseInt(input.value) || 1;
-        if (currentValue < 99) {
-            input.value = currentValue + 1;
-        }
-    }
-
-    function decreaseModalQuantity() {
-        const input = document.getElementById('modalQuantity');
-        const currentValue = parseInt(input.value) || 1;
-        if (currentValue > 1) {
-            input.value = currentValue - 1;
-        }
-    }
+  // Modal quantity controls removed.
 
     function increaseQuantity(button) {
         const input = button.parentElement.querySelector('input[name="quantity"]');
@@ -4328,14 +3519,15 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
       const quantity = quantityInput ? quantityInput.value : 1;
 
       // If the product has sizes/colors, open modal to force selection
-      const item = menuData[itemId];
-          if (item) {
-                const hasSizes = (item.sizes || '').trim().length > 0;
-                const hasColors = (item.colors || '').trim().length > 0;
-                if (hasSizes || hasColors) {
-                  openItemModal(itemId, e);
-                  return false;
-                }
+      const item = menuData && menuData[itemId];
+      if (item) {
+        const hasSizes = (item.sizes || '').trim().length > 0;
+        const hasColors = (item.colors || '').trim().length > 0;
+        if (hasSizes || hasColors) {
+          // Navigate to product page so user can pick options there
+          try { window.location.href = '/product/' + encodeURIComponent(itemId); } catch(e){ console.warn('navigation failed', e); }
+          return false;
+        }
       }
 
       addToCartAjax(itemId, quantity);
@@ -4365,7 +3557,7 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
           const hasSizes = (item.sizes || '').trim().length > 0;
           const hasColors = (item.colors || '').trim().length > 0;
           if (hasSizes || hasColors) {
-            openItemModal(menuItemId, e);
+            try { window.location.href = '/product/' + encodeURIComponent(menuItemId); } catch(e){ console.warn('navigation failed', e); }
             return false;
           }
         }
@@ -4467,6 +3659,8 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
     }
 
     function addColorIndicators(selectElement, colors) {
+      // Determine interface language for labels
+      const lang = (document.documentElement && document.documentElement.lang) ? document.documentElement.lang.split('-')[0] : ((document.body && (document.body.className.match(/lang-(uz|ru|en)/)||[])[1]) || 'uz');
       // Create a custom dropdown wrapper
       const wrapper = selectElement.parentElement;
       let customDropdown = wrapper.querySelector('.custom-color-dropdown');
@@ -4493,7 +3687,17 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
           display: none;
         `;
 
-        colors.forEach(color => {
+        colors.forEach(colorEntry => {
+          // Normalize entry to { value, label }
+          let value, label;
+          if (typeof colorEntry === 'object') {
+            value = colorEntry.value || colorEntry.code || colorEntry.key || colorEntry.name || '';
+            label = colorEntry.label || colorEntry.name || (colorEntry.labels && (colorEntry.labels[lang] || colorEntry.labels['uz'] || colorEntry.labels['en'])) || value;
+          } else {
+            value = String(colorEntry);
+            label = getColorDisplayName(value);
+          }
+
           const option = document.createElement('div');
           option.className = 'color-option';
           option.style.cssText = `
@@ -4505,12 +3709,12 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
             transition: all 0.2s ease;
           `;
           option.innerHTML = `
-            <span class="color-indicator ${getColorClass(color)}"></span>
-            <span>${getColorDisplayName(color)}</span>
+            <span class="color-indicator ${getColorClass(value)}"></span>
+            <span>${label}</span>
           `;
 
           option.addEventListener('click', () => {
-            selectElement.value = color;
+            selectElement.value = value;
             selectElement.dispatchEvent(new Event('change'));
             customDropdown.style.display = 'none';
           });
@@ -4687,13 +3891,16 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
       } catch(e) { console.warn('menuData fallback error', e); }
       // Fallback: ensure menu-item cards open modal when clicked (defensive)
       try {
-  document.querySelectorAll('.menu-item-card').forEach(card => {
+        document.querySelectorAll('.menu-item-card').forEach(card => {
           if (card._hasClickFallback) return;
           card._hasClickFallback = true;
           card.addEventListener('click', function(e) {
             try {
               const id = card.dataset && card.dataset.id ? card.dataset.id : (card.getAttribute && (card.getAttribute('onclick') || '').match(/openItemModal\((\d+)\)/) || [])[1];
-              if (id) openItemModal(parseInt(id, 10), e);
+              if (id) {
+                try { console.log('menu-item click fallback -> navigate to product', id, e.target); } catch(e) {}
+                try { window.location.href = '/product/' + encodeURIComponent(id); } catch(err) { console.warn('navigation failed', err); }
+              }
             } catch(err) { console.warn('menu-item click fallback failed', err); }
           });
         });
@@ -4762,8 +3969,8 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
             const id = card.dataset && card.dataset.id ? card.dataset.id : (card.getAttribute && (card.getAttribute('onclick') || '').match(/openItemModal\((\d+)\)/) || [])[1];
             if (id) {
               // debug
-              try { console.log('grid-level pointerup -> openItemModal', id); } catch(e){}
-              openItemModal(parseInt(id, 10), e);
+              try { console.log('grid-level pointerup -> navigate to product', id); } catch(e){}
+              try { window.location.href = '/product/' + encodeURIComponent(id); } catch(err) { console.warn('navigation failed', err); }
             }
           } catch(err) { console.warn('grid pointerup fallback error', err); }
         }, { passive: false, capture: true });
@@ -4786,8 +3993,8 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
           if (!card) return;
           const id = card.dataset && card.dataset.id ? card.dataset.id : (card.getAttribute && (card.getAttribute('onclick') || '').match(/openItemModal\((\d+)\)/) || [])[1];
           if (id) {
-            try { console.log('pointerup elementFromPoint -> openItemModal', id); } catch(e){}
-            openItemModal(parseInt(id, 10), ev);
+            try { console.log('pointerup elementFromPoint -> navigate to product', id); } catch(e){}
+            try { window.location.href = '/product/' + encodeURIComponent(id); } catch(err) { console.warn('navigation failed', err); }
           }
         } catch (e) { /* ignore */ }
       }, { passive: true, capture: true });
@@ -4796,6 +4003,7 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
 
     // Helper function to create color dropdown for items
     function createColorDropdown(selectElement, wrapper, colors) {
+      const lang = (document.documentElement && document.documentElement.lang) ? document.documentElement.lang.split('-')[0] : ((document.body && (document.body.className.match(/lang-(uz|ru|en)/)||[])[1]) || 'uz');
       if (colors && colors.length > 0) {
         const customDropdown = document.createElement('div');
         customDropdown.className = 'custom-color-dropdown';
@@ -4815,7 +4023,16 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         `;
 
-        colors.forEach(color => {
+        colors.forEach(colorEntry => {
+          let value, label;
+          if (typeof colorEntry === 'object') {
+            value = colorEntry.value || colorEntry.code || colorEntry.key || colorEntry.name || '';
+            label = colorEntry.label || colorEntry.name || (colorEntry.labels && (colorEntry.labels[lang] || colorEntry.labels['uz'] || colorEntry.labels['en'])) || value;
+          } else {
+            value = String(colorEntry);
+            label = getColorDisplayName(value);
+          }
+
           const option = document.createElement('div');
           option.className = 'color-option';
           option.style.cssText = `
@@ -4828,10 +4045,10 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
           `;
 
           const indicator = document.createElement('div');
-          indicator.className = `color-indicator ${getColorClass(color)}`;
+          indicator.className = `color-indicator ${getColorClass(value)}`;
 
           const text = document.createElement('span');
-          text.textContent = getColorDisplayName(color);
+          text.textContent = label;
           text.style.fontSize = '0.95rem';
 
           option.appendChild(indicator);
@@ -4846,7 +4063,7 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
           });
 
           option.addEventListener('click', () => {
-            selectElement.value = color;
+            selectElement.value = value;
             selectElement.dispatchEvent(new Event('change'));
             customDropdown.style.display = 'none';
           });
@@ -4920,7 +4137,7 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
                 </div>
                 <div class="rating-modal-body">
                     <div class="rating-item-info">
-                        <img src="${item.image}" alt="${item.name}" class="rating-item-image">
+                        <img src="${item.image_url || item.image || '/static/defoult.jpg'}" alt="${item.name}" class="rating-item-image" onerror="this.src='/static/defoult.jpg'">
                         <p class="rating-item-name">${item.name}</p>
                     </div>
 
@@ -5113,9 +4330,9 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
           // If the card has a data-id, use it; otherwise try to extract from onclick
           const id = (card.dataset && card.dataset.id) ? card.dataset.id : (card.getAttribute && (card.getAttribute('onclick') || '').match(/openItemModal\((\d+)\)/) || [])[1];
           if (id) {
-            // debug hook to aid troubleshooting in the browser console (use log so it's visible)
-            try { console.log('menu-item click -> openItemModal', id, e.target); } catch (e) {}
-            openItemModal(parseInt(id, 10), e);
+            // Navigate to product page instead of opening modal
+            try { console.log('menu-item click -> navigate to product', id, e.target); } catch (e) {}
+            try { window.location.href = '/product/' + encodeURIComponent(parseInt(id, 10)); } catch (err) { console.warn('navigation failed', err); }
           }
         } catch (err) {
           console.warn('menu-item delegated click error', err);
@@ -5138,15 +4355,41 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
             if (!card.hasAttribute('role')) card.setAttribute('role', 'button');
             if (!card.hasAttribute('tabindex')) card.setAttribute('tabindex', '0');
 
+            // Use pointerdown+pointerup tap-detection so swipes/scrolls don't open the modal
             card.addEventListener('pointerdown', function(e) {
-              // Ignore clicks that originate from interactive controls inside the card
-              if (e.target.closest && e.target.closest('a, button, input, select, textarea, form')) return;
-              const id = (card.dataset && card.dataset.id) ? card.dataset.id : (card.getAttribute && (card.getAttribute('onclick') || '').match(/openItemModal\((\d+)\)/) || [])[1];
-              if (id) {
-                console.log('menu-item pointerdown -> openItemModal', id, e.target);
-                try { openItemModal(parseInt(id, 10), e); } catch (err) { console.warn('openItemModal error', err); }
-                e.preventDefault();
-              }
+              try {
+                // Ignore interactive controls
+                if (e.target.closest && e.target.closest('a, button, input, select, textarea, form')) return;
+                // record start coords/time
+                card._ptrDownX = (e.clientX !== undefined) ? e.clientX : (e.touches && e.touches[0] && e.touches[0].clientX) || 0;
+                card._ptrDownY = (e.clientY !== undefined) ? e.clientY : (e.touches && e.touches[0] && e.touches[0].clientY) || 0;
+                card._ptrDownTime = Date.now();
+                card._ptrDown = true;
+              } catch (err) { /* ignore */ }
+            }, { capture: true });
+
+            card.addEventListener('pointerup', function(e) {
+              try {
+                if (!card._ptrDown) return;
+                card._ptrDown = false;
+                // ignore interactive controls
+                if (e.target.closest && e.target.closest('a, button, input, select, textarea, form')) return;
+                const upX = (e.clientX !== undefined) ? e.clientX : (e.changedTouches && e.changedTouches[0] && e.changedTouches[0].clientX) || 0;
+                const upY = (e.clientY !== undefined) ? e.clientY : (e.changedTouches && e.changedTouches[0] && e.changedTouches[0].clientY) || 0;
+                const dx = Math.abs(upX - (card._ptrDownX || 0));
+                const dy = Math.abs(upY - (card._ptrDownY || 0));
+                const dt = Date.now() - (card._ptrDownTime || 0);
+                // treat as tap only when small movement and short duration
+                if (dx <= 10 && dy <= 10 && dt < 600) {
+                  const id = (card.dataset && card.dataset.id) ? card.dataset.id : (card.getAttribute && (card.getAttribute('onclick') || '').match(/openItemModal\((\d+)\)/) || [])[1];
+                  if (id) {
+                    try { console.log('menu-item tap -> navigate to product', id, e.target); } catch(e){}
+                    try { window.location.href = '/product/' + encodeURIComponent(id); } catch (err) { console.warn('navigation error', err); }
+                    try { e.preventDefault(); } catch(e){}
+                  }
+                }
+                }
+              } catch (err) { /* ignore */ }
             }, { capture: true });
 
             // keyboard activation (Enter / Space)
@@ -5154,7 +4397,7 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
                 if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
                 const id = (card.dataset && card.dataset.id) ? card.dataset.id : (card.getAttribute && (card.getAttribute('onclick') || '').match(/openItemModal\((\d+)\)/) || [])[1];
-                if (id) { try { openItemModal(parseInt(id, 10), e); } catch (err) { console.warn('openItemModal error', err); } }
+                if (id) { try { window.location.href = '/product/' + encodeURIComponent(id); } catch (err) { console.warn('navigation error', err); } }
               }
             });
           } catch (e) { console.warn('attachCardHandlers error', e); }
@@ -5206,8 +4449,8 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
               if (!card) return;
               const id = card.dataset && card.dataset.id ? card.dataset.id : (card.getAttribute && (card.getAttribute('onclick') || '').match(/openItemModal\((\d+)\)/) || [])[1];
               if (id) {
-                try { console.log('menu-grid click fallback -> openItemModal', id); } catch(e){}
-                openItemModal(parseInt(id, 10), e);
+                try { console.log('menu-grid click fallback -> navigate to product', id); } catch(e){}
+                try { window.location.href = '/product/' + encodeURIComponent(id); } catch(err) { console.warn('navigation failed', err); }
               }
             } catch(err) { console.warn('menuGrid click fallback error', err); }
           }, { capture: true });

@@ -19,8 +19,8 @@
 /* Grid layout - use responsive auto-fill for flexibility */
 .menu-grid {
   display: grid !important;
-  /* slightly larger minimum so cards are wider by default */
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+  /* mobile-first: single-column by default */
+  grid-template-columns: 1fr !important;
   gap: var(--menu-gap) !important;
   padding: 12px 0 !important;
   align-items: start;
@@ -51,22 +51,23 @@
 .menu-item-card .card-image,
 .menu-item .item-image {
   width: 100% !important;
-  height: 0 !important;
-  padding-top: 56.25% !important; /* 16:9 aspect */
+  /* Use a fixed (responsive) height so images line up with the larger card sizes */
+  height: 380px !important;
+  overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   position: relative !important;
   background: linear-gradient(180deg, #f8fafc, #eef2f7) !important;
 }
 .menu-item-card .card-image img,
 .menu-item .item-image img {
-  position: absolute !important;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100% !important;
+  position: relative !important;
+  width: auto !important;
   height: 100% !important;
-  object-fit: cover !important;
+  object-fit: contain !important;
   border-radius: 0 !important;
+  display: block !important;
 }
 
 /* Body content */
@@ -245,27 +246,29 @@
 }
 
 /* Media queries: mobile-first improvements */
-@media (max-width: 1024px) {
+/* Tablet: two columns */
+@media (min-width: 576px) {
   .menu-grid {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
-    gap: 18px !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 20px !important;
   }
   .menu-item-card .card-image {
-    padding-top: 60% !important;
+    height: 260px !important;
   }
 }
 
 /* Laptop / desktop: make cards bigger and taller images for notebooks */
-@media (min-width: 1024px) {
+/* Notebook/Desktop: three columns */
+@media (min-width: 992px) {
   .menu-grid {
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)) !important;
+    grid-template-columns: repeat(3, 1fr) !important;
     gap: 28px !important;
   }
   .menu-item-card {
     border-radius: 16px !important;
   }
   .menu-item-card .card-image {
-    padding-top: 62% !important; /* taller image area on notebook */
+    height: 380px !important; /* default desktop image height */
   }
   .menu-item-card .card-body {
     padding: 16px 18px !important;
@@ -275,16 +278,16 @@
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 575px) {
   .menu-grid {
     grid-template-columns: 1fr !important;
-    gap: 14px !important;
+    gap: 12px !important;
   }
   .menu-item-card {
     border-radius: 10px !important;
   }
   .menu-item-card .card-image {
-    padding-top: 48% !important;
+    height: 200px !important;
   }
   .menu-item-card .card-body {
     padding: 10px !important;
@@ -325,6 +328,9 @@
   .menu-item-card {
     border-radius: 10px !important;
   }
+  .menu-item-card .card-image {
+    height: 200px !important;
+  }
 }
 
 /* Tablet: three columns */
@@ -338,11 +344,10 @@
 /* Laptop / Desktop: show 3 columns on typical computer screens */
 @media (min-width: 992px) {
   .menu-grid {
-    /* 3 columns on desktop/computer as requested */
-    grid-template-columns: repeat(3, 1fr) !important;
+    /* 3 columns on typical desktop but keep responsive min width */
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)) !important;
     gap: 28px !important;
-    /* prefer a larger min width so cards look roomy on desktop */
-    grid-auto-columns: minmax(340px, 1fr) !important;
+    grid-auto-columns: minmax(380px, 1fr) !important;
   }
 }
 
