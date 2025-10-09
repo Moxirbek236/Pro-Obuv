@@ -2,11 +2,34 @@
 block seo_meta %}
 <meta
   name="description"
-  content="Sizning savatchangiz — mahsulotlarni ko'ring, o'zgartiring va buyurtma qiling. Tez va ishonchli to'lov imkoniyatlari." />
+  content="Savatcha — Pro Obuv. Spetsobuv, spetsodejda va ish kiyimlari buyurtmalarini yakunlang." />
+<meta
+  name="keywords"
+  content="pro obuv, savatcha, buyurtma, spetsobuv, ish kiyimlari, oyoq kiyim" />
+<link rel="canonical" href="{{ request.url }}" />
+<meta property="og:type" content="website" />
 <meta property="og:title" content="Savatcha — Pro Obuv" />
 <meta
   property="og:description"
-  content="Sizning savatchangiz — mahsulotlarni ko'ring, o'zgartiring va buyurtma qiling." />
+  content="Savatcha — mahsulotlarni ko'rish va buyurtmani yakunlash" />
+<meta property="og:url" content="{{ request.url }}" />
+<meta
+  property="og:image"
+  content="{{ url_for('static', filename='defoult.png') }}" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Savatcha — Pro Obuv" />
+<meta name="twitter:description" content="Savatcha — buyurtmani yakunlash" />
+<meta
+  name="twitter:image"
+  content="{{ url_for('static', filename='defoult.png') }}" />
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CheckoutPage",
+    "name": "Savatcha — Pro Obuv",
+    "url": "{{ request.url }}"
+  }
+</script>
 {% endblock %} {% block head %}{% endblock %} {% block content %}
 <div class="cart-page-container">
   <div class="cart-hero-section">

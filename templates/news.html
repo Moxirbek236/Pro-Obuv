@@ -2,14 +2,37 @@
 {% block seo_meta %}
 <meta
   name="description"
-  content="Pro Obuv yangiliklari, aktsiyalar va yangilanishlar. Oxirgi yangiliklar va maxsus takliflar bilan tanishing." />
+  content="Pro Obuv yangiliklari, aksiyalar va yangilanishlar. Spetsobuv, spetsodejda va ish kiyimlari bo'yicha so'nggi yangiliklar." />
 <meta
   name="keywords"
-  content="pro obuv - news, pro obuv, yangiliklar, aksiya, yangilik" />
+  content="pro obuv, yangiliklar, aksiya, obuv, spetsobuv, spetsodejda, safety, oyoq kiyim, etik, tufli" />
+<link rel="canonical" href="{{ request.url }}" />
+<meta property="og:type" content="website" />
 <meta property="og:title" content="Yangiliklar - Pro Obuv" />
 <meta
   property="og:description"
-  content="Pro Obuv yangiliklari va aktsiyalari" />
+  content="Pro Obuv yangiliklari: spetsobuv va ish kiyimlari yangiliklari" />
+<meta property="og:url" content="{{ request.url }}" />
+<meta
+  property="og:image"
+  content="{{ url_for('static', filename='defoult.png') }}" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Yangiliklar - Pro Obuv" />
+<meta
+  name="twitter:description"
+  content="Spetsobuv va ish kiyimlari bo'yicha yangiliklar" />
+<meta
+  name="twitter:image"
+  content="{{ url_for('static', filename='defoult.png') }}" />
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Yangiliklar — Pro Obuv",
+    "description": "Pro Obuv yangiliklari va aksiyalari",
+    "url": "{{ request.url }}"
+  }
+</script>
 {% endblock %} {% block content %}
 <div class="container mt-4">
   <h1 class="mb-3">Yangiliklar</h1>

@@ -2,11 +2,36 @@
 block seo_meta %}
 <meta
   name="description"
-  content="Biz bilan bog'laning — Savollar, takliflar va mijozlarni qo'llab-quvvatlash. Pro Obuv jamoasi sizga yordam beradi." />
+  content="Biz bilan bog'laning — Savollar, takliflar va mijozlarni qo'llab-quvvatlash. Pro Obuv — spetsobuv, spetsodejda, oyoq kiyim va ish kiyimlari." />
+<meta
+  name="keywords"
+  content="pro obuv, aloqa, bog'lanish, spetsobuv, spetsodejda, oyoq kiyim, ish kiyimlari" />
+<link rel="canonical" href="{{ request.url }}" />
+<meta property="og:type" content="website" />
 <meta property="og:title" content="Aloqa — Pro Obuv" />
 <meta
   property="og:description"
-  content="Biz bilan bog'laning — Savollar, takliflar va mijozlarni qo'llab-quvvatlash." />
+  content="Savollar va takliflar — Pro Obuv bilan bog'laning." />
+<meta property="og:url" content="{{ request.url }}" />
+<meta
+  property="og:image"
+  content="{{ url_for('static', filename='defoult.png') }}" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Aloqa — Pro Obuv" />
+<meta
+  name="twitter:description"
+  content="Savollar va takliflar uchun Pro Obuv bilan bog'laning" />
+<meta
+  name="twitter:image"
+  content="{{ url_for('static', filename='defoult.png') }}" />
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "name": "Aloqa — Pro Obuv",
+    "url": "{{ request.url }}"
+  }
+</script>
 {% endblock %} {% block content %}
 <div class="contact-page-container">
   <div class="contact-hero-section">

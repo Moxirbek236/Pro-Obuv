@@ -27,9 +27,9 @@
   </script>
   {% endblock %}
     <!-- Use the project's default static image for app/icon as requested -->
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='defoult.jpg') }}" />
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='defoult.jpg') }}" />
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='defoult.jpg') }}" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='defoult.png') }}" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='defoult.png') }}" />
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='defoult.png') }}" />
     <link
       rel="manifest"
       href="{{ url_for('static', filename='site.webmanifest') }}" />
@@ -562,13 +562,6 @@
     <script>
   <!-- Public chat widget -->
   <script src="/static/chat_widget.js"></script>
-      // Masked debug: show whether a Yandex key exists (last 4 chars) without revealing full key
-      try {
-        const _y = "{{ yandex_key }}" || "";
-        if (_y && _y !== "None")
-          console.debug("Yandex API key present (last4): ****" + _y.slice(-4));
-        else console.debug("Yandex API key missing or unset");
-      } catch (e) {}
     </script>
     <!-- Robust fallback: ensure nav-notify clicks always open notify modal and manage aria-hidden -->
     <script>
@@ -1467,13 +1460,14 @@
             id="newsPrevBtn"
             title="Oldingi yangilik"
             aria-label="Oldingi yangilik"
+            onclick="prevNews()"
           >
             <span>‹</span>
           </button>
 
           <div class="news-ticker">
             <div class="news-ticker-viewport">
-              <div class="news-ticker-content" id="news-ticker-content">
+              <div class="news-ticker-content" id="newsTickerContent">
                     <!-- Yangiliklar JavaScript orqali yuklanadi -->
                     <div class="news-item news">📢 Sahifa yuklanmoqda...</div>
                   </div>
@@ -1484,9 +1478,15 @@
           <button
             class="news-nav-btn news-nav-next"
             id="newsNextBtn"
-            title="Keyingi yangilik">
+            title="Keyingi yangilik"
+            onclick="nextNews()">
             <span>›</span>
           </button>
+        </div>
+        
+        <!-- News indicators -->
+        <div class="news-indicators" id="newsIndicators">
+          <!-- Indicators will be generated dynamically -->
         </div>
       </div>
 
@@ -4979,6 +4979,7 @@
     {% endif %}
     <!-- End chat widget for staff/courier/superadmin -->
 
+
     <!-- Ticker quick-add modal DOM (superadmin only) -->
     <div class="modal fade" id="tickerNewsModal" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-lg">
@@ -5146,5 +5147,120 @@
             if(btn) btn.addEventListener('click', saveTickerNews);
           })();
     </script>
+    <!-- Global floating chat widget (visible for all users) -->
+    <style>
+      #chatWidgetBtn {
+        position: fixed;
+        right: 18px;
+        bottom: 18px;
+        z-index: 1080;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #chatWidgetPanel {
+        position: fixed;
+        right: 18px;
+        bottom: 86px;
+        z-index: 1080;
+        width: 340px;
+        max-width: calc(100vw - 24px);
+        height: 440px;
+        background: var(--bg-color);
+        color: var(--text-color);
+        border: 1px solid rgba(0,0,0,0.08);
+        border-radius: 12px;
+        box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+        display: none;
+        overflow: hidden;
+      }
+      #chatWidgetHeader {
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 12px;
+        background: #0f1724;
+        color: #fff;
+      }
+      #chatWidgetMessages {
+        height: 300px;
+        overflow-y: auto;
+        padding: 10px 12px;
+        background: rgba(0,0,0,0.02);
+      }
+      .chat-msg { margin: 6px 0; max-width: 82%; padding: 8px 10px; border-radius: 10px; font-size: 14px; line-height: 1.35; }
+      .chat-user { background: #0d6efd; color: #fff; margin-left: auto; border-bottom-right-radius: 2px; }
+      .chat-bot  { background: #e9ecef; color: #111; border-bottom-left-radius: 2px; }
+      body.dark-theme .chat-bot  { background: #1f2a37; color: #e6eef8; }
+      #chatWidgetInputRow { height: 84px; display: flex; flex-direction: column; padding: 8px; gap: 6px; background: var(--bg-color); }
+      #chatWidgetInput { flex: 1; resize: none; }
+    </style>
+
+    <button id="chatWidgetBtn" class="btn btn-primary" aria-label="Chat">
+      <i class="bi bi-chat-dots-fill" style="font-size:20px"></i>
+    </button>
+
+    <div id="chatWidgetPanel" role="dialog" aria-label="Live chat">
+      <div id="chatWidgetHeader">
+        <div style="font-weight:600">Onlayn chat</div>
+        <button id="chatWidgetClose" class="btn btn-sm btn-light">Yopish</button>
+      </div>
+      <div id="chatWidgetMessages"></div>
+      <div id="chatWidgetInputRow">
+        <textarea id="chatWidgetInput" class="form-control" rows="2" placeholder="Xabaringizni yozing..."></textarea>
+        <div class="d-flex justify-content-end">
+          <button id="chatWidgetSend" class="btn btn-primary btn-sm">Yuborish</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function(){
+        const btn = document.getElementById('chatWidgetBtn');
+        const panel = document.getElementById('chatWidgetPanel');
+        const closeBtn = document.getElementById('chatWidgetClose');
+        const messages = document.getElementById('chatWidgetMessages');
+        const input = document.getElementById('chatWidgetInput');
+        const send = document.getElementById('chatWidgetSend');
+
+        function togglePanel(show){ panel.style.display = show ? 'block' : (panel.style.display==='block'?'none':'block'); }
+        function appendMsg(text, who){
+          const div = document.createElement('div');
+          div.className = 'chat-msg ' + (who==='user'?'chat-user':'chat-bot');
+          div.textContent = text;
+          messages.appendChild(div);
+          messages.scrollTop = messages.scrollHeight;
+        }
+        async function sendMsg(){
+          const t = (input.value||'').trim();
+          if(!t) return;
+          appendMsg(t, 'user');
+          input.value='';
+          try{
+            const r = await fetch('/api/chat/ai', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ text: t, sender: 'web' }) });
+            const j = await r.json().catch(()=>({}));
+            const reply = (j && j.reply) || 'Xabar qabul qilindi.';
+            appendMsg(reply, 'bot');
+          }catch(e){ appendMsg('Ulanishda xatolik. Keyinroq urinib ko‘ring.', 'bot'); }
+        }
+
+        if(btn) btn.addEventListener('click', ()=>togglePanel());
+        if(closeBtn) closeBtn.addEventListener('click', ()=>togglePanel(false));
+        if(send) send.addEventListener('click', sendMsg);
+        if(input) input.addEventListener('keydown', (e)=>{ if((e.key==='Enter' && !e.shiftKey)){ e.preventDefault(); sendMsg(); } });
+
+        // Optional: greeting message when opened first time
+        let greeted = false;
+        if(btn) btn.addEventListener('click', ()=>{
+          if(!greeted && panel.style.display !== 'none'){ appendMsg("Assalomu alaykum! Savolingiz bormi?", 'bot'); greeted = true; }
+        });
+      })();
+    </script>
+
   </body>
 </html>

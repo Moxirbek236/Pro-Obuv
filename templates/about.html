@@ -2,11 +2,36 @@
 block seo_meta %}
 <meta
   name="description"
-  content="Ko'p so'raladigan savollar va yordam — Pro Obuv mijozlari uchun tezkor javoblar va yo'riqnomalar." />
+  content="Savollar va yordam: Pro Obuv — spetsobuv, spetsodejda, ish kiyimlari va oyoq kiyimlari haqida tezkor javoblar." />
+<meta
+  name="keywords"
+  content="pro obuv, savollar, FAQ, spetsobuv, spetsodejda, ish kiyimlari, oyoq kiyim" />
+<link rel="canonical" href="{{ request.url }}" />
+<meta property="og:type" content="website" />
 <meta property="og:title" content="Savollar - Pro Obuv" />
 <meta
   property="og:description"
-  content="Ko'p so'raladigan savollar va yordam — Pro Obuv mijozlari uchun tezkor javoblar." />
+  content="Pro Obuv — ko'p so'raladigan savollar va tezkor javoblar" />
+<meta property="og:url" content="{{ request.url }}" />
+<meta
+  property="og:image"
+  content="{{ url_for('static', filename='defoult.png') }}" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Savollar - Pro Obuv" />
+<meta
+  name="twitter:description"
+  content="Pro Obuv — ko'p so'raladigan savollar" />
+<meta
+  name="twitter:image"
+  content="{{ url_for('static', filename='defoult.png') }}" />
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "name": "Savollar — Pro Obuv",
+    "url": "{{ request.url }}"
+  }
+</script>
 {% endblock %} {% block content %}
 <div class="faq-page-container">
   <div class="faq-hero-section">

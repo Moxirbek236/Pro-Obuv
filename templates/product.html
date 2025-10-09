@@ -1,5 +1,46 @@
-{% extends 'base.html' %} {% block title %}{{ item.name }} — Mahsulot{% endblock
-%} {% block content %}
+{% extends 'base.html' %} 
+{% block title %}{{ item.name }} — Pro Obuv | Sifatli Spetsobuv va Ish Kiyimlari{% endblock %}
+{% block seo_meta %}
+<meta name="description" content="{{ item.name }} — Pro Obuv do'konidan sifatli spetsobuv va ish kiyimlari. {{ item.description[:150] if item.description else 'Xavfsizlik poyabzallari va ish kiyimlari' }}. Tez yetkazib berish, kafolat." />
+<meta name="keywords" content="{{ item.name }}, pro obuv, spetsobuv, ish kiyimlari, {{ item.category if item.category else 'xavfsizlik poyabzallari' }}, buyurtma, yetkazib berish" />
+<meta property="og:title" content="{{ item.name }} — Pro Obuv" />
+<meta property="og:description" content="{{ item.name }} — Pro Obuv do'konidan sifatli spetsobuv va ish kiyimlari. {{ item.description[:150] if item.description else 'Xavfsizlik poyabzallari va ish kiyimlari' }}." />
+<meta property="og:type" content="product" />
+<meta property="og:url" content="{{ request.url }}" />
+        <meta property="og:image" content="{{ item.image_url if item.image_url else url_for('static', filename='defoult.png') }}" />
+<meta property="product:price:amount" content="{{ item.price if item.price else '0' }}" />
+<meta property="product:price:currency" content="UZS" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="{{ item.name }} — Pro Obuv" />
+<meta name="twitter:description" content="{{ item.name }} — Sifatli spetsobuv va ish kiyimlari" />
+        <meta name="twitter:image" content="{{ item.image_url if item.image_url else url_for('static', filename='defoult.png') }}" />
+<link rel="canonical" href="{{ request.url }}" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "{{ item.name }}",
+  "description": "{{ item.description if item.description else 'Sifatli spetsobuv va ish kiyimlari' }}",
+          "image": "{{ item.image_url if item.image_url else url_for('static', filename='defoult.png') }}",
+  "brand": {
+    "@type": "Brand",
+    "name": "Pro Obuv"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": "{{ item.price if item.price else '0' }}",
+    "priceCurrency": "UZS",
+    "availability": "https://schema.org/InStock",
+    "seller": {
+      "@type": "Store",
+      "name": "Pro Obuv"
+    }
+  },
+  "category": "{{ item.category if item.category else 'Spetsobuv va Ish Kiyimlari' }}"
+}
+</script>
+{% endblock %}
+{% block content %}
 <style>
   .product-container {
     max-width: 1100px;
@@ -211,7 +252,7 @@
       {% endif %} {% else %}
       <img
         id="mainMedia"
-        src="{{ item.image_url or '/static/defoult.jpg' }}"
+        src="{{ item.image_url or '/static/defoult.png' }}"
         alt="{{ item.name }}" />
       {% endif %}
 
@@ -396,7 +437,7 @@
 <script>
   // Media data from server
   const mediaData = {{ (media or [])|tojson }};
-  const defaultImage = '{{ item.image_url or '/static/defoult.jpg' }}';
+  const defaultImage = '{{ item.image_url or '/static/defoult.png' }}';
   let currentIndex = 0;
 
   const mainEl = document.getElementById('mainMedia');

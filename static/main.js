@@ -259,6 +259,156 @@ function initMenuClient() {
   } catch (e) {}
 }
 
+// --- News Ticker ---
+class NewsTicker {
+  constructor() {
+    this.currentIndex = 0;
+    this.newsItems = [];
+    this.autoSlideInterval = null;
+    this.init();
+  }
+
+  async init() {
+    try {
+      await this.loadNews();
+      this.setupEventListeners();
+      this.startAutoSlide();
+    } catch (e) {
+      console.warn("News ticker init failed:", e);
+    }
+  }
+
+  async loadNews() {
+    try {
+      const response = await fetch("/api/news?ticker=1");
+      const data = await response.json();
+      if (data && data.success && data.news && data.news.length > 0) {
+        this.newsItems = data.news;
+        this.updateDisplay();
+      } else {
+        // Fallback to all news if no ticker-specific news
+        const response2 = await fetch("/api/news");
+        const data2 = await response2.json();
+        if (data2 && data2.success && data2.news && data2.news.length > 0) {
+          this.newsItems = data2.news;
+          this.updateDisplay();
+        } else {
+          this.showNoNews();
+        }
+      }
+    } catch (e) {
+      console.warn("News loading failed:", e);
+      this.showNoNews();
+    }
+  }
+
+  updateDisplay() {
+    const content = document.getElementById("newsTickerContent");
+    const indicators = document.getElementById("newsIndicators");
+    if (!content) return;
+
+    if (this.newsItems.length === 0) {
+      this.showNoNews();
+      return;
+    }
+
+    const item = this.newsItems[this.currentIndex];
+    content.innerHTML = `
+      <div class="news-item">
+        <div class="news-icon">${
+          item.type === "advertisement" ? "📢" : "📰"
+        }</div>
+        <div class="news-text">
+          <div class="news-title">${escapeHtml(item.title || "")}</div>
+          <div class="news-content">${escapeHtml(
+            (item.content || item.description || "").substring(0, 100)
+          )}</div>
+        </div>
+      </div>
+    `;
+
+    // Update indicators
+    if (indicators) {
+      indicators.innerHTML = "";
+      for (let i = 0; i < this.newsItems.length; i++) {
+        const dot = document.createElement("span");
+        dot.className = `news-indicator ${
+          i === this.currentIndex ? "active" : ""
+        }`;
+        dot.onclick = () => this.goToSlide(i);
+        indicators.appendChild(dot);
+      }
+    }
+  }
+
+  showNoNews() {
+    const content = document.getElementById("newsTickerContent");
+    if (content) {
+      content.innerHTML = `
+        <div class="news-item">
+          <div class="news-icon">📰</div>
+          <div class="news-text">
+            <div class="news-title">Yangiliklar yo'q</div>
+            <div class="news-content">Hozircha yangiliklar mavjud emas</div>
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  setupEventListeners() {
+    // Listen for refresh events
+    window.addEventListener("refreshNewsTicker", () => {
+      this.loadNews();
+    });
+  }
+
+  startAutoSlide() {
+    if (this.newsItems.length <= 1) return;
+    this.autoSlideInterval = setInterval(() => {
+      this.nextSlide();
+    }, 5000); // 5 seconds
+  }
+
+  stopAutoSlide() {
+    if (this.autoSlideInterval) {
+      clearInterval(this.autoSlideInterval);
+      this.autoSlideInterval = null;
+    }
+  }
+
+  nextSlide() {
+    if (this.newsItems.length <= 1) return;
+    this.currentIndex = (this.currentIndex + 1) % this.newsItems.length;
+    this.updateDisplay();
+  }
+
+  prevSlide() {
+    if (this.newsItems.length <= 1) return;
+    this.currentIndex =
+      this.currentIndex === 0
+        ? this.newsItems.length - 1
+        : this.currentIndex - 1;
+    this.updateDisplay();
+  }
+
+  goToSlide(index) {
+    if (index >= 0 && index < this.newsItems.length) {
+      this.currentIndex = index;
+      this.updateDisplay();
+    }
+  }
+}
+
+// Global functions for onclick handlers
+window.nextNews = function () {
+  if (window.newsTicker) window.newsTicker.nextSlide();
+};
+
+window.prevNews = function () {
+  if (window.newsTicker) window.newsTicker.prevSlide();
+};
+
 // initialize when appropriate
 document.addEventListener("DOMContentLoaded", function () {
   try {
@@ -267,6 +417,14 @@ document.addEventListener("DOMContentLoaded", function () {
   try {
     if (window.cartManager) window.cartManager.updateCartCount();
   } catch (e) {}
+  try {
+    // Initialize news ticker if the component exists
+    if (document.getElementById("newsTicker")) {
+      window.newsTicker = new NewsTicker();
+    }
+  } catch (e) {
+    console.warn("News ticker initialization failed:", e);
+  }
 });
 
 // export

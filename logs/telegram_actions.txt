@@ -35,3 +35,160 @@
 2025-10-08 11:43:41 | ACTION | products_sent | user:tg:1656193663 | item:35 images:1
 2025-10-08 11:43:42 | ACTION | products_sent | user:tg:1656193663 | item:35 images:1
 2025-10-08 11:46:17 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-10-09 02:47:08 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-10-09 02:47:11 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-10-09 02:47:16 | ACTION | products_default_image_used | user:tg:1656193663 | item:36
+2025-10-09 02:47:16 | ACTION | products_sent | user:tg:1656193663 | item:36 images:1
+2025-10-09 02:47:16 | ACTION | products_default_image_used | user:tg:1656193663 | item:37
+2025-10-09 02:47:17 | ACTION | products_sent | user:tg:1656193663 | item:37 images:1
+2025-10-09 02:47:19 | ACTION | products_sent | user:tg:1656193663 | item:34 images:1
+2025-10-09 02:47:20 | ACTION | products_sent | user:tg:1656193663 | item:33 images:1
+2025-10-09 02:47:20 | ACTION | products_default_image_used | user:tg:1656193663 | item:35
+2025-10-09 02:47:21 | ACTION | products_sent | user:tg:1656193663 | item:35 images:1
+2025-10-09 02:47:21 | ACTION | incoming_message | user:tg:1656193663 | lsaoms
+2025-10-09 02:47:23 | ACTION | incoming_message | user:tg:1656193663 | asa,sasasa
+2025-10-09 02:47:26 | ACTION | incoming_message | user:tg:1656193663 | sasa
+2025-10-09 02:47:28 | ACTION | incoming_message | user:tg:1656193663 | sasa
+2025-10-09 02:47:30 | ACTION | incoming_message | user:tg:1656193663 | sas
+2025-10-09 02:47:32 | ACTION | incoming_message | user:tg:1656193663 | asas
+2025-10-09 02:47:34 | ACTION | incoming_message | user:tg:1656193663 | asas
+2025-10-09 02:47:36 | ACTION | incoming_message | user:tg:1656193663 | asas
+2025-10-09 02:47:38 | ACTION | incoming_message | user:tg:1656193663 | asas
+2025-10-09 02:47:40 | ACTION | incoming_message | user:tg:1656193663 | asasa
+2025-10-09 02:47:42 | ACTION | incoming_message | user:tg:1656193663 | sasasqwqw
+2025-10-09 02:47:44 | ACTION | incoming_message | user:tg:1656193663 | qwqw
+2025-10-09 02:47:46 | ACTION | incoming_message | user:tg:1656193663 | wqas
+2025-10-09 02:47:48 | ACTION | incoming_message | user:tg:1656193663 | aa
+2025-10-09 02:47:52 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-10-09 02:47:55 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-10-09 02:47:57 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-10-09 02:48:00 | ACTION | products_default_image_used | user:tg:1656193663 | item:36
+2025-10-09 02:48:00 | ACTION | products_sent | user:tg:1656193663 | item:36 images:1
+2025-10-09 02:48:00 | ACTION | products_default_image_used | user:tg:1656193663 | item:37
+2025-10-09 02:48:00 | ACTION | products_sent | user:tg:1656193663 | item:37 images:1
+2025-10-09 02:48:00 | ACTION | products_sent | user:tg:1656193663 | item:34 images:1
+2025-10-09 02:48:01 | ACTION | products_sent | user:tg:1656193663 | item:33 images:1
+2025-10-09 02:48:01 | ACTION | products_default_image_used | user:tg:1656193663 | item:35
+2025-10-09 02:48:01 | ACTION | products_sent | user:tg:1656193663 | item:35 images:1
+2025-10-09 02:48:02 | ACTION | products_default_image_used | user:tg:1656193663 | item:36
+2025-10-09 02:48:02 | ACTION | products_sent | user:tg:1656193663 | item:36 images:1
+2025-10-09 02:48:02 | ACTION | products_default_image_used | user:tg:1656193663 | item:37
+2025-10-09 02:48:02 | ACTION | products_sent | user:tg:1656193663 | item:37 images:1
+2025-10-09 02:48:02 | ACTION | products_sent | user:tg:1656193663 | item:34 images:1
+2025-10-09 02:48:03 | ACTION | products_sent | user:tg:1656193663 | item:33 images:1
+2025-10-09 02:48:03 | ACTION | products_default_image_used | user:tg:1656193663 | item:35
+2025-10-09 02:48:03 | ACTION | products_sent | user:tg:1656193663 | item:35 images:1
+2025-10-09 02:48:04 | ACTION | products_default_image_used | user:tg:1656193663 | item:36
+2025-10-09 02:48:04 | ACTION | products_sent | user:tg:1656193663 | item:36 images:1
+2025-10-09 02:48:04 | ACTION | products_default_image_used | user:tg:1656193663 | item:37
+2025-10-09 02:48:04 | ACTION | products_sent | user:tg:1656193663 | item:37 images:1
+2025-10-09 02:48:05 | ACTION | products_sent | user:tg:1656193663 | item:34 images:1
+2025-10-09 02:48:05 | ACTION | products_sent | user:tg:1656193663 | item:33 images:1
+2025-10-09 02:48:05 | ACTION | products_default_image_used | user:tg:1656193663 | item:35
+2025-10-09 02:48:05 | ACTION | products_sent | user:tg:1656193663 | item:35 images:1
+2025-10-09 02:48:05 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-10-09 02:48:08 | ACTION | products_default_image_used | user:tg:1656193663 | item:36
+2025-10-09 02:48:08 | ACTION | products_sent | user:tg:1656193663 | item:36 images:1
+2025-10-09 02:48:08 | ACTION | products_default_image_used | user:tg:1656193663 | item:37
+2025-10-09 02:48:09 | ACTION | products_sent | user:tg:1656193663 | item:37 images:1
+2025-10-09 02:48:09 | ACTION | products_sent | user:tg:1656193663 | item:34 images:1
+2025-10-09 02:48:09 | ACTION | products_sent | user:tg:1656193663 | item:33 images:1
+2025-10-09 02:48:09 | ACTION | products_default_image_used | user:tg:1656193663 | item:35
+2025-10-09 02:48:09 | ACTION | products_sent | user:tg:1656193663 | item:35 images:1
+2025-10-09 02:51:03 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-10-09 02:53:12 | ACTION | products_default_image_used | user:tg:1656193663 | item:36
+2025-10-09 02:53:12 | ACTION | products_sent | user:tg:1656193663 | item:36 images:1
+2025-10-09 02:53:12 | ACTION | products_default_image_used | user:tg:1656193663 | item:37
+2025-10-09 02:53:13 | ACTION | products_sent | user:tg:1656193663 | item:37 images:1
+2025-10-09 02:53:13 | ACTION | products_sent | user:tg:1656193663 | item:34 images:1
+2025-10-09 02:53:13 | ACTION | products_sent | user:tg:1656193663 | item:33 images:1
+2025-10-09 02:53:13 | ACTION | products_default_image_used | user:tg:1656193663 | item:35
+2025-10-09 02:53:13 | ACTION | products_sent | user:tg:1656193663 | item:35 images:1
+2025-10-09 02:54:39 | ACTION | products_default_image_used | user:tg:1656193663 | item:36
+2025-10-09 02:54:39 | ACTION | products_sent | user:tg:1656193663 | item:36 images:1
+2025-10-09 02:54:39 | ACTION | products_default_image_used | user:tg:1656193663 | item:37
+2025-10-09 02:54:40 | ACTION | products_sent | user:tg:1656193663 | item:37 images:1
+2025-10-09 02:54:40 | ACTION | products_sent | user:tg:1656193663 | item:34 images:1
+2025-10-09 02:54:40 | ACTION | products_sent | user:tg:1656193663 | item:33 images:1
+2025-10-09 02:54:40 | ACTION | products_default_image_used | user:tg:1656193663 | item:35
+2025-10-09 02:54:40 | ACTION | products_sent | user:tg:1656193663 | item:35 images:1
+2025-10-09 02:55:14 | ACTION | products_default_image_used | user:tg:1656193663 | item:36
+2025-10-09 02:55:15 | ACTION | products_sent | user:tg:1656193663 | item:36 images:1
+2025-10-09 02:55:15 | ACTION | products_default_image_used | user:tg:1656193663 | item:37
+2025-10-09 02:55:15 | ACTION | products_sent | user:tg:1656193663 | item:37 images:1
+2025-10-09 02:55:15 | ACTION | products_sent | user:tg:1656193663 | item:34 images:1
+2025-10-09 02:55:16 | ACTION | products_sent | user:tg:1656193663 | item:33 images:1
+2025-10-09 02:55:16 | ACTION | products_default_image_used | user:tg:1656193663 | item:35
+2025-10-09 02:55:16 | ACTION | products_sent | user:tg:1656193663 | item:35 images:1
+2025-10-09 02:55:59 | ACTION | incoming_message | user:tg:1656193663 | slaom
+2025-10-09 03:05:55 | ACTION | products_default_image_used | user:tg:1656193663 | item:36
+2025-10-09 03:05:56 | ACTION | products_sent | user:tg:1656193663 | item:36
+2025-10-09 03:05:56 | ACTION | products_default_image_used | user:tg:1656193663 | item:37
+2025-10-09 03:05:56 | ACTION | products_sent | user:tg:1656193663 | item:37
+2025-10-09 03:05:56 | ACTION | products_sent | user:tg:1656193663 | item:34
+2025-10-09 03:05:56 | ACTION | products_sent | user:tg:1656193663 | item:33
+2025-10-09 03:05:56 | ACTION | products_default_image_used | user:tg:1656193663 | item:35
+2025-10-09 03:05:56 | ACTION | products_sent | user:tg:1656193663 | item:35
+2025-10-09 03:09:16 | ACTION | products_default_image_used | user:tg:1656193663 | item:36
+2025-10-09 03:09:16 | ACTION | products_sent | user:tg:1656193663 | item:36
+2025-10-09 03:09:16 | ACTION | products_default_image_used | user:tg:1656193663 | item:37
+2025-10-09 03:09:16 | ACTION | products_sent | user:tg:1656193663 | item:37
+2025-10-09 03:09:17 | ACTION | products_sent | user:tg:1656193663 | item:34
+2025-10-09 03:09:17 | ACTION | products_sent | user:tg:1656193663 | item:33
+2025-10-09 03:09:17 | ACTION | products_default_image_used | user:tg:1656193663 | item:35
+2025-10-09 03:09:17 | ACTION | products_sent | user:tg:1656193663 | item:35
+2025-10-09 03:10:36 | ACTION | products_default_image_used | user:tg:1656193663 | item:36
+2025-10-09 03:10:36 | ACTION | products_sent | user:tg:1656193663 | item:36
+2025-10-09 03:10:36 | ACTION | products_default_image_used | user:tg:1656193663 | item:37
+2025-10-09 03:10:36 | ACTION | products_sent | user:tg:1656193663 | item:37
+2025-10-09 03:10:37 | ACTION | products_sent | user:tg:1656193663 | item:34
+2025-10-09 03:10:37 | ACTION | products_sent | user:tg:1656193663 | item:33
+2025-10-09 03:10:37 | ACTION | products_default_image_used | user:tg:1656193663 | item:35
+2025-10-09 03:10:37 | ACTION | products_sent | user:tg:1656193663 | item:35
+2025-10-09 03:12:57 | ACTION | products_default_image_used | user:tg:1656193663 | item:36
+2025-10-09 03:12:57 | ACTION | products_sent | user:tg:1656193663 | item:36
+2025-10-09 03:12:57 | ACTION | products_default_image_used | user:tg:1656193663 | item:37
+2025-10-09 03:12:57 | ACTION | products_sent | user:tg:1656193663 | item:37
+2025-10-09 03:12:57 | ACTION | products_sent | user:tg:1656193663 | item:34
+2025-10-09 03:12:57 | ACTION | products_sent | user:tg:1656193663 | item:33
+2025-10-09 03:12:57 | ACTION | products_default_image_used | user:tg:1656193663 | item:35
+2025-10-09 03:12:57 | ACTION | products_sent | user:tg:1656193663 | item:35
+2025-10-09 03:13:15 | ACTION | products_default_image_used | user:tg:1656193663 | item:36
+2025-10-09 03:13:16 | ACTION | products_sent | user:tg:1656193663 | item:36
+2025-10-09 03:13:16 | ACTION | products_default_image_used | user:tg:1656193663 | item:37
+2025-10-09 03:13:16 | ACTION | products_sent | user:tg:1656193663 | item:37
+2025-10-09 03:13:16 | ACTION | products_sent | user:tg:1656193663 | item:34
+2025-10-09 03:13:16 | ACTION | products_sent | user:tg:1656193663 | item:33
+2025-10-09 03:13:16 | ACTION | products_default_image_used | user:tg:1656193663 | item:35
+2025-10-09 03:13:16 | ACTION | products_sent | user:tg:1656193663 | item:35
+2025-10-09 07:28:12 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-10-09 07:28:20 | ACTION | products_default_image_used | user:tg:1656193663 | item:36
+2025-10-09 07:28:20 | ACTION | products_sent | user:tg:1656193663 | item:36
+2025-10-09 07:28:20 | ACTION | products_default_image_used | user:tg:1656193663 | item:37
+2025-10-09 07:28:20 | ACTION | products_sent | user:tg:1656193663 | item:37
+2025-10-09 07:28:21 | ACTION | products_sent | user:tg:1656193663 | item:34
+2025-10-09 07:28:21 | ACTION | products_sent | user:tg:1656193663 | item:33
+2025-10-09 07:28:21 | ACTION | products_default_image_used | user:tg:1656193663 | item:35
+2025-10-09 07:28:21 | ACTION | products_sent | user:tg:1656193663 | item:35
+2025-10-09 07:48:18 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-10-09 07:48:20 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-10-09 07:48:23 | ACTION | incoming_message | user:tg:1656193663 | slaom
+2025-10-09 07:48:31 | ACTION | start_command | user:tg:1656193663 | start command sent
+2025-10-09 07:48:35 | ACTION | incoming_message | user:tg:1656193663 | hop
+2025-10-09 07:48:44 | ACTION | products_default_image_used | user:tg:1656193663 | item:36
+2025-10-09 07:48:45 | ACTION | products_sent_text_fallback | user:tg:1656193663 | item:36
+2025-10-09 07:48:45 | ACTION | products_default_image_used | user:tg:1656193663 | item:37
+2025-10-09 07:48:45 | ACTION | products_sent_text_fallback | user:tg:1656193663 | item:37
+2025-10-09 07:48:46 | ACTION | products_sent | user:tg:1656193663 | item:34
+2025-10-09 07:48:46 | ACTION | products_sent | user:tg:1656193663 | item:33
+2025-10-09 07:48:46 | ACTION | products_default_image_used | user:tg:1656193663 | item:35
+2025-10-09 07:48:46 | ACTION | products_sent_text_fallback | user:tg:1656193663 | item:35
+2025-10-09 07:56:06 | ACTION | products_default_image_used | user:tg:1656193663 | item:36
+2025-10-09 07:56:06 | ACTION | products_sent_text_fallback | user:tg:1656193663 | item:36
+2025-10-09 07:56:06 | ACTION | products_default_image_used | user:tg:1656193663 | item:37
+2025-10-09 07:56:06 | ACTION | products_sent_text_fallback | user:tg:1656193663 | item:37
+2025-10-09 07:56:06 | ACTION | products_sent | user:tg:1656193663 | item:34
+2025-10-09 07:56:06 | ACTION | products_sent | user:tg:1656193663 | item:33
+2025-10-09 07:56:06 | ACTION | products_default_image_used | user:tg:1656193663 | item:35
+2025-10-09 07:56:07 | ACTION | products_sent_text_fallback | user:tg:1656193663 | item:35
+2025-10-09 07:56:54 | ACTION | incoming_message | user:tg:1656193663 | salom

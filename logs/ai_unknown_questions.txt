@@ -1,0 +1,19 @@
+2025-10-09 12:43:43 | sender=web | sen kimsan
+2025-10-09 12:44:45 | sender=web | manu
+2025-10-09 12:44:46 | sender=web | menu
+2025-10-09 12:44:49 | sender=web | mahsulotlar
+2025-10-09 12:44:54 | sender=web | products
+2025-10-09 12:46:46 | sender=web | ho
+2025-10-09 07:48:20 | tg:1656193663 | salom
+2025-10-09 07:48:23 | tg:1656193663 | salom
+2025-10-09 07:48:25 | tg:1656193663 | slaom
+2025-10-09 07:48:38 | tg:1656193663 | hop
+2025-10-09 12:49:55 | sender=web | sen kimsan
+2025-10-09 12:55:17 | sender=web | qalay
+2025-10-09 12:55:20 | sender=web | qale
+2025-10-09 12:55:22 | sender=web | zormi
+2025-10-09 12:55:40 | sender=web | bog'lanish
+2025-10-09 12:55:44 | sender=web | kimsan
+2025-10-09 12:55:49 | sender=web | telegram bot
+2025-10-09 12:55:54 | sender=web | mahsulotlar
+2025-10-09 07:56:57 | tg:1656193663 | salom

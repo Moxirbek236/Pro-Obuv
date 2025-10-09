@@ -44,20 +44,28 @@ except Exception:
     request = None
     session = {}
     g = type("G", (), {})()
+
     def render_template(*a, **k):
         return ""
+
     def redirect(*a, **k):
         return ""
+
     def url_for(*a, **k):
         return ""
+
     def flash(*a, **k):
         return None
+
     def jsonify(obj=None):
         return obj
+
     def send_from_directory(*a, **k):
         return ""
+
     class Response:
         pass
+
 
 try:
     from werkzeug.middleware.proxy_fix import ProxyFix
@@ -86,6 +94,7 @@ except Exception:
 
     def get_remote_address():
         return lambda: None
+
 
 try:
     from werkzeug.middleware.profiler import ProfilerMiddleware
@@ -116,10 +125,13 @@ except Exception:
             salt_hex, dk_hex = stored_hash.split("$", 1)
             salt = binascii.unhexlify(salt_hex)
             expected = binascii.unhexlify(dk_hex)
-            test = hashlib.pbkdf2_hmac("sha256", (password or "").encode("utf-8"), salt, 100000)
+            test = hashlib.pbkdf2_hmac(
+                "sha256", (password or "").encode("utf-8"), salt, 100000
+            )
             return binascii.hexlify(test) == binascii.hexlify(expected)
         except Exception:
             return False
+
 
 try:
     from flask_sqlalchemy import SQLAlchemy
@@ -333,7 +345,9 @@ class MemoryLimitMiddleware:
     def __init__(self, app, max_content_length=None):
         self.app = app
         # store bytes limit (None or int)
-        self.max_content_length = int(max_content_length) if max_content_length else None
+        self.max_content_length = (
+            int(max_content_length) if max_content_length else None
+        )
 
     def __call__(self, environ, start_response):
         try:
@@ -354,7 +368,9 @@ class MemoryLimitMiddleware:
                     status = "413 Payload Too Large"
                     headers = [("Content-Type", "application/json")]
                     start_response(status, headers)
-                    return [b'{"success": false, "message": "Request entity too large"}']
+                    return [
+                        b'{"success": false, "message": "Request entity too large"}'
+                    ]
 
             # Delegate to the next WSGI app callable
             return self.app(environ, start_response)
@@ -365,7 +381,9 @@ class MemoryLimitMiddleware:
             try:
                 # Use app logger if available
                 try:
-                    app_logger.warning("MemoryError while reading request - returning 413")
+                    app_logger.warning(
+                        "MemoryError while reading request - returning 413"
+                    )
                 except Exception:
                     pass
             except Exception:
@@ -374,7 +392,9 @@ class MemoryLimitMiddleware:
             status = "413 Payload Too Large"
             headers = [("Content-Type", "application/json")]
             start_response(status, headers)
-            return [b'{"success": false, "message": "Request payload too large or server out of memory"}']
+            return [
+                b'{"success": false, "message": "Request payload too large or server out of memory"}'
+            ]
 
 
 # Wrap the WSGI app so Content-Length is checked before Werkzeug attempts large reads
@@ -6105,8 +6125,8 @@ def admin_monitor():
 
 
 # Admin utility: delete all products and seed 4 test products (super_admin only)
-@app.route('/admin/delete_all_products_and_seed', methods=['POST'])
-@role_required('super_admin')
+@app.route("/admin/delete_all_products_and_seed", methods=["POST"])
+@role_required("super_admin")
 def admin_delete_all_products_and_seed():
     """Dangerous admin endpoint: deletes all menu items, product_media, ratings,
     favorites, cart items (best-effort), then inserts 4 simple test products.
@@ -6148,10 +6168,58 @@ def admin_delete_all_products_and_seed():
         # Insert 4 test products
         now = get_current_time().isoformat()
         seed_items = [
-            ("Test Shoe Alpha", 100000, "shoes", "Alpha test shoe", "", 1, 10, 0, 0.0, 0.0, now),
-            ("Test Shoe Beta", 120000, "shoes", "Beta test shoe", "", 1, 8, 0, 0.0, 0.0, now),
-            ("Test Shoe Gamma", 90000, "shoes", "Gamma test shoe", "", 1, 15, 0, 0.0, 0.0, now),
-            ("Test Shoe Delta", 110000, "shoes", "Delta test shoe", "", 1, 5, 0, 0.0, 0.0, now),
+            (
+                "Test Shoe Alpha",
+                100000,
+                "shoes",
+                "Alpha test shoe",
+                "",
+                1,
+                10,
+                0,
+                0.0,
+                0.0,
+                now,
+            ),
+            (
+                "Test Shoe Beta",
+                120000,
+                "shoes",
+                "Beta test shoe",
+                "",
+                1,
+                8,
+                0,
+                0.0,
+                0.0,
+                now,
+            ),
+            (
+                "Test Shoe Gamma",
+                90000,
+                "shoes",
+                "Gamma test shoe",
+                "",
+                1,
+                15,
+                0,
+                0.0,
+                0.0,
+                now,
+            ),
+            (
+                "Test Shoe Delta",
+                110000,
+                "shoes",
+                "Delta test shoe",
+                "",
+                1,
+                5,
+                0,
+                0.0,
+                0.0,
+                now,
+            ),
         ]
 
         # Try multiple common INSERT shapes (some DBs expect different columns). Use a flexible insert.
@@ -6181,10 +6249,17 @@ def admin_delete_all_products_and_seed():
         except Exception:
             pass
 
-        return jsonify({"success": True, "message": "Menu wiped and 4 test products seeded"})
+        return jsonify(
+            {"success": True, "message": "Menu wiped and 4 test products seeded"}
+        )
     except Exception as e:
         app_logger.error(f"admin_delete_all_products_and_seed error: {e}")
-        return jsonify({"success": False, "message": "Failed to reset menu", "details": str(e)}), 500
+        return (
+            jsonify(
+                {"success": False, "message": "Failed to reset menu", "details": str(e)}
+            ),
+            500,
+        )
 
 
 # Advanced decorators
@@ -6338,19 +6413,23 @@ def menu():
                     # Normalize rating and orders_count columns for templates and JS
                     try:
                         # avg_rating may be returned as 'avg_rating' or 'rating'
-                        avg = item.get('avg_rating') if 'avg_rating' in item else item.get('rating')
-                        item['rating'] = float(avg or 0.0)
+                        avg = (
+                            item.get("avg_rating")
+                            if "avg_rating" in item
+                            else item.get("rating")
+                        )
+                        item["rating"] = float(avg or 0.0)
                     except Exception:
                         try:
-                            item['rating'] = float(item.get('rating') or 0.0)
+                            item["rating"] = float(item.get("rating") or 0.0)
                         except Exception:
-                            item['rating'] = 0.0
+                            item["rating"] = 0.0
 
                     try:
                         # orders_count may exist on menu_items table
-                        item['orders_count'] = int(item.get('orders_count') or 0)
+                        item["orders_count"] = int(item.get("orders_count") or 0)
                     except Exception:
-                        item['orders_count'] = 0
+                        item["orders_count"] = 0
 
                     menu_items.append(item)
                 except Exception as e:
@@ -6498,7 +6577,7 @@ def menu():
             return redirect(url_for("index"))
 
 
-@app.route('/product/<int:item_id>')
+@app.route("/product/<int:item_id>")
 @rate_limit(max_requests=5000, window=60)
 def product_detail(item_id):
     """Render a single product detail page.
@@ -6537,7 +6616,10 @@ def product_detail(item_id):
         comments = []
         try:
             # Legacy comments from 'comments' table (if present)
-            tbl = execute_query("SELECT name FROM sqlite_master WHERE type='table' AND name='comments'", fetch_one=True)
+            tbl = execute_query(
+                "SELECT name FROM sqlite_master WHERE type='table' AND name='comments'",
+                fetch_one=True,
+            )
             if tbl:
                 comments_raw = execute_query(
                     "SELECT author, text, rating, created_at FROM comments WHERE menu_item_id = ?",
@@ -6551,10 +6633,10 @@ def product_detail(item_id):
                         except Exception:
                             # tuple fallback
                             row = {
-                                'author': r[0] if len(r) > 0 else None,
-                                'text': r[1] if len(r) > 1 else None,
-                                'rating': r[2] if len(r) > 2 else None,
-                                'created_at': r[3] if len(r) > 3 else None,
+                                "author": r[0] if len(r) > 0 else None,
+                                "text": r[1] if len(r) > 1 else None,
+                                "rating": r[2] if len(r) > 2 else None,
+                                "created_at": r[3] if len(r) > 3 else None,
                             }
                         comments.append(row)
         except Exception:
@@ -6579,10 +6661,10 @@ def product_detail(item_id):
                         row = dict(rr)
                     except Exception:
                         row = {
-                            'rating': rr[0] if len(rr) > 0 else None,
-                            'text': rr[1] if len(rr) > 1 else None,
-                            'created_at': rr[2] if len(rr) > 2 else None,
-                            'user_name': rr[3] if len(rr) > 3 else None,
+                            "rating": rr[0] if len(rr) > 0 else None,
+                            "text": rr[1] if len(rr) > 1 else None,
+                            "created_at": rr[2] if len(rr) > 2 else None,
+                            "user_name": rr[3] if len(rr) > 3 else None,
                         }
                     comments.append(row)
         except Exception:
@@ -6592,45 +6674,54 @@ def product_detail(item_id):
         try:
             for c in comments:
                 # normalize author
-                if not c.get('author'):
-                    c['author'] = c.get('user_name') or c.get('author') or 'Guest'
+                if not c.get("author"):
+                    c["author"] = c.get("user_name") or c.get("author") or "Guest"
                 # normalize text
-                if not c.get('text'):
-                    c['text'] = c.get('comment') or ''
+                if not c.get("text"):
+                    c["text"] = c.get("comment") or ""
         except Exception:
             pass
 
         # Sort by created_at descending (ISO timestamps sort lexicographically); limit to 20
         try:
-            comments = sorted([c for c in comments if c.get('created_at')], key=lambda x: x.get('created_at'), reverse=True)[:20]
+            comments = sorted(
+                [c for c in comments if c.get("created_at")],
+                key=lambda x: x.get("created_at"),
+                reverse=True,
+            )[:20]
         except Exception:
             # fallback: keep original order and trim
             comments = comments[:20]
 
         # Ensure numeric fields are typed for templates
         try:
-            item['rating'] = float(item.get('rating') or 0)
+            item["rating"] = float(item.get("rating") or 0)
         except Exception:
-            item['rating'] = 0.0
+            item["rating"] = 0.0
         try:
-            item['orders_count'] = int(item.get('orders_count') or 0)
+            item["orders_count"] = int(item.get("orders_count") or 0)
         except Exception:
-            item['orders_count'] = 0
+            item["orders_count"] = 0
 
-        return render_template('product.html', item=item, media=media, comments=comments, current_page='product')
+        return render_template(
+            "product.html",
+            item=item,
+            media=media,
+            comments=comments,
+            current_page="product",
+        )
     except Exception as e:
         app_logger.error(f"product_detail error for id={item_id}: {str(e)}")
-        flash('Mahsulotni ochishda xatolik yuz berdi.', 'error')
-        return redirect(url_for('menu'))
+        flash("Mahsulotni ochishda xatolik yuz berdi.", "error")
+        return redirect(url_for("menu"))
 
 
-
-@app.route('/product/<int:item_id>/comment', methods=['POST'])
+@app.route("/product/<int:item_id>/comment", methods=["POST"])
 def post_comment(item_id):
     try:
         # Determine author: prefer logged-in user's real name, then form fields, then session values, fall back to 'Guest'
         author = None
-        user_id = session.get('user_id')
+        user_id = session.get("user_id")
         if user_id:
             try:
                 user_row = execute_query(
@@ -6639,31 +6730,31 @@ def post_comment(item_id):
                     fetch_one=True,
                 )
                 if user_row:
-                    if hasattr(user_row, 'get'):
-                        first = (user_row.get('first_name') or '').strip()
-                        last = (user_row.get('last_name') or '').strip()
-                        uname = ''
-                        email = (user_row.get('email') or '').strip()
+                    if hasattr(user_row, "get"):
+                        first = (user_row.get("first_name") or "").strip()
+                        last = (user_row.get("last_name") or "").strip()
+                        uname = ""
+                        email = (user_row.get("email") or "").strip()
                     else:
                         # tuple/row fallback
                         try:
-                            first = (user_row[0] or '').strip()
+                            first = (user_row[0] or "").strip()
                         except Exception:
-                            first = ''
+                            first = ""
                         try:
-                            last = (user_row[1] or '').strip()
+                            last = (user_row[1] or "").strip()
                         except Exception:
-                            last = ''
+                            last = ""
                         try:
-                            uname = ''
+                            uname = ""
                         except Exception:
-                            uname = ''
+                            uname = ""
                         try:
-                            email = (user_row[2] or '').strip()
+                            email = (user_row[2] or "").strip()
                         except Exception:
-                            email = ''
+                            email = ""
 
-                    full = (first + ' ' + last).strip()
+                    full = (first + " " + last).strip()
                     author = full or uname or email
             except Exception:
                 author = None
@@ -6671,19 +6762,22 @@ def post_comment(item_id):
         # final fallbacks (allow form-provided name or session values)
         if not author:
             author = (
-                request.form.get('author')
-                or request.form.get('user_name')
-                or session.get('user_name')
-                or session.get('user_email')
-                or 'Guest'
+                request.form.get("author")
+                or request.form.get("user_name")
+                or session.get("user_name")
+                or session.get("user_email")
+                or "Guest"
             )[:128]
 
-        rating = int(request.form.get('rating') or 0)
-        comment = (request.form.get('comment') or '').strip()
+        rating = int(request.form.get("rating") or 0)
+        comment = (request.form.get("comment") or "").strip()
 
         # ensure comments table exists (simple safe schema)
         try:
-            execute_query("SELECT name FROM sqlite_master WHERE type='table' AND name='comments'", fetch_one=True)
+            execute_query(
+                "SELECT name FROM sqlite_master WHERE type='table' AND name='comments'",
+                fetch_one=True,
+            )
             # create table if not present
             execute_query(
                 "CREATE TABLE IF NOT EXISTS comments (id INTEGER PRIMARY KEY AUTOINCREMENT, menu_item_id INTEGER, author TEXT, text TEXT, rating INTEGER, created_at TEXT)"
@@ -6701,41 +6795,51 @@ def post_comment(item_id):
         try:
             execute_query(
                 "INSERT INTO comments (menu_item_id, author, text, rating, created_at) VALUES (?, ?, ?, ?, datetime('now'))",
-                (item_id, author, comment, rating)
+                (item_id, author, comment, rating),
             )
         except Exception as ie:
             app_logger.debug(f"Legacy comments insert skipped or failed: {ie}")
 
         # Also insert into unified ratings table (preferred) and recalc average
         try:
-            user_id = session.get('user_id')
+            user_id = session.get("user_id")
             # If session doesn't contain numeric user_id but we have identifying
             # info (email or user_name), try to look up the user and resolve id.
             if not user_id:
                 try:
-                    sess_email = session.get('user_email')
-                    sess_name = session.get('user_name')
+                    sess_email = session.get("user_email")
+                    sess_name = session.get("user_name")
                     if sess_email:
-                        row = execute_query('SELECT id FROM users WHERE email = ?', (sess_email,), fetch_one=True)
-                        if row and row.get('id'):
-                            user_id = row.get('id')
+                        row = execute_query(
+                            "SELECT id FROM users WHERE email = ?",
+                            (sess_email,),
+                            fetch_one=True,
+                        )
+                        if row and row.get("id"):
+                            user_id = row.get("id")
                     if not user_id and sess_name:
                         # try match by username or concatenated name
-                        row = execute_query('SELECT id FROM users WHERE (first_name || " " || last_name) = ? OR email = ?', (sess_name, sess_name), fetch_one=True)
-                        if row and row.get('id'):
-                            user_id = row.get('id')
+                        row = execute_query(
+                            'SELECT id FROM users WHERE (first_name || " " || last_name) = ? OR email = ?',
+                            (sess_name, sess_name),
+                            fetch_one=True,
+                        )
+                        if row and row.get("id"):
+                            user_id = row.get("id")
                 except Exception:
-                    user_id = session.get('user_id')
+                    user_id = session.get("user_id")
             now_iso = get_current_time().isoformat()
             # Ensure ratings table exists
             try:
-                execute_query("CREATE TABLE IF NOT EXISTS ratings (id INTEGER PRIMARY KEY AUTOINCREMENT, menu_item_id INTEGER, branch_id INTEGER, user_id INTEGER, rating INTEGER, comment TEXT, created_at TEXT)")
+                execute_query(
+                    "CREATE TABLE IF NOT EXISTS ratings (id INTEGER PRIMARY KEY AUTOINCREMENT, menu_item_id INTEGER, branch_id INTEGER, user_id INTEGER, rating INTEGER, comment TEXT, created_at TEXT)"
+                )
             except Exception:
                 pass
 
             execute_query(
                 "INSERT INTO ratings (menu_item_id, user_id, rating, comment, created_at) VALUES (?, ?, ?, ?, ?)",
-                (item_id, user_id, rating, comment, now_iso)
+                (item_id, user_id, rating, comment, now_iso),
             )
 
             # Recalculate average and count
@@ -6745,28 +6849,39 @@ def post_comment(item_id):
                     (item_id,),
                     fetch_one=True,
                 )
-                avg = float(stats.get('avg_rating') or 0.0) if hasattr(stats, 'get') else float(stats[0] or 0.0)
-                cnt = int(stats.get('cnt') or 0) if hasattr(stats, 'get') else int(stats[1] or 0)
+                avg = (
+                    float(stats.get("avg_rating") or 0.0)
+                    if hasattr(stats, "get")
+                    else float(stats[0] or 0.0)
+                )
+                cnt = (
+                    int(stats.get("cnt") or 0)
+                    if hasattr(stats, "get")
+                    else int(stats[1] or 0)
+                )
                 # persist rounded average to menu_items.rating
                 try:
-                    execute_query('UPDATE menu_items SET rating = ? WHERE id = ?', (round(avg, 1), item_id))
+                    execute_query(
+                        "UPDATE menu_items SET rating = ? WHERE id = ?",
+                        (round(avg, 1), item_id),
+                    )
                 except Exception:
                     pass
 
-                flash('Sharhingiz qabul qilindi. Rahmat!', 'success')
+                flash("Sharhingiz qabul qilindi. Rahmat!", "success")
             except Exception as e:
                 app_logger.error(f"Failed to recalc rating for item {item_id}: {e}")
-                flash('Sharh qabul qilindi, ammo baho yangilanmadi.', 'warning')
+                flash("Sharh qabul qilindi, ammo baho yangilanmadi.", "warning")
 
         except Exception as ie:
             app_logger.error(f"Failed to insert rating for item {item_id}: {ie}")
-            flash('Sharhni saqlashda xatolik yuz berdi.', 'error')
+            flash("Sharhni saqlashda xatolik yuz berdi.", "error")
 
-        return redirect(url_for('product_detail', item_id=item_id))
+        return redirect(url_for("product_detail", item_id=item_id))
     except Exception as e:
         app_logger.error(f"post_comment error: {e}")
-        flash('Sharh yuborishda xatolik yuz berdi.', 'error')
-        return redirect(url_for('product_detail', item_id=item_id))
+        flash("Sharh yuborishda xatolik yuz berdi.", "error")
+        return redirect(url_for("product_detail", item_id=item_id))
 
 
 @app.route("/api/menu-search", methods=["GET"])
@@ -6805,8 +6920,14 @@ def api_menu_search():
             params.extend([like_q, like_q])
 
         if category:
-            where_clauses.append("category = ?")
-            params.append(category)
+            # Case-insensitive match; also accept slug forms (dashes) by normalizing
+            # Compare both raw and slugified(LOWER(category) with spaces->dashes)
+            where_clauses.append(
+                "(LOWER(category) = ? OR REPLACE(LOWER(category), ' ', '-') = ?)"
+            )
+            cat_lower = category.strip().lower()
+            params.append(cat_lower)
+            params.append(cat_lower)
 
         if min_price:
             try:
@@ -6851,11 +6972,11 @@ def api_menu_search():
         where_sql = " AND ".join(where_clauses) if where_clauses else "1"
         # Pagination support: limit & offset
         try:
-            limit = int(request.args.get('limit', 50))
+            limit = int(request.args.get("limit", 50))
         except Exception:
             limit = 50
         try:
-            offset = int(request.args.get('offset', 0))
+            offset = int(request.args.get("offset", 0))
         except Exception:
             offset = 0
 
@@ -6880,7 +7001,7 @@ def api_menu_search():
                 try:
                     media_rows = execute_query(
                         "SELECT id, media_type, media_url, display_order, is_main FROM product_media WHERE menu_item_id = ? ORDER BY is_main DESC, display_order ASC",
-                        (item.get("id") if hasattr(item, 'get') else item[0],),
+                        (item.get("id") if hasattr(item, "get") else item[0],),
                         fetch_all=True,
                     )
                     item_media = [dict(m) for m in media_rows] if media_rows else []
@@ -6894,37 +7015,49 @@ def api_menu_search():
                 try:
                     item_rating = None
                     if isinstance(item, dict):
-                        item_rating = item.get('rating')
+                        item_rating = item.get("rating")
                     else:
                         # if row-like, try index access (best-effort)
                         try:
                             item_rating = item[8]  # fallback - not reliable
                         except Exception:
                             item_rating = None
-                    item['rating'] = float(item_rating or 0.0)
+                    item["rating"] = float(item_rating or 0.0)
                 except Exception:
-                    item['rating'] = 0.0
+                    item["rating"] = 0.0
 
                 try:
-                    orders_val = item.get('orders_count') if isinstance(item, dict) else None
-                    item['orders_count'] = int(orders_val or 0)
+                    orders_val = (
+                        item.get("orders_count") if isinstance(item, dict) else None
+                    )
+                    item["orders_count"] = int(orders_val or 0)
                 except Exception:
-                    item['orders_count'] = 0
+                    item["orders_count"] = 0
 
         # Also return total matching count for pagination UI
         try:
             count_sql = f"SELECT COUNT(*) as cnt FROM menu_items WHERE {where_sql}"
             count_row = execute_query(count_sql, params, fetch_one=True)
-            total_count = int(count_row.get('cnt') if hasattr(count_row, 'get') else (count_row[0] if count_row else 0))
+            total_count = int(
+                count_row.get("cnt")
+                if hasattr(count_row, "get")
+                else (count_row[0] if count_row else 0)
+            )
         except Exception:
             total_count = len(items)
 
-        return jsonify({"success": True, "items": items, "total_count": total_count, "limit": limit, "offset": offset})
+        return jsonify(
+            {
+                "success": True,
+                "items": items,
+                "total_count": total_count,
+                "limit": limit,
+                "offset": offset,
+            }
+        )
     except Exception as e:
         app_logger.error(f"api_menu_search error: {str(e)}")
         return jsonify({"success": False, "message": "Search failed"}), 500
-
-
 
 
 @app.route("/add_to_cart", methods=["POST"])
@@ -9409,12 +9542,12 @@ def admin_add_menu_item():
         category = (request.form.get("category", "footwear") or "").strip()
         # Normalize categories used in templates: map common backend names to frontend tokens
         cat_map = {
-            'footwear': 'specobuv',
-            'specobuv': 'specobuv',
-            'shoes': 'specobuv',
-            'clothing': 'specodezhda',
-            'specodezhda': 'specodezhda',
-            'apparel': 'specodezhda'
+            "footwear": "specobuv",
+            "specobuv": "specobuv",
+            "shoes": "specobuv",
+            "clothing": "specodezhda",
+            "specodezhda": "specodezhda",
+            "apparel": "specodezhda",
         }
         category = cat_map.get(category.lower(), category)
         description = request.form.get("description", "").strip()
@@ -9432,7 +9565,9 @@ def admin_add_menu_item():
         media_files_check = request.files.getlist("media_files")
         image_extensions = {"png", "jpg", "jpeg", "gif", "webp"}
         has_image_uploaded = any(
-            f and getattr(f, 'filename', '') and f.filename.rsplit('.', 1)[-1].lower() in image_extensions
+            f
+            and getattr(f, "filename", "")
+            and f.filename.rsplit(".", 1)[-1].lower() in image_extensions
             for f in media_files_check
         )
 
@@ -9464,7 +9599,10 @@ def admin_add_menu_item():
             media_files = request.files.getlist("media_files")  # Yangi input nomi
             # Enforce 1..10 uploads if files were submitted
             if media_files and len([f for f in media_files if f and f.filename]) > 10:
-                flash("Iltimos, bir mahsulotga bir vaqtning o'zida maksimal 10 ta fayl yuklang.", "error")
+                flash(
+                    "Iltimos, bir mahsulotga bir vaqtning o'zida maksimal 10 ta fayl yuklang.",
+                    "error",
+                )
                 return redirect(url_for("staff_menu"))
             uploaded_media = []
             main_image_set = False
@@ -9584,10 +9722,16 @@ def admin_edit_menu_item(item_id):
         category_norm = None
         if category_in is not None:
             cat_map = {
-                'footwear': 'specobuv', 'specobuv': 'specobuv', 'shoes': 'specobuv',
-                'clothing': 'specodezhda', 'specodezhda': 'specodezhda', 'apparel': 'specodezhda'
+                "footwear": "specobuv",
+                "specobuv": "specobuv",
+                "shoes": "specobuv",
+                "clothing": "specodezhda",
+                "specodezhda": "specodezhda",
+                "apparel": "specodezhda",
             }
-            category_norm = cat_map.get((category_in or '').strip().lower(), (category_in or '').strip())
+            category_norm = cat_map.get(
+                (category_in or "").strip().lower(), (category_in or "").strip()
+            )
 
         if not name or price <= 0:
             flash("Nomi va narxi to'g'ri bo'lishi kerak.", "error")
@@ -9610,13 +9754,15 @@ def admin_edit_menu_item(item_id):
                 has_category = False
                 if cols:
                     for c in cols:
-                        name_col = c[1] if isinstance(c, tuple) else c.get('name')
-                        if name_col == 'category':
+                        name_col = c[1] if isinstance(c, tuple) else c.get("name")
+                        if name_col == "category":
                             has_category = True
                             break
                 if not has_category:
                     try:
-                        execute_query("ALTER TABLE menu_items ADD COLUMN category TEXT DEFAULT ''")
+                        execute_query(
+                            "ALTER TABLE menu_items ADD COLUMN category TEXT DEFAULT ''"
+                        )
                     except Exception:
                         pass
             except Exception:
@@ -9641,7 +9787,10 @@ def admin_edit_menu_item(item_id):
         if media_files:
             # Enforce max 10 new uploads
             if len([f for f in media_files if f and f.filename]) > 10:
-                flash("Iltimos, bir mahsulotga bir vaqtning o'zida maksimal 10 ta fayl yuklang.", "error")
+                flash(
+                    "Iltimos, bir mahsulotga bir vaqtning o'zida maksimal 10 ta fayl yuklang.",
+                    "error",
+                )
                 return redirect(url_for("staff_menu"))
             now = get_current_time().isoformat()
             uploaded_media = []
@@ -9919,24 +10068,32 @@ def api_reorder_product_media():
         )
 
 
-@app.route('/api/product-media/identify', methods=['POST'])
-@role_required('staff')
+@app.route("/api/product-media/identify", methods=["POST"])
+@role_required("staff")
 def api_product_media_identify():
     """Return product_media.id for a given media_url (and optional item_id)."""
     try:
         data = request.get_json() or {}
-        media_url = data.get('media_url')
-        item_id = data.get('item_id')
+        media_url = data.get("media_url")
+        item_id = data.get("item_id")
         if not media_url:
-            return jsonify({'success': False, 'message': 'media_url required'}), 400
+            return jsonify({"success": False, "message": "media_url required"}), 400
 
         # Try exact match first
         row = None
         try:
             if item_id:
-                row = execute_query('SELECT id, media_url FROM product_media WHERE menu_item_id = ? AND media_url = ?', (item_id, media_url), fetch_one=True)
+                row = execute_query(
+                    "SELECT id, media_url FROM product_media WHERE menu_item_id = ? AND media_url = ?",
+                    (item_id, media_url),
+                    fetch_one=True,
+                )
             else:
-                row = execute_query('SELECT id, media_url FROM product_media WHERE media_url = ?', (media_url,), fetch_one=True)
+                row = execute_query(
+                    "SELECT id, media_url FROM product_media WHERE media_url = ?",
+                    (media_url,),
+                    fetch_one=True,
+                )
         except Exception:
             row = None
 
@@ -9948,22 +10105,30 @@ def api_product_media_identify():
 
                 parsed = urlparse(media_url)
                 path_only = unquote(parsed.path or media_url)
-                basename = path_only.split('/')[-1]
+                basename = path_only.split("/")[-1]
 
                 # Try path-only match
                 if item_id:
-                    row = execute_query('SELECT id, media_url FROM product_media WHERE menu_item_id = ? AND (media_url = ? OR media_url LIKE ?)', (item_id, path_only, '%' + basename), fetch_one=True)
+                    row = execute_query(
+                        "SELECT id, media_url FROM product_media WHERE menu_item_id = ? AND (media_url = ? OR media_url LIKE ?)",
+                        (item_id, path_only, "%" + basename),
+                        fetch_one=True,
+                    )
                 else:
-                    row = execute_query('SELECT id, media_url FROM product_media WHERE media_url = ? OR media_url LIKE ?', (path_only, '%' + basename), fetch_one=True)
+                    row = execute_query(
+                        "SELECT id, media_url FROM product_media WHERE media_url = ? OR media_url LIKE ?",
+                        (path_only, "%" + basename),
+                        fetch_one=True,
+                    )
             except Exception:
                 row = None
 
         if not row:
-            return jsonify({'success': False, 'message': 'not found'}), 404
-        return jsonify({'success': True, 'media_id': row['id']})
+            return jsonify({"success": False, "message": "not found"}), 404
+        return jsonify({"success": True, "media_id": row["id"]})
     except Exception as e:
-        app_logger.error(f'Identify media error: {e}')
-        return jsonify({'success': False, 'message': 'server error'}), 500
+        app_logger.error(f"Identify media error: {e}")
+        return jsonify({"success": False, "message": "server error"}), 500
 
 
 @app.route("/admin/toggle_menu_item/<int:item_id>", methods=["POST"])
@@ -10067,52 +10232,67 @@ def admin_delete_menu_item(item_id):
         )
 
 
-@app.route('/admin/reset_menu_for_tests', methods=['GET', 'POST', 'OPTIONS', 'HEAD'])
-@app.route('/admin/reset_menu_for_tests/', methods=['GET', 'POST', 'OPTIONS', 'HEAD'])
+@app.route("/admin/reset_menu_for_tests", methods=["GET", "POST", "OPTIONS", "HEAD"])
+@app.route("/admin/reset_menu_for_tests/", methods=["GET", "POST", "OPTIONS", "HEAD"])
 def admin_reset_menu_for_tests():
     """Developer/testing helper: remove all existing products and insert 4 test products.
     Protected: only staff or super_admin can call this. Meant for local/dev use only.
     """
-    if not session.get('staff_id') and not session.get('super_admin'):
-        return jsonify({'success': False, 'error': 'Admin huquqi talab qilinadi'}), 401
+    if not session.get("staff_id") and not session.get("super_admin"):
+        return jsonify({"success": False, "error": "Admin huquqi talab qilinadi"}), 401
 
-    app_logger.debug(f"admin_reset_menu_for_tests called: method={request.method} args={request.args} form_keys={list(request.form.keys())}")
+    app_logger.debug(
+        f"admin_reset_menu_for_tests called: method={request.method} args={request.args} form_keys={list(request.form.keys())}"
+    )
     try:
         # Delete related data first to avoid FK issues
-        execute_query('DELETE FROM cart_items')
-        execute_query('DELETE FROM order_details')
-        execute_query('DELETE FROM ratings')
-        execute_query('DELETE FROM favorites')
-        execute_query('DELETE FROM product_media')
-        execute_query('DELETE FROM menu_items')
+        execute_query("DELETE FROM cart_items")
+        execute_query("DELETE FROM order_details")
+        execute_query("DELETE FROM ratings")
+        execute_query("DELETE FROM favorites")
+        execute_query("DELETE FROM product_media")
+        execute_query("DELETE FROM menu_items")
 
         now = get_current_time().isoformat()
 
         # Accept optional 'count' to insert a variable number of test items (for dev/testing only)
         try:
-            requested = int(request.args.get('count') or request.form.get('count') or 4)
+            requested = int(request.args.get("count") or request.form.get("count") or 4)
         except Exception:
             requested = 4
 
-        sample_categories = ['specobuv', 'specodezhda']
+        sample_categories = ["specobuv", "specodezhda"]
         for i in range(1, max(1, min(500, requested)) + 1):
             cat = sample_categories[i % sample_categories.__len__()]
             name = f"Test Mahsulot {i} {'Oyoq kiyim' if cat=='specobuv' else 'Kiyim'}"
             price = 50000 + (i * 1000)
             desc = f"Avtomatik test mahsuloti #{i}"
-            image = '/static/images/default-men.jpg'
+            image = "/static/images/default-men.jpg"
             available = 1
             stock = 10 + (i % 10)
             rating = round(3.5 + (i % 5) * 0.2, 1)
             discount = 0
-            sizes = '36,37,38,39' if cat == 'specobuv' else 'S,M,L'
-            colors = 'qora,oq,yashil'
+            sizes = "36,37,38,39" if cat == "specobuv" else "S,M,L"
+            colors = "qora,oq,yashil"
             execute_query(
                 """
                 INSERT INTO menu_items (name, price, category, description, image_url, available, stock_quantity, rating, discount_percentage, sizes, colors, created_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
-                (name, price, cat, desc, image, available, stock, rating, discount, sizes, colors, now),
+                (
+                    name,
+                    price,
+                    cat,
+                    desc,
+                    image,
+                    available,
+                    stock,
+                    rating,
+                    discount,
+                    sizes,
+                    colors,
+                    now,
+                ),
             )
 
         # Try to invalidate cache / write menu JSON if helpers exist
@@ -10127,10 +10307,15 @@ def admin_reset_menu_for_tests():
 
         # determine how many items were actually inserted (clamped between 1 and 500)
         inserted_count = max(1, min(500, requested))
-        return jsonify({'success': True, 'message': f"Menu resetlandi va {inserted_count} ta test mahsulot qo'shildi."})
+        return jsonify(
+            {
+                "success": True,
+                "message": f"Menu resetlandi va {inserted_count} ta test mahsulot qo'shildi.",
+            }
+        )
     except Exception as e:
         app_logger.error(f"Reset menu for tests error: {str(e)}")
-        return jsonify({'success': False, 'error': str(e)}), 500
+        return jsonify({"success": False, "error": str(e)}), 500
 
 
 # API routes
@@ -10322,14 +10507,32 @@ def api_submit_rating():
                     (menu_item_id_int,),
                     fetch_one=True,
                 )
-                avg = float(stats.get('avg_rating') or 0.0) if hasattr(stats, 'get') else float(stats[0] or 0.0)
-                cnt = int(stats.get('cnt') or 0) if hasattr(stats, 'get') else int(stats[1] or 0)
+                avg = (
+                    float(stats.get("avg_rating") or 0.0)
+                    if hasattr(stats, "get")
+                    else float(stats[0] or 0.0)
+                )
+                cnt = (
+                    int(stats.get("cnt") or 0)
+                    if hasattr(stats, "get")
+                    else int(stats[1] or 0)
+                )
                 # Also update menu_items.rating with latest average (best-effort)
                 try:
-                    execute_query('UPDATE menu_items SET rating = ? WHERE id = ?', (round(avg, 1), menu_item_id_int))
+                    execute_query(
+                        "UPDATE menu_items SET rating = ? WHERE id = ?",
+                        (round(avg, 1), menu_item_id_int),
+                    )
                 except Exception:
                     pass
-                return jsonify({"success": True, "message": "Rahmat! Baho qabul qilindi.", "new_rating": round(avg,1), "total_ratings": cnt})
+                return jsonify(
+                    {
+                        "success": True,
+                        "message": "Rahmat! Baho qabul qilindi.",
+                        "new_rating": round(avg, 1),
+                        "total_ratings": cnt,
+                    }
+                )
         except Exception:
             pass
 
@@ -10339,7 +10542,7 @@ def api_submit_rating():
         return jsonify({"success": False, "message": "Server error"}), 500
 
 
-@app.route('/api/chat/receive', methods=['POST'])
+@app.route("/api/chat/receive", methods=["POST"])
 def api_chat_receive():
     """Receive incoming chat message from Telegram bot or other integration.
     Expects JSON: { sender: str, text: str }
@@ -10347,20 +10550,25 @@ def api_chat_receive():
     """
     try:
         data = request.get_json() or {}
-        sender = (data.get('sender') or 'guest')[:128]
-        text = (data.get('text') or '').strip()
+        sender = (data.get("sender") or "guest")[:128]
+        text = (data.get("text") or "").strip()
         if not text:
-            return jsonify({'success': False, 'message': 'text required'}), 400
+            return jsonify({"success": False, "message": "text required"}), 400
 
         # Persist to a lightweight chat_messages table (create if missing)
         try:
-            execute_query('CREATE TABLE IF NOT EXISTS chat_messages (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, text TEXT, source TEXT, created_at TEXT)')
+            execute_query(
+                "CREATE TABLE IF NOT EXISTS chat_messages (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, text TEXT, source TEXT, created_at TEXT)"
+            )
         except Exception:
             pass
 
         now = get_current_time().isoformat()
         try:
-            execute_query('INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)', (sender, text, 'incoming', now))
+            execute_query(
+                "INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)",
+                (sender, text, "incoming", now),
+            )
         except Exception:
             pass
 
@@ -10369,17 +10577,20 @@ def api_chat_receive():
 
         # store reply
         try:
-            execute_query('INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)', ('ai', reply, 'outgoing', get_current_time().isoformat()))
+            execute_query(
+                "INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)",
+                ("ai", reply, "outgoing", get_current_time().isoformat()),
+            )
         except Exception:
             pass
 
-        return jsonify({'success': True, 'reply': reply})
+        return jsonify({"success": True, "reply": reply})
     except Exception as e:
-        app_logger.error(f'chat_receive error: {e}')
-        return jsonify({'success': False, 'message': 'server error'}), 500
+        app_logger.error(f"chat_receive error: {e}")
+        return jsonify({"success": False, "message": "server error"}), 500
 
 
-@app.route('/api/chat/send', methods=['POST'])
+@app.route("/api/chat/send", methods=["POST"])
 def api_chat_send():
     """Web frontend posts here when a user sends a message from site chat widget.
     JSON: { text: str, sender_name: str }
@@ -10387,72 +10598,94 @@ def api_chat_send():
     """
     try:
         data = request.get_json() or {}
-        text = (data.get('text') or '').strip()
-        sender_name = (data.get('sender_name') or session.get('user_name') or 'Guest')[:128]
+        text = (data.get("text") or "").strip()
+        sender_name = (data.get("sender_name") or session.get("user_name") or "Guest")[
+            :128
+        ]
         if not text:
-            return jsonify({'success': False, 'message': 'text required'}), 400
+            return jsonify({"success": False, "message": "text required"}), 400
 
         now = get_current_time().isoformat()
         try:
-            execute_query('INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)', (sender_name, text, 'web', now))
+            execute_query(
+                "INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)",
+                (sender_name, text, "web", now),
+            )
         except Exception:
             pass
 
         reply = ai_respond(text, sender=sender_name)
 
         try:
-            execute_query('INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)', ('ai', reply, 'outgoing', get_current_time().isoformat()))
+            execute_query(
+                "INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)",
+                ("ai", reply, "outgoing", get_current_time().isoformat()),
+            )
         except Exception:
             pass
 
-        return jsonify({'success': True, 'reply': reply})
+        return jsonify({"success": True, "reply": reply})
     except Exception as e:
-        app_logger.error(f'chat_send error: {e}')
-        return jsonify({'success': False, 'message': 'server error'}), 500
+        app_logger.error(f"chat_send error: {e}")
+        return jsonify({"success": False, "message": "server error"}), 500
 
 
-def ai_respond(text, sender='guest'):
+def ai_respond(text, sender="guest"):
     """Simple AI responder.
     If OPENAI_API_KEY is set in env, use OpenAI ChatCompletion. Otherwise use
     a lightweight multilingual fallback (Uz/Ru/En simple intents).
     """
     try:
-        OPENAI_KEY = os.environ.get('OPENAI_API_KEY')
+        OPENAI_KEY = os.environ.get("OPENAI_API_KEY")
         if OPENAI_KEY:
             # Use requests to call OpenAI if package not installed
             try:
                 payload = {
-                    'model': 'gpt-4o-mini',
-                    'messages': [
-                        {'role': 'system', 'content': 'You are a helpful assistant that speaks Uzbek, Russian, and English. Keep replies concise.'},
-                        {'role': 'user', 'content': text}
+                    "model": "gpt-4o-mini",
+                    "messages": [
+                        {
+                            "role": "system",
+                            "content": "You are a helpful assistant that speaks Uzbek, Russian, and English. Keep replies concise.",
+                        },
+                        {"role": "user", "content": text},
                     ],
-                    'temperature': 0.2,
+                    "temperature": 0.2,
                 }
-                headers = {'Authorization': f'Bearer {OPENAI_KEY}', 'Content-Type': 'application/json'}
-                resp = requests.post('https://api.openai.com/v1/chat/completions', json=payload, headers=headers, timeout=8)
+                headers = {
+                    "Authorization": f"Bearer {OPENAI_KEY}",
+                    "Content-Type": "application/json",
+                }
+                resp = requests.post(
+                    "https://api.openai.com/v1/chat/completions",
+                    json=payload,
+                    headers=headers,
+                    timeout=8,
+                )
                 j = resp.json()
-                reply = ''
-                if j and 'choices' in j and len(j['choices'])>0:
-                    reply = j['choices'][0].get('message', {}).get('content','')
-                return reply or 'Kechirasiz, hozir javob topilmadi.'
+                reply = ""
+                if j and "choices" in j and len(j["choices"]) > 0:
+                    reply = j["choices"][0].get("message", {}).get("content", "")
+                return reply or "Kechirasiz, hozir javob topilmadi."
             except Exception:
                 pass
 
         # Fallback simple responder: detect language and simple intents
         lower = text.lower()
         # greetings
-        if any(w in lower for w in ['salom','assalomu','hello','hi','privet','здравствуйте']):
-            return 'Salom! Qanday yordam bera olaman? Siz: ism, telefon, mahsulotlar, savatcha, manzil yoki aloqa buyrug\'ini tanlashingiz mumkin.'
-        if 'mahsulot' in lower or 'product' in lower or 'products' in lower:
-            return 'Mahsulotlar tugmasini bosing yoki saytimizdagi /products bo\'limiga o\'ting. Mahsulotlar staff tomonidan qo\'shiladi.'
-        if any(w in lower for w in ['telefon','contact','aloqa','phone','email']):
-            return 'Aloqa: +998 90 000 00 00, email: info@example.com. Bizning telegram kanal: https://t.me/example'
+        if any(
+            w in lower
+            for w in ["salom", "assalomu", "hello", "hi", "privet", "здравствуйте"]
+        ):
+            return "Salom! Qanday yordam bera olaman? Siz: ism, telefon, mahsulotlar, savatcha, manzil yoki aloqa buyrug'ini tanlashingiz mumkin."
+        if "mahsulot" in lower or "product" in lower or "products" in lower:
+            return "Mahsulotlar tugmasini bosing yoki saytimizdagi /products bo'limiga o'ting. Mahsulotlar staff tomonidan qo'shiladi."
+        if any(w in lower for w in ["telefon", "contact", "aloqa", "phone", "email"]):
+            return "Aloqa: +998 90 000 00 00, email: info@example.com. Bizning telegram kanal: https://t.me/example"
         # fallback: short generic reply
         return 'Kechirasiz, men buni tushunmadim. Iltimos, "mahsulotlar", "savatcha", yoki "aloqa" kabi so\'zlarni yuboring.'
     except Exception as e:
-        app_logger.error(f'ai_respond error: {e}')
-        return 'Kechirasiz, AI javob bera olmadi.'
+        app_logger.error(f"ai_respond error: {e}")
+        return "Kechirasiz, AI javob bera olmadi."
 
 
 @app.route("/api/status")
@@ -11346,7 +11579,7 @@ def extract_youtube_embed(url: str):
 
         u = url.strip()
         # Common youtube id patterns (11 chars)
-        m = re.search(r'(?:v=|\/embed\/|youtu\.be\/)([A-Za-z0-9_\-]{11})', u)
+        m = re.search(r"(?:v=|\/embed\/|youtu\.be\/)([A-Za-z0-9_\-]{11})", u)
         if m:
             vid = m.group(1)
             return f"https://www.youtube.com/embed/{vid}"
@@ -11404,7 +11637,9 @@ def news_page():
                 }
             # detect youtube embed
             try:
-                item["youtube_embed"] = extract_youtube_embed(item.get("video_url") or "")
+                item["youtube_embed"] = extract_youtube_embed(
+                    item.get("video_url") or ""
+                )
             except Exception:
                 item["youtube_embed"] = None
             news_items.append(item)
@@ -11446,7 +11681,9 @@ def super_admin_news_list():
                     "created_at": r[8],
                 }
             try:
-                item["youtube_embed"] = extract_youtube_embed(item.get("video_url") or "")
+                item["youtube_embed"] = extract_youtube_embed(
+                    item.get("video_url") or ""
+                )
             except Exception:
                 item["youtube_embed"] = None
             news_items.append(item)
@@ -11454,7 +11691,9 @@ def super_admin_news_list():
         return render_template("admin/news_manage.html", news=news_items)
     except Exception as e:
         try:
-            app_logger.error(f"super_admin_news_list DB read failed, falling back to JSON: {e}")
+            app_logger.error(
+                f"super_admin_news_list DB read failed, falling back to JSON: {e}"
+            )
         except Exception:
             pass
         # Fallback to JSON-backed loader for legacy setups
@@ -11560,14 +11799,21 @@ def super_admin_add_news():
                     }
                 # compute youtube embed if video_url is a YouTube link
                 try:
-                    item["youtube_embed"] = extract_youtube_embed(item.get("video_url") or "")
+                    item["youtube_embed"] = extract_youtube_embed(
+                        item.get("video_url") or ""
+                    )
                 except Exception:
                     item["youtube_embed"] = None
                 items.append(item)
             json_path = os.path.join(os.getcwd(), "data", "news.json")
             os.makedirs(os.path.dirname(json_path), exist_ok=True)
             with open(json_path, "w", encoding="utf-8") as f:
-                json.dump({"news": items, "metadata": {"last_updated": now}}, f, ensure_ascii=False, indent=2)
+                json.dump(
+                    {"news": items, "metadata": {"last_updated": now}},
+                    f,
+                    ensure_ascii=False,
+                    indent=2,
+                )
         except Exception as _:
             pass
     except Exception as e:
@@ -11617,14 +11863,21 @@ def super_admin_delete_news(news_id):
                                 "created_at": r[8],
                             }
                         try:
-                            item["youtube_embed"] = extract_youtube_embed(item.get("video_url") or "")
+                            item["youtube_embed"] = extract_youtube_embed(
+                                item.get("video_url") or ""
+                            )
                         except Exception:
                             item["youtube_embed"] = None
                         items.append(item)
                     json_path = os.path.join(os.getcwd(), "data", "news.json")
                     os.makedirs(os.path.dirname(json_path), exist_ok=True)
                     with open(json_path, "w", encoding="utf-8") as f:
-                        json.dump({"news": items, "metadata": {"last_updated": now}}, f, ensure_ascii=False, indent=2)
+                        json.dump(
+                            {"news": items, "metadata": {"last_updated": now}},
+                            f,
+                            ensure_ascii=False,
+                            indent=2,
+                        )
                 except Exception:
                     pass
                 flash("Yangilik o'chirildi.", "success")
@@ -11981,7 +12234,9 @@ def super_admin_add_menu_item():
         media_files_check = request.files.getlist("media_files")
         image_extensions = {"png", "jpg", "jpeg", "gif", "webp"}
         has_image_uploaded = any(
-            f and getattr(f, 'filename', '') and f.filename.rsplit('.', 1)[-1].lower() in image_extensions
+            f
+            and getattr(f, "filename", "")
+            and f.filename.rsplit(".", 1)[-1].lower() in image_extensions
             for f in media_files_check
         )
 
@@ -12007,9 +12262,13 @@ def super_admin_add_menu_item():
             import uuid
 
             for idx, file in enumerate(media_files_check):
-                if file and getattr(file, 'filename', ''):
+                if file and getattr(file, "filename", ""):
                     try:
-                        ext = file.filename.rsplit('.', 1)[1].lower() if '.' in file.filename else ''
+                        ext = (
+                            file.filename.rsplit(".", 1)[1].lower()
+                            if "." in file.filename
+                            else ""
+                        )
                         if ext not in image_extensions:
                             continue
                         unique_filename = f"{menu_item_id}_{uuid.uuid4().hex}.{ext}"
@@ -12018,13 +12277,24 @@ def super_admin_add_menu_item():
                         media_url = f"/static/uploads/products/{unique_filename}"
                         is_main = idx == 0
                         if is_main:
-                            execute_query("UPDATE menu_items SET image_url = ? WHERE id = ?", (media_url, menu_item_id))
+                            execute_query(
+                                "UPDATE menu_items SET image_url = ? WHERE id = ?",
+                                (media_url, menu_item_id),
+                            )
                         execute_query(
                             """
                             INSERT INTO product_media (menu_item_id, media_type, media_url, display_order, is_main, created_at, updated_at)
                             VALUES (?, ?, ?, ?, ?, ?, ?)
                             """,
-                            (menu_item_id, 'image', media_url, idx, 1 if is_main else 0, now_iso, now_iso),
+                            (
+                                menu_item_id,
+                                "image",
+                                media_url,
+                                idx,
+                                1 if is_main else 0,
+                                now_iso,
+                                now_iso,
+                            ),
                         )
                     except Exception as e:
                         app_logger.warning(f"Super admin media upload error: {e}")
@@ -12049,20 +12319,30 @@ def admin_repair_missing_images():
 
     default_image = "/static/images/default-product.jpg"
     try:
-        rows = execute_query("SELECT id FROM menu_items WHERE image_url IS NULL OR image_url = ''", fetch_all=True)
-        item_ids = [r[0] if isinstance(r, tuple) else r.get('id') for r in rows] if rows else []
+        rows = execute_query(
+            "SELECT id FROM menu_items WHERE image_url IS NULL OR image_url = ''",
+            fetch_all=True,
+        )
+        item_ids = (
+            [r[0] if isinstance(r, tuple) else r.get("id") for r in rows]
+            if rows
+            else []
+        )
         now = get_current_time().isoformat()
         repaired = 0
         for item_id in item_ids:
             try:
-                execute_query("UPDATE menu_items SET image_url = ? WHERE id = ?", (default_image, item_id))
+                execute_query(
+                    "UPDATE menu_items SET image_url = ? WHERE id = ?",
+                    (default_image, item_id),
+                )
                 # Insert a product_media row pointing to the default image so APIs return something
                 execute_query(
                     """
                     INSERT INTO product_media (menu_item_id, media_type, media_url, display_order, is_main, created_at, updated_at)
                     VALUES (?, ?, ?, ?, ?, ?, ?)
                     """,
-                    (item_id, 'image', default_image, 0, 1, now, now),
+                    (item_id, "image", default_image, 0, 1, now, now),
                 )
                 repaired += 1
             except Exception:
@@ -14598,7 +14878,9 @@ def super_admin_get_system_stats():
         # System stats
         # Prefer per-request start time (g.start_time) if present, otherwise
         # fall back to the process-wide APP_START_TIME so uptime is defined.
-        start_ts = getattr(g, 'start_time', globals().get('APP_START_TIME', time.time()))
+        start_ts = getattr(
+            g, "start_time", globals().get("APP_START_TIME", time.time())
+        )
         uptime_seconds = time.time() - start_ts
         uptime_days = int(uptime_seconds // 86400)
         uptime_hours = int((uptime_seconds % 86400) // 3600)
@@ -15286,8 +15568,8 @@ def superadmin_approve_order(order_id):
             flash("Buyurtma tasdiqlash uchun pending holatda emas.", "warning")
             return redirect(url_for("super_admin_dashboard"))
 
-    # Update status in DB to 'waiting' so staff workflows (which expect 'waiting') continue to work.
-    # We still notify the customer with a 'confirmed' notification below.
+        # Update status in DB to 'waiting' so staff workflows (which expect 'waiting') continue to work.
+        # We still notify the customer with a 'confirmed' notification below.
         execute_query("UPDATE orders SET status = 'waiting' WHERE id = ?", (order_id,))
 
         # Notify customer and staff
@@ -16701,17 +16983,27 @@ def api_news():
     """Get all active news items for ticker"""
     try:
         # If caller requested ticker-only items (e.g. footer ticker), honor show_in_ticker flag.
-        ticker_only = str(request.args.get('ticker') or '').lower() in ('1', 'true', 'yes')
+        ticker_only = str(request.args.get("ticker") or "").lower() in (
+            "1",
+            "true",
+            "yes",
+        )
         if ticker_only:
-            rows = execute_query(
-                "SELECT * FROM news WHERE is_active = 1 AND COALESCE(show_in_ticker,0)=1 ORDER BY display_order ASC, created_at DESC",
-                fetch_all=True,
-            ) or []
+            rows = (
+                execute_query(
+                    "SELECT * FROM news WHERE is_active = 1 AND COALESCE(show_in_ticker,0)=1 ORDER BY display_order ASC, created_at DESC",
+                    fetch_all=True,
+                )
+                or []
+            )
         else:
-            rows = execute_query(
-                "SELECT * FROM news WHERE is_active = 1 ORDER BY display_order ASC, created_at DESC",
-                fetch_all=True,
-            ) or []
+            rows = (
+                execute_query(
+                    "SELECT * FROM news WHERE is_active = 1 ORDER BY display_order ASC, created_at DESC",
+                    fetch_all=True,
+                )
+                or []
+            )
         news_items = []
         for r in rows:
             try:
@@ -16724,7 +17016,9 @@ def api_news():
                 item = r
             # attach youtube embed if applicable
             try:
-                item["youtube_embed"] = extract_youtube_embed(item.get("video_url") or "")
+                item["youtube_embed"] = extract_youtube_embed(
+                    item.get("video_url") or ""
+                )
             except Exception:
                 item["youtube_embed"] = None
             news_items.append(item)
@@ -16829,7 +17123,9 @@ def api_create_news():
                 except Exception:
                     item = r
                 try:
-                    item["youtube_embed"] = extract_youtube_embed(item.get("video_url") or "")
+                    item["youtube_embed"] = extract_youtube_embed(
+                        item.get("video_url") or ""
+                    )
                 except Exception:
                     item["youtube_embed"] = None
                 items.append(item)
@@ -16837,7 +17133,12 @@ def api_create_news():
             json_path = os.path.join(os.getcwd(), "data", "news.json")
             os.makedirs(os.path.dirname(json_path), exist_ok=True)
             with open(json_path, "w", encoding="utf-8") as f:
-                json.dump({"news": items, "metadata": {"last_updated": now}}, f, ensure_ascii=False, indent=2)
+                json.dump(
+                    {"news": items, "metadata": {"last_updated": now}},
+                    f,
+                    ensure_ascii=False,
+                    indent=2,
+                )
         except Exception:
             pass
 
@@ -16941,7 +17242,9 @@ def api_update_news(news_id):
                 except Exception:
                     item = r
                 try:
-                    item["youtube_embed"] = extract_youtube_embed(item.get("video_url") or "")
+                    item["youtube_embed"] = extract_youtube_embed(
+                        item.get("video_url") or ""
+                    )
                 except Exception:
                     item["youtube_embed"] = None
                 items.append(item)
@@ -16949,7 +17252,12 @@ def api_update_news(news_id):
             json_path = os.path.join(os.getcwd(), "data", "news.json")
             os.makedirs(os.path.dirname(json_path), exist_ok=True)
             with open(json_path, "w", encoding="utf-8") as f:
-                json.dump({"news": items, "metadata": {"last_updated": now}}, f, ensure_ascii=False, indent=2)
+                json.dump(
+                    {"news": items, "metadata": {"last_updated": now}},
+                    f,
+                    ensure_ascii=False,
+                    indent=2,
+                )
         except Exception:
             pass
 
@@ -16994,13 +17302,20 @@ def api_delete_news(news_id):
                 except Exception:
                     item = r
                 try:
-                    item["youtube_embed"] = extract_youtube_embed(item.get("video_url") or "")
+                    item["youtube_embed"] = extract_youtube_embed(
+                        item.get("video_url") or ""
+                    )
                 except Exception:
                     item["youtube_embed"] = None
                 items_out.append(item)
 
             with open(json_path, "w", encoding="utf-8") as f:
-                json.dump({"news": items_out, "metadata": {"last_updated": now}}, f, ensure_ascii=False, indent=2)
+                json.dump(
+                    {"news": items_out, "metadata": {"last_updated": now}},
+                    f,
+                    ensure_ascii=False,
+                    indent=2,
+                )
         except Exception as _:
             pass
 
@@ -17052,7 +17367,9 @@ def api_admin_news():
                     item = dict(r) if not isinstance(r, dict) else r
                 except Exception:
                     item = r
-                item["youtube_embed"] = extract_youtube_embed(item.get("video_url") or "")
+                item["youtube_embed"] = extract_youtube_embed(
+                    item.get("video_url") or ""
+                )
                 norm.append(item)
             news_items = norm
         except Exception:
@@ -17732,10 +18049,267 @@ def serve_data_file(filename):
     except Exception as e:
         app_logger.error(f"Error serving data file {filename}: {str(e)}")
         return jsonify({"error": "File not found"}), 404
-    
-@app.route('/sitemap.xml')
+
+
+@app.route("/sitemap.xml")
 def sitemap():
-    return send_from_directory('static', 'sitemap.xml')
+    return send_from_directory("static", "sitemap.xml")
+
+
+# --- Minimal Uzbek AI chat endpoints ---
+@app.route("/api/chat/ai", methods=["GET", "POST"])
+def api_chat_ai():
+    """Oddiy AI: Uzbek tilida qisqa javob qaytaradi.
+
+    GET: Returns API info
+    POST: { text: str, sender?: str } -> { success: True, reply: str }
+    """
+    try:
+        # Handle GET requests - return API info
+        if request.method == "GET":
+            try:
+                app_logger.info(
+                    f"GET request to /api/chat/ai from {request.remote_addr}"
+                )
+            except Exception:
+                pass
+            return jsonify(
+                {
+                    "success": True,
+                    "message": "Pro Obuv AI Chat API",
+                    "description": "Uzbek tilida AI javoblar beradi",
+                    "usage": "POST request with JSON: {'text': 'savol', 'sender': 'web'}",
+                    "version": "1.0",
+                }
+            )
+
+        # Handle POST requests - process chat
+        try:
+            app_logger.info(f"POST request to /api/chat/ai from {request.remote_addr}")
+        except Exception:
+            pass
+
+        # Check if request has JSON content
+        if not request.is_json:
+            return (
+                jsonify(
+                    {
+                        "success": False,
+                        "reply": "Iltimos, JSON formatida ma'lumot yuboring.",
+                    }
+                ),
+                400,
+            )
+
+        data = request.get_json(silent=True) or {}
+        text = (data.get("text") or "").strip()
+        sender = (data.get("sender") or "web").strip()
+
+        # Kuchaytirilgan qoida asosidagi javoblar
+        lower = text.lower()
+        reply = ""
+
+        if not text:
+            reply = "Assalomu alaykum! Pro Obuv do'koniga xush kelibsiz! 🛍️\n\nMen sizga quyidagi masalalarda yordam bera olaman:\n• Mahsulotlar haqida ma'lumot\n• Narxlar va chegirmalar\n• Yetkazib berish shartlari\n• Buyurtma berish\n• Kafolat va qaytarish\n\nSavolingizni yozing!"
+
+        elif any(
+            w in lower
+            for w in [
+                "salom",
+                "assalom",
+                "hello",
+                "hi",
+                "привет",
+                "assalomu alaykum",
+                "asalomu alaykum",
+                "salomlar",
+            ]
+        ):
+            reply = "Assalomu alaykum! 👋 Pro Obuv do'koniga xush kelibsiz!\n\nBiz sizga sifatli spetsobuv va ish kiyimlarini taklif etamiz. Qanday yordam bera olaman?"
+
+        elif any(
+            w in lower
+            for w in [
+                "narx",
+                "price",
+                "pul",
+                "qancha",
+                "bahosi",
+                "стоимость",
+                "сколько",
+                "nechi",
+            ]
+        ):
+            reply = "💰 Mahsulotlarimizning narxlari:\n• Spetsobuv: 150,000 - 500,000 so'm\n• Ish kiyimlari: 80,000 - 300,000 so'm\n• Aksessuarlar: 50,000 - 200,000 so'm\n\nAniq narxni bilish uchun menyu bo'limiga o'ting yoki mahsulotni tanlang. Chegirmalar ham mavjud!"
+
+        elif any(
+            w in lower
+            for w in ["yetkazib", "delivery", "yetkazish", "доставка", "когда"]
+        ):
+            reply = "🚚 Yetkazib berish:\n• Toshkent shahri: 1-2 kun, 30,000 so'm\n• Viloyatlar: 3-5 kun, 50,000 so'm\n• Bepul yetkazib berish: 500,000 so'mdan yuqori buyurtmalar\n• Yetkazib berish vaqti: 9:00-18:00"
+
+        elif any(
+            w in lower
+            for w in [
+                "qaytarish",
+                "garantiya",
+                "return",
+                "warranty",
+                "гарантия",
+                "возврат",
+            ]
+        ):
+            reply = "🛡️ Kafolat va qaytarish:\n• Barcha mahsulotlar uchun 6 oylik kafolat\n• 14 kun ichida qaytarish imkoniyati\n• Zavod nuqsoni bo'lsa, to'liq qaytarish\n• Qaytarish shartlari: mahsulot yangi holatda bo'lishi kerak"
+
+        elif any(
+            w in lower for w in ["o'lcham", "size", "razmer", "размер", "какой размер"]
+        ):
+            reply = "📏 O'lchamlar:\n• Spetsobuv: 35-45 (ayollar), 38-48 (erkaklar)\n• Ish kiyimlari: XS, S, M, L, XL, XXL\n• O'lcham jadvali har bir mahsulot sahifasida\n• O'lcham tanlashda yordam kerak bo'lsa, biz bilan bog'laning"
+
+        elif any(w in lower for w in ["rang", "color", "цвет", "какой цвет"]):
+            reply = "🎨 Ranglar:\n• Asosiy ranglar: qora, oq, ko'k, qizil\n• Maxsus ranglar: yashil, sariq, kulrang\n• Rang tanlash uchun mahsulot sahifasiga o'ting\n• Ba'zi mahsulotlar faqat ma'lum ranglarda mavjud"
+
+        elif any(
+            w in lower for w in ["mavjud", "available", "bor", "yo'q", "есть", "нет"]
+        ):
+            reply = "📦 Mavjudlik:\n• Barcha mahsulotlarimiz omborda mavjud\n• Tezda tugaydigan mahsulotlar uchun oldindan buyurtma\n• Mavjudlikni tekshirish uchun menyu bo'limiga o'ting\n• Savatga qo'shish imkoniyati mavjud bo'lsa, mahsulot bor"
+
+        elif any(
+            w in lower
+            for w in ["to'lov", "payment", "pul", "qanday", "оплата", "как платить"]
+        ):
+            reply = "💳 To'lov usullari:\n• Naqd pul (yetkazib berishda)\n• Bank kartasi (Visa, MasterCard)\n• Onlayn to'lov (Click, Payme, Uzcard)\n• Bo'lib to'lash imkoniyati (3 oy)\n• Barcha to'lovlar xavfsiz va shifrlangan"
+
+        elif any(
+            w in lower
+            for w in [
+                "manzil",
+                "address",
+                "qayerda",
+                "joylashuv",
+                "адрес",
+                "где",
+                "adres",
+            ]
+        ):
+            reply = "📍 Bizning manzil:\n• Toshkent shahri, Chilonzor tumani\n• Metro: Chilonzor bekati\n• Ish vaqti: 9:00-20:00 (dushanba-yakshanba)\n• Telefon: +998 90 123 45 67\n• Email: info@proobuv.uz"
+
+        elif any(
+            w in lower
+            for w in [
+                "buyurtma",
+                "order",
+                "sotib",
+                "xarid",
+                "заказ",
+                "купить",
+                "zakaz",
+                "olmoq",
+            ]
+        ):
+            reply = "🛒 Buyurtma berish:\n1. Mahsulotni tanlang va savatga qo'shing\n2. Savatni ko'rib chiqing\n3. Manzil va kontakt ma'lumotlarini kiriting\n4. To'lov usulini tanlang\n5. Buyurtmani tasdiqlang\n\nBuyurtma berishda yordam kerak bo'lsa, biz bilan bog'laning!"
+
+        elif any(
+            w in lower for w in ["chegirma", "sale", "discount", "скидка", "акция"]
+        ):
+            reply = "🎉 Chegirmalar va aksiyalar:\n• Yangi mijozlar uchun 10% chegirma\n• 500,000 so'mdan yuqori buyurtmalar uchun 15% chegirma\n• Aksiya: 3 ta mahsulot olsangiz, 4-chisi bepul\n• Doimiy mijozlar uchun maxsus chegirmalar\n\nChegirma kodlari va aksiyalar haqida batafsil ma'lumot olish uchun biz bilan bog'laning!"
+
+        elif any(
+            w in lower for w in ["yordam", "help", "qanday", "nima", "помощь", "как"]
+        ):
+            reply = "🤝 Yordam:\n\nMen sizga quyidagi masalalarda yordam bera olaman:\n• Mahsulot tanlash va tavsiya\n• O'lcham va rang tanlash\n• Buyurtma berish jarayoni\n• Yetkazib berish va to'lov\n• Kafolat va qaytarish\n• Chegirmalar va aksiyalar\n\nSavolingizni batafsilroq yozing yoki biz bilan to'g'ridan-to'g'ri bog'laning!"
+
+        elif any(
+            w in lower
+            for w in ["spetsobuv", "спецобувь", "ish kiyim", "рабочая одежда"]
+        ):
+            reply = "👷‍♂️ Spetsobuv va ish kiyimlari:\n\n• Xavfsizlik poyabzallari (metall panjara, dielektrik)\n• Ish kiyimlari (kombinezon, ko'ylak, shim)\n• Qo'lqop va boshqa himoya vositalari\n• Barcha mahsulotlar GOST standartlariga muvofiq\n• Turli sohalar uchun: qurilish, zavod, tibbiyot\n\nKerakli mahsulotni tanlashda yordam kerak bo'lsa, so'rang!"
+
+        elif any(w in lower for w in ["kafolat", "warranty", "гарантия", "качество"]):
+            reply = "✅ Sifat va kafolat:\n\n• Barcha mahsulotlar original va sifatli\n• 6 oylik rasmiy kafolat\n• Zavod nuqsoni bo'lsa, bepul almashtirish\n• Sifat nazorati har bir mahsulot uchun\n• Xalqaro standartlarga muvofiq\n\nSifat masalalarida hech qanday muammo bo'lmaydi!"
+
+        else:
+            # First try OpenAI (if key provided). Fallback to default text and log.
+            openai_api_key = os.environ.get("OPENAI_API_KEY") or os.environ.get(
+                "OPENAI_API"
+            )
+            generated = None
+            if openai_api_key and text:
+                try:
+                    import json as _json
+                    import requests as _req
+
+                    system_prompt = (
+                        "Siz Pro Obuv do'koni uchun yordamchi AI. Har doim o'zbek tilida,"
+                        " qisqa va aniq javob bering. Mavjud ma'lumot: Pro Obuv spetsobuv,"
+                        " ish kiyimlari va himoya vositalarini sotadi. Agar savol buyurtma,"
+                        " narx, yetkazib berish, o'lcham, rang, mavjudlik, kafolat, to'lov haqida"
+                        " bo'lsa, do'kon kontekstida javob bering. Noaniq bo'lsa, muloyimlik"
+                        " bilan qo'shimcha ma'lumot so'rang."
+                    )
+                    payload = {
+                        "model": "gpt-4o-mini",
+                        "messages": [
+                            {"role": "system", "content": system_prompt},
+                            {"role": "user", "content": text},
+                        ],
+                        "temperature": 0.4,
+                        "max_tokens": 350,
+                    }
+                    headers = {
+                        "Authorization": f"Bearer {openai_api_key}",
+                        "Content-Type": "application/json",
+                    }
+                    resp = _req.post(
+                        "https://api.openai.com/v1/chat/completions",
+                        headers=headers,
+                        data=_json.dumps(payload),
+                        timeout=8,
+                    )
+                    if resp is not None and resp.ok:
+                        data_j = resp.json()
+                        choices = (data_j or {}).get("choices") or []
+                        if choices:
+                            generated = (
+                                (choices[0].get("message") or {}).get("content") or ""
+                            ).strip()
+                except Exception:
+                    generated = None
+
+            if generated:
+                reply = generated
+            else:
+                reply = (
+                    "🤔 Kechirasiz, men hali bunday savolga to'liq javob bera olmayman.\n\n"
+                    "Pro Obuv do'koni haqida quyidagi mavzularda so'rashingiz mumkin:\n"
+                    "• Mahsulotlar va narxlar\n• Yetkazib berish\n• Buyurtma berish\n"
+                    "• Kafolat va qaytarish\n• Chegirmalar\n\nYoki biz bilan to'g'ridan-to'g'ri bog'laning: +998 90 123 45 67"
+                )
+                # Log unknown/unsupported questions for later improvement
+                try:
+                    os.makedirs("logs", exist_ok=True)
+                    ts = time.strftime("%Y-%m-%d %H:%M:%S")
+                    with open(
+                        os.path.join("logs", "ai_unknown_questions.txt"),
+                        "a",
+                        encoding="utf-8",
+                    ) as f:
+                        f.write(f"{ts} | sender={sender} | {text}\n")
+                except Exception:
+                    pass
+
+        try:
+            app_logger.info(f"chat_ai sender=%s text=%s", sender, text)
+        except Exception:
+            pass
+
+        return jsonify({"success": True, "reply": reply})
+    except Exception as e:
+        try:
+            app_logger.error(f"/api/chat/ai error: {str(e)}")
+        except Exception:
+            pass
+        return jsonify({"success": False, "message": "AI xatolik"}), 500
 
 
 # Flask app runner
@@ -17749,21 +18323,30 @@ if __name__ == "__main__":
     # When Flask debug reloader is enabled, the module is imported twice (parent and child).
     # Only spawn the bot in the reloader child process (WERKZEUG_RUN_MAIN=='true') or when debug is off.
     try:
-        should_start_bot = os.environ.get('START_TELEGRAM_BOT', '1') != '0'
-        is_reloader_child = os.environ.get('WERKZEUG_RUN_MAIN') == 'true'
+        should_start_bot = os.environ.get("START_TELEGRAM_BOT", "1") != "0"
+        is_reloader_child = os.environ.get("WERKZEUG_RUN_MAIN") == "true"
         if should_start_bot and (not app.debug or is_reloader_child):
-            bot_script = os.path.join(os.path.dirname(__file__), 'bot', 'telegram_bot.py')
+            bot_script = os.path.join(
+                os.path.dirname(__file__), "bot", "telegram_bot.py"
+            )
             if os.path.exists(bot_script):
-                python_exe = sys.executable or 'python'
-                log_path = os.path.join('logs', 'telegram_bot.log')
-                pid_path = os.path.join('logs', 'telegram_bot.pid')
+                python_exe = sys.executable or "python"
+                log_path = os.path.join("logs", "telegram_bot.log")
+                pid_path = os.path.join("logs", "telegram_bot.pid")
                 try:
-                    lf = open(log_path, 'a', encoding='utf-8')
+                    lf = open(log_path, "a", encoding="utf-8")
                     # Start the bot as a child process and detach its stdin; keep stdout/stderr in log file
-                    proc = subprocess.Popen([python_exe, bot_script], stdout=lf, stderr=lf, stdin=subprocess.DEVNULL)
-                    app_logger.info(f"Started telegram bot subprocess (pid={proc.pid}), logs -> {log_path}")
+                    proc = subprocess.Popen(
+                        [python_exe, bot_script],
+                        stdout=lf,
+                        stderr=lf,
+                        stdin=subprocess.DEVNULL,
+                    )
+                    app_logger.info(
+                        f"Started telegram bot subprocess (pid={proc.pid}), logs -> {log_path}"
+                    )
                     try:
-                        with open(pid_path, 'w', encoding='utf-8') as pf:
+                        with open(pid_path, "w", encoding="utf-8") as pf:
                             pf.write(str(proc.pid))
                     except Exception:
                         pass
@@ -17786,32 +18369,36 @@ def _maybe_start_telegram_bot_logic():
     thread so it does not block request handling.
     """
     try:
-        should_start_bot = os.environ.get('START_TELEGRAM_BOT', '1') != '0'
+        should_start_bot = os.environ.get("START_TELEGRAM_BOT", "1") != "0"
         if not should_start_bot:
             try:
-                app_logger.info('START_TELEGRAM_BOT=0 -> skipping telegram bot auto-start')
+                app_logger.info(
+                    "START_TELEGRAM_BOT=0 -> skipping telegram bot auto-start"
+                )
             except Exception:
                 pass
             return
 
         # If bot script missing, skip
-        bot_script = os.path.join(os.path.dirname(__file__), 'bot', 'telegram_bot.py')
+        bot_script = os.path.join(os.path.dirname(__file__), "bot", "telegram_bot.py")
         if not os.path.exists(bot_script):
             try:
-                app_logger.info('telegram_bot.py not found; skipping bot auto-start')
+                app_logger.info("telegram_bot.py not found; skipping bot auto-start")
             except Exception:
                 pass
             return
 
         # If PID file exists and points to a running process, assume bot is already running
-        pid_path = os.path.join('logs', 'telegram_bot.pid')
+        pid_path = os.path.join("logs", "telegram_bot.pid")
         if os.path.exists(pid_path):
             try:
-                pid = int(open(pid_path, 'r', encoding='utf-8').read().strip())
+                pid = int(open(pid_path, "r", encoding="utf-8").read().strip())
                 try:
                     os.kill(pid, 0)
                     try:
-                        app_logger.info(f'Telegram bot already running (pid={pid}), not starting another')
+                        app_logger.info(
+                            f"Telegram bot already running (pid={pid}), not starting another"
+                        )
                     except Exception:
                         pass
                     return
@@ -17830,31 +18417,40 @@ def _maybe_start_telegram_bot_logic():
         # Spawn the bot in a background thread to avoid blocking the request
         def _spawn_bot():
             try:
-                python_exe = sys.executable or 'python'
-                log_path = os.path.join('logs', 'telegram_bot.log')
+                python_exe = sys.executable or "python"
+                log_path = os.path.join("logs", "telegram_bot.log")
                 try:
-                    lf = open(log_path, 'a', encoding='utf-8')
+                    lf = open(log_path, "a", encoding="utf-8")
                 except Exception:
                     lf = None
                 try:
-                    proc = subprocess.Popen([python_exe, bot_script], stdout=lf or subprocess.DEVNULL, stderr=lf or subprocess.DEVNULL, stdin=subprocess.DEVNULL)
+                    proc = subprocess.Popen(
+                        [python_exe, bot_script],
+                        stdout=lf or subprocess.DEVNULL,
+                        stderr=lf or subprocess.DEVNULL,
+                        stdin=subprocess.DEVNULL,
+                    )
                     try:
-                        app_logger.info(f"Started telegram bot subprocess (pid={proc.pid}), logs -> {log_path}")
+                        app_logger.info(
+                            f"Started telegram bot subprocess (pid={proc.pid}), logs -> {log_path}"
+                        )
                     except Exception:
                         pass
                     try:
-                        with open(pid_path, 'w', encoding='utf-8') as pf:
+                        with open(pid_path, "w", encoding="utf-8") as pf:
                             pf.write(str(proc.pid))
                     except Exception:
                         pass
                 except Exception as e:
                     try:
-                        app_logger.error(f'Failed to spawn telegram bot subprocess: {e}')
+                        app_logger.error(
+                            f"Failed to spawn telegram bot subprocess: {e}"
+                        )
                     except Exception:
                         pass
             except Exception as e:
                 try:
-                    app_logger.error(f'Unexpected error spawning telegram bot: {e}')
+                    app_logger.error(f"Unexpected error spawning telegram bot: {e}")
                 except Exception:
                     pass
 
@@ -17865,12 +18461,14 @@ def _maybe_start_telegram_bot_logic():
             t.start()
         except Exception as e:
             try:
-                app_logger.error(f'Failed to start background thread for telegram bot: {e}')
+                app_logger.error(
+                    f"Failed to start background thread for telegram bot: {e}"
+                )
             except Exception:
                 pass
     except Exception as e:
         try:
-            app_logger.error(f'_maybe_start_telegram_bot_logic failed: {e}')
+            app_logger.error(f"_maybe_start_telegram_bot_logic failed: {e}")
         except Exception:
             pass
 
@@ -17879,10 +18477,14 @@ def _maybe_start_telegram_bot_logic():
 # fall back to an import-time background spawn so that `flask run` and other entrypoints
 # are still covered even if the Flask object doesn't expose before_first_request
 # (some test/mocked environments replace Flask with minimal stubs).
-if hasattr(app, 'before_first_request') and callable(getattr(app, 'before_first_request')):
+if hasattr(app, "before_first_request") and callable(
+    getattr(app, "before_first_request")
+):
+
     @app.before_first_request
     def _maybe_start_telegram_bot_on_first_request():
         _maybe_start_telegram_bot_logic()
+
 else:
     # Import-time fallback: start the bot in background thread (best-effort).
     try:
@@ -17891,6 +18493,6 @@ else:
         threading.Thread(target=_maybe_start_telegram_bot_logic, daemon=True).start()
     except Exception:
         try:
-            app_logger.warning('Failed to start telegram bot via import-time fallback')
+            app_logger.warning("Failed to start telegram bot via import-time fallback")
         except Exception:
             pass

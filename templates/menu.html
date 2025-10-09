@@ -3,7 +3,29 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
 <title>Pro Obuv — Spetsobuv va Ish kiyimlari do'koni | Safety.uz</title>
 <meta
   name="description"
-  content="Safety.uz – Pro Obuv do‘koni. Spetsobuv, ish kiyimlari va himoya poyabzallari keng tanlovda. Sifatli mahsulotlar, tez yetkazib berish." />
+  content="Safety.uz – Pro Obuv do‘koni. Spetsobuv, ish kiyimlari, spetsodejda va himoya poyabzallari. Sifatli mahsulotlar, tez yetkazib berish." />
+<meta
+  name="keywords"
+  content="pro obuv, obuv, spetsobuv, spetsodejda, safety, oyoq kiyim, tufli, etik, ish kiyimlari, himoya poyabzal" />
+<link rel="canonical" href="{{ request.url }}" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Pro Obuv — Spetsobuv va Ish kiyimlari" />
+<meta property="og:description" content="Spetsobuv, spetsodejda va ish kiyimlari — Pro Obuv" />
+<meta property="og:url" content="{{ request.url }}" />
+<meta property="og:image" content="{{ url_for('static', filename='defoult.png') }}" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Pro Obuv — Spetsobuv va Ish kiyimlari" />
+<meta name="twitter:description" content="Spetsobuv, spetsodejda va ish kiyimlari — Pro Obuv" />
+<meta name="twitter:image" content="{{ url_for('static', filename='defoult.png') }}" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Pro Obuv — Spetsobuv va Ish kiyimlari",
+  "description": "Spetsobuv, spetsodejda va ish kiyimlari — Pro Obuv",
+  "url": "{{ request.url }}"
+}
+</script>
 <style>
   /* Enforce strict, predictable grid breakpoints requested by product owner:
      phone = 1 column (default/mobile-first)
@@ -380,12 +402,12 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
                 href="{{ url_for('product_detail', item_id=item.id) }}"
                 onclick="event.stopPropagation();">
                 <img
-                  src="{{ item.image_url or '/static/defoult.jpg' }}"
+                  src="{{ item.image_url or '/static/defoult.png' }}"
                   alt="{{ item.name }}"
                   title="{{ item.name }}"
                   loading="lazy"
                   decoding="async"
-                  onerror="this.src='/static/defoult.jpg'" />
+                  onerror="this.src='/static/defoult.png'" />
               </a>
             </div>
             <div class="card-body">
@@ -442,53 +464,6 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
                 <div class="rating-text">{{ "%.1f"|format(item.rating or 0) }} ({{ item.orders_count or 0 }} buyurtma)</div>
               </div>
 
-              <div class="card-actions">
-                <form
-                  method="POST"
-                  action="{{ url_for('add_to_cart') }}"
-                  onclick="event.stopPropagation()">
-                  <input
-                    type="hidden"
-                    name="menu_item_id"
-                    value="{{ item.id }}" />
-                  <div class="qty-controls">
-                    <button
-                      type="button"
-                      class="qty-btn minus"
-                      onclick="decreaseQuantity(this)">
-                      -
-                    </button>
-                    <input
-                      type="number"
-                      name="quantity"
-                      value="1"
-                      min="1"
-                      max="99"
-                      class="qty-input" />
-                    <button
-                      type="button"
-                      class="qty-btn plus"
-                      onclick="increaseQuantity(this)">
-                      +
-                    </button>
-                  </div>
-                  <button
-                    type="submit"
-                    class="btn-add-cart"
-                    title="Savatchaga qo'shish"></button>
-                </form>
-                {% if session.user_id %}
-                <button
-                  type="button"
-                  class="btn-rate"
-                  onclick="openRatingModal({{ item.id }}, event)">
-                  <i
-                    class="bi bi-star-fill ui-icon ui-icon--accent"
-                    aria-hidden="true"></i>
-                  Baholash
-                </button>
-                {% endif %}
-              </div>
             </div>
           </div>
           {% endfor %}
@@ -2758,7 +2733,7 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
         "id": item.id,
         "name": item.name,
         "description": item.description or 'Mahsulot tavsifi',
-  "image_url": item.image_url or '/static/defoult.jpg',
+  "image_url": item.image_url or '/static/defoult.png',
         "rating": item.rating or 0,
         "orders_count": item.orders_count or 0,
         "sizes": item.sizes or '',
@@ -3006,7 +2981,7 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
         div.style.pointerEvents = 'auto';
 
         div.innerHTML = `
-          <div class="card-image"><img src="${item.image_url || '/static/defoult.jpg'}" alt="${escapeHtml(item.name || 'Mahsulot rasm') }" title="${escapeHtml(item.name || 'Mahsulot')}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.jpg'"/></div>
+          <div class="card-image"><img src="${item.image_url || '/static/defoult.png'}" alt="${escapeHtml(item.name || 'Mahsulot rasm') }" title="${escapeHtml(item.name || 'Mahsulot')}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.png'"/></div>
           <div class="card-body">
             <h3 class="card-title">${item.name}</h3>
             <p class="card-category">${item.category || ''}</p>
@@ -3022,54 +2997,10 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
               </div>
               <div class="rating-text">${(parseFloat(item.rating)||0).toFixed(1)} (${item.orders_count||0} buyurtma)</div>
             </div>
-            <div class="card-actions">
-              <form method="POST" action="/add_to_cart" onclick="event.stopPropagation()">
-                <input type="hidden" name="menu_item_id" value="${item.id}" />
-                <div class="qty-controls">
-                  <button type="button" class="qty-btn minus" onclick="decreaseQuantity(this)">−</button>
-                  <input type="number" name="quantity" value="1" min="1" max="99" class="qty-input" />
-                  <button type="button" class="qty-btn plus" onclick="increaseQuantity(this)">+</button>
-                </div>
-                <button type="submit" class="btn-add-cart"></button>
-              </form>
-              <button type="button" class="btn-rate" onclick="openRatingModal(${item.id}, event)"><i class="bi bi-star-fill ui-icon ui-icon--accent" aria-hidden="true"></i> Baholash</button>
-            </div>
           </div>
         `;
 
         grid.appendChild(div);
-        // Wire add-to-cart form in dynamically rendered card to use AJAX
-        try {
-          const dynForm = div.querySelector('form[action*="/add_to_cart"]');
-          if (dynForm && !dynForm._ajaxWired) {
-            dynForm._ajaxWired = true;
-            dynForm.addEventListener('submit', function(e) {
-              e.preventDefault();
-              const menuItemId = this.querySelector('input[name="menu_item_id"]').value;
-              const quantityInput = this.querySelector('input[name="quantity"]');
-              const quantity = quantityInput ? quantityInput.value : 1;
-              const sizeInput = this.querySelector('select[name="size"]') || this.querySelector('input[name="size"]');
-              const colorInput = this.querySelector('select[name="color"]') || this.querySelector('input[name="color"]');
-              const size = sizeInput ? sizeInput.value : '';
-              const color = colorInput ? colorInput.value : '';
-
-              // If the product has options require modal selection
-              const item = menuData && menuData[menuItemId] ? menuData[menuItemId] : null;
-                if (item) {
-                const hasSizes = (item.sizes || '').toString().trim().length > 0;
-                const hasColors = (item.colors || '').toString().trim().length > 0;
-                if (hasSizes || hasColors) {
-                  // Navigate to product page to select options
-                  try { window.location.href = '/product/' + encodeURIComponent(menuItemId); } catch(err) { console.warn('navigation failed', err); }
-                  return false;
-                }
-              }
-
-              addToCartAjax(menuItemId, quantity, size, color);
-              return false;
-            });
-          }
-        } catch (e) { console.warn('wire dynamic add-to-cart failed', e); }
       });
       // After dynamically rendering, ensure handlers are attached for new cards
       try { attachCardHandlers(); } catch (e) { console.warn('attachCardHandlers after render failed', e); }
@@ -4137,7 +4068,7 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
                 </div>
                 <div class="rating-modal-body">
                     <div class="rating-item-info">
-                        <img src="${item.image_url || item.image || '/static/defoult.jpg'}" alt="${item.name}" class="rating-item-image" onerror="this.src='/static/defoult.jpg'">
+                        <img src="${item.image_url || item.image || '/static/defoult.png'}" alt="${item.name}" class="rating-item-image" onerror="this.src='/static/defoult.png'">
                         <p class="rating-item-name">${item.name}</p>
                     </div>
 
@@ -4482,5 +4413,30 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
           }, { capture: true });
         }
       } catch (e) { console.warn('category buttons capture wiring failed', e); }
+
+      // Wire filter inputs
+      document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('menuSearchInput');
+        const categorySelect = document.getElementById('filterCategory');
+        const sortSelect = document.getElementById('filterSort');
+        const sizeInput = document.getElementById('filterSize');
+        const colorInput = document.getElementById('filterColor');
+        const clearBtn = document.getElementById('clearFiltersBtn');
+
+        if (searchInput) searchInput.addEventListener('input', function(){ currentPage = 1; debouncedSearch(); });
+        if (categorySelect) categorySelect.addEventListener('change', function(){ currentPage = 1; debouncedSearch(); });
+        if (sortSelect) sortSelect.addEventListener('change', function(){ currentPage = 1; debouncedSearch(); });
+        if (sizeInput) sizeInput.addEventListener('input', function(){ currentPage = 1; debouncedSearch(); });
+        if (colorInput) colorInput.addEventListener('input', function(){ currentPage = 1; debouncedSearch(); });
+        if (clearBtn) clearBtn.addEventListener('click', function(){
+          if (searchInput) searchInput.value = '';
+          if (categorySelect) categorySelect.value = '';
+          if (sortSelect) sortSelect.value = '';
+          if (sizeInput) sizeInput.value = '';
+          if (colorInput) colorInput.value = '';
+          currentPage = 1;
+          debouncedSearch();
+        });
+      });
 </script>
 {% endblock %}
