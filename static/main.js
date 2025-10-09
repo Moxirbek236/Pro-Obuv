@@ -213,7 +213,7 @@ const MenuClient = (function () {
       div.setAttribute("data-id", item.id || "");
       div.innerHTML = `
         <div class="item-image"><img src="${escapeHtml(
-          item.image_url || "/static/defoult.jpg"
+          item.image_url || "/static/defoult.png"
         )}" alt="${escapeHtml(item.name || "")}"></div>
         <div class="item-content">
           <h3 class="item-name">${escapeHtml(item.name || "")}</h3>

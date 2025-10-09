@@ -61,15 +61,60 @@ def _looks_like_image_url(url: str) -> bool:
 
 
 def _is_valid_image_url(url: str) -> bool:
+    """Return True only if URL resolves to an actual image payload.
+
+    We first try HEAD, then GET a few bytes to confirm signature.
+    Also avoid known placeholders like 'defoult.png' that may be blocked.
+    """
     try:
         if not url:
             return False
-        if _looks_like_image_url(url):
-            return True
-        # HEAD check to verify content type is image
-        r = requests.head(url, allow_redirects=True, timeout=5)
-        ct = (r.headers or {}).get("Content-Type", "").lower()
-        return ct.startswith("image/")
+        u = url.strip().lower()
+
+        # Quick HEAD probe
+        try:
+            r = requests.head(url, allow_redirects=True, timeout=5)
+            ct = (r.headers or {}).get("Content-Type", "").lower()
+            if not ct.startswith("image/"):
+                # Some servers misreport on HEAD; fall back to GET
+                pass
+            else:
+                # Looks fine, but still double-check by fetching small chunk
+                pass
+        except Exception:
+            # HEAD failed; continue with GET validation
+            pass
+
+        # GET small chunk to verify signature
+        rg = requests.get(url, stream=True, allow_redirects=True, timeout=6)
+        ctg = (rg.headers or {}).get("Content-Type", "").lower()
+        if not ctg.startswith("image/"):
+            return False
+        # Read first chunk
+        chunk = b""
+        try:
+            for c in rg.iter_content(chunk_size=2048):
+                if c:
+                    chunk = c
+                    break
+        finally:
+            try:
+                rg.close()
+            except Exception:
+                pass
+        if not chunk:
+            return False
+        # Basic magic signatures for JPEG/PNG/WEBP/GIF
+        if chunk.startswith(b"\xff\xd8\xff"):
+            return True  # JPEG
+        if chunk.startswith(b"\x89PNG\r\n\x1a\n"):
+            return True  # PNG
+        if chunk.startswith(b"GIF87a") or chunk.startswith(b"GIF89a"):
+            return True  # GIF
+        if chunk[:12] == b"RIFF" + chunk[4:8] + b"WEBP":
+            return True  # WEBP (best-effort)
+        # Fallback to content-type only if signature unknown
+        return True
     except Exception:
         return False
 
@@ -227,7 +272,8 @@ async def products_cmd_new(update: "Update", context: "ContextTypes.DEFAULT_TYPE
                     if it.get("description")
                     else "Sifatli mahsulot"
                 )
-                item_price = it.get("price", "Narx ko'rsatilmagan")
+                # Narxni chatga yubormaymiz
+                # item_price = it.get("price", "Narx ko'rsatilmagan")
 
                 # Build product page URL
                 view_url = FLASK_APP_URL.rstrip("/") + f"/product/{item_id}"
@@ -247,8 +293,7 @@ async def products_cmd_new(update: "Update", context: "ContextTypes.DEFAULT_TYPE
                 text = f"""🛍️ <b>{item_name}</b>
 
 {item_description}
-
-💰 <b>Narx:</b> {item_price} so'm{social_links}"""
+{social_links}"""
 
                 # Get product images
                 candidate_keys = [
@@ -329,6 +374,7 @@ async def products_cmd_new(update: "Update", context: "ContextTypes.DEFAULT_TYPE
                 # Send message with image and formatted text
                 if normalized:
                     try:
+                        # First try: URL directly
                         await update.message.reply_photo(
                             photo=normalized,
                             caption=text,
@@ -339,28 +385,76 @@ async def products_cmd_new(update: "Update", context: "ContextTypes.DEFAULT_TYPE
                         log_action(
                             "products_sent", user=f"tg:{uid}", detail=f"item:{item_id}"
                         )
-                    except Exception as e:
-                        LOG.exception("Failed sending photo, falling back to text")
-                        log_error(e, f"photo_send item:{item_id}")
-                        # fallback: send text only
+                    except Exception as e_url:
+                        # Second try: download bytes then send
+                        try:
+                            LOG.info(
+                                "products_cmd: URL send failed, trying bytes for %s",
+                                normalized,
+                            )
+                            rimg = requests.get(normalized, timeout=10)
+                            rimg.raise_for_status()
+                            content_type = (rimg.headers or {}).get(
+                                "Content-Type", "image/jpeg"
+                            )
+                            data = rimg.content
+                            await update.message.reply_photo(
+                                photo=data,
+                                caption=text,
+                                reply_markup=markup,
+                                parse_mode="HTML",
+                            )
+                            uid = getattr(update.message.from_user, "id", None)
+                            log_action(
+                                "products_sent_bytes",
+                                user=f"tg:{uid}",
+                                detail=f"item:{item_id}",
+                            )
+                        except Exception as e_bytes:
+                            LOG.exception(
+                                "Failed sending photo (url and bytes), fallback to text"
+                            )
+                            log_error(e_bytes, f"photo_send_bytes item:{item_id}")
+                            await update.message.reply_text(
+                                text, reply_markup=markup, parse_mode="HTML"
+                            )
+                            uid = getattr(update.message.from_user, "id", None)
+                            log_action(
+                                "products_sent_text_fallback",
+                                user=f"tg:{uid}",
+                                detail=f"item:{item_id}",
+                            )
+                else:
+                    # no images: send default local image bytes if available
+                    try:
+                        default_path = (
+                            LOGS_DIR.parent / "static" / "defoult.png"
+                        ).resolve()
+                        with open(default_path, "rb") as f:
+                            data = f.read()
+                        await update.message.reply_photo(
+                            photo=data,
+                            caption=text,
+                            reply_markup=markup,
+                            parse_mode="HTML",
+                        )
+                        uid = getattr(update.message.from_user, "id", None)
+                        log_action(
+                            "products_sent_default_image",
+                            user=f"tg:{uid}",
+                            detail=f"item:{item_id}",
+                        )
+                    except Exception:
+                        # fallback to text only if default image missing
                         await update.message.reply_text(
                             text, reply_markup=markup, parse_mode="HTML"
                         )
                         uid = getattr(update.message.from_user, "id", None)
                         log_action(
-                            "products_sent_text_fallback",
+                            "products_sent_text",
                             user=f"tg:{uid}",
                             detail=f"item:{item_id}",
                         )
-                else:
-                    # no images: just send text with buttons
-                    await update.message.reply_text(
-                        text, reply_markup=markup, parse_mode="HTML"
-                    )
-                    uid = getattr(update.message.from_user, "id", None)
-                    log_action(
-                        "products_sent_text", user=f"tg:{uid}", detail=f"item:{item_id}"
-                    )
 
             except Exception as item_error:
                 LOG.exception("Error processing item %s: %s", item_id, str(item_error))

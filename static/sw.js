@@ -4,8 +4,8 @@ const urlsToCache = [
   "/",
   "/static/style.css",
   "/static/main.js",
-  "/static/images/default-women.jpg",
-  "/static/images/default-men.jpg",
+  "/static/default.png",
+  "/static/default.png",
   // Do not pre-cache the /menu HTML page to avoid serving stale personalized content.
   // The menu data is fetched via API or embedded into pages; avoid caching HTML here.
   "/about",

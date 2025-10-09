@@ -18355,7 +18355,9 @@ if __name__ == "__main__":
     except Exception as e:
         app_logger.error(f"Telegram bot auto-start logic failed: {e}")
 
-    app.run(debug=True, host=host, port=port)
+    # Reloader parent processni tugatib yubormasligi uchun reloaderni o'chiramiz
+    # Debug-ni ham o'chirish parent/child ajralishini soddalashtiradi
+    app.run(debug=False, use_reloader=False, host=host, port=port)
 
 
 # Ensure the telegram bot is also started when the Flask app is launched via other entrypoints
