@@ -300,60 +300,125 @@
       </div>
     </div>
 
-    <form
-      method="POST"
-      action="{{ url_for('add_to_cart') }}"
-      id="addToCartForm">
-      <input type="hidden" name="menu_item_id" value="{{ item.id }}" />
+    {# If staff or super_admin is logged in, keep the add-to-cart form for testing/admin use. #}
+    {% if is_staff or is_super_admin %}
+      <form
+        method="POST"
+        action="{{ url_for('add_to_cart') }}"
+        id="addToCartForm">
+        <input type="hidden" name="menu_item_id" value="{{ item.id }}" />
 
-      <div class="options-row">
-        <div class="select-wrapper">
-          <label for="sizeSelect">O'lcham</label>
-          <select id="sizeSelect" name="size" class="form-select">
-            <option value="">— O'lcham tanlang —</option>
-            {% set _sizes = (item.sizes or '').split(',') %}
-            {% for s in _sizes %}
-              {% if s|trim %}
-                <option value="{{ s|trim }}">{{ s|trim }}</option>
-              {% endif %}
-            {% endfor %}
-          </select>
+        <div class="options-row">
+          <div class="select-wrapper">
+            <label for="sizeSelect">O'lcham</label>
+            <select id="sizeSelect" name="size" class="form-select">
+              <option value="">— O'lcham tanlang —</option>
+              {% set _sizes = (item.sizes or '').split(',') %}
+              {% for s in _sizes %}
+                {% if s|trim %}
+                  <option value="{{ s|trim }}">{{ s|trim }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="select-wrapper" style="flex: 0 0 160px">
+            <label for="colorSelect">Rang</label>
+            <select id="colorSelect" name="color" class="form-select">
+              <option value="">— Rang tanlang —</option>
+              {% set _colors = (item.colors or '').split(',') %}
+              {% for c in _colors %}
+                {% if c|trim %}
+                  <option value="{{ c|trim }}">{{ c|trim }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+          </div>
         </div>
 
-        <div class="select-wrapper" style="flex: 0 0 160px">
-          <label for="colorSelect">Rang</label>
-          <select id="colorSelect" name="color" class="form-select">
-            <option value="">— Rang tanlang —</option>
-            {% set _colors = (item.colors or '').split(',') %}
-            {% for c in _colors %}
-              {% if c|trim %}
-                <option value="{{ c|trim }}">{{ c|trim }}</option>
-              {% endif %}
-            {% endfor %}
-          </select>
+        <div class="quantity-row">
+          <label style="min-width: 70px; font-weight: 600">Miqdor</label>
+          <button type="button" class="qty-btn" id="decQty">−</button>
+          <input
+            type="number"
+            name="quantity"
+            id="quantityInput"
+            class="qty-input"
+            value="1"
+            min="1"
+            max="99" />
+          <button type="button" class="qty-btn" id="incQty">+</button>
         </div>
-      </div>
 
-      <div class="quantity-row">
-        <label style="min-width: 70px; font-weight: 600">Miqdor</label>
-        <button type="button" class="qty-btn" id="decQty">−</button>
-        <input
-          type="number"
-          name="quantity"
-          id="quantityInput"
-          class="qty-input"
-          value="1"
-          min="1"
-          max="99" />
-        <button type="button" class="qty-btn" id="incQty">+</button>
-      </div>
+        <div style="margin-top: 16px">
+          <button type="submit" class="add-cart-btn">
+            🛒 Savatchaga qo'shish
+          </button>
+        </div>
+      </form>
+    {% else %}
+      {# Regular users: show all marketplace links provided by staff, with a header and improved styling #}
+        {% set mp = marketplaces or {} %}
+        <style>
+          .marketplace-block { margin-top: 18px; }
+          .marketplace-header {
+            display: inline-block;
+            font-weight: 800;
+            padding: 10px 14px;
+            border-radius: 10px;
+            background: linear-gradient(90deg,#ff7a59,#ff4b4b);
+            color: white;
+            margin-bottom: 12px;
+            letter-spacing: 0.4px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+          }
+          .marketplace-buttons { display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-top:6px; }
+          .marketplace-btn {
+            display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:10px; color:#fff; font-weight:700; text-decoration:none;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08); transition:transform .12s ease, box-shadow .12s ease;
+          }
+          .marketplace-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 26px rgba(0,0,0,0.14); }
+          .marketplace-btn .mp-icon { font-size:18px; }
+          .mp-olx { background: linear-gradient(90deg,#ff9a3c,#f97316); }
+          .mp-uzum { background: linear-gradient(90deg,#06b6d4,#0891b2); }
+          .mp-yandex { background: linear-gradient(90deg,#ffd54a,#ffcc00); color:#222; }
+          .mp-generic { background: linear-gradient(90deg,#3b82f6,#1e40af); }
+          @media (max-width: 720px) { .marketplace-header { width:100%; text-align:center } .marketplace-buttons { justify-content:center } }
+        </style>
 
-      <div style="margin-top: 16px">
-        <button type="submit" class="add-cart-btn">
-          🛒 Savatchaga qo'shish
-        </button>
-      </div>
-    </form>
+        <div class="marketplace-block">
+          <div class="marketplace-header" aria-hidden="true">Buyurtma berish</div>
+
+          {% if mp and mp|length > 0 %}
+            <div class="marketplace-buttons" role="group" aria-label="Marketplaces">
+              {% for key, url in mp.items() %}
+                {% if url %}
+                  {% set k = (key or '')|lower %}
+                  {% if 'olx' in k %}
+                    <a href="{{ url }}" target="_blank" rel="noopener noreferrer" class="marketplace-btn mp-olx">
+                      <span class="mp-icon">🛍️</span><span>{{ 'OLX' }}</span>
+                    </a>
+                  {% elif 'uzum' in k %}
+                    <a href="{{ url }}" target="_blank" rel="noopener noreferrer" class="marketplace-btn mp-uzum">
+                      <span class="mp-icon">🛍️</span><span>{{ 'Uzum' }}</span>
+                    </a>
+                  {% elif 'yandex' in k or 'yand' in k %}
+                    <a href="{{ url }}" target="_blank" rel="noopener noreferrer" class="marketplace-btn mp-yandex">
+                      <span class="mp-icon">🛍️</span><span>{{ 'Yandex Market' }}</span>
+                    </a>
+                  {% else %}
+                    <a href="{{ url }}" target="_blank" rel="noopener noreferrer" class="marketplace-btn mp-generic">
+                      <span class="mp-icon">🛒</span><span>{{ key|capitalize }}</span>
+                    </a>
+                  {% endif %}
+                {% endif %}
+              {% endfor %}
+            </div>
+          {% else %}
+            <div style="color:#666; margin-top:8px">Mahsulotni xarid qilish uchun bozor linklari mavjud emas.</div>
+          {% endif %}
+        </div>
+    {% endif %}
 
     <!-- Comments: submission form + list -->
     <div

@@ -200,6 +200,48 @@
                 <textarea name="description" placeholder="Tavsif">
 {{ item.description }}</textarea
                 >
+                <!-- Support multiple URLs per marketplace: use market_<key>[] fields -->
+                <div>
+                  <label>OLX URL'lari</label>
+                  <div class="market-inputs" data-market="olx" id="market-olx-{{ item.id }}">
+                    {% set olx_list = (item.market_olx_list if item.get('market_olx_list') else ([item.market_olx] if item.get('market_olx') else [])) %}
+                    {% for u in olx_list %}
+                    {% if u %}
+                      <div class="mi-row"><input type="text" name="market_olx[]" value="{{ u }}" placeholder="https://..." /> <button type="button" class="btn small" onclick="removeMarketInput(this)">-</button></div>
+                    {% endif %}
+                    {% endfor %}
+                    <div class="mi-row"><input type="text" name="market_olx[]" value="" placeholder="https://..." /> <button type="button" class="btn small" onclick="removeMarketInput(this)">-</button></div>
+                  </div>
+                  <button type="button" class="btn" onclick="addMarketInput('olx', {{ item.id }})">+ Add OLX</button>
+                </div>
+
+                <div>
+                  <label>Uzum URL'lari</label>
+                  <div class="market-inputs" data-market="uzum" id="market-uzum-{{ item.id }}">
+                    {% set uzum_list = (item.market_uzum_list if item.get('market_uzum_list') else ([item.market_uzum] if item.get('market_uzum') else [])) %}
+                    {% for u in uzum_list %}
+                    {% if u %}
+                      <div class="mi-row"><input type="text" name="market_uzum[]" value="{{ u }}" placeholder="https://..." /> <button type="button" class="btn small" onclick="removeMarketInput(this)">-</button></div>
+                    {% endif %}
+                    {% endfor %}
+                    <div class="mi-row"><input type="text" name="market_uzum[]" value="" placeholder="https://..." /> <button type="button" class="btn small" onclick="removeMarketInput(this)">-</button></div>
+                  </div>
+                  <button type="button" class="btn" onclick="addMarketInput('uzum', {{ item.id }})">+ Add Uzum</button>
+                </div>
+
+                <div>
+                  <label>Yandex Market URL'lari</label>
+                  <div class="market-inputs" data-market="yandex" id="market-yandex-{{ item.id }}">
+                    {% set y_list = (item.market_yandex_list if item.get('market_yandex_list') else ([item.market_yandex] if item.get('market_yandex') else [])) %}
+                    {% for u in y_list %}
+                    {% if u %}
+                      <div class="mi-row"><input type="text" name="market_yandex[]" value="{{ u }}" placeholder="https://..." /> <button type="button" class="btn small" onclick="removeMarketInput(this)">-</button></div>
+                    {% endif %}
+                    {% endfor %}
+                    <div class="mi-row"><input type="text" name="market_yandex[]" value="" placeholder="https://..." /> <button type="button" class="btn small" onclick="removeMarketInput(this)">-</button></div>
+                  </div>
+                  <button type="button" class="btn" onclick="addMarketInput('yandex', {{ item.id }})">+ Add Yandex</button>
+                </div>
                 <div class="edit-buttons">
                   <button type="submit" class="btn small success">
                      Saqlash
@@ -984,6 +1026,37 @@
     const modal = document.getElementById('staffMediaModal');
     modal.style.display = 'none';
     document.body.style.overflow = 'auto';
+  }
+</script>
+<script>
+  // Helpers for dynamic marketplace inputs
+  function addMarketInput(marketKey, itemId){
+    try{
+      const container = document.getElementById(`market-${marketKey}-${itemId}`);
+      if(!container) return;
+      const row = document.createElement('div');
+      row.className = 'mi-row';
+      row.innerHTML = `<input type="text" name="market_${marketKey}[]" value="" placeholder="https://..." /> <button type="button" class="btn small" onclick="removeMarketInput(this)">-</button>`;
+      container.appendChild(row);
+      // focus newly added input
+      const inp = row.querySelector('input'); if(inp) inp.focus();
+    }catch(e){ console.error('addMarketInput error', e); }
+  }
+
+  function removeMarketInput(btn){
+    try{
+      const row = btn.closest('.mi-row');
+      if(!row) return;
+      const container = row.parentNode;
+      // Only remove if there's more than one input in container
+      const remain = container.querySelectorAll('input').length;
+      if(remain <= 1){
+        // clear the value instead of removing last field
+        const inp = row.querySelector('input'); if(inp) inp.value = '';
+        return;
+      }
+      row.remove();
+    }catch(e){ console.error('removeMarketInput error', e); }
   }
 </script>
 {% endblock %}

@@ -2199,10 +2199,9 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
       opacity: 0;
     }
     to {
-          const id = item.id !== undefined ? item.id : "";
+      opacity: 1;
     }
   }
-          console.warn('navigation failed', err);
   /* ================================
      ENHANCED MODAL OPTIONS STYLING
      ================================ */
@@ -2818,6 +2817,10 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
     try { applyClientSideFilter(); } catch (e) { console.warn('applyClientSideFilter failed after showCategory', e); }
     }
 
+  // Make showCategory available on the global window object as a defensive
+  // measure in case the script is executed inside a closure or bundler.
+  try { if (typeof window !== 'undefined') window.showCategory = showCategory; } catch (e) { /* ignore */ }
+
     // Keep filter select and clear button in sync with the category buttons
     try {
       const catSelect = document.getElementById('filterCategory');
@@ -3024,72 +3027,57 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
   let lastTotalCount = 0;
 
   async function performMenuSearch() {
-      // Guard DOM access in case inputs are missing or removed by other scripts
-      const qEl = document.getElementById('menuSearchInput');
-      const catEl = document.getElementById('filterCategory');
-      const sortEl = document.getElementById('filterSort');
-      const sizeEl = document.getElementById('filterSize');
-      const colorEl = document.getElementById('filterColor');
-      const q = qEl ? (qEl.value || '').trim() : '';
-      const category = catEl ? (catEl.value || '') : '';
-      const sort = sortEl ? (sortEl.value || '') : '';
-      const size = sizeEl ? (sizeEl.value || '').trim() : '';
-      const color = colorEl ? (colorEl.value || '').trim() : '';
+    // Read filter inputs defensively
+    const qEl = document.getElementById('menuSearchInput');
+    const catEl = document.getElementById('filterCategory');
+    const sortEl = document.getElementById('filterSort');
+    const sizeEl = document.getElementById('filterSize');
+    const colorEl = document.getElementById('filterColor');
 
-  const params = new URLSearchParams();
-      if (q) params.set('q', q);
-      if (category) params.set('category', category);
-      if (sort) params.set('sort', sort);
-      if (size) params.set('size', size);
-      if (color) params.set('color', color);
-  // pagination params
-  params.set('limit', PAGE_SIZE);
-  params.set('offset', (currentPage - 1) * PAGE_SIZE);
+    const q = qEl ? (qEl.value || '').trim() : '';
+    const category = catEl ? (catEl.value || '') : '';
+    const sort = sortEl ? (sortEl.value || '') : '';
+    const size = sizeEl ? (sizeEl.value || '').trim() : '';
+    const color = colorEl ? (colorEl.value || '').trim() : '';
 
-      // Special shortcut: allow users to type queries like "pro obuv - about" to jump
-      // directly to known site pages. This helps when users try 'pro obuv - about' in search.
-      try {
-          if (id) {
-            // navigate to product page instead of opening modal
-            try { console.log('menu-item click -> navigate to product', id, e.target); } catch (e) {}
-            try { window.location.href = '/product/' + encodeURIComponent(id); } catch(err) { console.warn('navigation failed', err); }
-          }
-              'about': '/about',
-              'menu': '/menu',
-              'contact': '/contact',
-              'cart': '/cart',
-              'news': '/news',
-              'login': '/login',
-              'favorites': '/favorites'
-            };
-            if (redirectMap[slug]) {
-              window.location.href = redirectMap[slug];
-              return;
-            }
-          }
-        }
-      } catch (e) { /* ignore and fall back to normal search */ }
+    // Build query params for server-side search
+    const params = new URLSearchParams();
+    if (q) params.set('q', q);
+    if (category) params.set('category', category);
+    if (sort) params.set('sort', sort);
+    if (size) params.set('size', size);
+    if (color) params.set('color', color);
+    params.set('limit', PAGE_SIZE);
+    params.set('offset', (currentPage - 1) * PAGE_SIZE);
 
-      try {
-        const res = await fetch('/api/menu-search?' + params.toString());
-        const data = await res.json();
-        if (data && data.success && Array.isArray(data.items)) {
-          renderMenuItems(data.items);
-          // Update local menuData cache for modal interactions
-          menuData = {};
-          data.items.forEach(it => { menuData[it.id] = it; });
-          // Pagination: render controls using total_count returned by API
-          lastTotalCount = parseInt(data.total_count || 0, 10) || 0;
-          renderPaginationControls(lastTotalCount, PAGE_SIZE, currentPage);
-        } else {
-          // Fallback to client-side filtering if API fails
-          applyClientSideFilter();
-        }
-      } catch (e) {
-        console.warn('Search API failed, using client-side filter', e);
+    // Try server-side search first; fall back to client-side filtering on any error
+    try {
+      // Debug: log the params so developer can inspect in console
+      try { console.debug('[performMenuSearch] params', Object.fromEntries(params.entries())); } catch(e) {}
+      const res = await fetch('/api/menu-search?' + params.toString());
+      if (!res.ok) throw new Error('Network response not ok: ' + res.status);
+      const data = await res.json();
+
+      try { console.debug('[performMenuSearch] response', { status: res.status, ok: res.ok, payload: data }); } catch(e) {}
+
+      if (data && data.success && Array.isArray(data.items)) {
+        // Render items returned by API
+        renderMenuItems(data.items);
+        // Update local cache for modal interactions and client-side operations
+        menuData = {};
+        data.items.forEach(it => { if (it && it.id !== undefined) menuData[it.id] = it; });
+        // Update pagination controls if available
+        lastTotalCount = parseInt(data.total_count || 0, 10) || 0;
+        renderPaginationControls(lastTotalCount, PAGE_SIZE, currentPage);
+      } else {
+        // API returned unexpected payload; fallback to client-side filter
         applyClientSideFilter();
       }
+    } catch (err) {
+      console.warn('performMenuSearch failed, falling back to client-side filter', err);
+      try { applyClientSideFilter(); } catch (e) { console.warn('client-side filter also failed', e); }
     }
+  }
 
     function applyClientSideFilter() {
       // Defensive DOM access
@@ -3114,6 +3102,62 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
     }
 
     const debouncedSearch = debounce(performMenuSearch, 300);
+
+    // Centralized, idempotent wiring for filter inputs.
+    function wireFilters() {
+      try {
+        const searchInput = document.getElementById('menuSearchInput');
+        const categorySelect = document.getElementById('filterCategory');
+        const sortSelect = document.getElementById('filterSort');
+        const sizeInput = document.getElementById('filterSize');
+        const colorInput = document.getElementById('filterColor');
+        const clearBtn = document.getElementById('clearFiltersBtn');
+
+        if (searchInput && !searchInput._menuWired) {
+          searchInput.addEventListener('input', function() { currentPage = 1; debouncedSearch(); });
+          searchInput._menuWired = true;
+        }
+
+        if (categorySelect && !categorySelect._menuWired) {
+          categorySelect.addEventListener('change', function() { currentPage = 1; debouncedSearch(); });
+          categorySelect._menuWired = true;
+        }
+
+        if (sortSelect && !sortSelect._menuWired) {
+          sortSelect.addEventListener('change', function() { currentPage = 1; debouncedSearch(); });
+          sortSelect._menuWired = true;
+        }
+
+        if (sizeInput && !sizeInput._menuWired) {
+          sizeInput.addEventListener('input', function() { currentPage = 1; debouncedSearch(); });
+          sizeInput._menuWired = true;
+        }
+
+        if (colorInput && !colorInput._menuWired) {
+          colorInput.addEventListener('input', function() { currentPage = 1; debouncedSearch(); });
+          colorInput._menuWired = true;
+        }
+
+        if (clearBtn && !clearBtn._menuWired) {
+          clearBtn.addEventListener('click', function() {
+            try {
+              if (searchInput) searchInput.value = '';
+              if (categorySelect) categorySelect.value = '';
+              if (sortSelect) sortSelect.value = '';
+              if (sizeInput) sizeInput.value = '';
+              if (colorInput) colorInput.value = '';
+              currentPage = 1;
+              debouncedSearch();
+            } catch (e) { console.warn('clear filters handler error', e); }
+          });
+          clearBtn._menuWired = true;
+        }
+      } catch (e) { console.warn('wireFilters failed', e); }
+    }
+
+    // Ensure filters are wired now and also on DOMContentLoaded (idempotent)
+    try { wireFilters(); } catch (e) {}
+    document.addEventListener('DOMContentLoaded', function() { try { wireFilters(); } catch (e) {} });
 
     // Wire inputs
     document.addEventListener('DOMContentLoaded', function() {

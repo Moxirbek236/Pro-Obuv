@@ -3400,6 +3400,36 @@ def ensure_menu_items_columns():
             conn.close()
 
 
+def ensure_product_marketplaces_table():
+    """Create product_marketplaces table if missing. Stores arbitrary marketplace links per product."""
+    conn = None
+    try:
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute(
+            """
+            CREATE TABLE IF NOT EXISTS product_marketplaces (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                menu_item_id INTEGER NOT NULL,
+                market_key TEXT NOT NULL,
+                url TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                UNIQUE(menu_item_id, market_key),
+                FOREIGN KEY (menu_item_id) REFERENCES menu_items(id) ON DELETE CASCADE
+            );
+            """
+        )
+        conn.commit()
+    except Exception as e:
+        app_logger.warning(f"Failed to ensure product_marketplaces table: {e}")
+    finally:
+        try:
+            if conn:
+                conn.close()
+        except:
+            pass
+
+
 def ensure_ratings_columns():
     """Ensure ratings table has branch_id column and a schema that supports branch ratings.
 
@@ -3927,6 +3957,11 @@ if not os.environ.get("SKIP_DB_INIT"):
     ensure_menu_items_columns()
     ensure_ratings_columns()
     ensure_users_columns()
+    # Ensure product marketplaces table exists
+    try:
+        ensure_product_marketplaces_table()
+    except Exception:
+        pass
 
     # Apply manual fixes
     fix_staff_table()
@@ -6816,11 +6851,31 @@ def product_detail(item_id):
         except Exception:
             item["orders_count"] = 0
 
+        # Load marketplaces for the product
+        marketplaces = {}
+        try:
+            mp_rows = execute_query(
+                "SELECT market_key, url FROM product_marketplaces WHERE menu_item_id = ?",
+                (item_id,),
+                fetch_all=True,
+            )
+            if mp_rows:
+                for r in mp_rows:
+                    try:
+                        row = dict(r)
+                        marketplaces[row.get("market_key")] = row.get("url")
+                    except Exception:
+                        # tuple fallback
+                        marketplaces[r[0]] = r[1]
+        except Exception:
+            pass
+
         return render_template(
             "product.html",
             item=item,
             media=media,
             comments=comments,
+            marketplaces=marketplaces,
             current_page="product",
         )
     except Exception as e:
@@ -9918,6 +9973,42 @@ def admin_edit_menu_item(item_id):
                 fetch_one=True,
             )
             next_order = current_media_count[0] if current_media_count else 0
+
+        # Save marketplace URLs (support multiple URLs per market: market_olx[], market_uzum[], market_yandex[])
+        try:
+            market_keys = ["olx", "uzum", "yandex"]
+            for key in market_keys:
+                try:
+                    # Accept both array-style names (market_olx[]) and single-field fallback
+                    list_name_with_brackets = f"market_{key}[]"
+                    vals = request.form.getlist(list_name_with_brackets) or request.form.getlist(f"market_{key}") or [request.form.get(f"market_{key}", "")]
+                    # Normalize and filter empty
+                    urls = [v.strip() for v in vals if v and v.strip()]
+
+                    # Delete existing entries for this key and item (we'll re-insert current list)
+                    try:
+                        execute_query(
+                            "DELETE FROM product_marketplaces WHERE menu_item_id = ? AND market_key = ?",
+                            (item_id, key),
+                        )
+                    except Exception:
+                        pass
+
+                    now = get_current_time().isoformat()
+                    for url in urls:
+                        try:
+                            execute_query(
+                                "INSERT INTO product_marketplaces (menu_item_id, market_key, url, created_at) VALUES (?, ?, ?, ?)",
+                                (item_id, key, url, now),
+                            )
+                        except Exception:
+                            # best-effort: skip bad inserts
+                            pass
+                except Exception:
+                    # skip this market key on any error
+                    continue
+        except Exception:
+            pass
 
             for idx, file in enumerate(media_files):
                 if file and file.filename:
@@ -15983,6 +16074,38 @@ def staff_menu():
                             for media in media_files:
                                 media_dict = dict(media)
                                 item_dict["media_files"].append(media_dict)
+
+                        # Load marketplace URLs for this product (allow multiple per market_key)
+                        try:
+                            cur.execute(
+                                "SELECT market_key, url FROM product_marketplaces WHERE menu_item_id = ? ORDER BY id ASC",
+                                (item_dict["id"],),
+                            )
+                            mp_rows = cur.fetchall() or []
+                            # Normalize into lists per key
+                            mp_map = {}
+                            for mr in mp_rows:
+                                try:
+                                    mkey = mr[0] if isinstance(mr, (list, tuple)) else mr.get('market_key')
+                                    murl = mr[1] if isinstance(mr, (list, tuple)) else mr.get('url')
+                                    if not mkey:
+                                        continue
+                                    mp_map.setdefault(f"market_{mkey}_list", []).append(murl)
+                                except Exception:
+                                    continue
+                            # Expose both single legacy fields and list forms for template compatibility
+                            for k, v in mp_map.items():
+                                item_dict[k] = v
+                            # Also set single fallback names for older templates
+                            if 'market_olx_list' in mp_map and mp_map['market_olx_list']:
+                                item_dict['market_olx'] = mp_map['market_olx_list'][0]
+                            if 'market_uzum_list' in mp_map and mp_map['market_uzum_list']:
+                                item_dict['market_uzum'] = mp_map['market_uzum_list'][0]
+                            if 'market_yandex_list' in mp_map and mp_map['market_yandex_list']:
+                                item_dict['market_yandex'] = mp_map['market_yandex_list'][0]
+                        except Exception:
+                            # ignore marketplace load failures
+                            pass
 
                         # Agar media fayllar yo'q bo'lsa, eski image_url dan foydalanish
                         if not item_dict["media_files"] and item_dict.get("image_url"):
