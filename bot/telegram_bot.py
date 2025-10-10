@@ -636,6 +636,20 @@ def main():
     base_delay = float(os.environ.get("TELEGRAM_BOT_RETRY_DELAY", "5"))
     attempt = 0
 
+    # Ensure an asyncio event loop is available in this thread. Newer Python
+    # versions raise RuntimeError when no loop is set; python-telegram-bot
+    # expects get_event_loop() to work. Create and set one if missing.
+    try:
+        import asyncio
+
+        try:
+            _loop = asyncio.get_event_loop()
+        except RuntimeError:
+            _loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(_loop)
+    except Exception:
+        LOG.exception("Failed to ensure asyncio event loop is available")
+
     while True:
         try:
             app.run_polling()
@@ -676,24 +690,29 @@ def main():
             try:
                 import asyncio
 
-                loop = None
                 try:
                     loop = asyncio.get_event_loop()
-                except Exception:
-                    loop = None
+                except RuntimeError:
+                    loop = asyncio.new_event_loop()
+                    asyncio.set_event_loop(loop)
 
-                if loop and loop.is_running():
-                    # schedule stop asynchronously
-                    try:
-                        loop.create_task(app.stop())
-                    except Exception:
-                        LOG.exception("Failed to schedule app.stop()")
-                else:
-                    try:
-                        # run stop synchronously if no running loop
-                        asyncio.run(app.stop())
-                    except Exception:
-                        LOG.exception("Failed to run app.stop() synchronously")
+                # If loop is running, schedule stop; otherwise run stop synchronously
+                try:
+                    if loop.is_running():
+                        try:
+                            loop.create_task(app.stop())
+                        except Exception:
+                            LOG.exception("Failed to schedule app.stop()")
+                    else:
+                        try:
+                            loop.run_until_complete(app.stop())
+                        except RuntimeError as re:
+                            # Application may not be running; ignore this specific case
+                            LOG.warning("app.stop() raised RuntimeError: %s", re)
+                        except Exception:
+                            LOG.exception("Failed to run app.stop() synchronously")
+                except Exception:
+                    LOG.exception("Error while attempting app.stop()")
             except Exception:
                 LOG.exception("Application.stop failed")
 

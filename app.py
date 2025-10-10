@@ -18415,7 +18415,7 @@ def api_chat_ai():
 
 # Flask app runner
 if __name__ == "__main__":
-    host = "127.0.0.1"
+    host = "0.0.0.0"
     port = int(os.environ.get("PORT", 10000))
     print(f"\nDastur quyidagi URLda ishga tushdi: http://{host}:{port}\n")
 
