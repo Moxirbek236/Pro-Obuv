@@ -64194,3 +64194,10 @@ werkzeug.exceptions.MethodNotAllowed: 405 Method Not Allowed: The method is not 
 2025-10-09 12:58:50,015 | WARNING | werkzeug | _log:97 |  * Debugger is active!
 2025-10-09 17:23:45,815 | WARNING | werkzeug | _log:97 |  * Debugger is active!
 2025-10-09 21:59:20,284 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-10-10 07:42:17,508 | ERROR | restaurant_app | execute_query:2160 | Database operational error: table chat_messages has no column named sender
+2025-10-10 07:42:17,512 | ERROR | restaurant_app | execute_query:2160 | Database operational error: no such table: ai_knowledge
+2025-10-10 07:42:17,512 | ERROR | restaurant_app | execute_query:2160 | Database operational error: table chat_messages has no column named sender
+2025-10-10 07:42:29,409 | ERROR | restaurant_app | execute_query:2160 | Database operational error: table chat_messages has no column named sender
+2025-10-10 07:42:29,410 | ERROR | restaurant_app | execute_query:2160 | Database operational error: no such table: ai_knowledge
+2025-10-10 07:42:29,411 | ERROR | restaurant_app | execute_query:2160 | Database operational error: no such table: ai_unanswered
+2025-10-10 07:42:29,412 | ERROR | restaurant_app | execute_query:2160 | Database operational error: table chat_messages has no column named sender

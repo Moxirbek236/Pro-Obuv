@@ -17,3 +17,4 @@
 2025-10-09 12:55:49 | sender=web | telegram bot
 2025-10-09 12:55:54 | sender=web | mahsulotlar
 2025-10-09 07:56:57 | tg:1656193663 | salom
+2025-10-10 07:42:29 | sender=tg:1656193663 | sen kimsan

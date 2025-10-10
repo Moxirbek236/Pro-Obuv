@@ -2049,3 +2049,10 @@ Traceback (most recent call last):
     raise MethodNotAllowed(valid_methods=list(e.have_match_for)) from None
 werkzeug.exceptions.MethodNotAllowed: 405 Method Not Allowed: The method is not allowed for the requested URL.
 
+2025-10-10 07:42:17,508 | ERROR | restaurant_app | execute_query:2160 | Database operational error: table chat_messages has no column named sender
+2025-10-10 07:42:17,512 | ERROR | restaurant_app | execute_query:2160 | Database operational error: no such table: ai_knowledge
+2025-10-10 07:42:17,512 | ERROR | restaurant_app | execute_query:2160 | Database operational error: table chat_messages has no column named sender
+2025-10-10 07:42:29,409 | ERROR | restaurant_app | execute_query:2160 | Database operational error: table chat_messages has no column named sender
+2025-10-10 07:42:29,410 | ERROR | restaurant_app | execute_query:2160 | Database operational error: no such table: ai_knowledge
+2025-10-10 07:42:29,411 | ERROR | restaurant_app | execute_query:2160 | Database operational error: no such table: ai_unanswered
+2025-10-10 07:42:29,412 | ERROR | restaurant_app | execute_query:2160 | Database operational error: table chat_messages has no column named sender

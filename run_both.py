@@ -123,7 +123,31 @@ def terminate_process(proc: subprocess.Popen, name: str):
         pass
 
 
-def main():
+def main(*args, **kwargs):
+    """Launcher/WSGI compatibility wrapper.
+
+    - When invoked with no args (CLI), behaves as the original launcher:
+      starts Flask and bot subprocesses and streams their output.
+    - When invoked as a WSGI callable (environ, start_response) by Gunicorn
+      (e.g. gunicorn run_both:main), delegate to the Flask app's WSGI app so
+      the same module can be used as the entrypoint in environments that
+      incorrectly configured the callable.
+    """
+
+    # If called as a WSGI application, delegate to the Flask app
+    if len(args) >= 2 and callable(args[1]):
+        environ = args[0]
+        start_response = args[1]
+        try:
+            # Import the Flask app from app.py and dispatch
+            from app import app as flask_app
+
+            # flask_app is a Flask instance; its wsgi_app is a callable
+            return flask_app.wsgi_app(environ, start_response)
+        except Exception:
+            # If Flask app can't be imported, re-raise for the WSGI server to log
+            raise
+
     global flask_proc, bot_proc
 
     print("[RUN] Flask va Telegram bot ishga tushirilmoqda...")
