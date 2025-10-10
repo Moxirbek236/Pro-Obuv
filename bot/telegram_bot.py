@@ -208,9 +208,22 @@ TELEGRAM_TOKEN = os.environ.get(
 )
 
 # FLASK_APP_URL should be set in environment; default to safety.uz if missing.
-FLASK_APP_URL = os.environ.get(
-    "FLASK_APP_URL", "https://safety.uz"
-)  # e.g., https://example.com
+FLASK_APP_URL = (os.environ.get("FLASK_APP_URL") or "").strip()
+# If no FLASK_APP_URL provided, prefer a local dev server if reachable, otherwise
+# fall back to the production default. This helps local runs where the app is
+# started together with the bot (no external URL needed).
+if not FLASK_APP_URL:
+    try:
+        # probe local Flask default address quickly
+        _probe = requests.get("http://127.0.0.1:5000/api/chat/ai", timeout=0.8)
+        # If we get any 200-range or 405/501 (method not allowed, etc.), assume local server exists
+        if _probe is not None and (_probe.status_code // 100) in (2, 4, 5):
+            FLASK_APP_URL = "http://127.0.0.1:5000"
+    except Exception:
+        # no local server detected; fall back to configured env var or default
+        FLASK_APP_URL = os.environ.get("FLASK_APP_URL", "https://safety.uz")
+else:
+    FLASK_APP_URL = FLASK_APP_URL
 
 
 async def start(update: "Update", context: "ContextTypes.DEFAULT_TYPE"):
@@ -495,7 +508,21 @@ async def handle_message(update: "Update", context: "ContextTypes.DEFAULT_TYPE")
                 ai_r = requests.post(
                     FLASK_APP_URL.rstrip("/") + "/api/chat/ai", json=payload, timeout=8
                 )
-                ai_j = ai_r.json() if ai_r is not None else {}
+                ai_text = ""
+                ai_j = {}
+                # Only try to decode JSON when response looks valid
+                if ai_r is not None and ai_r.status_code == 200:
+                    ct = (ai_r.headers or {}).get("Content-Type", "")
+                    if "application/json" in ct.lower() or ai_r.text.strip().startswith("{"):
+                        try:
+                            ai_j = ai_r.json() or {}
+                        except Exception:
+                            ai_j = {}
+                    else:
+                        ai_j = {}
+                else:
+                    ai_j = {}
+
                 ai_text = (ai_j or {}).get("reply") or ""
                 if not ai_text:
                     # Fallback: call OpenAI directly from bot (uses env OPENAI_API_KEY)
@@ -603,47 +630,72 @@ def main():
     app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), handle_message))
 
     LOG.info("Telegram bot starting (polling)")
-    try:
-        app.run_polling()
-    except Exception as exc:
-        # Handle common getUpdates Conflict (409) by exiting cleanly to avoid flood
+
+    # Robust polling loop with retry/backoff for transient errors (409 Conflict, timeouts)
+    max_retries = int(os.environ.get("TELEGRAM_BOT_RETRIES", "5"))
+    base_delay = float(os.environ.get("TELEGRAM_BOT_RETRY_DELAY", "5"))
+    attempt = 0
+
+    while True:
         try:
-            msg = str(exc)
-        except Exception:
-            msg = ""
-
-        LOG.error("Application.run_polling failed: %s", msg)
-
-        if "Conflict" in msg or "getUpdates" in msg:
-            LOG.error(
-                "Detected getUpdates conflict (another bot instance is polling). Exiting to avoid 409 errors."
-            )
-            return
-
-        # For other exceptions (timeouts, network errors), attempt graceful shutdown using asyncio
-        try:
-            import asyncio
-
-            loop = None
+            app.run_polling()
+            # Normal exit (clean stop) -> break the loop
+            break
+        except Exception as exc:
             try:
-                loop = asyncio.get_event_loop()
+                msg = str(exc) or ""
             except Exception:
-                loop = None
+                msg = ""
 
-            if loop and loop.is_running():
-                # schedule stop asynchronously
+            LOG.error("Application.run_polling failed: %s", msg)
+
+            # Handle getUpdates conflict: retry a few times with backoff before giving up
+            if "Conflict" in msg or "getUpdates" in msg:
+                attempt += 1
+                if attempt > max_retries:
+                    LOG.error(
+                        "Detected persistent getUpdates conflict after %d attempts; exiting.",
+                        attempt,
+                    )
+                    return
+                delay = min(base_delay * (2 ** (attempt - 1)), 60)
+                LOG.warning(
+                    "getUpdates conflict detected (attempt %d/%d). Retrying in %s seconds...",
+                    attempt,
+                    max_retries,
+                    delay,
+                )
                 try:
-                    loop.create_task(app.stop())
+                    time.sleep(delay)
                 except Exception:
-                    LOG.exception("Failed to schedule app.stop()")
-            else:
+                    pass
+                # try again
+                continue
+
+            # For other exceptions (timeouts, network errors), attempt graceful shutdown using asyncio
+            try:
+                import asyncio
+
+                loop = None
                 try:
-                    # run stop synchronously if no running loop
-                    asyncio.run(app.stop())
+                    loop = asyncio.get_event_loop()
                 except Exception:
-                    LOG.exception("Failed to run app.stop() synchronously")
-        except Exception:
-            LOG.exception("Application.stop failed")
+                    loop = None
+
+                if loop and loop.is_running():
+                    # schedule stop asynchronously
+                    try:
+                        loop.create_task(app.stop())
+                    except Exception:
+                        LOG.exception("Failed to schedule app.stop()")
+                else:
+                    try:
+                        # run stop synchronously if no running loop
+                        asyncio.run(app.stop())
+                    except Exception:
+                        LOG.exception("Failed to run app.stop() synchronously")
+            except Exception:
+                LOG.exception("Application.stop failed")
 
 
 if __name__ == "__main__":

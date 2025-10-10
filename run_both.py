@@ -28,7 +28,24 @@ def start_flask():
     env.setdefault("FLASK_ENV", "production")
     # App ichidan botni avtomatik ishga tushirmaslik uchun (konfliktning oldini olish)
     env["START_TELEGRAM_BOT"] = "0"
-    cmd = [PYTHON, str(ROOT / "app.py")]
+    # If requested, start Gunicorn as the WSGI server instead of the builtin Flask dev server.
+    # This is useful for production hosts which expect a single entrypoint. Set USE_GUNICORN=1
+    # and optionally GUNICORN_WORKERS to control worker count.
+    use_gunicorn = os.environ.get("USE_GUNICORN", "0") == "1"
+    # Gunicorn is not supported on Windows (depends on fcntl). If we're on
+    # Windows and the user requested gunicorn, warn and fall back to the
+    # builtin Flask launcher so run_both remains usable on Windows dev boxes.
+    is_windows = sys.platform.startswith("win") or os.name == "nt"
+    if use_gunicorn and is_windows:
+        print("[RUN] USE_GUNICORN=1 requested but running on Windows — gunicorn is unsupported. Falling back to app.py")
+        use_gunicorn = False
+    if use_gunicorn:
+        workers = os.environ.get("GUNICORN_WORKERS", "2")
+        bind = os.environ.get("GUNICORN_BIND", "0.0.0.0:10000")
+        # Run gunicorn module so we don't depend on shell wrappers
+        cmd = [PYTHON, "-m", "gunicorn", f"app:app", "-b", bind, "-w", str(workers)]
+    else:
+        cmd = [PYTHON, str(ROOT / "app.py")]
     return subprocess.Popen(
         cmd,
         cwd=str(ROOT),

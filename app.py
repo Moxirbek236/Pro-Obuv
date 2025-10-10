@@ -3024,6 +3024,33 @@ def init_db():
     conn.commit()
     conn.close()
 
+    # AI knowledge base and unanswered questions (for superadmin review)
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute(
+        """
+        CREATE TABLE IF NOT EXISTS ai_knowledge (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            question_pattern TEXT NOT NULL,
+            answer TEXT NOT NULL,
+            created_by TEXT,
+            created_at TEXT NOT NULL
+        );
+    """
+    )
+    cur.execute(
+        """
+        CREATE TABLE IF NOT EXISTS ai_unanswered (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            text TEXT NOT NULL,
+            times_asked INTEGER DEFAULT 1,
+            last_asked_at TEXT NOT NULL
+        );
+    """
+    )
+    conn.commit()
+    conn.close()
+
 
 def ensure_orders_columns():
     "Orders jadvaliga kerakli ustunlarni qo'shadi (migration)."
@@ -10668,6 +10695,30 @@ def ai_respond(text, sender="guest"):
                 return reply or "Kechirasiz, hozir javob topilmadi."
             except Exception:
                 pass
+        # Check ai_knowledge table for a matching pattern (simple substring match)
+        try:
+            q = text.lower()
+            rows = execute_query(
+                "SELECT answer FROM ai_knowledge ORDER BY id DESC",
+                fetch_all=True,
+            )
+            if rows:
+                for r in rows:
+                    ans = r[0] if isinstance(r, tuple) else r.get("answer")
+                    pat = r[0] if isinstance(r, tuple) else r.get("question_pattern")
+                # We'll perform a simple substring match against question_pattern
+            # More efficient approach: iterate properly
+            rows2 = execute_query("SELECT question_pattern, answer FROM ai_knowledge", fetch_all=True)
+            if rows2:
+                for qp, ans in rows2:
+                    try:
+                        if qp and qp.strip().lower() in q:
+                            return ans
+                    except Exception:
+                        continue
+        except Exception:
+            # ignore knowledge lookup failures
+            pass
 
         # Fallback simple responder: detect language and simple intents
         lower = text.lower()
@@ -10681,6 +10732,35 @@ def ai_respond(text, sender="guest"):
             return "Mahsulotlar tugmasini bosing yoki saytimizdagi /products bo'limiga o'ting. Mahsulotlar staff tomonidan qo'shiladi."
         if any(w in lower for w in ["telefon", "contact", "aloqa", "phone", "email"]):
             return "Aloqa: +998 90 000 00 00, email: info@example.com. Bizning telegram kanal: https://t.me/example"
+
+        # If we reach here, the AI couldn't confidently answer. Record unanswered for superadmin review
+        try:
+            now = get_current_time().isoformat()
+            # Try to upsert into ai_unanswered - increment times_asked if exists
+            existing = execute_query(
+                "SELECT id, times_asked FROM ai_unanswered WHERE text = ? LIMIT 1",
+                (text,),
+                fetch_one=True,
+            )
+            if existing:
+                try:
+                    execute_query(
+                        "UPDATE ai_unanswered SET times_asked = times_asked + 1, last_asked_at = ? WHERE id = ?",
+                        (now, existing[0]),
+                    )
+                except Exception:
+                    pass
+            else:
+                try:
+                    execute_query(
+                        "INSERT INTO ai_unanswered (text, times_asked, last_asked_at) VALUES (?, ?, ?)",
+                        (text, 1, now),
+                    )
+                except Exception:
+                    pass
+        except Exception:
+            pass
+
         # fallback: short generic reply
         return 'Kechirasiz, men buni tushunmadim. Iltimos, "mahsulotlar", "savatcha", yoki "aloqa" kabi so\'zlarni yuboring.'
     except Exception as e:
@@ -10694,6 +10774,71 @@ def api_status():
     return jsonify(
         {"status": "OK", "timestamp": get_current_time().isoformat(), "version": "1.0"}
     )
+
+
+@app.route("/admin/ai/unanswered", methods=["GET"])
+@role_required('super_admin')
+def admin_ai_unanswered():
+    """Return unanswered AI questions for superadmin review"""
+    try:
+        rows = execute_query(
+            "SELECT id, text, times_asked, last_asked_at FROM ai_unanswered ORDER BY times_asked DESC, last_asked_at DESC",
+            fetch_all=True,
+        )
+        items = []
+        for r in rows or []:
+            items.append({"id": r[0], "text": r[1], "times_asked": r[2], "last_asked_at": r[3]})
+        return jsonify({"success": True, "unanswered": items})
+    except Exception as e:
+        app_logger.error(f"admin_ai_unanswered error: {e}")
+        return jsonify({"success": False, "message": "Server error"}), 500
+
+
+@app.route("/admin/ai/teach", methods=["POST"])
+@role_required('super_admin')
+@csrf_protect
+def admin_ai_teach():
+    """Teach AI a new Q/A pair. JSON: { question_pattern, answer, remove_unanswered_id (optional) }"""
+    try:
+        data = request.get_json() or {}
+        qp = (data.get("question_pattern") or "").strip()[:800]
+        ans = (data.get("answer") or "").strip()[:2000]
+        remove_id = data.get("remove_unanswered_id")
+
+        if not qp or not ans:
+            return jsonify({"success": False, "message": "question_pattern and answer required"}), 400
+
+        now = get_current_time().isoformat()
+        execute_query(
+            "INSERT INTO ai_knowledge (question_pattern, answer, created_by, created_at) VALUES (?, ?, ?, ?)",
+            (qp, ans, session.get("admin_name") or "super", now),
+        )
+        # Optionally remove the unanswered row
+        if remove_id:
+            try:
+                execute_query("DELETE FROM ai_unanswered WHERE id = ?", (int(remove_id),))
+            except Exception:
+                pass
+
+        return jsonify({"success": True, "message": "Saved"})
+    except Exception as e:
+        app_logger.error(f"admin_ai_teach error: {e}")
+        return jsonify({"success": False, "message": "Server error"}), 500
+
+
+@app.route("/admin/ai/faq", methods=["GET"])
+@role_required('super_admin')
+def admin_ai_faq():
+    """List AI knowledge base entries"""
+    try:
+        rows = execute_query("SELECT id, question_pattern, answer, created_by, created_at FROM ai_knowledge ORDER BY id DESC", fetch_all=True)
+        items = []
+        for r in rows or []:
+            items.append({"id": r[0], "question_pattern": r[1], "answer": r[2], "created_by": r[3], "created_at": r[4]})
+        return jsonify({"success": True, "items": items})
+    except Exception as e:
+        app_logger.error(f"admin_ai_faq error: {e}")
+        return jsonify({"success": False, "message": "Server error"}), 500
 
 
 @app.route("/api/news/active", methods=["GET"])
@@ -18354,6 +18499,83 @@ if __name__ == "__main__":
                     app_logger.error(f"Failed to start telegram bot subprocess: {e}")
     except Exception as e:
         app_logger.error(f"Telegram bot auto-start logic failed: {e}")
+
+    # Install a safe SIGINT handler so a single Ctrl+C attempts a graceful
+    # shutdown (notify/terminate the telegram bot subprocess if running) and
+    # a second Ctrl+C forces exit. This avoids abrupt parent/child races.
+    try:
+        import signal
+        import threading
+
+        _sigint_state = {"count": 0}
+
+        def _sigint_handler(signum, frame):
+            # Increment the counter (thread-safe enough for this use)
+            _sigint_state["count"] += 1
+            try:
+                app_logger.info("SIGINT received, count=%d", _sigint_state["count"])
+            except Exception:
+                pass
+
+            pid_path = os.path.join("logs", "telegram_bot.pid")
+
+            if _sigint_state["count"] == 1:
+                # First Ctrl+C: politely terminate background bot (if any) and warn user
+                print("\nSIGINT received. Press Ctrl+C again within 3 seconds to force exit.")
+                try:
+                    if os.path.exists(pid_path):
+                        try:
+                            pid = int(open(pid_path, "r", encoding="utf-8").read().strip())
+                            try:
+                                # Try a polite termination first
+                                os.kill(pid, signal.SIGTERM)
+                                try:
+                                    app_logger.info("Sent SIGTERM to telegram bot (pid=%d)", pid)
+                                except Exception:
+                                    pass
+                            except Exception:
+                                # best effort - process may already be dead
+                                pass
+                        except Exception:
+                            pass
+                except Exception:
+                    pass
+
+                # Reset the counter after a short window so a delayed second Ctrl+C won't force exit
+                def _reset_after_delay():
+                    try:
+                        time.sleep(3)
+                        _sigint_state["count"] = 0
+                    except Exception:
+                        pass
+
+                threading.Thread(target=_reset_after_delay, daemon=True).start()
+
+            else:
+                # Second Ctrl+C: force exit
+                print("Exiting immediately.")
+                try:
+                    app_logger.info("Second SIGINT received - exiting immediately")
+                except Exception:
+                    pass
+                try:
+                    if os.path.exists(pid_path):
+                        try:
+                            os.remove(pid_path)
+                        except Exception:
+                            pass
+                except Exception:
+                    pass
+                # Hard exit
+                sys.exit(0)
+
+        # Register the handler
+        signal.signal(signal.SIGINT, _sigint_handler)
+    except Exception:
+        try:
+            app_logger.warning("Failed to install custom SIGINT handler; default behavior will apply")
+        except Exception:
+            pass
 
     # Reloader parent processni tugatib yubormasligi uchun reloaderni o'chiramiz
     # Debug-ni ham o'chirish parent/child ajralishini soddalashtiradi

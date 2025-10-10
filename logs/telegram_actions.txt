@@ -257,3 +257,30 @@
 2025-10-09 18:22:05 | ACTION | products_sent | user:tg:1656193663 | item:33
 2025-10-09 18:22:05 | ACTION | products_default_image_used | user:tg:1656193663 | item:35
 2025-10-09 18:22:08 | ACTION | products_sent_bytes | user:tg:1656193663 | item:35
+2025-10-09 18:26:07 | ACTION | products_default_image_used | user:tg:1656193663 | item:36
+2025-10-09 18:26:11 | ACTION | products_sent_bytes | user:tg:1656193663 | item:36
+2025-10-09 18:26:11 | ACTION | products_default_image_used | user:tg:1656193663 | item:37
+2025-10-09 18:26:15 | ACTION | products_sent_bytes | user:tg:1656193663 | item:37
+2025-10-09 18:26:18 | ACTION | products_sent | user:tg:1656193663 | item:34
+2025-10-09 18:26:20 | ACTION | products_sent | user:tg:1656193663 | item:33
+2025-10-09 18:26:20 | ACTION | products_default_image_used | user:tg:1656193663 | item:35
+2025-10-09 18:26:23 | ACTION | products_sent_bytes | user:tg:1656193663 | item:35
+2025-10-09 18:26:41 | ACTION | incoming_message | user:tg:1656193663 | mahsulotlarni ko'rsat
+2025-10-09 18:26:53 | ACTION | incoming_message | user:tg:1656193663 | chegirmalar
+2025-10-09 18:27:02 | ACTION | incoming_message | user:tg:1656193663 | yetkazib berish
+2025-10-09 18:27:09 | ACTION | incoming_message | user:tg:1656193663 | mahsulotlar
+2025-10-09 18:27:18 | ACTION | incoming_message | user:tg:1656193663 | mahsulotlar va narxlar
+2025-10-09 18:28:22 | ACTION | products_sent | user:tg:1656193663 | item:39
+2025-10-09 18:28:25 | ACTION | products_sent | user:tg:1656193663 | item:40
+2025-10-09 18:28:36 | ACTION | products_sent_bytes | user:tg:1656193663 | item:41
+2025-10-09 18:28:48 | ACTION | products_sent_bytes | user:tg:1656193663 | item:42
+2025-10-09 18:28:58 | ACTION | products_sent_bytes | user:tg:1656193663 | item:38
+2025-10-10 02:31:16 | ACTION | incoming_message | user:tg:1656193663 | salo,
+2025-10-10 02:31:20 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-10-10 02:31:22 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-10-10 02:31:29 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-10-10 02:32:30 | ACTION | products_sent_bytes | user:tg:1656193663 | item:39
+2025-10-10 02:32:31 | ACTION | products_sent_bytes | user:tg:1656193663 | item:40
+2025-10-10 02:32:32 | ACTION | products_sent_bytes | user:tg:1656193663 | item:41
+2025-10-10 02:32:32 | ACTION | products_sent_bytes | user:tg:1656193663 | item:42
+2025-10-10 02:32:33 | ACTION | products_sent_bytes | user:tg:1656193663 | item:38

@@ -557,12 +557,10 @@
       }
     </style>
 
-    {% block head %} {% set yandex_key = (config.get('YANDEX_MAPS_API') or '')
-    %} {% if yandex_key and yandex_key != 'None' %}
-    <script>
-  <!-- Public chat widget -->
-  <script src="/static/chat_widget.js"></script>
-    </script>
+    {% block head %} {% set yandex_key = (config.get('YANDEX_MAPS_API') or '') %}
+    {% if yandex_key and yandex_key != 'None' %}
+    <!-- Public chat widget -->
+    <script src="/static/chat_widget.js"></script>
     <!-- Robust fallback: ensure nav-notify clicks always open notify modal and manage aria-hidden -->
     <script>
       document.addEventListener("DOMContentLoaded", function () {
@@ -1917,6 +1915,53 @@
         box-shadow: 0 12px 35px rgba(234, 67, 53, 0.5);
         color: white;
       }
+
+      /* Chat FAB + panel styles */
+      .public-chat-fab {
+        position: fixed;
+        left: 16px;
+        bottom: 20px;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg,#00a8ff 0%,#006bb3 100%);
+        color: white;
+        font-size: 22px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+        z-index: 4000;
+        cursor: pointer;
+      }
+
+      .public-chat-panel {
+        position: fixed;
+        left: 16px;
+        bottom: 90px;
+        width: 320px;
+        max-width: calc(100% - 40px);
+        height: 420px;
+        background: #0d161b;
+        color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+        z-index: 4000;
+      }
+
+      .public-chat-panel.open { display: flex; }
+
+      .public-chat-header { padding: 10px 12px; background: linear-gradient(90deg,#0b2b3a,#083a4e); font-weight:600; display:flex; align-items:center; justify-content:space-between }
+      .public-chat-body { flex:1; padding:10px; overflow:auto; background: linear-gradient(180deg,#071018 0%, #0b1116 100%); }
+      .public-chat-input { padding:8px; display:flex; gap:8px; background:transparent; border-top:1px solid rgba(255,255,255,0.03) }
+      .public-chat-input input { flex:1; padding:8px 10px; border-radius:8px; border:1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02); color:#fff }
+      .public-chat-input button { background:#00a8ff; color:#fff; border:none; padding:6px 10px; border-radius:8px }
+      .public-chat-panel .messages .msg { margin-bottom:8px; padding:8px 10px; border-radius:8px; max-width:86%; }
+      .public-chat-panel .messages .msg.ai { background: rgba(255,255,255,0.04); align-self:flex-start }
+      .public-chat-panel .messages .msg.me { background: linear-gradient(90deg,#0a7a9a,#006bb3); align-self:flex-end; color:#fff }
 
       .social-icon-btn.phone:hover {
         background: linear-gradient(135deg, #25d366 0%, #1ebe57 100%);
