@@ -7115,17 +7115,21 @@ def api_menu_search():
 
         # Size and color are stored as CSV or JSON in sizes/colors columns
         if size:
-            # Use LIKE to match value inside CSV (e.g., '36,37,38')
+            # Normalize spaces and case for matching against CSV-like 'sizes' column.
+            # Many rows store values like '36, 37, 38' (with spaces). We'll remove
+            # spaces from both sides and perform a LIKE search to match values
+            # regardless of spacing: REPLACE(LOWER(sizes),' ','') LIKE '%40%'
+            size_norm = size.strip().lower().replace(' ', '')
             where_clauses.append(
-                "(sizes LIKE ? OR sizes LIKE ? OR sizes LIKE ? OR sizes = ?)"
+                "(REPLACE(LOWER(sizes), ' ', '') LIKE ?)"
             )
-            params.extend([f"%,{size},%", f"{size},%", f"%,{size}", size])
+            params.append(f"%{size_norm}%")
 
         if color:
-            where_clauses.append(
-                "(colors LIKE ? OR colors LIKE ? OR colors LIKE ? OR colors = ?)"
-            )
-            params.extend([f"%,{color},%", f"{color},%", f"%,{color}", color])
+            # Normalize spaces and case for color matching as well.
+            color_norm = color.strip().lower().replace(' ', '')
+            where_clauses.append("(REPLACE(LOWER(colors), ' ', '') LIKE ?)")
+            params.append(f"%{color_norm}%")
 
         order_by = "ORDER BY category, name"
         if sort == "price_asc":
@@ -7136,6 +7140,10 @@ def api_menu_search():
             order_by = "ORDER BY orders_count DESC"
         elif sort == "rating":
             order_by = "ORDER BY rating DESC"
+        elif sort == "name_asc":
+            order_by = "ORDER BY LOWER(name) ASC"
+        elif sort == "name_desc":
+            order_by = "ORDER BY LOWER(name) DESC"
 
         where_sql = " AND ".join(where_clauses) if where_clauses else "1"
         # Pagination support: limit & offset

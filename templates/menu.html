@@ -148,6 +148,38 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
       <!-- Search -->
       <div class="filter-section">
         <label for="menuSearchInput">Qidirish</label>
+        <!-- Defensive stub: ensure showCategory exists early to avoid
+             ReferenceError from legacy onclicks or diagnostic handlers
+             that may run before the full implementation is parsed. This
+             will be replaced by the real function later in the page. -->
+        <script>
+          try {
+            if (typeof window !== 'undefined' && typeof window.showCategory !== 'function') {
+              window.showCategory = function (event, category) {
+                try {
+                  // support both signatures
+                  if (typeof event === 'string' && (category === undefined || category === null)) {
+                    category = event; event = null;
+                  }
+                  console.warn('showCategory called before init; falling back to select change', category);
+                  const select = document.getElementById('filterCategory');
+                  if (select) {
+                    select.value = category === 'all' ? '' : (category || '');
+                    // trigger change to reuse wiring later
+                    try { select.dispatchEvent(new Event('change', { bubbles: true })); } catch (e) { /* ignore */ }
+                    return;
+                  }
+                  // last-resort: show/hide items directly
+                  const norm = String(category || 'all').toLowerCase().replace(/\s+/g,'');
+                  document.querySelectorAll('.menu-item-card').forEach(item => {
+                    const ic = (item.dataset.category || '').toLowerCase().replace(/\s+/g,'');
+                    item.style.display = (norm === 'all' || ic === norm) ? 'block' : 'none';
+                  });
+                } catch (err) { console.warn('showCategory stub failed', err); }
+              };
+            }
+          } catch (e) { /* ignore */ }
+        </script>
 
         <!-- Diagnostic/wiring helper: prints status and re-wires category buttons & search input -->
         <script>
@@ -370,21 +402,18 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
             <button
               class="category-btn active"
               data-cat="all"
-              onclick="showCategory(event, 'all')"
               data-translate="all_categories">
               Все товары
             </button>
             <button
               class="category-btn"
               data-cat="specobuv"
-              onclick="showCategory(event, 'specobuv')"
               data-translate="specobuv_category">
               Спецобувь
             </button>
             <button
               class="category-btn"
               data-cat="specodezhda"
-              onclick="showCategory(event, 'specodezhda')"
               data-translate="specodezhda_category">
               Спецодежда
             </button>
@@ -398,16 +427,19 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
             data-category="{{ (item.category or 'product')|lower }}"
             onclick="event.stopPropagation(); window.location.href='{{ url_for('product_detail', item_id=item.id) }}';">
             <div class="card-image">
-              <a
-                href="{{ url_for('product_detail', item_id=item.id) }}"
-                onclick="event.stopPropagation();">
-                <img
-                  src="{{ item.image_url or '/static/defoult.png' }}"
-                  alt="{{ item.name }}"
-                  title="{{ item.name }}"
-                  loading="lazy"
-                  decoding="async"
-                  onerror="this.src='/static/defoult.png'" />
+              <a href="{{ url_for('product_detail', item_id=item.id) }}" onclick="event.stopPropagation();">
+                <div class="gallery" data-item-id="{{ item.id }}">
+                  <div class="gallery-track">
+                    {% if item.media %}
+                      {% for m in item.media %}
+                        {% set src = (m.media_url if (m.media_url is defined) else (m.image_url if (m.image_url is defined) else (m if m is string else ''))) %}
+                        <img src="{{ src or '/static/defoult.png' }}" alt="{{ item.name }}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.png'" />
+                      {% endfor %}
+                    {% else %}
+                      <img src="{{ item.image_url or '/static/defoult.png' }}" alt="{{ item.name }}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.png'" />
+                    {% endif %}
+                  </div>
+                </div>
               </a>
             </div>
             <div class="card-body">
@@ -3079,29 +3111,39 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
     }
   }
 
-    function applyClientSideFilter() {
+  function applyClientSideFilter() {
       // Defensive DOM access
       const qEl = document.getElementById('menuSearchInput');
       const catEl = document.getElementById('filterCategory');
       const sizeEl = document.getElementById('filterSize');
       const colorEl = document.getElementById('filterColor');
-      const q = qEl ? (qEl.value || '').trim().toLowerCase() : '';
-      const category = catEl ? (catEl.value || '') : '';
-      const size = sizeEl ? (sizeEl.value || '').trim().toLowerCase() : '';
-      const color = colorEl ? (colorEl.value || '').trim().toLowerCase() : '';
+  const q = qEl ? (qEl.value || '').trim().toLowerCase() : '';
+  const category = catEl ? (catEl.value || '') : '';
+  // Normalize size/color like the server: remove spaces and lowercase
+  const size = sizeEl ? (sizeEl.value || '').trim().toLowerCase().replace(/\s+/g,'') : '';
+  const color = colorEl ? (colorEl.value || '').trim().toLowerCase().replace(/\s+/g,'') : '';
 
       const allItems = Object.values(menuData || {});
       const filtered = allItems.filter(it => {
         if (category && slugifyCategory(it.category || '') !== slugifyCategory(category)) return false;
         if (q && !(it.name.toLowerCase().includes(q) || (it.description||'').toLowerCase().includes(q))) return false;
-        if (size && !(it.sizes||'').toLowerCase().split(',').map(s=>s.trim()).includes(size)) return false;
-        if (color && !(it.colors||'').toLowerCase().split(',').map(s=>s.trim()).includes(color)) return false;
+        if (size) {
+          const sizesRaw = (it.sizes || '').toString().toLowerCase().replace(/\s+/g,'');
+          if (!sizesRaw.includes(size)) return false;
+        }
+        if (color) {
+          const colorsRaw = (it.colors || '').toString().toLowerCase().replace(/\s+/g,'');
+          if (!colorsRaw.includes(color)) return false;
+        }
         return true;
       });
       renderMenuItems(filtered);
     }
 
-    const debouncedSearch = debounce(performMenuSearch, 300);
+  const debouncedSearch = debounce(performMenuSearch, 300);
+
+  // Expose performMenuSearch for manual testing in console
+  try { if (typeof window !== 'undefined') window.performMenuSearch = performMenuSearch; } catch (e) {}
 
     // Centralized, idempotent wiring for filter inputs.
     function wireFilters() {

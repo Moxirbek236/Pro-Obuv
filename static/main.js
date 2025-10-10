@@ -211,10 +211,34 @@ const MenuClient = (function () {
       const div = document.createElement("div");
       div.className = "menu-item";
       div.setAttribute("data-id", item.id || "");
-      div.innerHTML = `
-        <div class="item-image"><img src="${escapeHtml(
+      const imageHtml = (function () {
+        try {
+          if (item.media && Array.isArray(item.media) && item.media.length) {
+            const imgs = item.media
+              .map((m) => {
+                const src =
+                  typeof m === "string" ? m : m.media_url || m.image_url || "";
+                return `<img src="${escapeHtml(
+                  src || "/static/defoult.png"
+                )}" alt="${escapeHtml(
+                  item.name || ""
+                )}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.png'" />`;
+              })
+              .join("");
+            return `<div class="item-image"><div class="gallery" data-item-id="${escapeHtml(
+              item.id || ""
+            )}"><div class="gallery-track">${imgs}</div></div></div>`;
+          }
+        } catch (e) {}
+        return `<div class="item-image"><img src="${escapeHtml(
           item.image_url || "/static/defoult.png"
-        )}" alt="${escapeHtml(item.name || "")}"></div>
+        )}" alt="${escapeHtml(
+          item.name || ""
+        )}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.png'" /></div>`;
+      })();
+
+      div.innerHTML = `
+        ${imageHtml}
         <div class="item-content">
           <h3 class="item-name">${escapeHtml(item.name || "")}</h3>
           <div class="rating-section"><div class="stars">${renderStars(
@@ -245,6 +269,10 @@ const MenuClient = (function () {
       });
 
       grid.appendChild(div);
+      // initialize gallery behaviors for this newly-inserted item (if any)
+      try {
+        initImageGalleries(div);
+      } catch (e) {}
     });
     // rebind add-to-cart handlers
     if (typeof attachCardHandlers === "function") attachCardHandlers();
@@ -258,6 +286,118 @@ function initMenuClient() {
     MenuClient.fetchAndRender();
   } catch (e) {}
 }
+
+// --- Gallery behavior (desktop hover-follow and mobile swipe) ---
+function initImageGalleries(root = document) {
+  try {
+    const galleries = root.querySelectorAll(".gallery");
+    galleries.forEach((g) => {
+      if (g._galleryInited) return;
+      g._galleryInited = true;
+      const track = g.querySelector(".gallery-track");
+      if (!track) return;
+
+      // Ensure images are laid out horizontally
+      g.style.overflow = "hidden";
+      track.style.display = "flex";
+      track.style.transition = "transform 220ms ease";
+      track.style.willChange = "transform";
+
+      // Desktop: hover follow
+      let rect = null;
+      const onMove = (ev) => {
+        try {
+          rect = g.getBoundingClientRect();
+          const isTouch = ev.type && ev.type.startsWith("touch");
+          const clientX = isTouch
+            ? (ev.touches && ev.touches[0] && ev.touches[0].clientX) || 0
+            : ev.clientX;
+          const rel = Math.max(
+            0,
+            Math.min(1, (clientX - rect.left) / rect.width)
+          );
+          const imgs = track.querySelectorAll("img");
+          if (!imgs || imgs.length <= 1) return;
+          const maxShift = track.scrollWidth - rect.width;
+          const shift = Math.round(maxShift * rel);
+          track.style.transform = `translateX(${-shift}px)`;
+        } catch (e) {
+          /* ignore */
+        }
+      };
+
+      const onLeave = () => {
+        try {
+          track.style.transform = "";
+        } catch (e) {}
+      };
+
+      // Desktop mouse events
+      g.addEventListener("mousemove", onMove);
+      g.addEventListener("mouseleave", onLeave);
+
+      // Touch handling: basic drag/swipe
+      let startX = 0,
+        currentX = 0,
+        dragging = false;
+      g.addEventListener(
+        "touchstart",
+        function (ev) {
+          try {
+            dragging = true;
+            startX =
+              (ev.touches && ev.touches[0] && ev.touches[0].clientX) || 0;
+            track.style.transition = "none";
+          } catch (e) {}
+        },
+        { passive: true }
+      );
+
+      g.addEventListener(
+        "touchmove",
+        function (ev) {
+          try {
+            if (!dragging) return;
+            currentX =
+              (ev.touches && ev.touches[0] && ev.touches[0].clientX) || 0;
+            const dx = startX - currentX;
+            const rect2 = g.getBoundingClientRect();
+            const maxShift = Math.max(0, track.scrollWidth - rect2.width);
+            // read current transform
+            const m = track.style.transform.match(/translateX\((-?\d+)px\)/);
+            const prev = m ? parseInt(m[1], 10) : 0;
+            let attempted = prev - dx;
+            attempted = Math.max(-maxShift, Math.min(0, attempted));
+            track.style.transform = `translateX(${attempted}px)`;
+            startX = currentX;
+          } catch (e) {
+            /* ignore */
+          }
+        },
+        { passive: true }
+      );
+
+      g.addEventListener("touchend", function () {
+        try {
+          dragging = false;
+          track.style.transition = "transform 220ms ease";
+        } catch (e) {}
+      });
+    });
+  } catch (e) {
+    console.warn("initImageGalleries failed", e);
+  }
+}
+
+// Ensure galleries for server-rendered cards are initialized on DOMContentLoaded
+document.addEventListener("DOMContentLoaded", function () {
+  try {
+    initImageGalleries(document);
+  } catch (e) {}
+});
+
+// Expose for dynamic rendering paths
+window.initImageGalleries = initImageGalleries;
 
 // --- News Ticker ---
 class NewsTicker {
