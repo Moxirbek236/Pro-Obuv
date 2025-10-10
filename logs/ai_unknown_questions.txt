@@ -18,3 +18,10 @@
 2025-10-09 12:55:54 | sender=web | mahsulotlar
 2025-10-09 07:56:57 | tg:1656193663 | salom
 2025-10-10 07:42:29 | sender=tg:1656193663 | sen kimsan
+2025-10-10 07:50:06 | sender=web | sen kimsan
+2025-10-10 07:50:16 | sender=tg:1656193663 | sen kimsan
+2025-10-10 08:06:26 | sender=tg:1656193663 | kimsan'
+2025-10-10 08:06:42 | sender=tg:1656193663 | sen kimsan
+2025-10-10 08:15:31 | sender=web | kisan
+2025-10-10 08:16:22 | sender=tg:1656193663 | slaom
+2025-10-10 08:16:30 | sender=tg:1656193663 | kimsan

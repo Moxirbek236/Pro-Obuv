@@ -1,0 +1,97 @@
+{% extends 'admin/base.html' %} {% block content %}
+<h2>AI - Javob kutayotgan savollar</h2>
+<p>Bu ro'yxatdan superadmin javob yozib, AI'ga o'rgatishi mumkin.</p>
+<table class="table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Savol</th>
+      <th>Vaqti</th>
+      <th>Times Asked</th>
+      <th>Amallar</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for it in items %}
+    <tr>
+      <td>{{ it.id }}</td>
+      <td>{{ it.text }}</td>
+      <td>{{ it.last_asked_at }}</td>
+      <td>{{ it.times_asked }}</td>
+      <td>
+        <a
+          href="#"
+          class="btn btn-sm btn-primary"
+          data-toggle="modal"
+          data-target="#teachModal"
+          data-id="{{ it.id }}"
+          data-text="{{ it.text }}"
+          >Javob yozish</a
+        >
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<!-- Teach modal -->
+<div class="modal fade" id="teachModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form
+        id="teachForm"
+        method="POST"
+        action="{{ url_for('admin_ai_teach') }}">
+        <div class="modal-header">
+          <h5 class="modal-title">AI ga javob qo'shish</h5>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+          <input
+            type="hidden"
+            name="remove_unanswered_id"
+            id="remove_unanswered_id" />
+          <div class="form-group">
+            <label>Savol</label>
+            <textarea
+              id="q_text"
+              class="form-control"
+              rows="3"
+              readonly></textarea>
+          </div>
+          <div class="form-group">
+            <label>Javob (AI uchun)</label>
+            <textarea name="answer" class="form-control" rows="6"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Question pattern (kalit so'zlar yoki jumla)</label>
+            <input type="text" name="question_pattern" class="form-control" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">
+            Saqlash va o'chirish
+          </button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Bekor qilish
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Populate modal with clicked row data
+  document.addEventListener("click", function (e) {
+    var target = e.target;
+    if (target && target.matches('[data-target="#teachModal"]')) {
+      var id = target.getAttribute("data-id");
+      var text = target.getAttribute("data-text");
+      document.getElementById("remove_unanswered_id").value = id;
+      document.getElementById("q_text").value = text;
+    }
+  });
+</script>
+
+{% endblock %}

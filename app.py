@@ -2987,6 +2987,29 @@ def init_db():
         );
     """
     )
+    # Ensure backwards-compatible columns exist (some older code writes 'sender'/'source')
+    try:
+        cur.execute("PRAGMA table_info(chat_messages);")
+        cols = [r[1] for r in cur.fetchall() or []]
+        # older code expects a 'sender' short column for simple storage
+        if "sender" not in cols:
+            try:
+                cur.execute("ALTER TABLE chat_messages ADD COLUMN sender TEXT;")
+            except Exception:
+                pass
+        if "source" not in cols:
+            try:
+                cur.execute("ALTER TABLE chat_messages ADD COLUMN source TEXT;")
+            except Exception:
+                pass
+        # ensure created_at exists (safety)
+        if "created_at" not in cols:
+            try:
+                cur.execute("ALTER TABLE chat_messages ADD COLUMN created_at TEXT;")
+            except Exception:
+                pass
+    except Exception:
+        pass
     cur.execute(
         """
         CREATE TABLE IF NOT EXISTS notifications (
@@ -3043,6 +3066,7 @@ def init_db():
         CREATE TABLE IF NOT EXISTS ai_unanswered (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             text TEXT NOT NULL,
+            sender TEXT DEFAULT 'web',
             times_asked INTEGER DEFAULT 1,
             last_asked_at TEXT NOT NULL
         );
@@ -3833,6 +3857,68 @@ def safe_init_database():
 
 
 if not os.environ.get("SKIP_DB_INIT"):
+    # --- Early minimal migrations ---
+    # Some parts of the app perform quick writes during startup. Run a
+    # tiny, idempotent migration first to ensure AI tables and the
+    # chat_messages 'sender' column exist so later migrations/read-writes
+    # don't fail with "no such table" / "no such column" errors.
+    def _ensure_core_ai_tables_and_chat_columns():
+        try:
+            conn = sqlite3.connect(DB_PATH, timeout=30.0)
+            cur = conn.cursor()
+            # Use executescript for multi-statement SQL to ensure both tables are created
+            cur.executescript(
+                """
+                CREATE TABLE IF NOT EXISTS ai_knowledge (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    question_pattern TEXT NOT NULL,
+                    answer TEXT NOT NULL,
+                    created_by TEXT,
+                    created_at TEXT NOT NULL
+                );
+
+                CREATE TABLE IF NOT EXISTS ai_unanswered (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    text TEXT NOT NULL,
+                    sender TEXT DEFAULT 'web',
+                    times_asked INTEGER DEFAULT 1,
+                    last_asked_at TEXT NOT NULL
+                );
+                """
+            )
+
+            # Ensure chat_messages has a sender column (older schemas use sender_type)
+            try:
+                cur.execute("PRAGMA table_info('chat_messages')")
+                cols = [r[1] for r in cur.fetchall() or []]
+                if cols:
+                    if "sender" not in cols:
+                        try:
+                            cur.execute("ALTER TABLE chat_messages ADD COLUMN sender TEXT")
+                        except Exception:
+                            # ALTER may fail on some older SQLite builds; ignore but continue
+                            pass
+                    if "source" not in cols:
+                        try:
+                            cur.execute("ALTER TABLE chat_messages ADD COLUMN source TEXT")
+                        except Exception:
+                            # Best-effort; ignore failures
+                            pass
+            except Exception:
+                # If the table doesn't exist yet, later init_db() will create it
+                pass
+
+            conn.commit()
+            conn.close()
+        except Exception:
+            # Best-effort only — don't block startup on this helper
+            try:
+                conn.close()
+            except Exception:
+                pass
+
+    _ensure_core_ai_tables_and_chat_columns()
+
     # Ensure columns exist on startup
     ensure_orders_columns()
     ensure_cart_items_columns()
@@ -10745,16 +10831,16 @@ def ai_respond(text, sender="guest"):
             if existing:
                 try:
                     execute_query(
-                        "UPDATE ai_unanswered SET times_asked = times_asked + 1, last_asked_at = ? WHERE id = ?",
-                        (now, existing[0]),
+                        "UPDATE ai_unanswered SET times_asked = times_asked + 1, last_asked_at = ?, sender = ? WHERE id = ?",
+                        (now, sender, existing[0]),
                     )
                 except Exception:
                     pass
             else:
                 try:
                     execute_query(
-                        "INSERT INTO ai_unanswered (text, times_asked, last_asked_at) VALUES (?, ?, ?)",
-                        (text, 1, now),
+                        "INSERT INTO ai_unanswered (text, sender, times_asked, last_asked_at) VALUES (?, ?, ?, ?)",
+                        (text, sender, 1, now),
                     )
                 except Exception:
                     pass
@@ -10839,6 +10925,98 @@ def admin_ai_faq():
     except Exception as e:
         app_logger.error(f"admin_ai_faq error: {e}")
         return jsonify({"success": False, "message": "Server error"}), 500
+
+
+@app.route('/super-admin/pages')
+@role_required('super_admin')
+def super_admin_pages():
+    """Manage editable site pages (contact, questions, about)."""
+    try:
+        # Load settings file where pages are stored
+        settings_path = os.path.join(os.path.dirname(__file__), 'superadmin_settings.json')
+        pages = {}
+        if os.path.exists(settings_path):
+            try:
+                with open(settings_path, 'r', encoding='utf-8') as f:
+                    pages = json.load(f) or {}
+            except Exception:
+                pages = {}
+
+        # Provide defaults
+        page_keys = [
+            ('contact_page', 'Contact page'),
+            ('questions_page', 'Questions page'),
+            ('about_page', 'About page'),
+        ]
+        page_list = []
+        for key, label in page_keys:
+            page_list.append({'key': key, 'label': label, 'content': pages.get(key, '')})
+
+        csrf_token = generate_csrf_token()
+        return render_template('admin/pages_management.html', pages=page_list, csrf_token=csrf_token)
+    except Exception as e:
+        app_logger.error(f"super_admin_pages error: {e}")
+        flash('Sahifa yuklashda xatolik', 'danger')
+        return redirect(url_for('super_admin_dashboard'))
+
+
+@app.route('/super-admin/pages/edit/<page_key>', methods=['GET', 'POST'])
+@role_required('super_admin')
+@csrf_protect
+def super_admin_edit_page(page_key):
+    settings_path = os.path.join(os.path.dirname(__file__), 'superadmin_settings.json')
+    try:
+        pages = {}
+        if os.path.exists(settings_path):
+            try:
+                with open(settings_path, 'r', encoding='utf-8') as f:
+                    pages = json.load(f) or {}
+            except Exception:
+                pages = {}
+
+        if request.method == 'POST':
+            content = request.form.get('content', '')
+            pages[page_key] = content
+            try:
+                with open(settings_path, 'w', encoding='utf-8') as f:
+                    json.dump(pages, f, ensure_ascii=False, indent=2)
+            except Exception as e:
+                app_logger.error(f"Failed to save page {page_key}: {e}")
+                flash('Saqlashda xatolik', 'danger')
+                return redirect(url_for('super_admin_pages'))
+
+            flash('Sahifa saqlandi', 'success')
+            return redirect(url_for('super_admin_pages'))
+
+        content = pages.get(page_key, '')
+        csrf_token = generate_csrf_token()
+        return render_template('admin/edit_page.html', page_key=page_key, content=content, csrf_token=csrf_token)
+    except Exception as e:
+        app_logger.error(f"super_admin_edit_page error: {e}")
+        flash('Sahifa yuklashda xatolik', 'danger')
+        return redirect(url_for('super_admin_pages'))
+
+
+@app.route('/super-admin/ai-unanswered', methods=['GET'])
+@role_required('super_admin')
+def super_admin_ai_unanswered_ui():
+    """Render a UI for superadmin to view and answer unanswered AI questions."""
+    try:
+        # reuse existing API data
+        rows = execute_query(
+            "SELECT id, text, times_asked, last_asked_at FROM ai_unanswered ORDER BY times_asked DESC, last_asked_at DESC",
+            fetch_all=True,
+        )
+        items = []
+        for r in rows or []:
+            items.append({'id': r[0], 'text': r[1], 'times_asked': r[2], 'last_asked_at': r[3]})
+
+        csrf_token = generate_csrf_token()
+        return render_template('admin/ai_unanswered.html', items=items, csrf_token=csrf_token)
+    except Exception as e:
+        app_logger.error(f"super_admin_ai_unanswered_ui error: {e}")
+        flash('Xatolik yuz berdi', 'danger')
+        return redirect(url_for('super_admin_dashboard'))
 
 
 @app.route("/api/news/active", methods=["GET"])
@@ -13277,6 +13455,36 @@ try:
     ensure_avatar_columns()
 except Exception:
     pass
+
+
+# Ensure news table has show_in_ticker column (used by ticker management)
+try:
+    try:
+        con = sqlite3.connect(DB_PATH)
+        cur = con.cursor()
+        cur.execute("PRAGMA table_info(news)")
+        cols = [r[1] for r in cur.fetchall()]
+        if "show_in_ticker" not in cols:
+            try:
+                app_logger.info("Adding missing column show_in_ticker to news table")
+            except Exception:
+                pass
+            try:
+                cur.execute("ALTER TABLE news ADD COLUMN show_in_ticker INTEGER DEFAULT 0")
+                con.commit()
+            except Exception:
+                # If ALTER fails (e.g. table missing), ignore and let later logic handle it
+                pass
+    finally:
+        try:
+            con.close()
+        except Exception:
+            pass
+except Exception:
+    try:
+        app_logger.exception("Failed to ensure news.show_in_ticker column at startup")
+    except Exception:
+        pass
 
 
 @app.route("/api/chats", methods=["GET", "POST"])
@@ -17850,335 +18058,62 @@ def upload_news_media():
 @app.route("/admin/card-management")
 @role_required("super_admin")
 def admin_card_management():
-    """Card payment management page - Super admin only"""
-    try:
-        return render_template("admin/card_management.html")
-    except Exception as e:
-        app_logger.error(f"Card management page error: {str(e)}")
-        flash("Sahifani yuklashda xatolik yuz berdi", "danger")
-        return redirect(url_for("super_admin_dashboard"))
+    """Card management removed. Return 404 to indicate the page is no longer available."""
+    return (jsonify({"success": False, "message": "Card management page removed"}), 404)
 
 
 @app.route("/api/card-data", methods=["GET"])
 @role_required("super_admin")
 def api_get_card_data():
-    """Get card payment data - Super admin only"""
-    try:
-        # Get card data from database
-        card_data = execute_query(
-            "SELECT * FROM card_payment_settings WHERE id = 1", fetch_one=True
-        )
-
-        if card_data:
-            return jsonify(
-                {
-                    "success": True,
-                    "data": {
-                        "card_number": card_data.get("card_number", ""),
-                        "card_name": card_data.get("card_name", ""),
-                        "click_qr_url": card_data.get("click_qr_url", ""),
-                        "payme_qr_url": card_data.get("payme_qr_url", ""),
-                    },
-                }
-            )
-        else:
-            return jsonify({"success": True, "data": None})
-
-    except Exception as e:
-        app_logger.error(f"Get card data error: {str(e)}")
-        return jsonify({"success": False, "message": "Ma'lumot yuklashda xatolik"}), 500
+    """Card data API removed."""
+    return (jsonify({"success": False, "message": "Card API removed"}), 404)
 
 
 @app.route("/api/save-card-data", methods=["POST"])
 @role_required("super_admin")
 @csrf_protect
 def api_save_card_data():
-    """Save card payment data - Super admin only"""
-    try:
-        data = request.get_json() or {}
-        card_number = data.get("card_number", "").strip()
-        card_name = data.get("card_name", "").strip()
-        click_qr_url = data.get("click_qr_url", "").strip()
-        payme_qr_url = data.get("payme_qr_url", "").strip()
-
-        if not card_number or not card_name:
-            return (
-                jsonify(
-                    {
-                        "success": False,
-                        "message": "Karta raqami va egasi ismi kiritilishi shart",
-                    }
-                ),
-                400,
-            )
-
-        # Check if record exists
-        existing = execute_query(
-            "SELECT id FROM card_payment_settings WHERE id = 1", fetch_one=True
-        )
-
-        now = get_current_time().isoformat()
-
-        if existing:
-            # Update existing record
-            execute_query(
-                """UPDATE card_payment_settings 
-                   SET card_number = ?, card_name = ?, click_qr_url = ?, payme_qr_url = ?, updated_at = ? 
-                   WHERE id = 1""",
-                (
-                    card_number,
-                    card_name,
-                    click_qr_url or None,
-                    payme_qr_url or None,
-                    now,
-                ),
-            )
-        else:
-            # Insert new record
-            execute_query(
-                """INSERT INTO card_payment_settings (id, card_number, card_name, click_qr_url, payme_qr_url, created_at, updated_at) 
-                   VALUES (1, ?, ?, ?, ?, ?, ?)""",
-                (
-                    card_number,
-                    card_name,
-                    click_qr_url or None,
-                    payme_qr_url or None,
-                    now,
-                    now,
-                ),
-            )
-
-        return jsonify({"success": True, "message": "Karta ma'lumotlari saqlandi"})
-
-    except Exception as e:
-        app_logger.error(f"Save card data error: {str(e)}")
-        return (
-            jsonify({"success": False, "message": "Ma'lumotlarni saqlashda xatolik"}),
-            500,
-        )
+    return (jsonify({"success": False, "message": "Card API removed"}), 404)
 
 
 @app.route("/api/upload-qr", methods=["POST"])
 @role_required("super_admin")
 @csrf_protect
 def api_upload_qr():
-    """Upload QR code files - Super admin only"""
-    try:
-        if "file" not in request.files:
-            return jsonify({"success": False, "message": "Fayl tanlanmagan"}), 400
-
-        file = request.files["file"]
-        qr_type = request.form.get("type", "unknown")
-
-        if file.filename == "":
-            return jsonify({"success": False, "message": "Fayl tanlanmagan"}), 400
-
-        # Check file type
-        allowed_extensions = {"png", "jpg", "jpeg", "gif", "webp"}
-        if file and "." in file.filename:
-            ext = file.filename.rsplit(".", 1)[1].lower()
-            if ext not in allowed_extensions:
-                return (
-                    jsonify(
-                        {
-                            "success": False,
-                            "message": "Faqat rasm fayllari qabul qilinadi",
-                        }
-                    ),
-                    400,
-                )
-
-        # Create uploads directory
-        upload_folder = os.path.join(os.getcwd(), "static", "uploads", "qr")
-        os.makedirs(upload_folder, exist_ok=True)
-
-        # Generate unique filename
-        import uuid
-        from datetime import datetime
-
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        unique_id = str(uuid.uuid4())[:8]
-        filename = f"{qr_type}_{timestamp}_{unique_id}.{ext}"
-        filepath = os.path.join(upload_folder, filename)
-
-        # Save file
-        file.save(filepath)
-
-        # Return URL
-        file_url = f"/static/uploads/qr/{filename}"
-
-        return jsonify(
-            {
-                "success": True,
-                "url": file_url,
-                "message": "QR kod muvaffaqiyatli yuklandi",
-            }
-        )
-
-    except Exception as e:
-        app_logger.error(f"Upload QR error: {str(e)}")
-        return jsonify({"success": False, "message": "O'chirish xatoligi"}), 500
+    return (jsonify({"success": False, "message": "QR upload API removed"}), 404)
 
 
 @app.route("/admin/360-management")
 @role_required("super_admin")
 def admin_360_management():
-    """360 degree photos management page - Super admin only"""
-    try:
-        return render_template("admin/360_management.html")
-    except Exception as e:
-        app_logger.error(f"360 management page error: {str(e)}")
-        flash("Sahifani yuklashda xatolik yuz berdi", "danger")
-        return redirect(url_for("super_admin_dashboard"))
+    """360 management removed."""
+    return (jsonify({"success": False, "message": "360 management page removed"}), 404)
 
 
 @app.route("/api/360-photos", methods=["GET"])
 @role_required("super_admin")
 def api_get_360_photos():
-    """Get all 360 photos - Super admin only"""
-    try:
-        photos = execute_query(
-            "SELECT * FROM photos_360 ORDER BY display_order ASC, created_at DESC",
-            fetch_all=True,
-        )
-        return jsonify({"success": True, "photos": photos or []})
-    except Exception as e:
-        app_logger.error(f"Get 360 photos error: {str(e)}")
-        return (
-            jsonify({"success": False, "message": "360° rasmlarni yuklashda xatolik"}),
-            500,
-        )
+    return (jsonify({"success": False, "message": "360 API removed"}), 404)
 
 
 @app.route("/api/upload-360-photos", methods=["POST"])
 @role_required("super_admin")
 def api_upload_360_photos():
-    """Upload 360 photos - Super admin only"""
-    try:
-        if "files" not in request.files:
-            return jsonify({"success": False, "message": "Fayllar tanlanmagan"}), 400
-
-        files = request.files.getlist("files")
-        if not files:
-            return jsonify({"success": False, "message": "Fayllar tanlanmagan"}), 400
-
-        # Create uploads directory
-        upload_folder = os.path.join(os.getcwd(), "static", "uploads", "360")
-        os.makedirs(upload_folder, exist_ok=True)
-
-        uploaded_files = []
-        now = get_current_time().isoformat()
-
-        for file in files:
-            if file.filename == "":
-                continue
-
-            # Check file type
-            allowed_extensions = {"png", "jpg", "jpeg", "gif", "webp"}
-            if file and "." in file.filename:
-                ext = file.filename.rsplit(".", 1)[1].lower()
-                if ext not in allowed_extensions:
-                    continue
-
-            # Generate unique filename
-            import uuid
-            from datetime import datetime
-
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            unique_id = str(uuid.uuid4())[:8]
-            filename = f"360_{timestamp}_{unique_id}.{ext}"
-            filepath = os.path.join(upload_folder, filename)
-
-            # Save file
-            file.save(filepath)
-
-            # Save to database
-            file_url = f"/static/uploads/360/{filename}"
-            title = f"360° Rasm - {datetime.now().strftime('%d.%m.%Y %H:%M')}"
-
-            photo_id = execute_query(
-                """INSERT INTO photos_360 (title, image_url, is_active, display_order, created_by, created_at, updated_at)
-                   VALUES (?, ?, 0, 0, 1, ?, ?)""",
-                (title, file_url, now, now),
-            )
-
-            uploaded_files.append(
-                {"id": photo_id, "title": title, "image_url": file_url}
-            )
-
-        if uploaded_files:
-            return jsonify(
-                {
-                    "success": True,
-                    "message": f"{len(uploaded_files)} ta 360° rasm yuklandi",
-                    "uploaded": uploaded_files,
-                }
-            )
-        else:
-            return (
-                jsonify({"success": False, "message": "Hech qanday fayl yuklanmadi"}),
-                400,
-            )
-
-    except Exception as e:
-        app_logger.error(f"Upload 360 photos error: {str(e)}")
-        return (
-            jsonify({"success": False, "message": "360° rasm yuklashda xatolik"}),
-            500,
-        )
+    return (jsonify({"success": False, "message": "360 upload API removed"}), 404)
 
 
 @app.route("/api/set-active-360-photo/<int:photo_id>", methods=["POST"])
 @role_required("super_admin")
 @csrf_protect
 def api_set_active_360_photo(photo_id):
-    """Set 360 photo as active - Super admin only"""
-    try:
-        # First deactivate all photos
-        execute_query("UPDATE photos_360 SET is_active = 0")
-
-        # Then activate the selected photo
-        now = get_current_time().isoformat()
-        execute_query(
-            "UPDATE photos_360 SET is_active = 1, updated_at = ? WHERE id = ?",
-            (now, photo_id),
-        )
-
-        return jsonify({"success": True, "message": "360° rasm faollashtirildi"})
-
-    except Exception as e:
-        app_logger.error(f"Set active 360 photo error: {str(e)}")
-        return jsonify({"success": False, "message": "Faollashtirish xatoligi"}), 500
+    return (jsonify({"success": False, "message": "360 API removed"}), 404)
 
 
 @app.route("/api/delete-360-photo/<int:photo_id>", methods=["DELETE"])
 @role_required("super_admin")
 @csrf_protect
 def api_delete_360_photo(photo_id):
-    """Delete 360 photo - Super admin only"""
-    try:
-        # Get photo info to delete file
-        photo = execute_query(
-            "SELECT image_url FROM photos_360 WHERE id = ?", (photo_id,), fetch_one=True
-        )
-
-        if photo:
-            # Try to delete the file
-            try:
-                file_path = photo["image_url"].replace("/static/", "static/")
-                if os.path.exists(file_path):
-                    os.remove(file_path)
-            except Exception as file_err:
-                app_logger.warning(f"Could not delete 360 photo file: {file_err}")
-
-        # Delete from database
-        execute_query("DELETE FROM photos_360 WHERE id = ?", (photo_id,))
-
-        return jsonify({"success": True, "message": "360° rasm o'chirildi"})
-
-    except Exception as e:
-        app_logger.error(f"Delete 360 photo error: {str(e)}")
-        return jsonify({"success": False, "message": "O'chirish xatoligi"}), 500
+    return (jsonify({"success": False, "message": "360 API removed"}), 404)
 
 
 # Public 360-room page removed per request. Admin APIs remain for managing photos.
@@ -18424,24 +18359,45 @@ def api_chat_ai():
             if generated:
                 reply = generated
             else:
-                reply = (
-                    "🤔 Kechirasiz, men hali bunday savolga to'liq javob bera olmayman.\n\n"
-                    "Pro Obuv do'koni haqida quyidagi mavzularda so'rashingiz mumkin:\n"
-                    "• Mahsulotlar va narxlar\n• Yetkazib berish\n• Buyurtma berish\n"
-                    "• Kafolat va qaytarish\n• Chegirmalar\n\nYoki biz bilan to'g'ridan-to'g'ri bog'laning: +998 90 123 45 67"
-                )
-                # Log unknown/unsupported questions for later improvement
+                # No generated reply: queue the question for superadmin review
+                try:
+                    now = get_current_time().isoformat()
+                    existing = execute_query(
+                        "SELECT id, times_asked FROM ai_unanswered WHERE text = ? LIMIT 1",
+                        (text,),
+                        fetch_one=True,
+                    )
+                    if existing:
+                        try:
+                            execute_query(
+                                "UPDATE ai_unanswered SET times_asked = times_asked + 1, last_asked_at = ?, sender = ? WHERE id = ?",
+                                (now, sender, existing[0]),
+                            )
+                            unanswered_id = existing[0]
+                        except Exception:
+                            unanswered_id = existing[0]
+                    else:
+                        try:
+                            unanswered_id = execute_query(
+                                "INSERT INTO ai_unanswered (text, sender, times_asked, last_asked_at) VALUES (?, ?, ?, ?)",
+                                (text, sender, 1, now),
+                            )
+                        except Exception:
+                            unanswered_id = None
+                except Exception:
+                    unanswered_id = None
+
+                # Also append to a diagnostics file (optional)
                 try:
                     os.makedirs("logs", exist_ok=True)
                     ts = time.strftime("%Y-%m-%d %H:%M:%S")
-                    with open(
-                        os.path.join("logs", "ai_unknown_questions.txt"),
-                        "a",
-                        encoding="utf-8",
-                    ) as f:
+                    with open(os.path.join("logs", "ai_unknown_questions.txt"), "a", encoding="utf-8") as f:
                         f.write(f"{ts} | sender={sender} | {text}\n")
                 except Exception:
                     pass
+
+                # Acknowledge receipt — superadmin will answer and can teach the AI
+                reply = "Xabaringiz qabul qilindi. Superadmin tez orada javob beradi."
 
         try:
             app_logger.info(f"chat_ai sender=%s text=%s", sender, text)
@@ -18460,7 +18416,7 @@ def api_chat_ai():
 # Flask app runner
 if __name__ == "__main__":
     host = "127.0.0.1"
-    port = 5000
+    port = int(os.environ.get("PORT", 10000))
     print(f"\nDastur quyidagi URLda ishga tushdi: http://{host}:{port}\n")
 
     # Optionally start the Telegram bot as a separate process when the app starts.

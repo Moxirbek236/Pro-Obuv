@@ -1,0 +1,28 @@
+{% extends 'admin/base.html' %} {% block content %}
+<h2>Sahifalar boshqaruvi</h2>
+<p>
+  Bu yerda saytning tahrirlanadigan sahifalarini ko'rish va tahrirlash mumkin.
+</p>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Sahifa</th>
+      <th>Amallar</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for p in pages %}
+    <tr>
+      <td>{{ p.label }}</td>
+      <td>
+        <a
+          class="btn btn-sm btn-primary"
+          href="{{ url_for('super_admin_edit_page', page_key=p.key) }}"
+          >Tahrirlash</a
+        >
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

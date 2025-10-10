@@ -1,0 +1,16 @@
+{% extends 'admin/base.html' %} {% block content %}
+<h2>Sahifani tahrirlash: {{ page_key }}</h2>
+<form method="POST">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+  <div class="form-group">
+    <label for="content">HTML mazmuni</label>
+    <textarea id="content" name="content" class="form-control" rows="12">
+{{ content|safe }}</textarea
+    >
+  </div>
+  <button class="btn btn-success" type="submit">Saqlash</button>
+  <a class="btn btn-secondary" href="{{ url_for('super_admin_pages') }}"
+    >Ortga</a
+  >
+</form>
+{% endblock %}
