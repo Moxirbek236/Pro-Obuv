@@ -64264,3 +64264,26 @@ werkzeug.exceptions.MethodNotAllowed: 405 Method Not Allowed: The method is not 
 2025-10-11 07:25:41,242 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://localhost:10000/.well-known/appspecific/com.chrome.devtools.json
 2025-10-11 07:29:54,092 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://localhost:10000/.well-known/appspecific/com.chrome.devtools.json
 2025-10-11 07:31:15,038 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://localhost:10000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-11 07:50:03,580 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-10-11 07:58:42,257 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://localhost:10000/static/favicons/favicon.ico
+2025-10-11 07:58:42,608 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://localhost:10000/static/favicons/favicon-32x32.png
+2025-10-11 07:58:42,630 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://localhost:10000/static/favicons/site.webmanifest
+2025-10-11 07:58:42,684 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://localhost:10000/static/favicons/favicon-16x16.png
+2025-10-11 07:59:26,493 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://localhost:10000/static/favicons/site.webmanifest
+2025-10-11 07:59:26,509 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://localhost:10000/static/favicons/favicon.ico
+2025-10-11 07:59:27,528 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://localhost:10000/static/favicons/favicon-16x16.png
+2025-10-11 07:59:31,209 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://localhost:10000/static/favicons/favicon.ico
+2025-10-11 07:59:31,225 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://localhost:10000/static/favicons/favicon-32x32.png
+2025-10-11 07:59:31,458 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://localhost:10000/static/favicons/favicon-16x16.png
+2025-10-11 07:59:31,458 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://localhost:10000/static/favicons/site.webmanifest
+2025-10-11 07:59:44,808 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://localhost:10000/static/favicons/favicon.ico
+2025-10-11 07:59:44,941 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://localhost:10000/static/favicons/favicon-32x32.png
+2025-10-11 07:59:44,990 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://localhost:10000/static/favicons/favicon-16x16.png
+2025-10-11 07:59:45,006 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://localhost:10000/static/favicons/site.webmanifest
