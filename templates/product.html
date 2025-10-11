@@ -51,6 +51,15 @@
     align-items: start;
   }
 
+  /* Media container visibility: desktop gets classic mainMedia UI, mobile uses gallery swipe */
+  .gallery-mobile { display: none; }
+  .media-stage-desktop { display: block; }
+
+  @media (max-width: 900px) {
+    .gallery-mobile { display: block; }
+    .media-stage-desktop { display: none; }
+  }
+
   @media (max-width: 900px) {
     .product-container {
       grid-template-columns: 1fr;
@@ -242,13 +251,37 @@
 
 <div class="product-container">
   <div class="product-media">
-    <div class="media-stage" id="mediaStage">
-      {# Server-rendered gallery using the shared .gallery/.gallery-track structure #}
-      {% set all_media = media if media else [] %}
-      {% if all_media|length == 0 and item.image_url %}
-        {% set all_media = [{'media_url': item.image_url, 'media_type':'image'}] %}
-      {% endif %}
+    {# Desktop: classic main image + thumbnails, visible on larger viewports #}
+    <div class="media-stage-desktop">
+      <div class="media-stage" id="mediaStageDesktop">
+        {% set all_media = media if media else [] %}
+        {% if all_media|length == 0 and item.image_url %}
+          {% set all_media = [{'media_url': item.image_url, 'media_type':'image'}] %}
+        {% endif %}
 
+        {% set first = all_media[0] if all_media|length > 0 else None %}
+        {% if first and first.media_type and first.media_type.startswith('video') %}
+          <video id="mainMediaDesktop" src="{{ first.media_url }}" controls muted></video>
+        {% else %}
+          <img id="mainMediaDesktop" src="{{ (first.media_url if first else item.image_url) or '/static/defoult.png' }}" alt="{{ item.name }}" />
+        {% endif %}
+
+        <button class="media-btn left" id="prevBtnDesktop" title="Oldingi">‹</button>
+        <button class="media-btn right" id="nextBtnDesktop" title="Keyingi">›</button>
+        <button class="media-btn zoom" id="zoomBtnDesktop" title="Kattalashtirish">🔍</button>
+      </div>
+
+      <div class="thumbnails" id="thumbnailsDesktop">
+        {% for m in all_media %}
+          <div class="thumb" data-idx="{{ loop.index0 }}">
+            <img src="{{ m.media_url }}" alt="thumb" />
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    {# Mobile-only: gallery with swipe/snapping initialized by static/main.js #}
+    <div class="gallery-mobile">
       <div class="gallery" id="productGallery" data-item-id="{{ item.id }}">
         <div class="gallery-track">
           {% for m in all_media %}
@@ -261,18 +294,13 @@
         </div>
       </div>
 
-      <button class="media-btn left" id="prevBtn" title="Oldingi">‹</button>
-      <button class="media-btn right" id="nextBtn" title="Keyingi">›</button>
-      <button class="media-btn zoom" id="zoomBtn" title="Kattalashtirish">🔍</button>
-    </div>
-
-    <div class="thumbnails" id="thumbnails">
-      {% set all_media = all_media %}
-      {% for m in all_media %}
-        <div class="thumb" data-idx="{{ loop.index0 }}">
-          <img src="{{ m.media_url }}" alt="thumb" />
-        </div>
-      {% endfor %}
+      <div class="thumbnails" id="thumbnailsMobile">
+        {% for m in all_media %}
+          <div class="thumb" data-idx="{{ loop.index0 }}">
+            <img src="{{ m.media_url }}" alt="thumb" />
+          </div>
+        {% endfor %}
+      </div>
     </div>
   </div>
 
@@ -507,66 +535,67 @@
   const defaultImage = '{{ item.image_url or '/static/defoult.png' }}';
   let currentIndex = 0;
 
-  // Try to use the shared gallery initialized by static/main.js
-  const galleryEl = document.getElementById('productGallery');
-  const prevBtn = document.getElementById('prevBtn');
-  const nextBtn = document.getElementById('nextBtn');
-  const zoomBtn = document.getElementById('zoomBtn');
-  const thumbs = document.getElementById('thumbnails');
+  // Desktop elements
+  const mainDesktop = document.getElementById('mainMediaDesktop');
+  const prevBtnDesktop = document.getElementById('prevBtnDesktop');
+  const nextBtnDesktop = document.getElementById('nextBtnDesktop');
+  const zoomBtnDesktop = document.getElementById('zoomBtnDesktop');
+  const thumbsDesktop = document.getElementById('thumbnailsDesktop');
 
-  // Ensure galleries are initialized (static/main.js runs init on DOMContentLoaded, but call again to be safe)
+  // Mobile gallery elements
+  const galleryEl = document.getElementById('productGallery');
+  const thumbsMobile = document.getElementById('thumbnailsMobile');
+
+  // Initialize shared galleries (idempotent)
   try { if (typeof initImageGalleries === 'function') initImageGalleries(document); } catch (e) {}
 
-  function updateThumbs(idx) {
-    if (!thumbs) return;
-    Array.from(thumbs.children).forEach((t, i) => (t.style.outline = i === idx ? '2px solid #21a366' : ''));
+  // Desktop: simple mainMedia swapper
+  function updateMainDesktop(index) {
+    currentIndex = (index + (mediaData.length || 1)) % (mediaData.length || 1);
+    const m = (mediaData && mediaData.length) ? mediaData[currentIndex] : { media_url: defaultImage, media_type: 'image' };
+    const existing = document.getElementById('mainMediaDesktop');
+    if (!existing) return;
+    if (m.media_type && m.media_type.startsWith('video')) {
+      const vid = document.createElement('video');
+      vid.id = 'mainMediaDesktop'; vid.src = m.media_url; vid.controls = true; vid.autoplay = false; vid.muted = true;
+      existing.replaceWith(vid);
+    } else {
+      const img = document.createElement('img');
+      img.id = 'mainMediaDesktop'; img.src = m.media_url || defaultImage; img.alt = '{{ item.name }}';
+      existing.replaceWith(img);
+    }
+    // highlight desktop thumbnails
+    if (thumbsDesktop) Array.from(thumbsDesktop.children).forEach((t, i) => t.style.outline = (i === currentIndex) ? '2px solid #21a366' : '');
   }
 
-  function setSlide(i) {
+  if (prevBtnDesktop) prevBtnDesktop.addEventListener('click', function (e) { e.stopPropagation(); updateMainDesktop(currentIndex - 1); });
+  if (nextBtnDesktop) nextBtnDesktop.addEventListener('click', function (e) { e.stopPropagation(); updateMainDesktop(currentIndex + 1); });
+  if (thumbsDesktop) {
+    Array.from(thumbsDesktop.querySelectorAll('.thumb')).forEach(function (el) { if (el._wired) return; el._wired = true; el.addEventListener('click', function () { updateMainDesktop(parseInt(this.dataset.idx, 10) || 0); }); });
+  }
+
+  if (zoomBtnDesktop) zoomBtnDesktop.addEventListener('click', function (e) { e.stopPropagation(); const m = (mediaData && mediaData.length) ? mediaData[currentIndex] : { media_url: defaultImage }; document.getElementById('zoomImg').src = m.media_url || defaultImage; document.getElementById('zoomOverlay').style.display = 'flex'; });
+
+  // Mobile: wire thumbnails to setSlide on gallery
+  function setSlideMobile(i) {
     if (!galleryEl) return;
     const count = (mediaData && mediaData.length) ? mediaData.length : (galleryEl.querySelectorAll('img,video').length || 1);
     const idx = Math.max(0, Math.min(count - 1, i || 0));
     currentIndex = idx;
     try {
-      if (typeof galleryEl.setSlide === 'function') {
-        galleryEl.setSlide(idx);
-      } else {
-        const track = galleryEl.querySelector('.gallery-track');
-        const elems = galleryEl.querySelectorAll('img,video');
-        const w = Math.round(galleryEl.getBoundingClientRect().width || galleryEl.clientWidth || window.innerWidth);
-        if (track) track.style.transform = `translateX(${-idx * w}px)`;
-      }
+      if (typeof galleryEl.setSlide === 'function') galleryEl.setSlide(idx);
     } catch (e) {}
-    updateThumbs(currentIndex);
+    // highlight mobile thumbs
+    if (thumbsMobile) Array.from(thumbsMobile.children).forEach((t, ii) => t.style.outline = (ii === idx) ? '2px solid #21a366' : '');
   }
 
-  if (prevBtn) prevBtn.addEventListener('click', function (e) { e.stopPropagation(); setSlide(Math.max(0, currentIndex - 1)); });
-  if (nextBtn) nextBtn.addEventListener('click', function (e) { e.stopPropagation(); setSlide(Math.min(currentIndex + 1, (mediaData && mediaData.length ? mediaData.length - 1 : 0))); });
-
-  // click thumbnails
-  if (thumbs) {
-    Array.from(thumbs.querySelectorAll('.thumb')).forEach(function (el) {
-      if (el._wired) return; el._wired = true;
-      el.addEventListener('click', function () { setSlide(parseInt(this.dataset.idx, 10) || 0); });
-    });
+  if (thumbsMobile) {
+    Array.from(thumbsMobile.querySelectorAll('.thumb')).forEach(function (el) { if (el._wired) return; el._wired = true; el.addEventListener('click', function () { setSlideMobile(parseInt(this.dataset.idx, 10) || 0); }); });
   }
 
-  // zoom
-  if (zoomBtn) zoomBtn.addEventListener('click', function (e) {
-    e.stopPropagation();
-    let src = defaultImage;
-    try {
-      if (galleryEl) {
-        const els = galleryEl.querySelectorAll('img,video');
-        if (els && els.length > 0) {
-          const el = els[currentIndex] || els[0];
-          src = el && (el.tagName.toLowerCase() === 'video' ? el.currentSrc || el.src : el.src) || src;
-        }
-      }
-    } catch (e) {}
-    document.getElementById('zoomImg').src = src || defaultImage;
-    document.getElementById('zoomOverlay').style.display = 'flex';
-  });
+  // initial states
+  try { updateMainDesktop(0); } catch (e) {}
+  try { setSlideMobile(0); } catch (e) {}
 
   // quantity controls
   const dec = document.getElementById('decQty');
@@ -574,12 +603,6 @@
   const qtyInput = document.getElementById('quantityInput');
   if (dec) dec.addEventListener('click', () => { qtyInput.value = Math.max(1, parseInt(qtyInput.value || 1, 10) - 1); });
   if (inc) inc.addEventListener('click', () => { qtyInput.value = Math.min(99, parseInt(qtyInput.value || 1, 10) + 1); });
-
-  // initial state
-  setSlide(0);
-
-  // Graceful fallback: if mediaData empty, hide prev/next
-  try { if (!mediaData || mediaData.length <= 1) { if (prevBtn) prevBtn.style.display = 'none'; if (nextBtn) nextBtn.style.display = 'none'; } } catch (e) {}
 
   // Rating stars input widget (unchanged)
   (function () {
