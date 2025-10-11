@@ -1,0 +1,8 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /super_admin/
+Disallow: /static/uploads/
+
+# Sitemap locations
+Sitemap: https://safety.uz/sitemap.xml
+Sitemap: https://www.safety.uz/sitemap.xml
