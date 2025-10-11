@@ -2090,3 +2090,8 @@ werkzeug.exceptions.MethodNotAllowed: 405 Method Not Allowed: The method is not 
 2025-10-10 14:16:32,671 | ERROR | restaurant_app | execute_query:2160 | Database operational error: no such table: product_marketplaces
 2025-10-10 14:16:42,278 | ERROR | restaurant_app | execute_query:2160 | Database operational error: no such table: product_marketplaces
 2025-10-10 14:16:46,075 | ERROR | restaurant_app | execute_query:2160 | Database operational error: no such table: product_marketplaces
+2025-10-10 22:38:57,794 | ERROR | restaurant_app | get_connection:1751 | Database pool error: NOT NULL constraint failed: ratings.user_id
+2025-10-10 22:38:58,303 | ERROR | restaurant_app | get_connection:1751 | Database pool error: NOT NULL constraint failed: ratings.user_id
+2025-10-10 22:38:58,806 | ERROR | restaurant_app | get_connection:1751 | Database pool error: NOT NULL constraint failed: ratings.user_id
+2025-10-10 22:38:58,808 | ERROR | restaurant_app | execute_query:2171 | execute_query error after 3 attempts: NOT NULL constraint failed: ratings.user_id - Query: INSERT INTO ratings (menu_item_id, user_id, rating, comment, created_at) VALUES (?, ?, ?, ?, ?)...
+2025-10-10 22:38:58,809 | ERROR | restaurant_app | post_comment:7045 | Failed to insert rating for item 42: NOT NULL constraint failed: ratings.user_id

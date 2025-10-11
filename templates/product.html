@@ -243,33 +243,35 @@
 <div class="product-container">
   <div class="product-media">
     <div class="media-stage" id="mediaStage">
-      <!-- main media inserted by JS; fallback image below -->
-      {% if media and media|length > 0 %} {% set first = media[0] %} {% if
-      first.media_type and first.media_type.startswith('video') %}
-      <video id="mainMedia" src="{{ first.media_url }}" controls muted></video>
-      {% else %}
-      <img id="mainMedia" src="{{ first.media_url }}" alt="{{ item.name }}" />
-      {% endif %} {% else %}
-      <img
-        id="mainMedia"
-        src="{{ item.image_url or '/static/defoult.png' }}"
-        alt="{{ item.name }}" />
+      {# Server-rendered gallery using the shared .gallery/.gallery-track structure #}
+      {% set all_media = media if media else [] %}
+      {% if all_media|length == 0 and item.image_url %}
+        {% set all_media = [{'media_url': item.image_url, 'media_type':'image'}] %}
       {% endif %}
+
+      <div class="gallery" id="productGallery" data-item-id="{{ item.id }}">
+        <div class="gallery-track">
+          {% for m in all_media %}
+            {% if m.media_type and m.media_type.startswith('video') %}
+              <video controls muted preload="metadata" src="{{ m.media_url }}"></video>
+            {% else %}
+              <img src="{{ m.media_url }}" alt="{{ item.name }}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.png'" />
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
 
       <button class="media-btn left" id="prevBtn" title="Oldingi">‹</button>
       <button class="media-btn right" id="nextBtn" title="Keyingi">›</button>
-      <button class="media-btn zoom" id="zoomBtn" title="Kattalashtirish">
-        🔍
-      </button>
+      <button class="media-btn zoom" id="zoomBtn" title="Kattalashtirish">🔍</button>
     </div>
 
     <div class="thumbnails" id="thumbnails">
-      {% set all_media = media if media else [] %} {% if all_media|length == 0
-      and item.image_url %} {% set all_media = [{'media_url': item.image_url,
-      'media_type':'image'}] %} {% endif %} {% for m in all_media %}
-      <div class="thumb" data-idx="{{ loop.index0 }}">
-        <img src="{{ m.media_url }}" alt="thumb" />
-      </div>
+      {% set all_media = all_media %}
+      {% for m in all_media %}
+        <div class="thumb" data-idx="{{ loop.index0 }}">
+          <img src="{{ m.media_url }}" alt="thumb" />
+        </div>
       {% endfor %}
     </div>
   </div>
@@ -505,80 +507,104 @@
   const defaultImage = '{{ item.image_url or '/static/defoult.png' }}';
   let currentIndex = 0;
 
-  const mainEl = document.getElementById('mainMedia');
+  // Try to use the shared gallery initialized by static/main.js
+  const galleryEl = document.getElementById('productGallery');
   const prevBtn = document.getElementById('prevBtn');
   const nextBtn = document.getElementById('nextBtn');
   const zoomBtn = document.getElementById('zoomBtn');
   const thumbs = document.getElementById('thumbnails');
 
-  function updateMain(index) {
-    currentIndex = (index + (mediaData.length || 1)) % (mediaData.length || 1);
-    const m = (mediaData && mediaData.length) ? mediaData[currentIndex] : {media_url: defaultImage, media_type: 'image'};
-    // replace element if type differs
-    const existing = document.getElementById('mainMedia');
-    if (m.media_type && m.media_type.startsWith('video')) {
-      const vid = document.createElement('video');
-      vid.id = 'mainMedia'; vid.src = m.media_url; vid.controls = true; vid.autoplay = false; vid.muted = true;
-      existing.replaceWith(vid);
-    } else {
-      const img = document.createElement('img');
-      img.id = 'mainMedia'; img.src = m.media_url || defaultImage; img.alt = '{{ item.name }}';
-      existing.replaceWith(img);
-    }
-    // highlight thumbnail
-    Array.from(thumbs.children).forEach((t,i)=> t.style.outline = (i===currentIndex)?'2px solid #21a366':'' );
+  // Ensure galleries are initialized (static/main.js runs init on DOMContentLoaded, but call again to be safe)
+  try { if (typeof initImageGalleries === 'function') initImageGalleries(document); } catch (e) {}
+
+  function updateThumbs(idx) {
+    if (!thumbs) return;
+    Array.from(thumbs.children).forEach((t, i) => (t.style.outline = i === idx ? '2px solid #21a366' : ''));
   }
 
-  prevBtn.addEventListener('click', function(e){ e.stopPropagation(); updateMain(currentIndex-1); });
-  nextBtn.addEventListener('click', function(e){ e.stopPropagation(); updateMain(currentIndex+1); });
+  function setSlide(i) {
+    if (!galleryEl) return;
+    const count = (mediaData && mediaData.length) ? mediaData.length : (galleryEl.querySelectorAll('img,video').length || 1);
+    const idx = Math.max(0, Math.min(count - 1, i || 0));
+    currentIndex = idx;
+    try {
+      if (typeof galleryEl.setSlide === 'function') {
+        galleryEl.setSlide(idx);
+      } else {
+        const track = galleryEl.querySelector('.gallery-track');
+        const elems = galleryEl.querySelectorAll('img,video');
+        const w = Math.round(galleryEl.getBoundingClientRect().width || galleryEl.clientWidth || window.innerWidth);
+        if (track) track.style.transform = `translateX(${-idx * w}px)`;
+      }
+    } catch (e) {}
+    updateThumbs(currentIndex);
+  }
+
+  if (prevBtn) prevBtn.addEventListener('click', function (e) { e.stopPropagation(); setSlide(Math.max(0, currentIndex - 1)); });
+  if (nextBtn) nextBtn.addEventListener('click', function (e) { e.stopPropagation(); setSlide(Math.min(currentIndex + 1, (mediaData && mediaData.length ? mediaData.length - 1 : 0))); });
 
   // click thumbnails
-  Array.from(document.querySelectorAll('.thumb')).forEach(function(el){
-    el.addEventListener('click', function(){ updateMain(parseInt(this.dataset.idx,10) || 0); });
-  });
+  if (thumbs) {
+    Array.from(thumbs.querySelectorAll('.thumb')).forEach(function (el) {
+      if (el._wired) return; el._wired = true;
+      el.addEventListener('click', function () { setSlide(parseInt(this.dataset.idx, 10) || 0); });
+    });
+  }
 
   // zoom
-  zoomBtn.addEventListener('click', function(e){ e.stopPropagation(); const m = (mediaData && mediaData.length)? mediaData[currentIndex] : {media_url: defaultImage}; document.getElementById('zoomImg').src = m.media_url || defaultImage; document.getElementById('zoomOverlay').style.display = 'flex'; });
+  if (zoomBtn) zoomBtn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    let src = defaultImage;
+    try {
+      if (galleryEl) {
+        const els = galleryEl.querySelectorAll('img,video');
+        if (els && els.length > 0) {
+          const el = els[currentIndex] || els[0];
+          src = el && (el.tagName.toLowerCase() === 'video' ? el.currentSrc || el.src : el.src) || src;
+        }
+      }
+    } catch (e) {}
+    document.getElementById('zoomImg').src = src || defaultImage;
+    document.getElementById('zoomOverlay').style.display = 'flex';
+  });
 
   // quantity controls
   const dec = document.getElementById('decQty');
   const inc = document.getElementById('incQty');
   const qtyInput = document.getElementById('quantityInput');
-  dec.addEventListener('click', ()=> { qtyInput.value = Math.max(1, parseInt(qtyInput.value||1,10)-1); });
-  inc.addEventListener('click', ()=> { qtyInput.value = Math.min(99, parseInt(qtyInput.value||1,10)+1); });
+  if (dec) dec.addEventListener('click', () => { qtyInput.value = Math.max(1, parseInt(qtyInput.value || 1, 10) - 1); });
+  if (inc) inc.addEventListener('click', () => { qtyInput.value = Math.min(99, parseInt(qtyInput.value || 1, 10) + 1); });
 
-  // initial thumbnail highlight
-  updateMain(0);
+  // initial state
+  setSlide(0);
 
   // Graceful fallback: if mediaData empty, hide prev/next
-  if (!mediaData || mediaData.length <= 1) {
-    prevBtn.style.display = 'none'; nextBtn.style.display = 'none';
-  }
+  try { if (!mediaData || mediaData.length <= 1) { if (prevBtn) prevBtn.style.display = 'none'; if (nextBtn) nextBtn.style.display = 'none'; } } catch (e) {}
 
-  // Rating stars input widget
-  (function(){
-    function wire(widgetId, inputId, textId){
+  // Rating stars input widget (unchanged)
+  (function () {
+    function wire(widgetId, inputId, textId) {
       const starsWrap = document.getElementById(widgetId);
       const input = document.getElementById(inputId);
       const text = document.getElementById(textId);
-      if(!starsWrap || !input) return;
-      let selected = parseInt(input.value||5,10);
-      function refresh(){
-        Array.from(starsWrap.querySelectorAll('.star')).forEach(s=>{
-          const v = parseInt(s.dataset.value,10)||0;
-          s.classList.toggle('selected', v<=selected);
+      if (!starsWrap || !input) return;
+      let selected = parseInt(input.value || 5, 10);
+      function refresh() {
+        Array.from(starsWrap.querySelectorAll('.star')).forEach(s => {
+          const v = parseInt(s.dataset.value, 10) || 0;
+          s.classList.toggle('selected', v <= selected);
         });
-        if(text) text.textContent = selected;
+        if (text) text.textContent = selected;
         input.value = selected;
       }
-      starsWrap.addEventListener('click', function(e){ const s = e.target.closest('.star'); if(!s) return; selected = parseInt(s.dataset.value,10)||selected; refresh(); });
-      starsWrap.addEventListener('mouseover', function(e){ const s = e.target.closest('.star'); if(!s) return; const hover = parseInt(s.dataset.value,10)||0; Array.from(starsWrap.querySelectorAll('.star')).forEach(st=> st.classList.toggle('hovered', (parseInt(st.dataset.value,10)||0)<=hover)); });
-      starsWrap.addEventListener('mouseout', function(){ Array.from(starsWrap.querySelectorAll('.star.hovered')).forEach(st=> st.classList.remove('hovered')); });
+      starsWrap.addEventListener('click', function (e) { const s = e.target.closest('.star'); if (!s) return; selected = parseInt(s.dataset.value, 10) || selected; refresh(); });
+      starsWrap.addEventListener('mouseover', function (e) { const s = e.target.closest('.star'); if (!s) return; const hover = parseInt(s.dataset.value, 10) || 0; Array.from(starsWrap.querySelectorAll('.star')).forEach(st => st.classList.toggle('hovered', (parseInt(st.dataset.value, 10) || 0) <= hover)); });
+      starsWrap.addEventListener('mouseout', function () { Array.from(starsWrap.querySelectorAll('.star.hovered')).forEach(st => st.classList.remove('hovered')); });
       refresh();
     }
 
-    wire('ratingStars','ratingInput','ratingSelectedText');
-    wire('ratingStarsBottom','ratingInputBottom','ratingSelectedTextBottom');
+    wire('ratingStars', 'ratingInput', 'ratingSelectedText');
+    wire('ratingStarsBottom', 'ratingInputBottom', 'ratingSelectedTextBottom');
   })();
 </script>
 

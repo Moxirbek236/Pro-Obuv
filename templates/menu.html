@@ -51,30 +51,30 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
   @media (min-width: 992px) {
     .menu-grid {
       grid-template-columns: repeat(3, 1fr);
-      gap: 26px;
+      gap: 28px;
     }
   }
 
   @media (min-width: 1400px) {
     .menu-grid {
       grid-template-columns: repeat(4, 1fr);
-      gap: 30px;
+      gap: 32px;
     }
   }
 
   /* Card image heights - responsive but consistent */
   .menu-item-card .card-image {
-    height: 260px;
+    height: 300px;
     overflow: hidden;
   }
   @media (min-width: 992px) {
     .menu-item-card .card-image {
-      height: 360px;
+      height: 420px;
     }
   }
   @media (min-width: 1400px) {
     .menu-item-card .card-image {
-      height: 420px;
+      height: 480px;
     }
   }
 
@@ -460,28 +460,18 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
                 >
               </h3>
               <p class="card-category">{{ item.category or '' }}</p>
-              <p class="card-description">{{ item.description or '' }}</p>
-              <!-- Show available sizes and colors on the card -->
+              <!-- Description and sizes removed per request (keep colors only) -->
+              {% if item.colors %}
               <div class="card-options">
-                {% if item.sizes %}
-                <div class="card-sizes" aria-label="Available sizes">
-                  {% for s in (item.sizes or '').split(',') %} {% if s and
-                  s|trim %}
-                  <span class="option-badge">{{ s|trim }}</span>
-                  {% endif %} {% endfor %}
-                </div>
-                {% endif %} {% if item.colors %}
                 <div class="card-colors" aria-label="Available colors">
-                  {% for c in (item.colors or '').split(',') %} {% if c and
-                  c|trim %}
-                  <span
-                    class="color-badge"
-                    title="{{ c|trim }}"
-                    style="background: {{ c|trim }};"></span>
-                  {% endif %} {% endfor %}
+                  {% for c in (item.colors or '').split(',') %}
+                    {% if c and c|trim %}
+                      <span class="color-badge" title="{{ c|trim }}" style="background: {{ c|trim }};"></span>
+                    {% endif %}
+                  {% endfor %}
                 </div>
-                {% endif %}
               </div>
+              {% endif %}
               <div class="card-rating">
                 <style>
                   .card-stars-wrap{display:inline-block;position:relative;font-size:16px;line-height:1}
@@ -518,7 +508,7 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
      MENU PAGE LAYOUT
      ================================ */
   .menu-container {
-    max-width: 1400px;
+    max-width: 1600px;
     margin: 0 auto;
     padding: 20px;
     animation: fadeIn 0.6s ease-out;
@@ -539,9 +529,9 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
      ================================ */
   .filter-sidebar {
     position: fixed;
-    left: 20px;
+    left: 24px;
     top: 120px;
-    width: 280px; /* Reduced from 320px */
+    width: 340px; /* increased width to make sidebar slightly larger */
     background: rgba(255, 255, 255, 0.98);
     border-radius: 16px;
     padding: 25px; /* Reduced from 30px */
@@ -728,11 +718,11 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
      CONTENT AREA
      ================================ */
   .content-area {
-    margin-left: 320px;
+    margin-left: 380px; /* leave space for wider sidebar */
     flex: 1;
     min-width: 0;
-    width: calc(100% - 380px); /* Reduced from 320px to prevent overflow */
-    max-width: 1200px; /* Set maximum width */
+    width: calc(100% - 460px); /* adjusted for wider sidebar */
+    max-width: 1400px; /* allow larger content area */
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     padding-right: 20px; /* Reduced padding */
     padding-left: 10px;
@@ -1930,6 +1920,35 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
     width: auto !important;
     height: 100% !important;
     object-fit: contain !important;
+  }
+
+  /* Gallery specific layout for multi-image cards */
+  .menu-item-card .gallery,
+  .menu-item .gallery,
+  .menu-item-card .gallery {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .menu-item-card .gallery .gallery-track,
+  .menu-item .gallery .gallery-track {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    height: 100%;
+    transition: transform 220ms ease;
+    will-change: transform;
+  }
+
+  .menu-item-card .gallery .gallery-track img,
+  .menu-item .gallery .gallery-track img {
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+    display: block;
+    flex-shrink: 0;
   }
 
   .comment-item {

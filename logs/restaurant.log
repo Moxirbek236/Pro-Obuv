@@ -64247,3 +64247,18 @@ werkzeug.exceptions.MethodNotAllowed: 405 Method Not Allowed: The method is not 
 2025-10-10 21:09:31,208 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://localhost:10000/favicon.ico
 2025-10-10 21:59:48,222 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://localhost:10000/.well-known/appspecific/com.chrome.devtools.json
 2025-10-10 22:00:37,182 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://localhost:10000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-10 22:00:41,429 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://localhost:10000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-10 22:22:01,400 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://localhost:10000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-10 22:32:42,556 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://localhost:10000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-10 22:38:43,064 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://localhost:10000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-10 22:38:57,794 | ERROR | restaurant_app | get_connection:1751 | Database pool error: NOT NULL constraint failed: ratings.user_id
+2025-10-10 22:38:57,803 | WARNING | restaurant_app | execute_query:2165 | Query execution failed, retrying (attempt 1): NOT NULL constraint failed: ratings.user_id
+2025-10-10 22:38:58,303 | ERROR | restaurant_app | get_connection:1751 | Database pool error: NOT NULL constraint failed: ratings.user_id
+2025-10-10 22:38:58,304 | WARNING | restaurant_app | execute_query:2165 | Query execution failed, retrying (attempt 2): NOT NULL constraint failed: ratings.user_id
+2025-10-10 22:38:58,806 | ERROR | restaurant_app | get_connection:1751 | Database pool error: NOT NULL constraint failed: ratings.user_id
+2025-10-10 22:38:58,808 | ERROR | restaurant_app | execute_query:2171 | execute_query error after 3 attempts: NOT NULL constraint failed: ratings.user_id - Query: INSERT INTO ratings (menu_item_id, user_id, rating, comment, created_at) VALUES (?, ?, ?, ?, ?)...
+2025-10-10 22:38:58,809 | ERROR | restaurant_app | post_comment:7045 | Failed to insert rating for item 42: NOT NULL constraint failed: ratings.user_id
+2025-10-10 22:38:58,896 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://localhost:10000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-10 22:40:52,395 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://localhost:10000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-11 07:25:32,968 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://localhost:10000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-11 07:25:41,242 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://localhost:10000/.well-known/appspecific/com.chrome.devtools.json

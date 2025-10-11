@@ -237,6 +237,33 @@ const MenuClient = (function () {
         )}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.png'" /></div>`;
       })();
 
+      // Build colors badges if present (client-side rendering)
+      const colorsHtml = (function () {
+        try {
+          if (item.colors) {
+            const cols = String(item.colors)
+              .split(",")
+              .map((c) => c.trim())
+              .filter(Boolean);
+            if (cols.length) {
+              return (
+                `<div class="card-options"><div class="card-colors" aria-label="Available colors">` +
+                cols
+                  .map(
+                    (c) =>
+                      `<span class="color-badge" title="${escapeHtml(
+                        c
+                      )}" style="background:${escapeHtml(c)}"></span>`
+                  )
+                  .join("") +
+                `</div></div>`
+              );
+            }
+          }
+        } catch (e) {}
+        return "";
+      })();
+
       div.innerHTML = `
         ${imageHtml}
         <div class="item-content">
@@ -248,6 +275,7 @@ const MenuClient = (function () {
           ? (item.avg_rating || item.rating || 0).toFixed(1)
           : item.avg_rating || item.rating || 0
       } (${item.orders_count || 0})</span></div>
+          ${colorsHtml}
           <div class="item-footer"><div class="price">${formatPrice(
             item.price || 0
           )}</div><div><button class="add-to-cart-btn" data-item-id="${
@@ -281,108 +309,226 @@ const MenuClient = (function () {
   return { fetchAndRender, setState: (s) => (state = { ...state, ...s }) };
 })();
 
-function initMenuClient() {
-  try {
-    MenuClient.fetchAndRender();
-  } catch (e) {}
-}
-
-// --- Gallery behavior (desktop hover-follow and mobile swipe) ---
 function initImageGalleries(root = document) {
   try {
-    const galleries = root.querySelectorAll(".gallery");
-    galleries.forEach((g) => {
-      if (g._galleryInited) return;
-      g._galleryInited = true;
+    const galleries = Array.from(
+      (root || document).querySelectorAll(".gallery")
+    );
+    galleries.forEach(function (g) {
       const track = g.querySelector(".gallery-track");
       if (!track) return;
-
-      // Ensure images are laid out horizontally
+      // Common setup
       g.style.overflow = "hidden";
       track.style.display = "flex";
       track.style.transition = "transform 220ms ease";
       track.style.willChange = "transform";
+      track.style.display = "flex";
+      track.style.transition = "transform 220ms ease";
+      track.style.willChange = "transform";
 
-      // Desktop: hover follow
-      let rect = null;
-      const onMove = (ev) => {
-        try {
-          rect = g.getBoundingClientRect();
-          const isTouch = ev.type && ev.type.startsWith("touch");
-          const clientX = isTouch
-            ? (ev.touches && ev.touches[0] && ev.touches[0].clientX) || 0
-            : ev.clientX;
-          const rel = Math.max(
-            0,
-            Math.min(1, (clientX - rect.left) / rect.width)
-          );
-          const imgs = track.querySelectorAll("img");
-          if (!imgs || imgs.length <= 1) return;
-          const maxShift = track.scrollWidth - rect.width;
-          const shift = Math.round(maxShift * rel);
-          track.style.transform = `translateX(${-shift}px)`;
-        } catch (e) {
-          /* ignore */
-        }
-      };
+      const imgs = Array.from(track.querySelectorAll("img"));
+      if (!imgs || imgs.length === 0) return;
 
-      const onLeave = () => {
-        try {
-          track.style.transform = "";
-        } catch (e) {}
-      };
+      // Detect touch-capable device
+      const isTouchDevice = !!(
+        "ontouchstart" in window ||
+        (navigator && navigator.maxTouchPoints && navigator.maxTouchPoints > 0)
+      );
 
-      // Desktop mouse events
-      g.addEventListener("mousemove", onMove);
-      g.addEventListener("mouseleave", onLeave);
-
-      // Touch handling: basic drag/swipe
-      let startX = 0,
-        currentX = 0,
-        dragging = false;
-      g.addEventListener(
-        "touchstart",
-        function (ev) {
+      if (isTouchDevice) {
+        // Carousel/snap mode: each image is full-width of container
+        let index = 0;
+        const resize = () => {
           try {
-            dragging = true;
-            startX =
-              (ev.touches && ev.touches[0] && ev.touches[0].clientX) || 0;
-            track.style.transition = "none";
+            const rect = g.getBoundingClientRect();
+            const w = Math.round(
+              rect.width || g.clientWidth || window.innerWidth
+            );
+            imgs.forEach((img) => {
+              img.style.flex = "0 0 " + w + "px";
+              img.style.maxWidth = w + "px";
+              img.style.width = w + "px";
+            });
+            // reposition to current index
+            track.style.transform = `translateX(${-index * w}px)`;
           } catch (e) {}
-        },
-        { passive: true }
-      );
+        };
 
-      g.addEventListener(
-        "touchmove",
-        function (ev) {
+        // initial resize
+        resize();
+        window.addEventListener("resize", resize);
+
+        // touch swipe handling with threshold and snapping
+        let startX = 0,
+          startTime = 0,
+          dragging = false,
+          startTransform = 0;
+        const getTranslateX = () => {
+          const m = track.style.transform.match(/translateX\((-?\d+)px\)/);
+          return m ? parseInt(m[1], 10) : 0;
+        };
+
+        g.addEventListener(
+          "touchstart",
+          function (ev) {
+            try {
+              dragging = true;
+              startX =
+                (ev.touches && ev.touches[0] && ev.touches[0].clientX) || 0;
+              startTime = Date.now();
+              track.style.transition = "none";
+              startTransform = getTranslateX();
+            } catch (e) {}
+          },
+          { passive: true }
+        );
+
+        g.addEventListener(
+          "touchmove",
+          function (ev) {
+            try {
+              if (!dragging) return;
+              const x =
+                (ev.touches && ev.touches[0] && ev.touches[0].clientX) || 0;
+              const dx = x - startX; // positive => moved right
+              const rect = g.getBoundingClientRect();
+              const w = Math.round(
+                rect.width || g.clientWidth || window.innerWidth
+              );
+              let attempted = startTransform + dx;
+              const maxShift = 0; // translateX is negative or zero
+              const minShift = -((imgs.length - 1) * w);
+              attempted = Math.max(
+                minShift - 40,
+                Math.min(maxShift + 40, attempted)
+              ); // allow small overscroll
+              track.style.transform = `translateX(${attempted}px)`;
+            } catch (e) {}
+          },
+          { passive: true }
+        );
+
+        g.addEventListener(
+          "touchend",
+          function (ev) {
+            try {
+              if (!dragging) return;
+              dragging = false;
+              const rect = g.getBoundingClientRect();
+              const w = Math.round(
+                rect.width || g.clientWidth || window.innerWidth
+              );
+              const endX =
+                (ev.changedTouches &&
+                  ev.changedTouches[0] &&
+                  ev.changedTouches[0].clientX) ||
+                startX;
+              const dx = endX - startX; // >0 means swipe right (show previous)
+              const dt = Date.now() - startTime;
+              // determine velocity & distance
+              const velocity = Math.abs(dx / Math.max(1, dt));
+              const threshold = Math.max(40, w * 0.18); // px or proportion
+              if (Math.abs(dx) > threshold || velocity > 0.3) {
+                if (dx < 0) {
+                  // moved left -> next image
+                  index = Math.min(index + 1, imgs.length - 1);
+                } else {
+                  // moved right -> previous image
+                  index = Math.max(index - 1, 0);
+                }
+              } else {
+                // small move -> snap to nearest
+                const cur = Math.abs(getTranslateX());
+                index = Math.round(cur / w);
+              }
+              track.style.transition =
+                "transform 260ms cubic-bezier(.2,.8,.2,1)";
+              track.style.transform = `translateX(${-index * w}px)`;
+            } catch (e) {}
+          },
+          { passive: true }
+        );
+
+        // allow external programmatic set by dataset index
+        g.setSlide = function (i) {
           try {
-            if (!dragging) return;
-            currentX =
-              (ev.touches && ev.touches[0] && ev.touches[0].clientX) || 0;
-            const dx = startX - currentX;
-            const rect2 = g.getBoundingClientRect();
-            const maxShift = Math.max(0, track.scrollWidth - rect2.width);
-            // read current transform
-            const m = track.style.transform.match(/translateX\((-?\d+)px\)/);
-            const prev = m ? parseInt(m[1], 10) : 0;
-            let attempted = prev - dx;
-            attempted = Math.max(-maxShift, Math.min(0, attempted));
-            track.style.transform = `translateX(${attempted}px)`;
-            startX = currentX;
-          } catch (e) {
-            /* ignore */
-          }
-        },
-        { passive: true }
-      );
+            index = Math.max(0, Math.min(imgs.length - 1, i));
+            const rect = g.getBoundingClientRect();
+            const w = Math.round(
+              rect.width || g.clientWidth || window.innerWidth
+            );
+            track.style.transition = "transform 260ms cubic-bezier(.2,.8,.2,1)";
+            track.style.transform = `translateX(${-index * w}px)`;
+          } catch (e) {}
+        };
+      } else {
+        // Desktop: hover-follow continuous behavior
+        let rect = null;
+        const onMove = (ev) => {
+          try {
+            rect = g.getBoundingClientRect();
+            const clientX = ev.clientX;
+            const rel = Math.max(
+              0,
+              Math.min(1, (clientX - rect.left) / rect.width)
+            );
+            if (imgs.length <= 1) return;
+            const maxShift = track.scrollWidth - rect.width;
+            const shift = Math.round(maxShift * rel);
+            track.style.transform = `translateX(${-shift}px)`;
+          } catch (e) {}
+        };
+        const onLeave = () => {
+          try {
+            track.style.transform = "";
+          } catch (e) {}
+        };
+        g.addEventListener("mousemove", onMove);
+        g.addEventListener("mouseleave", onLeave);
 
-      g.addEventListener("touchend", function () {
-        try {
+        // keep a minimal touch fallback
+        let startX = 0,
+          currentX = 0,
           dragging = false;
-          track.style.transition = "transform 220ms ease";
-        } catch (e) {}
-      });
+        g.addEventListener(
+          "touchstart",
+          function (ev) {
+            try {
+              dragging = true;
+              startX =
+                (ev.touches && ev.touches[0] && ev.touches[0].clientX) || 0;
+              track.style.transition = "none";
+            } catch (e) {}
+          },
+          { passive: true }
+        );
+        g.addEventListener(
+          "touchmove",
+          function (ev) {
+            try {
+              if (!dragging) return;
+              currentX =
+                (ev.touches && ev.touches[0] && ev.touches[0].clientX) || 0;
+              const dx = startX - currentX;
+              const rect2 = g.getBoundingClientRect();
+              const maxShift = Math.max(0, track.scrollWidth - rect2.width);
+              const m = track.style.transform.match(/translateX\((-?\d+)px\)/);
+              const prev = m ? parseInt(m[1], 10) : 0;
+              let attempted = prev - dx;
+              attempted = Math.max(-maxShift, Math.min(0, attempted));
+              track.style.transform = `translateX(${attempted}px)`;
+              startX = currentX;
+            } catch (e) {}
+          },
+          { passive: true }
+        );
+        g.addEventListener("touchend", function () {
+          try {
+            dragging = false;
+            track.style.transition = "transform 220ms ease";
+          } catch (e) {}
+        });
+      }
     });
   } catch (e) {
     console.warn("initImageGalleries failed", e);
@@ -398,6 +544,35 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Expose for dynamic rendering paths
 window.initImageGalleries = initImageGalleries;
+
+// Provide a safe initMenuClient fallback so older templates calling
+// initMenuClient() won't cause ReferenceErrors. Prefer using
+// MenuClient.fetchAndRender when available.
+if (typeof window.initMenuClient === "undefined") {
+  function initMenuClient() {
+    try {
+      if (
+        window.MenuClient &&
+        typeof window.MenuClient.fetchAndRender === "function"
+      ) {
+        // Optionally allow callers to set initial state via window.MENU_CLIENT_INIT
+        try {
+          if (
+            window.MENU_CLIENT_INIT &&
+            typeof window.MenuClient.setState === "function"
+          ) {
+            window.MenuClient.setState(window.MENU_CLIENT_INIT);
+          }
+        } catch (e) {}
+        window.MenuClient.fetchAndRender();
+        return;
+      }
+    } catch (e) {
+      console.warn("initMenuClient fallback failed", e);
+    }
+  }
+  window.initMenuClient = initMenuClient;
+}
 
 // --- News Ticker ---
 class NewsTicker {
