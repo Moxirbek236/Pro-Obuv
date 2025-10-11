@@ -3924,13 +3924,17 @@ if not os.environ.get("SKIP_DB_INIT"):
                 if cols:
                     if "sender" not in cols:
                         try:
-                            cur.execute("ALTER TABLE chat_messages ADD COLUMN sender TEXT")
+                            cur.execute(
+                                "ALTER TABLE chat_messages ADD COLUMN sender TEXT"
+                            )
                         except Exception:
                             # ALTER may fail on some older SQLite builds; ignore but continue
                             pass
                     if "source" not in cols:
                         try:
-                            cur.execute("ALTER TABLE chat_messages ADD COLUMN source TEXT")
+                            cur.execute(
+                                "ALTER TABLE chat_messages ADD COLUMN source TEXT"
+                            )
                         except Exception:
                             # Best-effort; ignore failures
                             pass
@@ -6696,12 +6700,23 @@ def menu():
             )
 
         # Render menu using clothing store categories (women/men)
+        # SEO data for menu page
+        seo_data = {
+            "page_title": "Pro Obuv — Spetsobuv va Ish kiyimlari do'koni | Safety.uz",
+            "meta_description": "Safety.uz – Pro Obuv do'koni. Spetsobuv, ish kiyimlari, spetsodejda va himoya poyabzallari. Botinki, krasofka, professional footwear, work boots, safety shoes.",
+            "meta_keywords": "pro obuv, obuv, spetsobuv, spetsodejda, safety, oyoq kiyim, tufli, etik, ish kiyimlari, himoya poyabzal, botinki, krasofka, спетсообув, спецодежда, обувь, кроссовки, ботинки, safety shoes, work boots, professional footwear, protective shoes",
+            "og_title": "Pro Obuv — Spetsobuv, Botinki, Krasofka va Ish kiyimlari",
+            "og_description": "Spetsobuv, spetsodejda, botinki, krasofka va ish kiyimlari — Pro Obuv. Safety.uz da eng sifatli himoya poyabzallari",
+            "canonical_url": "https://www.safety.uz/menu",
+        }
+
         return render_template(
             "menu.html",
             women=women,
             men=men,
             favorites=favorites,
             current_page="menu",
+            seo_data=seo_data,
         )
 
     except Exception as e:
@@ -6716,8 +6731,23 @@ def menu():
             # All items are for men only - no women's category
             women = []  # No women's items
             men = menu_items  # All items are for men
+
+            # SEO data for fallback menu
+            seo_data = {
+                "page_title": "Pro Obuv — Spetsobuv va Ish kiyimlari do'koni | Safety.uz",
+                "meta_description": "Safety.uz – Pro Obuv do'koni. Spetsobuv, ish kiyimlari, spetsodejda va himoya poyabzallari. Botinki, krasofka, professional footwear, work boots, safety shoes.",
+                "meta_keywords": "pro obuv, obuv, spetsobuv, spetsodejda, safety, oyoq kiyim, tufli, etik, ish kiyimlari, himoya poyabzal, botinki, krasofka, спетсообув, спецодежда, обувь, кроссовки, ботинки, safety shoes, work boots, professional footwear, protective shoes",
+                "og_title": "Pro Obuv — Spetsobuv, Botinki, Krasofka va Ish kiyimlari",
+                "og_description": "Spetsobuv, spetsodejda, botinki, krasofka va ish kiyimlari — Pro Obuv. Safety.uz da eng sifatli himoya poyabzallari",
+                "canonical_url": "https://www.safety.uz/menu",
+            }
+
             return render_template(
-                "menu.html", women=women, men=men, current_page="menu"
+                "menu.html",
+                women=women,
+                men=men,
+                current_page="menu",
+                seo_data=seo_data,
             )
         except Exception as fallback_error:
             app_logger.error(f"Menu fallback error: {str(fallback_error)}")
@@ -7119,15 +7149,13 @@ def api_menu_search():
             # Many rows store values like '36, 37, 38' (with spaces). We'll remove
             # spaces from both sides and perform a LIKE search to match values
             # regardless of spacing: REPLACE(LOWER(sizes),' ','') LIKE '%40%'
-            size_norm = size.strip().lower().replace(' ', '')
-            where_clauses.append(
-                "(REPLACE(LOWER(sizes), ' ', '') LIKE ?)"
-            )
+            size_norm = size.strip().lower().replace(" ", "")
+            where_clauses.append("(REPLACE(LOWER(sizes), ' ', '') LIKE ?)")
             params.append(f"%{size_norm}%")
 
         if color:
             # Normalize spaces and case for color matching as well.
-            color_norm = color.strip().lower().replace(' ', '')
+            color_norm = color.strip().lower().replace(" ", "")
             where_clauses.append("(REPLACE(LOWER(colors), ' ', '') LIKE ?)")
             params.append(f"%{color_norm}%")
 
@@ -9989,7 +10017,11 @@ def admin_edit_menu_item(item_id):
                 try:
                     # Accept both array-style names (market_olx[]) and single-field fallback
                     list_name_with_brackets = f"market_{key}[]"
-                    vals = request.form.getlist(list_name_with_brackets) or request.form.getlist(f"market_{key}") or [request.form.get(f"market_{key}", "")]
+                    vals = (
+                        request.form.getlist(list_name_with_brackets)
+                        or request.form.getlist(f"market_{key}")
+                        or [request.form.get(f"market_{key}", "")]
+                    )
                     # Normalize and filter empty
                     urls = [v.strip() for v in vals if v and v.strip()]
 
@@ -10893,7 +10925,9 @@ def ai_respond(text, sender="guest"):
                     pat = r[0] if isinstance(r, tuple) else r.get("question_pattern")
                 # We'll perform a simple substring match against question_pattern
             # More efficient approach: iterate properly
-            rows2 = execute_query("SELECT question_pattern, answer FROM ai_knowledge", fetch_all=True)
+            rows2 = execute_query(
+                "SELECT question_pattern, answer FROM ai_knowledge", fetch_all=True
+            )
             if rows2:
                 for qp, ans in rows2:
                     try:
@@ -10962,7 +10996,7 @@ def api_status():
 
 
 @app.route("/admin/ai/unanswered", methods=["GET"])
-@role_required('super_admin')
+@role_required("super_admin")
 def admin_ai_unanswered():
     """Return unanswered AI questions for superadmin review"""
     try:
@@ -10972,7 +11006,9 @@ def admin_ai_unanswered():
         )
         items = []
         for r in rows or []:
-            items.append({"id": r[0], "text": r[1], "times_asked": r[2], "last_asked_at": r[3]})
+            items.append(
+                {"id": r[0], "text": r[1], "times_asked": r[2], "last_asked_at": r[3]}
+            )
         return jsonify({"success": True, "unanswered": items})
     except Exception as e:
         app_logger.error(f"admin_ai_unanswered error: {e}")
@@ -10980,7 +11016,7 @@ def admin_ai_unanswered():
 
 
 @app.route("/admin/ai/teach", methods=["POST"])
-@role_required('super_admin')
+@role_required("super_admin")
 @csrf_protect
 def admin_ai_teach():
     """Teach AI a new Q/A pair. JSON: { question_pattern, answer, remove_unanswered_id (optional) }"""
@@ -10991,7 +11027,15 @@ def admin_ai_teach():
         remove_id = data.get("remove_unanswered_id")
 
         if not qp or not ans:
-            return jsonify({"success": False, "message": "question_pattern and answer required"}), 400
+            return (
+                jsonify(
+                    {
+                        "success": False,
+                        "message": "question_pattern and answer required",
+                    }
+                ),
+                400,
+            )
 
         now = get_current_time().isoformat()
         execute_query(
@@ -11001,7 +11045,9 @@ def admin_ai_teach():
         # Optionally remove the unanswered row
         if remove_id:
             try:
-                execute_query("DELETE FROM ai_unanswered WHERE id = ?", (int(remove_id),))
+                execute_query(
+                    "DELETE FROM ai_unanswered WHERE id = ?", (int(remove_id),)
+                )
             except Exception:
                 pass
 
@@ -11012,92 +11058,114 @@ def admin_ai_teach():
 
 
 @app.route("/admin/ai/faq", methods=["GET"])
-@role_required('super_admin')
+@role_required("super_admin")
 def admin_ai_faq():
     """List AI knowledge base entries"""
     try:
-        rows = execute_query("SELECT id, question_pattern, answer, created_by, created_at FROM ai_knowledge ORDER BY id DESC", fetch_all=True)
+        rows = execute_query(
+            "SELECT id, question_pattern, answer, created_by, created_at FROM ai_knowledge ORDER BY id DESC",
+            fetch_all=True,
+        )
         items = []
         for r in rows or []:
-            items.append({"id": r[0], "question_pattern": r[1], "answer": r[2], "created_by": r[3], "created_at": r[4]})
+            items.append(
+                {
+                    "id": r[0],
+                    "question_pattern": r[1],
+                    "answer": r[2],
+                    "created_by": r[3],
+                    "created_at": r[4],
+                }
+            )
         return jsonify({"success": True, "items": items})
     except Exception as e:
         app_logger.error(f"admin_ai_faq error: {e}")
         return jsonify({"success": False, "message": "Server error"}), 500
 
 
-@app.route('/super-admin/pages')
-@role_required('super_admin')
+@app.route("/super-admin/pages")
+@role_required("super_admin")
 def super_admin_pages():
     """Manage editable site pages (contact, questions, about)."""
     try:
         # Load settings file where pages are stored
-        settings_path = os.path.join(os.path.dirname(__file__), 'superadmin_settings.json')
+        settings_path = os.path.join(
+            os.path.dirname(__file__), "superadmin_settings.json"
+        )
         pages = {}
         if os.path.exists(settings_path):
             try:
-                with open(settings_path, 'r', encoding='utf-8') as f:
+                with open(settings_path, "r", encoding="utf-8") as f:
                     pages = json.load(f) or {}
             except Exception:
                 pages = {}
 
         # Provide defaults
         page_keys = [
-            ('contact_page', 'Contact page'),
-            ('questions_page', 'Questions page'),
-            ('about_page', 'About page'),
+            ("contact_page", "Contact page"),
+            ("questions_page", "Questions page"),
+            ("about_page", "About page"),
         ]
         page_list = []
         for key, label in page_keys:
-            page_list.append({'key': key, 'label': label, 'content': pages.get(key, '')})
+            page_list.append(
+                {"key": key, "label": label, "content": pages.get(key, "")}
+            )
 
         csrf_token = generate_csrf_token()
-        return render_template('admin/pages_management.html', pages=page_list, csrf_token=csrf_token)
+        return render_template(
+            "admin/pages_management.html", pages=page_list, csrf_token=csrf_token
+        )
     except Exception as e:
         app_logger.error(f"super_admin_pages error: {e}")
-        flash('Sahifa yuklashda xatolik', 'danger')
-        return redirect(url_for('super_admin_dashboard'))
+        flash("Sahifa yuklashda xatolik", "danger")
+        return redirect(url_for("super_admin_dashboard"))
 
 
-@app.route('/super-admin/pages/edit/<page_key>', methods=['GET', 'POST'])
-@role_required('super_admin')
+@app.route("/super-admin/pages/edit/<page_key>", methods=["GET", "POST"])
+@role_required("super_admin")
 @csrf_protect
 def super_admin_edit_page(page_key):
-    settings_path = os.path.join(os.path.dirname(__file__), 'superadmin_settings.json')
+    settings_path = os.path.join(os.path.dirname(__file__), "superadmin_settings.json")
     try:
         pages = {}
         if os.path.exists(settings_path):
             try:
-                with open(settings_path, 'r', encoding='utf-8') as f:
+                with open(settings_path, "r", encoding="utf-8") as f:
                     pages = json.load(f) or {}
             except Exception:
                 pages = {}
 
-        if request.method == 'POST':
-            content = request.form.get('content', '')
+        if request.method == "POST":
+            content = request.form.get("content", "")
             pages[page_key] = content
             try:
-                with open(settings_path, 'w', encoding='utf-8') as f:
+                with open(settings_path, "w", encoding="utf-8") as f:
                     json.dump(pages, f, ensure_ascii=False, indent=2)
             except Exception as e:
                 app_logger.error(f"Failed to save page {page_key}: {e}")
-                flash('Saqlashda xatolik', 'danger')
-                return redirect(url_for('super_admin_pages'))
+                flash("Saqlashda xatolik", "danger")
+                return redirect(url_for("super_admin_pages"))
 
-            flash('Sahifa saqlandi', 'success')
-            return redirect(url_for('super_admin_pages'))
+            flash("Sahifa saqlandi", "success")
+            return redirect(url_for("super_admin_pages"))
 
-        content = pages.get(page_key, '')
+        content = pages.get(page_key, "")
         csrf_token = generate_csrf_token()
-        return render_template('admin/edit_page.html', page_key=page_key, content=content, csrf_token=csrf_token)
+        return render_template(
+            "admin/edit_page.html",
+            page_key=page_key,
+            content=content,
+            csrf_token=csrf_token,
+        )
     except Exception as e:
         app_logger.error(f"super_admin_edit_page error: {e}")
-        flash('Sahifa yuklashda xatolik', 'danger')
-        return redirect(url_for('super_admin_pages'))
+        flash("Sahifa yuklashda xatolik", "danger")
+        return redirect(url_for("super_admin_pages"))
 
 
-@app.route('/super-admin/ai-unanswered', methods=['GET'])
-@role_required('super_admin')
+@app.route("/super-admin/ai-unanswered", methods=["GET"])
+@role_required("super_admin")
 def super_admin_ai_unanswered_ui():
     """Render a UI for superadmin to view and answer unanswered AI questions."""
     try:
@@ -11108,14 +11176,18 @@ def super_admin_ai_unanswered_ui():
         )
         items = []
         for r in rows or []:
-            items.append({'id': r[0], 'text': r[1], 'times_asked': r[2], 'last_asked_at': r[3]})
+            items.append(
+                {"id": r[0], "text": r[1], "times_asked": r[2], "last_asked_at": r[3]}
+            )
 
         csrf_token = generate_csrf_token()
-        return render_template('admin/ai_unanswered.html', items=items, csrf_token=csrf_token)
+        return render_template(
+            "admin/ai_unanswered.html", items=items, csrf_token=csrf_token
+        )
     except Exception as e:
         app_logger.error(f"super_admin_ai_unanswered_ui error: {e}")
-        flash('Xatolik yuz berdi', 'danger')
-        return redirect(url_for('super_admin_dashboard'))
+        flash("Xatolik yuz berdi", "danger")
+        return redirect(url_for("super_admin_dashboard"))
 
 
 @app.route("/api/news/active", methods=["GET"])
@@ -13569,7 +13641,9 @@ try:
             except Exception:
                 pass
             try:
-                cur.execute("ALTER TABLE news ADD COLUMN show_in_ticker INTEGER DEFAULT 0")
+                cur.execute(
+                    "ALTER TABLE news ADD COLUMN show_in_ticker INTEGER DEFAULT 0"
+                )
                 con.commit()
             except Exception:
                 # If ALTER fails (e.g. table missing), ignore and let later logic handle it
@@ -16094,23 +16168,44 @@ def staff_menu():
                             mp_map = {}
                             for mr in mp_rows:
                                 try:
-                                    mkey = mr[0] if isinstance(mr, (list, tuple)) else mr.get('market_key')
-                                    murl = mr[1] if isinstance(mr, (list, tuple)) else mr.get('url')
+                                    mkey = (
+                                        mr[0]
+                                        if isinstance(mr, (list, tuple))
+                                        else mr.get("market_key")
+                                    )
+                                    murl = (
+                                        mr[1]
+                                        if isinstance(mr, (list, tuple))
+                                        else mr.get("url")
+                                    )
                                     if not mkey:
                                         continue
-                                    mp_map.setdefault(f"market_{mkey}_list", []).append(murl)
+                                    mp_map.setdefault(f"market_{mkey}_list", []).append(
+                                        murl
+                                    )
                                 except Exception:
                                     continue
                             # Expose both single legacy fields and list forms for template compatibility
                             for k, v in mp_map.items():
                                 item_dict[k] = v
                             # Also set single fallback names for older templates
-                            if 'market_olx_list' in mp_map and mp_map['market_olx_list']:
-                                item_dict['market_olx'] = mp_map['market_olx_list'][0]
-                            if 'market_uzum_list' in mp_map and mp_map['market_uzum_list']:
-                                item_dict['market_uzum'] = mp_map['market_uzum_list'][0]
-                            if 'market_yandex_list' in mp_map and mp_map['market_yandex_list']:
-                                item_dict['market_yandex'] = mp_map['market_yandex_list'][0]
+                            if (
+                                "market_olx_list" in mp_map
+                                and mp_map["market_olx_list"]
+                            ):
+                                item_dict["market_olx"] = mp_map["market_olx_list"][0]
+                            if (
+                                "market_uzum_list" in mp_map
+                                and mp_map["market_uzum_list"]
+                            ):
+                                item_dict["market_uzum"] = mp_map["market_uzum_list"][0]
+                            if (
+                                "market_yandex_list" in mp_map
+                                and mp_map["market_yandex_list"]
+                            ):
+                                item_dict["market_yandex"] = mp_map[
+                                    "market_yandex_list"
+                                ][0]
                         except Exception:
                             # ignore marketplace load failures
                             pass
@@ -17626,6 +17721,29 @@ def api_create_news():
         except Exception:
             pass
 
+        # Sync to JSON file
+        try:
+            items = (
+                execute_query(
+                    "SELECT * FROM news ORDER BY display_order ASC, created_at DESC",
+                    fetch_all=True,
+                )
+                or []
+            )
+            news_data = {
+                "news": [dict(item) for item in items],
+                "metadata": {
+                    "total_count": len(items),
+                    "active_count": len([i for i in items if i["is_active"]]),
+                    "last_updated": get_current_time().isoformat(),
+                    "version": "1.0",
+                },
+            }
+            with open("data/news.json", "w", encoding="utf-8") as f:
+                json.dump(news_data, f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            app_logger.warning(f"Failed to sync news to JSON: {str(e)}")
+
         return jsonify({"success": True, "message": "News item created", "id": news_id})
 
     except Exception as e:
@@ -17745,6 +17863,29 @@ def api_update_news(news_id):
         except Exception:
             pass
 
+        # Sync to JSON file
+        try:
+            items = (
+                execute_query(
+                    "SELECT * FROM news ORDER BY display_order ASC, created_at DESC",
+                    fetch_all=True,
+                )
+                or []
+            )
+            news_data = {
+                "news": [dict(item) for item in items],
+                "metadata": {
+                    "total_count": len(items),
+                    "active_count": len([i for i in items if i["is_active"]]),
+                    "last_updated": get_current_time().isoformat(),
+                    "version": "1.0",
+                },
+            }
+            with open("data/news.json", "w", encoding="utf-8") as f:
+                json.dump(news_data, f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            app_logger.warning(f"Failed to sync news to JSON: {str(e)}")
+
         return jsonify({"success": True, "message": "News item updated"})
 
     except Exception as e:
@@ -17802,6 +17943,29 @@ def api_delete_news(news_id):
                 )
         except Exception as _:
             pass
+
+        # Sync to JSON file
+        try:
+            items = (
+                execute_query(
+                    "SELECT * FROM news ORDER BY display_order ASC, created_at DESC",
+                    fetch_all=True,
+                )
+                or []
+            )
+            news_data = {
+                "news": [dict(item) for item in items],
+                "metadata": {
+                    "total_count": len(items),
+                    "active_count": len([i for i in items if i["is_active"]]),
+                    "last_updated": get_current_time().isoformat(),
+                    "version": "1.0",
+                },
+            }
+            with open("data/news.json", "w", encoding="utf-8") as f:
+                json.dump(news_data, f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            app_logger.warning(f"Failed to sync news to JSON: {str(e)}")
 
         return jsonify({"success": True, "message": "News item deleted"})
 
@@ -18084,6 +18248,55 @@ def api_admin_news_ticker():
             jsonify({"success": False, "message": "Failed to load ticker items"}),
             500,
         )
+
+
+@app.route("/news/<int:news_id>")
+def news_detail(news_id):
+    """Yangilik batafsil sahifasi"""
+    try:
+        # Yangilik ma'lumotlarini olish
+        news_item = execute_query(
+            "SELECT * FROM news WHERE id = ? AND is_active = 1",
+            (news_id,),
+            fetch_one=True,
+        )
+
+        if not news_item:
+            flash("Yangilik topilmadi yoki faol emas.", "warning")
+            return redirect(url_for("index"))
+
+        # Yangilik ma'lumotlarini dict ga aylantirish
+        news_data = dict(news_item) if news_item else {}
+
+        # SEO ma'lumotlari
+        seo_data = {
+            "page_title": f"{news_data.get('title', 'Yangilik')} | Safety.uz",
+            "meta_description": (
+                f"{news_data.get('content', '')[:160]}..."
+                if news_data.get("content")
+                else "Yangilik batafsil ma'lumotlari"
+            ),
+            "meta_keywords": f"yangilik, news, {news_data.get('title', '')}, safety.uz, pro obuv",
+            "og_title": news_data.get("title", "Yangilik"),
+            "og_description": (
+                news_data.get("content", "")[:160]
+                if news_data.get("content")
+                else "Yangilik batafsil ma'lumotlari"
+            ),
+            "canonical_url": f"https://www.safety.uz/news/{news_id}",
+        }
+
+        return render_template(
+            "news_detail.html",
+            news=news_data,
+            seo_data=seo_data,
+            current_page="news_detail",
+        )
+
+    except Exception as e:
+        app_logger.error(f"News detail error: {str(e)}")
+        flash("Yangilik yuklashda xatolik yuz berdi.", "error")
+        return redirect(url_for("index"))
 
 
 @app.route("/api/news/ticker/toggle/<int:news_id>", methods=["POST"])
@@ -18522,7 +18735,11 @@ def api_chat_ai():
                 try:
                     os.makedirs("logs", exist_ok=True)
                     ts = time.strftime("%Y-%m-%d %H:%M:%S")
-                    with open(os.path.join("logs", "ai_unknown_questions.txt"), "a", encoding="utf-8") as f:
+                    with open(
+                        os.path.join("logs", "ai_unknown_questions.txt"),
+                        "a",
+                        encoding="utf-8",
+                    ) as f:
                         f.write(f"{ts} | sender={sender} | {text}\n")
                 except Exception:
                     pass
@@ -18608,16 +18825,22 @@ if __name__ == "__main__":
 
             if _sigint_state["count"] == 1:
                 # First Ctrl+C: politely terminate background bot (if any) and warn user
-                print("\nSIGINT received. Press Ctrl+C again within 3 seconds to force exit.")
+                print(
+                    "\nSIGINT received. Press Ctrl+C again within 3 seconds to force exit."
+                )
                 try:
                     if os.path.exists(pid_path):
                         try:
-                            pid = int(open(pid_path, "r", encoding="utf-8").read().strip())
+                            pid = int(
+                                open(pid_path, "r", encoding="utf-8").read().strip()
+                            )
                             try:
                                 # Try a polite termination first
                                 os.kill(pid, signal.SIGTERM)
                                 try:
-                                    app_logger.info("Sent SIGTERM to telegram bot (pid=%d)", pid)
+                                    app_logger.info(
+                                        "Sent SIGTERM to telegram bot (pid=%d)", pid
+                                    )
                                 except Exception:
                                     pass
                             except Exception:
@@ -18660,7 +18883,9 @@ if __name__ == "__main__":
         signal.signal(signal.SIGINT, _sigint_handler)
     except Exception:
         try:
-            app_logger.warning("Failed to install custom SIGINT handler; default behavior will apply")
+            app_logger.warning(
+                "Failed to install custom SIGINT handler; default behavior will apply"
+            )
         except Exception:
             pass
 

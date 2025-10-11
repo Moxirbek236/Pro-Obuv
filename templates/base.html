@@ -8,8 +8,8 @@
   <title>Safety / Pro Obuv - {% block title %}Spetsobuv Do'koni{% endblock %}</title>
   {# SEO meta block: page templates intended for customers may override this block to inject page-specific meta tags #}
   {% block seo_meta %}
-  <meta name="description" content="Pro Obuv - sifatli oyoq kiyim va aksessuarlar. Onlayn buyurtma qilish, tez yetkazib berish va qulay to'lov imkoniyatlari.">
-  <meta name="keywords" content="pro obuv, obuv, safety, pro guard, guard, oyoq kiyim, buyurtma, yetkazib berish">
+  <meta name="description" content="Pro Obuv - sifatli oyoq kiyim va aksessuarlar. Spetsobuv, botinki, krasofka, ish kiyimlari, spetsodejda. Onlayn buyurtma qilish, tez yetkazib berish va qulay to'lov imkoniyatlari.">
+  <meta name="keywords" content="pro obuv, obuv, safety, pro guard, guard, oyoq kiyim, buyurtma, yetkazib berish, spetsobuv, botinki, krasofka, ish kiyimlari, spetsodejda, himoya poyabzal, спетсообув, спецодежда, обувь, кроссовки, ботинки, safety shoes, work boots, professional footwear, protective shoes">
   <meta property="og:site_name" content="Pro Obuv">
   <meta property="og:title" content="Pro Obuv - Do'kon">
   <meta property="og:description" content="Pro Obuv - sifatli oyoq kiyim va aksessuarlar">
@@ -2143,6 +2143,174 @@
         height: 100%;
         position: relative;
         transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-behavior: smooth;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+
+      /* Hide scrollbar for news ticker */
+      .news-ticker-content::-webkit-scrollbar {
+        display: none;
+      }
+
+      .news-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        min-width: 100%;
+        height: 100%;
+        padding: 15px 20px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        margin-right: 15px;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+        box-sizing: border-box;
+        position: relative;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        cursor: pointer;
+      }
+
+      .news-item.news {
+        background: linear-gradient(135deg, rgba(66, 153, 225, 0.2), rgba(59, 130, 246, 0.2));
+        border-left: 4px solid #4299e1;
+        box-shadow: 0 4px 15px rgba(66, 153, 225, 0.1);
+      }
+
+      .news-item.advertisement {
+        background: linear-gradient(135deg, rgba(237, 137, 54, 0.2), rgba(221, 107, 32, 0.2));
+        border-left: 4px solid #ed8936;
+        box-shadow: 0 4px 15px rgba(237, 137, 54, 0.1);
+      }
+
+      .news-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        cursor: pointer;
+      }
+
+      .news-content {
+        flex: 1;
+        margin-right: 15px;
+      }
+
+      .news-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #ffffff;
+        margin-bottom: 8px;
+        line-height: 1.3;
+      }
+
+      .news-text {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.9);
+        margin: 0;
+        line-height: 1.4;
+        max-height: 60px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .news-media {
+        flex-shrink: 0;
+        width: 80px;
+        height: 60px;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .news-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .news-video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .news-youtube {
+        width: 100%;
+        height: 100%;
+        border-radius: 8px;
+      }
+
+      .news-indicators {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 15px;
+      }
+
+      .news-indicator {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .news-indicator.active {
+        background: #4299e1;
+        transform: scale(1.2);
+      }
+
+      .news-indicator:hover {
+        background: rgba(255, 255, 255, 0.6);
+      }
+
+      /* News ticker responsive design */
+      @media (max-width: 768px) {
+        .news-item {
+          padding: 12px 15px;
+          margin-right: 10px;
+        }
+
+        .news-title {
+          font-size: 1rem;
+          margin-bottom: 6px;
+        }
+
+        .news-text {
+          font-size: 0.85rem;
+          max-height: 50px;
+        }
+
+        .news-media {
+          width: 60px;
+          height: 45px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .news-item {
+          padding: 10px 12px;
+          margin-right: 8px;
+        }
+
+        .news-title {
+          font-size: 0.9rem;
+          margin-bottom: 4px;
+        }
+
+        .news-text {
+          font-size: 0.8rem;
+          max-height: 40px;
+        }
+
+        .news-media {
+          width: 50px;
+          height: 35px;
+        }
+      }
         gap: 20px;
         padding: 16px;
         flex-wrap: nowrap;
@@ -3380,6 +3548,207 @@
           // ignore
         }
       })();
+    </script>
+
+    <!-- News Ticker JavaScript -->
+    <script>
+      // News Ticker functionality
+      let newsItems = [];
+      let currentNewsIndex = 0;
+      let newsTickerInterval;
+
+      // Load news from API
+      async function loadNewsTicker() {
+        try {
+          const response = await fetch('/api/news?ticker=true');
+          const data = await response.json();
+          
+          if (data && data.success && data.items) {
+            newsItems = data.items.filter(item => item.is_active && item.show_in_ticker);
+            renderNewsTicker();
+            startNewsTicker();
+          } else {
+            // Fallback to JSON file
+            await loadNewsFromJSON();
+          }
+        } catch (error) {
+          console.warn('Failed to load news from API, trying JSON file:', error);
+          await loadNewsFromJSON();
+        }
+      }
+
+      // Fallback: Load news from JSON file
+      async function loadNewsFromJSON() {
+        try {
+          const response = await fetch('/data/news.json');
+          const data = await response.json();
+          
+          if (data && data.news) {
+            newsItems = data.news.filter(item => item.is_active);
+            renderNewsTicker();
+            startNewsTicker();
+          }
+        } catch (error) {
+          console.error('Failed to load news from JSON file:', error);
+          showDefaultNews();
+        }
+      }
+
+      // Render news ticker
+      function renderNewsTicker() {
+        const container = document.getElementById('newsTickerContent');
+        if (!container) return;
+
+        if (newsItems.length === 0) {
+          showDefaultNews();
+          return;
+        }
+
+        container.innerHTML = '';
+        
+        newsItems.forEach((item, index) => {
+          const newsElement = document.createElement('div');
+          newsElement.className = `news-item ${item.type}`;
+          newsElement.style.display = 'flex'; // Har bir yangilik ko'rinadi
+          
+          let content = `<div class="news-content">`;
+          content += `<h4 class="news-title">${item.title}</h4>`;
+          if (item.content) {
+            content += `<p class="news-text">${item.content}</p>`;
+          }
+          content += `</div>`;
+          
+          if (item.image_url) {
+            content += `<div class="news-media"><img src="${item.image_url}" alt="${item.title}" class="news-image"></div>`;
+          }
+          
+          if (item.video_url && !item.image_url) {
+            content += `<div class="news-media"><video src="${item.video_url}" class="news-video" controls></video></div>`;
+          }
+          
+          if (item.youtube_embed && !item.image_url && !item.video_url) {
+            content += `<div class="news-media"><iframe src="${item.youtube_embed}" class="news-youtube" frameborder="0" allowfullscreen></iframe></div>`;
+          }
+          
+          newsElement.innerHTML = content;
+          
+          // Add click handler to open news detail page
+          newsElement.style.cursor = 'pointer';
+          newsElement.onclick = function() {
+            window.location.href = `/news/${item.id}`;
+          };
+          
+          container.appendChild(newsElement);
+        });
+
+        updateIndicators();
+        scrollToCurrentNews();
+      }
+
+      // Show default news when no news available
+      function showDefaultNews() {
+        const container = document.getElementById('newsTickerContent');
+        if (!container) return;
+        
+        container.innerHTML = `
+          <div class="news-item news">
+            <div class="news-content">
+              <h4 class="news-title">📢 Yangiliklar</h4>
+              <p class="news-text">Pro Obuv do'konida eng yangi mahsulotlar va chegirmalar!</p>
+            </div>
+          </div>
+        `;
+      }
+
+      // Start automatic news rotation
+      function startNewsTicker() {
+        if (newsItems.length <= 1) return;
+        
+        clearInterval(newsTickerInterval);
+        newsTickerInterval = setInterval(() => {
+          nextNews();
+        }, 5000); // Change news every 5 seconds
+      }
+
+      // Scroll to current news
+      function scrollToCurrentNews() {
+        const container = document.getElementById('newsTickerContent');
+        if (!container) return;
+        
+        const items = container.querySelectorAll('.news-item');
+        if (items.length === 0) return;
+        
+        if (currentNewsIndex < items.length) {
+          const targetItem = items[currentNewsIndex];
+          const containerWidth = container.offsetWidth;
+          const itemWidth = targetItem.offsetWidth;
+          const scrollLeft = currentNewsIndex * (itemWidth + 15); // 15px margin
+            
+          container.scrollTo({
+            left: scrollLeft,
+            behavior: 'smooth'
+          });
+        }
+      }
+
+      // Next news function
+      function nextNews() {
+        if (newsItems.length <= 1) return;
+        
+        // Move to next item
+        currentNewsIndex = (currentNewsIndex + 1) % newsItems.length;
+        
+        scrollToCurrentNews();
+        updateIndicators();
+      }
+
+      // Previous news function
+      function prevNews() {
+        if (newsItems.length <= 1) return;
+        
+        // Move to previous item
+        currentNewsIndex = currentNewsIndex === 0 ? newsItems.length - 1 : currentNewsIndex - 1;
+        
+        scrollToCurrentNews();
+        updateIndicators();
+      }
+
+      // Update indicators
+      function updateIndicators() {
+        const indicatorsContainer = document.getElementById('newsIndicators');
+        if (!indicatorsContainer || newsItems.length <= 1) return;
+        
+        indicatorsContainer.innerHTML = '';
+        
+        newsItems.forEach((_, index) => {
+          const indicator = document.createElement('span');
+          indicator.className = `news-indicator ${index === currentNewsIndex ? 'active' : ''}`;
+          indicator.onclick = () => {
+            currentNewsIndex = index;
+            scrollToCurrentNews();
+            updateIndicators();
+          };
+          indicatorsContainer.appendChild(indicator);
+        });
+      }
+
+      // Refresh news ticker
+      function refreshNewsTicker() {
+        loadNewsTicker();
+      }
+
+      // Make functions globally available
+      window.nextNews = nextNews;
+      window.prevNews = prevNews;
+      window.refreshNewsTicker = refreshNewsTicker;
+
+      // Initialize news ticker when page loads
+      document.addEventListener('DOMContentLoaded', function() {
+        loadNewsTicker();
+      });
+
+      // Listen for refresh events
+      window.addEventListener('refreshNewsTicker', refreshNewsTicker);
     </script>
 
     <!-- Enhanced Telegram-style Chat Widget - Only for Staff, Courier, SuperAdmin -->

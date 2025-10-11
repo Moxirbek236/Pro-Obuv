@@ -3,27 +3,108 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
 <title>Pro Obuv — Spetsobuv va Ish kiyimlari do'koni | Safety.uz</title>
 <meta
   name="description"
-  content="Safety.uz – Pro Obuv do‘koni. Spetsobuv, ish kiyimlari, spetsodejda va himoya poyabzallari. Sifatli mahsulotlar, tez yetkazib berish." />
+  content="Safety.uz – Pro Obuv do'koni. Spetsobuv, ish kiyimlari, spetsodejda va himoya poyabzallari. Sifatli mahsulotlar, tez yetkazib berish." />
 <meta
   name="keywords"
-  content="pro obuv, obuv, spetsobuv, spetsodejda, safety, oyoq kiyim, tufli, etik, ish kiyimlari, himoya poyabzal" />
+  content="pro obuv, obuv, spetsobuv, spetsodejda, safety, oyoq kiyim, tufli, etik, ish kiyimlari, himoya poyabzal, botinki, krasofka, спетсообув, спецодежда, обувь, кроссовки, ботинки, safety shoes, work boots, professional footwear, protective shoes" />
 <link rel="canonical" href="https://safety.uz{{ request.path }}" />
 <meta property="og:type" content="website" />
-<meta property="og:title" content="Pro Obuv — Spetsobuv va Ish kiyimlari" />
-<meta property="og:description" content="Spetsobuv, spetsodejda va ish kiyimlari — Pro Obuv" />
+<meta property="og:title" content="Pro Obuv — Spetsobuv, Botinki, Krasofka va Ish kiyimlari" />
+<meta property="og:description" content="Spetsobuv, spetsodejda, botinki, krasofka va ish kiyimlari — Pro Obuv. Safety.uz da eng sifatli himoya poyabzallari" />
 <meta property="og:url" content="{{ request.url }}" />
 <meta property="og:image" content="{{ url_for('static', filename='defoult.png') }}" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="Pro Obuv — Spetsobuv va Ish kiyimlari" />
-<meta name="twitter:description" content="Spetsobuv, spetsodejda va ish kiyimlari — Pro Obuv" />
+<meta name="twitter:title" content="Pro Obuv — Spetsobuv, Botinki, Krasofka va Ish kiyimlari" />
+<meta name="twitter:description" content="Spetsobuv, spetsodejda, botinki, krasofka va ish kiyimlari — Pro Obuv. Safety.uz da eng sifatli himoya poyabzallari" />
 <meta name="twitter:image" content="{{ url_for('static', filename='defoult.png') }}" />
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
-  "name": "Pro Obuv — Spetsobuv va Ish kiyimlari",
-  "description": "Spetsobuv, spetsodejda va ish kiyimlari — Pro Obuv",
-  "url": "{{ request.url }}"
+  "name": "Pro Obuv — Spetsobuv, Botinki, Krasofka va Ish kiyimlari",
+  "description": "Spetsobuv, spetsodejda, botinki, krasofka va ish kiyimlari — Pro Obuv. Safety.uz da eng sifatli himoya poyabzallari va ish kiyimlari",
+  "url": "{{ request.url }}",
+  "keywords": "pro obuv, spetsobuv, spetsodejda, botinki, krasofka, safety shoes, work boots, professional footwear, protective shoes, ish kiyimlari, himoya poyabzal",
+  "alternateName": ["Spetsobuv do'koni", "Ish kiyimlari", "Safety shoes", "Work boots", "Про обувь", "Спецобувь", "Botinki do'koni", "Krasofka do'koni", "Professional footwear store"],
+  "mainEntity": {
+    "@type": "Store",
+    "name": "Pro Obuv",
+    "description": "Professional footwear and work clothes store in Uzbekistan",
+    "url": "https://www.safety.uz",
+    "sameAs": ["https://www.safety.uz"],
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "UZ"
+    },
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Professional Footwear and Work Clothes",
+      "itemListElement": [
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Product",
+            "name": "Spetsobuv - Professional footwear",
+            "description": "Professional safety shoes for work"
+          }
+        },
+        {
+          "@type": "Offer", 
+          "itemOffered": {
+            "@type": "Product",
+            "name": "Botinki - Work boots",
+            "description": "High quality work boots"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Product", 
+            "name": "Krasofka - Safety shoes",
+            "description": "Safety sneakers and shoes"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Product",
+            "name": "Ish kiyimlari - Work clothes", 
+            "description": "Professional work clothing"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Product",
+            "name": "Spetsodejda - Protective clothing",
+            "description": "Specialized protective clothing"
+          }
+        }
+      ]
+    }
+  }
+}
+</script>
+
+<!-- Breadcrumb Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Bosh sahifa",
+      "item": "https://www.safety.uz/"
+    },
+    {
+      "@type": "ListItem", 
+      "position": 2,
+      "name": "Menu - Spetsobuv va Ish kiyimlari",
+      "item": "https://www.safety.uz/menu"
+    }
+  ]
 }
 </script>
 <style>
@@ -143,6 +224,10 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
     <!-- cart button removed (use navbar cart) -->
     <!-- Left Sidebar Filters -->
     <div class="filter-sidebar">
+      <!-- Mobile Close Button -->
+      <button class="mobile-close-btn d-md-none" onclick="toggleMobileFilter()">
+        <span>&times;</span>
+      </button>
       <h3 class="filter-title">Filter va qidiruv</h3>
 
       <!-- Search -->
@@ -419,6 +504,58 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
             </button>
           </div>
         </div>
+        <!-- Breadcrumb Navigation for SEO -->
+        <nav aria-label="breadcrumb" style="margin-bottom: 20px;">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Bosh sahifa</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Menu - Spetsobuv va Ish kiyimlari</li>
+          </ol>
+        </nav>
+        
+        <!-- SEO Header Content -->
+        <div class="seo-header" style="background: #f8f9fa; padding: 20px; margin-bottom: 30px; border-radius: 8px;">
+          <h1 style="color: #2d3748; font-size: 2.5rem; margin-bottom: 15px; text-align: center;">Pro Obuv - Spetsobuv va Ish kiyimlari do'koni</h1>
+          <p style="font-size: 1.2rem; color: #4a5568; text-align: center; margin-bottom: 20px;">
+            Safety.uz da eng sifatli <strong>spetsobuv</strong>, <strong>botinki</strong>, <strong>krasofka</strong>, <strong>ish kiyimlari</strong> va <strong>spetsodejda</strong> sotuvchi professional do'kon. 
+            Bizning mahsulotlarimiz: <em>professional footwear</em>, <em>work boots</em>, <em>safety shoes</em>, <em>protective shoes</em>, <em>work clothes</em>.
+          </p>
+          <div style="text-align: center;">
+            <span style="background: #4299e1; color: white; padding: 8px 16px; border-radius: 20px; margin: 5px; display: inline-block;">Spetsobuv</span>
+            <span style="background: #4299e1; color: white; padding: 8px 16px; border-radius: 20px; margin: 5px; display: inline-block;">Botinki</span>
+            <span style="background: #4299e1; color: white; padding: 8px 16px; border-radius: 20px; margin: 5px; display: inline-block;">Krasofka</span>
+            <span style="background: #4299e1; color: white; padding: 8px 16px; border-radius: 20px; margin: 5px; display: inline-block;">Ish kiyimlari</span>
+            <span style="background: #4299e1; color: white; padding: 8px 16px; border-radius: 20px; margin: 5px; display: inline-block;">Spetsodejda</span>
+            <span style="background: #4299e1; color: white; padding: 8px 16px; border-radius: 20px; margin: 5px; display: inline-block;">Himoya poyabzal</span>
+          </div>
+        </div>
+        
+        <!-- SEO Content for Search Engines -->
+        <div class="seo-content" style="display: none;">
+          <h1>Pro Obuv - Spetsobuv va Ish kiyimlari do'koni</h1>
+          <h2>Botinki, Krasofka va Himoya Poyabzallari</h2>
+          <p>Safety.uz da eng sifatli spetsobuv, botinki, krasofka va ish kiyimlari. Professional footwear, work boots, safety shoes, protective shoes. Спетсообув, спецодежда, обувь, кроссовки, ботинки. Pro Obuv do'koni O'zbekistonda eng yaxshi ish kiyimlari va himoya poyabzallari sotuvchi do'kon. Bizda spetsobuv, botinki, krasofka, ish kiyimlari, spetsodejda va boshqa himoya vositalari mavjud.</p>
+          
+          <h3>Mahsulotlar:</h3>
+          <ul>
+            <li>Spetsobuv - Professional footwear - Профессиональная обувь</li>
+            <li>Botinki - Work boots - Рабочие ботинки</li>
+            <li>Krasofka - Safety shoes - Кроссовки безопасности</li>
+            <li>Ish kiyimlari - Work clothes - Рабочая одежда</li>
+            <li>Spetsodejda - Protective clothing - Спецодежда</li>
+            <li>Himoya poyabzallari - Protective shoes - Защитная обувь</li>
+            <li>Safety shoes - Безопасная обувь</li>
+            <li>Professional footwear - Профессиональная обувь</li>
+            <li>Work boots - Рабочие ботинки</li>
+            <li>Protective shoes - Защитная обувь</li>
+          </ul>
+          
+          <h3>Xizmatlar:</h3>
+          <p>Pro Obuv do'konida siz eng sifatli ish kiyimlari va himoya poyabzallarini topishingiz mumkin. Bizning mahsulotlarimiz: spetsobuv, botinki, krasofka, ish kiyimlari, spetsodejda va boshqa himoya vositalari. Safety.uz - bu O'zbekistondagi eng yaxshi professional footwear do'koni.</p>
+          
+          <h4>Kalit so'zlar:</h4>
+          <p>pro obuv, spetsobuv, botinki, krasofka, ish kiyimlari, spetsodejda, himoya poyabzal, safety shoes, work boots, professional footwear, protective shoes, спетсообув, спецодежда, обувь, кроссовки, ботинки, рабочая обувь, защитная обувь, профессиональная обувь</p>
+        </div>
+        
         <div class="menu-grid">
           {% for item in men %}
           <div
@@ -660,6 +797,38 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
     background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(66, 153, 225, 0.4);
+  }
+
+  /* Mobile Close Button */
+  .mobile-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 35px;
+    height: 35px;
+    background: #e53e3e;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    box-shadow: 0 2px 8px rgba(229, 62, 62, 0.3);
+    transition: all 0.3s ease;
+  }
+
+  .mobile-close-btn:hover {
+    background: #c53030;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(229, 62, 62, 0.4);
+  }
+
+  .mobile-close-btn span {
+    line-height: 1;
   }
 
   .filter-links {
@@ -4544,4 +4713,34 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
         });
       });
 </script>
+
+<!-- SEO Footer Content -->
+<div class="seo-footer" style="background: #f8f9fa; padding: 30px; margin-top: 40px; border-radius: 8px;">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6">
+        <h3>Pro Obuv - Professional Footwear Store</h3>
+        <p>Safety.uz da eng yaxshi <strong>spetsobuv</strong>, <strong>botinki</strong>, <strong>krasofka</strong> va <strong>ish kiyimlari</strong> sotuvchi do'kon. Bizning mahsulotlarimiz: professional footwear, work boots, safety shoes, protective shoes, work clothes, spetsodejda.</p>
+        
+        <h4>Mahsulotlar:</h4>
+        <ul>
+          <li><strong>Spetsobuv</strong> - Professional footwear, Профессиональная обувь</li>
+          <li><strong>Botinki</strong> - Work boots, Рабочие ботинки</li>
+          <li><strong>Krasofka</strong> - Safety shoes, Кроссовки безопасности</li>
+          <li><strong>Ish kiyimlari</strong> - Work clothes, Рабочая одежда</li>
+          <li><strong>Spetsodejda</strong> - Protective clothing, Спецодежда</li>
+          <li><strong>Himoya poyabzal</strong> - Protective shoes, Защитная обувь</li>
+        </ul>
+      </div>
+      <div class="col-md-6">
+        <h4>Kalit so'zlar va qidiruv:</h4>
+        <p>Pro Obuv, spetsobuv, botinki, krasofka, ish kiyimlari, spetsodejda, himoya poyabzal, safety shoes, work boots, professional footwear, protective shoes, спетсообув, спецодежда, обувь, кроссовки, ботинки, рабочая обувь, защитная обувь, профессиональная обувь, Safety.uz, Pro Obuv do'koni, O'zbekiston professional footwear.</p>
+        
+        <h4>Xizmatlar:</h4>
+        <p>Onlayn buyurtma, tez yetkazib berish, sifatli mahsulotlar, professional footwear, work clothes, safety equipment, protective gear, spetsobuv, botinki, krasofka, ish kiyimlari, spetsodejda, himoya poyabzal.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
