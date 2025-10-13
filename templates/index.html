@@ -6,10 +6,10 @@
     <title>Pro Obuv - Bosh sahifa | Sifatli Spetsobuv va Ish Kiyimlari</title>
     <meta
       name="description"
-      content="Pro Obuv — O'zbekistondagi eng yaxshi spetsobuv va ish kiyimlari do'koni. Xavfsizlik poyabzallari, ish kiyimlari, himoya vositalari. Tez yetkazib berish, kafolat." />
+      content="Pro Obuv (Safety.uz) — spetsobuv, work boots, kроссовки, krasofka va ish kiyimlari. Sifatli himoya poyabzallari (steel toe, composite toe), antistatic/ESD, professional workwear. Buyurtma va yetkazib berish O'zbekiston bo'ylab." />
     <meta
       name="keywords"
-      content="pro obuv, spetsobuv, ish kiyimlari, xavfsizlik poyabzallari, himoya vositalari, safety, oyoq kiyim, buyurtma, yetkazib berish, toshkent" />
+      content="pro obuv, spetsobuv, spets obuv, spestobuv, spest obuv, safety shoes, safety.uz, work boots, protective shoes, steel toe, composite toe, ESD shoes, antistatic, botinki, botinki ish, krasofka, krosovka, krossovka, кроссовки, krosofkalar, krosofkalar, sneakers, sport shoes, cross, crossovki, кроссовки, tufli, etik, ish kiyimlari, spetsodejda, himoya poyabzal, buyurtma, yetkazib berish, Toshkent, Uzbekistan" />
     <meta
       property="og:title"
       content="Pro Obuv - Bosh sahifa | Sifatli Spetsobuv va Ish Kiyimlari" />
@@ -552,24 +552,41 @@
     </div>
 
     <!-- Services Section -->
-      <!-- Search (mirrors menu search) -->
+      <!-- Site-wide search (mirrors menu search controls) -->
       <div class="container mt-4">
-        <form action="{{ url_for('menu') }}" method="get" class="d-flex justify-content-center mb-4">
-          <input name="q" class="form-control form-control-lg me-2" type="search" placeholder="Qidirish: misol 'shoes', 'krossovka', 'spetsobuv'" aria-label="Search" style="max-width:720px;" />
-          <button class="btn btn-primary btn-lg" type="submit">Qidirish</button>
-        </form>
-
-        <!-- SEO keyword cluster (visible but small) -->
-        <div class="text-center mb-4" style="font-size:12px;color:#e9ecef;opacity:0.9;">
-          <strong>Qidiruv kalit so'zlari:</strong>
-          <div style="max-width:900px;margin:8px auto;line-height:1.6;color:#f8f9fa;">
-            shoes, safety shoes, sneakers, work boots, work shoes, pro obuv, spetsobuv, spestobuv, spest obuv, spets obuv, krosovka, krossovka, кроссовки, krasofka, krosofka, krosofkalar, kasovka, cross, kross, cross-trainers, sport shoes, ortopedik poyabzal, ish poyabzallari, himoya oyoq kiyimlari, safety boots, steel toe boots, anti-slip shoes, yuk tashish poyabzallari, batafsil katalog, buyurtma, yetkazib berish, ProGuard, Pro Obuv, safety.uz, workwear, ish kiyimlari
-          </div>
+        <div class="card p-4 mb-4">
+          <form action="{{ url_for('menu') }}" method="get" class="d-flex gap-2">
+            <input name="q" type="search" class="form-control" placeholder="Qidirish: nom, tavsif, kod (masalan: shoes, spetsobuv, кроссовки)" />
+            <select name="category" class="form-select" style="max-width:220px">
+              <option value="">Barcha kategoriyalar</option>
+              <option value="specobuv">Спецобувь</option>
+              <option value="specodezhda">Спецодежда</option>
+            </select>
+            <button type="submit" class="btn btn-primary">Qidirish</button>
+          </form>
+          <div class="mt-3 text-muted small">Maslahat: qidiruv so'zlarini ruscha, inglizcha va lokal yozuvlarda sinab ko'ring (masalan: "krosovka", "кроссовки", "safety shoes").</div>
         </div>
 
+        <!-- Popular searches / keyword cloud for SEO (crawlable phrases) -->
+        <div class="card p-4">
+          <h5>Ommabop qidiruvlar</h5>
+          <p class="text-muted">Tez-tez qidiriladigan so'zlar — ularni bosib darhol qidirish mumkin:</p>
+          <div class="d-flex flex-wrap gap-2">
+            {% set popular = [
+              'shoes','safety shoes','work boots','spetsobuv','spestobuv','spets obuv','spest obuv',
+              'krosovka','krossovka','кроссовки','krasofka','krosofkalar','krosovkalar','sneakers',
+              'steel toe','composite toe','antistatic','ESD shoes','botinki','tufli','etik',
+              'cross','crossovki','sport shoes','ish kiyimlari','spetsodejda','himoya poyabzal',
+              'safety boots','workwear','professional footwear','protective shoes','buyurtma','yetkazib berish',
+              'Toshkent','Uzbekistan','Oʻzbekiston','Pro Obuv','Safety.uz'
+            ] %}
+            {% for kw in popular %}
+              <a href="{{ url_for('menu') }}?q={{ kw|urlencode }}" class="badge bg-light border text-dark text-decoration-none py-2 px-3">{{ kw }}</a>
+            {% endfor %}
+          </div>
+        </div>
       </div>
-
-      <div class="container">
+    <div class="container">
       <div class="row">
         <div class="col-md-6">
           <div class="service-card">
@@ -583,8 +600,8 @@
               href="{{ url_for('menu') }}"
               class="btn-service"
               data-translate="browse_shoes">
-                name="keywords"
-                content="pro obuv, spetsobuv, spestobuv, spets obuv, spest obuv, safety shoes, shoes, krosovka, krossovka, кроссовки, sneakers, sport shoes, work boots, ish poyabzallari, xavfsizlik poyabzallari, tayyor poyabzal, oyoq kiyim, krasofka, krosofka, krosofkalar, kasovka, cross, kross, krossovki, ortopedik poyabzal, ish kiyimlari, himoya oyoq kiyimlari, workwear, safety.uz, proguard, pro obuv, buyurtma, yetkazib berish, Toshkent" />
+              Katalogni ko'rish</a
+            >
           </div>
         </div>
         <div class="col-md-6">
