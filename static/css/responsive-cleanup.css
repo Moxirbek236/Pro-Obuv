@@ -315,7 +315,7 @@ button,
   height: 180px !important;
 }
 
-/* Small phones: stack sidebar above content and keep images compact */
+/* Small phones: keep sidebar stacked but show menu as 2 columns for better density */
 @media (max-width: 575.98px) {
   .main-content {
     flex-direction: column;
@@ -338,13 +338,14 @@ button,
     padding-right: 8px !important;
   }
   .menu-grid {
-    grid-template-columns: 1fr !important;
+    /* Use two columns on small phones to reduce excessive vertical scrolling */
+    grid-template-columns: repeat(2, 1fr) !important;
     gap: 12px !important;
   }
   .menu-item-card .card-image,
   .menu-item .item-image,
   .menu-item-image {
-    height: 160px !important;
+    height: 140px !important;
   }
 }
 

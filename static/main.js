@@ -189,12 +189,25 @@ const MenuClient = (function () {
     try {
       const q = buildQuery();
       const res = await fetch("/api/menu-search?" + q);
-      if (!res.ok) return;
-      const data = await res.json();
-      if (!data || !data.success) return;
-      renderMenuItems(data.items || []);
+      if (res && res.ok) {
+        const data = await res.json().catch(() => null);
+        if (data && data.success && Array.isArray(data.items)) {
+          // cache last successful dataset to allow client-side fallback filtering
+          try {
+            window.menuDataArr = data.items.slice();
+          } catch (e) {}
+          renderMenuItems(data.items || []);
+          return;
+        }
+      }
     } catch (e) {
       console.warn("MenuClient fetch error", e);
+    }
+    // If API failed or returned nothing, try client-side filtering of existing DOM/data
+    try {
+      applyClientSideFilter();
+    } catch (e) {
+      console.warn("applyClientSideFilter failed", e);
     }
   }
 
@@ -209,8 +222,15 @@ const MenuClient = (function () {
     }
     items.forEach((item) => {
       const div = document.createElement("div");
-      div.className = "menu-item";
+      // Use same class as server template so filtering and diagnostics work
+      div.className = "menu-item-card";
       div.setAttribute("data-id", item.id || "");
+      try {
+        div.setAttribute(
+          "data-category",
+          (item.category || "").toString().toLowerCase()
+        );
+      } catch (e) {}
       const imageHtml = (function () {
         try {
           if (item.media && Array.isArray(item.media) && item.media.length) {
@@ -237,32 +257,8 @@ const MenuClient = (function () {
         )}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.png'" /></div>`;
       })();
 
-      // Build colors badges if present (client-side rendering)
-      const colorsHtml = (function () {
-        try {
-          if (item.colors) {
-            const cols = String(item.colors)
-              .split(",")
-              .map((c) => c.trim())
-              .filter(Boolean);
-            if (cols.length) {
-              return (
-                `<div class="card-options"><div class="card-colors" aria-label="Available colors">` +
-                cols
-                  .map(
-                    (c) =>
-                      `<span class="color-badge" title="${escapeHtml(
-                        c
-                      )}" style="background:${escapeHtml(c)}"></span>`
-                  )
-                  .join("") +
-                `</div></div>`
-              );
-            }
-          }
-        } catch (e) {}
-        return "";
-      })();
+      // Colors and add-to-cart removed by request (no UI controls needed on cards)
+      const colorsHtml = "";
 
       div.innerHTML = `
         ${imageHtml}
@@ -276,11 +272,7 @@ const MenuClient = (function () {
           : item.avg_rating || item.rating || 0
       } (${item.orders_count || 0})</span></div>
           ${colorsHtml}
-          <div class="item-footer"><div class="price">${formatPrice(
-            item.price || 0
-          )}</div><div><button class="add-to-cart-btn" data-item-id="${
-        item.id
-      }">+</button></div></div>
+          <!-- item-footer (price/add-to-cart) removed intentionally -->
         </div>`;
 
       // Navigate to product page when clicking the card
@@ -308,6 +300,115 @@ const MenuClient = (function () {
 
   return { fetchAndRender, setState: (s) => (state = { ...state, ...s }) };
 })();
+
+// Debounce helper and global search/filter wiring used by templates
+function debounce(fn, wait) {
+  let t = null;
+  return function (...args) {
+    if (t) clearTimeout(t);
+    t = setTimeout(() => fn.apply(this, args), wait || 250);
+  };
+}
+
+// Read filter inputs, update MenuClient state and fetch results (or fallback)
+window.performMenuSearch = function () {
+  try {
+    const qEl = document.getElementById("menuSearchInput");
+    const catEl = document.getElementById("filterCategory");
+    const sizeEl = document.getElementById("filterSize");
+    const colorEl = document.getElementById("filterColor");
+    const sortEl = document.getElementById("filterSort");
+
+    const q = qEl ? qEl.value.trim() : "";
+    const category = catEl ? catEl.value || "" : "";
+    const size = sizeEl ? sizeEl.value || "" : "";
+    const color = colorEl ? colorEl.value || "" : "";
+    const sort = sortEl ? sortEl.value || "" : "";
+
+    if (window.MenuClient && typeof window.MenuClient.setState === "function") {
+      window.MenuClient.setState({ q, category, size, color, sort, offset: 0 });
+      // async fetch - MenuClient has its own fallback to client-side filtering
+      try {
+        window.MenuClient.fetchAndRender();
+      } catch (e) {
+        console.warn("MenuClient.fetchAndRender failed", e);
+        applyClientSideFilter();
+      }
+    } else {
+      // If MenuClient missing, attempt client-side filter only
+      applyClientSideFilter();
+    }
+  } catch (e) {
+    console.warn("performMenuSearch error", e);
+  }
+};
+
+// Debounced version wired by templates to input events
+window.debouncedSearch = debounce(window.performMenuSearch, 300);
+
+// Simple client-side filter that hides/shows existing .menu-item-card elements based on inputs
+window.applyClientSideFilter = function () {
+  try {
+    const grid = document.querySelector(".menu-grid");
+    if (!grid) return;
+    const q = (document.getElementById("menuSearchInput")?.value || "")
+      .toLowerCase()
+      .trim();
+    const category = (document.getElementById("filterCategory")?.value || "")
+      .toLowerCase()
+      .trim();
+    const size = (document.getElementById("filterSize")?.value || "")
+      .toLowerCase()
+      .trim();
+    const color = (document.getElementById("filterColor")?.value || "")
+      .toLowerCase()
+      .trim();
+
+    const cards = Array.from(grid.querySelectorAll(".menu-item-card"));
+    cards.forEach((card) => {
+      try {
+        const title = (
+          card.querySelector(".item-name")?.textContent ||
+          card.querySelector(".card-title")?.textContent ||
+          ""
+        ).toLowerCase();
+        const cat = (card.getAttribute("data-category") || "").toLowerCase();
+        const desc = (
+          card.querySelector(".item-description")?.textContent ||
+          card.querySelector(".card-description")?.textContent ||
+          ""
+        ).toLowerCase();
+        let visible = true;
+        if (category && category !== "all" && category !== "") {
+          visible =
+            visible &&
+            (cat === category ||
+              cat.replace(/\s+/g, "") === category.replace(/\s+/g, ""));
+        }
+        if (q) {
+          visible =
+            visible && (title.indexOf(q) !== -1 || desc.indexOf(q) !== -1);
+        }
+        // size and color are best-effort: check dataset or description text
+        if (size) {
+          const ds = (card.dataset.size || "").toLowerCase();
+          visible =
+            visible && (ds.indexOf(size) !== -1 || desc.indexOf(size) !== -1);
+        }
+        if (color) {
+          const dc = (card.dataset.color || "").toLowerCase();
+          visible =
+            visible && (dc.indexOf(color) !== -1 || desc.indexOf(color) !== -1);
+        }
+        card.style.display = visible ? "" : "none";
+      } catch (e) {
+        /* ignore per-card errors */
+      }
+    });
+  } catch (e) {
+    console.warn("applyClientSideFilter error", e);
+  }
+};
 
 function initImageGalleries(root = document) {
   try {
@@ -587,12 +688,50 @@ class NewsTicker {
     try {
       await this.loadNews();
       this.setupEventListeners();
+      // Recalculate heights on resize for responsive layouts
+      window.addEventListener("resize", () => {
+        try {
+          this.equalizeHeights();
+        } catch (e) {}
+      });
       this.startAutoSlide();
     } catch (e) {
       console.warn("News ticker init failed:", e);
     }
   }
 
+  equalizeHeights() {
+    const container = document.getElementById("newsTickerContent");
+    if (!container) return;
+    const items = Array.from(container.querySelectorAll(".news-item"));
+    if (!items || items.length === 0) return;
+
+    // Reset heights first so we measure natural heights
+    items.forEach((it) => {
+      it.style.height = "auto";
+    });
+
+    // On small screens we prefer natural stacking - don't enforce equal height
+    const narrow =
+      window.matchMedia && window.matchMedia("(max-width: 640px)").matches;
+    if (narrow) return;
+
+    let maxH = 0;
+    items.forEach((it) => {
+      try {
+        const h = it.getBoundingClientRect().height;
+        if (h > maxH) maxH = h;
+      } catch (e) {}
+    });
+
+    if (maxH > 0) {
+      items.forEach((it) => {
+        try {
+          it.style.height = Math.ceil(maxH) + "px";
+        } catch (e) {}
+      });
+    }
+  }
   async loadNews() {
     try {
       const response = await fetch("/api/news?ticker=1");
@@ -625,44 +764,94 @@ class NewsTicker {
       this.showNoNews();
       return;
     }
-    const item = this.newsItems[this.currentIndex];
-
-    const imageHtml = item.image_url
-      ? `<div class="news-thumb"><img src="${escapeHtml(
-          item.image_url || ""
-        )}" alt="${escapeHtml(item.title || "")}"></div>`
-      : "";
-
-    const excerptRaw = (item.content || item.description || "").trim();
-    const excerpt = escapeHtml(
-      excerptRaw.substring(0, 140) + (excerptRaw.length > 140 ? "..." : "")
-    );
-
-    const inner = `
-          <div class="news-item">
-            ${imageHtml}
-            <div class="news-body">
-              <h4 class="news-title">${escapeHtml(item.title || "")}</h4>
-              <p class="news-excerpt">${excerpt}</p>
-            </div>
-          </div>
-        `;
-
-    // Create link wrapper to news detail
-    const link = document.createElement("a");
-    try {
-      const id = encodeURIComponent(String(item.id || ""));
-      link.href = `/news/${id}`;
-    } catch (e) {
-      link.href = "/news/" + (item.id || "");
-    }
-    link.className = "news-ticker-link";
-    link.setAttribute("aria-label", item.title || "news");
-    link.innerHTML = inner;
-
-    // Clear and append
+    // Render all visible items horizontally so native scrolling + nav works
     container.innerHTML = "";
-    container.appendChild(link);
+    this.newsItems.forEach((it, idx) => {
+      const itemWrap = document.createElement("div");
+      itemWrap.className = "news-item";
+      itemWrap.setAttribute("data-news-id", it.id || "");
+      itemWrap.style.display = "inline-block";
+      itemWrap.style.verticalAlign = "top";
+      // Keep a compact card width for desktop ticker; responsive CSS will
+      // allow full-width stacking on narrow screens.
+      itemWrap.style.width = "280px";
+      itemWrap.style.marginRight = "12px";
+
+      // Build media HTML: prefer YouTube iframe when `youtube_embed` is set,
+      // otherwise show image if available.
+      let mediaHtml = "";
+      try {
+        if (it.youtube_embed) {
+          mediaHtml = `
+            <div class="news-media">
+              <div class="youtube-embed-wrapper">
+                <iframe src="${escapeHtml(
+                  it.youtube_embed
+                )}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              </div>
+            </div>
+          `;
+        } else if (it.image_url) {
+          mediaHtml = `
+            <div class="news-media"><img src="${escapeHtml(
+              it.image_url || ""
+            )}" alt="${escapeHtml(it.title || "")}"/></div>
+          `;
+        }
+      } catch (e) {
+        mediaHtml = "";
+      }
+      const excerptRaw = (it.content || it.description || "").trim() || "";
+      const excerpt = escapeHtml(
+        excerptRaw.substring(0, 120) + (excerptRaw.length > 120 ? "..." : "")
+      );
+
+      itemWrap.innerHTML = `
+        ${mediaHtml}
+        <div class=\"news-body\">
+          <h4 class=\"news-title\">${escapeHtml(it.title || "")}</h4>
+          <p class=\"news-excerpt\">${excerpt}</p>
+        </div>
+      `;
+
+      itemWrap.addEventListener("click", (e) => {
+        try {
+          const id = encodeURIComponent(String(it.id || ""));
+          window.location.href = "/news/" + id;
+        } catch (e) {}
+      });
+
+      container.appendChild(itemWrap);
+    });
+
+    // Ensure container is horizontally scrollable
+    container.style.whiteSpace = "nowrap";
+    container.style.overflowX = "auto";
+    container.style.display = "block";
+
+    // Equalize card heights so ticker visuals are consistent.
+    try {
+      // Wait a tick to allow layout and then equalize.
+      setTimeout(() => {
+        this.equalizeHeights();
+
+        // Re-run when images/iframes finish loading so heights correct after media load
+        try {
+          const imgs = container.querySelectorAll("img");
+          imgs.forEach((im) =>
+            im.addEventListener("load", () => this.equalizeHeights())
+          );
+        } catch (e) {}
+        try {
+          const iframes = container.querySelectorAll("iframe");
+          iframes.forEach((f) =>
+            f.addEventListener("load", () => this.equalizeHeights())
+          );
+        } catch (e) {}
+      }, 10);
+    } catch (e) {
+      console.warn("Equalize heights failed:", e);
+    }
 
     // Update indicators
     if (indicators) {

@@ -583,18 +583,7 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
                 >
               </h3>
               <p class="card-category">{{ item.category or '' }}</p>
-              <!-- Description and sizes removed per request (keep colors only) -->
-              {% if item.colors %}
-              <div class="card-options">
-                <div class="card-colors" aria-label="Available colors">
-                  {% for c in (item.colors or '').split(',') %}
-                    {% if c and c|trim %}
-                      <span class="color-badge" title="{{ c|trim }}" style="background: {{ c|trim }};"></span>
-                    {% endif %}
-                  {% endfor %}
-                </div>
-              </div>
-              {% endif %}
+              <!-- Colors removed from card per request -->
               <div class="card-rating">
                 <style>
                   .card-stars-wrap{display:inline-block;position:relative;font-size:16px;line-height:1}

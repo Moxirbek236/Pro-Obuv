@@ -12499,12 +12499,20 @@ def news_detail(news_id):
     except Exception as e:
         # If it's an HTTPException raised by abort(), re-raise so Flask
         # can handle it properly (returning the intended HTTP status).
+        # NOTE: avoid re-raising inside a try/except that would catch it again.
+        is_http = False
         try:
-            if isinstance(e, HTTPException):
-                raise
+            is_http = isinstance(e, HTTPException)
         except Exception:
-            # isinstance may fail in fallback environments; ignore and continue
-            pass
+            # isinstance may fail in some very unusual fallback environments;
+            # treat as non-HTTPException and continue to return 500 below.
+            is_http = False
+
+        if is_http:
+            # Re-raise the original HTTPException so Flask returns the
+            # intended HTTP status (e.g. 404 for abort(404)).
+            raise
+
         try:
             app_logger.error(f"news_detail error: {e}")
         except Exception:
@@ -15178,21 +15186,23 @@ def super_admin_get_logs():
 
         # Restaurant log faylini o'qish
         try:
-            # Try utf-8 first, then fall back to latin-1 or binary with replacement to avoid decode errors
+            # Open with errors='replace' so invalid bytes won't raise UnicodeDecodeError
             lines = []
             try:
-                with open("logs/restaurant.log", "r", encoding="utf-8") as f:
-                    lines = f.readlines()[-100:]
-            except UnicodeDecodeError:
-                try:
-                    with open("logs/restaurant.log", "r", encoding="latin-1") as f:
+                if os.path.exists("logs/restaurant.log"):
+                    with open("logs/restaurant.log", "r", encoding="utf-8", errors="replace") as f:
                         lines = f.readlines()[-100:]
-                except Exception:
-                    # Last resort: read binary and replace undecodable bytes
+                else:
+                    lines = []
+            except Exception:
+                # As a last resort, read raw and decode with replacement
+                try:
                     with open("logs/restaurant.log", "rb") as f:
                         raw = f.read()
                         text = raw.decode("utf-8", errors="replace")
                         lines = text.splitlines()[-100:]
+                except Exception:
+                    lines = []
 
             # Parse lines (run regardless of which encoding branch succeeded)
             for line in lines:
@@ -15333,19 +15343,22 @@ def super_admin_get_errors_summary():
 
         # Error log faylini o'qish
         try:
+            # Open errors.log with replacement for invalid bytes
             lines = []
             try:
-                with open("logs/errors.log", "r", encoding="utf-8") as f:
-                    lines = f.readlines()[-50:]
-            except UnicodeDecodeError:
-                try:
-                    with open("logs/errors.log", "r", encoding="latin-1") as f:
+                if os.path.exists("logs/errors.log"):
+                    with open("logs/errors.log", "r", encoding="utf-8", errors="replace") as f:
                         lines = f.readlines()[-50:]
-                except Exception:
+                else:
+                    lines = []
+            except Exception:
+                try:
                     with open("logs/errors.log", "rb") as f:
                         raw = f.read()
                         text = raw.decode("utf-8", errors="replace")
                         lines = text.splitlines()[-50:]
+                except Exception:
+                    lines = []
 
             # Now parse the lines to build error counts
             error_counts = {}
@@ -15409,49 +15422,45 @@ def super_admin_download_logs():
         # Log fayllarini birlashtirish
         all_logs = []
 
-        # Restaurant logs
+        # Restaurant logs (tolerant read)
         try:
-            try:
-                with open("logs/restaurant.log", "r", encoding="utf-8") as f:
-                    for line in f:
-                        if line.strip():
-                            all_logs.append(line.strip())
-            except UnicodeDecodeError:
+            if os.path.exists("logs/restaurant.log"):
                 try:
-                    with open("logs/restaurant.log", "r", encoding="latin-1") as f:
+                    with open("logs/restaurant.log", "r", encoding="utf-8", errors="replace") as f:
                         for line in f:
                             if line.strip():
                                 all_logs.append(line.strip())
                 except Exception:
-                    with open("logs/restaurant.log", "rb") as f:
-                        raw = f.read()
-                        text = raw.decode("utf-8", errors="replace")
-                        for line in text.splitlines():
-                            if line.strip():
-                                all_logs.append(line.strip())
+                    try:
+                        with open("logs/restaurant.log", "rb") as f:
+                            raw = f.read()
+                            text = raw.decode("utf-8", errors="replace")
+                            for line in text.splitlines():
+                                if line.strip():
+                                    all_logs.append(line.strip())
+                    except Exception:
+                        pass
         except FileNotFoundError:
             pass
 
-        # Error logs
+        # Error logs (tolerant read)
         try:
-            try:
-                with open("logs/errors.log", "r", encoding="utf-8") as f:
-                    for line in f:
-                        if line.strip():
-                            all_logs.append(f"ERROR: {line.strip()}")
-            except UnicodeDecodeError:
+            if os.path.exists("logs/errors.log"):
                 try:
-                    with open("logs/errors.log", "r", encoding="latin-1") as f:
+                    with open("logs/errors.log", "r", encoding="utf-8", errors="replace") as f:
                         for line in f:
                             if line.strip():
                                 all_logs.append(f"ERROR: {line.strip()}")
                 except Exception:
-                    with open("logs/errors.log", "rb") as f:
-                        raw = f.read()
-                        text = raw.decode("utf-8", errors="replace")
-                        for line in text.splitlines():
-                            if line.strip():
-                                all_logs.append(f"ERROR: {line.strip()}")
+                    try:
+                        with open("logs/errors.log", "rb") as f:
+                            raw = f.read()
+                            text = raw.decode("utf-8", errors="replace")
+                            for line in text.splitlines():
+                                if line.strip():
+                                    all_logs.append(f"ERROR: {line.strip()}")
+                    except Exception:
+                        pass
         except FileNotFoundError:
             pass
 
@@ -15607,21 +15616,22 @@ def super_admin_get_system_logs():
 
         # Try to get real logs
         try:
-            with open("logs/restaurant.log", "r", encoding="utf-8") as f:
-                lines = f.readlines()[-10:]  # So'nggi 10 ta
-                for line in lines:
-                    if "INFO" in line and any(
-                        word in line for word in ["server", "system", "start", "init"]
-                    ):
-                        parts = line.strip().split(" | ")
-                        if len(parts) >= 2:
-                            time_part = (
-                                parts[0].split(" ")[1]
-                                if " " in parts[0]
-                                else parts[0][-8:]
-                            )
-                            message_part = " | ".join(parts[1:])
-                            logs.append({"time": time_part, "message": message_part})
+            if os.path.exists("logs/restaurant.log"):
+                with open("logs/restaurant.log", "r", encoding="utf-8", errors="replace") as f:
+                    lines = f.readlines()[-10:]  # So'nggi 10 ta
+                    for line in lines:
+                        if "INFO" in line and any(
+                            word in line for word in ["server", "system", "start", "init"]
+                        ):
+                            parts = line.strip().split(" | ")
+                            if len(parts) >= 2:
+                                time_part = (
+                                    parts[0].split(" ")[1]
+                                    if " " in parts[0]
+                                    else parts[0][-8:]
+                                )
+                                message_part = " | ".join(parts[1:])
+                                logs.append({"time": time_part, "message": message_part})
         except:
             pass
 
@@ -17029,7 +17039,8 @@ def super_admin_logs():
         # Recent logs
         try:
             if os.path.exists("logs/restaurant.log"):
-                with open("logs/restaurant.log", "r", encoding="utf-8") as f:
+                # Use replace error handler to tolerate invalid bytes in log files
+                with open("logs/restaurant.log", "r", encoding="utf-8", errors="replace") as f:
                     lines = f.readlines()[-50:]  # So'nggi 50 ta log
                     logs_data["recent_logs"] = [
                         line.strip() for line in lines if line.strip()
@@ -17043,7 +17054,8 @@ def super_admin_logs():
         # Error logs
         try:
             if os.path.exists("logs/errors.log"):
-                with open("logs/errors.log", "r", encoding="utf-8") as f:
+                # Use replace error handler to tolerate invalid bytes in log files
+                with open("logs/errors.log", "r", encoding="utf-8", errors="replace") as f:
                     lines = f.readlines()[-30:]  # So'nggi 30 ta error
                     logs_data["error_logs"] = [
                         line.strip() for line in lines if line.strip()
@@ -18385,71 +18397,12 @@ def api_toggle_news_ticker(news_id):
         )
 
 
-@app.route("/admin/upload-news-media", methods=["POST"])
-@role_required("super_admin")
-@csrf_protect
-def upload_news_media():
-    """Upload media files for news - Super admin only"""
-    try:
-        if "file" not in request.files:
-            return jsonify({"success": False, "message": "Fayl tanlanmagan"}), 400
-
-        file = request.files["file"]
-        if file.filename == "":
-            return jsonify({"success": False, "message": "Fayl tanlanmagan"}), 400
-
-        # Check file type
-        allowed_extensions = {"png", "jpg", "jpeg", "gif", "webp", "mp4", "webm", "mov"}
-        if file and "." in file.filename:
-            ext = file.filename.rsplit(".", 1)[1].lower()
-            if ext not in allowed_extensions:
-                return (
-                    jsonify(
-                        {
-                            "success": False,
-                            "message": "Faqat rasm (PNG, JPG, JPEG, GIF, WEBP) va video (MP4, WEBM, MOV) fayllari qo'llab-quvvatlanadi",
-                        }
-                    ),
-                    400,
-                )
-
-        # Create uploads directory if not exists
-        import os
-
-        upload_folder = os.path.join(os.getcwd(), "static", "uploads", "news")
-        os.makedirs(upload_folder, exist_ok=True)
-
-        # Generate unique filename
-        import uuid
-        from datetime import datetime
-
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        unique_id = str(uuid.uuid4())[:8]
-        filename = f"{timestamp}_{unique_id}.{ext}"
-        filepath = os.path.join(upload_folder, filename)
-
-        # Save file
-        file.save(filepath)
-
-        # Return URL
-        file_url = f"/static/uploads/news/{filename}"
-        file_type = "video" if ext in {"mp4", "webm", "mov"} else "image"
-
-        return jsonify(
-            {
-                "success": True,
-                "file_url": file_url,
-                "file_type": file_type,
-                "message": "Fayl muvaffaqiyatli yuklandi",
-            }
-        )
-
-    except Exception as e:
-        app_logger.error(f"Upload news media error: {str(e)}")
-        return (
-            jsonify({"success": False, "message": "Fayl yuklashda xatolik yuz berdi"}),
-            500,
-        )
+# Note: upload-news-media route is implemented in the news_api blueprint
+# (api/news_api.py) as /admin/upload-news-media. The blueprint registration
+# happens early during app startup. We intentionally avoid re-defining the
+# same route here to prevent conflicting behavior (duplicate handlers with
+# different auth/CSRF rules). The blueprint's handler will be the active
+# implementation.
 
 
 @app.route("/admin/card-management")
