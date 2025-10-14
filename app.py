@@ -38,6 +38,7 @@ try:
         Response,
         abort,
     )
+    from werkzeug.exceptions import HTTPException
 except Exception:
     # Minimal fallbacks to allow static analysis / parsing; runtime will still
     # require the real packages.
@@ -12496,6 +12497,14 @@ def news_detail(news_id):
 
         abort(404)
     except Exception as e:
+        # If it's an HTTPException raised by abort(), re-raise so Flask
+        # can handle it properly (returning the intended HTTP status).
+        try:
+            if isinstance(e, HTTPException):
+                raise
+        except Exception:
+            # isinstance may fail in fallback environments; ignore and continue
+            pass
         try:
             app_logger.error(f"news_detail error: {e}")
         except Exception:
