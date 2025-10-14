@@ -64343,3 +64343,73 @@ MemoryError
 2025-10-12 21:41:39,331 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://localhost:10000/.well-known/appspecific/com.chrome.devtools.json
 2025-10-12 21:42:04,085 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://localhost:10000/.well-known/appspecific/com.chrome.devtools.json
 2025-10-12 23:37:51,467 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://localhost:10000/favicon.ico
+2025-10-14 15:26:45,506 | ERROR | restaurant_app | news_detail:12495 | news_detail error: name 'abort' is not defined
+2025-10-14 15:26:45,510 | ERROR | restaurant_app | handle_exception:1368 | Unhandled exception: name 'abort' is not defined - URL: http://localhost:10000/news/6
+2025-10-14 15:26:45,576 | ERROR | restaurant_app | handle_exception:1370 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\app.py", line 12492, in news_detail
+    abort(404)
+    ^^^^^
+NameError: name 'abort' is not defined
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\app.py", line 12498, in news_detail
+    abort(500)
+    ^^^^^
+NameError: name 'abort' is not defined
+
+2025-10-14 15:26:45,831 | WARNING | restaurant_app | not_found_error:1252 | 404 Error: http://localhost:10000/favicon.ico
+2025-10-14 15:27:02,973 | ERROR | restaurant_app | news_detail:12495 | news_detail error: name 'abort' is not defined
+2025-10-14 15:27:02,974 | ERROR | restaurant_app | handle_exception:1368 | Unhandled exception: name 'abort' is not defined - URL: http://localhost:10000/news/6
+2025-10-14 15:27:02,976 | ERROR | restaurant_app | handle_exception:1370 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\app.py", line 12492, in news_detail
+    abort(404)
+    ^^^^^
+NameError: name 'abort' is not defined
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\app.py", line 12498, in news_detail
+    abort(500)
+    ^^^^^
+NameError: name 'abort' is not defined
+
+2025-10-14 15:27:49,216 | ERROR | restaurant_app | news_detail:12495 | news_detail error: name 'abort' is not defined
+2025-10-14 15:27:49,217 | ERROR | restaurant_app | handle_exception:1368 | Unhandled exception: name 'abort' is not defined - URL: http://localhost:10000/news/7
+2025-10-14 15:27:49,218 | ERROR | restaurant_app | handle_exception:1370 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\app.py", line 12492, in news_detail
+    abort(404)
+    ^^^^^
+NameError: name 'abort' is not defined
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv\app.py", line 12498, in news_detail
+    abort(500)
+    ^^^^^
+NameError: name 'abort' is not defined
+
