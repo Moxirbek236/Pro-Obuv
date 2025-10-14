@@ -18482,7 +18482,31 @@ def serve_data_file(filename):
 
 @app.route("/sitemap.xml")
 def sitemap():
-    return send_from_directory("static", "sitemap.xml")
+    """Serve sitemap.xml. Try static/sitemap.xml first, then project root sitemap.xml.
+
+    This avoids 404s when sitemap is generated at the repository root but
+    the Flask app was previously serving only from the static folder.
+    """
+    try:
+        from flask import send_from_directory, abort
+        import os
+
+        static_file = os.path.join(app.root_path, "static", "sitemap.xml")
+        project_file = os.path.join(app.root_path, "sitemap.xml")
+
+        if os.path.exists(static_file):
+            return send_from_directory(os.path.join(app.root_path, "static"), "sitemap.xml")
+        if os.path.exists(project_file):
+            # serve sitemap placed at project root
+            return send_from_directory(app.root_path, "sitemap.xml")
+
+        # Not found
+        app_logger.info("sitemap.xml not found in static/ or project root")
+        return abort(404)
+    except Exception as e:
+        app_logger.exception("Error while serving sitemap.xml: %s", e)
+        from flask import abort
+        return abort(500)
 
 
 # --- Minimal Uzbek AI chat endpoints ---
