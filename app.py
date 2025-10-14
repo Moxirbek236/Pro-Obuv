@@ -12418,6 +12418,86 @@ def clear_role_sessions():
         session.pop(k, None)
 
 
+@app.route('/news/<int:news_id>')
+def news_detail(news_id):
+    """Serve a single news item page. Prefer DB source; fall back to JSON-backed storage."""
+    try:
+        # Try DB first
+        try:
+            row = execute_query(
+                "SELECT id, title, content, type, image_url, video_url, is_active, display_order, created_at FROM news WHERE id = ?",
+                (news_id,),
+                fetch_one=True,
+            )
+            if row:
+                if isinstance(row, dict):
+                    item = dict(row)
+                else:
+                    item = {
+                        "id": row[0],
+                        "title": row[1],
+                        "content": row[2],
+                        "type": row[3],
+                        "image_url": row[4],
+                        "video_url": row[5],
+                        "is_active": bool(row[6]),
+                        "display_order": row[7],
+                        "created_at": row[8],
+                    }
+                try:
+                    item["youtube_embed"] = extract_youtube_embed(item.get("video_url") or "")
+                except Exception:
+                    item["youtube_embed"] = None
+                # If the item is not active, still allow preview for admins
+                if not item.get("is_active") and not session.get("super_admin"):
+                    abort(404)
+                # Build SEO data expected by template
+                seo = {
+                    "page_title": f"{item.get('title')} - Yangiliklar - Safety.uz",
+                    "meta_description": (item.get('content') or '')[:160],
+                    "meta_keywords": '',
+                    "canonical_url": url_for('news_detail', news_id=item.get('id'), _external=True),
+                    "og_title": item.get('title'),
+                    "og_description": (item.get('content') or '')[:160],
+                }
+                return render_template("news_detail.html", news=item, seo_data=seo)
+        except Exception:
+            # DB read failed - fall through to JSON fallback
+            pass
+
+        # JSON fallback
+        json_path = os.path.join(os.getcwd(), "data", "news.json")
+        if os.path.exists(json_path):
+            with open(json_path, "r", encoding="utf-8") as f:
+                blob = json.load(f) or {}
+                items = blob.get("news") or blob if isinstance(blob, list) else []
+                for n in items:
+                    try:
+                        if int(n.get("id", 0)) == int(news_id):
+                            n["youtube_embed"] = extract_youtube_embed(n.get("video_url") or "")
+                            if not n.get("is_active") and not session.get("super_admin"):
+                                abort(404)
+                            seo = {
+                                "page_title": f"{n.get('title')} - Yangiliklar - Safety.uz",
+                                "meta_description": (n.get('content') or '')[:160],
+                                "meta_keywords": '',
+                                "canonical_url": url_for('news_detail', news_id=n.get('id'), _external=True),
+                                "og_title": n.get('title'),
+                                "og_description": (n.get('content') or '')[:160],
+                            }
+                            return render_template("news_detail.html", news=n, seo_data=seo)
+                    except Exception:
+                        continue
+
+        abort(404)
+    except Exception as e:
+        try:
+            app_logger.error(f"news_detail error: {e}")
+        except Exception:
+            pass
+        abort(500)
+
+
 def set_role_session(role, id=None, name=None, **kwargs):
     """Set a single role in session and clear other role flags.
 

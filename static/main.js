@@ -617,44 +617,64 @@ class NewsTicker {
     }
   }
 
-  updateDisplay() {
-    const content = document.getElementById("newsTickerContent");
-    const indicators = document.getElementById("newsIndicators");
-    if (!content) return;
+      updateDisplay() {
+        const container = document.getElementById("newsTickerContent");
+        const indicators = document.getElementById("newsIndicators");
+        if (!container) return;
+        if (!this.newsItems || this.newsItems.length === 0) {
+          this.showNoNews();
+          return;
+        }
+        const item = this.newsItems[this.currentIndex];
 
-    if (this.newsItems.length === 0) {
-      this.showNoNews();
-      return;
-    }
+        const imageHtml = item.image_url
+          ? `<div class="news-thumb"><img src="${escapeHtml(
+              item.image_url || ""
+            )}" alt="${escapeHtml(item.title || "")}"></div>`
+          : "";
 
-    const item = this.newsItems[this.currentIndex];
-    content.innerHTML = `
-      <div class="news-item">
-        <div class="news-icon">${
-          item.type === "advertisement" ? "Ad" : "News"
-        }</div>
-        <div class="news-text">
-          <div class="news-title">${escapeHtml(item.title || "")}</div>
-          <div class="news-content">${escapeHtml(
-            (item.content || item.description || "").substring(0, 100)
-          )}</div>
-        </div>
-      </div>
-    `;
+        const excerptRaw = (item.content || item.description || "").trim();
+        const excerpt = escapeHtml(
+          excerptRaw.substring(0, 140) + (excerptRaw.length > 140 ? "..." : "")
+        );
 
-    // Update indicators
-    if (indicators) {
-      indicators.innerHTML = "";
-      for (let i = 0; i < this.newsItems.length; i++) {
-        const dot = document.createElement("span");
-        dot.className = `news-indicator ${
-          i === this.currentIndex ? "active" : ""
-        }`;
-        dot.onclick = () => this.goToSlide(i);
-        indicators.appendChild(dot);
+        const inner = `
+          <div class="news-item">
+            ${imageHtml}
+            <div class="news-body">
+              <h4 class="news-title">${escapeHtml(item.title || "")}</h4>
+              <p class="news-excerpt">${excerpt}</p>
+            </div>
+          </div>
+        `;
+
+        // Create link wrapper to news detail
+        const link = document.createElement("a");
+        try {
+          const id = encodeURIComponent(String(item.id || ""));
+          link.href = `/news/${id}`;
+        } catch (e) {
+          link.href = "/news/" + (item.id || "");
+        }
+        link.className = "news-ticker-link";
+        link.setAttribute("aria-label", item.title || "news");
+        link.innerHTML = inner;
+
+        // Clear and append
+        container.innerHTML = "";
+        container.appendChild(link);
+
+        // Update indicators
+        if (indicators) {
+          indicators.innerHTML = "";
+          for (let i = 0; i < this.newsItems.length; i++) {
+            const dot = document.createElement("span");
+            dot.className = "news-indicator" + (i === this.currentIndex ? " active" : "");
+            dot.onclick = () => this.goToSlide(i);
+            indicators.appendChild(dot);
+          }
+        }
       }
-    }
-  }
 
   showNoNews() {
     const content = document.getElementById("newsTickerContent");
