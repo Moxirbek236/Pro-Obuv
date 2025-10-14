@@ -28,13 +28,14 @@
   }
   </script>
   {% endblock %}
-    <!-- Favicons: prefer files served from static/favicons, fall back to /favicons if not present -->
-    {# Recommended: copy your favicons into static/favicons/ so Flask serves them via url_for('static', filename='favicons/...') #}
+    <!-- Favicons -->
     <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='favicons/apple-touch-icon.png') }}" />
     <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicons/favicon-32x32.png') }}" />
     <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicons/favicon-16x16.png') }}" />
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicons/favicon.ico') }}" />
     <link rel="manifest" href="{{ url_for('static', filename='favicons/site.webmanifest') }}" />
+    <meta name="theme-color" content="#4299e1" />
+    <meta name="msapplication-TileColor" content="#4299e1" />
     <!-- Fallbacks for servers that don't serve static/favicons yet (keeps compatibility) -->
     <!-- If these static files are not present, the server may instead serve /favicons/* from project root -->
     <script>
@@ -804,7 +805,7 @@
       ">
       <div class="container-fluid">
         <a class="navbar-brand" href="{{ url_for('super_admin_dashboard') }}"
-          >🔧 Super Admin Panel</a
+          >Super Admin Panel</a
         >
 
         <button
@@ -819,44 +820,44 @@
           <ul class="navbar-nav me-auto">
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('super_admin_dashboard') }}"
-                >🏠 Dashboard</a
+                >Dashboard</a
               >
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('super_admin_analytics') }}"
-                >📊 Analytics</a
+                >Analytics</a
               >
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('super_admin_reports') }}"
-                >📈 Hisobotlar</a
+                >Hisobotlar</a
               >
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('super_admin_system') }}"
-                >⚙️ Tizim</a
+                >Tizim</a
               >
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('super_admin_logs') }}"
-                >📝 Loglar</a
+                >Loglar</a
               >
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('admin_monitor') }}"
-                >📺 Monitor</a
+                >Monitor</a
               >
             </li>
             {# Card and 360 management removed #}
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('news_page') }}">📰 Yangiliklar</a>
+              <a class="nav-link" href="{{ url_for('news_page') }}">Yangiliklar</a>
             </li>
           </ul>
 
           <ul class="navbar-nav">
             <li class="nav-item">
               <span class="navbar-text text-white me-3"
-                >🔧 Super Administrator</span
+                >Super Administrator</span
               >
             </li>
             <li class="nav-item dropdown">
@@ -894,21 +895,21 @@
                 <li><hr class="dropdown-divider" /></li>
                 <li>
                   <a class="dropdown-item" href="{{ url_for('profile') }}"
-                    >👤 Profil ma'lumotlari</a
+                    >Profil ma'lumotlari</a
                   >
                 </li>
                 <li>
                   <a
                     class="dropdown-item"
                     href="{{ url_for('profile_settings') }}"
-                    >⚙️ Profil sozlamalari</a
+                    >Profil sozlamalari</a
                   >
                 </li>
                 <li>
                   <a
                     class="dropdown-item"
                     href="{{ url_for('general_settings') }}"
-                    >🔧 Umumi sozlamalar</a
+                    >Umumi sozlamalar</a
                   >
                 </li>
                 <li><hr class="dropdown-divider" /></li>
@@ -916,7 +917,7 @@
                   <a
                     class="dropdown-item"
                     href="{{ url_for('super_admin_logout') }}"
-                    >🚪 Chiqish</a
+                    >Chiqish</a
                   >
                 </li>
               </ul>
@@ -937,7 +938,7 @@
       ">
       <div class="container-fluid">
         <a class="navbar-brand" href="{{ url_for('staff_dashboard') }}"
-          >👨‍💼 Xodim Panel</a
+          >Xodim Panel</a
         >
 
         <button
@@ -952,17 +953,17 @@
           <ul class="navbar-nav me-auto">
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('staff_dashboard') }}"
-                >🏠 Dashboard</a
+                >Dashboard</a
               >
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('staff_menu') }}"
-                >📋 Menyu boshqaruvi</a
+                >Menyu boshqaruvi</a
               >
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('staff_employees') }}"
-                >👥 Xodimlar ro'yxati</a
+                >Xodimlar ro'yxati</a
               >
             </li>
             <li class="nav-item">
@@ -971,14 +972,14 @@
               >
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('news_page') }}">📰 Yangiliklar</a>
+              <a class="nav-link" href="{{ url_for('news_page') }}">Yangiliklar</a>
             </li>
           </ul>
 
           <ul class="navbar-nav">
             <li class="nav-item">
               <span class="navbar-text text-white me-3"
-                >👨‍💼 {{ session.get('staff_name', 'Xodim') }}</span
+                >{{ session.get('staff_name', 'Xodim') }}</span
               >
             </li>
             <li class="nav-item dropdown">
@@ -1016,27 +1017,27 @@
                 <li><hr class="dropdown-divider" /></li>
                 <li>
                   <a class="dropdown-item" href="{{ url_for('profile') }}"
-                    >👤 Profil ma'lumotlari</a
+                    >Profil ma'lumotlari</a
                   >
                 </li>
                 <li>
                   <a
                     class="dropdown-item"
                     href="{{ url_for('profile_settings') }}"
-                    >⚙️ Profil sozlamalari</a
+                    >Profil sozlamalari</a
                   >
                 </li>
                 <li>
                   <a
                     class="dropdown-item"
                     href="{{ url_for('general_settings') }}"
-                    >🔧 Umumi sozlamalar</a
+                    >Umumi sozlamalar</a
                   >
                 </li>
                 <li><hr class="dropdown-divider" /></li>
                 <li>
                   <a class="dropdown-item" href="{{ url_for('staff_logout') }}"
-                    >🚪 Chiqish</a
+                    >Chiqish</a
                   >
                 </li>
               </ul>
@@ -1058,7 +1059,7 @@
       ">
       <div class="container-fluid">
         <a class="navbar-brand" href="{{ url_for('courier_dashboard') }}"
-          >🚚 Kuryer Panel</a
+          >Kuryer Panel</a
         >
 
         <button
@@ -1073,12 +1074,12 @@
           <ul class="navbar-nav me-auto">
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('courier_dashboard') }}"
-                >🏠 Dashboard</a
+                >Dashboard</a
               >
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('menu') }}"
-                >📋 Menyu ko'rish</a
+                >Menyu ko'rish</a
               >
             </li>
             <li class="nav-item">
@@ -1093,7 +1094,7 @@
                 id="openMapGlobalBtn"
                 class="btn btn-sm btn-outline-light"
                 title="Haritani ochish">
-                🗺️ Joylashni ko'rish
+                Joylashni ko'rish
               </button>
             </li>
             <li class="nav-item d-flex align-items-center">
@@ -1103,7 +1104,6 @@
                 title="Bildirishnomalar"
                 aria-controls="notifyModal"
                 style="position: relative">
-                🔔
                 <span
                   id="notify-count"
                   class="badge bg-danger"
@@ -1152,21 +1152,21 @@
                 <li><hr class="dropdown-divider" /></li>
                 <li>
                   <a class="dropdown-item" href="{{ url_for('profile') }}"
-                    >👤 Profil ma'lumotlari</a
+                    >Profil ma'lumotlari</a
                   >
                 </li>
                 <li>
                   <a
                     class="dropdown-item"
                     href="{{ url_for('profile_settings') }}"
-                    >⚙️ Profil sozlamalari</a
+                    >Profil sozlamalari</a
                   >
                 </li>
                 <li>
                   <a
                     class="dropdown-item"
                     href="{{ url_for('general_settings') }}"
-                    >🔧 Umumi sozlamalar</a
+                    >Umumi sozlamalar</a
                   >
                 </li>
                 <li><hr class="dropdown-divider" /></li>
@@ -1174,7 +1174,7 @@
                   <a
                     class="dropdown-item"
                     href="{{ url_for('courier_logout') }}"
-                    >🚪 Chiqish</a
+                    >Chiqish</a
                   >
                 </li>
               </ul>
@@ -1189,7 +1189,7 @@
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="container-fluid">
         <a class="navbar-brand" href="{{ url_for('index') }}"
-         >👟 {{ _('nav.home') }}</a
+         >{{ _('nav.home') }}</a
 
         <button
           class="navbar-toggler"
@@ -1202,26 +1202,26 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav me-auto">
             <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('menu') }}">📋 {{ _('nav.menu') }}</a>
+            <a class="nav-link" href="{{ url_for('menu') }}">{{ _('nav.menu') }}</a>
             </li>
             <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('favorites') }}">❤️ {{ _('nav.favorites') }}</a>
+            <a class="nav-link" href="{{ url_for('favorites') }}">{{ _('nav.favorites') }}</a>
             </li>
             {# Shopping cart nav removed per request #}
             <li class="nav-item d-flex align-items-center">
-              <a class="nav-link" href="{{ url_for('contact') }}">📞 {{ _('nav.contact') }}</a>
+              <a class="nav-link" href="{{ url_for('contact') }}">{{ _('nav.contact') }}</a>
             </li>
             <li>
-              <a class="nav-link" href="https://maps.app.goo.gl/tQU6Axzj4JvLoGML8"> 🗺️ Manzil</a>
+              <a class="nav-link" href="https://maps.app.goo.gl/tQU6Axzj4JvLoGML8">Manzil</a>
             </li>
             <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('news_page') }}"> {{ _('nav.news') }}</a>
+            <a class="nav-link" href="{{ url_for('news_page') }}">{{ _('nav.news') }}</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('about') }}">❓ {{ _('nav.about') }}</a>
+              <a class="nav-link" href="{{ url_for('about') }}">{{ _('nav.about') }}</a>
             </li>
             <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('downloads') }}">📱 {{ _('nav.downloads') }}</a>
+            <a class="nav-link" href="{{ url_for('downloads') }}">{{ _('nav.downloads') }}</a>
             </li>
             <!-- 360 Room removed -->
           </ul>
@@ -1235,14 +1235,14 @@
                 width="32"
                 height="32"
                 style="object-fit: cover; margin-right: 8px" />
-                <span class="navbar-text text-white me-3">👤 {{ user_profile.name or session.get('user_name', _('nav.profile')) }}</span>
+                <span class="navbar-text text-white me-3">{{ user_profile.name or session.get('user_name', _('nav.profile')) }}</span>
               <button
                 type="button"
                 class="btn btn-sm btn-outline-light nav-notify"
                 title="Bildirishnomalar"
                 aria-controls="notifyModal"
                 style="margin-left: 6px; position: relative">
-                🔔
+                
                 <span
                   id="notify-count"
                   class="badge bg-danger"
@@ -1291,24 +1291,24 @@
                 <li><hr class="dropdown-divider" /></li>
                 <li>
                   <a class="dropdown-item" href="{{ url_for('profile') }}"
-            >👤 {{ _('nav.profile') }}</a>
+            >{{ _('nav.profile') }}</a>
                 </li>
                 <li>
                   <a
                     class="dropdown-item"
                     href="{{ url_for('profile_settings') }}"
-                    >⚙️ {{ _('nav.profile_settings') }}</a>
+                    >{{ _('nav.profile_settings') }}</a>
                 </li>
                 <li>
                   <a
                     class="dropdown-item"
                     href="{{ url_for('general_settings') }}"
-                    >🔧 {{ _('settings.title') }}</a>
+                    >{{ _('settings.title') }}</a>
                 </li>
                 <li><hr class="dropdown-divider" /></li>
                 <li>
                   <a class="dropdown-item" href="{{ url_for('logout') }}"
-                    >🚪 Chiqish</a
+                    >Chiqish</a
                   >
                 </li>
               </ul>
@@ -1322,7 +1322,7 @@
     {% else %}
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="container-fluid">
-        <a class="navbar-brand" href="{{ url_for('index') }}">👟 Pro_Obuv</a>
+  <a class="navbar-brand" href="{{ url_for('index') }}">Pro_Obuv</a>
 
         <button
           class="navbar-toggler"
@@ -1335,22 +1335,22 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav me-auto">
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('menu') }}">📋 Menyu</a>
+              <a class="nav-link" href="{{ url_for('menu') }}">Menyu</a>
             </li>
             {# Mobile/guest cart nav removed per request #}
             <li class="nav-item">
               <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('contact') }}">📞 Aloqa</a>
+                <a class="nav-link" href="{{ url_for('contact') }}">Aloqa</a>
               </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('about') }}">❓ Savollar</a>
+              <a class="nav-link" href="{{ url_for('about') }}">Savollar</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('news_page') }}">📰 Yangiliklar</a>
+              <a class="nav-link" href="{{ url_for('news_page') }}">Yangiliklar</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('downloads') }}"
-                >📱 Yuklamalar</a
+                >Yuklamalar</a
               >
             </li>
             <!-- 360 Room removed -->
@@ -1359,12 +1359,12 @@
           <ul class="navbar-nav">
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('login_page') }}"
-                >🔐 Kirish</a
+                >Kirish</a
               >
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('register') }}"
-                >📝 Ro'yxatdan o'tish</a
+                >Ro'yxatdan o'tish</a
               >
             </li>
             <li class="nav-item d-flex align-items-center">
@@ -1374,7 +1374,6 @@
                 title="Bildirishnomalar"
                 aria-controls="notifyModal"
                 style="margin-left: 6px; position: relative">
-                🔔
                 <span
                   id="notify-count"
                   class="badge bg-danger"
@@ -1428,7 +1427,7 @@
             title="Yangilik qo'shish (tasma)"
             onclick="openTickerNewsModal()"
           >
-            ➕ Yangilik (Tasma)
+            Yangilik (Tasma)
           </button>
           {% endif %}
 
@@ -1446,7 +1445,7 @@
             <div class="news-ticker-viewport">
               <div class="news-ticker-content" id="newsTickerContent">
                     <!-- Yangiliklar JavaScript orqali yuklanadi -->
-                    <div class="news-item news">📢 Sahifa yuklanmoqda...</div>
+                    <div class="news-item news">Sahifa yuklanmoqda...</div>
                   </div>
                 </div>
               </div>
@@ -1459,20 +1458,16 @@
             onclick="nextNews()">
             <span>›</span>
           </button>
+
+          <!-- close ticker wrapper -->
         </div>
-        
-        <!-- News indicators -->
-        <div class="news-indicators" id="newsIndicators">
-          <!-- Indicators will be generated dynamically -->
-        </div>
-      </div>
 
       <div class="container-fluid bg-dark text-light py-5">
         <div class="container">
           <div class="row g-4">
             <!-- Company Info -->
             <div class="col-lg-3 col-md-6">
-              <h5 class="fw-bold mb-3 text-warning">👟 Pro Obuv</h5>
+              <h5 class="fw-bold mb-3 text-warning">Pro Obuv</h5>
               <p class="mb-3">
                 O'zbekistondagi eng yirik oyoq kiyim do'koni. Sifatli
                 mahsulotlar va eng yaxshi xizmat ko'rsatish bizning
@@ -1592,7 +1587,7 @@
 
             <!-- Quick Links -->
             <div class="col-lg-2 col-md-6">
-              <h6 class="fw-bold mb-3 text-warning">🔗 {{ _('nav.quick_links') }}</h6>
+              <h6 class="fw-bold mb-3 text-warning">{{ _('nav.quick_links') }}</h6>
               <ul class="list-unstyled">
                 <li class="mb-2">
                   <a href="{{ url_for('index') }}" class="text-light text-decoration-none hover-text-warning"> {{ _('nav.home') }}</a>
@@ -1614,34 +1609,34 @@
 
             <!-- Categories -->
             <div class="col-lg-2 col-md-6">
-              <h6 class="fw-bold mb-3 text-warning">🏷️ Kategoriyalar</h6>
+              <h6 class="fw-bold mb-3 text-warning">Kategoriyalar</h6>
               <ul class="list-unstyled">
                 <li class="mb-2">
                   <a
                     href="{{ url_for('menu') }}?category=specobuv"
                     class="text-light text-decoration-none hover-text-warning">
-                    🥾 Спецобувь
+                    Спецобувь
                   </a>
                 </li>
                 <li class="mb-2">
                   <a
                     href="{{ url_for('menu') }}?category=specodezhda"
                     class="text-light text-decoration-none hover-text-warning">
-                    🦺 Спецодежда
+                    Спецодежда
                   </a>
                 </li>
                 <li class="mb-2">
                   <a
                     href="{{ url_for('menu') }}"
                     class="text-light text-decoration-none hover-text-warning">
-                    🔄 Все товары
+                    Все товары
                   </a>
                 </li>
                 <li class="mb-2">
                   <a
                     href="{{ url_for('contact') }}"
                     class="text-light text-decoration-none hover-text-warning">
-                    📞 Консультация
+                    Консультация
                   </a>
                 </li>
               </ul>
@@ -1649,10 +1644,10 @@
 
             <!-- Contact Info -->
             <div class="col-lg-3 col-md-6">
-              <h6 class="fw-bold mb-3 text-warning">📞 {{ _('footer.contact_info') }}</h6>
+              <h6 class="fw-bold mb-3 text-warning">{{ _('footer.contact_info') }}</h6>
               <div class="mb-3">
                 <div class="d-flex align-items-center mb-2">
-                  <span class="me-2">📱</span>
+                  <span class="me-2"></span>
                   <a
                     href="tel:+998977195770"
                     class="text-light text-decoration-none">
@@ -1660,7 +1655,7 @@
                   </a>
                 </div>
                 <div class="d-flex align-items-center mb-2">
-                  <span class="me-2">✉️</span>
+                  <span class="me-2"></span>
                   <a
                     href="mailto:premiumsafety@mail.ru"
                     class="text-light text-decoration-none">
@@ -1668,7 +1663,7 @@
                   </a>
                 </div>
                 <div class="d-flex align-items-start mb-2">
-                  <span class="me-2">📍</span>
+                  <span class="me-2"></span>
                   <span class="text-light">
                     <a
                     href="https://maps.app.goo.gl/Ezg462SRmBYLxfUY6"
@@ -1679,7 +1674,7 @@
                 </div>
               </div>
               <div class="border-top pt-3">
-                <h6 class="fw-bold mb-2 text-warning">⏰ {{ _('footer.hours') }}</h6>
+                <h6 class="fw-bold mb-2 text-warning">{{ _('footer.hours') }}</h6>
                 <small class="text-light d-block mb-1">Dushanba - Juma: 9:00 - 18:00</small>
                 <small class="text-light d-block">Shanba - Yakshanba: Dam</small>
               </div>
@@ -1687,38 +1682,38 @@
 
             <!-- Customer Service -->
             <div class="col-lg-2 col-md-6">
-              <h6 class="fw-bold mb-3 text-warning">🎯 {{ _('footer.services') }}</h6>
+              <h6 class="fw-bold mb-3 text-warning">{{ _('footer.services') }}</h6>
               <ul class="list-unstyled">
                 <li class="mb-2">
                   <a
                     href="{{ url_for('contact') }}#delivery"
                     class="text-light text-decoration-none hover-text-warning">
-                    🚚 Yetkazib berish
+                    Yetkazib berish
                   </a>
                 </li>
                 <li class="mb-2">
                   <a
                     href="{{ url_for('about') }}#return-policy"
                     class="text-light text-decoration-none hover-text-warning">
-                    🔄 Qaytarish siyosati
+                    Qaytarish siyosati
                   </a>
                 </li>
                 <li class="mb-2">
                   <a
                     href="{{ url_for('contact') }}#payment"
                     class="text-light text-decoration-none hover-text-warning">
-                    💳 To'lov usullari
+                    To'lov usullari
                   </a>
                 </li>
                 <li class="mb-2">
                   <a
                     href="{{ url_for('about') }}#size-chart"
                     class="text-light text-decoration-none hover-text-warning">
-                    📏 O'lcham jadvali
+                    O'lcham jadvali
                   </a>
                 </li>
                 <li class="mb-2">
-                  <a href="{{ url_for('kafolatlar') }}" class="text-light text-decoration-none hover-text-warning">🛡️ {{ _('nav.warranty') }}</a>
+                  <a href="{{ url_for('kafolatlar') }}" class="text-light text-decoration-none hover-text-warning">{{ _('nav.warranty') }}</a>
                 </li>
               </ul>
             </div>
@@ -1727,25 +1722,21 @@
           <!-- Payment Methods -->
           <div class="row mt-4 pt-4 border-top">
             <div class="col-md-8">
-              <h6 class="fw-bold mb-3 text-warning">💳 To'lov usullari</h6>
+              <h6 class="fw-bold mb-3 text-warning">To'lov usullari</h6>
               <div class="d-flex flex-wrap gap-3 align-items-center">
-                <span class="badge bg-success px-3 py-2">💵 Naqd</span>
-                <span class="badge bg-primary px-3 py-2">💳 Plastik karta</span>
-                <span class="badge bg-info px-3 py-2">📱 Click</span>
-                <span class="badge bg-warning px-3 py-2 text-dark"
-                  >💰 Payme</span
-                >
-                <span class="badge bg-secondary px-3 py-2"
-                  >🏦 Bank o'tkazmasi</span
-                >
+                <span class="badge bg-success px-3 py-2">Naqd</span>
+                <span class="badge bg-primary px-3 py-2">Plastik karta</span>
+                <span class="badge bg-info px-3 py-2">Click</span>
+                <span class="badge bg-warning px-3 py-2 text-dark">Payme</span>
+                <span class="badge bg-secondary px-3 py-2">Bank o'tkazmasi</span>
               </div>
             </div>
             <div class="col-md-4 text-md-end">
-              <h6 class="fw-bold mb-3 text-warning">🌟 {{ _('footer.follow_us') }}</h6>
+              <h6 class="fw-bold mb-3 text-warning">{{ _('footer.follow_us') }}</h6>
               <p class="text-light mb-1">{{ _('footer.subscribe') }}</p>
               <div class="input-group" style="max-width: 300px">
                 <input type="email" class="form-control" placeholder="{{ _('footer.subscribe_placeholder') }}" />
-                <button class="btn btn-warning" type="button">📧 {{ _('footer.subscribe') }}</button>
+                <button class="btn btn-warning" type="button">{{ _('footer.subscribe') }}</button>
               </div>
             </div>
           </div>
@@ -1767,17 +1758,17 @@
                 <a
                   href="{{ url_for('about') }}#privacy"
                   class="text-light text-decoration-none hover-text-warning">
-                  <small>📋 Maxfiylik siyosati</small>
+                  <small>Maxfiylik siyosati</small>
                 </a>
                 <a
                   href="{{ url_for('about') }}#terms"
                   class="text-light text-decoration-none hover-text-warning">
-                  <small>📄 Foydalanish shartlari</small>
+                  <small>Foydalanish shartlari</small>
                 </a>
                 <a
                   href="{{ url_for('about') }}#cookies"
                   class="text-light text-decoration-none hover-text-warning">
-                  <small>🍪 Cookie siyosati</small>
+                  <small>Cookie siyosati</small>
                 </a>
               </div>
             </div>
@@ -2148,6 +2139,9 @@
         scroll-behavior: smooth;
         -ms-overflow-style: none;
         scrollbar-width: none;
+        gap: 15px;
+        padding: 0 15px;
+        flex-wrap: nowrap;
       }
 
       /* Hide scrollbar for news ticker */
@@ -2159,20 +2153,37 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        width: 100%;
-        min-width: 100%;
+        width: 300px;
+        min-width: 300px;
         height: 100%;
+        flex-shrink: 0;
         padding: 15px 20px;
         background: rgba(255, 255, 255, 0.1);
         border-radius: 12px;
-        margin-right: 15px;
         transition: all 0.3s ease;
-        flex-shrink: 0;
         box-sizing: border-box;
         position: relative;
         backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.1);
         cursor: pointer;
+        flex-wrap: nowrap;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-wrap: break-word;
+        /* Prevent height equalization */
+        height: 100% !important;
+        min-height: 100% !important;
+        max-height: 100% !important;
+        /* Prevent width changes */
+        width: 300px !important;
+        min-width: 300px !important;
+        max-width: 300px !important;
+        /* Prevent flex changes */
+        flex: 0 0 300px !important;
+        /* Prevent any other changes */
+        position: relative !important;
+        z-index: 1 !important;
       }
 
       .news-item.news {
@@ -2191,6 +2202,11 @@
         transform: translateY(-2px);
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         cursor: pointer;
+      }
+
+      .news-item:active {
+        transform: translateY(0);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
       }
 
       .news-content {
@@ -3033,62 +3049,62 @@
         if (typeof window.translations === 'undefined') {
           window.translations = {
         uz: {
-          menu: '📋 Menyu',
-          favorites: '❤️ Sevimlilar',
-          contact: '📞 Aloqa',
-          about: '❓ Savollar',
-          downloads: '📱 Yuklamalar',
-          cart: '🛒 Savatcha',
-          profile_info: '👤 Profil ma\'lumotlari',
-          profile_settings: '⚙️ Profil sozlamalari',
-          settings: '🔧 Sozlamalar',
-          logout: '🚪 Chiqish',
-          login: '🔐 Kirish',
-          register: '📝 Ro\'yxat',
-          user: '👤 Foydalanuvchi',
-          staff: '👨‍💼 Xodim',
-          courier: '🚚 Kuryer',
-          admin: '🔧 Admin',
-          dashboard: '🏠 Dashboard',
-          brand: "👟 Oyoq kiyim do'koni"
+          menu: 'Menyu',
+          favorites: 'Sevimlilar',
+          contact: 'Aloqa',
+          about: 'Savollar',
+          downloads: 'Yuklamalar',
+          cart: 'Savatcha',
+          profile_info: 'Profil ma\'lumotlari',
+          profile_settings: 'Profil sozlamalari',
+          settings: 'Sozlamalar',
+          logout: 'Chiqish',
+          login: 'Kirish',
+          register: 'Ro\'yxat',
+          user: 'Foydalanuvchi',
+          staff: 'Xodim',
+          courier: 'Kuryer',
+          admin: 'Admin',
+          dashboard: 'Dashboard',
+          brand: "Oyoq kiyim do'koni"
         },
                 ru: {
-                    menu: '📋 Меню',
-                    favorites: '❤️ Избранное',
-                    contact: '📞 Контакты',
-                    about: '❓ Вопросы',
-                    downloads: '📱 Загрузки',
-                    cart: '🛒 Корзина',
-                    profile_info: '👤 Данные профиля',
-                    profile_settings: '⚙️ Настройки профиля',
-                    settings: '🔧 Настройки',
-                    logout: '🚪 Выход',
-                    login: '🔐 Вход',
-                    register: '📝 Регистрация',
-                    user: '👤 Пользователь',
-                    staff: '👨‍💼 Сотрудник',
-                    courier: '🚚 Курьер',
-                    admin: '🔧 Админ',
-                    dashboard: '🏠 Панель'
+                    menu: 'Меню',
+                    favorites: 'Избранное',
+                    contact: 'Контакты',
+                    about: 'Вопросы',
+                    downloads: 'Загрузки',
+                    cart: 'Корзина',
+                    profile_info: 'Данные профиля',
+                    profile_settings: 'Настройки профиля',
+                    settings: 'Настройки',
+                    logout: 'Выход',
+                    login: 'Вход',
+                    register: 'Регистрация',
+                    user: 'Пользователь',
+                    staff: 'Сотрудник',
+                    courier: 'Курьер',
+                    admin: 'Админ',
+                    dashboard: 'Панель'
                 },
                 en: {
-                    menu: '📋 Menu',
-                    favorites: '❤️ Favorites',
-                    contact: '📞 Contact',
-                    about: '❓ About',
-                    downloads: '📱 Downloads',
-                    cart: '🛒 Cart',
-                    profile_info: '👤 Profile Info',
-                    profile_settings: '⚙️ Profile Settings',
-                    settings: '🔧 Settings',
-                    logout: '🚪 Logout',
-                    login: '🔐 Login',
-                    register: '📝 Register',
-                    user: '👤 User',
-                    staff: '👨‍💼 Staff',
-                    courier: '🚚 Courier',
-                    admin: '🔧 Admin',
-                    dashboard: '🏠 Dashboard'
+                    menu: 'Menu',
+                    favorites: 'Favorites',
+                    contact: 'Contact',
+                    about: 'About',
+                    downloads: 'Downloads',
+                    cart: 'Cart',
+                    profile_info: 'Profile Info',
+                    profile_settings: 'Profile Settings',
+                    settings: 'Settings',
+                    logout: 'Logout',
+                    login: 'Login',
+                    register: 'Register',
+                    user: 'User',
+                    staff: 'Staff',
+                    courier: 'Courier',
+                    admin: 'Admin',
+                    dashboard: 'Dashboard'
                 }
           };
         }
@@ -3288,7 +3304,7 @@
             justify-content: space-between;
             align-items: center;
           ">
-          <h5 id="notifyModalTitle">📢 Bildirishnomalar</h5>
+          <h5 id="notifyModalTitle">Bildirishnomalar</h5>
           <button
             type="button"
             id="notifyCloseViewer"
@@ -3306,7 +3322,7 @@
           <!-- For super admin: compose notification form -->
           {% if is_super_admin %}
           <div id="notifyComposer" class="mb-3">
-            <h6>📝 Yangi bildirishnoma yuborish</h6>
+            <h6>Yangi bildirishnoma yuborish</h6>
             <div class="mb-3">
               <label for="notifyTitle" class="form-label">Sarlavha:</label>
               <input
@@ -3328,21 +3344,21 @@
                 >Qabul qiluvchi:</label
               >
               <select id="notifyRecipientType" class="form-select">
-                <option value="users">👤 Foydalanuvchilar</option>
-                <option value="staff">👨‍💼 Xodimlar</option>
-                <option value="couriers">🚚 Kuryerlar</option>
-                <option value="all">👥 Barchasi</option>
+                <option value="users">Foydalanuvchilar</option>
+                <option value="staff">Xodimlar</option>
+                <option value="couriers">Kuryerlar</option>
+                <option value="all">Barchasi</option>
               </select>
             </div>
             <div class="d-flex gap-2">
               <button type="button" id="notifySendBtn" class="btn btn-primary">
-                📤 Yuborish
+                Yuborish
               </button>
               <button
                 type="button"
                 id="notifyCancelBtn"
                 class="btn btn-secondary">
-                ❌ Bekor qilish
+                Bekor qilish
               </button>
             </div>
             <hr />
@@ -3351,7 +3367,7 @@
 
           <!-- Notification list -->
           <div id="notifyListPreview">
-            <p class="text-muted">📥 Bildirishnomalar yuklanmoqda...</p>
+            <p class="text-muted">Bildirishnomalar yuklanmoqda...</p>
           </div>
         </div>
       </div>
@@ -3391,7 +3407,7 @@
             justify-content: space-between;
             align-items: center;
           ">
-          <h5>👤 Profil ma'lumotlari</h5>
+          <h5>Profil ma'lumotlari</h5>
           <button
             type="button"
             id="memberProfileClose"
@@ -3499,54 +3515,7 @@
           // ignore
         }
 
-        // 3) News-card equalization: make all .news-item match the tallest currently rendered
-        try {
-          function equalizeNewsItems() {
-            try {
-              const items = Array.from(document.querySelectorAll('.news-ticker-content .news-item'));
-              if (!items.length) return;
-
-              // Reset heights to auto to get natural content height
-              items.forEach(it => { it.style.height = 'auto'; it.style.minHeight = ''; });
-
-              // Measure and pick the maximum
-              let max = 0;
-              items.forEach(it => {
-                const h = it.getBoundingClientRect().height;
-                if (h > max) max = h;
-              });
-
-              if (max <= 0) return;
-              // Apply uniform height (use px to avoid cross-browser issues)
-              items.forEach(it => { it.style.height = Math.ceil(max) + 'px'; it.style.minHeight = Math.ceil(max) + 'px'; });
-            } catch (e) {}
-          }
-
-          // Run after news ticker updates or on DOMContentLoaded
-          document.addEventListener('DOMContentLoaded', function () {
-            // run after a short delay to allow async news load
-            setTimeout(equalizeNewsItems, 300);
-          });
-
-          // Also observe the news-ticker-content for changes and re-run equalization
-          const newsContainer = document.getElementById('news-ticker-content');
-          if (newsContainer) {
-            const mo = new MutationObserver(() => {
-              // small debounce
-              if (window._newsEqualizeTimer) clearTimeout(window._newsEqualizeTimer);
-              window._newsEqualizeTimer = setTimeout(equalizeNewsItems, 120);
-            });
-            mo.observe(newsContainer, { childList: true, subtree: true, attributes: true });
-          }
-
-          // Re-run on window resize
-          window.addEventListener('resize', function () {
-            if (window._newsEqualizeTimer) clearTimeout(window._newsEqualizeTimer);
-            window._newsEqualizeTimer = setTimeout(equalizeNewsItems, 120);
-          });
-        } catch (e) {
-          // ignore
-        }
+        // News-card equalization disabled to prevent news ticker issues
       })();
     </script>
 
@@ -3565,9 +3534,11 @@
           
           if (data && data.success && data.items) {
             newsItems = data.items.filter(item => item.is_active && item.show_in_ticker);
+            console.log('News ticker loaded:', newsItems.length, 'items');
             renderNewsTicker();
             startNewsTicker();
           } else {
+            console.log('API failed, falling back to JSON file');
             // Fallback to JSON file
             await loadNewsFromJSON();
           }
@@ -3609,17 +3580,42 @@
         newsItems.forEach((item, index) => {
           const newsElement = document.createElement('div');
           newsElement.className = `news-item ${item.type}`;
-          newsElement.style.display = 'flex'; // Har bir yangilik ko'rinadi
+          newsElement.style.display = 'flex';
+          newsElement.style.width = '300px';
+          newsElement.style.minWidth = '300px';
+          newsElement.style.flexShrink = '0';
+          newsElement.style.marginRight = '15px';
+          newsElement.style.flexWrap = 'nowrap';
+          newsElement.style.whiteSpace = 'nowrap';
+          newsElement.style.overflow = 'hidden';
+          newsElement.style.textOverflow = 'ellipsis';
+          newsElement.style.wordWrap = 'break-word';
+          // Prevent height equalization
+          newsElement.style.height = '100%';
+          newsElement.style.minHeight = '100%';
+          newsElement.style.maxHeight = '100%';
+          // Prevent width changes
+          newsElement.style.width = '300px';
+          newsElement.style.minWidth = '300px';
+          newsElement.style.maxWidth = '300px';
+          // Prevent flex changes
+          newsElement.style.flex = '0 0 300px';
+          // Prevent any other changes
+          newsElement.style.position = 'relative';
+          newsElement.style.zIndex = '1';
+          newsElement.setAttribute('data-news-id', item.id);
           
           let content = `<div class="news-content">`;
-          content += `<h4 class="news-title">${item.title}</h4>`;
+          const safeTitle = (item.title || '').replace(/[<>]/g, '');
+          const safeContent = (item.content || '').replace(/[<>]/g, '');
+          content += `<h4 class="news-title">${safeTitle}</h4>`;
           if (item.content) {
-            content += `<p class="news-text">${item.content}</p>`;
+            content += `<p class="news-text">${safeContent}</p>`;
           }
           content += `</div>`;
           
           if (item.image_url) {
-            content += `<div class="news-media"><img src="${item.image_url}" alt="${item.title}" class="news-image"></div>`;
+            content += `<div class="news-media"><img src="${item.image_url}" alt="${safeTitle}" class="news-image"></div>`;
           }
           
           if (item.video_url && !item.image_url) {
@@ -3634,8 +3630,16 @@
           
           // Add click handler to open news detail page
           newsElement.style.cursor = 'pointer';
-          newsElement.onclick = function() {
-            window.location.href = `/news/${item.id}`;
+          newsElement.onclick = function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            const newsId = this.getAttribute('data-news-id');
+            console.log('News clicked, ID:', newsId);
+            if (newsId) {
+              window.location.href = `/news/${newsId}`;
+            } else {
+              console.error('News ID not found');
+            }
           };
           
           container.appendChild(newsElement);
@@ -3653,7 +3657,7 @@
         container.innerHTML = `
           <div class="news-item news">
             <div class="news-content">
-              <h4 class="news-title">📢 Yangiliklar</h4>
+              <h4 class="news-title">Yangiliklar</h4>
               <p class="news-text">Pro Obuv do'konida eng yangi mahsulotlar va chegirmalar!</p>
             </div>
           </div>
@@ -3679,11 +3683,10 @@
         if (items.length === 0) return;
         
         if (currentNewsIndex < items.length) {
-          const targetItem = items[currentNewsIndex];
-          const containerWidth = container.offsetWidth;
-          const itemWidth = targetItem.offsetWidth;
+          // Use fixed width instead of measuring
+          const itemWidth = 300; // Fixed width
           const scrollLeft = currentNewsIndex * (itemWidth + 15); // 15px margin
-            
+          
           container.scrollTo({
             left: scrollLeft,
             behavior: 'smooth'
@@ -4260,7 +4263,7 @@
     {% if (session.get('staff_id') or session.get('courier_id') or
     session.get('super_admin') or session.get('user_id')) %}
     <div id="chatFab" class="chat-fab" title="Chat" aria-label="Chat">
-      💬
+      Chat
       <span
         id="chat-unread-count"
         class="badge bg-danger"
@@ -4274,14 +4277,16 @@
 
     <div id="chatPanel" class="chat-panel" role="dialog" aria-hidden="true">
       <!-- Chat Header -->
-      <div class="chat-header">
-        <h5>💬 Chat</h5>
+        <div class="chat-header">
+        <h5>Chat</h5>
         <div class="chat-header-controls">
           <button id="chatRefreshBtn" class="chat-header-btn" title="Yangilash">
-            🔄
+            <i class="bi bi-arrow-clockwise" aria-hidden="true"></i>
+            <span class="visually-hidden">Yangilash</span>
           </button>
           <button id="chatCloseBtn" class="chat-header-btn" title="Yopish">
-            ✕
+            <i class="bi bi-x-lg" aria-hidden="true"></i>
+            <span class="visually-hidden">Yopish</span>
           </button>
         </div>
       </div>
@@ -4290,18 +4295,18 @@
       <div class="chat-content">
         <!-- Chat List (Groups and Contacts) -->
         <div class="chat-list" id="chatList">
-          <div class="chat-list-header">💬 Guruhlar</div>
+          <div class="chat-list-header">Guruhlar</div>
           <div class="chat-group">
-            <div class="chat-group-title">🏢 Guruhlar</div>
+            <div class="chat-group-title">Guruhlar</div>
             <div class="chat-item" data-chat-id="all" data-chat-type="group">
-              <div class="chat-item-avatar">🌐</div>
+              <div class="chat-item-avatar"><i class="bi bi-globe" aria-hidden="true"></i></div>
               <div class="chat-item-info">
                 <div class="chat-item-name">All Team</div>
                 <div class="chat-item-last-message">Barcha xodimlar</div>
               </div>
             </div>
             <div class="chat-item" data-chat-id="staffs" data-chat-type="group">
-              <div class="chat-item-avatar">👥</div>
+              <div class="chat-item-avatar"><i class="bi bi-people-fill" aria-hidden="true"></i></div>
               <div class="chat-item-info">
                 <div class="chat-item-name">Staffs</div>
                 <div class="chat-item-last-message">Xodimlar guruhi</div>
@@ -4311,7 +4316,7 @@
               class="chat-item"
               data-chat-id="couriers"
               data-chat-type="group">
-              <div class="chat-item-avatar">🚚</div>
+              <div class="chat-item-avatar"><i class="bi bi-truck" aria-hidden="true"></i></div>
               <div class="chat-item-info">
                 <div class="chat-item-name">Couriers</div>
                 <div class="chat-item-last-message">Yetkazib beruvchilar</div>
@@ -4319,7 +4324,7 @@
             </div>
           </div>
           <div class="chat-group">
-            <div class="chat-group-title">👤 Shaxsiy suhbatlar</div>
+            <div class="chat-group-title">Shaxsiy suhbatlar</div>
             <div id="privateChatsList">
               <!-- Private chats will be loaded here -->
             </div>
@@ -4329,8 +4334,8 @@
         <!-- Chat Messages Area -->
         <div class="chat-messages-area">
           <div class="chat-messages" id="chatMessages">
-            <div class="chat-empty">
-              <div class="chat-empty-icon">💬</div>
+              <div class="chat-empty">
+              <div class="chat-empty-icon"><i class="bi bi-chat-dots" aria-hidden="true"></i></div>
               <h5>Chatni tanlang</h5>
               <p>Xabarlarni ko'rish uchun chap tomondan chatni tanlang</p>
             </div>
@@ -4343,7 +4348,7 @@
                 placeholder="Xabar yozing..."
                 disabled></textarea>
             </div>
-            <button id="chatSendBtn" class="chat-send-btn" disabled>➤</button>
+            <button id="chatSendBtn" class="chat-send-btn" disabled><i class="bi bi-send" aria-hidden="true"></i></button>
           </div>
         </div>
       </div>
@@ -4367,7 +4372,7 @@
         box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
         z-index: 11000; /* raised so it overlays other panels */
       ">
-      <h5>📣 Superadmenga bildirishnoma</h5>
+  <h5>Superadmenga bildirishnoma</h5>
       <div class="mb-2">
         <input id="notifyTitle" class="form-control" placeholder="Sarlavha" />
       </div>
@@ -4407,7 +4412,7 @@
         box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
         z-index: 11000; /* raised so it overlays other panels */
       ">
-      <h5>🔔 Bildirishnomalar</h5>
+  <h5>Bildirishnomalar</h5>
       <div id="notifyListPreview">
         <!-- Filled by JS: latest notifications for this user -->
       </div>
@@ -4473,10 +4478,10 @@
 
     <script>
       (function () {
-        const fab = document.getElementById("chatFab");
-        const panel = document.getElementById("chatPanel");
-        const closeBtn = document.getElementById("chatCloseBtn");
-        const refreshBtn = document.getElementById("chatRefreshBtn");
+  const fab = document.getElementById("chatFab");
+  const panel = document.getElementById("chatPanel");
+  const closeBtn = document.getElementById("chatCloseBtn");
+  const refreshBtn = document.getElementById("chatRefreshBtn");
         const listEl = document.getElementById("chatList");
         const messagesEl = document.getElementById("chatMessages");
         const sendBtn = document.getElementById("chatSendBtn");
@@ -4667,10 +4672,10 @@
                 });
               } else {
                 // Show placeholder if no private chats
-                const placeholder = document.createElement('div');
+                      const placeholder = document.createElement('div');
                 placeholder.className = 'chat-item';
                 placeholder.innerHTML = `
-                  <div class="chat-item-avatar">👤</div>
+                  <div class="chat-item-avatar"><i class="bi bi-person-fill" aria-hidden="true"></i></div>
                   <div class="chat-item-info">
                     <div class="chat-item-name">Shaxsiy suhbatlar yo'q</div>
                     <div class="chat-item-last-message">Boshqa xodimlar bilan suhbatlashish</div>
@@ -4684,7 +4689,7 @@
               const placeholder = document.createElement('div');
               placeholder.className = 'chat-item';
               placeholder.innerHTML = `
-                <div class="chat-item-avatar">❌</div>
+                <div class="chat-item-avatar"><i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i></div>
                 <div class="chat-item-info">
                   <div class="chat-item-name">Xatolik</div>
                   <div class="chat-item-last-message">Shaxsiy suhbatlarni yuklashda xatolik</div>
@@ -4724,7 +4729,7 @@
                 } else {
                   messagesEl.innerHTML = `
                     <div class="chat-empty">
-                      <div class="chat-empty-icon">❌</div>
+                      <div class="chat-empty-icon"><i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i></div>
                       <h5>Xatolik</h5>
                       <p>Shaxsiy suhbatni ochishda xatolik: ${data.message}</p>
                     </div>
@@ -4735,7 +4740,7 @@
                 // console.error('Error opening private chat:', error);
                 messagesEl.innerHTML = `
                   <div class="chat-empty">
-                    <div class="chat-empty-icon">❌</div>
+                    <div class="chat-empty-icon"><i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i></div>
                     <h5>Xatolik</h5>
                     <p>Shaxsiy suhbatni ochishda xatolik yuz berdi</p>
                   </div>
@@ -4758,7 +4763,7 @@
               if (!data || !data.messages || data.messages.length === 0) {
                 messagesEl.innerHTML = `
                   <div class="chat-empty">
-                    <div class="chat-empty-icon">💬</div>
+                    <div class="chat-empty-icon"><i class="bi bi-chat-dots" aria-hidden="true"></i></div>
                     <h5>Hali xabar yo'q</h5>
                     <p>Birinchi xabarni yuboring!</p>
                   </div>
@@ -4778,7 +4783,7 @@
               // console.error('Error loading messages:', error);
               messagesEl.innerHTML = `
                 <div class="chat-empty">
-                  <div class="chat-empty-icon">❌</div>
+                  <div class="chat-empty-icon"><i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i></div>
                   <h5>Xatolik</h5>
                   <p>Xabarlarni yuklashda xatolik yuz berdi</p>
                 </div>
@@ -4860,7 +4865,8 @@
           }
 
           sendBtn.disabled = true;
-          sendBtn.textContent = '⏳';
+          // show spinner with bootstrap icon
+          sendBtn.innerHTML = '<i class="bi bi-hourglass-split" aria-hidden="true"></i>';
 
           fetch(`/api/chats/${activeChatId}/messages`, {
             method: 'POST',
@@ -5393,8 +5399,8 @@
               <div class="mb-3 mt-2">
                 <label class="form-label">Turi</label>
                 <select id="tickerNewsType" class="form-control">
-                  <option value="news">📰 Yangilik</option>
-                  <option value="advertisement">📢 Reklama</option>
+                  <option value="news">Yangilik</option>
+                  <option value="advertisement">Reklama</option>
                 </select>
               </div>
               <div class="form-check mb-3">
