@@ -617,28 +617,28 @@ class NewsTicker {
     }
   }
 
-      updateDisplay() {
-        const container = document.getElementById("newsTickerContent");
-        const indicators = document.getElementById("newsIndicators");
-        if (!container) return;
-        if (!this.newsItems || this.newsItems.length === 0) {
-          this.showNoNews();
-          return;
-        }
-        const item = this.newsItems[this.currentIndex];
+  updateDisplay() {
+    const container = document.getElementById("newsTickerContent");
+    const indicators = document.getElementById("newsIndicators");
+    if (!container) return;
+    if (!this.newsItems || this.newsItems.length === 0) {
+      this.showNoNews();
+      return;
+    }
+    const item = this.newsItems[this.currentIndex];
 
-        const imageHtml = item.image_url
-          ? `<div class="news-thumb"><img src="${escapeHtml(
-              item.image_url || ""
-            )}" alt="${escapeHtml(item.title || "")}"></div>`
-          : "";
+    const imageHtml = item.image_url
+      ? `<div class="news-thumb"><img src="${escapeHtml(
+          item.image_url || ""
+        )}" alt="${escapeHtml(item.title || "")}"></div>`
+      : "";
 
-        const excerptRaw = (item.content || item.description || "").trim();
-        const excerpt = escapeHtml(
-          excerptRaw.substring(0, 140) + (excerptRaw.length > 140 ? "..." : "")
-        );
+    const excerptRaw = (item.content || item.description || "").trim();
+    const excerpt = escapeHtml(
+      excerptRaw.substring(0, 140) + (excerptRaw.length > 140 ? "..." : "")
+    );
 
-        const inner = `
+    const inner = `
           <div class="news-item">
             ${imageHtml}
             <div class="news-body">
@@ -648,33 +648,34 @@ class NewsTicker {
           </div>
         `;
 
-        // Create link wrapper to news detail
-        const link = document.createElement("a");
-        try {
-          const id = encodeURIComponent(String(item.id || ""));
-          link.href = `/news/${id}`;
-        } catch (e) {
-          link.href = "/news/" + (item.id || "");
-        }
-        link.className = "news-ticker-link";
-        link.setAttribute("aria-label", item.title || "news");
-        link.innerHTML = inner;
+    // Create link wrapper to news detail
+    const link = document.createElement("a");
+    try {
+      const id = encodeURIComponent(String(item.id || ""));
+      link.href = `/news/${id}`;
+    } catch (e) {
+      link.href = "/news/" + (item.id || "");
+    }
+    link.className = "news-ticker-link";
+    link.setAttribute("aria-label", item.title || "news");
+    link.innerHTML = inner;
 
-        // Clear and append
-        container.innerHTML = "";
-        container.appendChild(link);
+    // Clear and append
+    container.innerHTML = "";
+    container.appendChild(link);
 
-        // Update indicators
-        if (indicators) {
-          indicators.innerHTML = "";
-          for (let i = 0; i < this.newsItems.length; i++) {
-            const dot = document.createElement("span");
-            dot.className = "news-indicator" + (i === this.currentIndex ? " active" : "");
-            dot.onclick = () => this.goToSlide(i);
-            indicators.appendChild(dot);
-          }
-        }
+    // Update indicators
+    if (indicators) {
+      indicators.innerHTML = "";
+      for (let i = 0; i < this.newsItems.length; i++) {
+        const dot = document.createElement("span");
+        dot.className =
+          "news-indicator" + (i === this.currentIndex ? " active" : "");
+        dot.onclick = () => this.goToSlide(i);
+        indicators.appendChild(dot);
       }
+    }
+  }
 
   showNoNews() {
     const content = document.getElementById("newsTickerContent");
