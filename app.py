@@ -36,6 +36,7 @@ try:
         jsonify,
         send_from_directory,
         Response,
+        abort,
     )
 except Exception:
     # Minimal fallbacks to allow static analysis / parsing; runtime will still
@@ -62,6 +63,10 @@ except Exception:
 
     def send_from_directory(*a, **k):
         return ""
+
+    def abort(code=500):
+        # Minimal fallback for abort during static analysis/testing.
+        raise Exception(f"HTTP abort called with code={code}")
 
     class Response:
         pass
