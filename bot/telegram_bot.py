@@ -624,6 +624,43 @@ def main():
         # If HTTPXRequest import or construction fails, fall back to default builder
         LOG.info("HTTPXRequest unavailable or failed, using default ApplicationBuilder")
         app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
+    
+        # Global error handler for the Application (python-telegram-bot v20+)
+        async def _global_error_handler(update: object, context: "ContextTypes.DEFAULT_TYPE"):
+            """Centralized error handler to capture exceptions raised in handlers.
+
+            This prevents the library from printing unhandled tracebacks and lets
+            us write a concise message to our own logs and error file.
+            """
+            try:
+                # context.error is set by PTB when an exception occurs
+                err = getattr(context, "error", None)
+                if err is None:
+                    # Fallback: try to extract exception from sys.exc_info
+                    import sys
+
+                    err = sys.exc_info()[1]
+
+                LOG.exception("Telegram handler exception: %s", err)
+                # Persist a brief traceback to our persistent error log
+                try:
+                    log_error(err, context=str(update))
+                except Exception:
+                    LOG.exception("Failed to write to telegram error log")
+            except Exception:
+                # Ensure the error handler never raises
+                LOG.exception("Global error handler failed")
+
+        # Register the global error handler so the Application logs exceptions via our handler
+        try:
+            app.add_error_handler(_global_error_handler)
+        except Exception:
+            # Some older/newer variants might expose different API - try dispatcher fallback
+            try:
+                if hasattr(app, "dispatcher") and app.dispatcher:
+                    app.dispatcher.add_error_handler(_global_error_handler)
+            except Exception:
+                LOG.exception("Failed to register global telegram error handler")
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("test", test_cmd))
     app.add_handler(CommandHandler("products", products_cmd_new))
@@ -663,28 +700,33 @@ def main():
 
             LOG.error("Application.run_polling failed: %s", msg)
 
-            # Handle getUpdates conflict: retry a few times with backoff before giving up
+            # Handle getUpdates conflict: this is caused by another bot instance or
+            # an active webhook. Retrying repeatedly only floods logs with 409s.
+            # Instead, log a clear error and exit so deployments/platforms can
+            # ensure a single bot instance runs (or switch to webhook mode).
             if "Conflict" in msg or "getUpdates" in msg:
-                attempt += 1
-                if attempt > max_retries:
-                    LOG.error(
-                        "Detected persistent getUpdates conflict after %d attempts; exiting.",
-                        attempt,
-                    )
-                    return
-                delay = min(base_delay * (2 ** (attempt - 1)), 60)
-                LOG.warning(
-                    "getUpdates conflict detected (attempt %d/%d). Retrying in %s seconds...",
-                    attempt,
-                    max_retries,
-                    delay,
+                # Mask token for logs
+                def _mask_token(tkn: str) -> str:
+                    try:
+                        if not tkn:
+                            return "(none)"
+                        parts = tkn.split(":")
+                        if len(parts) >= 1:
+                            bid = parts[0]
+                            return f"bot_id={bid} (token masked)"
+                    except Exception:
+                        pass
+                    return "(token masked)"
+
+                LOG.error(
+                    "getUpdates conflict detected (409). Another getUpdates request or a webhook is active; exiting to avoid conflict. %s",
+                    _mask_token(TELEGRAM_TOKEN),
                 )
-                try:
-                    time.sleep(delay)
-                except Exception:
-                    pass
-                # try again
-                continue
+                LOG.error(
+                    "If you intend to run the bot in webhook mode, remove polling or disable auto-start. If running multiple instances, ensure START_TELEGRAM_BOT=0 or use a single managed process."
+                )
+                # Do not retry - return to let process exit/launcher or platform handle restart policy
+                return
 
             # For other exceptions (timeouts, network errors), attempt graceful shutdown using asyncio
             try:
