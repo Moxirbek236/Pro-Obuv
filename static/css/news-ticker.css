@@ -160,7 +160,7 @@
   min-width: 0;
   min-height: var(--nt-item-height-desktop);
   display: flex;
-  align-items: center;
+  align-items: stretch; /* allow children to stretch vertically so equalizeHeights can apply */
   padding: 16px 20px;
   position: relative;
   background: linear-gradient(
@@ -216,9 +216,40 @@
 
 /* News Text */
 .news-text {
-  flex: 1;
+  flex: 1 1 auto;
   color: #ffffff;
   overflow: hidden;
+}
+
+/* Make body fill available vertical space so cards can be equalized */
+.news-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  flex: 1 1 auto;
+}
+
+/* If a card has no media, hide the media container and allow text to occupy full width */
+.news-item.no-media .news-media {
+  display: none !important;
+}
+.news-item.no-media .news-body {
+  width: 100%;
+}
+
+/* Ensure media containers don't collapse and media fills them */
+.news-media {
+  min-width: 0;
+  width: var(--nt-media-width-desktop);
+  height: auto;
+}
+.news-media img,
+.news-media video,
+.news-media iframe {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .news-title {

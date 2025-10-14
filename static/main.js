@@ -373,34 +373,88 @@ window.applyClientSideFilter = function () {
           ""
         ).toLowerCase();
         const cat = (card.getAttribute("data-category") || "").toLowerCase();
-        const desc = (
-          card.querySelector(".item-description")?.textContent ||
-          card.querySelector(".card-description")?.textContent ||
-          ""
-        ).toLowerCase();
-        let visible = true;
-        if (category && category !== "all" && category !== "") {
-          visible =
-            visible &&
-            (cat === category ||
-              cat.replace(/\s+/g, "") === category.replace(/\s+/g, ""));
+        // Build media HTML: support youtube iframe, video files, media array, or image.
+        let mediaHtml = "";
+        let hasMedia = false;
+        try {
+          const renderVideo = (src) => `
+              <div class="news-media video-wrapper">
+                <video controls preload="metadata" playsinline>
+                  <source src="${escapeHtml(src)}" />
+                  Your browser does not support the video tag.
+                </video>
+              </div>`;
+
+          if (it.youtube_embed) {
+            hasMedia = true;
+            mediaHtml = `
+              <div class="news-media">
+                <div class="youtube-embed-wrapper">
+                  <iframe src="${escapeHtml(
+                    it.youtube_embed
+                  )}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+              </div>
+            `;
+          } else if (it.video_url) {
+            hasMedia = true;
+            mediaHtml = renderVideo(it.video_url);
+          } else if (Array.isArray(it.media) && it.media.length) {
+            for (let m of it.media) {
+              try {
+                let src = null;
+                let type = null;
+                if (!m) continue;
+                if (typeof m === "string") {
+                  src = m;
+                } else if (typeof m === "object") {
+                  src =
+                    m.media_url || m.url || m.src || m.image_url || m.video_url;
+                  type = m.type || m.media_type || null;
+                }
+                if (!src) continue;
+                const lower = String(src).toLowerCase();
+                if (type && type.indexOf("video") !== -1) {
+                  hasMedia = true;
+                  mediaHtml = renderVideo(src);
+                  break;
+                }
+                if (
+                  lower.endsWith(".mp4") ||
+                  lower.endsWith(".webm") ||
+                  lower.endsWith(".ogg")
+                ) {
+                  hasMedia = true;
+                  mediaHtml = renderVideo(src);
+                  break;
+                }
+                if (lower.match(/\.(jpg|jpeg|png|gif|webp)$/)) {
+                  hasMedia = true;
+                  mediaHtml = ` <div class="news-media"><img src="${escapeHtml(
+                    src
+                  )}" alt="${escapeHtml(
+                    it.title || ""
+                  )}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.png'"/></div>`;
+                  break;
+                }
+              } catch (e) {
+                continue;
+              }
+            }
+          } else if (it.image_url) {
+            hasMedia = true;
+            mediaHtml = `
+              <div class="news-media"><img src="${escapeHtml(
+                it.image_url || ""
+              )}" alt="${escapeHtml(
+              it.title || ""
+            )}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.png'"/></div>
+            `;
+          }
+        } catch (e) {
+          mediaHtml = "";
+          hasMedia = false;
         }
-        if (q) {
-          visible =
-            visible && (title.indexOf(q) !== -1 || desc.indexOf(q) !== -1);
-        }
-        // size and color are best-effort: check dataset or description text
-        if (size) {
-          const ds = (card.dataset.size || "").toLowerCase();
-          visible =
-            visible && (ds.indexOf(size) !== -1 || desc.indexOf(size) !== -1);
-        }
-        if (color) {
-          const dc = (card.dataset.color || "").toLowerCase();
-          visible =
-            visible && (dc.indexOf(color) !== -1 || desc.indexOf(color) !== -1);
-        }
-        card.style.display = visible ? "" : "none";
       } catch (e) {
         /* ignore per-card errors */
       }
@@ -408,6 +462,7 @@ window.applyClientSideFilter = function () {
   } catch (e) {
     console.warn("applyClientSideFilter error", e);
   }
+  if (!hasMedia) itemWrap.classList.add("no-media");
 };
 
 function initImageGalleries(root = document) {
@@ -439,6 +494,32 @@ function initImageGalleries(root = document) {
       if (isTouchDevice) {
         // Carousel/snap mode: each image is full-width of container
         let index = 0;
+        try {
+          const videos = container.querySelectorAll("video");
+          videos.forEach((v) => {
+            try {
+              const videos = container.querySelectorAll("video");
+              videos.forEach((v) => {
+                v.addEventListener("loadedmetadata", () =>
+                  this.equalizeHeights()
+                );
+                v.addEventListener("canplay", () => this.equalizeHeights());
+                if (v.readyState >= 1) {
+                  try {
+                    this.equalizeHeights();
+                  } catch (e) {}
+                }
+              });
+            } catch (e) {}
+            v.addEventListener("loadedmetadata", () => this.equalizeHeights());
+            v.addEventListener("canplay", () => this.equalizeHeights());
+            if (v.readyState >= 1) {
+              try {
+                this.equalizeHeights();
+              } catch (e) {}
+            }
+          });
+        } catch (e) {}
         const resize = () => {
           try {
             const rect = g.getBoundingClientRect();

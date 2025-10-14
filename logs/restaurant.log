@@ -64450,3 +64450,7 @@ NameError: name 'abort' is not defined
 2025-10-14 17:22:23,850 | WARNING | restaurant_app | not_found_error:1258 | 404 Error: http://localhost:10000/news/7
 2025-10-14 17:22:23,917 | WARNING | restaurant_app | not_found_error:1258 | 404 Error: http://localhost:10000/favicon.ico
 2025-10-14 17:22:32,816 | WARNING | restaurant_app | not_found_error:1258 | 404 Error: http://localhost:10000/news/6
+2025-10-14 17:30:21,897 | WARNING | restaurant_app | not_found_error:1258 | 404 Error: http://localhost:10000/news/6
+2025-10-14 17:30:21,968 | WARNING | restaurant_app | not_found_error:1258 | 404 Error: http://localhost:10000/favicon.ico
+2025-10-14 18:16:16,009 | WARNING | restaurant_app | not_found_error:1258 | 404 Error: http://localhost:10000/news/6
+2025-10-14 22:44:28,563 | WARNING | restaurant_app | not_found_error:1258 | 404 Error: http://localhost:10000/favicon.ico

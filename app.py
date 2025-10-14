@@ -12428,7 +12428,43 @@ def clear_role_sessions():
 def news_detail(news_id):
     """Serve a single news item page. Prefer DB source; fall back to JSON-backed storage."""
     try:
-        # Try DB first
+        # JSON-first: prefer authoritative data stored in data/news.json
+        json_path = os.path.join(os.getcwd(), "data", "news.json")
+        if os.path.exists(json_path):
+            try:
+                with open(json_path, "r", encoding="utf-8", errors="replace") as f:
+                    blob = json.load(f) or {}
+            except Exception:
+                blob = {}
+
+            items = blob.get("news") if isinstance(blob, dict) else (blob if isinstance(blob, list) else [])
+            for n in items or []:
+                try:
+                    if int(n.get("id", 0)) == int(news_id):
+                        # Normalize expected fields
+                        n.setdefault("title", n.get("headline") or "")
+                        n.setdefault("content", n.get("content") or n.get("description") or "")
+                        n.setdefault("image_url", n.get("image_url") or n.get("image") or "")
+                        n.setdefault("video_url", n.get("video_url") or n.get("video") or "")
+                        try:
+                            n["youtube_embed"] = extract_youtube_embed(n.get("video_url") or "")
+                        except Exception:
+                            n["youtube_embed"] = None
+                        if not n.get("is_active") and not session.get("super_admin"):
+                            abort(404)
+                        seo = {
+                            "page_title": f"{n.get('title')} - Yangiliklar - Safety.uz",
+                            "meta_description": (n.get('content') or '')[:160],
+                            "meta_keywords": '',
+                            "canonical_url": url_for('news_detail', news_id=n.get('id'), _external=True),
+                            "og_title": n.get('title'),
+                            "og_description": (n.get('content') or '')[:160],
+                        }
+                        return render_template("news_detail.html", news=n, seo_data=seo)
+                except Exception:
+                    continue
+
+        # If not found in JSON, fall back to DB for legacy entries
         try:
             row = execute_query(
                 "SELECT id, title, content, type, image_url, video_url, is_active, display_order, created_at FROM news WHERE id = ?",
@@ -12454,10 +12490,8 @@ def news_detail(news_id):
                     item["youtube_embed"] = extract_youtube_embed(item.get("video_url") or "")
                 except Exception:
                     item["youtube_embed"] = None
-                # If the item is not active, still allow preview for admins
                 if not item.get("is_active") and not session.get("super_admin"):
                     abort(404)
-                # Build SEO data expected by template
                 seo = {
                     "page_title": f"{item.get('title')} - Yangiliklar - Safety.uz",
                     "meta_description": (item.get('content') or '')[:160],
@@ -12468,33 +12502,9 @@ def news_detail(news_id):
                 }
                 return render_template("news_detail.html", news=item, seo_data=seo)
         except Exception:
-            # DB read failed - fall through to JSON fallback
             pass
 
-        # JSON fallback
-        json_path = os.path.join(os.getcwd(), "data", "news.json")
-        if os.path.exists(json_path):
-            with open(json_path, "r", encoding="utf-8") as f:
-                blob = json.load(f) or {}
-                items = blob.get("news") or blob if isinstance(blob, list) else []
-                for n in items:
-                    try:
-                        if int(n.get("id", 0)) == int(news_id):
-                            n["youtube_embed"] = extract_youtube_embed(n.get("video_url") or "")
-                            if not n.get("is_active") and not session.get("super_admin"):
-                                abort(404)
-                            seo = {
-                                "page_title": f"{n.get('title')} - Yangiliklar - Safety.uz",
-                                "meta_description": (n.get('content') or '')[:160],
-                                "meta_keywords": '',
-                                "canonical_url": url_for('news_detail', news_id=n.get('id'), _external=True),
-                                "og_title": n.get('title'),
-                                "og_description": (n.get('content') or '')[:160],
-                            }
-                            return render_template("news_detail.html", news=n, seo_data=seo)
-                    except Exception:
-                        continue
-
+        # Not found anywhere
         abort(404)
     except Exception as e:
         # If it's an HTTPException raised by abort(), re-raise so Flask
@@ -18500,10 +18510,95 @@ def sitemap():
         if os.path.exists(project_file):
             # serve sitemap placed at project root
             return send_from_directory(app.root_path, "sitemap.xml")
+        # Not found on disk — build a dynamic sitemap so search engines can discover pages
+        app_logger.info("sitemap.xml not found on disk; generating dynamic sitemap")
 
-        # Not found
-        app_logger.info("sitemap.xml not found in static/ or project root")
-        return abort(404)
+        urls = []
+        try:
+            # Always include index and news listing
+            urls.append({"loc": url_for("index", _external=True), "priority": "1.0", "changefreq": "daily"})
+            urls.append({"loc": url_for("news", _external=True), "priority": "0.8", "changefreq": "daily"})
+        except Exception:
+            # Fallback to root
+            root = request.url_root.rstrip("/")
+            urls.append({"loc": root + "/", "priority": "1.0", "changefreq": "daily"})
+            urls.append({"loc": root + "/news", "priority": "0.8", "changefreq": "daily"})
+
+        # Try DB-first for news items
+        news_items = []
+        try:
+            try:
+                rows = execute_query(
+                    "SELECT id, COALESCE(updated_at, created_at) as mod FROM news WHERE is_active = 1 ORDER BY created_at DESC",
+                    fetch_all=True,
+                )
+                if rows:
+                    for r in rows:
+                        nid = r[0] if isinstance(r, (list, tuple)) else (r.get("id") if isinstance(r, dict) else None)
+                        mod = r[1] if isinstance(r, (list, tuple)) else (r.get("mod") if isinstance(r, dict) else None)
+                        news_items.append({"id": nid, "lastmod": mod})
+            except Exception:
+                # DB read failed - fall through to JSON fallback
+                news_items = []
+        except Exception:
+            news_items = []
+
+        # JSON fallback
+        if not news_items:
+            try:
+                json_path = os.path.join(os.getcwd(), "data", "news.json")
+                if os.path.exists(json_path):
+                    with open(json_path, "r", encoding="utf-8", errors="replace") as f:
+                        blob = json.load(f) or {}
+                        items = blob.get("news") or blob if isinstance(blob, list) else []
+                        for n in items:
+                            try:
+                                nid = int(n.get("id")) if n.get("id") else None
+                                lastmod = n.get("updated_at") or n.get("created_at")
+                                news_items.append({"id": nid, "lastmod": lastmod})
+                            except Exception:
+                                continue
+            except Exception:
+                news_items = news_items or []
+
+        # Add news URLs to sitemap
+        for ni in news_items:
+            try:
+                if not ni or not ni.get("id"):
+                    continue
+                loc = url_for("news_detail", news_id=int(ni.get("id")), _external=True)
+                lastmod = ni.get("lastmod")
+                # If lastmod is a datetime-like string, attempt to format date-only
+                if isinstance(lastmod, str) and len(lastmod) >= 10:
+                    lm = lastmod[:10]
+                else:
+                    lm = None
+                urls.append({"loc": loc, "lastmod": lm, "changefreq": "weekly", "priority": "0.6"})
+            except Exception:
+                continue
+
+        # Build XML
+        try:
+            xml_parts = [
+                '<?xml version="1.0" encoding="UTF-8"?>',
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+            ]
+            for u in urls:
+                xml_parts.append("  <url>")
+                xml_parts.append(f"    <loc>{u['loc']}</loc>")
+                if u.get("lastmod"):
+                    xml_parts.append(f"    <lastmod>{u['lastmod']}</lastmod>")
+                if u.get("changefreq"):
+                    xml_parts.append(f"    <changefreq>{u['changefreq']}</changefreq>")
+                if u.get("priority"):
+                    xml_parts.append(f"    <priority>{u['priority']}</priority>")
+                xml_parts.append("  </url>")
+            xml_parts.append("</urlset>")
+            xml = "\n".join(xml_parts)
+            return Response(xml, mimetype="application/xml")
+        except Exception as e:
+            app_logger.error(f"Failed to build dynamic sitemap: {e}")
+            return abort(500)
     except Exception as e:
         app_logger.exception("Error while serving sitemap.xml: %s", e)
         from flask import abort
