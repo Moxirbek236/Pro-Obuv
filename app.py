@@ -18330,58 +18330,12 @@ def api_admin_news_ticker():
         )
 
 
-@app.route("/news/<int:news_id>")
-def news_detail(news_id):
-    """Yangilik batafsil sahifasi"""
-    try:
-        app_logger.info(f"News detail requested for ID: {news_id}")
-
-        # Yangilik ma'lumotlarini olish
-        news_item = execute_query(
-            "SELECT * FROM news WHERE id = ? AND is_active = 1",
-            (news_id,),
-            fetch_one=True,
-        )
-
-        app_logger.info(f"News item found: {news_item is not None}")
-
-        if not news_item:
-            app_logger.warning(f"News item {news_id} not found or not active")
-            flash("Yangilik topilmadi yoki faol emas.", "warning")
-            return redirect(url_for("index"))
-
-        # Yangilik ma'lumotlarini dict ga aylantirish
-        news_data = dict(news_item) if news_item else {}
-
-        # SEO ma'lumotlari
-        seo_data = {
-            "page_title": f"{news_data.get('title', 'Yangilik')} | Safety.uz",
-            "meta_description": (
-                f"{news_data.get('content', '')[:160]}..."
-                if news_data.get("content")
-                else "Yangilik batafsil ma'lumotlari"
-            ),
-            "meta_keywords": f"yangilik, news, {news_data.get('title', '')}, safety.uz, pro obuv",
-            "og_title": news_data.get("title", "Yangilik"),
-            "og_description": (
-                news_data.get("content", "")[:160]
-                if news_data.get("content")
-                else "Yangilik batafsil ma'lumotlari"
-            ),
-            "canonical_url": f"https://www.safety.uz/news/{news_id}",
-        }
-
-        return render_template(
-            "news_detail.html",
-            news=news_data,
-            seo_data=seo_data,
-            current_page="news_detail",
-        )
-
-    except Exception as e:
-        app_logger.error(f"News detail error: {str(e)}")
-        flash("Yangilik yuklashda xatolik yuz berdi.", "error")
-        return redirect(url_for("index"))
+# NOTE: Duplicate news_detail() definition removed. The consolidated
+# news_detail route (DB-first with JSON fallback and seo_data) is defined
+# earlier in this file. Keeping a single definition avoids Flask endpoint
+# collisions (AssertionError: overwriting existing endpoint). If you need
+# different behavior for admin previews or alternative fallbacks, adjust the
+# one implementation at the earlier location near load/save news handlers.
 
 
 @app.route("/api/news/ticker/toggle/<int:news_id>", methods=["POST"])
