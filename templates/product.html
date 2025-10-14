@@ -16,19 +16,28 @@
         <meta name="twitter:image" content="{{ item.image_url if item.image_url else url_for('static', filename='defoult.png') }}" />
 <link rel="canonical" href="{{ ('https://safety.uz' + request.path) if request else request.url }}" />
 <script type="application/ld+json">
+{%- set _img = item.image_url if item.image_url else url_for('static', filename='defoult.png') -%}
+{%- if _img and (_img.startswith('http://') or _img.startswith('https://')) -%}
+  {%- set abs_image = _img -%}
+{%- else -%}
+  {%- set abs_image = (request.url_root.rstrip('/') + (_img if _img.startswith('/') else ('/' + _img))) -%}
+{%- endif -%}
+{%- set abs_url = (request.url_root.rstrip('/') + request.path) if request else (('https://safety.uz' + request.path) if request else request.url) -%}
+{%- set price_val = (item.price|float(0)) -%}
+{%- set availability = 'https://schema.org/InStock' if (item.available or item.get('available') if item is mapping else (item.available if item is not none else True)) else 'https://schema.org/OutOfStock' -%}
 {{ {
   "@context": "https://schema.org",
   "@type": "Product",
   "name": (item.name or ""),
   "description": (item.description or "Sifatli spetsobuv va ish kiyimlari"),
-  "image": (item.image_url or url_for('static', filename='defoult.png')),
-  "url": (('https://safety.uz' + request.path) if request else request.url),
+  "image": abs_image,
+  "url": abs_url,
   "brand": {"@type": "Brand", "name": "Pro Obuv"},
   "offers": {
     "@type": "Offer",
-    "price": ((item.price if (item.price is not none and item.price != '') else 0)),
+    "price": price_val,
     "priceCurrency": "UZS",
-    "availability": "https://schema.org/InStock",
+    "availability": availability,
     "seller": {"@type": "Store", "name": "Pro Obuv"}
   },
   "category": (item.category or "Spetsobuv va Ish Kiyimlari")
