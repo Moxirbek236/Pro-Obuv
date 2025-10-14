@@ -18254,6 +18254,8 @@ def api_admin_news_ticker():
 def news_detail(news_id):
     """Yangilik batafsil sahifasi"""
     try:
+        app_logger.info(f"News detail requested for ID: {news_id}")
+
         # Yangilik ma'lumotlarini olish
         news_item = execute_query(
             "SELECT * FROM news WHERE id = ? AND is_active = 1",
@@ -18261,7 +18263,10 @@ def news_detail(news_id):
             fetch_one=True,
         )
 
+        app_logger.info(f"News item found: {news_item is not None}")
+
         if not news_item:
+            app_logger.warning(f"News item {news_id} not found or not active")
             flash("Yangilik topilmadi yoki faol emas.", "warning")
             return redirect(url_for("index"))
 

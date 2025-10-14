@@ -234,12 +234,25 @@
       "created_at": "2025-10-02T12:02:07.018129Z",
       "updated_at": "2025-10-02T12:02:07.018129Z",
       "youtube_embed": null
+    },
+    {
+      "id": 19,
+      "title": "Test Yangilik - API Test",
+      "content": "Bu test yangiligi API orqali yaratilgan",
+      "type": "news",
+      "is_active": true,
+      "display_order": 19,
+      "image_url": "",
+      "video_url": "",
+      "created_at": "2025-10-11T19:32:28.585246Z",
+      "updated_at": "2025-10-11T19:32:28.585716Z",
+      "youtube_embed": null
     }
   ],
   "metadata": {
-    "total_count": 18,
-    "active_count": 18,
-    "last_updated": "2025-10-02T12:02:07.019127Z",
+    "total_count": 19,
+    "active_count": 19,
+    "last_updated": "2025-10-12T16:30:19.944935Z",
     "version": "1.0"
   }
 }

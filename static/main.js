@@ -280,7 +280,7 @@ const MenuClient = (function () {
             item.price || 0
           )}</div><div><button class="add-to-cart-btn" data-item-id="${
         item.id
-      }">➕</button></div></div>
+      }">+</button></div></div>
         </div>`;
 
       // Navigate to product page when clicking the card
@@ -631,7 +631,7 @@ class NewsTicker {
     content.innerHTML = `
       <div class="news-item">
         <div class="news-icon">${
-          item.type === "advertisement" ? "📢" : "📰"
+          item.type === "advertisement" ? "Ad" : "News"
         }</div>
         <div class="news-text">
           <div class="news-title">${escapeHtml(item.title || "")}</div>
@@ -661,7 +661,7 @@ class NewsTicker {
     if (content) {
       content.innerHTML = `
         <div class="news-item">
-          <div class="news-icon">📰</div>
+          <div class="news-icon">News</div>
           <div class="news-text">
             <div class="news-title">Yangiliklar yo'q</div>
             <div class="news-content">Hozircha yangiliklar mavjud emas</div>

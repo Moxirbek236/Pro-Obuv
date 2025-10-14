@@ -552,40 +552,89 @@
     </div>
 
     <!-- Services Section -->
-      <!-- Site-wide search (mirrors menu search controls) -->
-      <div class="container mt-4">
-        <div class="card p-4 mb-4">
-          <form action="{{ url_for('menu') }}" method="get" class="d-flex gap-2">
-            <input name="q" type="search" class="form-control" placeholder="Qidirish: nom, tavsif, kod (masalan: shoes, spetsobuv, кроссовки)" />
-            <select name="category" class="form-select" style="max-width:220px">
-              <option value="">Barcha kategoriyalar</option>
-              <option value="specobuv">Спецобувь</option>
-              <option value="specodezhda">Спецодежда</option>
-            </select>
-            <button type="submit" class="btn btn-primary">Qidirish</button>
-          </form>
-          <div class="mt-3 text-muted small">Maslahat: qidiruv so'zlarini ruscha, inglizcha va lokal yozuvlarda sinab ko'ring (masalan: "krosovka", "кроссовки", "safety shoes").</div>
+    <!-- Site-wide search (mirrors menu search controls) -->
+    <div class="container mt-4">
+      <div class="card p-4 mb-4">
+        <form action="{{ url_for('menu') }}" method="get" class="d-flex gap-2">
+          <input
+            name="q"
+            type="search"
+            class="form-control"
+            placeholder="Qidirish: nom, tavsif, kod (masalan: shoes, spetsobuv, кроссовки)" />
+          <select name="category" class="form-select" style="max-width: 220px">
+            <option value="">Barcha kategoriyalar</option>
+            <option value="specobuv">Спецобувь</option>
+            <option value="specodezhda">Спецодежда</option>
+          </select>
+          <button type="submit" class="btn btn-primary">Qidirish</button>
+        </form>
+        <div class="mt-3 text-muted small">
+          Maslahat: qidiruv so'zlarini ruscha, inglizcha va lokal yozuvlarda
+          sinab ko'ring (masalan: "krosovka", "кроссовки", "safety shoes").
+        </div>
+      </div>
+
+      <!-- Popular searches / keyword cloud for SEO (crawlable phrases) -->
+      <div class="card p-4">
+        <h5>Ommabop qidiruvlar</h5>
+        <p class="text-muted">
+          Tez-tez qidiriladigan so'zlar — ularni bosib darhol qidirish mumkin:
+        </p>
+        <div class="d-flex flex-wrap gap-2">
+          {% set popular = [ 'shoes','safety shoes','work
+          boots','spetsobuv','spestobuv','spets obuv','spest
+          obuv','spesobuv','spes obuv',
+          'krosovka','krossovka','кроссовки','krasofka','krosofkalar','krosovkalar','sneakers',
+          'steel toe','composite toe','antistatic','ESD
+          shoes','botinki','tufli','etik','cross','crossovki','sport shoes',
+          'ish kiyimlari','spetsodejda','himoya poyabzal','safety
+          boots','workwear','professional footwear','protective shoes',
+          'buyurtma','yetkazib
+          berish','Toshkent','Uzbekistan','Oʻzbekiston','Pro Obuv','Safety.uz' ]
+          %} {% for kw in popular %}
+          <a
+            href="{{ url_for('menu') }}?q={{ kw|urlencode }}"
+            class="badge bg-light border text-dark text-decoration-none py-2 px-3"
+            >{{ kw }}</a
+          >
+          {% endfor %}
         </div>
 
-        <!-- Popular searches / keyword cloud for SEO (crawlable phrases) -->
-        <div class="card p-4">
-          <h5>Ommabop qidiruvlar</h5>
-          <p class="text-muted">Tez-tez qidiriladigan so'zlar — ularni bosib darhol qidirish mumkin:</p>
+        <!-- Expanded multilingual variants (crawlable list) -->
+        <div class="mt-3">
+          <h6>
+            Qo'shimcha qidiruv variantlari (uz/ru/en, bo'shliqli va xatolik
+            variantlari)
+          </h6>
+          <p class="text-muted">
+            Quyidagi so'zlar saytimiz bilan bog'liq bo'lib, ularni Google va
+            boshqa qidiruv tizimlari indekslashi uchun sahifada joylashtirilgan.
+            Bosib, darhol qidirishingiz mumkin:
+          </p>
+          {% set expanded = [ 'spetsobuv','spets obuv','spestobuv','spest
+          obuv','spesobuv','spes obuv','spetsobuvni','spetsobuv turlari',
+          'krasofka','krosovka','krosovka','krosovka
+          krasofka','krosovki','krosofka','krosofkalar','krosovkalar',
+          'кроссовки','кроссовка','спецобувь','спец обувь','спецодежда','спец
+          одежда','ботинки','рабочая обувь', 'safety shoes','safety
+          shoe','safety boot','safety boots','work boots','protective
+          shoes','steel toe boots','composite toe', 'antistatic shoes','ESD
+          shoes','sneakers','sports shoes','running shoes','sport
+          shoes','tufli','etik','botinki ish', 'buyurtma spetsobuv','spetsobuv
+          buyurtma','krasofka buyurtma','krosovka buyurtma','safety.uz
+          spetsobuv' ] %}
           <div class="d-flex flex-wrap gap-2">
-            {% set popular = [
-              'shoes','safety shoes','work boots','spetsobuv','spestobuv','spets obuv','spest obuv',
-              'krosovka','krossovka','кроссовки','krasofka','krosofkalar','krosovkalar','sneakers',
-              'steel toe','composite toe','antistatic','ESD shoes','botinki','tufli','etik',
-              'cross','crossovki','sport shoes','ish kiyimlari','spetsodejda','himoya poyabzal',
-              'safety boots','workwear','professional footwear','protective shoes','buyurtma','yetkazib berish',
-              'Toshkent','Uzbekistan','Oʻzbekiston','Pro Obuv','Safety.uz'
-            ] %}
-            {% for kw in popular %}
-              <a href="{{ url_for('menu') }}?q={{ kw|urlencode }}" class="badge bg-light border text-dark text-decoration-none py-2 px-3">{{ kw }}</a>
+            {% for e in expanded %}
+            <a
+              href="{{ url_for('menu') }}?q={{ e|urlencode }}"
+              class="badge bg-white border text-dark py-2 px-3 small"
+              >{{ e }}</a
+            >
             {% endfor %}
           </div>
         </div>
       </div>
+    </div>
     <div class="container">
       <div class="row">
         <div class="col-md-6">

@@ -233,10 +233,7 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
       <!-- Search -->
       <div class="filter-section">
         <label for="menuSearchInput">Qidirish</label>
-        <!-- Defensive stub: ensure showCategory exists early to avoid
-             ReferenceError from legacy onclicks or diagnostic handlers
-             that may run before the full implementation is parsed. This
-             will be replaced by the real function later in the page. -->
+        <!-- Early showCategory function to avoid "before init" warnings -->
         <script>
           try {
             if (typeof window !== 'undefined' && typeof window.showCategory !== 'function') {
@@ -246,21 +243,44 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
                   if (typeof event === 'string' && (category === undefined || category === null)) {
                     category = event; event = null;
                   }
-                  console.warn('showCategory called before init; falling back to select change', category);
+                  
+                  console.log('showCategory called (early version):', category);
+                  
+                  // Update button active state
+                  const buttons = document.querySelectorAll('.category-btn');
+                  buttons.forEach(btn => btn.classList.remove('active'));
+                  
+                  // Find and activate the correct button
+                  const targetButton = Array.from(buttons).find(btn => {
+                    const btnCat = btn.getAttribute('data-cat') || 'all';
+                    return btnCat === category;
+                  });
+                  if (targetButton) {
+                    targetButton.classList.add('active');
+                  }
+                  
+                  // Update select dropdown
                   const select = document.getElementById('filterCategory');
                   if (select) {
                     select.value = category === 'all' ? '' : (category || '');
                     // trigger change to reuse wiring later
                     try { select.dispatchEvent(new Event('change', { bubbles: true })); } catch (e) { /* ignore */ }
-                    return;
                   }
-                  // last-resort: show/hide items directly
+                  
+                  // Show/hide items directly
                   const norm = String(category || 'all').toLowerCase().replace(/\s+/g,'');
-                  document.querySelectorAll('.menu-item-card').forEach(item => {
+                  const items = document.querySelectorAll('.menu-item-card');
+                  items.forEach(item => {
                     const ic = (item.dataset.category || '').toLowerCase().replace(/\s+/g,'');
                     item.style.display = (norm === 'all' || ic === norm) ? 'block' : 'none';
                   });
-                } catch (err) { console.warn('showCategory stub failed', err); }
+                  
+                  // Trigger search if available
+                  if (typeof debouncedSearch === 'function') {
+                    try { debouncedSearch(); } catch (e) { /* ignore */ }
+                  }
+                  
+                } catch (err) { console.warn('showCategory early version failed', err); }
               };
             }
           } catch (e) { /* ignore */ }
@@ -294,9 +314,18 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
                   btn.addEventListener("click", function (ev) {
                     try {
                       ev.preventDefault();
+                      ev.stopPropagation();
                       const cat = this.getAttribute("data-cat") || "all";
                       console.log("[menuInit] category click", cat);
-                      showCategory(null, cat);
+                      
+                      // Call showCategory directly - it will handle button state
+                      if (typeof showCategory === 'function') {
+                        showCategory(ev, cat);
+                      } else if (typeof window.showCategory === 'function') {
+                        window.showCategory(ev, cat);
+                      } else {
+                        console.warn('showCategory function not available');
+                      }
                     } catch (e) {
                       console.warn(
                         "[menuInit] category click handler error",
@@ -512,49 +541,6 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
           </ol>
         </nav>
         
-        <!-- SEO Header Content -->
-        <div class="seo-header" style="background: #f8f9fa; padding: 20px; margin-bottom: 30px; border-radius: 8px;">
-          <h1 style="color: #2d3748; font-size: 2.5rem; margin-bottom: 15px; text-align: center;">Pro Obuv - Spetsobuv va Ish kiyimlari do'koni</h1>
-          <p style="font-size: 1.2rem; color: #4a5568; text-align: center; margin-bottom: 20px;">
-            Safety.uz da eng sifatli <strong>spetsobuv</strong>, <strong>botinki</strong>, <strong>krasofka</strong>, <strong>ish kiyimlari</strong> va <strong>spetsodejda</strong> sotuvchi professional do'kon. 
-            Bizning mahsulotlarimiz: <em>professional footwear</em>, <em>work boots</em>, <em>safety shoes</em>, <em>protective shoes</em>, <em>work clothes</em>.
-          </p>
-          <div style="text-align: center;">
-            <span style="background: #4299e1; color: white; padding: 8px 16px; border-radius: 20px; margin: 5px; display: inline-block;">Spetsobuv</span>
-            <span style="background: #4299e1; color: white; padding: 8px 16px; border-radius: 20px; margin: 5px; display: inline-block;">Botinki</span>
-            <span style="background: #4299e1; color: white; padding: 8px 16px; border-radius: 20px; margin: 5px; display: inline-block;">Krasofka</span>
-            <span style="background: #4299e1; color: white; padding: 8px 16px; border-radius: 20px; margin: 5px; display: inline-block;">Ish kiyimlari</span>
-            <span style="background: #4299e1; color: white; padding: 8px 16px; border-radius: 20px; margin: 5px; display: inline-block;">Spetsodejda</span>
-            <span style="background: #4299e1; color: white; padding: 8px 16px; border-radius: 20px; margin: 5px; display: inline-block;">Himoya poyabzal</span>
-          </div>
-        </div>
-        
-        <!-- SEO Content for Search Engines -->
-        <div class="seo-content" style="display: none;">
-          <h1>Pro Obuv - Spetsobuv va Ish kiyimlari do'koni</h1>
-          <h2>Botinki, Krasofka va Himoya Poyabzallari</h2>
-          <p>Safety.uz da eng sifatli spetsobuv, botinki, krasofka va ish kiyimlari. Professional footwear, work boots, safety shoes, protective shoes. Спетсообув, спецодежда, обувь, кроссовки, ботинки. Pro Obuv do'koni O'zbekistonda eng yaxshi ish kiyimlari va himoya poyabzallari sotuvchi do'kon. Bizda spetsobuv, botinki, krasofka, ish kiyimlari, spetsodejda va boshqa himoya vositalari mavjud.</p>
-          
-          <h3>Mahsulotlar:</h3>
-          <ul>
-            <li>Spetsobuv - Professional footwear - Профессиональная обувь</li>
-            <li>Botinki - Work boots - Рабочие ботинки</li>
-            <li>Krasofka - Safety shoes - Кроссовки безопасности</li>
-            <li>Ish kiyimlari - Work clothes - Рабочая одежда</li>
-            <li>Spetsodejda - Protective clothing - Спецодежда</li>
-            <li>Himoya poyabzallari - Protective shoes - Защитная обувь</li>
-            <li>Safety shoes - Безопасная обувь</li>
-            <li>Professional footwear - Профессиональная обувь</li>
-            <li>Work boots - Рабочие ботинки</li>
-            <li>Protective shoes - Защитная обувь</li>
-          </ul>
-          
-          <h3>Xizmatlar:</h3>
-          <p>Pro Obuv do'konida siz eng sifatli ish kiyimlari va himoya poyabzallarini topishingiz mumkin. Bizning mahsulotlarimiz: spetsobuv, botinki, krasofka, ish kiyimlari, spetsodejda va boshqa himoya vositalari. Safety.uz - bu O'zbekistondagi eng yaxshi professional footwear do'koni.</p>
-          
-          <h4>Kalit so'zlar:</h4>
-          <p>pro obuv, spetsobuv, botinki, krasofka, ish kiyimlari, spetsodejda, himoya poyabzal, safety shoes, work boots, professional footwear, protective shoes, спетсообув, спецодежда, обувь, кроссовки, ботинки, рабочая обувь, защитная обувь, профессиональная обувь</p>
-        </div>
         
         <div class="menu-grid">
           {% for item in men %}
@@ -2988,6 +2974,8 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
   });
 
   function showCategory(event, category) {
+    console.log('showCategory called (full version) with:', { event, category });
+    
     // Support both signatures:
     //  - showCategory(event, category)
     //  - showCategory(category)  (legacy callers may pass only the category string)
@@ -2998,6 +2986,9 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
 
   const items = document.querySelectorAll('.menu-item-card');
     const buttons = document.querySelectorAll('.category-btn');
+    
+    console.log('Found items:', items.length, 'buttons:', buttons.length);
+    
     // Tugmalarni yangilash
     buttons.forEach(btn => btn.classList.remove('active'));
     // normalize requested category
@@ -3034,12 +3025,30 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
     }
 
     // Trigger client-side filter so clicks and select stay in sync
-    try { applyClientSideFilter(); } catch (e) { console.warn('applyClientSideFilter failed after showCategory', e); }
+    try { 
+      console.log('Triggering client-side filter after showCategory');
+      applyClientSideFilter(); 
+    } catch (e) { 
+      console.warn('applyClientSideFilter failed after showCategory', e); 
+    }
+    
+    // Also trigger debounced search to ensure API search works
+    try {
+      console.log('Triggering debounced search after showCategory');
+      debouncedSearch();
+    } catch (e) {
+      console.warn('debouncedSearch failed after showCategory', e);
+    }
     }
 
   // Make showCategory available on the global window object as a defensive
   // measure in case the script is executed inside a closure or bundler.
-  try { if (typeof window !== 'undefined') window.showCategory = showCategory; } catch (e) { /* ignore */ }
+  try { 
+    if (typeof window !== 'undefined') {
+      window.showCategory = showCategory;
+      console.log('showCategory function updated to full version');
+    }
+  } catch (e) { /* ignore */ }
 
     // Keep filter select and clear button in sync with the category buttons
     try {
@@ -3091,8 +3100,18 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
           btn._categoryWired = true;
           btn.addEventListener('click', function(ev) {
             ev.preventDefault();
+            ev.stopPropagation();
             const cat = this.getAttribute('data-cat') || 'all';
+            console.log('Category button clicked:', cat);
+            
+            // Call showCategory directly - it will handle button state
+            if (typeof showCategory === 'function') {
             showCategory(ev, cat);
+            } else if (typeof window.showCategory === 'function') {
+              window.showCategory(ev, cat);
+            } else {
+              console.warn('showCategory function not available');
+            }
           });
         });
       } catch (e) { console.warn('wireCategoryButtons failed', e); }
@@ -3247,6 +3266,8 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
   let lastTotalCount = 0;
 
   async function performMenuSearch() {
+    console.log('performMenuSearch called');
+    
     // Read filter inputs defensively
     const qEl = document.getElementById('menuSearchInput');
     const catEl = document.getElementById('filterCategory');
@@ -3259,6 +3280,8 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
     const sort = sortEl ? (sortEl.value || '') : '';
     const size = sizeEl ? (sizeEl.value || '').trim() : '';
     const color = colorEl ? (colorEl.value || '').trim() : '';
+
+    console.log('Filter values:', { q, category, sort, size, color });
 
     // Build query params for server-side search
     const params = new URLSearchParams();
@@ -3281,6 +3304,7 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
       try { console.debug('[performMenuSearch] response', { status: res.status, ok: res.ok, payload: data }); } catch(e) {}
 
       if (data && data.success && Array.isArray(data.items)) {
+        console.log('API returned items:', data.items.length);
         // Render items returned by API
         renderMenuItems(data.items);
         // Update local cache for modal interactions and client-side operations
@@ -3290,6 +3314,7 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
         lastTotalCount = parseInt(data.total_count || 0, 10) || 0;
         renderPaginationControls(lastTotalCount, PAGE_SIZE, currentPage);
       } else {
+        console.log('API returned unexpected payload, falling back to client-side filter');
         // API returned unexpected payload; fallback to client-side filter
         applyClientSideFilter();
       }
@@ -3300,6 +3325,7 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
   }
 
   function applyClientSideFilter() {
+      console.log('Applying client-side filter');
       // Defensive DOM access
       const qEl = document.getElementById('menuSearchInput');
       const catEl = document.getElementById('filterCategory');
@@ -3325,13 +3351,42 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
         }
         return true;
       });
+      console.log('Client-side filter result:', filtered.length, 'items');
       renderMenuItems(filtered);
     }
 
   const debouncedSearch = debounce(performMenuSearch, 300);
 
+  // Force initial load when page loads
+  window.addEventListener('load', function() {
+    try {
+      console.log('Page loaded, triggering initial search');
+      debouncedSearch();
+    } catch (e) {
+      console.warn('Initial search failed:', e);
+    }
+  });
+
+  // Also trigger on DOMContentLoaded as backup
+  document.addEventListener('DOMContentLoaded', function() {
+    try {
+      console.log('DOM loaded, triggering initial search');
+      setTimeout(() => {
+        debouncedSearch();
+      }, 100);
+    } catch (e) {
+      console.warn('DOM loaded search failed:', e);
+    }
+  });
+
   // Expose performMenuSearch for manual testing in console
-  try { if (typeof window !== 'undefined') window.performMenuSearch = performMenuSearch; } catch (e) {}
+  try { 
+    if (typeof window !== 'undefined') {
+      window.performMenuSearch = performMenuSearch;
+      window.debouncedSearch = debouncedSearch;
+      console.log('Filter functions exposed to window object');
+    }
+  } catch (e) {}
 
     // Centralized, idempotent wiring for filter inputs.
     function wireFilters() {
@@ -3387,7 +3442,15 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
 
     // Ensure filters are wired now and also on DOMContentLoaded (idempotent)
     try { wireFilters(); } catch (e) {}
-    document.addEventListener('DOMContentLoaded', function() { try { wireFilters(); } catch (e) {} });
+  document.addEventListener('DOMContentLoaded', function() { 
+    try { 
+      wireFilters(); 
+      // Initial load
+      debouncedSearch();
+    } catch (e) {
+      console.warn('Filter initialization error:', e);
+    } 
+  });
 
     // Wire inputs
     document.addEventListener('DOMContentLoaded', function() {
@@ -4117,8 +4180,18 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
           if (btn._wiredByFallback) return; btn._wiredByFallback = true;
           btn.addEventListener('click', function(ev) {
             ev.preventDefault();
+            ev.stopPropagation();
             const cat = this.getAttribute('data-cat') || 'all';
+            console.log('Fallback category button clicked:', cat);
+            
+            // Call showCategory directly - it will handle button state
+            if (typeof showCategory === 'function') {
             showCategory(null, cat);
+            } else if (typeof window.showCategory === 'function') {
+              window.showCategory(null, cat);
+            } else {
+              console.warn('showCategory function not available');
+            }
           });
         });
       } catch(e) { console.warn('category button fallback wiring failed', e); }
@@ -4679,7 +4752,18 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
               try { document.querySelectorAll('.category-btn').forEach(b=>b.classList.remove('active')); } catch(e){}
               try { btn.classList.add('active'); } catch(e){}
               // Call the central handler (uses defensive checks internally)
-              try { showCategory(null, cat); } catch(e) { /* ignore */ }
+              try { 
+                console.log('Capture category button clicked:', cat);
+                if (typeof showCategory === 'function') {
+                  showCategory(null, cat);
+                } else if (typeof window.showCategory === 'function') {
+                  window.showCategory(null, cat);
+                } else {
+                  console.warn('showCategory function not available');
+                }
+              } catch(e) { 
+                console.warn('showCategory failed in capture handler', e);
+              }
               // Prevent other handlers from interfering further
               ev.preventDefault();
               ev.stopPropagation();
@@ -4714,33 +4798,5 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
       });
 </script>
 
-<!-- SEO Footer Content -->
-<div class="seo-footer" style="background: #f8f9fa; padding: 30px; margin-top: 40px; border-radius: 8px;">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-6">
-        <h3>Pro Obuv - Professional Footwear Store</h3>
-        <p>Safety.uz da eng yaxshi <strong>spetsobuv</strong>, <strong>botinki</strong>, <strong>krasofka</strong> va <strong>ish kiyimlari</strong> sotuvchi do'kon. Bizning mahsulotlarimiz: professional footwear, work boots, safety shoes, protective shoes, work clothes, spetsodejda.</p>
-        
-        <h4>Mahsulotlar:</h4>
-        <ul>
-          <li><strong>Spetsobuv</strong> - Professional footwear, Профессиональная обувь</li>
-          <li><strong>Botinki</strong> - Work boots, Рабочие ботинки</li>
-          <li><strong>Krasofka</strong> - Safety shoes, Кроссовки безопасности</li>
-          <li><strong>Ish kiyimlari</strong> - Work clothes, Рабочая одежда</li>
-          <li><strong>Spetsodejda</strong> - Protective clothing, Спецодежда</li>
-          <li><strong>Himoya poyabzal</strong> - Protective shoes, Защитная обувь</li>
-        </ul>
-      </div>
-      <div class="col-md-6">
-        <h4>Kalit so'zlar va qidiruv:</h4>
-        <p>Pro Obuv, spetsobuv, botinki, krasofka, ish kiyimlari, spetsodejda, himoya poyabzal, safety shoes, work boots, professional footwear, protective shoes, спетсообув, спецодежда, обувь, кроссовки, ботинки, рабочая обувь, защитная обувь, профессиональная обувь, Safety.uz, Pro Obuv do'koni, O'zbekiston professional footwear.</p>
-        
-        <h4>Xizmatlar:</h4>
-        <p>Onlayn buyurtma, tez yetkazib berish, sifatli mahsulotlar, professional footwear, work clothes, safety equipment, protective gear, spetsobuv, botinki, krasofka, ish kiyimlari, spetsodejda, himoya poyabzal.</p>
-      </div>
-    </div>
-  </div>
-</div>
 
 {% endblock %}

@@ -1,0 +1,30 @@
+{
+    "name": "Pro Obuv - Spetsobuv va Ish kiyimlari",
+    "short_name": "Pro Obuv",
+    "description": "Professional footwear and work clothes store in Uzbekistan",
+    "icons": [
+        {
+            "src": "/static/favicons/favicon-16x16.png",
+            "sizes": "16x16",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/favicons/favicon-32x32.png",
+            "sizes": "32x32",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/favicons/favicon.ico",
+            "sizes": "any",
+            "type": "image/x-icon"
+        }
+    ],
+    "start_url": "/",
+    "display": "standalone",
+    "theme_color": "#4299e1",
+    "background_color": "#ffffff",
+    "orientation": "portrait-primary",
+    "scope": "/",
+    "lang": "uz",
+    "categories": ["shopping", "business", "productivity"]
+}
