@@ -10,12 +10,117 @@
 
    This file is intentionally specific and uses selectors to override inline and other styles
    when needed (keeps changes centralized). Adjust values if you want tighter pixel control.
+/* responsive-cleanup.css
+   Purpose: central override file to harmonize responsive behavior across the app
+   Mobile-first approach. Focus on phone/tablet/laptop widths.
 */
-
-:root {
+*/ :root {
   --base-font-size: 15px; /* default mobile-friendly */
   --touch-target: 44px; /* minimum touch target */
+
+  /* Ensure images in menu cards cover their area and cards keep uniform heights */
+  .menu-item-card {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .menu-item-card .item-image,
+  .menu-item-card .card-image,
+  .menu-item-card .menu-item-image {
+    width: 100% !important;
+    flex: 0 0 auto !important;
+    overflow: hidden !important;
+    display: block !important;
+  }
+  .menu-item-card .item-image img,
+  .menu-item-card .card-image img,
+  .menu-item-card .menu-item-image img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+  }
+
+  /* Hidden helper used by JS to cap visible items */
+  .menu-item-card.hidden-by-cap {
+    display: none !important;
+  }
+
+  /* Show-more toggle below the grid */
+  .menu-grid-toggle {
+    text-align: center;
+    margin: 12px 0 20px 0;
+  }
+  .menu-grid-toggle button {
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: #fff;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+  }
+  .menu-grid-toggle button:active {
+    transform: translateY(1px);
+  }
   --container-max: 1200px; /* default container max on larger screens */
+
+  /* Global rules for image fit & card layout that apply at all sizes */
+  .menu-item-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  .menu-item-card .item-image img,
+  .menu-item-card .card-image img,
+  .menu-item-card .menu-item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Ensure collapsed grid doesn't overflow awkwardly */
+  .menu-grid {
+    position: relative;
+  }
+
+  /* Pagination controls for menu grid */
+  .menu-grid-pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 12px;
+  }
+  .menu-pagination-table {
+    border-collapse: collapse;
+  }
+  .menu-pagination-table td {
+    padding: 6px 8px;
+  }
+  .menu-pagination-table a.menu-page-link {
+    text-decoration: none;
+    color: #111;
+    display: inline-block;
+    min-width: 34px;
+    text-align: center;
+    padding: 6px 8px;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+  }
+  .menu-page-cell.active a.menu-page-link {
+    background: var(--primary-color, #2c5530);
+    color: #fff;
+    border-color: rgba(0, 0, 0, 0.08);
+  }
+
+  @media (max-width: 575.98px) {
+    .menu-pagination-table td {
+      padding: 4px 6px;
+    }
+    .menu-pagination-table a.menu-page-link {
+      min-width: 28px;
+      padding: 5px 6px;
+    }
+  }
 }
 
 /* Global resets useful for responsive layouts */
@@ -321,15 +426,27 @@ button,
     flex-direction: column;
     gap: 12px;
   }
+  /* On small phones, hide the filter sidebar completely by default.
+     It will be shown when JS adds the .show class (full-screen panel). */
   .filter-sidebar {
-    position: relative !important;
-    top: auto !important;
-    left: auto !important;
+    display: none !important;
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: 0 !important;
     width: 100% !important;
-    max-height: none !important;
-    box-shadow: none !important;
+    max-height: 100vh !important;
     padding: 12px !important;
-    border-radius: 12px !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    background: rgba(255, 255, 255, 0.98) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    z-index: 1050 !important;
+  }
+
+  .filter-sidebar.show {
+    display: block !important;
   }
   .content-area {
     margin-left: 0 !important;

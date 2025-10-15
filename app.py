@@ -180,6 +180,37 @@ except Exception as e:
     print(f"WARNING: News API registration failed: {e}")
 
 
+# Jinja filter: autolink URLs in plain text to clickable anchors
+def autolink(value):
+    try:
+        import re
+        import html
+
+        if not value:
+            return value
+        text = str(value)
+        # Very small but safe URL regex matching http/https links
+        url_re = re.compile(r"(https?://[\w\-\.\?\&\/=:%#~+,;@!\(\)]+)")
+
+        def _wrap(m):
+            u = m.group(1)
+            # Escape URL and display text to avoid injection
+            esc_url = html.escape(u, quote=True)
+            esc_text = html.escape(u)
+            return f'<a href="{esc_url}" target="_blank" rel="noopener noreferrer">{esc_text}</a>'
+
+        return url_re.sub(_wrap, text)
+    except Exception:
+        return value
+
+
+# register filter with Jinja
+try:
+    app.jinja_env.filters["autolink"] = autolink
+except Exception:
+    pass
+
+
 class Config:
     "Universal dastur konfiguratsiyasi"
 
@@ -12428,7 +12459,7 @@ def clear_role_sessions():
 def news_detail(news_id):
     """Serve a single news item page. Prefer DB source; fall back to JSON-backed storage."""
     try:
-        # JSON-first: prefer authoritative data stored in data/news.json
+        # Always read from the JSON authoritative source in data/news.json
         json_path = os.path.join(os.getcwd(), "data", "news.json")
         if os.path.exists(json_path):
             try:
@@ -12441,7 +12472,7 @@ def news_detail(news_id):
             for n in items or []:
                 try:
                     if int(n.get("id", 0)) == int(news_id):
-                        # Normalize expected fields
+                        # Normalize fields that templates expect
                         n.setdefault("title", n.get("headline") or "")
                         n.setdefault("content", n.get("content") or n.get("description") or "")
                         n.setdefault("image_url", n.get("image_url") or n.get("image") or "")
@@ -12464,47 +12495,7 @@ def news_detail(news_id):
                 except Exception:
                     continue
 
-        # If not found in JSON, fall back to DB for legacy entries
-        try:
-            row = execute_query(
-                "SELECT id, title, content, type, image_url, video_url, is_active, display_order, created_at FROM news WHERE id = ?",
-                (news_id,),
-                fetch_one=True,
-            )
-            if row:
-                if isinstance(row, dict):
-                    item = dict(row)
-                else:
-                    item = {
-                        "id": row[0],
-                        "title": row[1],
-                        "content": row[2],
-                        "type": row[3],
-                        "image_url": row[4],
-                        "video_url": row[5],
-                        "is_active": bool(row[6]),
-                        "display_order": row[7],
-                        "created_at": row[8],
-                    }
-                try:
-                    item["youtube_embed"] = extract_youtube_embed(item.get("video_url") or "")
-                except Exception:
-                    item["youtube_embed"] = None
-                if not item.get("is_active") and not session.get("super_admin"):
-                    abort(404)
-                seo = {
-                    "page_title": f"{item.get('title')} - Yangiliklar - Safety.uz",
-                    "meta_description": (item.get('content') or '')[:160],
-                    "meta_keywords": '',
-                    "canonical_url": url_for('news_detail', news_id=item.get('id'), _external=True),
-                    "og_title": item.get('title'),
-                    "og_description": (item.get('content') or '')[:160],
-                }
-                return render_template("news_detail.html", news=item, seo_data=seo)
-        except Exception:
-            pass
-
-        # Not found anywhere
+        # If the JSON file exists but the id is not found, return 404
         abort(404)
     except Exception as e:
         # If it's an HTTPException raised by abort(), re-raise so Flask

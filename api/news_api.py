@@ -11,6 +11,13 @@ import uuid
 
 news_api = Blueprint("news_api", __name__)
 
+# Social footer appended to every news content
+SOCIAL_FOOTER = (
+    "\nYoutube: https://www.youtube.com/@proobuv-safety\n"
+    "Telegram: https://t.me/specobuv\n"
+    " INstagram: https://www.instagram.com/proguarduz/\n"
+)
+
 DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
 NEWS_FILE = os.path.join(DATA_DIR, "news.json")
 
@@ -56,6 +63,22 @@ def load_news_data():
         return {"news": [], "metadata": {"total_count": 0, "active_count": 0}}
 
 
+def extract_youtube_embed_local(url: str):
+    """Return a normalized YouTube embed URL for a given YouTube video link, or None."""
+    try:
+        if not url:
+            return None
+        import re
+
+        u = url.strip()
+        m = re.search(r'(?:v=|\/embed\/|youtu\.be\/)([A-Za-z0-9_\-]{11})', u)
+        if m:
+            return f"https://www.youtube.com/embed/{m.group(1)}"
+    except Exception:
+        return None
+    return None
+
+
 def save_news_data(data):
     """Yangiliklar ma'lumotlarini JSON faylga saqlash"""
     try:
@@ -79,6 +102,15 @@ def save_news_data(data):
             try:
                 n_obj = dict(n) if not isinstance(n, dict) else n
                 n_obj["youtube_embed"] = extract_youtube_embed_local(n_obj.get("video_url") or "")
+                # Ensure the social footer is present in content
+                try:
+                    content = (n_obj.get("content") or "")
+                    if "https://www.youtube.com/@proobuv-safety" not in content:
+                        # append footer ensuring a newline separation
+                        content = content.rstrip() + SOCIAL_FOOTER
+                    n_obj["content"] = content
+                except Exception:
+                    pass
                 data["news"][i] = n_obj
             except Exception:
                 try:
@@ -134,6 +166,25 @@ def get_all_news():
     try:
         data = load_news_data()
         news_list = data.get("news", [])
+
+        # Ensure each returned item has a computed youtube_embed so front-end
+        # components (ticker, listing) can render YouTube iframes immediately.
+        for i, n in enumerate(news_list):
+            try:
+                if isinstance(n, dict):
+                    news_list[i]["youtube_embed"] = extract_youtube_embed_local(
+                        n.get("video_url") or ""
+                    )
+                else:
+                    news_list[i] = dict(n)
+                    news_list[i]["youtube_embed"] = extract_youtube_embed_local(
+                        n.get("video_url") or ""
+                    )
+            except Exception:
+                try:
+                    news_list[i]["youtube_embed"] = None
+                except Exception:
+                    pass
 
         # Query parametrlarni tekshirish
         active_only = request.args.get("active", "").lower() == "true"

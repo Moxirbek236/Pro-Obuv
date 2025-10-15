@@ -91,10 +91,6 @@
             src="{{ news.image_url }}"
             alt="{{ news.title }}"
             class="news-detail-image" />
-          {% elif news.video_url %}
-          <video src="{{ news.video_url }}" class="news-detail-video" controls>
-            Sizning brauzeringiz video elementini qo'llab-quvvatlamaydi.
-          </video>
           {% elif news.youtube_embed %}
           <div class="news-youtube-container">
             <iframe
@@ -104,6 +100,10 @@
               allowfullscreen>
             </iframe>
           </div>
+          {% elif news.video_url %}
+          <video src="{{ news.video_url }}" class="news-detail-video" controls>
+            Sizning brauzeringiz video elementini qo'llab-quvvatlamaydi.
+          </video>
           {% endif %}
         </div>
         {% endif %}
@@ -112,7 +112,7 @@
         <div class="news-content-detail">
           {% if news.content %}
           <div class="news-text-content">
-            {{ news.content | replace('\n', '<br />') | safe }}
+            {{ news.content | autolink | replace('\n', '<br />') | safe }}
           </div>
           {% else %}
           <div class="news-text-content">

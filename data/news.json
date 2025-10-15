@@ -2,11 +2,37 @@
   "news": [
     {
       "id": 1,
-      "title": " Pro Obuvga xush kelibsiz!",
-      "content": "2025 yilgi eng yangi poyafzal kolleksiyasi do'konimizga keldi. Erkaklar va ayollar uchun zamonaviy va shinam poyafzallar.",
+      "title": "Pro Obuvga xush kelibsiz!",
+      "content": "2025 yilgi eng yangi poyafzal kolleksiyasi do'konimizga keldi. Erkaklar va ayollar uchun zamonaviy va shinam poyafzallar.\n\nYoutube: https://www.youtube.com/@proobuv-safety\nTelegram: https://t.me/specobuv\n INstagram: https://www.instagram.com/proguarduz/\n",
       "type": "news",
       "is_active": true,
       "display_order": 1,
+  "image_url": "/static/favicons/favicon-32x32.png",
+      "video_url": null,
+      "youtube_embed": null,
+      "created_at": "2024-01-15T10:00:00Z",
+      "updated_at": "2024-01-15T10:00:00Z"
+    },
+    {
+      "id": 2,
+      "title": "Bizni Youtubeda kuzatib boring",
+      "content": "ProObuv — bu professional ish kiyimlari, maxsus poyabzallar va xavfsizlik uchun eng ishonchli brend 👷‍♂️👢\nIsh joyingizda xavfsizlikni ta’minlang:\n✅ Spetsobuv (ish poyabzallari)\n✅ Spetsodejda (ish kiyimlari)\n✅ Safety footwear & workwear\n\nYoutube: https://www.youtube.com/@proobuv-safety\nTelegram: https://t.me/specobuv\n INstagram: https://www.instagram.com/proguarduz/\n",
+      "type": "news",
+      "is_active": true,
+      "display_order": 2,
+      "image_url": null,
+      "video_url": "https://youtube.com/shorts/c8ZTzTzR3MI",
+      "youtube_embed": "https://www.youtube.com/embed/c8ZTzTzR3MI",
+      "created_at": "2024-01-15T10:00:00Z",
+      "updated_at": "2024-01-15T10:00:00Z"
+    },
+    {
+      "id": 3,
+      "title": "Pro Obuvga xush kelibsiz!",
+      "content": "2025 yilgi eng yangi poyafzal kolleksiyasi do'konimizga keldi. Erkaklar va ayollar uchun zamonaviy va shinam poyafzallar.\n\nYoutube: https://www.youtube.com/@proobuv-safety\nTelegram: https://t.me/specobuv\n INstagram: https://www.instagram.com/proguarduz/\n",
+      "type": "news",
+      "is_active": true,
+      "display_order": 3,
       "image_url": "/static/uploads/oy.jpg",
       "video_url": null,
       "youtube_embed": null,
@@ -15,9 +41,9 @@
     }
   ],
   "metadata": {
-    "total_count": 19,
-    "active_count": 19,
-    "last_updated": "2025-10-12T16:30:19.944935Z",
+    "total_count": 3,
+    "active_count": 3,
+    "last_updated": "2025-10-15T00:00:00Z",
     "version": "1.0"
   }
 }

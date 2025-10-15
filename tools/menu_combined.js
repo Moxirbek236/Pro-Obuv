@@ -1876,22 +1876,35 @@
         .finally(() => { if (btn) { btn.disabled = false; btn.textContent = ' Menyuni yangilash'; } });
     }
 
-      // Mobile filter toggle function
-      function toggleMobileFilter() {
-        const sidebar = document.querySelector('.filter-sidebar');
-        if (sidebar) {
-          sidebar.classList.toggle('show');
+      // Mobile filter toggle function: uses IDs and manages ARIA attributes
+      function toggleMobileFilter(force) {
+        const sidebar = document.getElementById('filterSidebar') || document.querySelector('.filter-sidebar');
+        const toggleBtn = document.getElementById('mobileFilterToggle') || document.querySelector('.mobile-filter-toggle');
+        if (!sidebar) return;
+        let willShow;
+        if (typeof force === 'boolean') willShow = force;
+        else willShow = !sidebar.classList.contains('show');
+        if (willShow) {
+          sidebar.classList.add('show');
+          sidebar.setAttribute('aria-hidden', 'false');
+          if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'true');
+        } else {
+          sidebar.classList.remove('show');
+          sidebar.setAttribute('aria-hidden', 'true');
+          if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'false');
         }
       }
 
-      // Close mobile filter when clicking outside (for mobile)
+      // Close mobile filter when clicking outside (for mobile). Uses IDs and updates aria-expanded
       document.addEventListener('click', function(event) {
-        const sidebar = document.querySelector('.filter-sidebar');
-        const toggleBtn = document.querySelector('.mobile-filter-toggle');
+        const sidebar = document.getElementById('filterSidebar') || document.querySelector('.filter-sidebar');
+        const toggleBtn = document.getElementById('mobileFilterToggle') || document.querySelector('.mobile-filter-toggle');
 
         if (window.innerWidth <= 768 && sidebar && sidebar.classList.contains('show')) {
-          if (!sidebar.contains(event.target) && !toggleBtn.contains(event.target)) {
+          if (!sidebar.contains(event.target) && !(toggleBtn && toggleBtn.contains(event.target))) {
             sidebar.classList.remove('show');
+            sidebar.setAttribute('aria-hidden', 'true');
+            if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'false');
           }
         }
       });

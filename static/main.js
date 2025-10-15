@@ -296,6 +296,122 @@ const MenuClient = (function () {
     });
     // rebind add-to-cart handlers
     if (typeof attachCardHandlers === "function") attachCardHandlers();
+
+    // Enforce circular caps and toggle for long menus
+    try {
+      enforceMenuCaps();
+    } catch (e) {}
+  }
+
+  // Cap rules and toggle handling
+  function enforceMenuCaps() {
+    const grid = document.querySelector(".menu-grid");
+    if (!grid) return;
+    // Remove previous toggle if present
+    let existingToggle = document.querySelector(".menu-grid-toggle");
+    if (existingToggle) existingToggle.remove();
+
+    const isPhone = window.matchMedia("(max-width: 575.98px)").matches;
+    const isLaptop = window.matchMedia("(min-width: 992px)").matches;
+    const maxItemsPhone = 14; // 2 columns * 7 rows
+    const maxItemsLaptop = 30; // 3 columns * 10 rows
+    const cap = isPhone
+      ? maxItemsPhone
+      : isLaptop
+      ? maxItemsLaptop
+      : maxItemsPhone;
+
+    const cards = Array.from(grid.querySelectorAll(".menu-item-card"));
+    // First, unhide all
+    cards.forEach((c) => c.classList.remove("hidden-by-cap"));
+
+    if (cards.length > cap) {
+      // Use pagination instead of single toggle. Render first page by default.
+      paginateMenu(grid, cards, cap);
+    } else {
+      // remove any existing pagination controls
+      const prev = document.querySelector(".menu-grid-pagination");
+      if (prev) prev.remove();
+    }
+  }
+
+  // Paginate menu cards: shows itemsPerPage per page and renders page navigation
+  function paginateMenu(grid, cards, itemsPerPage) {
+    if (!grid) return;
+    // remove previous pagination if any
+    const existing = document.querySelector(".menu-grid-pagination");
+    if (existing) existing.remove();
+
+    const total = cards.length;
+    const pages = Math.max(1, Math.ceil(total / itemsPerPage));
+    let currentPage = parseInt(grid.getAttribute("data-menu-page") || "1", 10);
+    if (currentPage < 1) currentPage = 1;
+    if (currentPage > pages) currentPage = pages;
+    grid.setAttribute("data-menu-page", String(currentPage));
+
+    // hide all, then show only the slice for current page
+    cards.forEach((c) => c.classList.add("hidden-by-cap"));
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    const visible = cards.slice(start, end);
+    visible.forEach((c) => c.classList.remove("hidden-by-cap"));
+
+    // build pagination markup similar to the sample (table-based row)
+    const wrap = document.createElement("div");
+    wrap.className = "menu-grid-pagination";
+    const table = document.createElement("table");
+    table.className = "menu-pagination-table";
+    const tbody = document.createElement("tbody");
+    const tr = document.createElement("tr");
+
+    // helper to create a page cell
+    function pageCell(pageNum, label, isActive) {
+      const td = document.createElement("td");
+      td.className = "menu-page-cell";
+      if (isActive) td.classList.add("active");
+      const a = document.createElement("a");
+      a.href = "#";
+      a.className = "menu-page-link";
+      a.setAttribute("data-page", String(pageNum));
+      a.setAttribute("aria-label", "Sahifa " + pageNum);
+      a.textContent = label || String(pageNum);
+      a.addEventListener("click", function (e) {
+        e.preventDefault();
+        const targetPage = parseInt(this.getAttribute("data-page"), 10) || 1;
+        grid.setAttribute("data-menu-page", String(targetPage));
+        paginateMenu(grid, cards, itemsPerPage);
+        try {
+          grid.scrollIntoView({ behavior: "smooth", block: "start" });
+        } catch (e) {}
+      });
+      td.appendChild(a);
+      return td;
+    }
+
+    // Prev
+    const prevPage = Math.max(1, currentPage - 1);
+    tr.appendChild(pageCell(prevPage, "«", false));
+
+    // show up to 9 page numbers with current centered when possible
+    const maxVisible = 9;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+    let endPage = Math.min(pages, startPage + maxVisible - 1);
+    if (endPage - startPage + 1 < maxVisible) {
+      startPage = Math.max(1, endPage - maxVisible + 1);
+    }
+
+    for (let p = startPage; p <= endPage; p++) {
+      tr.appendChild(pageCell(p, String(p), p === currentPage));
+    }
+
+    // Next
+    const nextPage = Math.min(pages, currentPage + 1);
+    tr.appendChild(pageCell(nextPage, "»", false));
+
+    tbody.appendChild(tr);
+    table.appendChild(tbody);
+    wrap.appendChild(table);
+    grid.parentNode.insertBefore(wrap, grid.nextSibling);
   }
 
   return { fetchAndRender, setState: (s) => (state = { ...state, ...s }) };
@@ -309,6 +425,29 @@ function debounce(fn, wait) {
     t = setTimeout(() => fn.apply(this, args), wait || 250);
   };
 }
+
+// Run caps on load and viewport change
+window.addEventListener("DOMContentLoaded", function () {
+  try {
+    enforceMenuCaps();
+  } catch (e) {}
+});
+
+// Debounced resize handler to re-run cap enforcement
+window.addEventListener(
+  "resize",
+  (function () {
+    let t = null;
+    return function () {
+      if (t) clearTimeout(t);
+      t = setTimeout(function () {
+        try {
+          enforceMenuCaps();
+        } catch (e) {}
+      }, 250);
+    };
+  })()
+);
 
 // Read filter inputs, update MenuClient state and fetch results (or fallback)
 window.performMenuSearch = function () {
