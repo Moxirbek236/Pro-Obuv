@@ -34,93 +34,114 @@
   }
 </script>
 {% endblock %} {% block content %}
-<div class="container mt-4">
-  <h1 class="mb-3">Yangiliklar</h1>
-
+  <!-- equalize() removed intentionally to prevent forced heights; feed is stacked vertically -->
   <style>
-    /* Force vertical stacked news cards on the news page */
-    #news-list .news-item.card {
-      display: flex !important;
-      flex-direction: column !important;
-      align-items: stretch !important;
-      padding: 16px !important;
-      gap: 12px !important;
-      position: relative;
-      overflow: hidden;
-    }
-
-    #news-list .news-media {
-      order: 1;
-      width: 100%;
-      height: 360px;
-      max-height: 420px;
-      border-radius: 10px;
-      overflow: hidden;
-      background: #000;
-    }
-
-    #news-list .news-title {
-      order: 2;
-      margin: 0;
-      font-size: 18px;
-      font-weight: 800;
-      color: #22d3ee;
-    }
-    #news-list .news-body {
-      order: 3;
-    }
-
-    /* keep the timestamp bottom-right inside each card */
-    #news-list .news-card-meta {
-      position: absolute;
-      right: 12px;
-      bottom: 12px;
-    }
-
-    @media (max-width: 768px) {
-      #news-list .news-media {
-        height: 220px;
-        max-height: 260px;
+      /* Ensure media area has sensible defaults (was previously rendered as raw text) */
+      /* Layout: stacked vertical feed (one column) */
+      #news-list {
+        display: block;
       }
+
+      /* Larger stacked news cards */
       #news-list .news-item.card {
-        padding: 12px;
-        gap: 8px;
+        width: 100%;
+        max-width: 1100px;
+        margin: 0 auto 26px; /* centered column with bottom spacing */
+        display: block !important;
+        padding: 22px !important;
+        gap: 14px !important;
+        position: relative;
+        /* make p-3.position-relative cards taller by default */
+        min-height: 520px;
+        overflow: visible !important;
+        transition: transform 180ms ease, box-shadow 180ms ease;
+        box-shadow: 0 8px 22px rgba(10, 10, 10, 0.06);
+        border-radius: 12px;
+        background: #fff;
       }
+
+      #news-list .news-item.card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 18px 40px rgba(10, 10, 10, 0.12);
+      }
+
+      /* Media area: wide responsive container for stacked layout */
+      #news-list .news-media {
+        width: 100%;
+        height: 520px;
+        max-height: 640px;
+        border-radius: 10px;
+        overflow: hidden;
+        background: #000;
+        display: block;
+        margin-bottom: 12px;
+      }
+
+      /* Title and body styling */
       #news-list .news-title {
-        font-size: 16px;
+        margin: 0 0 6px 0;
+        font-size: 22px;
+        font-weight: 800;
+        color: #0b5a6f;
+        line-height: 1.12;
       }
-    }
-    /* Floating Add News button for quick access (superadmin only) */
-    .fab-add-news {
-      position: fixed;
-      right: 18px;
-      bottom: 18px;
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #22d3ee, #0891b2);
-      color: #072026;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      box-shadow: 0 8px 26px rgba(0, 0, 0, 0.3);
-      border: none;
-      cursor: pointer;
-      z-index: 12000;
-    }
-    .fab-add-news:active {
-      transform: scale(0.98);
-    }
-    @media (max-width: 480px) {
+
+      #news-list .news-body { margin-bottom: 12px; }
+
+      /* Timestamp below content to avoid overlap */
+      #news-list .news-card-meta { position: static; margin-top: 8px; }
+
+      @media (max-width: 1024px) {
+        #news-list .news-item.card { max-width: 900px; padding: 18px !important; }
+        #news-list .news-media { height: 420px; max-height: 520px; }
+        #news-list .news-title { font-size: 20px; }
+      }
+
+      @media (max-width: 768px) {
+        #news-list .news-item.card { max-width: 100%; padding: 14px !important; }
+        #news-list .news-media { height: 260px; max-height: 320px; }
+        #news-list .news-title { font-size: 18px; }
+      }
+      /* Share links and meta layout */
+      .news-share-and-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 8px; }
+      .news-share-links { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+      .news-share-links .share-btn { background: #f3f4f6; border: 1px solid #e5e7eb; padding: 6px 8px; border-radius: 6px; font-size: 13px; cursor: pointer; color: #0b5a6f; text-decoration: none; }
+      .news-share-links .share-btn:hover { background: #e6f7fb; }
+      /* Place timestamp bottom-right inside card without overlapping content */
+      .news-item.card .news-card-meta { position: absolute; right: 12px; bottom: 12px; background: rgba(255,255,255,0.85); padding: 4px 8px; border-radius: 6px; }
+      /* Ensure the share and meta container doesn't overlap with absolute timestamp */
+      .news-share-and-meta { margin-bottom: 28px; }
+      /* Floating Add News button for quick access (superadmin only) */
       .fab-add-news {
-        width: 48px;
-        height: 48px;
-        font-size: 20px;
-        right: 12px;
-        bottom: 12px;
+        position: fixed;
+        right: 18px;
+        bottom: 18px;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #22d3ee, #0891b2);
+        color: #072026;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        box-shadow: 0 8px 26px rgba(0, 0, 0, 0.3);
+        border: none;
+        cursor: pointer;
+        z-index: 12000;
       }
-    }
+      .fab-add-news:active {
+        transform: scale(0.98);
+      }
+      @media (max-width: 480px) {
+        .fab-add-news {
+          width: 48px;
+          height: 48px;
+          font-size: 20px;
+          right: 12px;
+          bottom: 12px;
+        }
+      }
   </style>
 
   {% if session.get('super_admin') %}
@@ -133,6 +154,91 @@
       Yangilik qo'shish
     </button>
   </div>
+  <style>
+    /* Override/ensure news card content is visible and titles are not truncated */
+    #news-list .news-item.card {
+      /* allow content to size naturally and avoid forced clipping */
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: stretch !important;
+      padding: 16px !important;
+      gap: 12px !important;
+      position: relative;
+      overflow: visible !important;
+      height: auto !important;
+      min-height: 0 !important;
+    }
+
+    /* Media area: responsive 16:9 container for iframe/video, fallback to image */
+    #news-list .news-media,
+    #news-list .youtube-embed-wrapper,
+    #news-list .video-wrapper {
+      width: 100%;
+      max-width: 100%;
+      margin: 0;
+      background: #000;
+      overflow: hidden;
+    }
+
+    /* Responsive embed wrapper */
+    .youtube-embed-wrapper {
+      position: relative;
+      padding-bottom: 56.25%; /* 16:9 */
+      height: 0;
+      overflow: hidden;
+    }
+
+    .youtube-embed-wrapper iframe,
+    .video-wrapper video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+    }
+
+    /* Images should not force a small card height and should be responsive */
+    #news-list .news-media img {
+      width: 100%;
+      height: auto;
+      max-height: 420px;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Title: allow wrapping and visible full text */
+    #news-list .news-title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 800;
+      color: #22d3ee;
+      white-space: normal !important;
+      overflow: visible !important;
+      text-overflow: clip !important;
+      -webkit-line-clamp: none !important;
+      display: block;
+    }
+
+    /* Description: ensure it's visible */
+    #news-list .news-body,
+    #news-list .news-content {
+      display: block !important;
+      color: #333;
+      max-height: none !important;
+      overflow: visible !important;
+      margin-top: 8px;
+    }
+
+    /* Make sure timestamp doesn't overlap content on small cards */
+    #news-list .news-card-meta { position: static; margin-top: 12px; }
+
+    @media (min-width: 992px) {
+      /* On wide screens, allow a slightly larger title */
+      #news-list .news-title { font-size: 20px; }
+    }
+  </style>
   {% endif %} {% if session.get('super_admin') %}
   <!-- Floating Add News button -->
   <button
@@ -142,7 +248,7 @@
     onclick="openNewsModalPublic()">
     +
   </button>
-  {% endif %}itemModal
+  {% endif %}
 
   <!-- Simple ticker: recent titles -->
   <div
@@ -193,24 +299,32 @@
 
         <!-- Title -->
         <div class="mt-3">
-          <h3 class="news-title">{{ item.title }}</h3>
+          <h3 class="news-title">{{ item.localized_title or item.title }}</h3>
         </div>
 
         <!-- Description -->
         <div class="news-body">
           <p class="news-content">
-            {{ (item.description or item.content) | safe }}
+            {{ (item.localized_content or item.description or item.content) |
+            safe }}
           </p>
         </div>
 
-        <!-- Timestamp bottom-right -->
-        <div
-          class="news-card-meta"
-          style="position: absolute; right: 12px; bottom: 12px">
-          <small class="text-muted news-card-date"
-            >{{ item.created_at.split('T')[0] if item.created_at else ''
-            }}</small
-          >
+        <!-- Social links + Timestamp -->
+        <div class="news-share-and-meta">
+          <div class="news-share-links">
+            {% set detail_url = url_for('news_detail', news_id=item.id, _external=True) %}
+            <a class="share-btn" href="https://t.me/share/url?url={{ detail_url }}&text={{ (item.localized_title or item.title) | urlencode }}" target="_blank" rel="noopener noreferrer">Telegram</a>
+            <a class="share-btn" href="https://www.facebook.com/sharer/sharer.php?u={{ detail_url }}" target="_blank" rel="noopener noreferrer">Facebook</a>
+            <a class="share-btn" href="https://twitter.com/intent/tweet?text={{ (item.localized_title or item.title) | urlencode }}&url={{ detail_url }}" target="_blank" rel="noopener noreferrer">Twitter</a>
+            <a class="share-btn" href="https://api.whatsapp.com/send?text={{ (item.localized_title or item.title) | urlencode }}%20{{ detail_url }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+            <button type="button" class="share-btn" onclick="copyNewsLink('{{ detail_url }}')">Copy link</button>
+            <button type="button" class="share-btn" onclick="nativeShare('{{ (item.localized_title or item.title) | replace("'","\'") }}', '{{ detail_url }}')">Uzatish</button>
+          </div>
+
+          <div class="news-card-meta">
+            <small class="text-muted news-card-date">{{ item.created_at.split('T')[0] if item.created_at else '' }}</small>
+          </div>
         </div>
       </article>
       {% endfor %}
@@ -221,90 +335,85 @@
   </div>
 
   <script>
-    (function(){
-      const news = {{ (news|length if news else 0) }};
-      const items = [];
-      {% for it in news %}
-        items.push("{{ it.title|replace('"','\"') }}");
-      {% endfor %}
-      const ticker = document.getElementById('ticker-inner');
-      if(items.length){
-        ticker.innerText = items.join('  •  ');
-      } else {
-        ticker.innerText = 'Yangiliklar yo\'q';
+      (function(){
+        const news = {{ (news|length if news else 0) }};
+        const items = [];
+    {% for it in news %}
+    items.push("{{ (it.localized_title or it.title)|replace('"','\"') }}");
+    {% endfor %}
+        const ticker = document.getElementById('ticker-inner');
+        if(items.length){
+
+    <script>
+      function copyNewsLink(url) {
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(function(){ alert('Link nusxalandi'); }, function(){ prompt('Ko' + "'" + 'chirish uchun linkni belgilang va nusxa oling:', url); });
+          } else {
+            // Fallback prompt
+            prompt('Linkni nusxalash uchun matnni tanlang va Ctrl+C ni bosing:', url);
+          }
+        } catch (e) {
+          prompt('Linkni nusxalash:', url);
+        }
       }
-    })();
+
+      function nativeShare(title, url) {
+        try {
+          if (navigator.share) {
+            navigator.share({ title: title, url: url });
+          } else {
+            // Fallback: copy link to clipboard and notify
+            copyNewsLink(url);
+          }
+        } catch (e) {
+          copyNewsLink(url);
+        }
+      }
+    </script>
+          ticker.innerText = items.join('  •  ');
+        } else {
+          ticker.innerText = 'Yangiliklar yo\'q';
+        }
+      })();
   </script>
 
   <!-- Public Add News Modal (for superadmin on /news page) -->
   {% if session.get('super_admin') %}
   <div class="modal fade" id="newsModalPublic" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Yangilik qo'shish</h5>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <form id="newsFormPublic">
-            <div class="mb-3">
-              <label class="form-label">Sarlavha *</label>
-              <input
-                type="text"
-                id="newsTitlePublic"
-                class="form-control"
-                required
-                maxlength="200" />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Matn</label>
-              <textarea
-                id="newsContentPublic"
-                class="form-control"
-                rows="3"
-                maxlength="500"></textarea>
-            </div>
-            <div class="row">
-              <div class="col-md-6">
-                <label class="form-label">Rasm</label>
-                <input
-                  type="file"
-                  id="newsImageFilePublic"
-                  class="form-control"
-                  accept="image/*"
-                  onchange="uploadMediaFilePublic('image')" />
-                <input type="hidden" id="newsImageUrlPublic" />
-                <img
-                  id="imagePreviewPublic"
-                  style="display: none; max-width: 180px; margin-top: 8px" />
-              </div>
-              <div class="col-md-6">
-                <label class="form-label"
-                  >Video (yuklash yoki YouTube URL)</label
-                >
-                <input
-                  type="file"
-                  id="newsVideoFilePublic"
-                  class="form-control"
-                  accept="video/*"
-                  onchange="uploadMediaFilePublic('video')" />
-                <input type="hidden" id="newsVideoUrlPublic" />
-                <video
-                  id="videoPreviewPublic"
-                  style="display: none; max-width: 180px; margin-top: 8px"
-                  controls
-                  muted></video>
+      <style>
+          /* Force vertical stacked news cards on the news page */
+          #news-list .news-item.card {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: stretch !important;
+            padding: 16px !important;
+            gap: 12px !important;
+            position: relative;
+            overflow: hidden;
+          }
 
-                <div class="mt-2">
-                  <label class="form-label">YouTube URL (ixtiyoriy)</label>
-                  <input
-                    type="url"
-                    id="newsYoutubeUrlPublic"
-                    class="form-control"
-                    placeholder="https://www.youtube.com/watch?v=..." />
+          #news-list .news-media {
+            order: 1;
+            width: 100%;
+            height: 360px;
+            max-height: 420px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #000;
+          }
+
+          #news-list .news-title {
+            order: 2;
+            margin: 0;
+            font-size: 18px;
+            font-weight: 800;
+            color: #22d3ee;
+          }
+          #news-list .news-body {
+            order: 3;
+          }
                   <small class="form-text text-muted"
                     >Agar YouTube havolasi kiritilsa, yuklangan video o'rniga
                     shu manba ishlatiladi.</small

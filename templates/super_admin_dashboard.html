@@ -1,6 +1,6 @@
 {% extends "base.html" %} {% block content %}
 <div class="super-admin-container">
-  <h1> Super Admin Dashboard</h1>
+  <h1>Super Admin Dashboard</h1>
   <p class="welcome-text">Salom, Super Admin! Tizimni to'liq boshqaring.</p>
 
   <!-- Dashboard Grid -->
@@ -59,13 +59,24 @@
         Tasmada ko'rinadigan elementlarni alohida boshqarish
       </div>
     </a>
+
+    <!-- Advanced Settings Block -->
+    <a
+      href="{{ url_for('super_admin_advanced_settings') }}"
+      class="dashboard-card">
+      <div class="dashboard-icon"></div>
+      <div class="dashboard-title">Kengaytirilgan Sozlamalar</div>
+      <div class="dashboard-description">
+        Tizim, frontend, va backend sozlamalarni konfiguratsiya qilish
+      </div>
+    </a>
   </div>
 
   <!-- Statistika kartlari -->
   <div class="stats-grid">
     <div class="stat-card">
       <h3>
-         Umumiy Statistika
+        Umumiy Statistika
         <button class="refresh-btn" onclick="refreshStats()"></button>
       </h3>
       <div class="stat-item">
@@ -96,7 +107,7 @@
 
     <div class="stat-card">
       <h3>
-         Xodimlar
+        Xodimlar
         <button class="refresh-btn" onclick="refreshStats()"></button>
       </h3>
       <div class="stat-item">
@@ -118,25 +129,28 @@
 
   <!-- Navigation Menu -->
   <div class="admin-nav">
-    <a href="{{ url_for('super_admin_dashboard') }}" class="nav-link active"
-      > Dashboard</a
+    <a href="{{ url_for('super_admin_dashboard') }}" class="nav-link active">
+      Dashboard</a
     >
-    <a href="{{ url_for('super_admin_analytics') }}" class="nav-link"
-      > Analytics</a
+    <a href="{{ url_for('super_admin_analytics') }}" class="nav-link">
+      Analytics</a
     >
-    <a href="{{ url_for('super_admin_reports') }}" class="nav-link"
-      > Hisobotlar</a
+    <a href="{{ url_for('super_admin_reports') }}" class="nav-link">
+      Hisobotlar</a
     >
     <a href="{{ url_for('super_admin_system') }}" class="nav-link"> Tizim</a>
     <a href="{{ url_for('super_admin_logs') }}" class="nav-link"> Loglar</a>
-    <a href="{{ url_for('admin_news_management') }}" class="nav-link"
-      > Yangiliklar</a
+    <a href="{{ url_for('admin_news_management') }}" class="nav-link">
+      Yangiliklar</a
+    >
+    <a href="{{ url_for('super_admin_advanced_settings') }}" class="nav-link">
+      Kengaytirilgan Sozlamalar</a
     >
   </div>
 
   <!-- Link to notifications management -->
   <div class="composer-card mt-3 mb-3">
-    <h4> Bildirishnomalar</h4>
+    <h4>Bildirishnomalar</h4>
     <p class="small text-muted">
       Yuborilgan va kelgan bildirishnomalarni boshqarish.
     </p>
@@ -225,24 +239,22 @@
   <div class="tabs-container">
     <div class="tabs">
       <button class="tab-button active" onclick="showTab('staff')">
-         Xodimlar
+        Xodimlar
       </button>
       <button class="tab-button" onclick="showTab('couriers')">
-         Kuryerlar
+        Kuryerlar
       </button>
       <button class="tab-button" onclick="showTab('users')">
-         Foydalanuvchilar
+        Foydalanuvchilar
       </button>
       <button class="tab-button" onclick="showTab('branches')">
-         Filiallar
+        Filiallar
       </button>
       <button class="tab-button" onclick="showTab('orders')">
-         Buyurtmalar
+        Buyurtmalar
       </button>
-      <button class="tab-button" onclick="showTab('menu')"> Menyu</button>
-      <button class="tab-button" onclick="showTab('receipts')">
-         Cheklar
-      </button>
+      <button class="tab-button" onclick="showTab('menu')">Menyu</button>
+      <button class="tab-button" onclick="showTab('receipts')">Cheklar</button>
       <button class="tab-button" onclick="showTab('ratings')">
         ⭐ Baholar
       </button>
@@ -251,9 +263,9 @@
     <!-- Xodimlar tab -->
     <div id="staff" class="tab-content active">
       <div class="section-header">
-        <h3> Xodimlar boshqaruvi</h3>
+        <h3>Xodimlar boshqaruvi</h3>
         <button class="btn btn-primary" onclick="showAddStaffModal()">
-           Yangi xodim qo'shish
+          Yangi xodim qo'shish
         </button>
       </div>
 
@@ -304,7 +316,7 @@
                   type="button"
                   class="btn btn-warning btn-sm"
                   onclick="resetStaffPassword({{ staff.id }})">
-                   Parol
+                  Parol
                 </button>
                 <form
                   method="POST"
@@ -312,7 +324,7 @@
                   style="display: inline"
                   onsubmit="return confirm('Rostdan ham bu xodimni o\'chirmoqchimisiz?')">
                   <button type="submit" class="btn btn-danger btn-sm">
-                     O'chirish
+                    O'chirish
                   </button>
                 </form>
               </td>
@@ -326,9 +338,9 @@
     <!-- Kuryerlar tab -->
     <div id="couriers" class="tab-content">
       <div class="section-header">
-        <h3> Kuryerlar boshqaruvi</h3>
+        <h3>Kuryerlar boshqaruvi</h3>
         <button class="btn btn-primary" onclick="showAddCourierModal()">
-           Yangi kuryer qo'shish
+          Yangi kuryer qo'shish
         </button>
       </div>
 
@@ -379,7 +391,7 @@
                   type="button"
                   class="btn btn-warning btn-sm"
                   onclick="resetCourierPassword({{ courier.id }})">
-                   Parol
+                  Parol
                 </button>
                 <form
                   method="POST"
@@ -387,7 +399,7 @@
                   style="display: inline"
                   onsubmit="return confirm('Rostdan ham bu kuryerni o\'chirmoqchimisiz?')">
                   <button type="submit" class="btn btn-danger btn-sm">
-                     O'chirish
+                    O'chirish
                   </button>
                 </form>
               </td>
@@ -400,9 +412,9 @@
 
     <!-- Foydalanuvchilar tab -->
     <div id="users" class="tab-content">
-      <h3> Foydalanuvchilar ma'lumotlari</h3>
+      <h3>Foydalanuvchilar ma'lumotlari</h3>
 
-      <h4> Ro'yxatdan o'tgan foydalanuvchilar (Database)</h4>
+      <h4>Ro'yxatdan o'tgan foydalanuvchilar (Database)</h4>
       <div class="table-container">
         <table class="admin-table">
           <thead>
@@ -438,7 +450,7 @@
                   type="button"
                   class="btn btn-warning btn-sm"
                   onclick="resetUserPassword({{ user.id }})">
-                   Parol
+                  Parol
                 </button>
                 <form
                   method="POST"
@@ -446,7 +458,7 @@
                   style="display: inline"
                   onsubmit="return confirm('Rostdan ham bu foydalanuvchini o\'chirmoqchimisiz?')">
                   <button type="submit" class="btn btn-danger btn-sm">
-                     O'chirish
+                    O'chirish
                   </button>
                 </form>
               </td>
@@ -456,7 +468,7 @@
         </table>
       </div>
 
-      <h4> Buyurtma berganlar (JSON)</h4>
+      <h4>Buyurtma berganlar (JSON)</h4>
       <div class="table-container">
         <table class="admin-table">
           <thead>
@@ -494,7 +506,7 @@
                     name="ticket_no"
                     value="{{ user.buyurtma_raqami }}" />
                   <button type="submit" class="btn btn-danger btn-sm">
-                     O'chirish
+                    O'chirish
                   </button>
                 </form>
               </td>
@@ -508,9 +520,9 @@
     <!-- Filiallar tab -->
     <div id="branches" class="tab-content">
       <div class="section-header">
-        <h3> Filiallar boshqaruvi</h3>
+        <h3>Filiallar boshqaruvi</h3>
         <button class="btn btn-primary" onclick="showAddBranchModal()">
-           Yangi filial qo'shish
+          Yangi filial qo'shish
         </button>
       </div>
 
@@ -549,7 +561,7 @@
                 <div class="rating-display">
                   <span class="rating-stars">
                     {% for i in range(1, 6) %} {% if i <= branch.average_rating
-                    %} ⭐ {% else %}  {% endif %} {% endfor %}
+                    %} ⭐ {% else %} {% endif %} {% endfor %}
                   </span>
                   <small
                     >({{ branch.average_rating }}/5 - {{ branch.total_ratings }}
@@ -584,7 +596,7 @@
                   style="display: inline"
                   onsubmit="return confirm('Rostdan ham bu filialni o\'chirmoqchimisiz?')">
                   <button type="submit" class="btn btn-danger btn-sm">
-                     O'chirish
+                    O'chirish
                   </button>
                 </form>
               </td>
@@ -597,16 +609,16 @@
 
     <!-- Buyurtmalar tab -->
     <div id="orders" class="tab-content">
-      <h3> Barcha buyurtmalar</h3>
+      <h3>Barcha buyurtmalar</h3>
       <div id="orders-data"></div>
     </div>
 
     <!-- Menyu tab -->
     <div id="menu" class="tab-content">
       <div class="section-header">
-        <h3> Menyu boshqaruvi</h3>
+        <h3>Menyu boshqaruvi</h3>
         <button class="btn btn-primary" onclick="showAddMenuModal()">
-           Yangi mahsulot qo'shish
+          Yangi mahsulot qo'shish
         </button>
       </div>
       <div id="menu-data"></div>
@@ -614,7 +626,7 @@
 
     <!-- Cheklar tab -->
     <div id="receipts" class="tab-content">
-      <h3> Cheklar ro'yxati</h3>
+      <h3>Cheklar ro'yxati</h3>
       <div id="receipts-data"></div>
     </div>
 
@@ -748,7 +760,7 @@
 
   <!-- Savollar bo'limi -->
   <div class="section-card">
-    <h3> Mijozlar savollari</h3>
+    <h3>Mijozlar savollari</h3>
     {% if questions %}
     <div class="table-container">
       <table class="admin-table">
@@ -787,7 +799,7 @@
   <div id="addStaffModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeModal('addStaffModal')">&times;</span>
-      <h3> Yangi xodim qo'shish</h3>
+      <h3>Yangi xodim qo'shish</h3>
       <form method="POST" action="{{ url_for('super_admin_add_staff') }}">
         <div class="form-group">
           <label>Ism:</label>
@@ -826,7 +838,7 @@
   <div id="addCourierModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeModal('addCourierModal')">&times;</span>
-      <h3> Yangi kuryer qo'shish</h3>
+      <h3>Yangi kuryer qo'shish</h3>
       <form method="POST" action="{{ url_for('super_admin_add_courier') }}">
         <div class="form-group">
           <label>Ism:</label>
@@ -865,7 +877,7 @@
   <div id="addMenuModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeModal('addMenuModal')">&times;</span>
-      <h3> Yangi mahsulot qo'shish</h3>
+      <h3>Yangi mahsulot qo'shish</h3>
       <form
         method="POST"
         action="{{ url_for('super_admin_add_menu_item') }}"
@@ -881,11 +893,9 @@
         <div class="form-group">
           <label>Kategoriya:</label>
           <select name="category" required>
-            <option value="specobuv">
-               Спецобувь / Спецobuv (Oyoq kiyim)
-            </option>
+            <option value="specobuv">Спецобувь / Спецobuv (Oyoq kiyim)</option>
             <option value="specodezhda">
-               Спецодежда / Спецodezhda (Ish kiyimi)
+              Спецодежда / Спецodezhda (Ish kiyimi)
             </option>
           </select>
         </div>
@@ -906,7 +916,7 @@
   <div id="addBranchModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeModal('addBranchModal')">&times;</span>
-      <h3> Yangi filial qo'shish</h3>
+      <h3>Yangi filial qo'shish</h3>
       <form method="POST" action="{{ url_for('super_admin_add_branch') }}">
         <div class="form-group">
           <label>Filial nomi:</label>
@@ -946,8 +956,8 @@
   </div>
 
   <div class="logout-section">
-    <a href="{{ url_for('super_admin_logout') }}" class="btn btn-danger"
-      > Super admin panelidan chiqish</a
+    <a href="{{ url_for('super_admin_logout') }}" class="btn btn-danger">
+      Super admin panelidan chiqish</a
     >
   </div>
 </div>

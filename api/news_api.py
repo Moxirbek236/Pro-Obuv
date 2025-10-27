@@ -15,7 +15,7 @@ news_api = Blueprint("news_api", __name__)
 SOCIAL_FOOTER = (
     "\nYoutube: https://www.youtube.com/@proobuv-safety\n"
     "Telegram: https://t.me/specobuv\n"
-    " INstagram: https://www.instagram.com/proguarduz/\n"
+    " Instagram: https://www.instagram.com/proguarduz/\n"
 )
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
@@ -101,16 +101,34 @@ def save_news_data(data):
         for i, n in enumerate(data.get("news", [])):
             try:
                 n_obj = dict(n) if not isinstance(n, dict) else n
-                n_obj["youtube_embed"] = extract_youtube_embed_local(n_obj.get("video_url") or "")
-                # Ensure the social footer is present in content
+                n_obj["youtube_embed"] = extract_youtube_embed_local(
+                    n_obj.get("video_url") or ""
+                )
+
+                # Ensure the social footer is present in content fields.
+                # Support both legacy single 'content' and per-language content_uz/content_ru/content_en/content_kz
                 try:
-                    content = (n_obj.get("content") or "")
-                    if "https://www.youtube.com/@proobuv-safety" not in content:
-                        # append footer ensuring a newline separation
-                        content = content.rstrip() + SOCIAL_FOOTER
-                    n_obj["content"] = content
+                    # Helper to append footer if missing for a given content string
+                    def _ensure_footer(s: str):
+                        if not s:
+                            return s
+                        if "https://www.youtube.com/@proobuv-safety" in s:
+                            return s
+                        return s.rstrip() + SOCIAL_FOOTER
+
+                    # Legacy content
+                    if "content" in n_obj:
+                        n_obj["content"] = _ensure_footer(n_obj.get("content") or "")
+
+                    # Per-language content
+                    for lang in ("uz", "ru", "en", "kz"):
+                        key = f"content_{lang}"
+                        if key in n_obj:
+                            n_obj[key] = _ensure_footer(n_obj.get(key) or "")
+
                 except Exception:
                     pass
+
                 data["news"][i] = n_obj
             except Exception:
                 try:
@@ -190,6 +208,8 @@ def get_all_news():
         active_only = request.args.get("active", "").lower() == "true"
         news_type = request.args.get("type", "")
         limit = request.args.get("limit", type=int)
+        # Language selection: api consumers can request 'lang' (uz/ru/en/kz)
+        lang = request.args.get("lang") or None
 
         # Filtrlash
         if active_only:
@@ -206,6 +226,21 @@ def get_all_news():
         # Limit qo'llash
         if limit and limit > 0:
             news_list = news_list[:limit]
+
+        # If lang provided, compute localized_title/localized_content for each item
+        if lang:
+            for i, n in enumerate(news_list):
+                try:
+                    # prefer per-language fields title_<lang> / content_<lang>, fall back to legacy title/content
+                    n["localized_title"] = (
+                        n.get(f"title_{lang}") or n.get("title") or ""
+                    )
+                    n["localized_content"] = (
+                        n.get(f"content_{lang}") or n.get("content") or ""
+                    )
+                except Exception:
+                    n["localized_title"] = n.get("title") or ""
+                    n["localized_content"] = n.get("content") or ""
 
         return jsonify(
             {
@@ -276,7 +311,11 @@ def create_news():
             return jsonify({"success": False, "message": "Ma'lumotlar topilmadi"}), 400
 
         # Majburiy maydonlarni tekshirish
-        if not news_data.get("title", "").strip():
+        # Accept either legacy 'title' or any of title_uz/title_ru/title_en/title_kz
+        title_present = any(
+            (news_data.get(f"title_{lang}") or "").strip() for lang in ("uz", "ru", "en", "kz")
+        ) or (news_data.get("title") or "").strip()
+        if not title_present:
             return (
                 jsonify({"success": False, "message": "Sarlavha kiritilishi shart"}),
                 400,
@@ -290,18 +329,30 @@ def create_news():
         new_id = max_id + 1
 
         # Yangi yangilik yaratish
-        new_news = {
-            "id": new_id,
-            "title": news_data.get("title", "").strip(),
-            "content": news_data.get("content", "").strip(),
-            "type": news_data.get("type", "news"),
-            "is_active": news_data.get("is_active", True),
-            "display_order": news_data.get("display_order", len(data["news"]) + 1),
-            "image_url": news_data.get("image_url", ""),
-            "video_url": news_data.get("video_url", ""),
-            "created_at": datetime.utcnow().isoformat() + "Z",
-            "updated_at": datetime.utcnow().isoformat() + "Z",
-        }
+        # Build new item including per-language title/content if provided
+        new_news = {"id": new_id}
+        # Legacy fields
+        new_news["title"] = (news_data.get("title") or "").strip()
+        new_news["content"] = (news_data.get("content") or "").strip()
+
+        # Per-language fields
+        for lang in ("uz", "ru", "en", "kz"):
+            new_news[f"title_{lang}"] = (news_data.get(f"title_{lang}") or "").strip()
+            new_news[f"content_{lang}"] = (news_data.get(f"content_{lang}") or "").strip()
+
+        new_news.update(
+            {
+                "type": news_data.get("type", "news"),
+                "is_active": news_data.get("is_active", True),
+                "display_order": news_data.get(
+                    "display_order", len(data["news"]) + 1
+                ),
+                "image_url": news_data.get("image_url", ""),
+                "video_url": news_data.get("video_url", ""),
+                "created_at": datetime.utcnow().isoformat() + "Z",
+                "updated_at": datetime.utcnow().isoformat() + "Z",
+            }
+        )
 
         # Ro'yxatga qo'shish
         data["news"].append(new_news)
@@ -338,8 +389,11 @@ def update_news(news_id):
         if not news_data:
             return jsonify({"success": False, "message": "Ma'lumotlar topilmadi"}), 400
 
-        # Majburiy maydonlarni tekshirish
-        if not news_data.get("title", "").strip():
+        # Majburiy maydonlarni tekshirish - accept either legacy title or one of per-language titles
+        title_present = any(
+            (news_data.get(f"title_{lang}") or "").strip() for lang in ("uz", "ru", "en", "kz")
+        ) or (news_data.get("title") or "").strip()
+        if not title_present:
             return (
                 jsonify({"success": False, "message": "Sarlavha kiritilishi shart"}),
                 400,
@@ -359,10 +413,20 @@ def update_news(news_id):
             return jsonify({"success": False, "message": "Yangilik topilmadi"}), 404
 
         # Ma'lumotlarni yangilash
+        # Update legacy and per-language fields if provided
+        news_item["title"] = (news_data.get("title") or news_item.get("title") or "").strip()
+        news_item["content"] = (news_data.get("content") or news_item.get("content") or "").strip()
+
+        for lang in ("uz", "ru", "en", "kz"):
+            tkey = f"title_{lang}"
+            ckey = f"content_{lang}"
+            if tkey in news_data:
+                news_item[tkey] = (news_data.get(tkey) or "").strip()
+            if ckey in news_data:
+                news_item[ckey] = (news_data.get(ckey) or "").strip()
+
         news_item.update(
             {
-                "title": news_data.get("title", "").strip(),
-                "content": news_data.get("content", "").strip(),
                 "type": news_data.get("type", news_item.get("type", "news")),
                 "is_active": news_data.get(
                     "is_active", news_item.get("is_active", True)

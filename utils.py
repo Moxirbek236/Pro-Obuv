@@ -12,7 +12,8 @@ import json
 import logging
 from datetime import datetime, timedelta
 from functools import wraps
-from flask import request, jsonify, session, flash, redirect, url_for
+from flask import request, jsonify, session, flash, redirect, url_for, g
+from config import Config
 
 def generate_unique_id(prefix="", length=8):
     """Unikal ID yaratish"""
@@ -185,3 +186,208 @@ def cleanup_old_backups(backup_dir="backups", keep_days=30):
     
     except Exception as e:
         logging.error(f"Backup tozalashda xatolik: {str(e)}")
+
+def load_translations():
+    """Barcha tillardagi tarjimalarni yuklash"""
+    try:
+        with open('data/translations.json', 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except Exception as e:
+        logging.error(f"Tarjimalarni yuklashda xatolik: {str(e)}")
+        return {}
+
+_translations = load_translations()
+
+def get_current_language():
+    """Joriy tilni qaytarish"""
+    # Prefer unified 'interface_language' session key; fall back to legacy 'language'
+    return session.get('interface_language', session.get('language', Config.DEFAULT_LANGUAGE))
+
+def set_language(lang_code):
+    """Tilni o'zgartirish"""
+    if lang_code in Config.SUPPORTED_LANGUAGES:
+        session['interface_language'] = lang_code
+        # keep backward compatibility
+        session['language'] = lang_code
+        return True
+    return False
+
+def get_text(key, lang=None):
+    """Matnni joriy tilda olish"""
+    if not lang:
+        lang = get_current_language()
+    # ensure we modify the module-level translations when reloading
+    global _translations
+    
+    try:
+        # Support dot-separated keys for nested objects (e.g., 'nav.home')
+        parts = key.split('.') if isinstance(key, str) and '.' in key else [key]
+        node = _translations.get(lang, {})
+        for p in parts:
+            if isinstance(node, dict) and p in node:
+                node = node[p]
+            else:
+                # Fallback to default language if nested key missing
+                node = None
+                break
+        if node is not None:
+            return node
+        # If key not found in current in-memory translations, try reloading translations
+        try:
+            fresh = load_translations()
+            if fresh:
+                _translations = fresh
+                node = _translations.get(lang, {})
+                parts = key.split('.') if isinstance(key, str) and '.' in key else [key]
+                for p in parts:
+                    if isinstance(node, dict) and p in node:
+                        node = node[p]
+                    else:
+                        node = None
+                        break
+                if node is not None:
+                    return node
+        except Exception:
+            # If reload fails, continue to fallback logic below
+            pass
+        # Fallback: return top-level key if exists (or None)
+        val = _translations.get(lang, {}).get(key, None)
+        return val
+    except KeyError:
+        # Agar tarjima topilmasa, default tildagi matnni qaytarish
+        try:
+            # Try dot-notation on default language
+            parts = key.split('.') if isinstance(key, str) and '.' in key else [key]
+            node = _translations.get(Config.DEFAULT_LANGUAGE, {})
+            for p in parts:
+                if isinstance(node, dict) and p in node:
+                    node = node[p]
+                else:
+                    node = None
+                    break
+            if node is not None:
+                return node
+            return _translations[Config.DEFAULT_LANGUAGE].get(key)
+        except KeyError:
+            # Agar default tilda ham topilmasa, kalitni o'zini qaytarish
+            return key
+
+
+def translate(key, lang=None):
+    """Robust translation helper used by templates.
+
+    Attempts to return a localized string for `key`. Behaviors:
+    - Try `get_text(key, lang)` first (nested lookups).
+    - If that yields None, fall back to the flattened translations map which
+      is used by client-side JS (keys like 'menu.all_products').
+    - If still not found, return the original `key` so templates show a
+      predictable placeholder instead of crashing.
+    """
+    try:
+        val = get_text(key, lang)
+        if val:
+            return val
+        # Fallback to flattened map
+        flat = flatten_translations(lang)
+        if isinstance(key, str) and key in flat and flat.get(key):
+            return flat.get(key)
+        return key
+    except Exception:
+        return key
+
+
+def localized_field(item, field_base, lang=None):
+    """Return localized field value from a DB row or dict-like item.
+
+    Example: localized_field(item, 'name') will try 'name_uz','name_ru','name_en','name_kz'
+    depending on session language or provided lang. Falls back to 'name' if localized field missing.
+    """
+    try:
+        if not lang:
+            lang = get_current_language()
+        # Normalize lang (e.g., 'uz') and build candidate key
+        cand = f"{field_base}_{lang}"
+        # item might be sqlite Row, dict, or object with attributes
+        if isinstance(item, dict):
+            # Prefer explicit per-lang key like title_uz
+            if cand in item and item[cand]:
+                return item[cand]
+            # If base field is a dict with language keys (e.g. title: {"uz": "...", "ru": "..."}), pick the lang value
+            base_val = item.get(field_base)
+            if isinstance(base_val, dict):
+                # exact lang
+                if lang in base_val and base_val[lang]:
+                    return base_val[lang]
+                # try common fallbacks
+                for lk in (lang, 'uz', 'ru', 'en', 'kz'):
+                    if lk in base_val and base_val[lk]:
+                        return base_val[lk]
+            # fallback to base field or legacy suffixed keys
+            return (
+                base_val
+                or item.get(f"{field_base}_uz")
+                or item.get(f"{field_base}_ru")
+                or item.get(f"{field_base}_en")
+                or item.get(f"{field_base}_kz")
+            )
+
+        # sqlite3.Row supports mapping access
+        try:
+            val = item[cand]
+            if val:
+                return val
+        except Exception:
+            pass
+
+        # object attribute fallback
+        try:
+            val = getattr(item, cand, None)
+            if val:
+                return val
+        except Exception:
+            pass
+
+        # Try base field
+        try:
+            val = item[field_base]
+            if val:
+                return val
+        except Exception:
+            pass
+
+        try:
+            val = getattr(item, field_base, None)
+            if val:
+                return val
+        except Exception:
+            pass
+
+    except Exception:
+        pass
+    return None
+
+
+def flatten_translations(lang=None):
+    """Return a flat mapping of translation keys to strings for the given language.
+
+    Example: {'footer.company_desc': '...'}
+    """
+    if not lang:
+        lang = get_current_language()
+    flat = {}
+
+    def _walk(node, prefix=""):
+        if isinstance(node, dict):
+            for k, v in node.items():
+                nk = f"{prefix}.{k}" if prefix else k
+                if isinstance(v, dict):
+                    _walk(v, nk)
+                else:
+                    flat[nk] = v
+
+    try:
+        node = _translations.get(lang, {}) or {}
+        _walk(node, "")
+    except Exception:
+        pass
+    return flat

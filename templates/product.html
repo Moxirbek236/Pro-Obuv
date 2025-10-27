@@ -1,10 +1,12 @@
-{% extends 'base.html' %} 
-{% block title %}{{ item.name }} — Pro Obuv | Sifatli Spetsobuv va Ish Kiyimlari{% endblock %}
+{% extends 'base.html' %}
+{% set localized_name = localized_field(item, 'name') or item.name %}
+{% set localized_description = localized_field(item, 'description') or item.description or "Sifatli spetsobuv va ish kiyimlari" %}
+{% block title %}{{ localized_name }} — Pro Obuv | {{ _('nav.home') }}{% endblock %}
 {% block seo_meta %}
-<meta name="description" content="{{ item.name }} — Pro Obuv do'konidan sifatli spetsobuv va ish kiyimlari. {{ item.description[:150] if item.description else 'Xavfsizlik poyabzallari va ish kiyimlari' }}. Tez yetkazib berish, kafolat." />
-<meta name="keywords" content="{{ item.name }}, pro obuv, spetsobuv, ish kiyimlari, {{ item.category if item.category else 'xavfsizlik poyabzallari' }}, buyurtma, yetkazib berish" />
-<meta property="og:title" content="{{ item.name }} — Pro Obuv" />
-<meta property="og:description" content="{{ item.name }} — Pro Obuv do'konidan sifatli spetsobuv va ish kiyimlari. {{ item.description[:150] if item.description else 'Xavfsizlik poyabzallari va ish kiyimlari' }}." />
+<meta name="description" content="{{ localized_name }} — {{ _('meta_product_suffix') }} {{ (localized_description[:150] if localized_description else '') }}" />
+<meta name="keywords" content="{{ localized_name }}, Pro Obuv, {{ _('footer.cat_specobuv') }}, {{ item.category if item.category else 'spetsobuv' }}, buyurtma, yetkazib berish" />
+<meta property="og:title" content="{{ localized_name }} — Pro Obuv" />
+<meta property="og:description" content="{{ localized_name }} — {{ _('meta_product_suffix') }} {{ (localized_description[:150] if localized_description else '') }}" />
 <meta property="og:type" content="product" />
 <meta property="og:url" content="{{ ('https://safety.uz' + request.path) if request else request.url }}" />
         <meta property="og:image" content="{{ item.image_url if item.image_url else url_for('static', filename='defoult.png') }}" />
@@ -28,8 +30,8 @@
 {{ {
   "@context": "https://schema.org",
   "@type": "Product",
-  "name": (item.name or ""),
-  "description": (item.description or "Sifatli spetsobuv va ish kiyimlari"),
+  "name": (localized_name or ""),
+  "description": (localized_description or "Sifatli spetsobuv va ish kiyimlari"),
   "image": abs_image,
   "url": abs_url,
   "brand": {"@type": "Brand", "name": "Pro Obuv"},
@@ -44,7 +46,19 @@
 } | tojson }}
 </script>
 {% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/color_select.css') }}">
+{% endblock %}
 {% block content %}
+{# Debug banner: visit /product/<id>?debug=1 to show server-rendered localized values on the page for troubleshooting #}
+{% if request.args.get('debug') %}
+<div id="debug-localized" style="position:fixed;left:12px;top:12px;z-index:99999;padding:10px;background:rgba(255,255,255,0.95);border:2px solid #222;color:#111;max-width:calc(100% - 40px);font-size:14px;line-height:1.2;">
+  <strong>DEBUG:</strong>
+  <div><strong>localized_name:</strong> {{ localized_name|e }}</div>
+  <div><strong>localized_description:</strong> {{ localized_description[:200]|e }}{% if localized_description|length > 200 %}…{% endif %}</div>
+  <div style="margin-top:6px;font-size:12px;color:#666">Remove <code>?debug=1</code> from the URL to hide this box.</div>
+</div>
+{% endif %}
 <style>
   .product-container {
     max-width: 1100px;
@@ -267,7 +281,7 @@
         {% if first and first.media_type and first.media_type.startswith('video') %}
           <video id="mainMediaDesktop" src="{{ first.media_url }}" controls muted></video>
         {% else %}
-          <img id="mainMediaDesktop" src="{{ (first.media_url if first else item.image_url) or '/static/defoult.png' }}" alt="{{ item.name }}" />
+      <img id="mainMediaDesktop" src="{{ (first.media_url if first else item.image_url) or '/static/defoult.png' }}" alt="{{ localized_name }}" />
         {% endif %}
 
         <button class="media-btn left" id="prevBtnDesktop" title="Oldingi">‹</button>
@@ -286,13 +300,13 @@
 
     {# Mobile-only: gallery with swipe/snapping initialized by static/main.js #}
     <div class="gallery-mobile">
-      <div class="gallery" id="productGallery" data-item-id="{{ item.id }}">
+    <div class="gallery" id="productGallery" data-item-id="{{ item.id }}">
         <div class="gallery-track">
           {% for m in all_media %}
             {% if m.media_type and m.media_type.startswith('video') %}
               <video controls muted preload="metadata" src="{{ m.media_url }}"></video>
             {% else %}
-              <img src="{{ m.media_url }}" alt="{{ item.name }}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.png'" />
+              <img src="{{ m.media_url }}" alt="{{ localized_name }}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.png'" />
             {% endif %}
           {% endfor %}
         </div>
@@ -309,8 +323,8 @@
   </div>
 
   <div class="product-details">
-    <h1>{{ item.name }}</h1>
-    <p class="description">{{ item.description or '' }}</p>
+  <h1>{{ localized_name }}</h1>
+  <p class="description">{{ localized_description or '' }}</p>
 
     <div class="rating-row">
       <!-- Fractional star display: two layered elements. .stars-inner width reflects rating/5*100% -->
@@ -334,6 +348,102 @@
       </div>
     </div>
 
+    {# Size & color selectors visible to everyone (customers + staff) - improved swatches for colors #}
+    <div class="options-row" id="productOptionsRow">
+      <div class="select-wrapper">
+        <label for="sizeSelect">O'lcham</label>
+        <select id="sizeSelect" name="size" class="form-select">
+          <option value="">— O'lcham tanlang —</option>
+          {% set _sizes = (item.sizes or '39,40,41,42,43').split(',') %}
+          {% for s in _sizes %}
+            {% if s|trim %}
+              <option value="{{ s|trim }}">{{ s|trim }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="select-wrapper colors-wrapper" style="flex: 0 0 auto; min-width: 220px;">
+        <label for="colorSelect">Rang</label>
+        {% set _colors = (item.colors or "black,white").split(',') %}
+        {% set color_map = {
+          'qora':'#000000','oq':'#FFFFFF','yashil':'#008000',"ko'k":'#0000FF','koʻk':'#0000FF',
+          'black':'#000000','white':'#FFFFFF','brown':'#8B4513','gray':'#808080','kulrang':'#808080',
+          'red':'#FF0000','blue':'#0000FF','green':'#008000','yellow':'#FFD700','orange':'#FFA500',
+          'purple':'#800080','pink':'#FFC0CB','beige':'#F5F5DC','navy':'#000080','khaki':'#F0E68C'
+        } %}
+
+  {# Translations for common color keys in four languages: uz/ru/en/kz #}
+        {% set color_translations = {
+          'black': {'uz':'Qora','ru':'Черный','en':'Black','kz':'Қара'},
+          'qora': {'uz':'Qora','ru':'Черный','en':'Black','kz':'Қара'},
+          'white': {'uz':'Oq','ru':'Белый','en':'White','kz':'Ақ'},
+          'oq': {'uz':'Oq','ru':'Белый','en':'White','kz':'Ақ'},
+          'red': {'uz':'Qizil','ru':'Красный','en':'Red','kz':'Қызыл'},
+          'blue': {'uz':'Ko\'k','ru':'Синий','en':'Blue','kz':'Көк'},
+          'ko\'k': {'uz':'Ko\'k','ru':'Синий','en':'Blue','kz':'Көк'},
+          'koʻk': {'uz':'Koʻk','ru':'Синий','en':'Blue','kz':'Көк'},
+          'green': {'uz':'Yashil','ru':'Зелёный','en':'Green','kz':'Жасыл'},
+          'yashil': {'uz':'Yashil','ru':'Зелёный','en':'Green','kz':'Жасыл'},
+          'yellow': {'uz':'Sariq','ru':'Жёлтый','en':'Yellow','kz':'Сары'},
+          'orange': {'uz':'To\'q Sariq','ru':'Оранжевый','en':'Orange','kz':'Қызғылт сары'},
+          'pink': {'uz':'Pushti','ru':'Розовый','en':'Pink','kz':'Күлгін'},
+          'purple': {'uz':'Binafsha','ru':'Фиолетовый','en':'Purple','kz':'Күлгін'},
+          'brown': {'uz':'Jigarrang','ru':'Коричневый','en':'Brown','kz':'Қоңыр'},
+          'beige': {'uz':'Bej','ru':'Бежевый','en':'Beige','kz':'Беж'},
+          'gray': {'uz':'Kulrang','ru':'Серый','en':'Gray','kz':'Күрең'},
+          'kulrang': {'uz':'Kulrang','ru':'Серый','en':'Gray','kz':'Күрең'},
+          'navy': {'uz':'Navy (To\'q ko\'k)','ru':'Тёмно-синий','en':'Navy','kz':'Түсі қою көк'},
+          'khaki': {'uz':'Xaki','ru':'Хаки','en':'Khaki','kz':'Хаки'}
+        } %}
+
+        {% set interface_lang = (session.get('interface_language') or 'uz') %}
+
+        <div class="compact-color-select">
+          <select id="colorSelect" name="color" class="form-select">
+            <option value="">— Rang tanlang —</option>
+            {% for c in _colors %}
+              {% set cv = c|trim %}
+              {% if cv %}
+                {% set ck = cv|lower %}
+                {% set hexval = color_map.get(ck, cv) %}
+                {% set trans = color_translations.get(ck, None) %}
+                {% if not trans %}
+                  {% set display = cv %}
+                {% else %}
+                  {% set display = trans.get(interface_lang, cv) %}
+                {% endif %}
+                <option value="{{ cv }}" data-hex="{{ hexval }}">{{ display }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+          {# small preview swatch that updates with selection #}
+          {% set first_color = (_colors[0]|trim) if _colors|length > 0 else '' %}
+          {% set first_hex = color_map.get(first_color|lower, first_color) if first_color else 'transparent' %}
+          <span id="selectedColorSwatch" class="color-swatch small" style="background-color: {{ first_hex }};" aria-hidden="true"></span>
+        </div>
+
+        <div class="color-translations" aria-hidden="false">
+          <small style="font-weight:700">Ranglar ({{ interface_lang }}):</small>
+          <ul>
+            {% for c in _colors %}
+              {% set cv = c|trim %}
+              {% if cv %}
+                {% set ck = cv|lower %}
+                {% set trans = color_translations.get(ck, None) %}
+                {% if not trans %}
+                  {% set display = cv %}
+                {% else %}
+                  {% set display = trans.get(interface_lang, cv) %}
+                {% endif %}
+                <li style="margin-top:6px"> <strong>{{ display }}</strong> <span style="color:#666">({{ cv }})</span></li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+
     {# If staff or super_admin is logged in, keep the add-to-cart form for testing/admin use. #}
     {% if is_staff or is_super_admin %}
       <form
@@ -342,33 +452,7 @@
         id="addToCartForm">
         <input type="hidden" name="menu_item_id" value="{{ item.id }}" />
 
-        <div class="options-row">
-          <div class="select-wrapper">
-            <label for="sizeSelect">O'lcham</label>
-            <select id="sizeSelect" name="size" class="form-select">
-              <option value="">— O'lcham tanlang —</option>
-              {% set _sizes = (item.sizes or '').split(',') %}
-              {% for s in _sizes %}
-                {% if s|trim %}
-                  <option value="{{ s|trim }}">{{ s|trim }}</option>
-                {% endif %}
-              {% endfor %}
-            </select>
-          </div>
-
-          <div class="select-wrapper" style="flex: 0 0 160px">
-            <label for="colorSelect">Rang</label>
-            <select id="colorSelect" name="color" class="form-select">
-              <option value="">— Rang tanlang —</option>
-              {% set _colors = (item.colors or '').split(',') %}
-              {% for c in _colors %}
-                {% if c|trim %}
-                  <option value="{{ c|trim }}">{{ c|trim }}</option>
-                {% endif %}
-              {% endfor %}
-            </select>
-          </div>
-        </div>
+        {# options-row rendered above for all users; staff form keeps quantity + submit below #}
 
         <div class="quantity-row">
           <label style="min-width: 70px; font-weight: 600">Miqdor</label>
@@ -565,7 +649,7 @@
       existing.replaceWith(vid);
     } else {
       const img = document.createElement('img');
-      img.id = 'mainMediaDesktop'; img.src = m.media_url || defaultImage; img.alt = '{{ item.name }}';
+  img.id = 'mainMediaDesktop'; img.src = m.media_url || defaultImage; img.alt = '{{ localized_name }}';
       existing.replaceWith(img);
     }
     // highlight desktop thumbnails
@@ -632,6 +716,49 @@
 
     wire('ratingStars', 'ratingInput', 'ratingSelectedText');
     wire('ratingStarsBottom', 'ratingInputBottom', 'ratingSelectedTextBottom');
+  })();
+
+  // Product color swatches selection wiring
+  (function(){
+    try{
+      const container = document.getElementById('productColorSelect');
+      if(container){
+        const options = Array.from(container.querySelectorAll('.color-option'));
+        options.forEach(opt => {
+          const inp = opt.querySelector('input[type="radio"]');
+          if(!inp) return;
+          // reflect initial state
+          if(inp.checked) opt.classList.add('selected');
+          opt.addEventListener('click', function(e){
+            try{
+              options.forEach(o => { o.classList.remove('selected'); o.setAttribute('aria-checked','false'); });
+              inp.checked = true;
+              opt.classList.add('selected');
+              opt.setAttribute('aria-checked','true');
+            }catch(_){ }
+          });
+          opt.addEventListener('keydown', function(e){ if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); opt.click(); } });
+        });
+      }
+    }catch(e){ console.warn('color swatch wiring failed', e); }
+  })();
+
+  // Compact select swatch wiring
+  (function(){
+    try{
+      const colorSelect = document.getElementById('colorSelect');
+      const swatch = document.getElementById('selectedColorSwatch');
+      if(colorSelect && swatch){
+        function updateSwatch(){
+          const opt = colorSelect.selectedOptions && colorSelect.selectedOptions[0];
+          const hex = opt ? (opt.getAttribute('data-hex') || opt.value) : 'transparent';
+          swatch.style.backgroundColor = hex;
+        }
+        colorSelect.addEventListener('change', updateSwatch);
+        // initialize
+        updateSwatch();
+      }
+    }catch(e){ console.warn('compact color select wiring failed', e); }
   })();
 </script>
 

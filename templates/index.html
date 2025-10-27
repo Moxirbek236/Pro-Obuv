@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="{{ session.get('interface_language', 'uz') }}">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Pro Obuv - Bosh sahifa | Sifatli Spetsobuv va Ish Kiyimlari</title>
+    <title>
+      Pro Obuv - {{ _('nav.home') }} | Sifatli Spetsobuv va Ish Kiyimlari
+    </title>
     <meta
       name="description"
       content="Pro Obuv (Safety.uz) — spetsobuv, work boots, kроссовки, krasofka va ish kiyimlari. Sifatli himoya poyabzallari (steel toe, composite toe), antistatic/ESD, professional workwear. Buyurtma va yetkazib berish O'zbekiston bo'ylab." />
@@ -381,7 +383,9 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
       <div class="container">
-        <a class="navbar-brand" href="{{ url_for('index') }}"> Pro_Obuv</a>
+        <a class="navbar-brand" href="{{ url_for('index') }}"
+          >{{ _('nav.brand') }}</a
+        >
         <button
           class="navbar-toggler"
           type="button"
@@ -392,40 +396,53 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav me-auto">
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('menu') }}"> Menyu</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('favorites') }}">
-                Sevimlilar</a
+              <a class="nav-link" href="{{ url_for('menu') }}"
+                >{{ _('nav.menu') }}</a
               >
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('contact') }}"> Aloqa</a>
+              <a class="nav-link" href="{{ url_for('favorites') }}">
+                {{ _('nav.favorites') }}</a
+              >
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('about') }}"> Savollar</a>
+              <a class="nav-link" href="{{ url_for('contact') }}"
+                >{{ _('nav.contact') }}</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('about') }}"
+                >{{ _('nav.about') }}</a
+              >
             </li>
           </ul>
           <ul class="navbar-nav">
             {% if session.get('user_id') %}
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('cart') }}"> Savatcha</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('profile') }}">
-                {{ session.get('user_name') }}</a
+              <a class="nav-link" href="{{ url_for('cart') }}"
+                >{{ _('nav.cart') }}</a
               >
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('logout') }}"> Chiqish</a>
+              <a class="nav-link" href="{{ url_for('profile') }}"
+                >{{ _('nav.profile') }} {{ session.get('user_name') }}</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('logout') }}"
+                >{{ _('nav.logout') }}</a
+              >
             </li>
             {% else %}
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('login_page') }}"> Kirish</a>
+              <a class="nav-link" href="{{ url_for('login_page') }}"
+                >{{ _('nav.login') if _('nav.login') else _('nav.profile') }}</a
+              >
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('register') }}">
-                Ro'yxatdan o'tish</a
+                {{ _('nav.register') if _('nav.register') else "Ro'yxatdan
+                o'tish" }}</a
               >
             </li>
             {% endif %}

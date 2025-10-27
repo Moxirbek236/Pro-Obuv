@@ -1,0 +1,19 @@
+{
+    "cache_ttl": 3600,
+    "debug_mode": false,
+    "log_level": "INFO",
+    "db_pool_size": 10,
+    "db_timeout": 30,
+    "auto_migrate": true,
+    "page_size": 24,
+    "news_ticker_interval": 5000,
+    "preload_images": true,
+    "mobile_animations": true,
+    "api_caching": true,
+    "api_rate_limit": 60,
+    "api_timeout": 30,
+    "security_level": "medium",
+    "image_quality": 85,
+    "max_image_size": 5,
+    "allowed_image_types": "jpg,jpeg,png,webp"
+}

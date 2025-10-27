@@ -189,7 +189,9 @@
       <p>Ilovalarni o'rnatishda muammo bo'lsa, bizga murojaat qiling:</p>
       <div class="contact-buttons">
         <a href="{{ url_for('contact') }}" class="contact-btn"> Aloqa</a>
-        <a href="tel:+998977195770" class="contact-btn"> Qo'ng'iroq</a>
+        <a href="tel:{{ get_text('footer.phone_href') }}" class="contact-btn">
+          Qo'ng'iroq</a
+        >
         <a href="mailto:premiumsafety@mail.ru" class="contact-btn"> Email</a>
       </div>
     </div>

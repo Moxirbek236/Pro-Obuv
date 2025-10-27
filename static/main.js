@@ -238,10 +238,12 @@ const MenuClient = (function () {
               .map((m) => {
                 const src =
                   typeof m === "string" ? m : m.media_url || m.image_url || "";
+                // Prefer localized name if provided by API
+                const altText = item.name_local || item.name || "";
                 return `<img src="${escapeHtml(
                   src || "/static/defoult.png"
                 )}" alt="${escapeHtml(
-                  item.name || ""
+                  altText
                 )}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.png'" />`;
               })
               .join("");
@@ -250,10 +252,11 @@ const MenuClient = (function () {
             )}"><div class="gallery-track">${imgs}</div></div></div>`;
           }
         } catch (e) {}
+        const altText = item.name_local || item.name || "";
         return `<div class="item-image"><img src="${escapeHtml(
           item.image_url || "/static/defoult.png"
         )}" alt="${escapeHtml(
-          item.name || ""
+          altText
         )}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.png'" /></div>`;
       })();
 
@@ -263,7 +266,9 @@ const MenuClient = (function () {
       div.innerHTML = `
         ${imageHtml}
         <div class="item-content">
-          <h3 class="item-name">${escapeHtml(item.name || "")}</h3>
+          <h3 class="item-name">${escapeHtml(
+            item.name_local || item.name || ""
+          )}</h3>
           <div class="rating-section"><div class="stars">${renderStars(
             item.avg_rating || item.rating || 0
           )}</div><span class="rating-text">${
@@ -954,14 +959,25 @@ class NewsTicker {
   }
   async loadNews() {
     try {
-      const response = await fetch("/api/news?ticker=1");
+      // Determine preferred language from page (session-injected) or <html lang>
+      const preferredLang =
+        (document.body &&
+          document.body.dataset &&
+          document.body.dataset.language) ||
+        document.documentElement.lang ||
+        "ru";
+      const response = await fetch(
+        `/api/news?ticker=1&lang=${encodeURIComponent(preferredLang)}`
+      );
       const data = await response.json();
       if (data && data.success && data.news && data.news.length > 0) {
         this.newsItems = data.news;
         this.updateDisplay();
       } else {
         // Fallback to all news if no ticker-specific news
-        const response2 = await fetch("/api/news");
+        const response2 = await fetch(
+          `/api/news?lang=${encodeURIComponent(preferredLang)}`
+        );
         const data2 = await response2.json();
         if (data2 && data2.success && data2.news && data2.news.length > 0) {
           this.newsItems = data2.news;
@@ -1021,7 +1037,26 @@ class NewsTicker {
       } catch (e) {
         mediaHtml = "";
       }
-      const excerptRaw = (it.content || it.description || "").trim() || "";
+      // Prefer localized fields populated by /api/news?lang=...
+      const titleText =
+        it.localized_title ||
+        it.title ||
+        it.title_uz ||
+        it.title_ru ||
+        it.title_en ||
+        it.title_kz ||
+        "";
+      const excerptRaw =
+        (
+          it.localized_content ||
+          it.content ||
+          it.description ||
+          it.content_uz ||
+          it.content_ru ||
+          it.content_en ||
+          it.content_kz ||
+          ""
+        ).trim() || "";
       const excerpt = escapeHtml(
         excerptRaw.substring(0, 120) + (excerptRaw.length > 120 ? "..." : "")
       );
@@ -1083,6 +1118,41 @@ class NewsTicker {
         dot.onclick = () => this.goToSlide(i);
         indicators.appendChild(dot);
       }
+    }
+
+    // Scroll to the currentIndex so auto-slide feels like a carousel
+    try {
+      const items = container.querySelectorAll(".news-item");
+      if (items && items.length && items[this.currentIndex]) {
+        // Use container.scrollTo to explicitly scroll only the ticker container
+        // This avoids letting scrollIntoView try to scroll the whole page vertically
+        try {
+          const el = items[this.currentIndex];
+          const elLeft = el.offsetLeft || 0;
+          const elCenter = elLeft + (el.clientWidth || 0) / 2;
+          const targetLeft = Math.max(
+            0,
+            Math.round(elCenter - (container.clientWidth || 0) / 2)
+          );
+          try {
+            container.scrollTo({ left: targetLeft, behavior: "smooth" });
+          } catch (e) {
+            // Some older environments may not support options object
+            container.scrollLeft = targetLeft;
+          }
+        } catch (e) {
+          // last-resort fallback: try scrollIntoView but request nearest block
+          try {
+            items[this.currentIndex].scrollIntoView({
+              behavior: "smooth",
+              inline: "center",
+              block: "nearest",
+            });
+          } catch (e) {}
+        }
+      }
+    } catch (e) {
+      // ignore scrolling errors
     }
   }
 

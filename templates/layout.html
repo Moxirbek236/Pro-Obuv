@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html
+  lang="{{ session.get('interface_language', config.DEFAULT_LANGUAGE if config is defined else 'uz') }}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
+    <title>{% block title %}{% endblock %}</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}" />
+    {% block extra_css %}{% endblock %}
+  </head>
+  <body>
+    <header>
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="{{ url_for('index') }}"
+            >{{ get_text('home_title') }}</a
+          >
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+              <!-- Language selector -->
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown">
+                  {{ get_text('language') }}
+                </a>
+                <ul class="dropdown-menu">
+                  {% set cur_lang = session.get('interface_language',
+                  config.DEFAULT_LANGUAGE if config is defined else 'uz') %}
+                  <li>
+                    <a
+                      class="dropdown-item {{ 'active' if cur_lang == 'ru' }}"
+                      href="#"
+                      onclick="changeLanguage('ru')"
+                      >{{ get_text('language_names.ru') }}</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      class="dropdown-item {{ 'active' if cur_lang == 'uz' }}"
+                      href="#"
+                      onclick="changeLanguage('uz')"
+                      >{{ get_text('language_names.uz') }}</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      class="dropdown-item {{ 'active' if cur_lang == 'en' }}"
+                      href="#"
+                      onclick="changeLanguage('en')"
+                      >{{ get_text('language_names.en') }}</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      class="dropdown-item {{ 'active' if cur_lang == 'kz' }}"
+                      href="#"
+                      onclick="changeLanguage('kz')"
+                      >{{ get_text('language_names.kz') }}</a
+                    >
+                  </li>
+                </ul>
+              </li>
+              {% if is_user %}
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('profile') }}"
+                  >{{ get_text('profile') }}</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('notifications') }}"
+                  >{{ get_text('notifications') }}</a
+                >
+              </li>
+              {% endif %}
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('settings') }}"
+                  >{{ get_text('settings') }}</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('about') }}"
+                  >{{ get_text('about') }}</a
+                >
+              </li>
+            </ul>
+            <ul class="navbar-nav">
+              {% if is_user %}
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('logout') }}"
+                  >{{ get_text('logout') }}</a
+                >
+              </li>
+              {% endif %}
+              <li class="nav-item">
+                <button
+                  type="button"
+                  class="btn btn-link nav-link"
+                  id="theme-toggle">
+                  <i class="fas fa-moon"></i> {{ get_text('theme') }}
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container mt-4">
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show">
+        {{ message }}
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"></button>
+      </div>
+      {% endfor %} {% endif %} {% endwith %} {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-dark text-light py-4 mt-5">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6">
+            <p>&copy; 2025 {{ get_text('footer_company') }}</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+
+    <script>
+      // Dark mode toggle
+      document
+        .getElementById("theme-toggle")
+        .addEventListener("click", function () {
+          document.body.classList.toggle("dark-theme");
+          const isDark = document.body.classList.contains("dark-theme");
+          localStorage.setItem("theme", isDark ? "dark" : "light");
+        });
+
+      // Check theme preference on load
+      if (localStorage.getItem("theme") === "dark") {
+        document.body.classList.add("dark-theme");
+      }
+    </script>
+  </body>
+</html>

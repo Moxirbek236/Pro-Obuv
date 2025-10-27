@@ -228,7 +228,7 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
       <button class="mobile-close-btn d-md-none" onclick="toggleMobileFilter()">
         <span>&times;</span>
       </button>
-      <h3 class="filter-title">Filter va qidiruv</h3>
+      <h3 class="filter-title">{{ _('menu.filter_and_search') }}</h3>
 
       <!-- Search -->
       <div class="filter-section">
@@ -394,62 +394,141 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
         <input
           id="menuSearchInput"
           type="search"
-          placeholder="Qidirish... (nom, tavsif)"
+          placeholder="{{ _('menu.search_placeholder') }}"
           class="filter-input" />
       </div>
 
       <!-- Category Filter -->
       <div class="filter-section">
-        <label for="filterCategory">Kategoriya</label>
+        <label for="filterCategory">{{ get_text('menu.category') }}</label>
         <select id="filterCategory" class="filter-select">
-          <option value="">Barcha turdagi</option>
-          <option value="specobuv">Спецобувь</option>
-          <option value="specodezhda">Спецодежда</option>
+          <option value="">{{ get_text('menu.all_products') }}</option>
+          <option value="specobuv">{{ _('menu.specobuv_category') }}</option>
+          <option value="specodezhda">{{ _('menu.specodezhda_category') }}</option>
         </select>
       </div>
 
       <!-- Sort Filter -->
       <div class="filter-section">
-        <label for="filterSort">Saralash</label>
+        <label for="filterSort">{{ _('menu.sort') }}</label>
         <select id="filterSort" class="filter-select">
-          <option value="">Standart</option>
-          <option value="popularity">Ommaboplik</option>
-          <option value="rating">Bahoga ko'ra</option>
-          <option value="name_asc">Nomi: A-Z</option>
-          <option value="name_desc">Nomi: Z-A</option>
+          <option value="">{{ _('menu.sort_default') }}</option>
+          <option value="popularity">{{ _('menu.sort_popularity') }}</option>
+          <option value="rating">{{ _('menu.sort_rating') }}</option>
+          <option value="name_asc">{{ _('menu.sort_name_asc') }}</option>
+          <option value="name_desc">{{ _('menu.sort_name_desc') }}</option>
         </select>
       </div>
 
       <!-- Size Filter -->
       <div class="filter-section">
-        <label for="filterSize">O'lcham</label>
+        <label for="filterSize">{{ _('menu.size') }}</label>
         <input
           id="filterSize"
           type="text"
-          placeholder="Masalan: 40"
+          placeholder="{{ _('menu.size_placeholder') }}"
           class="filter-input" />
       </div>
 
       <!-- Color Filter -->
       <div class="filter-section">
-        <label for="filterColor">Rang</label>
-        <input
-          id="filterColor"
-          type="text"
-          placeholder="Masalan: qora"
-          class="filter-input" />
+        <label for="filterColor">{{ _('menu.color') }}</label>
+          <select id="filterColor" class="filter-select color-select">
+          <option value="">{{ get_text('menu.all_products') }}</option>
+          <option value="black" data-color="#000000">{{ _('colors.black') }}</option>
+          <option value="white" data-color="#FFFFFF">{{ _('colors.white') }}</option>
+          <option value="brown" data-color="#8B4513">{{ _('colors.brown') }}</option>
+          <option value="gray" data-color="#808080">{{ _('colors.gray') }}</option>
+          <option value="blue" data-color="#0000FF">{{ _('colors.blue') }}</option>
+          <option value="red" data-color="#FF0000">{{ _('colors.red') }}</option>
+          <option value="green" data-color="#008000">{{ _('colors.green') }}</option>
+          <option value="yellow" data-color="#FFD700">{{ _('colors.yellow') }}</option>
+          <option value="orange" data-color="#FFA500">{{ _('colors.orange') }}</option>
+          <option value="purple" data-color="#800080">{{ _('colors.purple') }}</option>
+          <option value="beige" data-color="#F5F5DC">{{ _('colors.beige') }}</option>
+          <option value="navy" data-color="#000080">{{ _('colors.navy') }}</option>
+          <option value="khaki" data-color="#F0E68C">{{ _('colors.khaki') }}</option>
+        </select>
+        <style>
+          /* Color select styling */
+          .color-select {
+            padding-left: 35px !important; /* Space for color swatch */
+          }
+          
+          .color-select option {
+            padding-left: 35px;
+            position: relative;
+          }
+          
+          /* Custom styled select with color swatches */
+          .color-select-wrapper {
+            position: relative;
+            width: 100%;
+          }
+          
+          .color-swatch {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-right: 8px;
+            vertical-align: middle;
+            border: 1px solid rgba(0,0,0,0.1);
+          }
+          
+          /* Color preview for selected option */
+          .color-select-preview {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 1px solid rgba(0,0,0,0.1);
+            pointer-events: none;
+          }
+        </style>
+        <script>
+          document.addEventListener('DOMContentLoaded', function() {
+            const colorSelect = document.getElementById('filterColor');
+            if (!colorSelect) return;
+            
+            // Wrap select in a container
+            const wrapper = document.createElement('div');
+            wrapper.className = 'color-select-wrapper';
+            colorSelect.parentNode.insertBefore(wrapper, colorSelect);
+            wrapper.appendChild(colorSelect);
+            
+            // Add color preview element
+            const preview = document.createElement('div');
+            preview.className = 'color-select-preview';
+            wrapper.appendChild(preview);
+            
+            // Update color preview when selection changes
+            function updateColorPreview() {
+              const selected = colorSelect.options[colorSelect.selectedIndex];
+              const color = selected.getAttribute('data-color');
+              preview.style.backgroundColor = color || 'transparent';
+              preview.style.display = color ? 'block' : 'none';
+            }
+            
+            colorSelect.addEventListener('change', updateColorPreview);
+            updateColorPreview(); // Initial state
+          });
+        </script>
       </div>
 
       <!-- Clear Filters -->
       <button id="clearFiltersBtn" class="clear-btn">
-        Barchasini tozalash
+        {{ _('menu.clear_filters') }}
       </button>
 
       <!-- Links Section -->
       <div class="filter-links">
-        <a href="{{ url_for('about') }}" class="filter-link"> Biz haqimizda </a>
-        <a href="{{ url_for('contact') }}" class="filter-link"> Bog'lanish </a>
-        <a href="{{ url_for('index') }}" class="filter-link"> Bosh sahifa </a>
+        <a href="{{ url_for('about') }}" class="filter-link">{{ _('nav.about') }}</a>
+        <a href="{{ url_for('contact') }}" class="filter-link">{{ _('nav.contact') }}</a>
+        <a href="{{ url_for('index') }}" class="filter-link">{{ _('nav.home') }}</a>
       </div>
     </div>
 
@@ -521,7 +600,7 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
       aria-controls="filterSidebar"
       aria-expanded="false"
       onclick="toggleMobileFilter()">
-      Filterlar
+      {{ _('menu.mobile_filters') }}
     </button>
 
     <!-- Right Content Area -->
@@ -532,7 +611,7 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
 
       <!-- Spetsial'naya odezhda i obuv' -->
       <div class="menu-section" id="products-section">
-        <h2 class="section-title">Специальная одежда и обувь</h2>
+        <h2 class="section-title">{{ _('menu.section_title') }}</h2>
         <!-- Category buttons (also accessible from sidebar) -->
         <div class="filter-section category-buttons-wrapper">
           <div class="category-buttons">
@@ -540,27 +619,27 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
               class="category-btn active"
               data-cat="all"
               data-translate="all_categories">
-              Все товары
+              {{ get_text('menu.all_products') }}
             </button>
             <button
               class="category-btn"
               data-cat="specobuv"
               data-translate="specobuv_category">
-              Спецобувь
+              {{ _('menu.specobuv_category') }}
             </button>
             <button
               class="category-btn"
               data-cat="specodezhda"
               data-translate="specodezhda_category">
-              Спецодежда
+              {{ _('menu.specodezhda_category') }}
             </button>
           </div>
         </div>
         <!-- Breadcrumb Navigation for SEO -->
         <nav aria-label="breadcrumb" style="margin-bottom: 20px;">
           <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="/">Bosh sahifa</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Menu - Spetsobuv va Ish kiyimlari</li>
+            <li class="breadcrumb-item"><a href="/">{{ _('nav.home') }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ _('menu.breadcrumb') }}</li>
           </ol>
         </nav>
         
@@ -579,10 +658,10 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
                     {% if item.media %}
                       {% for m in item.media %}
                         {% set src = (m.media_url if (m.media_url is defined) else (m.image_url if (m.image_url is defined) else (m if m is string else ''))) %}
-                        <img src="{{ src or '/static/defoult.png' }}" alt="{{ item.name }}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.png'" />
+                        <img src="{{ src or '/static/defoult.png' }}" alt="{{ localized_field(item, 'name') or item.name }}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.png'" />
                       {% endfor %}
                     {% else %}
-                      <img src="{{ item.image_url or '/static/defoult.png' }}" alt="{{ item.name }}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.png'" />
+                      <img src="{{ item.image_url or '/static/defoult.png' }}" alt="{{ localized_field(item, 'name') or item.name }}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.png'" />
                     {% endif %}
                   </div>
                 </div>
@@ -602,7 +681,7 @@ do'koni | Safety.uz{% endblock %} {% block seo_meta %}
                 <a
                   href="{{ url_for('product_detail', item_id=item.id) }}"
                   onclick="event.stopPropagation();"
-                  >{{ item.name }}</a
+                  >{{ localized_field(item, 'name') or item.name }}</a
                 >
               </h3>
               <p class="card-category">{{ item.category or '' }}</p>

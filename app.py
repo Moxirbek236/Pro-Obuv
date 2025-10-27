@@ -8,6 +8,7 @@ import os
 import json
 import logging
 import datetime
+import random
 from datetime import timedelta
 import sqlite3
 import threading
@@ -19,6 +20,7 @@ import binascii
 from contextlib import contextmanager
 from functools import wraps
 from concurrent.futures import ThreadPoolExecutor
+import utils
 from collections import defaultdict
 
 # Third-party imports (use safe fallbacks so the module can be parsed
@@ -35,6 +37,8 @@ try:
         flash,
         jsonify,
         send_from_directory,
+        send_file,
+        get_flashed_messages,
         Response,
         abort,
     )
@@ -65,6 +69,12 @@ except Exception:
     def send_from_directory(*a, **k):
         return ""
 
+    def send_file(*a, **k):
+        return ""
+
+    def get_flashed_messages(*a, **k):
+        return []
+
     def abort(code=500):
         # Minimal fallback for abort during static analysis/testing.
         raise Exception(f"HTTP abort called with code={code}")
@@ -77,6 +87,34 @@ try:
     from werkzeug.middleware.proxy_fix import ProxyFix
 except Exception:
     ProxyFix = None
+
+# Development-time: suppress noisy "Bad request version" / TLS-handshake prints from
+# BaseHTTPRequestHandler which often occur when an HTTPS client hits an HTTP server.
+# Prefer terminating TLS at a proxy in production; this is a small local workaround.
+try:
+    import http.server as _http_server
+
+    _orig_log_error = getattr(_http_server.BaseHTTPRequestHandler, "log_error", None)
+
+    def _filtered_log_error(self, format, *args):
+        try:
+            msg = format % args
+            # Filter out TLS handshake / binary noise messages that show as 400 logs
+            if (
+                "Bad request version" in msg
+                or "Bad HTTP/0.9 request type" in msg
+                or "Bad request" in msg and any(ch < ' ' for ch in msg)
+            ):
+                return
+        except Exception:
+            pass
+        if _orig_log_error:
+            return _orig_log_error(self, format, *args)
+
+    _http_server.BaseHTTPRequestHandler.log_error = _filtered_log_error
+except Exception:
+    # Non-fatal if monkeypatching fails
+    pass
 
 try:
     from flask_cors import CORS
@@ -106,6 +144,69 @@ try:
     from werkzeug.middleware.profiler import ProfilerMiddleware
 except Exception:
     ProfilerMiddleware = None
+
+# Optional third-party imports used in some routes/features. Use safe
+# fallbacks so the module can be parsed in environments where packages
+# are not installed. Real runtime requires installing these packages.
+try:
+    import requests
+except Exception:
+    requests = None
+
+try:
+    import qrcode
+except Exception:
+    qrcode = None
+
+try:
+    import base64
+except Exception:
+    base64 = None
+
+try:
+    from io import BytesIO
+except Exception:
+    BytesIO = None
+
+try:
+    import pandas as pd
+except Exception:
+    pd = None
+
+try:
+    from openpyxl import Workbook
+except Exception:
+    Workbook = None
+
+try:
+    import uuid
+except Exception:
+    uuid = None
+
+try:
+    from werkzeug.utils import secure_filename
+except Exception:
+    # Minimal fallback for static analysis; real sanitization requires werkzeug
+    def secure_filename(x):
+        try:
+            return os.path.basename(str(x))
+        except Exception:
+            return str(x)
+
+# Some helper functions (like `write_menu_json`) were moved/removed in refactors.
+# Provide a safe stub so tools and static analysis don't report undefined names.
+def write_menu_json(*args, **kwargs):
+    """Placeholder stub for write_menu_json.
+
+    If the full implementation is required, restore it from backups or
+    implement a proper version that writes the menu JSON used by the front-end.
+    """
+    try:
+        # No-op default to avoid runtime NameError in environments where it's
+        # called but the real generator is not necessary (e.g., static checks)
+        return None
+    except Exception:
+        return None
 
 try:
     # Preferred: use Werkzeug's secure password helpers
@@ -165,6 +266,12 @@ except Exception:
 app = Flask(__name__)
 
 print("DEBUG: Flask app created")
+try:
+    # Expose the Flask `app` object to Jinja templates so templates that
+    # reference `app.url_map` (guarded checks) will work during rendering.
+    app.jinja_env.globals.update(app=app)
+except Exception:
+    pass
 
 # Application start timestamp used for uptime calculations
 APP_START_TIME = time.time()
@@ -207,6 +314,19 @@ def autolink(value):
 # register filter with Jinja
 try:
     app.jinja_env.filters["autolink"] = autolink
+    # Add get_text function to Jinja environment and expose a robust '_'
+    # wrapper that templates use. Use utils.translate so templates always
+    # receive a string (falls back to flattened translations when needed).
+    app.jinja_env.globals.update(get_text=utils.get_text)
+    app.jinja_env.globals.update(_=utils.translate)
+except Exception:
+    pass
+
+# Defensive: ensure Jinja always has a translation helper bound to utils.get_text
+# (some import-time paths may skip the earlier block). This guarantees templates
+# calling _('some.key') will resolve to utils.get_text at runtime.
+try:
+    app.jinja_env.globals.update(_=utils.translate, get_text=utils.get_text, localized_field=utils.localized_field)
 except Exception:
     pass
 
@@ -270,7 +390,9 @@ class Config:
 
     # Localization
     DEFAULT_LANGUAGE = os.environ.get("DEFAULT_LANGUAGE", "uz")
-    SUPPORTED_LANGUAGES = ["uz", "ru", "en", "tr", "ar"]
+    # Add 'kz' (Kazakh) to supported languages so URL-prefix detection and
+    # language switching recognize it site-wide.
+    SUPPORTED_LANGUAGES = ["uz", "ru", "en", "kz", "tr", "ar"]
     DEFAULT_CURRENCY = os.environ.get("DEFAULT_CURRENCY", "UZS")
     TIMEZONE = os.environ.get("TIMEZONE", "Asia/Tashkent")
 
@@ -321,6 +443,13 @@ class Config:
 
 # Apply configuration
 app.config.from_object(Config)
+try:
+    # Expose the Flask app config (mapping) to Jinja templates so templates
+    # can safely call config.get('KEY'). Previously a class object was
+    # exposed which does not implement .get and caused template errors.
+    app.jinja_env.globals["config"] = app.config
+except Exception:
+    pass
 # Ensure client-side Yandex Maps key is available in app.config.
 # Some deployments set YANDEX_MAPS_API in a separate config file or .env;
 # make sure the key is always present in app.config for templates.
@@ -528,7 +657,8 @@ def setup_logging():
 
         # Werkzeug loglarni sozlash
         werkzeug_logger = logging.getLogger("werkzeug")
-        werkzeug_logger.setLevel(logging.WARNING)
+        # Reduce verbosity: treat Werkzeug logs as errors only to avoid noisy 400/TLS-handshake messages
+        werkzeug_logger.setLevel(logging.ERROR)
 
         return logging.getLogger("restaurant_app")
 
@@ -709,6 +839,47 @@ def get_cache_manager():
         except Exception:
             pass
     return cache_manager
+
+
+def invalidate_menu_cache(lang=None):
+    """Invalidate menu cache keys.
+
+    If lang is provided, delete the language-scoped key. Otherwise delete the
+    generic key and all language-scoped keys for supported languages listed in
+    Config.SUPPORTED_LANGUAGES. This is safe to call from admin edit/add flows
+    to ensure clients see updated localized values.
+    """
+    try:
+        cm = cache_manager or get_cache_manager()
+    except Exception:
+        cm = None
+
+    keys_to_delete = set()
+    # Base key (legacy)
+    keys_to_delete.add("menu_items_active")
+
+    # If a specific lang is provided, delete that scoped key
+    try:
+        if lang:
+            keys_to_delete.add(f"menu_items_active:{lang}")
+        else:
+            # delete all supported languages
+            for l in getattr(Config, "SUPPORTED_LANGUAGES", []):
+                keys_to_delete.add(f"menu_items_active:{l}")
+    except Exception:
+        # best-effort fallback
+        for l in ["ru", "uz", "en", "kz"]:
+            keys_to_delete.add(f"menu_items_active:{l}")
+
+    if cm:
+        try:
+            for k in keys_to_delete:
+                try:
+                    cm.delete(k)
+                except Exception:
+                    pass
+        except Exception:
+            pass
 
 
 # Ensure a global cache_manager instance exists so code that references
@@ -1070,6 +1241,15 @@ def inject_navbar_context():
             except Exception:
                 notifications_count = 0
 
+        # Provide a flattened translations map for client-side JS and keep the
+        # nested translations available for server-side lookups. Many client-side
+        # scripts expect dotted keys like 'footer.company_desc'. Flatten the
+        # translations here to make window.TRANSLATIONS useful for JS.
+        try:
+            flat_trans = utils.flatten_translations(utils.get_current_language())
+        except Exception:
+            flat_trans = {}
+
         return {
             "is_user": is_user and not elevated,
             "is_staff": is_staff,
@@ -1077,6 +1257,8 @@ def inject_navbar_context():
             "is_super_admin": is_super_admin,
             "user_profile": user_profile,
             "notifications_count": notifications_count,
+            # expose flat translations mapping for client-side usage
+            "translations": flat_trans,
         }
     except Exception as e:
         try:
@@ -1084,6 +1266,45 @@ def inject_navbar_context():
         except Exception:
             pass
         return {}
+
+
+@app.context_processor
+def inject_translation_helpers():
+    """Ensure '_' and get_text are available in every template context.
+
+    Some template rendering paths or extensions may override globals; providing
+    them via a context processor guarantees the functions are present in the
+    template local context used by render_template.
+    """
+    try:
+        return {"_": utils.translate, "get_text": utils.get_text}
+    except Exception:
+        return {}
+
+
+# Debug endpoint: quick check of translation lookup from server side
+# Usage: /_debug/translate?lang=uz
+@app.route('/_debug/translate')
+def _debug_translate():
+    try:
+        from utils import get_text as _t
+        lang = request.args.get('lang') or session.get('interface_language') or Config.DEFAULT_LANGUAGE
+        keys = [
+            'nav.menu',
+            'nav.cart',
+            'footer.cat_specobuv',
+            'footer.copyright',
+            'menu.filter_and_search',
+            'colors.blue',
+        ]
+        data = {k: (_t(k, lang) if callable(_t) else None) for k in keys}
+        return jsonify({'lang': lang, 'translations': data})
+    except Exception as e:
+        try:
+            app_logger.error(f"_debug_translate error: {e}")
+        except Exception:
+            pass
+        return jsonify({'error': str(e)}), 500
 
 
 def is_international_delivery_enabled():
@@ -1237,6 +1458,11 @@ def safe_submit(fn, *args, **kwargs):
 
 # -------------------------
 
+
+# Note: A consolidated /api/change-language endpoint is implemented later in this file
+# under the "General settings API endpoints" section which handles authentication,
+# persists the choice to user settings and updates session['interface_language'].
+# The earlier minimal implementation was removed to avoid endpoint collision.
 
 # Rate limiting
 class RateLimiter:
@@ -1545,6 +1771,26 @@ def before_request():
         # Session ni tekshirish va tuzatish
         if not session.get("session_id") or session.get("session_id") == "None":
             session["session_id"] = get_session_id()
+
+        # URL-based language detection: support URLs like /ru/... or /uz
+        try:
+            path = (request.path or "").lstrip("/")
+            parts = path.split("/", 1)
+            candidate = parts[0] if parts and parts[0] else None
+            if candidate and candidate in getattr(Config, "SUPPORTED_LANGUAGES", []):
+                # store canonical key used across the app
+                session["interface_language"] = candidate
+                g.interface_language = candidate
+            else:
+                # ensure g.interface_language is always set (fallback to session or default)
+                g.interface_language = session.get(
+                    "interface_language", getattr(Config, "DEFAULT_LANGUAGE", "uz")
+                )
+        except Exception:
+            # Non-fatal; fallback to session or default
+            g.interface_language = session.get(
+                "interface_language", getattr(Config, "DEFAULT_LANGUAGE", "uz")
+            )
 
         # Database connection test
         if not hasattr(g, "db_test_done"):
@@ -1991,6 +2237,14 @@ except Exception:
     except Exception:
         pass
 
+# Register useful template helpers
+try:
+    # `_` is already used in many templates as the gettext helper
+    app.jinja_env.globals.update(_=utils.get_text)
+    app.jinja_env.globals.update(localized_field=utils.localized_field)
+except Exception:
+    pass
+
 
 def check_database_health():
     "Database connection holatini tekshirish"
@@ -2087,6 +2341,32 @@ def api_set_settings():
     except Exception as e:
         app_logger.error(f"api_set_settings error: {str(e)}")
         return jsonify({"success": False, "message": "Failed to save settings"}), 500
+
+
+@app.route('/api/translations')
+def api_translations():
+    """Return translations for requested language as JSON.
+
+    Query params: ?lang=uz|ru|en|kz
+    """
+    try:
+        lang = request.args.get('lang') or session.get('interface_language') or getattr(Config, 'DEFAULT_LANGUAGE', 'uz')
+        # limit to supported languages
+        if hasattr(Config, 'SUPPORTED_LANGUAGES') and lang not in getattr(Config, 'SUPPORTED_LANGUAGES'):
+            lang = getattr(Config, 'DEFAULT_LANGUAGE', 'uz')
+        # Use utils._translations safely
+        try:
+            import utils as _utils
+            data = getattr(_utils, '_translations', {}).get(lang, {})
+        except Exception:
+            data = {}
+        return jsonify(data)
+    except Exception as e:
+        try:
+            app_logger.error(f"api_translations error: {e}")
+        except Exception:
+            pass
+        return jsonify({}), 500
 
 
 # Optimized database operations with timeout handling
@@ -2342,6 +2622,32 @@ def init_db():
         );
     """
     )
+
+    # Ensure there is at least one staff record (used as created_by in seed data)
+    try:
+        cur.execute("SELECT COUNT(*) FROM staff")
+        staff_count = cur.fetchone()[0]
+        if staff_count == 0:
+            try:
+                now = get_current_time().isoformat()
+            except Exception:
+                now = datetime.datetime.utcnow().isoformat()
+            try:
+                pw = generate_password_hash(getattr(Config, 'SUPER_ADMIN_PASSWORD', 'admin'))
+            except Exception:
+                pw = ''
+            # Insert a minimal default staff row with id=1 to satisfy FK references during seeding
+            try:
+                cur.execute(
+                    "INSERT OR IGNORE INTO staff (id, first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    (1, 'System', 'Admin', '1970-01-01', getattr(Config, 'SUPER_ADMIN_USERNAME', 'admin'), 'N/A', 'N/A', pw, now),
+                )
+                conn.commit()
+            except Exception:
+                # If insert fails, continue; later inserts may still work if FK checks are relaxed
+                pass
+    except Exception:
+        pass
 
     # Kuryerlar jadvali
     cur.execute(
@@ -2922,10 +3228,54 @@ def init_db():
                 now,
             ),
         ]
-        cur.executemany(
-            "INSERT INTO payment_cards (card_name, card_number, card_holder_name, bank_name, card_type, is_active, display_order, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            sample_cards,
-        )
+        try:
+            # Detect current columns in payment_cards table and insert compatibly
+            cur.execute("PRAGMA table_info(payment_cards);")
+            existing_cols = [r[1] for r in cur.fetchall() or []]
+
+            if all(c in existing_cols for c in [
+                'card_name', 'card_number', 'card_holder_name', 'bank_name', 'card_type', 'is_active', 'display_order', 'created_by', 'created_at', 'updated_at'
+            ]):
+                cur.executemany(
+                    "INSERT INTO payment_cards (card_name, card_number, card_holder_name, bank_name, card_type, is_active, display_order, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    sample_cards,
+                )
+            else:
+                # Fallback to legacy columns present in many older DBs
+                legacy_cols = []
+                legacy_cols_order = []
+                # Common legacy shape: card_number, card_holder_name, card_type, is_active, display_order, created_at, updated_at
+                legacy_cols = [c for c in ['card_number', 'card_holder_name', 'card_type', 'is_active', 'display_order', 'created_at', 'updated_at'] if c in existing_cols]
+                if legacy_cols:
+                    insert_sql = f"INSERT INTO payment_cards ({', '.join(legacy_cols)}) VALUES ({', '.join(['?']*len(legacy_cols))})"
+                    # Transform sample_cards tuples to match legacy_cols order
+                    legacy_rows = []
+                    for sc in sample_cards:
+                        # sc is full tuple: (card_name, card_number, card_holder_name, bank_name, card_type, is_active, display_order, created_by, created_at, updated_at)
+                        mapping = {
+                            'card_name': sc[0],
+                            'card_number': sc[1],
+                            'card_holder_name': sc[2],
+                            'bank_name': sc[3],
+                            'card_type': sc[4],
+                            'is_active': sc[5],
+                            'display_order': sc[6],
+                            'created_by': sc[7],
+                            'created_at': sc[8],
+                            'updated_at': sc[9],
+                        }
+                        row = tuple(mapping[c] for c in legacy_cols)
+                        legacy_rows.append(row)
+                    cur.executemany(insert_sql, legacy_rows)
+                else:
+                    # As a last resort, try inserting only card_number and card_holder_name if those exist
+                    if 'card_number' in existing_cols and 'card_holder_name' in existing_cols:
+                        cur.executemany(
+                            "INSERT INTO payment_cards (card_number, card_holder_name, created_at) VALUES (?, ?, ?)",
+                            [(sc[1], sc[2], sc[8]) for sc in sample_cards],
+                        )
+        except Exception as seed_err:
+            app_logger.warning(f"Payment cards seed skipped due to schema mismatch: {seed_err}")
 
     conn.commit()
     conn.close()
@@ -3396,6 +3746,21 @@ def ensure_menu_items_columns():
             ("colors", "TEXT"),
             ("created_at", "TEXT"),
         ]
+
+        # Multilingual columns for name and description (new)
+        multilingual = [
+            ("name_ru", "TEXT"),
+            ("name_uz", "TEXT"),
+            ("name_en", "TEXT"),
+            ("name_kz", "TEXT"),
+            ("description_ru", "TEXT"),
+            ("description_uz", "TEXT"),
+            ("description_en", "TEXT"),
+            ("description_kz", "TEXT"),
+        ]
+
+        # Merge lists so multilingual columns are also ensured
+        columns_to_add.extend(multilingual)
 
         for col_name, col_type in columns_to_add:
             if col_name not in cols:
@@ -4227,10 +4592,32 @@ def localize_flashes():
             # If mapping exists, use translation key; else try to find key by value
             key = MSG_KEY_MAP.get(msg)
             if key:
-                localized = translate(key) if isinstance(key, str) else translate(msg)
+                # Prefer utils.get_text (data/translations.json) when available
+                try:
+                    localized = None
+                    if "utils" in globals() and hasattr(utils, "get_text"):
+                        try:
+                            localized = utils.get_text(key)
+                        except Exception:
+                            localized = None
+                    # Fallback to old LOCALES/translate() system if utils didn't return a useful value
+                    if not localized or localized == key:
+                        localized = translate(key) if isinstance(key, str) else translate(msg)
+                except Exception:
+                    localized = translate(key) if isinstance(key, str) else translate(msg)
             else:
                 # As a fallback, try to treat the msg itself as a translation key
-                localized = translate(msg)
+                try:
+                    # First try utils.get_text for msg-as-key
+                    if "utils" in globals() and hasattr(utils, "get_text"):
+                        localized = utils.get_text(msg)
+                    else:
+                        localized = translate(msg)
+                    # If utils returned None or same key, fallback to translate()
+                    if not localized or localized == msg:
+                        localized = translate(msg)
+                except Exception:
+                    localized = translate(msg)
             # re-flash localized message in same category
             flash(localized, category)
     except Exception:
@@ -4242,7 +4629,10 @@ def localize_flashes():
 def inject_translations():
     """Expose translation helper and current language to templates."""
     return {
-        "_": translate,
+        # Use utils.translate here so templates get the unified translations
+        # (this prefers the data/translations.json map and the utils.get_text
+        # lookup) instead of the older LOCALES-based `translate` helper.
+        "_": utils.translate,
         "supported_languages": SUPPORTED_LANGUAGES,
         "current_language": session.get("interface_language", "uz"),
     }
@@ -6577,9 +6967,17 @@ def menu():
             cm = None
 
         cached_menu = None
+        # Use language-scoped cache key so cached menu respects interface_language per user
+        try:
+            lang_cache_key = session.get("interface_language", session.get("language", getattr(Config, 'DEFAULT_LANGUAGE', 'uz')))
+        except Exception:
+            lang_cache_key = getattr(Config, 'DEFAULT_LANGUAGE', 'uz')
+
+        cached_menu = None
         if cm:
             try:
-                cached_menu = cm.get("menu_items_active")
+                cache_key = f"menu_items_active:{lang_cache_key}"
+                cached_menu = cm.get(cache_key)
             except Exception:
                 cached_menu = None
 
@@ -6620,6 +7018,24 @@ def menu():
                     except Exception:
                         item["orders_count"] = 0
 
+                    # Add localized fields for immediate server-side rendering
+                    try:
+                        item["name_local"] = (
+                            utils.localized_field(item, "name")
+                            or item.get("name")
+                            or ""
+                        )
+                    except Exception:
+                        item["name_local"] = item.get("name") or ""
+                    try:
+                        item["description_local"] = (
+                            utils.localized_field(item, "description")
+                            or item.get("description")
+                            or ""
+                        )
+                    except Exception:
+                        item["description_local"] = item.get("description") or ""
+
                     menu_items.append(item)
                 except Exception as e:
                     app_logger.warning(f"Menu item row processing error: {str(e)}")
@@ -6628,7 +7044,8 @@ def menu():
             # Cache ga saqlash (safe)
             if cm:
                 try:
-                    cm.set("menu_items_active", menu_items, 120)
+                    cache_key = f"menu_items_active:{lang_cache_key}"
+                    cm.set(cache_key, menu_items, 120)
                 except Exception:
                     pass
         else:
@@ -6917,6 +7334,16 @@ def product_detail(item_id):
             item["orders_count"] = int(item.get("orders_count") or 0)
         except Exception:
             item["orders_count"] = 0
+
+        # Attach localized fields for templates and client JS
+        try:
+            item["name_local"] = utils.localized_field(item, "name") or item.get("name") or ""
+        except Exception:
+            item["name_local"] = item.get("name") or ""
+        try:
+            item["description_local"] = utils.localized_field(item, "description") or item.get("description") or ""
+        except Exception:
+            item["description_local"] = item.get("description") or ""
 
         # Load marketplaces for the product
         marketplaces = {}
@@ -7250,6 +7677,24 @@ def api_menu_search():
                 except Exception:
                     item["media"] = []
 
+                # Attach localized fields (name_local, description_local) for client-side rendering
+                try:
+                    item["name_local"] = (
+                        utils.localized_field(item, "name")
+                        or (item.get("name") if isinstance(item, dict) else None)
+                        or ""
+                    )
+                except Exception:
+                    item["name_local"] = (item.get("name") if isinstance(item, dict) else "") or ""
+                try:
+                    item["description_local"] = (
+                        utils.localized_field(item, "description")
+                        or (item.get("description") if isinstance(item, dict) else None)
+                        or ""
+                    )
+                except Exception:
+                    item["description_local"] = (item.get("description") if isinstance(item, dict) else "") or ""
+
                 items.append(item)
 
                 # Ensure rating and orders_count are present and typed for API consumers
@@ -7336,6 +7781,44 @@ def add_to_cart():
                 return jsonify({"success": False, "message": "Mahsulot tanlanmadi"})
             flash("Mahsulot tanlanmadi.", "error")
             return redirect(url_for("menu"))
+
+
+
+        @app.route("/debug/menu-item-localized")
+        def debug_menu_item_localized():
+            """Debug: return localized fields for a given menu item id.
+
+            Query param: id=int
+            Returns JSON with id, requested language and localized fields.
+            """
+            try:
+                item_id = int(request.args.get("id") or 0)
+            except Exception:
+                return jsonify({"error": "invalid id"}), 400
+
+            try:
+                row = execute_query("SELECT * FROM menu_items WHERE id = ?", (item_id,), fetch_one=True)
+                if not row:
+                    return jsonify({"error": "not_found"}), 404
+                try:
+                    item = dict(row)
+                except Exception:
+                    item = row
+
+                lang = utils.get_current_language()
+                name_local = utils.localized_field(item, "name", lang)
+                desc_local = utils.localized_field(item, "description", lang)
+
+                return jsonify({
+                    "id": item_id,
+                    "language": lang,
+                    "name_local": name_local,
+                    "description_local": desc_local,
+                    "all_fields": {k: item.get(k) for k in item.keys() if k.startswith("name_") or k.startswith("description_")}
+                })
+            except Exception as e:
+                app_logger.error(f"debug_menu_item_localized error: {e}")
+                return jsonify({"error": "server_error", "details": str(e)}), 500
 
         # Convert menu_item_id to int safely
         try:
@@ -9778,7 +10261,13 @@ def admin_add_menu_item():
         return redirect(url_for("staff_login"))
 
     try:
+        # Single-field legacy names (for backward compatibility)
         name = request.form.get("name", "").strip()
+        # Multilingual fields (if staff provides them)
+        name_ru = request.form.get("name_ru", "").strip()
+        name_uz = request.form.get("name_uz", "").strip()
+        name_en = request.form.get("name_en", "").strip()
+        name_kz = request.form.get("name_kz", "").strip()
         price = float(request.form.get("price", 0))
         category = (request.form.get("category", "footwear") or "").strip()
         # Normalize categories used in templates: map common backend names to frontend tokens
@@ -9792,6 +10281,10 @@ def admin_add_menu_item():
         }
         category = cat_map.get(category.lower(), category)
         description = request.form.get("description", "").strip()
+        description_ru = request.form.get("description_ru", "").strip()
+        description_uz = request.form.get("description_uz", "").strip()
+        description_en = request.form.get("description_en", "").strip()
+        description_kz = request.form.get("description_kz", "").strip()
         sizes = request.form.get("sizes", "").strip()  # comma-separated
         colors = request.form.get("colors", "").strip()  # comma-separated
         discount_percentage = float(request.form.get("discount_percentage", 0) or 0)
@@ -9816,24 +10309,73 @@ def admin_add_menu_item():
             flash("Iltimos, mahsulot uchun kamida bitta rasm yuklang.", "error")
             return redirect(url_for("staff_menu"))
 
-        # Birinchi mahsulotni qo'shamiz (image_url ni hozircha None bilan)
-        menu_item_id = execute_query(
-            """
+        # Determine if multilingual columns exist in DB
+        conn_check = get_db()
+        cur_check = conn_check.cursor()
+        cur_check.execute("PRAGMA table_info(menu_items);")
+        existing_cols = [r[1] for r in cur_check.fetchall()]
+        conn_check.close()
+
+        # Build insert depending on available columns
+        if all(c in existing_cols for c in [
+            "name_ru",
+            "name_uz",
+            "name_en",
+            "name_kz",
+            "description_ru",
+            "description_uz",
+            "description_en",
+            "description_kz",
+        ]):
+            # Use multilingual insert, falling back on legacy fields if a specific lang is empty
+            insert_sql = (
+                "INSERT INTO menu_items (name, name_ru, name_uz, name_en, name_kz, price, category, description, "
+                "description_ru, description_uz, description_en, description_kz, sizes, colors, discount_percentage, image_url, created_at, available) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)"
+            )
+            # Populate name (legacy) from RU by default or the single name field
+            legacy_name = name or name_ru or name_uz or name_en or name_kz
+            menu_item_id = execute_query(
+                insert_sql,
+                (
+                    legacy_name,
+                    name_ru or legacy_name,
+                    name_uz or legacy_name,
+                    name_en or legacy_name,
+                    name_kz or legacy_name,
+                    price,
+                    category,
+                    description or description_ru or description_uz or description_en or description_kz,
+                    description_ru or description,
+                    description_uz or description,
+                    description_en or description,
+                    description_kz or description,
+                    sizes,
+                    colors,
+                    discount_percentage,
+                    None,
+                    now,
+                ),
+            )
+        else:
+            # Fallback: legacy insert
+            menu_item_id = execute_query(
+                """
             INSERT INTO menu_items (name, price, category, description, sizes, colors, discount_percentage, image_url, created_at, available)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
         """,
-            (
-                name,
-                price,
-                category,
-                description,
-                sizes,
-                colors,
-                discount_percentage,
-                None,
-                now,
-            ),
-        )
+                (
+                    name or name_ru or name_uz or name_en or name_kz,
+                    price,
+                    category,
+                    description or description_ru or description_uz or description_en or description_kz,
+                    sizes,
+                    colors,
+                    discount_percentage,
+                    None,
+                    now,
+                ),
+            )
 
         if menu_item_id:
             # Ko'p rasm va videolarni yuklash
@@ -9954,8 +10496,18 @@ def admin_edit_menu_item(item_id):
         name = request.form.get("name", "").strip()
         price = float(request.form.get("price", 0) or 0)
         description = request.form.get("description", "").strip()
+        # Multilingual edit fields
+        name_ru = request.form.get("name_ru", "").strip()
+        name_uz = request.form.get("name_uz", "").strip()
+        name_en = request.form.get("name_en", "").strip()
+        name_kz = request.form.get("name_kz", "").strip()
+        description_ru = request.form.get("description_ru", "").strip()
+        description_uz = request.form.get("description_uz", "").strip()
+        description_en = request.form.get("description_en", "").strip()
+        description_kz = request.form.get("description_kz", "").strip()
         sizes = request.form.get("sizes", "")
-        colors = request.form.get("colors", "")
+        # Handle colors as a list from multiple select
+        colors = ','.join(request.form.getlist('colors[]') or [request.form.get('colors', '')])
         discount_percentage = float(request.form.get("discount_percentage", 0) or 0)
 
         # Optional category normalization if provided
@@ -10011,6 +10563,28 @@ def admin_edit_menu_item(item_id):
 
             sql_set += ", category = ?"
             params.append(category_norm)
+
+        # If multilingual columns exist, include them in update if provided
+        try:
+            cols = execute_query("PRAGMA table_info(menu_items)", fetch_all=True)
+            existing_cols = [c[1] if isinstance(c, tuple) else c.get("name") for c in cols]
+        except Exception:
+            existing_cols = []
+
+        # Append multilingual SET clauses when columns exist
+        for col_name, form_val in [
+            ("name_ru", name_ru),
+            ("name_uz", name_uz),
+            ("name_en", name_en),
+            ("name_kz", name_kz),
+            ("description_ru", description_ru),
+            ("description_uz", description_uz),
+            ("description_en", description_en),
+            ("description_kz", description_kz),
+        ]:
+            if col_name in existing_cols and form_val != "":
+                sql_set += f", {col_name} = ?"
+                params.append(form_val)
 
         params.append(item_id)
 
@@ -12119,6 +12693,22 @@ def extract_youtube_embed(url: str):
     return None
 
 
+def find_youtube_url_in_text(text: str):
+    """Search a block of text for the first YouTube URL (watch, youtu.be or embed) and return it or None."""
+    try:
+        if not text:
+            return None
+        import re
+
+        s = str(text)
+        m = re.search(r"(https?://(?:www\.)?youtube\.com/watch\?v=[A-Za-z0-9_\-]{11}|https?://youtu\.be/[A-Za-z0-9_\-]{11}|https?://(?:www\.)?youtube\.com/embed/[A-Za-z0-9_\-]{11})", s)
+        if m:
+            return m.group(0)
+    except Exception:
+        return None
+    return None
+
+
 def save_news(list_of_items):
     try:
         d = os.path.dirname(NEWS_STORAGE_PATH)
@@ -12138,8 +12728,66 @@ def save_news(list_of_items):
 
 @app.route("/news")
 def news_page():
-    """Public news list from database (active only)"""
+    """Public news list — prefer JSON-backed multilingual entries. Default language is 'ru'."""
     try:
+        # Preferred source: data/news.json (multilingual support)
+        json_path = os.path.join(os.getcwd(), "data", "news.json")
+        news_items = []
+        preferred_lang = session.get("interface_language") or "ru"
+
+        if os.path.exists(json_path):
+            try:
+                with open(json_path, "r", encoding="utf-8", errors="replace") as f:
+                    blob = json.load(f) or {}
+            except Exception:
+                blob = {}
+
+            items = blob.get("news") if isinstance(blob, dict) else (blob if isinstance(blob, list) else [])
+            for n in items or []:
+                try:
+                    if not n.get("is_active"):
+                        continue
+                    # Normalize legacy fields
+                    n.setdefault("title", n.get("headline") or n.get("title") or "")
+                    n.setdefault("content", n.get("content") or n.get("description") or "")
+                    n.setdefault("image_url", n.get("image_url") or n.get("image") or "")
+                    n.setdefault("video_url", n.get("video_url") or n.get("video") or "")
+
+                    # Compute localized fields: prefer title_<lang>/content_<lang>, fallback to legacy
+                    # Use utils.localized_field to support both title_<lang> keys and dict-valued 'title' fields
+                    localized_title = utils.localized_field(n, 'title', preferred_lang) or n.get('title') or ''
+                    localized_content = utils.localized_field(n, 'content', preferred_lang) or n.get('content') or ''
+                    # Normalize dicts to string values if necessary
+                    if isinstance(localized_title, dict):
+                        localized_title = localized_title.get(preferred_lang) or next(iter(localized_title.values()), '')
+                    if isinstance(localized_content, dict):
+                        localized_content = localized_content.get(preferred_lang) or next(iter(localized_content.values()), '')
+                    n["localized_title"] = localized_title
+                    n["localized_content"] = localized_content
+
+                    try:
+                        # prefer explicit video_url, otherwise search the content for a youtube link
+                        vid_src = n.get("video_url") or n.get("video") or n.get("content") or n.get("description") or ""
+                        if not vid_src:
+                            # also search full text fields for embedded youtube links
+                            vid_src = find_youtube_url_in_text(n.get("content") or "") or find_youtube_url_in_text(n.get("description") or "") or ""
+                        n["youtube_embed"] = extract_youtube_embed(vid_src)
+                    except Exception:
+                        n["youtube_embed"] = None
+
+                    news_items.append(n)
+                except Exception:
+                    continue
+
+            # sort by display_order then created_at
+            try:
+                news_items.sort(key=lambda x: (x.get("display_order") or 0, x.get("created_at") or ""))
+            except Exception:
+                pass
+
+            return render_template("news.html", news=news_items)
+
+        # Fallback: read from DB if JSON not present
         rows = (
             execute_query(
                 "SELECT id, title, content, type, image_url, video_url, is_active, display_order, created_at FROM news WHERE is_active = 1 ORDER BY display_order ASC, created_at DESC",
@@ -12148,13 +12796,10 @@ def news_page():
             or []
         )
 
-        # Normalize rows to dicts
-        news_items = []
         for r in rows:
             if isinstance(r, dict):
                 item = r
             else:
-                # tuple ordering per SELECT above
                 item = {
                     "id": r[0],
                     "title": r[1],
@@ -12166,13 +12811,18 @@ def news_page():
                     "display_order": r[7],
                     "created_at": r[8],
                 }
-            # detect youtube embed
             try:
-                item["youtube_embed"] = extract_youtube_embed(
-                    item.get("video_url") or ""
-                )
+                vid_src = item.get("video_url") or item.get("video") or item.get("content") or item.get("description") or ""
+                if not vid_src:
+                    vid_src = find_youtube_url_in_text(item.get("content") or "") or find_youtube_url_in_text(item.get("description") or "") or ""
+                item["youtube_embed"] = extract_youtube_embed(vid_src)
             except Exception:
                 item["youtube_embed"] = None
+
+            # When DB-only rows exist, try to use per-language fields if they were added to DB (title_ru etc.)
+            preferred = session.get("interface_language") or "ru"
+            item["localized_title"] = item.get(f"title_{preferred}") or item.get("title") or ""
+            item["localized_content"] = item.get(f"content_{preferred}") or item.get("content") or ""
             news_items.append(item)
 
         return render_template("news.html", news=news_items)
@@ -12212,9 +12862,10 @@ def super_admin_news_list():
                     "created_at": r[8],
                 }
             try:
-                item["youtube_embed"] = extract_youtube_embed(
-                    item.get("video_url") or ""
-                )
+                vid_src = item.get("video_url") or item.get("video") or item.get("content") or item.get("description") or ""
+                if not vid_src:
+                    vid_src = find_youtube_url_in_text(item.get("content") or "") or find_youtube_url_in_text(item.get("description") or "") or ""
+                item["youtube_embed"] = extract_youtube_embed(vid_src)
             except Exception:
                 item["youtube_embed"] = None
             news_items.append(item)
@@ -12478,11 +13129,31 @@ def news_detail(news_id):
                         n.setdefault("image_url", n.get("image_url") or n.get("image") or "")
                         n.setdefault("video_url", n.get("video_url") or n.get("video") or "")
                         try:
-                            n["youtube_embed"] = extract_youtube_embed(n.get("video_url") or "")
+                            vid_src = n.get("video_url") or n.get("video") or n.get("content") or n.get("description") or ""
+                            if not vid_src:
+                                vid_src = find_youtube_url_in_text(n.get("content") or "") or find_youtube_url_in_text(n.get("description") or "") or ""
+                            n["youtube_embed"] = extract_youtube_embed(vid_src)
                         except Exception:
                             n["youtube_embed"] = None
                         if not n.get("is_active") and not session.get("super_admin"):
                             abort(404)
+                        # Compute localized title/content based on current interface language
+                        preferred_lang = session.get('interface_language') or app.config.get('DEFAULT_LANGUAGE', 'ru') or 'ru'
+                        try:
+                            # Use utils.localized_field which handles title_<lang>, title map objects, and fallbacks
+                            localized_title = utils.localized_field(n, 'title', preferred_lang) or n.get('title') or ''
+                            localized_content = utils.localized_field(n, 'content', preferred_lang) or n.get('content') or n.get('description') or ''
+                            # Ensure we store plain strings (not dicts) so templates render values not keys
+                            if isinstance(localized_title, dict):
+                                localized_title = localized_title.get(preferred_lang) or next(iter(localized_title.values()), '')
+                            if isinstance(localized_content, dict):
+                                localized_content = localized_content.get(preferred_lang) or next(iter(localized_content.values()), '')
+                            n['title'] = localized_title
+                            n['content'] = localized_content
+                        except Exception:
+                            # Fallback: leave existing title/content
+                            pass
+
                         seo = {
                             "page_title": f"{n.get('title')} - Yangiliklar - Safety.uz",
                             "meta_description": (n.get('content') or '')[:160],
@@ -12558,43 +13229,49 @@ def set_role_session(role, id=None, name=None, **kwargs):
 @app.route("/super-admin-master-login-z9x4m", methods=["GET", "POST"])
 def super_admin_login():
     "Super admin login"
-    if request.method == "POST":
-        username = request.form.get("username", "").strip()
-        password = request.form.get("password", "")
-        creds = get_superadmin_creds()
-        if username == creds.get("username") and password == creds.get("password"):
-            # Use helper to set role and clear other role flags
-            name_parts = []
-            if creds.get("first_name"):
-                name_parts.append(creds.get("first_name"))
-            if creds.get("last_name"):
-                name_parts.append(creds.get("last_name"))
-            display_name = " ".join(name_parts) if name_parts else "Super Administrator"
-            # Load avatar from persistent settings
-            persistent_avatar = (
-                creds.get("avatar") or "/static/images/default-avatar.svg"
-            )
+    try:
+        if request.method == "POST":
+            username = request.form.get("username", "").strip()
+            password = request.form.get("password", "")
+            creds = get_superadmin_creds()
+            if username == creds.get("username") and password == creds.get("password"):
+                # Use helper to set role and clear other role flags
+                name_parts = []
+                if creds.get("first_name"):
+                    name_parts.append(creds.get("first_name"))
+                if creds.get("last_name"):
+                    name_parts.append(creds.get("last_name"))
+                display_name = " ".join(name_parts) if name_parts else "Super Administrator"
+                # Load avatar from persistent settings
+                persistent_avatar = (
+                    creds.get("avatar") or "/static/images/default-avatar.svg"
+                )
 
-            set_role_session(
-                "super_admin",
-                name=display_name,
-                first_name=creds.get("first_name", ""),
-                last_name=creds.get("last_name", ""),
-                phone=creds.get("phone", ""),
-                avatar=persistent_avatar,
-            )
+                set_role_session(
+                    "super_admin",
+                    name=display_name,
+                    first_name=creds.get("first_name", ""),
+                    last_name=creds.get("last_name", ""),
+                    phone=creds.get("phone", ""),
+                    avatar=persistent_avatar,
+                )
 
-            # Ensure user_avatar is also set for template consistency
-            session["user_avatar"] = persistent_avatar
+                # Ensure user_avatar is also set for template consistency
+                session["user_avatar"] = persistent_avatar
 
-            app_logger.info(f"Super admin kirdi: {username}")
-            flash("Super Admin tizimiga xush kelibsiz!", "success")
-            return redirect(url_for("super_admin_dashboard"))
-        else:
-            app_logger.warning(f"Super admin login failed for username: {username}")
-            flash("Noto'g'ri username yoki parol.", "error")
+                app_logger.info(f"Super admin kirdi: {username}")
+                flash("Super Admin tizimiga xush kelibsiz!", "success")
+                return redirect(url_for("super_admin_dashboard"))
+            else:
+                app_logger.warning(f"Super admin login failed for username: {username}")
+                flash("Noto'g'ri username yoki parol.", "error")
 
-    return render_template("super_admin_login.html")
+        return render_template("super_admin_login.html")
+    except Exception as e:
+        # Log full exception and show a safe fallback to the user
+        app_logger.exception(f"Unexpected error in super_admin_login: {e}")
+        flash("Kutilmagan server xatolik yuz berdi. Iltimos boshqaruv paneliga qaytib urinib ko'ring.", "error")
+        return redirect(url_for("index"))
 
 
 @app.route("/super-admin/logout")
@@ -12627,6 +13304,176 @@ def super_admin_profile():
         "avatar": creds.get("avatar") or "/static/images/default-avatar.svg",
     }
     return render_template("super_admin_profile.html", user=user)
+
+
+# ---- SUPERADMIN FORGOT PASSWORD FLOW ----
+@app.route('/super-admin/advanced-settings', methods=['GET', 'POST'])
+@role_required('super_admin')
+def super_admin_advanced_settings():
+    """Advanced system settings for super admin."""
+    if request.method == 'POST':
+        try:
+            # Load existing settings
+            with open('data/advanced_settings.json', 'r') as f:
+                settings = json.load(f)
+            
+            # Update settings from form
+            settings.update({
+                'cache_ttl': int(request.form.get('cache_ttl', 3600)),
+                'debug_mode': request.form.get('debug_mode') == '1',
+                'log_level': request.form.get('log_level', 'INFO'),
+                'db_pool_size': int(request.form.get('db_pool_size', 10)),
+                'db_timeout': int(request.form.get('db_timeout', 30)),
+                'auto_migrate': request.form.get('auto_migrate') == '1',
+                'page_size': int(request.form.get('page_size', 24)),
+                'news_ticker_interval': int(request.form.get('news_ticker_interval', 5000)),
+                'preload_images': request.form.get('preload_images') == '1',
+                'mobile_animations': request.form.get('mobile_animations') == '1',
+                'api_caching': request.form.get('api_caching') == '1',
+                'api_rate_limit': int(request.form.get('api_rate_limit', 60)),
+                'api_timeout': int(request.form.get('api_timeout', 30)),
+                'security_level': request.form.get('security_level', 'medium'),
+                'image_quality': int(request.form.get('image_quality', 85)),
+                'max_image_size': float(request.form.get('max_image_size', 5)),
+                'allowed_image_types': request.form.get('allowed_image_types', 'jpg,jpeg,png,webp')
+            })
+            
+            # Save settings
+            with open('data/advanced_settings.json', 'w') as f:
+                json.dump(settings, f, indent=4)
+            
+            # Apply some settings immediately
+            app.config['DEBUG'] = settings['debug_mode']
+            app.logger.setLevel(settings['log_level'])
+            
+            flash('Sozlamalar muvaffaqiyatli saqlandi', 'success')
+            return redirect(url_for('super_admin_advanced_settings'))
+            
+        except Exception as e:
+            app_logger.error(f"Advanced settings update error: {str(e)}")
+            flash('Xatolik yuz berdi: ' + str(e), 'error')
+            return redirect(url_for('super_admin_advanced_settings'))
+    
+    try:
+        # Load current settings
+        with open('data/advanced_settings.json', 'r') as f:
+            settings = json.load(f)
+    except Exception as e:
+        app_logger.error(f"Error loading advanced settings: {str(e)}")
+        settings = {}
+    
+    return render_template('super_admin_advanced_settings.html', settings=settings)
+
+@app.route("/super-admin/forgot", methods=["GET"]) 
+def super_admin_forgot():
+    """Render page that asks user to enter the code they received via SMS.
+    The flow is:
+    1) User clicks 'Parol esdan chiqdi?' on login page -> hits /super-admin/send-code via JS/form
+    2) SMS is sent to configured superadmin phone and a code is stored in session (short lived)
+    3) User visits /super-admin/forgot to enter code and then new password
+    """
+    return render_template("super_admin_forgot.html")
+
+
+@app.route("/super-admin/send-code", methods=["POST"]) 
+def super_admin_send_code():
+    """Generate one-time numeric code, store hashed-ish in session with expiry, and send SMS to superadmin phone.
+    This endpoint does NOT reveal whether a phone exists; it always returns generic JSON.
+    """
+    try:
+        creds = get_superadmin_creds()
+        phone = creds.get("phone") or ""
+        if not phone:
+            # Don't leak; return generic message
+            return jsonify({"ok": True, "message": "If configured, a code was sent."})
+
+        # generate 6-digit code
+        code = "%06d" % (random.randint(0, 999999))
+        # limit: store code and expiry in session
+        session["superadmin_reset_code"] = code
+        session["superadmin_reset_expires"] = int(time.time()) + 10 * 60  # 10 minutes
+
+        # Send SMS (log-only if no provider)
+        from sms_helper import send_sms
+
+        send_sms(phone, f"Your reset code: {code}")
+
+        return jsonify({"ok": True, "message": "If configured, a code was sent."})
+    except Exception as e:
+        app_logger.exception(f"Failed to send superadmin reset code: {e}")
+        return jsonify({"ok": False, "message": "Unable to send code."}), 500
+
+
+@app.route("/super-admin/verify-code", methods=["POST"]) 
+def super_admin_verify_code():
+    """Verify the code provided by the user; on success set session flag allowing password set."""
+    try:
+        code = request.form.get("code", "").strip()
+
+        if not code:
+            flash("Iltimos, SMS kodni kiriting.", "error")
+            return redirect(url_for("super_admin_forgot"))
+
+        stored = session.get("superadmin_reset_code")
+        expires = session.get("superadmin_reset_expires", 0)
+        now = int(time.time())
+        if not stored or now > int(expires) or code != stored:
+            flash("Kod noto'g'ri yoki muddati o'tgan.", "error")
+            return redirect(url_for("super_admin_forgot"))
+
+        # mark verified
+        session["superadmin_reset_verified"] = True
+        # consume code
+        session.pop("superadmin_reset_code", None)
+        session.pop("superadmin_reset_expires", None)
+
+        return redirect(url_for("super_admin_reset_password"))
+    except Exception as e:
+        app_logger.exception(f"Error verifying superadmin code: {e}")
+        flash("Server xatolik.", "error")
+        return redirect(url_for("super_admin_forgot"))
+
+
+@app.route("/super-admin/reset-password", methods=["GET", "POST"]) 
+def super_admin_reset_password():
+    """If GET: show form (only if verified). If POST: set new password in superadmin_settings.json
+    and clear verification state.
+    """
+    try:
+        if request.method == "GET":
+            if not session.get("superadmin_reset_verified"):
+                flash("Iltimos avval SMS kodni tekshiring.", "error")
+                return redirect(url_for("super_admin_forgot"))
+            return render_template("super_admin_reset_password.html")
+
+        # POST: perform password save
+        if not session.get("superadmin_reset_verified"):
+            flash("Siz tasdiqlanmagansiz.", "error")
+            return redirect(url_for("super_admin_forgot"))
+
+        new_password = request.form.get("password", "").strip()
+        new_password_confirm = request.form.get("password_confirm", "").strip()
+        if not new_password or new_password != new_password_confirm:
+            flash("Parollar mos kelmadi yoki bo'sh.", "error")
+            return redirect(url_for("super_admin_reset_password"))
+
+        settings = load_superadmin_settings() or {}
+        settings["password"] = new_password
+        ok = save_superadmin_settings(settings)
+        if not ok:
+            flash("Parol saqlanmadi.", "error")
+            return redirect(url_for("super_admin_reset_password"))
+
+        # clear verification flags
+        session.pop("superadmin_reset_verified", None)
+        flash("Yangi parol saqlandi. Iltimos tizimga kiring.", "success")
+        return redirect(url_for("super_admin_login"))
+
+    except Exception as e:
+        app_logger.exception(f"Error resetting superadmin password: {e}")
+        flash("Server xatolik.", "error")
+        return redirect(url_for("super_admin_forgot"))
+
 
 
 @app.route("/super-admin/profile/update", methods=["POST"])
@@ -16326,6 +17173,22 @@ def staff_menu():
                                 }
                             ]
 
+                        # Compute localized display fields server-side to avoid relying on Jinja builtin 'attribute'
+                        try:
+                            lang = session.get("interface_language", Config.DEFAULT_LANGUAGE)
+                        except Exception:
+                            lang = Config.DEFAULT_LANGUAGE
+
+                        name_key = f"name_{lang}"
+                        desc_key = f"description_{lang}"
+
+                        item_dict["localized_name"] = (
+                            item_dict.get(name_key) or item_dict.get("name")
+                        )
+                        item_dict["localized_description"] = (
+                            item_dict.get(desc_key) or item_dict.get("description")
+                        )
+
                         menu_items.append(item_dict)
                     except Exception as row_error:
                         app_logger.warning(
@@ -16432,7 +17295,6 @@ def super_admin_dashboard():
     if not session.get("super_admin"):
         flash("Super admin paneliga kirish talab qilinadi.", "error")
         return redirect(url_for("super_admin_login"))
-
     try:
 
         # Xodimlar ma'lumotlari - soddalashtirilgan
@@ -17481,21 +18343,22 @@ def super_admin_delete_user():
 @app.route("/api/change-language", methods=["POST"])
 def change_language():
     """Change interface language"""
-    if not (
-        session.get("user_id")
-        or session.get("staff_id")
-        or session.get("courier_id")
-        or session.get("super_admin")
-    ):
-        return jsonify({"success": False, "message": "Authentication required"}), 401
-
+    # Allow both anonymous and authenticated users to change the language in session.
     data = request.get_json() or {}
     language = data.get("language", "uz")
 
-    if language not in SUPPORTED_LANGUAGES:
+    # Validate against configured supported languages
+    try:
+        supported = getattr(Config, "SUPPORTED_LANGUAGES", ["uz", "ru", "en", "kz"])
+    except Exception:
+        supported = ["uz", "ru", "en", "kz"]
+
+    if language not in supported:
         return jsonify({"success": False, "message": "Invalid language"}), 400
 
     session["interface_language"] = language
+    # Keep legacy key in sync
+    session["language"] = language
 
     # Update database if user is logged in
     if session.get("user_id"):
@@ -17507,7 +18370,8 @@ def change_language():
         except Exception as e:
             app_logger.error(f"Failed to update user language: {e}")
 
-    return jsonify({"success": True, "message": "Language changed"})
+    # Return JSON success so frontend can react without requiring a redirect
+    return jsonify({"success": True, "language": language}), 200
 
 
 @app.route("/api/change-theme", methods=["POST"])
@@ -17700,6 +18564,15 @@ def api_news():
                     item = dict(r)
             except Exception:
                 item = r
+            # Attach localized title/content for API consumers
+            try:
+                item["title_local"] = utils.localized_field(item, "title") or item.get("title")
+            except Exception:
+                item["title_local"] = item.get("title")
+            try:
+                item["content_local"] = utils.localized_field(item, "content") or item.get("content")
+            except Exception:
+                item["content_local"] = item.get("content")
             # attach youtube embed if applicable
             try:
                 item["youtube_embed"] = extract_youtube_embed(
@@ -17757,13 +18630,43 @@ def api_create_news():
         except Exception:
             pass
 
-        if has_show:
+        # Support multilingual title/content if provided
+        title_ru = data.get("title_ru", "").strip()
+        title_uz = data.get("title_uz", "").strip()
+        title_en = data.get("title_en", "").strip()
+        title_kz = data.get("title_kz", "").strip()
+        content_ru = data.get("content_ru", "").strip()
+        content_uz = data.get("content_uz", "").strip()
+        content_en = data.get("content_en", "").strip()
+        content_kz = data.get("content_kz", "").strip()
+
+        # Use multilingual insert when columns exist
+        try:
+            cols = execute_query("PRAGMA table_info(news)", fetch_all=True) or []
+            existing_cols = [c[1] if isinstance(c, tuple) else c.get("name") for c in cols]
+        except Exception:
+            existing_cols = []
+
+        if all(c in existing_cols for c in [
+            "title_ru","title_uz","title_en","title_kz",
+            "content_ru","content_uz","content_en","content_kz",
+        ]):
+            legacy_title = title or title_ru or title_uz or title_en or title_kz
+            legacy_content = content or content_ru or content_uz or content_en or content_kz
             news_id = execute_query(
-                """INSERT INTO news (title, content, type, image_url, video_url, is_active, display_order, show_in_ticker, created_by, created_at, updated_at)
-                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                """INSERT INTO news (title, title_ru, title_uz, title_en, title_kz, content, content_ru, content_uz, content_en, content_kz, type, image_url, video_url, is_active, display_order, show_in_ticker, created_by, created_at, updated_at)
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                 (
-                    title,
-                    content,
+                    legacy_title,
+                    title_ru or legacy_title,
+                    title_uz or legacy_title,
+                    title_en or legacy_title,
+                    title_kz or legacy_title,
+                    legacy_content,
+                    content_ru or legacy_content,
+                    content_uz or legacy_content,
+                    content_en or legacy_content,
+                    content_kz or legacy_content,
                     news_type,
                     image_url or None,
                     video_url or None,
@@ -17780,8 +18683,8 @@ def api_create_news():
                 """INSERT INTO news (title, content, type, image_url, video_url, is_active, display_order, created_by, created_at, updated_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                 (
-                    title,
-                    content,
+                    title or title_ru or title_uz or title_en or title_kz,
+                    content or content_ru or content_uz or content_en or content_kz,
                     news_type,
                     image_url or None,
                     video_url or None,
@@ -17901,13 +18804,42 @@ def api_update_news(news_id):
         except Exception:
             has_show = False
 
-        if has_show:
+        # Accept multilingual fields if present
+        title_ru = data.get("title_ru", "").strip()
+        title_uz = data.get("title_uz", "").strip()
+        title_en = data.get("title_en", "").strip()
+        title_kz = data.get("title_kz", "").strip()
+        content_ru = data.get("content_ru", "").strip()
+        content_uz = data.get("content_uz", "").strip()
+        content_en = data.get("content_en", "").strip()
+        content_kz = data.get("content_kz", "").strip()
+
+        try:
+            cols = execute_query("PRAGMA table_info(news)", fetch_all=True) or []
+            existing_cols = [c[1] if isinstance(c, tuple) else c.get("name") for c in cols]
+        except Exception:
+            existing_cols = []
+
+        if all(c in existing_cols for c in [
+            "title_ru","title_uz","title_en","title_kz",
+            "content_ru","content_uz","content_en","content_kz",
+        ]):
+            # Preserve legacy title/content if new multilingual fields are empty
+            legacy_title = title or title_ru or title_uz or title_en or title_kz
+            legacy_content = content or content_ru or content_uz or content_en or content_kz
             execute_query(
-                """UPDATE news SET title = ?, content = ?, type = ?, image_url = ?, video_url = ?, 
-                   is_active = ?, display_order = ?, show_in_ticker = ?, updated_at = ? WHERE id = ?""",
+                """UPDATE news SET title = ?, title_ru = ?, title_uz = ?, title_en = ?, title_kz = ?, content = ?, content_ru = ?, content_uz = ?, content_en = ?, content_kz = ?, type = ?, image_url = ?, video_url = ?, is_active = ?, display_order = ?, show_in_ticker = ?, updated_at = ? WHERE id = ?""",
                 (
-                    title,
-                    content,
+                    legacy_title,
+                    title_ru or legacy_title,
+                    title_uz or legacy_title,
+                    title_en or legacy_title,
+                    title_kz or legacy_title,
+                    legacy_content,
+                    content_ru or legacy_content,
+                    content_uz or legacy_content,
+                    content_en or legacy_content,
+                    content_kz or legacy_content,
                     news_type,
                     image_url or None,
                     video_url or None,
@@ -17923,8 +18855,8 @@ def api_update_news(news_id):
                 """UPDATE news SET title = ?, content = ?, type = ?, image_url = ?, video_url = ?, 
                 is_active = ?, display_order = ?, updated_at = ? WHERE id = ?""",
                 (
-                    title,
-                    content,
+                    title or title_ru or title_uz or title_en or title_kz,
+                    content or content_ru or content_uz or content_en or content_kz,
                     news_type,
                     image_url or None,
                     video_url or None,

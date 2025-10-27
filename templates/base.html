@@ -8,12 +8,20 @@
   <title>Safety / Pro Obuv - {% block title %}Spetsobuv Do'koni{% endblock %}</title>
   {# SEO meta block: page templates intended for customers may override this block to inject page-specific meta tags #}
   {% block seo_meta %}
-  <meta name="description" content="Pro Obuv - sifatli oyoq kiyim va aksessuarlar. Spetsobuv, botinki, krasofka, ish kiyimlari, spetsodejda. Onlayn buyurtma qilish, tez yetkazib berish va qulay to'lov imkoniyatlari.">
-  <meta name="keywords" content="pro obuv, obuv, safety, pro guard, guard, oyoq kiyim, buyurtma, yetkazib berish, spetsobuv, botinki, krasofka, ish kiyimlari, spetsodejda, himoya poyabzal, спетсообув, спецодежда, обувь, кроссовки, ботинки, safety shoes, work boots, professional footwear, protective shoes">
+  {# Per-page SEO: templates may pass `seo_data` (object/dict) with page_title, meta_description, meta_keywords. Fallback to site-wide translations. #}
+  <meta name="description" content="{{ (seo_data.meta_description if (seo_data and seo_data.meta_description) else _('meta_description')) }}">
+  <meta name="keywords" content="{{ (seo_data.meta_keywords if (seo_data and seo_data.meta_keywords) else _('meta_keywords')) }}">
   <meta property="og:site_name" content="Pro Obuv">
-  <meta property="og:title" content="Pro Obuv - Do'kon">
-  <meta property="og:description" content="Pro Obuv - sifatli oyoq kiyim va aksessuarlar">
+  <meta property="og:title" content="{{ (seo_data.page_title if (seo_data and seo_data.page_title) else _('home_title')) }}">
+  <meta property="og:description" content="{{ (seo_data.meta_description if (seo_data and seo_data.meta_description) else _('meta_description')) }}">
   <meta name="twitter:card" content="summary_large_image">
+  {# Provide simple hreflang alternates for the four supported languages. These use a ?lang= query param — adjust if your routing uses a different param/session key. #}
+  {% set _current_path = (request.path or '/') %}
+  {% set _base = request.url_root.rstrip('/') %}
+  <link rel="alternate" hreflang="uz" href="{{ _base }}{{ _current_path }}?lang=uz" />
+  <link rel="alternate" hreflang="ru" href="{{ _base }}{{ _current_path }}?lang=ru" />
+  <link rel="alternate" hreflang="en" href="{{ _base }}{{ _current_path }}?lang=en" />
+  <link rel="alternate" hreflang="kz" href="{{ _base }}{{ _current_path }}?lang=kz" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -72,6 +80,9 @@
 
   <!-- Menu & product card improved styles (load late to override legacy rules) -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/menu-cards.css') }}" />
+
+    <!-- Modern site-wide design system (overrides & auth/footer styles) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/site-modern.css') }}" />
 
     <!-- Global sozlamalar uchun CSS -->
     <style>
@@ -586,9 +597,9 @@
               }
               // If this is a non-super-admin viewer, try to fetch notifications and populate preview
               const preview = document.getElementById("notifyListPreview");
-              if (preview) {
+                if (preview) {
                 preview.innerHTML =
-                  '<div class="text-muted">Yuklanmoqda...</div>';
+                  '<div class="text-muted">{{ _("messages.loading") }}</div>';
                 try {
                   const res = await fetch("/api/notifications");
                   const data = await safeJson(res);
@@ -596,7 +607,7 @@
                   preview.innerHTML = "";
                   if (list.length === 0)
                     preview.innerHTML =
-                      '<div class="text-muted">Hech qanday bildirishnoma yo\'q</div>';
+                      '<div class="text-muted">{{ _("messages.no_notifications") }}</div>';
                   list.slice(0, 10).forEach((n) => {
                     const item = document.createElement("div");
                     item.className = "mb-2";
@@ -609,7 +620,7 @@
                   });
                 } catch (e) {
                   preview.innerHTML =
-                    '<div class="text-muted">Bildirishnomalar yuklanmadi</div>';
+                    '<div class="text-muted">{{ _("messages.notifications_load_error") }}</div>';
                 }
               }
 
@@ -727,6 +738,31 @@
     data-dark-mode="true"
     data-font-size="{{ session.get('font_size', 'medium') }}"
     data-language="{{ session.get('interface_language', 'uz') }}">
+    <script>
+      // Expose server-side translations for the current language to JS
+      window.TRANSLATIONS = {{ translations|tojson|safe if translations is defined else '{}' }};
+    </script>
+    <script>
+      // Language switch helper used by navbar buttons. It saves choice to session via
+      // /api/set-settings and reloads the page so server-rendered labels update.
+      function changeLanguage(lang) {
+        try {
+          fetch('/api/set-settings', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : ''
+            },
+            body: JSON.stringify({ language: lang })
+          }).catch(function(){}).finally(function(){
+            // reload to apply the new server-side language
+            try { window.location.reload(); } catch(e){ /* ignore */ }
+          });
+        } catch (e) {
+          try { window.location.reload(); } catch (err) { /* ignore */ }
+        }
+      }
+    </script>
     <!-- Set dark theme as default in JavaScript -->
     <script>
       document.documentElement.classList.add("dark-theme");
@@ -855,6 +891,14 @@
           </ul>
 
           <ul class="navbar-nav">
+            <li class="nav-item d-flex align-items-center me-2">
+              <div class="btn-group btn-group-sm" role="group" aria-label="Language selector">
+                <button type="button" class="btn btn-sm btn-outline-light {% if session.get('interface_language','uz') == 'uz' %}active{% endif %}" onclick="changeLanguage('uz')">UZ</button>
+                <button type="button" class="btn btn-sm btn-outline-light {% if session.get('interface_language','uz') == 'ru' %}active{% endif %}" onclick="changeLanguage('ru')">RU</button>
+                <button type="button" class="btn btn-sm btn-outline-light {% if session.get('interface_language','uz') == 'en' %}active{% endif %}" onclick="changeLanguage('en')">EN</button>
+                <button type="button" class="btn btn-sm btn-outline-light {% if session.get('interface_language','uz') == 'kz' %}active{% endif %}" onclick="changeLanguage('kz')">KZ</button>
+              </div>
+            </li>
             <li class="nav-item">
               <span class="navbar-text text-white me-3"
                 >Super Administrator</span
@@ -895,21 +939,21 @@
                 <li><hr class="dropdown-divider" /></li>
                 <li>
                   <a class="dropdown-item" href="{{ url_for('profile') }}"
-                    >Profil ma'lumotlari</a
+                    >{{ _('nav.profile_info') }}</a
                   >
                 </li>
                 <li>
                   <a
                     class="dropdown-item"
                     href="{{ url_for('profile_settings') }}"
-                    >Profil sozlamalari</a
+                    >{{ _('nav.profile_settings') }}</a
                   >
                 </li>
                 <li>
                   <a
                     class="dropdown-item"
                     href="{{ url_for('general_settings') }}"
-                    >Umumi sozlamalar</a
+                    >{{ _('settings.title') }}</a
                   >
                 </li>
                 <li><hr class="dropdown-divider" /></li>
@@ -917,7 +961,7 @@
                   <a
                     class="dropdown-item"
                     href="{{ url_for('super_admin_logout') }}"
-                    >Chiqish</a
+                    >{{ _('nav.logout') }}</a
                   >
                 </li>
               </ul>
@@ -938,7 +982,7 @@
       ">
       <div class="container-fluid">
         <a class="navbar-brand" href="{{ url_for('staff_dashboard') }}"
-          >Xodim Panel</a
+          >{{ _('nav.staff_panel') }}</a
         >
 
         <button
@@ -953,17 +997,17 @@
           <ul class="navbar-nav me-auto">
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('staff_dashboard') }}"
-                >Dashboard</a
+                >{{ _('nav.dashboard') }}</a
               >
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('staff_menu') }}"
-                >Menyu boshqaruvi</a
+                >{{ _('nav.staff_menu') }}</a
               >
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('staff_employees') }}"
-                >Xodimlar ro'yxati</a
+                >{{ _('nav.staff_list') }}</a
               >
             </li>
             <li class="nav-item">
@@ -977,6 +1021,14 @@
           </ul>
 
           <ul class="navbar-nav">
+            <li class="nav-item d-flex align-items-center me-2">
+              <div class="btn-group btn-group-sm" role="group" aria-label="Language selector">
+                <button type="button" class="btn btn-sm btn-outline-light {% if session.get('interface_language','uz') == 'uz' %}active{% endif %}" onclick="changeLanguage('uz')">UZ</button>
+                <button type="button" class="btn btn-sm btn-outline-light {% if session.get('interface_language','uz') == 'ru' %}active{% endif %}" onclick="changeLanguage('ru')">RU</button>
+                <button type="button" class="btn btn-sm btn-outline-light {% if session.get('interface_language','uz') == 'en' %}active{% endif %}" onclick="changeLanguage('en')">EN</button>
+                <button type="button" class="btn btn-sm btn-outline-light {% if session.get('interface_language','uz') == 'kz' %}active{% endif %}" onclick="changeLanguage('kz')">KZ</button>
+              </div>
+            </li>
             <li class="nav-item">
               <span class="navbar-text text-white me-3"
                 >{{ session.get('staff_name', 'Xodim') }}</span
@@ -1017,7 +1069,7 @@
                 <li><hr class="dropdown-divider" /></li>
                 <li>
                   <a class="dropdown-item" href="{{ url_for('profile') }}"
-                    >Profil ma'lumotlari</a
+                    >{{ _('nav.profile_info') }}</a
                   >
                 </li>
                 <li>
@@ -1037,7 +1089,7 @@
                 <li><hr class="dropdown-divider" /></li>
                 <li>
                   <a class="dropdown-item" href="{{ url_for('staff_logout') }}"
-                    >Chiqish</a
+                    >{{ _('nav.logout') }}</a
                   >
                 </li>
               </ul>
@@ -1101,7 +1153,7 @@
               <button
                 type="button"
                 class="btn btn-sm btn-outline-light nav-notify"
-                title="Bildirishnomalar"
+                title="{{ _('notifications') }}"
                 aria-controls="notifyModal"
                 style="position: relative">
                 <span
@@ -1116,6 +1168,14 @@
                   >0</span
                 >
               </button>
+            </li>
+            <li class="nav-item d-flex align-items-center me-2">
+              <div class="btn-group btn-group-sm" role="group" aria-label="Language selector">
+                <button type="button" class="btn btn-sm btn-outline-light {% if session.get('interface_language','uz') == 'uz' %}active{% endif %}" onclick="changeLanguage('uz')">UZ</button>
+                <button type="button" class="btn btn-sm btn-outline-light {% if session.get('interface_language','uz') == 'ru' %}active{% endif %}" onclick="changeLanguage('ru')">RU</button>
+                <button type="button" class="btn btn-sm btn-outline-light {% if session.get('interface_language','uz') == 'en' %}active{% endif %}" onclick="changeLanguage('en')">EN</button>
+                <button type="button" class="btn btn-sm btn-outline-light {% if session.get('interface_language','uz') == 'kz' %}active{% endif %}" onclick="changeLanguage('kz')">KZ</button>
+              </div>
             </li>
             <li class="nav-item dropdown">
               <a
@@ -1152,7 +1212,7 @@
                 <li><hr class="dropdown-divider" /></li>
                 <li>
                   <a class="dropdown-item" href="{{ url_for('profile') }}"
-                    >Profil ma'lumotlari</a
+                    >{{ _('nav.profile_info') }}</a
                   >
                 </li>
                 <li>
@@ -1174,7 +1234,7 @@
                   <a
                     class="dropdown-item"
                     href="{{ url_for('courier_logout') }}"
-                    >Chiqish</a
+                    >{{ _('nav.logout') }}</a
                   >
                 </li>
               </ul>
@@ -1239,7 +1299,7 @@
               <button
                 type="button"
                 class="btn btn-sm btn-outline-light nav-notify"
-                title="Bildirishnomalar"
+                title="{{ _('notifications') }}"
                 aria-controls="notifyModal"
                 style="margin-left: 6px; position: relative">
                 
@@ -1308,7 +1368,7 @@
                 <li><hr class="dropdown-divider" /></li>
                 <li>
                   <a class="dropdown-item" href="{{ url_for('logout') }}"
-                    >Chiqish</a
+                    >{{ _('nav.logout') }}</a
                   >
                 </li>
               </ul>
@@ -1322,7 +1382,7 @@
     {% else %}
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="container-fluid">
-  <a class="navbar-brand" href="{{ url_for('index') }}">Pro_Obuv</a>
+  <a class="navbar-brand" href="{{ url_for('index') }}">{{ _('nav.brand') }}</a>
 
         <button
           class="navbar-toggler"
@@ -1335,22 +1395,21 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav me-auto">
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('menu') }}">Menyu</a>
+              <a class="nav-link" href="{{ url_for('menu') }}">{{ _('nav.menu') }}</a>
             </li>
             {# Mobile/guest cart nav removed per request #}
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('contact') }}">Aloqa</a>
+              <a class="nav-link" href="{{ url_for('contact') }}">{{ _('nav.contact') }}</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('about') }}">Savollar</a>
+              <a class="nav-link" href="{{ url_for('about') }}">{{ _('nav.about') }}</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('news_page') }}">Yangiliklar</a>
+              <a class="nav-link" href="{{ url_for('news_page') }}">{{ _('nav.news') }}</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('downloads') }}"
-                >Yuklamalar</a
-              >
+                >{{ _('nav.downloads') }}</a
             </li>
             <!-- 360 Room removed -->
           </ul>
@@ -1358,19 +1417,17 @@
           <ul class="navbar-nav">
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('login_page') }}"
-                >Kirish</a
-              >
+                >{{ _('nav.login') }}</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('register') }}"
-                >Ro'yxatdan o'tish</a
-              >
+                >{{ _('nav.register') }}</a>
             </li>
             <li class="nav-item d-flex align-items-center">
               <button
                 type="button"
                 class="btn btn-sm btn-outline-light nav-notify"
-                title="Bildirishnomalar"
+                title="{{ _('notifications') }}"
                 aria-controls="notifyModal"
                 style="margin-left: 6px; position: relative">
                 <span
@@ -1411,366 +1468,155 @@
       {% endif %} {% endwith %} {% block content %}{% endblock %}
     </main>
 
-    <footer class="footer mt-5">
-      <!-- Yangiliklar Tasmasi - Footer ichida -->
+    <footer class="site-footer" role="contentinfo" aria-label="{{ _('footer.site_footer') if _('footer.site_footer') else 'Site footer' }}">
+      <!-- News ticker sits at the top of footer for visibility -->
       <div class="news-ticker-container">
         <div class="news-ticker-wrapper">
-          <!-- Chap navigation tugmasi -->
-          
-          
-          <!-- Superadmin: quick add to news ticker (only appears in footer ticker) -->
           {% if session.get('super_admin') %}
-          <button
-            class="btn btn-sm btn-outline-light ms-2"
-            id="addTickerNewsBtn"
-            title="Yangilik qo'shish (tasma)"
-            onclick="openTickerNewsModal()"
-          >
-            Yangilik (Tasma)
-          </button>
+          <button class="btn btn-sm btn-outline-light ms-2" id="addTickerNewsBtn" title="{{ _('ticker.add_news') if _('ticker.add_news') else 'Add news' }}" onclick="openTickerNewsModal()">{{ _('ticker.add_news') if _('ticker.add_news') else 'Yangilik (Tasma)' }}</button>
           {% endif %}
 
-          <button
-            class="news-nav-btn news-nav-prev"
-            id="newsPrevBtn"
-            title="Oldingi yangilik"
-            aria-label="Oldingi yangilik"
-            onclick="prevNews()"
-          >
-            <span>‹</span>
-          </button>
+          <button class="news-nav-btn news-nav-prev" id="newsPrevBtn" title="{{ _('ticker.prev') if _('ticker.prev') else 'Previous' }}" aria-label="{{ _('ticker.prev') if _('ticker.prev') else 'Previous' }}" onclick="prevNews()"><span>‹</span></button>
 
-          <div class="news-ticker" id="newsTicker">
+          <div class="news-ticker" id="newsTicker" aria-hidden="false">
             <div class="news-ticker-viewport">
               <div class="news-ticker-content" id="newsTickerContent">
-                    <!-- Yangiliklar JavaScript orqali yuklanadi -->
-                    <div class="news-item news">Sahifa yuklanmoqda...</div>
-                  </div>
+                <div class="news-item news">{{ _('messages.loading') }}</div>
+              </div>
+            </div>
+          </div>
+
+          <button class="news-nav-btn news-nav-next" id="newsNextBtn" title="{{ _('ticker.next') if _('ticker.next') else 'Next' }}" onclick="nextNews()"><span>›</span></button>
+        </div>
+      </div>
+
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-col footer-brand">
+            <h6>{{ _('nav.brand') }}</h6>
+            <p class="mb-3">{{ _('footer.company_desc') }}</p>
+            <div class="social-row" aria-hidden="false">
+              <!-- YouTube -->
+              <a href="https://www.youtube.com/" target="_blank" class="social-icon-btn youtube" aria-label="YouTube" title="YouTube">
+                <img src="{{ url_for('static', filename='icons/youtube.svg') }}" alt="YouTube" width="24" height="24">
+              </a>
+
+              <!-- Instagram -->
+              <a href="https://www.instagram.com/proguarduz/" target="_blank" class="social-icon-btn instagram" aria-label="Instagram" title="Instagram">
+                <img src="{{ url_for('static', filename='icons/instagram.svg') }}" alt="Instagram" width="24" height="24">
+              </a>
+
+              <!-- Facebook -->
+              <a href="https://www.facebook.com/aklashoes/" target="_blank" class="social-icon-btn facebook" aria-label="Facebook" title="Facebook">
+                <img src="{{ url_for('static', filename='icons/facebook.svg') }}" alt="Facebook" width="24" height="24">
+              </a>
+
+              <!-- Telegram channel -->
+              <a href="https://t.me/specobuv" target="_blank" class="social-icon-btn telegram" aria-label="Telegram channel" title="Telegram channel">
+                <img src="{{ url_for('static', filename='icons/telegram.svg') }}" alt="Telegram" width="24" height="24">
+              </a>
+
+              <!-- Phone -->
+              <a href="tel:{{ get_text('footer.phone_href') }}" class="social-icon-btn phone" aria-label="Phone" title="Call us">
+                <img src="{{ url_for('static', filename='icons/phone.png') }}" alt="Phone" width="24" height="24">
+              </a>
+
+              <!-- Gmail / Email -->
+              <a href="mailto:premiumsafety@mail.ru" class="social-icon-btn email" aria-label="Email" title="Email">
+                <img src="{{ url_for('static', filename='icons/gmail.png') }}" alt="Email" width="24" height="24">
+              </a>
+
+              <!-- Google Maps -->
+              <a href="https://maps.app.goo.gl/Ezg462SRmBYLxfUY6" target="_blank" class="social-icon-btn maps" aria-label="Google Maps" title="Map">
+                <img src="{{ url_for('static', filename='icons/maps.png') }}" alt="Map" width="24" height="24">
+              </a>
+
+              <!-- Threads -->
+              <a href="https://www.threads.net/" target="_blank" class="social-icon-btn threads" aria-label="Threads" title="Threads">
+                <img src="{{ url_for('static', filename='icons/threads.svg') }}" alt="Threads" width="24" height="24">
+              </a>
+
+              <!-- OLX -->
+              <a href="https://www.olx.uz/" target="_blank" class="social-icon-btn olx" aria-label="OLX" title="OLX">
+                <img src="{{ url_for('static', filename='icons/olx.svg') }}" alt="OLX" width="24" height="24">
+              </a>
+
+              <!-- Uzum (market) -->
+              <a href="https://uzum.uz/" target="_blank" class="social-icon-btn uzum" aria-label="Uzum" title="Uzum">
+                <img src="{{ url_for('static', filename='icons/uzum.png') }}" alt="Uzum" width="24" height="24">
+              </a>
+
+              <!-- Yandex Market -->
+              <a href="https://market.yandex.ru/" target="_blank" class="social-icon-btn yandex" aria-label="Yandex Market" title="Yandex Market">
+                <img src="{{ url_for('static', filename='icons/yandex.svg') }}" alt="Yandex Market" width="24" height="24">
+              </a>
+            </div>
+            <!-- Newsletter signup (non-blocking, posts to /subscribe endpoint if available) -->
+            <form class="newsletter-form mt-3" action="{{ url_for('subscribe') if (url_for and 'subscribe' in (app.url_map._rules_by_endpoint or {})) else '#' }}" method="post" onsubmit="return handleNewsletter(event)">
+              <label for="newsletter-email" class="visually-hidden">{{ _('footer.newsletter_label') if _('footer.newsletter_label') else 'Subscribe to newsletter' }}</label>
+              <div class="input-group">
+                <input id="newsletter-email" name="email" type="email" class="form-control" placeholder="{{ _('footer.newsletter_placeholder') if _('footer.newsletter_placeholder') else 'Your email' }}" aria-label="{{ _('footer.newsletter_label') if _('footer.newsletter_label') else 'Email' }}" required />
+                <button type="submit" class="btn btn-warning">{{ _('footer.subscribe') if _('footer.subscribe') else 'Subscribe' }}</button>
+              </div>
+              <div class="newsletter-feedback mt-2" role="status" aria-live="polite" style="display:none"></div>
+            </form>
+          </div>
+
+          <div class="footer-col footer-links">
+            <div class="footer-section">
+              <button class="footer-section-toggle d-md-none" aria-expanded="false" aria-controls="links-content">{{ _('nav.quick_links') }}</button>
+              <h6 class="d-none d-md-block">{{ _('nav.quick_links') }}</h6>
+              <div id="links-content" class="footer-section-content">
+                <ul>
+                  <li><a href="{{ url_for('index') }}">{{ _('nav.home') }}</a></li>
+                  <li><a href="{{ url_for('menu') }}">{{ _('nav.menu') }}</a></li>
+                  <li><a href="{{ url_for('about') }}">{{ _('nav.about') }}</a></li>
+                  <li><a href="{{ url_for('contact') }}">{{ _('nav.contact') }}</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="footer-col footer-contact">
+            <div class="footer-section">
+              <button class="footer-section-toggle d-md-none" aria-expanded="false" aria-controls="contact-content">{{ _('footer.contact_info') }}</button>
+              <h6 class="d-none d-md-block">{{ _('footer.contact_info') }}</h6>
+              <div id="contact-content" class="footer-section-content">
+                <ul>
+                  <li><a href="tel:{{ get_text('footer.phone_href') }}">{{ get_text('footer.phone_display') }}</a></li>
+                  <li><a href="mailto:premiumsafety@mail.ru">premiumsafety@mail.ru</a></li>
+                  <li><a href="https://maps.app.goo.gl/Ezg462SRmBYLxfUY6">{{ _('footer.address') }}</a></li>
+                </ul>
+                <div class="mt-3">
+                  <strong>{{ _('footer.hours') }}</strong>
+                  <div class="text-muted">{{ _('footer.hours_working') }}</div>
                 </div>
               </div>
+            </div>
+          </div>
 
-          <!-- O'ng navigation tugmasi -->
-          <button
-            class="news-nav-btn news-nav-next"
-            id="newsNextBtn"
-            title="Keyingi yangilik"
-            onclick="nextNews()">
-            <span>›</span>
-          </button>
-
-          <!-- close ticker wrapper -->
+          <div class="footer-col footer-services">
+            <div class="footer-section">
+              <button class="footer-section-toggle d-md-none" aria-expanded="false" aria-controls="services-content">{{ _('footer.services') }}</button>
+              <h6 class="d-none d-md-block">{{ _('footer.services') }}</h6>
+              <div id="services-content" class="footer-section-content">
+                <ul>
+                  <li><a href="{{ url_for('contact') }}#delivery">{{ _('footer.delivery') }}</a></li>
+                  <li><a href="{{ url_for('about') }}#return-policy">{{ _('footer.return_policy') }}</a></li>
+                  <li><a href="{{ url_for('contact') }}#payment">{{ _('footer.payment_methods') }}</a></li>
+                  <li><a href="{{ url_for('kafolatlar') }}">{{ _('nav.warranty') }}</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
 
-      <div class="container-fluid bg-dark text-light py-5">
-        <div class="container">
-          <div class="row g-4">
-            <!-- Company Info -->
-            <div class="col-lg-3 col-md-6">
-              <h5 class="fw-bold mb-3 text-warning">Pro Obuv</h5>
-              <p class="mb-3">
-                O'zbekistondagi eng yirik oyoq kiyim do'koni. Sifatli
-                mahsulotlar va eng yaxshi xizmat ko'rsatish bizning
-                ustuvorligimiz.
-              </p>
-              <div
-                class="d-flex gap-3 mb-3 flex-wrap justify-content-center justify-content-lg-start">
-                <a
-                  href="https://www.facebook.com/aklashoes/?ref=pl_edit_xav_ig_profile_page_web#"
-                  target="_blank"
-                  class="social-icon-btn facebook"
-                  title="Facebook">
-                  <img
-                    src="{{ url_for('static', filename='icons/facebook.svg') }}"
-                    alt="Facebook"
-                    width="24"
-                    height="24" />
-                </a>
-                <a
-                  href="https://www.instagram.com/proguarduz/"
-                  target="_blank"
-                  class="social-icon-btn instagram"
-                  title="Instagram">
-                  <img
-                    src="{{ url_for('static', filename='icons/instagram.svg') }}"
-                    alt="Instagram"
-                    width="24"
-                    height="24" />
-                </a>
-                <a
-                  href="https://t.me/specobuv"
-                  target="_blank"
-                  class="social-icon-btn telegram"
-                  title="Telegram">
-                  <img
-                    src="{{ url_for('static', filename='icons/telegram.svg') }}"
-                    alt="Telegram"
-                    width="24"
-                    height="24" />
-                </a>
-                <a
-                  href="https://www.threads.com/@proguarduz?xmt=AQF0Luvd5UXAmD_U3B5JI01ho5dNPZudQGYe4WbnAc934pc"
-                  target="_blank"
-                  class="social-icon-btn threads"
-                  title="Threads">
-                  <img
-                    src="{{ url_for('static', filename='icons/threads.svg') }}"
-                    alt="Threads"
-                    width="24"
-                    height="24" />
-                </a>
-                <a
-                  href="https://uzum.uz/uz/shop/pro-obuv"
-                  target="_blank"
-                  class="social-icon-btn uzum"
-                  title="Uzum Market">
-                  <img
-                    src="{{ url_for('static', filename='icons/uzum.png') }}"
-                    alt="Uzum Market"
-                    width="24"
-                    height="24" />
-                </a>
-                <a
-                  href="https://www.youtube.com/channel/UCAsyOqztQHOgWX95086LCIA"
-                  target="_blank"
-                  class="social-icon-btn youtube"
-                  title="YouTube">
-                  <img
-                    src="{{ url_for('static', filename='icons/youtube.svg') }}"
-                    alt="YouTube"
-                    width="24"
-                    height="24" />
-                </a>
-                <a
-                  href="https://www.olx.uz/"
-                  target="_blank"
-                  class="social-icon-btn olx"
-                  title="OLX">
-                  <img
-                    src="{{ url_for('static', filename='icons/olx.svg') }}"
-                    alt="OLX"
-                    width="24"
-                    height="24" />
-                </a>
-                <a
-                  href="mailto:premiumsafety@mail.ru"
-                  class="social-icon-btn email"
-                  title="Email">
-                  <img
-                    src="{{ url_for('static', filename='icons/gmail.png') }}"
-                    alt="Email"
-                    width="24"
-                    height="24" />
-                </a>
-                <a
-                  href="https://maps.app.goo.gl/Ezg462SRmBYLxfUY6"
-                  class="social-icon-btn email"
-                  title="Google Maps">
-                  <img
-                    src="{{ url_for('static', filename='icons/maps.png') }}"
-                    alt="Google Maps"
-                    width="24"
-                    height="24" />
-                </a>
-                <a
-                  href="tel:+998977195770"
-                  class="social-icon-btn phone"
-                  title="Telefon">
-                  <img
-                    src="{{ url_for('static', filename='icons/phone.png') }}"
-                    alt="Phone"
-                    width="24"
-                    height="24" />
-                </a>
-              </div>
-            </div>
-
-            <!-- Quick Links -->
-            <div class="col-lg-2 col-md-6">
-              <h6 class="fw-bold mb-3 text-warning">{{ _('nav.quick_links') }}</h6>
-              <ul class="list-unstyled">
-                <li class="mb-2">
-                  <a href="{{ url_for('index') }}" class="text-light text-decoration-none hover-text-warning"> {{ _('nav.home') }}</a>
-                </li>
-                <li class="mb-2">
-                  <a href="{{ url_for('menu') }}" class="text-light text-decoration-none hover-text-warning"> {{ _('nav.menu') }}</a>
-                </li>
-                <li class="mb-2">
-                  <a href="{{ url_for('cart') }}" class="text-light text-decoration-none hover-text-warning"> {{ _('nav.cart') }}</a>
-                </li>
-                <li class="mb-2">
-                  <a href="{{ url_for('about') }}" class="text-light text-decoration-none hover-text-warning"> {{ _('nav.about') }}</a>
-                </li>
-                <li class="mb-2">
-                  <a href="{{ url_for('contact') }}" class="text-light text-decoration-none hover-text-warning"> {{ _('nav.contact') }}</a>
-                </li>
-              </ul>
-            </div>
-
-            <!-- Categories -->
-            <div class="col-lg-2 col-md-6">
-              <h6 class="fw-bold mb-3 text-warning">Kategoriyalar</h6>
-              <ul class="list-unstyled">
-                <li class="mb-2">
-                  <a
-                    href="{{ url_for('menu') }}?category=specobuv"
-                    class="text-light text-decoration-none hover-text-warning">
-                    Спецобувь
-                  </a>
-                </li>
-                <li class="mb-2">
-                  <a
-                    href="{{ url_for('menu') }}?category=specodezhda"
-                    class="text-light text-decoration-none hover-text-warning">
-                    Спецодежда
-                  </a>
-                </li>
-                <li class="mb-2">
-                  <a
-                    href="{{ url_for('menu') }}"
-                    class="text-light text-decoration-none hover-text-warning">
-                    Все товары
-                  </a>
-                </li>
-                <li class="mb-2">
-                  <a
-                    href="{{ url_for('contact') }}"
-                    class="text-light text-decoration-none hover-text-warning">
-                    Консультация
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            <!-- Contact Info -->
-            <div class="col-lg-3 col-md-6">
-              <h6 class="fw-bold mb-3 text-warning">{{ _('footer.contact_info') }}</h6>
-              <div class="mb-3">
-                <div class="d-flex align-items-center mb-2">
-                  <span class="me-2"></span>
-                  <a
-                    href="tel:+998977195770"
-                    class="text-light text-decoration-none">
-                    +998 97 719 57 70
-                  </a>
-                </div>
-                <div class="d-flex align-items-center mb-2">
-                  <span class="me-2"></span>
-                  <a
-                    href="mailto:premiumsafety@mail.ru"
-                    class="text-light text-decoration-none">
-                    premiumsafety@mail.ru
-                  </a>
-                </div>
-                <div class="d-flex align-items-start mb-2">
-                  <span class="me-2"></span>
-                  <span class="text-light">
-                    <a
-                    href="https://maps.app.goo.gl/Ezg462SRmBYLxfUY6"
-                    class="text-light text-decoration-none">
-                    Toshkent, Sergeli tumani, Yuqori Darxon mahalla fuqarolar yig'ini
-                    </a>
-                  </span>
-                </div>
-              </div>
-              <div class="border-top pt-3">
-                <h6 class="fw-bold mb-2 text-warning">{{ _('footer.hours') }}</h6>
-                <small class="text-light d-block mb-1">Dushanba - Juma: 9:00 - 18:00</small>
-                <small class="text-light d-block">Shanba - Yakshanba: Dam</small>
-              </div>
-            </div>
-
-            <!-- Customer Service -->
-            <div class="col-lg-2 col-md-6">
-              <h6 class="fw-bold mb-3 text-warning">{{ _('footer.services') }}</h6>
-              <ul class="list-unstyled">
-                <li class="mb-2">
-                  <a
-                    href="{{ url_for('contact') }}#delivery"
-                    class="text-light text-decoration-none hover-text-warning">
-                    Yetkazib berish
-                  </a>
-                </li>
-                <li class="mb-2">
-                  <a
-                    href="{{ url_for('about') }}#return-policy"
-                    class="text-light text-decoration-none hover-text-warning">
-                    Qaytarish siyosati
-                  </a>
-                </li>
-                <li class="mb-2">
-                  <a
-                    href="{{ url_for('contact') }}#payment"
-                    class="text-light text-decoration-none hover-text-warning">
-                    To'lov usullari
-                  </a>
-                </li>
-                <li class="mb-2">
-                  <a
-                    href="{{ url_for('about') }}#size-chart"
-                    class="text-light text-decoration-none hover-text-warning">
-                    O'lcham jadvali
-                  </a>
-                </li>
-                <li class="mb-2">
-                  <a href="{{ url_for('kafolatlar') }}" class="text-light text-decoration-none hover-text-warning">{{ _('nav.warranty') }}</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <!-- Payment Methods -->
-          <div class="row mt-4 pt-4 border-top">
-            <div class="col-md-8">
-              <h6 class="fw-bold mb-3 text-warning">To'lov usullari</h6>
-              <div class="d-flex flex-wrap gap-3 align-items-center">
-                <span class="badge bg-success px-3 py-2">Naqd</span>
-                <span class="badge bg-primary px-3 py-2">Plastik karta</span>
-                <span class="badge bg-info px-3 py-2">Click</span>
-                <span class="badge bg-warning px-3 py-2 text-dark">Payme</span>
-                <span class="badge bg-secondary px-3 py-2">Bank o'tkazmasi</span>
-              </div>
-            </div>
-            <div class="col-md-4 text-md-end">
-              <h6 class="fw-bold mb-3 text-warning">{{ _('footer.follow_us') }}</h6>
-              <p class="text-light mb-1">{{ _('footer.subscribe') }}</p>
-              <div class="input-group" style="max-width: 300px">
-                <input type="email" class="form-control" placeholder="{{ _('footer.subscribe_placeholder') }}" />
-                <button class="btn btn-warning" type="button">{{ _('footer.subscribe') }}</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Bottom Copyright -->
-          <div class="row mt-4 pt-4 border-top">
-            <div class="col-md-8">
-              <p class="mb-1 text-light">
-                © 2025 <strong class="text-warning">Pro Obuv</strong> - Oyoq
-                kiyim do'koni | Barcha huquqlar himoyalangan
-              </p>
-              <small class="text-muted">
-                Ushbu sayt materiallaridan foydalanganda, Pro Obuv do'koniga
-                havola qilish majburiy.
-              </small>
-            </div>
-            <div class="col-md-4 text-md-end">
-              <div class="d-flex justify-content-md-end gap-3 flex-wrap">
-                <a
-                  href="{{ url_for('about') }}#privacy"
-                  class="text-light text-decoration-none hover-text-warning">
-                  <small>Maxfiylik siyosati</small>
-                </a>
-                <a
-                  href="{{ url_for('about') }}#terms"
-                  class="text-light text-decoration-none hover-text-warning">
-                  <small>Foydalanish shartlari</small>
-                </a>
-                <a
-                  href="{{ url_for('about') }}#cookies"
-                  class="text-light text-decoration-none hover-text-warning">
-                  <small>Cookie siyosati</small>
-                </a>
-              </div>
-            </div>
+        <div class="footer-bottom">
+          <div class="legal">{{ _('footer.copyright')|safe }}</div>
+          <div class="d-flex gap-3 align-items-center">
+            <a href="{{ url_for('about') }}#privacy">{{ _('footer.privacy') if _('footer.privacy') else 'Privacy' }}</a>
+            <a href="{{ url_for('about') }}#terms">{{ _('footer.terms') if _('footer.terms') else 'Terms' }}</a>
+            <a href="{{ url_for('about') }}#cookies">{{ _('footer.cookies') if _('footer.cookies') else 'Cookies' }}</a>
           </div>
         </div>
       </div>
@@ -1796,6 +1642,11 @@
       /* ================================
          SOCIAL MEDIA ICONS
          ================================ */
+      :root {
+        --footer-icon-size: 45px;
+        --footer-icon-gap: 10px;
+        --footer-icon-inner-size: 24px;
+      }
       .social-icon-btn {
         display: inline-flex;
         align-items: center;
@@ -1810,6 +1661,61 @@
         backdrop-filter: blur(15px) saturate(180%);
         position: relative;
         overflow: hidden;
+      }
+
+      /* Container that holds the social icons */
+      .social-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--footer-icon-gap);
+        align-items: center;
+        justify-content: flex-start;
+        margin-top: 8px;
+      }
+
+      .social-row .social-icon-btn {
+        width: var(--footer-icon-size);
+        height: var(--footer-icon-size);
+        flex: 0 0 auto;
+      }
+
+      .social-row .social-icon-btn img {
+        width: var(--footer-icon-inner-size);
+        height: var(--footer-icon-inner-size);
+      }
+
+      /* Universal responsive adjustments for social-row */
+      @media (min-width: 1800px) {
+        :root { --footer-icon-size: 64px; --footer-icon-inner-size: 28px; --footer-icon-gap: 18px; }
+        .social-row { justify-content: flex-start; }
+      }
+
+      @media (min-width: 1200px) and (max-width: 1799px) {
+        :root { --footer-icon-size: 56px; --footer-icon-inner-size: 26px; --footer-icon-gap: 16px; }
+        .social-row { justify-content: flex-start; }
+      }
+
+      /* Desktop / Laptop primary */
+      @media (min-width: 992px) and (max-width: 1199px) {
+        :root { --footer-icon-size: 48px; --footer-icon-inner-size: 22px; --footer-icon-gap: 14px; }
+        .social-row { justify-content: flex-start; }
+      }
+
+      /* Tablet */
+      @media (min-width: 768px) and (max-width: 991px) {
+        :root { --footer-icon-size: 44px; --footer-icon-inner-size: 20px; --footer-icon-gap: 12px; }
+        .social-row { justify-content: center; }
+      }
+
+      /* Phone - tight, centered flow */
+      @media (max-width: 767px) {
+        :root { --footer-icon-size: 40px; --footer-icon-inner-size: 18px; --footer-icon-gap: 10px; }
+        .social-row {
+          justify-content: center;
+          gap: 10px;
+          margin-top: 10px;
+        }
+        .social-row .social-icon-btn { margin: 0 6px; }
       }
 
       .social-icon-btn::before {
@@ -2088,32 +1994,25 @@
 
       .news-ticker-wrapper {
         display: flex;
-        /* let the wrapper stretch to the container height and keep children aligned */
-        align-items: stretch;
-        padding: 24px 30px;
+        align-items: center;
+        padding: 18px 20px;
         position: relative;
-        gap: 20px;
-        max-width: 1600px;
+        gap: 16px;
+        max-width: 1400px;
         margin: 0 auto;
-        /* allow external CSS or small-screen media queries to control exact height */
-        min-height: 100px;
-        /* allow nav buttons to overflow outside the ticker area */
-        overflow: visible;
+        min-height: 88px;
       }
 
 
       .news-ticker {
         flex: 1 1 auto;
-        /* fill available wrapper height */
-        height: 100%;
-        min-height: 120px;
+        height: auto;
+        min-height: 88px;
         position: relative;
-        border-radius: 15px;
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(15px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2);
-        margin: 0 8px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        margin: 0 6px;
         max-width: 100%;
       }
 
@@ -2129,18 +2028,17 @@
 
       .news-ticker-content {
         display: flex;
-        align-items: stretch;
+        align-items: center;
         height: 100%;
         position: relative;
-        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: transform 0.45s cubic-bezier(0.2, 0, 0.2, 1);
         overflow-x: auto;
         overflow-y: hidden;
         scroll-behavior: smooth;
         -ms-overflow-style: none;
         scrollbar-width: none;
-        gap: 15px;
-        padding: 0 15px;
-        flex-wrap: nowrap;
+        gap: 12px;
+        padding: 10px 12px;
       }
 
       /* Hide scrollbar for news ticker */
@@ -2150,39 +2048,25 @@
 
       .news-item {
         display: flex;
-        align-items: center;
-        justify-content: space-between;
-        width: 300px;
-        min-width: 300px;
-        height: 100%;
+        align-items: flex-start;
+        justify-content: flex-start;
+        width: 320px;
+        min-width: 260px;
+        height: auto;
         flex-shrink: 0;
-        padding: 15px 20px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        transition: all 0.3s ease;
+        padding: 12px 14px;
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 10px;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
         box-sizing: border-box;
         position: relative;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.06);
         cursor: pointer;
         flex-wrap: nowrap;
-        white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         word-wrap: break-word;
-        /* Prevent height equalization */
-        height: 100% !important;
-        min-height: 100% !important;
-        max-height: 100% !important;
-        /* Prevent width changes */
-        width: 300px !important;
-        min-width: 300px !important;
-        max-width: 300px !important;
-        /* Prevent flex changes */
-        flex: 0 0 300px !important;
-        /* Prevent any other changes */
-        position: relative !important;
-        z-index: 1 !important;
+        z-index: 1;
       }
 
       .news-item.news {
@@ -2198,9 +2082,8 @@
       }
 
       .news-item:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        cursor: pointer;
+        transform: translateY(-4px) scale(1.01);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
       }
 
       .news-item:active {
@@ -2208,25 +2091,50 @@
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
       }
 
+      /* Mobile adjustments: increase ticker height and make items more readable */
+      @media (max-width: 767px) {
+        .news-ticker-wrapper {
+          min-height: 140px; /* increased from 88px for better legibility on phones */
+          padding: 16px 12px;
+          gap: 12px;
+        }
+        .news-ticker {
+          min-height: 140px;
+        }
+        .news-ticker-content { padding: 12px; }
+        .news-item {
+          min-width: 220px;
+          width: 100%;
+          align-items: flex-start;
+          padding: 14px;
+          min-height: 110px;
+        }
+        .news-media { width: 100px; height: 70px; }
+        .news-title { font-size: 1.05rem; }
+        .news-text { max-height: 120px; }
+      }
+
       .news-content {
-        flex: 1;
-        margin-right: 15px;
+        flex: 1 1 auto;
+        margin-right: 12px;
+        min-width: 0; /* allow truncation */
       }
 
       .news-title {
-        font-size: 1.1rem;
-        font-weight: 600;
+        font-size: 1.05rem;
+        font-weight: 700;
         color: #ffffff;
-        margin-bottom: 8px;
-        line-height: 1.3;
+        margin-bottom: 6px;
+        line-height: 1.2;
+        letter-spacing: 0.1px;
       }
 
       .news-text {
-        font-size: 0.9rem;
-        color: rgba(255, 255, 255, 0.9);
+        font-size: 0.88rem;
+        color: rgba(255, 255, 255, 0.92);
         margin: 0;
-        line-height: 1.4;
-        max-height: 60px;
+        line-height: 1.35;
+        max-height: 72px;
         overflow: hidden;
         text-overflow: ellipsis;
       }
@@ -2259,9 +2167,10 @@
 
       .news-indicators {
         display: flex;
-        justify-content: center;
+        justify-content: flex-start;
         gap: 8px;
-        margin-top: 15px;
+        margin-top: 12px;
+        padding-left: 12px;
       }
 
       .news-indicator {
@@ -2285,23 +2194,25 @@
       /* News ticker responsive design */
       @media (max-width: 768px) {
         .news-item {
-          padding: 12px 15px;
-          margin-right: 10px;
+          padding: 10px 12px;
+          margin-right: 8px;
+          width: 240px;
+          min-width: 220px;
         }
 
         .news-title {
-          font-size: 1rem;
+          font-size: 0.98rem;
           margin-bottom: 6px;
         }
 
         .news-text {
-          font-size: 0.85rem;
-          max-height: 50px;
+          font-size: 0.82rem;
+          max-height: 54px;
         }
 
         .news-media {
-          width: 60px;
-          height: 45px;
+          width: 56px;
+          height: 40px;
         }
       }
 
@@ -2329,6 +2240,92 @@
       
 
       /* Navigation tugmalari */
+      /* Mobile-friendly news-ticker: keep horizontal ribbon (lenta) on phones
+         - Preserve carousel/scroll behavior on narrow screens
+         - Ensure media (images/videos/iframes) are visible and not clipped
+         - Enable smooth touch scrolling
+      */
+      @media (max-width: 767px) {
+        .news-ticker-viewport,
+        .news-ticker-content {
+          overflow-x: auto !important;
+          overflow-y: hidden !important;
+          -webkit-overflow-scrolling: touch;
+          height: auto !important;
+          white-space: nowrap !important;
+        }
+
+        .news-ticker {
+          min-height: auto !important;
+          border-radius: 12px;
+        }
+
+        .news-ticker-wrapper {
+          align-items: center;
+          padding: 12px 8px;
+          gap: 12px;
+        }
+
+        /* Keep cards inline for ribbon effect */
+        .news-ticker-content {
+          display: block !important;
+          padding: 6px !important;
+          gap: 12px !important;
+        }
+
+        .news-item {
+          display: inline-block !important;
+          vertical-align: top !important;
+          width: 220px !important;
+          min-width: 200px !important;
+          height: auto !important;
+          padding: 10px !important;
+          margin-right: 12px !important;
+          box-sizing: border-box;
+        }
+
+        .news-media {
+          width: 100% !important;
+          height: 120px !important;
+          max-height: 140px !important;
+          object-fit: cover !important;
+          display: block !important;
+          margin-bottom: 8px !important;
+        }
+
+        .news-item .news-image,
+        .news-item .news-video,
+        .news-item .news-youtube {
+          width: 100% !important;
+          height: 100% !important;
+          object-fit: cover !important;
+          display: block !important;
+        }
+
+        .news-title { text-align: left; font-size: 1rem; }
+        .news-text { max-height: none; overflow: hidden; text-overflow: ellipsis; }
+
+        /* Nav buttons: keep small and overlay at ends */
+        .news-nav-btn {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 40px;
+          height: 40px;
+        }
+      }
+
+      /* Extra-small phones: slightly smaller cards */
+      @media (max-width: 480px) {
+        .news-item {
+          width: 180px !important;
+          min-width: 160px !important;
+        }
+
+        .news-media { height: 100px !important; max-height: 120px !important; }
+        .news-title { font-size: 0.98rem; }
+        .news-text { font-size: 0.92rem; }
+      }
       .news-nav-btn {
         /* positioned absolutely so prev/next can sit over the ticker */
         position: absolute;
@@ -2766,6 +2763,84 @@
       }
       
       /* ================================
+         UNIVERSAL FOOTER RESPONSIVE
+         Breakpoints: TV, large desktop, desktop, laptop, tablet, phone
+         Focus: polished layouts for laptop and phone
+         ================================ */
+
+      /* TV & very large screens */
+      @media (min-width: 1800px) {
+        .footer .container {
+          max-width: 1600px;
+        }
+        .footer .footer-grid {
+          display: grid;
+          grid-template-columns: 360px 1fr 320px;
+          gap: 48px;
+          align-items: start;
+        }
+        .social-icon-btn { width: 64px; height: 64px; }
+        .social-icon-btn img { width: 28px; height: 28px; }
+      }
+
+      /* Large desktop */
+      @media (min-width: 1200px) and (max-width: 1799px) {
+        .footer .container {
+          max-width: 1200px;
+        }
+        .footer .footer-grid {
+          display: grid;
+          grid-template-columns: 320px 1fr 260px;
+          gap: 36px;
+        }
+        .social-icon-btn { width: 56px; height: 56px; }
+        .social-icon-btn img { width: 26px; height: 26px; }
+      }
+
+      /* Desktop / Laptop (primary focused layout) */
+      @media (min-width: 992px) and (max-width: 1199px) {
+        .footer .footer-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 28px;
+          align-items: start;
+        }
+        .footer .footer-col { padding-top: 6px; }
+        .social-icon-btn { width: 48px; height: 48px; }
+        .social-icon-btn img { width: 22px; height: 22px; }
+      }
+
+      /* Tablet */
+      @media (min-width: 768px) and (max-width: 991px) {
+        .footer .footer-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 20px;
+        }
+        .footer .footer-col { padding: 8px 0; }
+        .social-icon-btn { width: 44px; height: 44px; }
+        .social-row { gap: 12px; }
+      }
+
+      /* Mobile / Phone (primary focused layout) */
+      @media (max-width: 767px) {
+        .footer {
+          padding: 24px 12px;
+        }
+        .footer .footer-grid {
+          display: block;
+        }
+        .footer .footer-col {
+          margin-bottom: 18px;
+        }
+        .social-icon-btn { width: 40px; height: 40px; margin: 0 6px; }
+        .social-icon-btn img { width: 18px; height: 18px; }
+        .footer .newsletter-form .input-group { flex-direction: column; gap: 8px; }
+        .footer-bottom { text-align: center; }
+        .footer-bottom .d-flex { flex-direction: column; gap: 8px; align-items: center; }
+      }
+      
+      /* ================================
          MEDIA MODAL STYLES
          ================================ */
       .media-modal-overlay {
@@ -3107,13 +3182,36 @@
 
             // Global Translation Function
       function translatePage(language) {
-      const trans = (window.translations && window.translations[language]) || (window.translations && window.translations.uz) || {};
+      // Prefer server-provided window.TRANSLATIONS if available, fall back to legacy window.translations
+      const transRoot = (window.TRANSLATIONS && Object.keys(window.TRANSLATIONS).length) ? window.TRANSLATIONS : (window.translations || {});
+
+      // Helper: resolve nested keys like 'footer.categories' in a translations object
+      function resolveKey(obj, key) {
+        try {
+          if (!obj || !key) return undefined;
+          if (key in obj) return obj[key];
+          const parts = key.split('.');
+          let cur = obj;
+          for (let p of parts) {
+            if (!cur) return undefined;
+            if (typeof cur !== 'object') return undefined;
+            if (!(p in cur)) return undefined;
+            cur = cur[p];
+          }
+          return cur;
+        } catch (e) {
+          return undefined;
+        }
+      }
+
+      const trans = (transRoot && transRoot[language]) || (transRoot && transRoot['uz']) || {};
 
             // Translate elements that use data-translate attribute
             document.querySelectorAll('[data-translate]').forEach(el => {
               const key = el.getAttribute('data-translate');
               if (!key) return;
-              const val = trans[key] || el.textContent;
+              // Try nested lookup first, then fallback to existing text content (do NOT set to literal key)
+              const val = resolveKey(trans, key) || resolveKey(transRoot[language], key) || el.textContent;
               // If element is input/textarea, change placeholder instead
               if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
                 if (el.placeholder !== undefined) el.placeholder = val;
@@ -3160,42 +3258,76 @@
 
             // Enhanced Language Change Function
             window.changeLanguage = function(language) {
-                // console.log('Changing language to:', language);
                 try {
-                    // Immediately apply translation and styles
-                    translatePage(language);
+                    // Immediately apply styles
                     applyLanguageStyles(language);
                     localStorage.setItem('language', language);
                     document.body.setAttribute('data-language', language);
-                } catch (error) {
-                    // console.log('Language change error:', error);
-                }
-            document.body.classList.remove('lang-uz', 'lang-ru', 'lang-en');
-            document.body.classList.add('lang-' + language);
 
-            // Server ga yuborish (include CSRF)
-            fetch('/api/set-language', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : ''
-              },
-              body: JSON.stringify({ language: language })
-            }).then(response => {
-              if (response.ok) {
-                return response.json();
-              }
-              throw new Error('Network response was not ok');
-            })
-            .then(data => {
-              if (data && data.success) {
-                // console.log('Language saved to server:', language);
-                showNotification(data.message || 'Til muvaffaqiyatli o\'zgartirildi');
-              }
-            }).catch(error => {
-              // console.log('Til sozlamasini saqlashda xato:', error);
-              showNotification('Til mahalliy o\'zgartirildi');
-            });
+                    // If server-provided translations for this language are available in window.TRANSLATIONS, use them
+                    if (window.TRANSLATIONS && Object.keys(window.TRANSLATIONS).length) {
+                        // set a global trans object for other scripts
+                        window.translations = window.TRANSLATIONS;
+                        translatePage(language);
+                    } else {
+                        // Fallback: ask server for translations for selected language (not yet implemented server-side for all keys)
+                        fetch('/api/translations?lang=' + encodeURIComponent(language))
+                          .then(r => r.json())
+                          .then(data => {
+                              if (data && typeof data === 'object') {
+                                  window.translations = data;
+                              }
+                translatePage(language);
+                try { if (window.MenuClient && typeof window.MenuClient.fetchAndRender === 'function') window.MenuClient.fetchAndRender(); } catch(e) {}
+                          })
+                          .catch(()=>{
+                              // still attempt to translate with best-effort
+                translatePage(language);
+                try { if (window.MenuClient && typeof window.MenuClient.fetchAndRender === 'function') window.MenuClient.fetchAndRender(); } catch(e) {}
+                          });
+                    }
+                } catch (error) {
+                    // ignore
+                }
+                document.body.classList.remove('lang-uz', 'lang-ru', 'lang-en', 'lang-kz');
+                document.body.classList.add('lang-' + language);
+
+                // Server ga yuborish (include CSRF) - persist to existing settings API
+                fetch('/api/set-settings', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : ''
+                  },
+                  body: JSON.stringify({ language: language })
+                }).then(response => {
+                  if (response.ok) {
+                    return response.json();
+                  }
+                  throw new Error('Network response was not ok');
+                })
+                .then(data => {
+                  if (data && data.success) {
+                    const msg = (window.translations && window.translations['settings'] && window.translations['settings']['language_saved']) || data.message || 'Til muvaffaqiyatli o\'zgartirildi';
+                    showNotification(msg);
+                    // If we're on a product page, reload so server-rendered product title/description
+                    // (which depend on session.interface_language) are updated. Otherwise refresh menu.
+                    try {
+                      const path = (window.location && window.location.pathname) || '';
+                      const isProduct = path.startsWith('/product') || /\/\w{2}\/product/.test(path);
+                      if (isProduct) {
+                        setTimeout(() => { window.location.reload(); }, 120);
+                      } else {
+                        setTimeout(() => {
+                          if (window.MenuClient && typeof window.MenuClient.fetchAndRender === 'function') window.MenuClient.fetchAndRender();
+                        }, 120);
+                      }
+                    } catch (e) {}
+                  }
+                }).catch(error => {
+                  const fallback = (window.translations && window.translations['settings'] && window.translations['settings']['language_local_change']) || 'Til mahalliy o\'zgartirildi';
+                  showNotification(fallback);
+                });
             };
 
             // Notification function
@@ -3300,7 +3432,7 @@
             justify-content: space-between;
             align-items: center;
           ">
-          <h5 id="notifyModalTitle">Bildirishnomalar</h5>
+          <h5 id="notifyModalTitle">{{ _('notifications') }}</h5>
           <button
             type="button"
             id="notifyCloseViewer"
@@ -3318,43 +3450,38 @@
           <!-- For super admin: compose notification form -->
           {% if is_super_admin %}
           <div id="notifyComposer" class="mb-3">
-            <h6>Yangi bildirishnoma yuborish</h6>
+            <h6>{{ _('notifications_ui.new_notification') }}</h6>
             <div class="mb-3">
-              <label for="notifyTitle" class="form-label">Sarlavha:</label>
+              <label for="notifyTitle" class="form-label">{{ _('notifications_ui.title_label') }}</label>
               <input
                 type="text"
                 id="notifyTitle"
                 class="form-control"
-                placeholder="Bildirishnoma sarlavhasi" />
+                placeholder="{{ _('notifications_ui.title_label') }}" />
             </div>
             <div class="mb-3">
-              <label for="notifyBody" class="form-label">Matn:</label>
+              <label for="notifyBody" class="form-label">{{ _('notifications_ui.body_label') }}</label>
               <textarea
                 id="notifyBody"
                 class="form-control"
                 rows="3"
-                placeholder="Bildirishnoma matni"></textarea>
+                placeholder="{{ _('notifications_ui.body_label') }}"></textarea>
             </div>
             <div class="mb-3">
-              <label for="notifyRecipientType" class="form-label"
-                >Qabul qiluvchi:</label
-              >
+              <label for="notifyRecipientType" class="form-label">{{ _('notifications_ui.recipient_label') }}</label>
               <select id="notifyRecipientType" class="form-select">
-                <option value="users">Foydalanuvchilar</option>
-                <option value="staff">Xodimlar</option>
-                <option value="couriers">Kuryerlar</option>
-                <option value="all">Barchasi</option>
+                <option value="users">{{ _('notifications_ui.recipient_users') }}</option>
+                <option value="staff">{{ _('notifications_ui.recipient_staff') }}</option>
+                <option value="couriers">{{ _('notifications_ui.recipient_couriers') }}</option>
+                <option value="all">{{ _('notifications_ui.recipient_all') }}</option>
               </select>
             </div>
             <div class="d-flex gap-2">
               <button type="button" id="notifySendBtn" class="btn btn-primary">
-                Yuborish
+                {{ _('notifications_ui.send') }}
               </button>
-              <button
-                type="button"
-                id="notifyCancelBtn"
-                class="btn btn-secondary">
-                Bekor qilish
+              <button type="button" id="notifyCancelBtn" class="btn btn-secondary">
+                {{ _('notifications_ui.cancel') }}
               </button>
             </div>
             <hr />
@@ -3363,7 +3490,7 @@
 
           <!-- Notification list -->
           <div id="notifyListPreview">
-            <p class="text-muted">Bildirishnomalar yuklanmoqda...</p>
+            <p class="text-muted">{{ _('notifications_ui.loading_preview') }}</p>
           </div>
         </div>
       </div>
@@ -3403,7 +3530,7 @@
             justify-content: space-between;
             align-items: center;
           ">
-          <h5>Profil ma'lumotlari</h5>
+          <h5>{{ _('nav.profile_info') }}</h5>
           <button
             type="button"
             id="memberProfileClose"
@@ -3418,7 +3545,7 @@
           </button>
         </div>
         <div id="memberProfileContent">
-          <p class="text-muted">Yuklanmoqda...</p>
+          <p class="text-muted">{{ _('messages.loading') }}</p>
         </div>
       </div>
     </div>
@@ -4054,15 +4181,15 @@
     <div id="chatPanel" class="chat-panel" role="dialog" aria-hidden="true">
       <!-- Chat Header -->
         <div class="chat-header">
-        <h5>Chat</h5>
+        <h5>{{ _('chat.online_chat') }}</h5>
         <div class="chat-header-controls">
-          <button id="chatRefreshBtn" class="chat-header-btn" title="Yangilash">
+          <button id="chatRefreshBtn" class="chat-header-btn" title="{{ _('chat.refresh') }}">
             <i class="bi bi-arrow-clockwise" aria-hidden="true"></i>
-            <span class="visually-hidden">Yangilash</span>
+            <span class="visually-hidden">{{ _('chat.refresh') }}</span>
           </button>
-          <button id="chatCloseBtn" class="chat-header-btn" title="Yopish">
+          <button id="chatCloseBtn" class="chat-header-btn" title="{{ _('chat.close') }}">
             <i class="bi bi-x-lg" aria-hidden="true"></i>
-            <span class="visually-hidden">Yopish</span>
+            <span class="visually-hidden">{{ _('chat.close') }}</span>
           </button>
         </div>
       </div>
@@ -4071,14 +4198,14 @@
       <div class="chat-content">
         <!-- Chat List (Groups and Contacts) -->
         <div class="chat-list" id="chatList">
-          <div class="chat-list-header">Guruhlar</div>
+          <div class="chat-list-header">{{ _('chat.groups') }}</div>
           <div class="chat-group">
-            <div class="chat-group-title">Guruhlar</div>
+            <div class="chat-group-title">{{ _('chat.groups') }}</div>
             <div class="chat-item" data-chat-id="all" data-chat-type="group">
               <div class="chat-item-avatar"><i class="bi bi-globe" aria-hidden="true"></i></div>
               <div class="chat-item-info">
-                <div class="chat-item-name">All Team</div>
-                <div class="chat-item-last-message">Barcha xodimlar</div>
+                <div class="chat-item-name">{{ _('chat.all_team') }}</div>
+                <div class="chat-item-last-message">{{ _('chat.all_staff') }}</div>
               </div>
             </div>
             <div class="chat-item" data-chat-id="staffs" data-chat-type="group">
@@ -4100,7 +4227,7 @@
             </div>
           </div>
           <div class="chat-group">
-            <div class="chat-group-title">Shaxsiy suhbatlar</div>
+            <div class="chat-group-title">{{ _('chat.private_chats') }}</div>
             <div id="privateChatsList">
               <!-- Private chats will be loaded here -->
             </div>
@@ -4112,8 +4239,8 @@
           <div class="chat-messages" id="chatMessages">
               <div class="chat-empty">
               <div class="chat-empty-icon"><i class="bi bi-chat-dots" aria-hidden="true"></i></div>
-              <h5>Chatni tanlang</h5>
-              <p>Xabarlarni ko'rish uchun chap tomondan chatni tanlang</p>
+              <h5>{{ _('chat.select_a_chat') }}</h5>
+              <p>{{ _('chat.select_chat_hint') }}</p>
             </div>
           </div>
           <div class="chat-input">
@@ -4121,7 +4248,7 @@
               <textarea
                 id="chatText"
                 rows="1"
-                placeholder="Xabar yozing..."
+                placeholder="{{ _('chat.write_message') }}"
                 disabled></textarea>
             </div>
             <button id="chatSendBtn" class="chat-send-btn" disabled><i class="bi bi-send" aria-hidden="true"></i></button>
@@ -4148,23 +4275,23 @@
         box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
         z-index: 11000; /* raised so it overlays other panels */
       ">
-  <h5>Superadmenga bildirishnoma</h5>
+  <h5>{{ _('notifications_ui.new_notification') }}</h5>
       <div class="mb-2">
-        <input id="notifyTitle" class="form-control" placeholder="Sarlavha" />
+        <input id="notifyTitle" class="form-control" placeholder="{{ _('notifications_ui.title_label') }}" />
       </div>
       <div class="mb-2">
         <textarea
           id="notifyBody"
           class="form-control"
           rows="3"
-          placeholder="Matn"></textarea>
+          placeholder="{{ _('notifications_ui.body_label') }}"></textarea>
       </div>
       <div style="display: flex; gap: 8px; justify-content: flex-end">
         <button id="notifyCancelBtn" class="btn btn-sm btn-secondary">
-          Bekor
+          {{ _('notifications_ui.cancel') }}
         </button>
         <button id="notifySendBtn" class="btn btn-sm btn-primary">
-          Yuborish
+          {{ _('notifications_ui.send') }}
         </button>
       </div>
     </div>
@@ -4188,13 +4315,13 @@
         box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
         z-index: 11000; /* raised so it overlays other panels */
       ">
-  <h5>Bildirishnomalar</h5>
+  <h5>{{ _('notifications') }}</h5>
       <div id="notifyListPreview">
         <!-- Filled by JS: latest notifications for this user -->
       </div>
       <div style="display: flex; justify-content: flex-end; margin-top: 8px">
         <button id="notifyCloseViewer" class="btn btn-sm btn-secondary">
-          Yopish
+          {{ _('notifications_ui.cancel') }}
         </button>
       </div>
     </div>
@@ -4247,7 +4374,7 @@
       </div>
       <div style="display: flex; justify-content: flex-end; margin-top: 8px">
         <button id="memberProfileClose" class="btn btn-sm btn-secondary">
-          Yopish
+          {{ _('chat.close') }}
         </button>
       </div>
     </div>
@@ -4453,8 +4580,8 @@
                 placeholder.innerHTML = `
                   <div class="chat-item-avatar"><i class="bi bi-person-fill" aria-hidden="true"></i></div>
                   <div class="chat-item-info">
-                    <div class="chat-item-name">Shaxsiy suhbatlar yo'q</div>
-                    <div class="chat-item-last-message">Boshqa xodimlar bilan suhbatlashish</div>
+                    <div class="chat-item-name">{{ _('chat.no_private_chats') }}</div>
+                    <div class="chat-item-last-message">{{ _('chat.private_chat_prompt') }}</div>
                   </div>
                 `;
                 privateChatsList.appendChild(placeholder);
@@ -4467,8 +4594,8 @@
               placeholder.innerHTML = `
                 <div class="chat-item-avatar"><i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i></div>
                 <div class="chat-item-info">
-                  <div class="chat-item-name">Xatolik</div>
-                  <div class="chat-item-last-message">Shaxsiy suhbatlarni yuklashda xatolik</div>
+                  <div class="chat-item-name">{{ _('messages.error_title') }}</div>
+                  <div class="chat-item-last-message">{{ _('messages.private_chat_open_failed') }}</div>
                 </div>
               `;
               privateChatsList.appendChild(placeholder);
@@ -4506,8 +4633,8 @@
                   messagesEl.innerHTML = `
                     <div class="chat-empty">
                       <div class="chat-empty-icon"><i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i></div>
-                      <h5>Xatolik</h5>
-                      <p>Shaxsiy suhbatni ochishda xatolik: ${data.message}</p>
+                      <h5>{{ _('messages.error_title') }}</h5>
+                      <p>{{ _('messages.private_chat_open_failed') }}: ${data.message}</p>
                     </div>
                   `;
                 }
@@ -4517,8 +4644,8 @@
                 messagesEl.innerHTML = `
                   <div class="chat-empty">
                     <div class="chat-empty-icon"><i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i></div>
-                    <h5>Xatolik</h5>
-                    <p>Shaxsiy suhbatni ochishda xatolik yuz berdi</p>
+                    <h5>{{ _('messages.error_title') }}</h5>
+                    <p>{{ _('messages.private_chat_open_failed') }}</p>
                   </div>
                 `;
               });
@@ -4529,19 +4656,19 @@
         }
 
         function loadMessages(chatId) {
-          messagesEl.innerHTML = '<div class="text-center p-4">Yuklanmoqda...</div>';
+          messagesEl.innerHTML = '<div class="text-center p-4">{{ _("messages.loading") }}</div>';
 
           fetch(`/api/chats/${chatId}/messages?limit=100`)
             .then(safeJson)
             .then((data) => {
               messagesEl.innerHTML = '';
 
-              if (!data || !data.messages || data.messages.length === 0) {
+                if (!data || !data.messages || data.messages.length === 0) {
                 messagesEl.innerHTML = `
                   <div class="chat-empty">
                     <div class="chat-empty-icon"><i class="bi bi-chat-dots" aria-hidden="true"></i></div>
-                    <h5>Hali xabar yo'q</h5>
-                    <p>Birinchi xabarni yuboring!</p>
+                    <h5>{{ _('messages.no_messages') }}</h5>
+                    <p>{{ _('messages.send_first_message') }}</p>
                   </div>
                 `;
                 return;
@@ -4560,8 +4687,8 @@
               messagesEl.innerHTML = `
                 <div class="chat-empty">
                   <div class="chat-empty-icon"><i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i></div>
-                  <h5>Xatolik</h5>
-                  <p>Xabarlarni yuklashda xatolik yuz berdi</p>
+                  <h5>{{ _('messages.error_title') }}</h5>
+                  <p>{{ _('messages.messages_load_error') }}</p>
                 </div>
               `;
             });
@@ -4636,7 +4763,7 @@
 
           // Validate message length
           if (text.length > 1000) {
-            alert('Xabar juda uzun (maksimum 1000 belgi)');
+            alert({{ _('messages.message_too_long')|tojson }});
             return;
           }
 
@@ -4664,12 +4791,12 @@
               textEl.style.height = 'auto';
               loadMessages(activeChatId);
             } else {
-              alert('Xabar yuborishda xatolik: ' + (data.message || 'Noma\'lum xatolik'));
+              alert({{ _('messages.message_send_error')|tojson }} + ': ' + (data.message || {{ _('messages.unknown_error')|tojson }}));
             }
           })
           .catch(error => {
             // console.error('Error sending message:', error);
-            alert('Xabar yuborishda xatolik yuz berdi');
+            alert({{ _('messages.message_send_error')|tojson }});
           })
           .finally(() => {
             sendBtn.disabled = false;
@@ -4813,7 +4940,7 @@
               activeChatId = chatId;
               // ensure panel is visible
               if (panel.style.display !== 'block') togglePanel();
-              messagesEl.innerHTML = '<div class="text-muted">Yuklanmoqda...</div>';
+              messagesEl.innerHTML = '<div class="text-muted">' + {{ _('messages.loading')|tojson }} + '</div>';
               // notifications are handled via separate FAB, do not inject notify button into chat header
 
               fetch(`/api/chats/${chatId}/messages?limit=200`)
@@ -4822,7 +4949,7 @@
                   messagesEl.innerHTML = "";
                   if (!data || !data.messages)
                     return (messagesEl.innerHTML =
-                      '<div class="text-muted">Xabarlar topilmadi</div>');
+                      '<div class="text-muted">' + {{ _('messages.no_messages')|tojson }} + '</div>');
                   data.messages.forEach((m) => {
                     const d = document.createElement("div");
                     d.className = "chat-message d-flex gap-2";
@@ -4867,7 +4994,7 @@
                 })
                 .catch((e) => {
                   messagesEl.innerHTML =
-                    '<div class="text-danger">Xatolik yuz berdi</div>';
+                    '<div class="text-danger">' + {{ _('messages.error_occurred')|tojson }} + '</div>';
                   // console.log(e);
                 });
             }
@@ -4979,7 +5106,7 @@
               notifySendBtn.addEventListener("click", () => {
                 const title = document.getElementById("notifyTitle").value.trim();
                 const body = document.getElementById("notifyBody").value.trim();
-                if (!title || !body) return alert("Iltimos sarlavha va matn kiriting");
+                if (!title || !body) return alert({{ _('messages.enter_title_and_body')|tojson }});
 
                 const isBroadcast = confirm('Barcha foydalanuvchilarga yuborilsinmi? OK = BARCHA; Cancel = Yagona qabul qiluvchi');
                 let payload = { title, body };
@@ -4989,7 +5116,7 @@
                 } else {
                   const rType = prompt('Qabul qiluvchi turi? (users, staff, couriers)', 'users');
                   const rId = prompt('Qabul qiluvchining id raqami', '');
-                  if (!rId) return alert('Iltimos id kiriting');
+                  if (!rId) return alert({{ _('messages.enter_id')|tojson }});
                   payload.recipient_type = rType || 'users';
                   payload.recipient_id = parseInt(rId, 10);
                 }
@@ -5005,7 +5132,7 @@
                   .then(safeJson)
                   .then((r) => {
                     if (r && r.success) {
-                      alert("Bildirishnoma yuborildi");
+                      alert({{ _('messages.notification_sent')|tojson }});
                       if (notifyModal) {
                         notifyModal.style.display = "none";
                         const t = document.getElementById('notifyTitle');
@@ -5013,10 +5140,10 @@
                         if (t) t.value = '';
                         if (b) b.value = '';
                       }
-                    } else alert("Yuborishda xatolik: " + (r && r.message ? r.message : ''));
+                    } else alert({{ _('messages.message_send_error')|tojson }} + ': ' + (r && r.message ? r.message : {{ _('messages.unknown_error')|tojson }}));
                   })
                   .catch((e) => {
-                    alert("Yuborishda xatolik");
+                    alert({{ _('messages.message_send_error')|tojson }});
                     // console.log(e);
                   });
               });
@@ -5100,7 +5227,7 @@
                   const preview = document.getElementById('notifyListPreview');
                   if(preview){
                     preview.innerHTML = '';
-                    if(list.length===0) preview.innerHTML = '<div class="text-muted">Hech qanday bildirishnoma yo\'q</div>';
+                    if(list.length===0) preview.innerHTML = '<div class="text-muted">' + {{ _('messages.no_notifications')|tojson }} + '</div>';
                     list.slice(0,10).forEach(n=>{
                       const item = document.createElement('div');
                       item.className = 'mb-2';
@@ -5134,36 +5261,36 @@
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Yangilik qo'shish</h5>
+            <h5 class="modal-title">{{ _('ticker.add_news') }}</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body">
             <form id="tickerNewsForm">
               <div class="mb-3">
-                <label class="form-label">Sarlavha *</label>
+                <label class="form-label">{{ _('notifications_ui.title_label') }}</label>
                 <input type="text" id="tickerNewsTitle" class="form-control" required maxlength="200" />
               </div>
               <div class="mb-3">
-                <label class="form-label">Matn</label>
+                <label class="form-label">{{ _('notifications_ui.body_label') }}</label>
                 <textarea id="tickerNewsContent" class="form-control" rows="4" maxlength="500"></textarea>
               </div>
               <div class="row">
                 <div class="col-md-6">
-                  <label class="form-label">Rasm</label>
+                  <label class="form-label">{{ _('ticker.image_label') }}</label>
                   <input type="file" id="tickerImageFile" class="form-control" accept="image/*" onchange="uploadMediaFileTicker('image')" />
                   <input type="hidden" id="tickerImageUrl" />
                   <img id="tickerImagePreview" style="display:none; max-width:180px; margin-top:8px" />
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label">Video (yuklash yoki YouTube URL)</label>
+                  <label class="form-label">{{ _('ticker.video_label') }}</label>
                   <input type="file" id="tickerVideoFile" class="form-control" accept="video/*" onchange="uploadMediaFileTicker('video')" />
                   <input type="hidden" id="tickerVideoUrl" />
                   <video id="tickerVideoPreview" style="display:none; max-width:180px; margin-top:8px" controls muted></video>
 
                   <div class="mt-2">
-                    <label class="form-label">YouTube URL (ixtiyoriy)</label>
+                    <label class="form-label">{{ _('ticker.youtube_label') }}</label>
                     <input type="url" id="tickerYoutubeUrl" class="form-control" placeholder="https://www.youtube.com/watch?v=..." />
-                    <small class="form-text text-muted">Agar YouTube havolasi kiritilsa, yuklangan video o'rniga shu manba ishlatiladi.</small>
+                    <small class="form-text text-muted">{{ _('ticker.youtube_hint') }}</small>
 
                     <div id="tickerYoutubePreviewContainer" style="display:none; margin-top:8px; position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:8px;">
                       <iframe id="tickerYoutubePreview" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" allowfullscreen></iframe>
@@ -5173,21 +5300,21 @@
               </div>
 
               <div class="mb-3 mt-2">
-                <label class="form-label">Turi</label>
+                <label class="form-label">{{ _('ticker.type_label') }}</label>
                 <select id="tickerNewsType" class="form-control">
-                  <option value="news">Yangilik</option>
-                  <option value="advertisement">Reklama</option>
+                  <option value="news">{{ _('ticker.type_news') }}</option>
+                  <option value="advertisement">{{ _('ticker.type_ad') }}</option>
                 </select>
               </div>
               <div class="form-check mb-3">
                 <input type="checkbox" id="tickerNewsIsActive" class="form-check-input" checked />
-                <label for="tickerNewsIsActive" class="form-check-label">Faol</label>
+                <label for="tickerNewsIsActive" class="form-check-label">{{ _('ticker.active_label') }}</label>
               </div>
             </form>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
-            <button type="button" class="btn btn-primary" id="saveTickerNewsBtn">Saqlash</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ _('notifications_ui.cancel') }}</button>
+            <button type="button" class="btn btn-primary" id="saveTickerNewsBtn">{{ _('settings.save') }}</button>
           </div>
         </div>
       </div>
@@ -5208,7 +5335,7 @@
 
           function saveTickerNews(){
             const title = (document.getElementById('tickerNewsTitle')||{}).value||'';
-            if(!title.trim()){ alert('Sarlavha kiritilishi shart'); return; }
+            if(!title.trim()){ alert({{ _('messages.title_required')|tojson }}); return; }
             const content = (document.getElementById('tickerNewsContent')||{}).value||'';
             const type = (document.getElementById('tickerNewsType')||{}).value||'news';
             const image_url = (document.getElementById('tickerImageUrl')||{}).value||'';
@@ -5232,17 +5359,17 @@
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(payload)
             }).then(r=>r.json()).then(data=>{
-              if(data && data.success){
-                alert('Yangilik tasmaga qo\'shildi');
+                if(data && data.success){
+                alert({{ _('messages.news_added')|tojson }});
                 const bs = bootstrap.Modal.getInstance(document.getElementById('tickerNewsModal'));
                 if(bs) bs.hide();
                 // refresh ticker content
                 const evt = new Event('refreshNewsTicker');
                 window.dispatchEvent(evt);
               } else {
-                alert('Xato: '+(data && data.message||'')); 
+                alert({{ _('messages.error_occurred')|tojson }} + ': ' + (data && data.message || ''));
               }
-            }).catch(e=>{ console.error(e); alert('Saqlashda xatolik'); });
+            }).catch(e=>{ console.error(e); alert({{ _('messages.save_error')|tojson }}); });
           }
 
           // Upload handler reusing the admin upload endpoint
@@ -5268,9 +5395,9 @@
                     const ytCont = document.getElementById('tickerYoutubePreviewContainer'); if(ytCont) ytCont.style.display = 'none';
                   }
                 } else {
-                  alert('Upload xatosi: '+(data && data.message||''));
+                  alert({{ _('messages.file_upload_error')|tojson }} + ': ' + (data && data.message || ''));
                 }
-              }).catch(err=>{ console.error('Upload error', err); alert('Fayl yuklashda xatolik'); });
+              }).catch(err=>{ console.error('Upload error', err); alert({{ _('messages.file_upload_error')|tojson }}); });
           }
 
           // YouTube preview binding
@@ -5355,15 +5482,15 @@
     </button>
 
     <div id="chatWidgetPanel" role="dialog" aria-label="Live chat">
-      <div id="chatWidgetHeader">
-        <div style="font-weight:600">Onlayn chat</div>
-        <button id="chatWidgetClose" class="btn btn-sm btn-light">Yopish</button>
+        <div id="chatWidgetHeader">
+        <div style="font-weight:600">{{ _('chat.online_chat') }}</div>
+        <button id="chatWidgetClose" class="btn btn-sm btn-light">{{ _('chat.close') }}</button>
       </div>
       <div id="chatWidgetMessages"></div>
       <div id="chatWidgetInputRow">
-        <textarea id="chatWidgetInput" class="form-control" rows="2" placeholder="Xabaringizni yozing..."></textarea>
+        <textarea id="chatWidgetInput" class="form-control" rows="2" placeholder="{{ _('chat.write_message') }}"></textarea>
         <div class="d-flex justify-content-end">
-          <button id="chatWidgetSend" class="btn btn-primary btn-sm">Yuborish</button>
+          <button id="chatWidgetSend" class="btn btn-primary btn-sm">{{ _('chat.send') }}</button>
         </div>
       </div>
     </div>
@@ -5390,15 +5517,15 @@
           if(!t) return;
           appendMsg(t, 'user');
           input.value='';
-          try{
+            try{
             const r = await fetch('/api/chat/ai', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ text: t, sender: 'web' }) });
             const j = await r.json().catch(()=>({}));
-            const reply = (j && j.reply) || 'Xabar qabul qilindi.';
+            const reply = (j && j.reply) || {{ _('messages.message_received')|tojson }};
             appendMsg(reply, 'bot');
-          }catch(e){ appendMsg('Ulanishda xatolik. Keyinroq urinib ko‘ring.', 'bot'); }
+          }catch(e){ appendMsg({{ _('messages.connection_error')|tojson }}, 'bot'); }
         }
 
-        if(btn) btn.addEventListener('click', ()=>togglePanel());
+          if(btn) btn.addEventListener('click', ()=>togglePanel());
         if(closeBtn) closeBtn.addEventListener('click', ()=>togglePanel(false));
         if(send) send.addEventListener('click', sendMsg);
         if(input) input.addEventListener('keydown', (e)=>{ if((e.key==='Enter' && !e.shiftKey)){ e.preventDefault(); sendMsg(); } });
@@ -5406,10 +5533,71 @@
         // Optional: greeting message when opened first time
         let greeted = false;
         if(btn) btn.addEventListener('click', ()=>{
-          if(!greeted && panel.style.display !== 'none'){ appendMsg("Assalomu alaykum! Savolingiz bormi?", 'bot'); greeted = true; }
+          if(!greeted && panel.style.display !== 'none'){ appendMsg({{ _('chat.greeting')|tojson }}, 'bot'); greeted = true; }
         });
       })();
     </script>
 
-  </body>
+      <script>
+        // Footer responsive toggles: allow mobile users to expand/collapse sections
+        (function(){
+          function initFooterToggles(){
+            try{
+              const buttons = document.querySelectorAll('.footer-section-toggle');
+              buttons.forEach(btn=>{
+                const parent = btn.closest('.footer-section');
+                const targetId = btn.getAttribute('aria-controls');
+                const target = document.getElementById(targetId);
+                if(!target || !parent) return;
+                btn.addEventListener('click', function(){
+                  const isOpen = parent.classList.toggle('open');
+                  btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                  // allow CSS to animate max-height; force reflow for consistent animation
+                  if(isOpen){ target.style.maxHeight = target.scrollHeight + 'px'; }
+                  else { target.style.maxHeight = '0px'; }
+                });
+                // Ensure desktop shows content
+                const mq = window.matchMedia('(min-width: 768px)');
+                function handleMq(ev){
+                  if(ev.matches){ // desktop/tablet: ensure visible
+                    parent.classList.remove('open');
+                    target.style.maxHeight = null;
+                    btn.setAttribute('aria-expanded','true');
+                  } else {
+                    btn.setAttribute('aria-expanded','false');
+                    target.style.maxHeight = '0px';
+                  }
+                }
+                mq.addListener(handleMq);
+                handleMq(mq);
+              });
+            }catch(e){console.warn('Footer toggles init failed', e)}
+          }
+          if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initFooterToggles); else initFooterToggles();
+        })();
+      </script>
+
+      <script>
+        // Newsletter form handler (graceful, non-blocking)
+        function handleNewsletter(e){
+          if(e) e.preventDefault();
+          try{
+            const form = e.target || document.querySelector('.newsletter-form');
+            const input = form.querySelector('input[name="email"]');
+            const feedback = form.querySelector('.newsletter-feedback');
+            const email = (input.value||'').trim();
+            if(!email){ feedback.style.display='block'; feedback.textContent = '{{ _('footer.newsletter_enter_email') if _('footer.newsletter_enter_email') else "Please enter an email" }}'; return false; }
+            // Try optimistic UI: show message and attempt fetch if endpoint exists
+            feedback.style.display='block'; feedback.textContent = '{{ _('footer.newsletter_thanks') if _('footer.newsletter_thanks') else "Thanks! Subscribed (offline)" }}';
+            // If /subscribe exists, post to it
+            fetch(form.action, { method: 'POST', headers: { 'Content-Type':'application/json' }, body: JSON.stringify({ email: email }) }).then(r=>r.json().catch(()=>({}))).then(j=>{
+              if(j && j.success){ feedback.textContent = (j.message || '{{ _('footer.newsletter_confirm') if _('footer.newsletter_confirm') else "Confirmed" }}'); }
+            }).catch(()=>{});
+            input.value='';
+          }catch(err){ console.warn('newsletter error', err); }
+          return false;
+        }
+      </script>
+
+    </body>
 </html>

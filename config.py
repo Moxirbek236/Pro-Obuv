@@ -62,8 +62,8 @@ class Config:
     )
 
     # Localization
-    DEFAULT_LANGUAGE = os.environ.get("DEFAULT_LANGUAGE", "uz")
-    SUPPORTED_LANGUAGES = ["uz", "ru", "en", "tr", "ar"]
+    DEFAULT_LANGUAGE = os.environ.get("DEFAULT_LANGUAGE", "ru")
+    SUPPORTED_LANGUAGES = ["ru", "uz", "en", "kz"]
     DEFAULT_CURRENCY = os.environ.get("DEFAULT_CURRENCY", "UZS")
     TIMEZONE = os.environ.get("TIMEZONE", "Asia/Tashkent")
 

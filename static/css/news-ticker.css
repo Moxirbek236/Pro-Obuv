@@ -11,6 +11,9 @@
   --nt-media-width-tablet: 180px;
   --nt-media-height-desktop: 150px;
   --nt-media-height-tablet: 120px;
+  /* Fixed card body height to keep news cards uniform in lists/ticker */
+  --nt-card-body-height-desktop: 120px;
+  --nt-card-body-height-tablet: 100px;
 }
 
 /* News Ticker Container */
@@ -252,6 +255,13 @@
   display: block;
 }
 
+/* Ensure news card bodies have a consistent height so cards line up */
+.news-body {
+  min-height: var(--nt-card-body-height-desktop);
+  max-height: var(--nt-card-body-height-desktop);
+  overflow: hidden;
+}
+
 .news-title {
   font-size: clamp(14px, 1.8vw, 16px);
   font-weight: 700;
@@ -412,6 +422,13 @@
       max-height: 220px !important;
       object-fit: cover !important;
       visibility: visible !important;
+    }
+
+    /* On small screens use a smaller fixed body height for consistent stacking */
+    .news-body {
+      min-height: var(--nt-card-body-height-tablet) !important;
+      max-height: var(--nt-card-body-height-tablet) !important;
+      overflow: hidden !important;
     }
   }
 }

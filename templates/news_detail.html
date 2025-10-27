@@ -1,21 +1,40 @@
 {% extends "base.html" %} {% block title %}{{ seo_data.page_title }}{% endblock
 %} {% block seo_meta %}
-<title>{{ seo_data.page_title }}</title>
-<meta name="description" content="{{ seo_data.meta_description }}" />
-<meta name="keywords" content="{{ seo_data.meta_keywords }}" />
-<link rel="canonical" href="{{ seo_data.canonical_url }}" />
+<title>
+  {{ (seo_data.page_title if (seo_data and seo_data.page_title) else news.title)
+  }}
+</title>
+<meta
+  name="description"
+  content="{{ (seo_data.meta_description if (seo_data and seo_data.meta_description) else (news.summary if news.summary else _('meta_description'))) }}" />
+<meta
+  name="keywords"
+  content="{{ (seo_data.meta_keywords if (seo_data and seo_data.meta_keywords) else _('meta_keywords')) }}" />
+<link
+  rel="canonical"
+  href="{{ (seo_data.canonical_url if (seo_data and seo_data.canonical_url) else request.url) }}" />
 <meta property="og:type" content="article" />
-<meta property="og:title" content="{{ seo_data.og_title }}" />
-<meta property="og:description" content="{{ seo_data.og_description }}" />
-<meta property="og:url" content="{{ seo_data.canonical_url }}" />
+<meta
+  property="og:title"
+  content="{{ (seo_data.og_title if (seo_data and seo_data.og_title) else news.title) }}" />
+<meta
+  property="og:description"
+  content="{{ (seo_data.og_description if (seo_data and seo_data.og_description) else (news.summary if news.summary else _('meta_description'))) }}" />
+<meta
+  property="og:url"
+  content="{{ (seo_data.canonical_url if (seo_data and seo_data.canonical_url) else request.url) }}" />
 {% if news.image_url %}
 <meta
   property="og:image"
   content="{{ request.url_root[:-1] }}{{ news.image_url }}" />
 {% endif %}
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="{{ seo_data.og_title }}" />
-<meta name="twitter:description" content="{{ seo_data.og_description }}" />
+<meta
+  name="twitter:title"
+  content="{{ (seo_data.og_title if (seo_data and seo_data.og_title) else news.title) }}" />
+<meta
+  name="twitter:description"
+  content="{{ (seo_data.og_description if (seo_data and seo_data.og_description) else (news.summary if news.summary else _('meta_description'))) }}" />
 {% if news.image_url %}
 <meta
   name="twitter:image"
@@ -125,7 +144,7 @@
         <div class="news-footer">
           <div class="news-actions">
             <a
-              href="{{ url_for('index') }}#news"
+              href="{{ url_for('index') }}./news"
               class="btn btn-outline-primary">
               <i class="bi bi-arrow-left"></i> Barcha yangiliklar
             </a>
@@ -431,7 +450,7 @@
       if (data && data.success && data.items) {
         const relatedNews = data.items
           .filter(item => item.id !== {{ news.id }} && item.is_active)
-          .slice(0, 3); // Show only 3 related news
+          .slice(0, 6); // Show up to 6 related news
 
         renderRelatedNews(relatedNews);
       } else {

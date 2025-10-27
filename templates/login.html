@@ -10,49 +10,23 @@
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}" />
-    <style>
-      body {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .login-card {
-        background: rgba(255, 255, 255, 0.95);
-        border-radius: 20px;
-        padding: 40px;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-        max-width: 400px;
-        width: 100%;
-      }
-      .form-control {
-        border-radius: 10px;
-        padding: 12px 15px;
-        border: 2px solid #e2e8f0;
-      }
-      .form-control:focus {
-        border-color: #4299e1;
-        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
-      }
-      .btn-login {
-        background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
-        border: none;
-        color: white;
-        padding: 12px 30px;
-        border-radius: 10px;
-        font-weight: 600;
-        width: 100%;
-      }
-      .btn-login:hover {
-        background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%);
-        color: white;
-      }
-    </style>
+    <!-- Modern site styles (auth/footer) -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/site-modern.css') }}" />
   </head>
-  <body>
-    <div class="login-card">
-      <h2 class="text-center mb-4"> Kirish -  Pro-Obuv</h2>
+  <body class="auth-page">
+    <div class="auth-card">
+      <div class="brand">
+        <img
+          src="{{ url_for('static', filename='icons/logo-compact.png') }}"
+          alt="logo"
+          onerror="this.style.display='none'" />
+        <div>
+          <h2 class="mb-0">{{ _('nav.login') }}</h2>
+          <small class="text-muted-weak">{{ _('nav.brand') }}</small>
+        </div>
+      </div>
 
       {% with messages = get_flashed_messages(with_categories=true) %} {% if
       messages %} {% for category, message in messages %}
@@ -88,7 +62,7 @@
             required />
         </div>
 
-        <button type="submit" class="btn btn-login"> Kirish</button>
+        <button type="submit" class="btn btn-login">Kirish</button>
       </form>
 
       <div class="text-center mt-3">

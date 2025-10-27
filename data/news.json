@@ -2,48 +2,66 @@
   "news": [
     {
       "id": 1,
-      "title": "Pro Obuvga xush kelibsiz!",
-      "content": "2025 yilgi eng yangi poyafzal kolleksiyasi do'konimizga keldi. Erkaklar va ayollar uchun zamonaviy va shinam poyafzallar.\n\nYoutube: https://www.youtube.com/@proobuv-safety\nTelegram: https://t.me/specobuv\n INstagram: https://www.instagram.com/proguarduz/\n",
+      "title_uz": "Pro Obuvga xush kelibsiz!",
+      "title_ru": "Добро пожаловать в Pro Obuv!",
+      "title_en": "Welcome to Pro Obuv!",
+      "title_kz": "Pro Obuv-қа қош келдіңіз!",
+      "content_uz": "2025 yilgi eng yangi poyafzal kolleksiyasi do'konimizga keldi. Erkaklar va ayollar uchun zamonaviy va shinam poyafzallar.\n\nYoutube: https://www.youtube.com/@proobuv-safety\nTelegram: https://t.me/specobuv\n Instagram: https://www.instagram.com/proguarduz/\n",
+      "content_ru": "Коллекция обуви 2025 года уже в нашем магазине. Современная и комфортная обувь для мужчин и женщин.\n\nYoutube: https://www.youtube.com/@proobuv-safety\nTelegram: https://t.me/specobuv\n Instagram: https://www.instagram.com/proguarduz/\n",
+      "content_en": "The 2025 footwear collection has arrived at our store. Modern and comfortable shoes for men and women.\n\nYoutube: https://www.youtube.com/@proobuv-safety\nTelegram: https://t.me/specobuv\n Instagram: https://www.instagram.com/proguarduz/\n",
+      "content_kz": "2025 жылғы аяқ киім коллекциясы дүкенімізге келді. Ерлер мен әйелдерге арналған заманауи және ыңғайлы аяқ киімдер.\n\nYoutube: https://www.youtube.com/@proobuv-safety\nTelegram: https://t.me/specobuv\n Instagram: https://www.instagram.com/proguarduz/\n",
       "type": "news",
       "is_active": true,
       "display_order": 1,
-  "image_url": "/static/favicons/favicon-32x32.png",
+      "image_url": "/static/favicons/favicon-32x32.png",
       "video_url": null,
       "youtube_embed": null,
-      "created_at": "2024-01-15T10:00:00Z",
-      "updated_at": "2024-01-15T10:00:00Z"
+      "created_at": "2025-01-15T10:00:00Z",
+      "updated_at": "2025-01-15T10:00:00Z"
     },
     {
       "id": 2,
-      "title": "Bizni Youtubeda kuzatib boring",
-      "content": "ProObuv — bu professional ish kiyimlari, maxsus poyabzallar va xavfsizlik uchun eng ishonchli brend 👷‍♂️👢\nIsh joyingizda xavfsizlikni ta’minlang:\n✅ Spetsobuv (ish poyabzallari)\n✅ Spetsodejda (ish kiyimlari)\n✅ Safety footwear & workwear\n\nYoutube: https://www.youtube.com/@proobuv-safety\nTelegram: https://t.me/specobuv\n INstagram: https://www.instagram.com/proguarduz/\n",
+      "title_uz": "Bizni Youtubeda kuzatib boring",
+      "title_ru": "Подписывайтесь на нас на YouTube",
+      "title_en": "Follow us on YouTube",
+      "title_kz": "Бізді YouTube-те қадағалаңыз",
+      "content_uz": "ProObuv — bu professional ish kiyimlari, maxsus poyabzallar va xavfsizlik uchun eng ishonchli brend 👷‍♂️👢\nIsh joyingizda xavfsizlikni ta’minlang:\n✅ Spetsobuv (ish poyabzallari)\n✅ Spetsodejda (ish kiyimlari)\n✅ Safety footwear & workwear\n\nYoutube: https://www.youtube.com/@proobuv-safety\nTelegram: https://t.me/specobuv\n Instagram: https://www.instagram.com/proguarduz/\n",
+      "content_ru": "ProObuv — это профессиональная спецодежда, специальная обувь и самый надежный бренд для безопасности 👷‍♂️👢\nОбеспечьте безопасность на рабочем месте:\n✅ Спецобувь\n✅ Спецодежда\n✅ Safety footwear & workwear\n\nYoutube: https://www.youtube.com/@proobuv-safety\nTelegram: https://t.me/specobuv\n Instagram: https://www.instagram.com/proguarduz/\n",
+      "content_en": "ProObuv is a professional workwear and safety footwear brand you can trust 👷‍♂️👢\nEnsure safety at your workplace:\n✅ Safety shoes\n✅ Workwear\n✅ Safety footwear & workwear\n\nYoutube: https://www.youtube.com/@proobuv-safety\nTelegram: https://t.me/specobuv\n Instagram: https://www.instagram.com/proguarduz/\n",
+      "content_kz": "ProObuv — бұл кәсіби жұмыс киімдері, арнайы аяқ киім және қауіпсіздік үшін ең сенімді бренд 👷‍♂️👢\nЖұмыс орныңызда қауіпсіздікті қамтамасыз етіңіз:\n✅ Арнайы аяқ киім\n✅ Арнайы киім\n✅ Safety footwear & workwear\n\nYoutube: https://www.youtube.com/@proobuv-safety\nTelegram: https://t.me/specobuv\n Instagram: https://www.instagram.com/proguarduz/\n",
       "type": "news",
       "is_active": true,
       "display_order": 2,
       "image_url": null,
       "video_url": "https://youtube.com/shorts/c8ZTzTzR3MI",
       "youtube_embed": "https://www.youtube.com/embed/c8ZTzTzR3MI",
-      "created_at": "2024-01-15T10:00:00Z",
-      "updated_at": "2024-01-15T10:00:00Z"
+      "created_at": "2025-01-15T10:00:00Z",
+      "updated_at": "2025-01-15T10:00:00Z"
     },
     {
       "id": 3,
-      "title": "Pro Obuvga xush kelibsiz!",
-      "content": "2025 yilgi eng yangi poyafzal kolleksiyasi do'konimizga keldi. Erkaklar va ayollar uchun zamonaviy va shinam poyafzallar.\n\nYoutube: https://www.youtube.com/@proobuv-safety\nTelegram: https://t.me/specobuv\n INstagram: https://www.instagram.com/proguarduz/\n",
+      "title_uz": "Pro Obuvga xush kelibsiz!",
+      "title_ru": "Добро пожаловать в Pro Obuv!",
+      "title_en": "Welcome to Pro Obuv!",
+      "title_kz": "Pro Obuv-қа қош келдіңіз!",
+      "content_uz": "2025 yilgi eng yangi poyafzal kolleksiyasi do'konimizga keldi. Erkaklar va ayollar uchun zamonaviy va shinam poyafzallar.\n\nYoutube: https://www.youtube.com/@proobuv-safety\nTelegram: https://t.me/specobuv\n Instagram: https://www.instagram.com/proguarduz/\n",
+      "content_ru": "Коллекция обуви 2025 года уже в нашем магазине. Современная и комфортная обувь для мужчин и женщин.\n\nYoutube: https://www.youtube.com/@proobuv-safety\nTelegram: https://t.me/specobuv\n Instagram: https://www.instagram.com/proguarduz/\n",
+      "content_en": "The 2025 footwear collection has arrived at our store. Modern and comfortable shoes for men and women.\n\nYoutube: https://www.youtube.com/@proobuv-safety\nTelegram: https://t.me/specobuv\n Instagram: https://www.instagram.com/proguarduz/\n",
+      "content_kz": "2025 жылғы аяқ киім коллекциясы дүкенімізге келді. Ерлер мен әйелдерге арналған заманауи және ыңғайлы аяқ киімдер.\n\nYoutube: https://www.youtube.com/@proobuv-safety\nTelegram: https://t.me/specobzuv\n Instagram: https://www.instagram.com/proguarduz/\n",
       "type": "news",
       "is_active": true,
       "display_order": 3,
       "image_url": "/static/uploads/oy.jpg",
       "video_url": null,
       "youtube_embed": null,
-      "created_at": "2024-01-15T10:00:00Z",
-      "updated_at": "2024-01-15T10:00:00Z"
+      "created_at": "2025-01-15T10:00:00Z",
+      "updated_at": "2025-01-15T10:00:00Z"
     }
   ],
   "metadata": {
     "total_count": 3,
     "active_count": 3,
     "last_updated": "2025-10-15T00:00:00Z",
-    "version": "1.0"
+    "version": "1.1"
   }
 }

@@ -1,4 +1,9 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/color_select.css') }}">
+{% endblock %} {% block content %}
+{# determine interface language for displaying localized fields #}
+{% set lang = session.get('interface_language', config.DEFAULT_LANGUAGE) %}
 <div class="card">
   <h2> Mahsulotlar boshqaruvi</h2>
   <p class="muted">Do'kon mahsulotlarini boshqaring</p>
@@ -12,8 +17,24 @@
       enctype="multipart/form-data">
       <div class="form-grid">
         <div>
-          <label>Nomi:</label>
-          <input type="text" name="name" required placeholder="Mahsulot nomi" />
+          <label>Nomi (legacy, avtomatik to'ldiriladi):</label>
+          <input type="text" name="name" required placeholder="Mahsulot nomi (RU tavsiya etiladi)" />
+        </div>
+        <div>
+          <label>Nomi (ru) — asosiy til:</label>
+          <input type="text" name="name_ru" placeholder="Nomi (ru)" />
+        </div>
+        <div>
+          <label>Nomi (uz):</label>
+          <input type="text" name="name_uz" placeholder="Nomi (uz)" />
+        </div>
+        <div>
+          <label>Nomi (en):</label>
+          <input type="text" name="name_en" placeholder="Nomi (en)" />
+        </div>
+        <div>
+          <label>Nomi (kz):</label>
+          <input type="text" name="name_kz" placeholder="Nomi (kz)" />
         </div>
         <div>
           <label>Narxi (so'm):</label>
@@ -55,18 +76,53 @@
           <input type="text" name="sizes" placeholder="e.g. 36,37,38,39" />
         </div>
         <div>
-          <label>Ranglar (vergul bilan):</label>
-          <input
-            type="text"
-            name="colors"
-            placeholder="e.g. black,brown,white" />
+          <label>Ranglar:</label>
+          <div class="color-select" id="add-color-select">
+            {% set supported_colors = {
+              'black': 'Qora',
+              'white': 'Oq',
+              'brown': 'Jigarrang',
+              'gray': 'Kulrang',
+              'red': 'Qizil',
+              'blue': 'Ko\'k',
+              'green': 'Yashil',
+              'yellow': 'Sariq',
+              'orange': 'To\'q sariq',
+              'purple': 'Siyoh rang',
+              'pink': 'Pushti',
+              'beige': 'Bej'
+            } %}
+            {% for color_key, color_name in supported_colors.items() %}
+            <label class="color-option">
+              <input type="checkbox" name="colors[]" value="{{ color_key }}" />
+              <span class="color-swatch" style="background-color: {{ color_key }};"></span>
+              <span class="color-name">{{ color_name }}</span>
+            </label>
+            {% endfor %}
+          </div>
         </div>
         <div>
-          <label>Tavsif:</label>
+          <label>Tavsif (legacy):</label>
           <textarea
             name="description"
             placeholder="Mahsulot haqida qisqacha ma'lumot"
             rows="2"></textarea>
+        </div>
+        <div>
+          <label>Tavsif (ru):</label>
+          <textarea name="description_ru" placeholder="Tavsif (ru)" rows="2"></textarea>
+        </div>
+        <div>
+          <label>Tavsif (uz):</label>
+          <textarea name="description_uz" placeholder="Tavsif (uz)" rows="2"></textarea>
+        </div>
+        <div>
+          <label>Tavsif (en):</label>
+          <textarea name="description_en" placeholder="Tavsif (en)" rows="2"></textarea>
+        </div>
+        <div>
+          <label>Tavsif (kz):</label>
+          <textarea name="description_kz" placeholder="Tavsif (kz)" rows="2"></textarea>
         </div>
         <div style="display: flex; align-items: end">
           <button type="submit" class="btn"> Qo'shish</button>
@@ -89,9 +145,10 @@
         </div>
 
         <div class="item-details">
-          <h4>{{ item.name }}</h4>
+          {# show localized name/description based on session interface language (fallback to legacy fields) #}
+          <h4>{{ item.localized_name }}</h4>
           <p class="item-description">
-            {{ item.description or 'Tavsif mavjud emas' }}
+            {{ item.localized_description or 'Tavsif mavjud emas' }}
           </p>
 
           <div class="price-section">
@@ -161,8 +218,28 @@
                   type="text"
                   name="name"
                   value="{{ item.name }}"
-                  placeholder="Nomi"
+                  placeholder="Nomi (legacy)"
                   required />
+                <input
+                  type="text"
+                  name="name_ru"
+                  value="{{ item.name_ru or item.name }}"
+                  placeholder="Nomi (ru)" />
+                <input
+                  type="text"
+                  name="name_uz"
+                  value="{{ item.name_uz or '' }}"
+                  placeholder="Nomi (uz)" />
+                <input
+                  type="text"
+                  name="name_en"
+                  value="{{ item.name_en or '' }}"
+                  placeholder="Nomi (en)" />
+                <input
+                  type="text"
+                  name="name_kz"
+                  value="{{ item.name_kz or '' }}"
+                  placeholder="Nomi (kz)" />
                 <input
                   type="number"
                   name="price"
@@ -187,18 +264,40 @@
                   name="sizes"
                   value="{{ item.sizes or '' }}"
                   placeholder="O'lchamlar (36,37,38)" />
-                <input
-                  type="text"
-                  name="colors"
-                  value="{{ item.colors or '' }}"
-                  placeholder="Ranglar (black,brown)" />
+                <div class="color-select">
+                  {% set supported_colors = {
+                    'black': 'Qora',
+                    'white': 'Oq', 
+                    'brown': 'Jigarrang',
+                    'gray': 'Kulrang',
+                    'red': 'Qizil',
+                    'blue': 'Ko\'k',
+                    'green': 'Yashil',
+                    'yellow': 'Sariq', 
+                    'orange': 'To\'q sariq',
+                    'purple': 'Siyoh rang',
+                    'pink': 'Pushti',
+                    'beige': 'Bej'
+                  } %}
+                  {% for color_key, color_name in supported_colors.items() %}
+                  {% set is_selected = item.colors and color_key in item.colors.split(',') %}
+                  <label class="color-option {% if is_selected %}selected{% endif %}">
+                    <input type="checkbox" name="colors[]" value="{{ color_key }}" {% if is_selected %}checked{% endif %} />
+                    <span class="color-swatch" style="background-color: {{ color_key }};"></span>
+                    <span class="color-name">{{ color_name }}</span>
+                  </label>
+                  {% endfor %}
+                </div>
                 <input
                   type="file"
                   name="media_files"
                   accept="image/*,video/*"
                   multiple />
-                <textarea name="description" placeholder="Tavsif">
-{{ item.description }}</textarea
+                <textarea name="description" placeholder="Tavsif">{{ item.description or '' }}</textarea>
+                <textarea name="description_ru" placeholder="Tavsif (ru)">{{ item.description_ru or item.description or '' }}</textarea>
+                <textarea name="description_uz" placeholder="Tavsif (uz)">{{ item.description_uz or '' }}</textarea>
+                <textarea name="description_en" placeholder="Tavsif (en)">{{ item.description_en or '' }}</textarea>
+                <textarea name="description_kz" placeholder="Tavsif (kz)">{{ item.description_kz or '' }}</textarea>
                 >
                 <!-- Support multiple URLs per marketplace: use market_<key>[] fields -->
                 <div>
@@ -1058,5 +1157,28 @@
       row.remove();
     }catch(e){ console.error('removeMarketInput error', e); }
   }
+</script>
+<script>
+  // Wire color-option checkboxes so clicking label toggles visual selection
+  document.addEventListener('DOMContentLoaded', function(){
+    try{
+      // All color-select containers on the page
+      document.querySelectorAll('.color-select').forEach(function(container){
+        Array.from(container.querySelectorAll('.color-option')).forEach(function(label){
+          var cb = label.querySelector('input[type="checkbox"]');
+          if(!cb) return;
+          // reflect initial state
+          if(cb.checked) label.classList.add('selected');
+          label.addEventListener('click', function(e){
+            // avoid toggling when clicking inner inputs directly
+            if(e.target && e.target.tagName === 'INPUT') return;
+            cb.checked = !cb.checked;
+            label.classList.toggle('selected', cb.checked);
+          });
+          cb.addEventListener('change', function(){ label.classList.toggle('selected', cb.checked); });
+        });
+      });
+    }catch(e){ console.warn('color wiring error', e); }
+  });
 </script>
 {% endblock %}
