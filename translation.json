@@ -1,0 +1,290 @@
+{
+  "Biz bilan bog'lanish": {
+    "uz": "Biz bilan bog'lanish",
+    "ru": "Связаться с нами",
+    "en": "Contact us",
+    "kz": "Бізбен байланысу"
+  },
+  "Sizning savollaringiz va takliflaringiz biz uchun muhim": {
+    "uz": "Sizning savollaringiz va takliflaringiz biz uchun muhim",
+    "ru": "Ваши вопросы и предложения важны для нас",
+    "en": "Your questions and suggestions are important to us",
+    "kz": "Сіздің сұрақтарыңыз бен ұсыныстарыңыз біз үшін маңызды"
+  },
+  "Savol yuborish": {
+    "uz": "Savol yuborish",
+    "ru": "Отправить вопрос",
+    "en": "Send a question",
+    "kz": "Сұрақ жіберу"
+  },
+  "Ismingiz:": {
+    "uz": "Ismingiz:",
+    "ru": "Ваше имя:",
+    "en": "Your name:",
+    "kz": "Атыңыз:"
+  },
+  "Email (ixtiyoriy):": {
+    "uz": "Email (ixtiyoriy):",
+    "ru": "Email (необязательно):",
+    "en": "Email (optional):",
+    "kz": "Электрондық пошта (міндетті емес):"
+  },
+  "Telefon (ixtiyoriy):": {
+    "uz": "Telefon (ixtiyoriy):",
+    "ru": "Телефон (необязательно):",
+    "en": "Phone (optional):",
+    "kz": "Телефон (міндетті емес):"
+  },
+  "Mavzu:": {
+    "uz": "Mavzu:",
+    "ru": "Тема:",
+    "en": "Subject:",
+    "kz": "Тақырыбы:"
+  },
+  "Xabar:": {
+    "uz": "Xabar:",
+    "ru": "Сообщение:",
+    "en": "Message:",
+    "kz": "Хабарлама:"
+  },
+  "Yuborish": {
+    "uz": "Yuborish",
+    "ru": "Отправить",
+    "en": "Send",
+    "kz": "Жіберу"
+  },
+  "Aloqa ma'lumotlari": {
+    "uz": "Aloqa ma'lumotlari",
+    "ru": "Контактная информация",
+    "en": "Contact information",
+    "kz": "Байланыс ақпараты"
+  },
+  "Manzil:": {
+    "uz": "Manzil:",
+    "ru": "Адрес:",
+    "en": "Address:",
+    "kz": "Мекен-жай:"
+  },
+  "Ish vaqti:": {
+    "uz": "Ish vaqti:",
+    "ru": "Время работы:",
+    "en": "Working hours:",
+    "kz": "Жұмыс уақыты:"
+  },
+  "Ijtimoiy tarmoqlarda bizni kuzatib boring:": {
+    "uz": "Ijtimoiy tarmoqlarda bizni kuzatib boring:",
+    "ru": "Следите за нами в социальных сетях:",
+    "en": "Follow us on social media:",
+    "kz": "Әлеуметтік желілерде бізді қадағалаңыз:"
+  },
+  "Qidirish": {
+    "uz": "Qidirish",
+    "ru": "Поиск",
+    "en": "Search",
+    "kz": "Іздеу"
+  },
+  "Savatcha": {
+    "uz": "Savatcha",
+    "ru": "Корзина",
+    "en": "Cart",
+    "kz": "Себет"
+  },
+  "Tanlagan mahsulotlaringizni ko'ring va buyurtma bering": {
+    "uz": "Tanlagan mahsulotlaringizni ko'ring va buyurtma bering",
+    "ru": "Просмотрите выбранные товары и оформите заказ",
+    "en": "Review your selected products and place an order",
+    "kz": "Таңдаған өнімдеріңізді қарап, тапсырыс беріңіз"
+  },
+  "Savatchangiz bo'sh": {
+    "uz": "Savatchangiz bo'sh",
+    "ru": "Ваша корзина пуста",
+    "en": "Your cart is empty",
+    "kz": "Себетіңіз бос"
+  },
+  "Buyurtma berish": {
+    "uz": "Buyurtma berish",
+    "ru": "Оформить заказ",
+    "en": "Place order",
+    "kz": "Тапсырыс беру"
+  },
+  "Shaxsiy ma'lumotlar": {
+    "uz": "Shaxsiy ma'lumotlar",
+    "ru": "Личные данные",
+    "en": "Personal information",
+    "kz": "Жеке мәліметтер"
+  },
+  "Ism": {
+    "uz": "Ism",
+    "ru": "Имя",
+    "en": "First name",
+    "kz": "Аты"
+  },
+  "Familiya": {
+    "uz": "Familiya",
+    "ru": "Фамилия",
+    "en": "Last name",
+    "kz": "Тегі"
+  },
+  "Telefon": {
+    "uz": "Telefon",
+    "ru": "Телефон",
+    "en": "Phone",
+    "kz": "Телефон"
+  },
+  "Saqlash": {
+    "uz": "Saqlash",
+    "ru": "Сохранить",
+    "en": "Save",
+    "kz": "Сақтау"
+  },
+  "Parolni o'zgartirish": {
+    "uz": "Parolni o'zgartirish",
+    "ru": "Сменить пароль",
+    "en": "Change password",
+    "kz": "Құпия сөзді өзгерту"
+  },
+  "Joriy parol": {
+    "uz": "Joriy parol",
+    "ru": "Текущий пароль",
+    "en": "Current password",
+    "kz": "Ағымдағы құпия сөз"
+  },
+  "Yangi parol": {
+    "uz": "Yangi parol",
+    "ru": "Новый пароль",
+    "en": "New password",
+    "kz": "Жаңа құпия сөз"
+  },
+  "Yangi parolni tasdiqlash": {
+    "uz": "Yangi parolni tasdiqlash",
+    "ru": "Подтвердите новый пароль",
+    "en": "Confirm new password",
+    "kz": "Жаңа құпия сөзді растау"
+  },
+  "Mobil Ilovalar": {
+    "uz": "Mobil Ilovalar",
+    "ru": "Мобильные приложения",
+    "en": "Mobile apps",
+    "kz": "Мобильді қосымшалар"
+  },
+  "Xizmatlardan yanada qulay foydalanish uchun mobil ilovalarni yuklab oling": {
+    "uz": "Xizmatlardan yanada qulay foydalanish uchun mobil ilovalarni yuklab oling",
+    "ru": "Скачайте мобильные приложения для более удобного использования сервиса",
+    "en": "Download mobile apps for more convenient use of the service",
+    "kz": "Қызметті ыңғайлы пайдалану үшін мобильді қосымшаларды жүктеп алыңыз"
+  },
+  "Yangiliklar": {
+    "uz": "Yangiliklar",
+    "ru": "Новости",
+    "en": "News",
+    "kz": "Жаңалықтар"
+  },
+  "nav.address": {
+    "uz": "Manzil",
+    "ru": "Адрес",
+    "en": "Address",
+    "kz": "Мекен-жай"
+  },
+  "Hozircha yangiliklar mavjud emas.": {
+    "uz": "Hozircha yangiliklar mavjud emas.",
+    "ru": "Пока новостей нет.",
+    "en": "No news yet.",
+    "kz": "Әзірше жаңалықтар жоқ."
+  },
+  "Mahsulot tanlash": {
+    "uz": "Mahsulot tanlash",
+    "ru": "Выбор товара",
+    "en": "Product selection",
+    "kz": "Өнім таңдау"
+  },
+  "Miqdor": {
+    "uz": "Miqdor",
+    "ru": "Количество",
+    "en": "Quantity",
+    "kz": "Саны"
+  },
+  "Savatchaga qo'shish": {
+    "uz": "Savatchaga qo'shish",
+    "ru": "Добавить в корзину",
+    "en": "Add to cart",
+    "kz": "Себетке қосу"
+  },
+  "Mijozlar sharhlari": {
+    "uz": "Mijozlar sharhlari",
+    "ru": "Отзывы клиентов",
+    "en": "Customer reviews",
+    "kz": "Тұтынушылар пікірлері"
+  },
+  "Sharh yuborish": {
+    "uz": "Sharh yuborish",
+    "ru": "Оставить отзыв",
+    "en": "Submit review",
+    "kz": "Пікір жіберу"
+  },
+  "Hozircha sharhlar yo'q - birinchi bo'lib fikr qoldiring.": {
+    "uz": "Hozircha sharhlar yo'q - birinchi bo'lib fikr qoldiring.",
+    "ru": "Пока отзывов нет - оставьте первый.",
+    "en": "No reviews yet - be the first to leave feedback.",
+    "kz": "Әзірше пікірлер жоқ - бірінші болып пікір қалтырыңыз."
+  },
+  "Raqam": {
+    "uz": "Raqam",
+    "ru": "Номер",
+    "en": "Number",
+    "kz": "Nымер"
+  },
+  "Sana": {
+    "uz": "Sana",
+    "ru": "Дата",
+    "en": "Date",
+    "kz": "Күні"
+  },
+  "Holat": {
+    "uz": "Holat",
+    "ru": "Статус",
+    "en": "Status",
+    "kz": "Күйі"
+  },
+  "Jami": {
+    "uz": "Jami",
+    "ru": "Итого",
+    "en": "Total",
+    "kz": "Барлығы"
+  },
+  "Amallar": {
+    "uz": "Amallar",
+    "ru": "Действия",
+    "en": "Actions",
+    "kz": "Әрекеттер"
+  },
+  "Tayyorlanmoqda": {
+    "uz": "Tayyorlanmoqda",
+    "ru": "Готовится",
+    "en": "Preparing",
+    "kz": "Дайындалып жатыр"
+  },
+  "Tayyor": {
+    "uz": "Tayyor",
+    "ru": "Готово",
+    "en": "Ready",
+    "kz": "Дайын"
+  },
+  "Yetkazildi": {
+    "uz": "Yetkazildi",
+    "ru": "Доставлено",
+    "en": "Delivered",
+    "kz": "Жеткізілді"
+  },
+  "Bekor qilindi": {
+    "uz": "Bekor qilindi",
+    "ru": "Отменено",
+    "en": "Cancelled",
+    "kz": "Болдырылмады"
+  },
+  "Menuga o'tish": {
+    "uz": "Menuga o'tish",
+    "ru": "Перейти в меню",
+    "en": "Go to menu",
+    "kz": "Мәзірге өту"
+  }
+}

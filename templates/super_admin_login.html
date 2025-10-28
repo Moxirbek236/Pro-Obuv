@@ -31,12 +31,7 @@ block content %}
       <button type="submit" class="btn btn-primary btn-full">Kirish</button>
     </form>
 
-    <div style="margin-top: 12px; text-align: center">
-      <!-- Forgot password only shown for superadmin login -->
-      <a href="{{ url_for('super_admin_forgot') }}" class="btn btn-link"
-        >Parol esdan chiqdi?</a
-      >
-    </div>
+    <!-- Forgot password removed for super-admin to avoid public reset links -->
 
     <div class="login-info">
       <small class="text-muted"

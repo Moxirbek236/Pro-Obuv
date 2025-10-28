@@ -1533,3 +1533,270 @@ werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'super_
 2025-10-26 23:56:47,013 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
 2025-10-26 23:57:18,368 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
 2025-10-27 07:43:52,684 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 07:43:53,914 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 12:37:28,221 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 12:37:34,885 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 12:37:49,457 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 13:27:59,348 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 13:45:10,857 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 13:45:14,630 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 13:45:21,814 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/logo-compact.png
+2025-10-27 13:45:21,831 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/favicon.ico
+2025-10-27 13:45:27,423 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 13:45:30,621 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 13:58:39,949 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 13:58:47,065 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 13:59:17,324 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 13:59:19,914 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 13:59:22,256 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 13:59:29,851 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 13:59:33,035 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 13:59:35,785 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 13:59:41,346 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 13:59:43,942 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 13:59:47,950 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 13:59:50,268 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 14:00:21,702 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 14:00:24,289 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 14:03:04,650 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 14:03:08,629 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 14:03:10,872 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 14:03:16,739 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 14:03:18,183 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 14:03:22,824 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 14:03:25,136 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 14:03:36,780 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 14:03:40,252 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 14:06:28,732 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 14:06:32,420 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-27 14:08:15,139 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 14:08:19,277 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 14:08:25,350 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 14:08:27,493 | WARNING | restaurant_app | wrapper:929 | role_required wrapper error: 'str' object is not callable
+2025-10-27 14:08:27,610 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://127.0.0.1:5000/static/icons/logo-compact.png
+2025-10-27 14:08:28,340 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-10-27 14:08:29,933 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 14:08:36,818 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 14:08:37,344 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://127.0.0.1:5000/api/user-sessions
+2025-10-27 14:09:31,624 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 14:09:45,853 | WARNING | restaurant_app | wrapper:929 | role_required wrapper error: 'str' object is not callable
+2025-10-27 14:09:45,992 | WARNING | restaurant_app | not_found_error:1515 | 404 Error: http://127.0.0.1:5000/static/icons/logo-compact.png
+2025-10-27 14:16:59,712 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/logo-compact.png
+2025-10-27 14:17:01,348 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-10-27 14:17:05,768 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 14:17:08,287 | WARNING | restaurant_app | wrapper:929 | role_required wrapper error: 'str' object is not callable
+2025-10-27 14:17:08,486 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/logo-compact.png
+2025-10-27 14:17:12,050 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 14:17:17,156 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 14:17:17,507 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/api/user-sessions
+2025-10-27 14:17:21,563 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 14:18:14,896 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/logo-compact.png
+2025-10-27 14:18:21,675 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 14:18:23,313 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/logo-compact.png
+2025-10-27 14:18:24,997 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 14:18:45,862 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 14:18:46,726 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/api/user-sessions
+2025-10-27 14:19:12,557 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 14:19:13,243 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/api/user-sessions
+2025-10-27 14:19:22,176 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 14:19:26,689 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 14:19:29,429 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 14:19:30,596 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/logo-compact.png
+2025-10-27 14:19:39,191 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 14:19:45,007 | WARNING | restaurant_app | super_admin_login:13278 | Super admin login failed for username: masteradmin
+2025-10-27 14:19:45,090 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 14:19:55,299 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 14:20:03,150 | WARNING | restaurant_app | super_admin_login:13278 | Super admin login failed for username: masteradmin
+2025-10-27 14:20:04,277 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 14:20:12,216 | WARNING | restaurant_app | super_admin_login:13278 | Super admin login failed for username: masteradmin
+2025-10-27 14:20:12,316 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 14:20:15,430 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 14:20:21,099 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-10-27 14:20:24,958 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 14:20:41,201 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 14:20:57,720 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 14:26:47,714 | WARNING | restaurant_app | super_admin_login:13283 | Super admin login failed for username: masteradmin
+2025-10-27 14:26:49,166 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 14:26:53,524 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 14:27:07,285 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 14:27:07,805 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/api/user-sessions
+2025-10-27 14:27:14,635 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 14:27:19,290 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 14:27:19,837 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/api/user-sessions
+2025-10-27 14:27:31,507 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 14:27:49,403 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-27 14:30:08,541 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 14:31:03,182 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 14:31:07,511 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 15:09:52,055 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 15:10:09,224 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 15:10:09,300 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/api/user-sessions
+2025-10-27 15:10:15,822 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 15:12:54,465 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 15:19:52,229 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 15:20:01,112 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 15:20:07,411 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 15:20:10,493 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 15:20:36,419 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 15:20:44,281 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 15:21:00,095 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/logo-compact.png
+2025-10-27 15:21:00,824 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-10-27 15:21:10,223 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 15:21:18,039 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/logo-compact.png
+2025-10-27 15:21:18,978 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 15:21:36,971 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 15:21:37,546 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 15:21:38,690 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 15:21:40,324 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 15:21:40,895 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/api/user-sessions
+2025-10-27 15:21:42,286 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 15:21:51,626 | WARNING | restaurant_app | super_admin_login:13288 | Super admin login failed for username: masteradmin
+2025-10-27 15:21:51,767 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 15:22:02,143 | WARNING | restaurant_app | super_admin_login:13288 | Super admin login failed for username: moxirbekmoxirbek29@gmail.com
+2025-10-27 15:22:02,277 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 15:39:33,580 | WARNING | restaurant_app | super_admin_login:13288 | Super admin login failed for username: moxirbekmoxirbek29@gmail.com
+2025-10-27 15:39:36,369 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 15:39:45,170 | WARNING | restaurant_app | super_admin_login:13288 | Super admin login failed for username: masteradmin
+2025-10-27 15:39:45,516 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 15:39:54,692 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 15:40:05,062 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 15:40:14,731 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 15:40:15,493 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/api/user-sessions
+2025-10-27 15:41:15,810 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 15:41:40,136 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 16:08:06,527 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 16:08:17,461 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 16:08:21,135 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 16:08:23,125 | WARNING | restaurant_app | wrapper:929 | role_required wrapper error: 'str' object is not callable
+2025-10-27 16:08:23,691 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/logo-compact.png
+2025-10-27 16:08:23,951 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-10-27 16:08:25,807 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 16:08:27,912 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 16:08:40,137 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 16:08:40,500 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/api/user-sessions
+2025-10-27 16:08:45,259 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 16:15:45,965 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 16:15:50,853 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 16:15:54,188 | WARNING | restaurant_app | wrapper:929 | role_required wrapper error: 'str' object is not callable
+2025-10-27 16:15:54,643 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/static/icons/logo-compact.png
+2025-10-27 16:15:56,039 | WARNING | restaurant_app | not_found_error:1524 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-10-27 16:40:20,917 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 16:40:28,791 | ERROR | restaurant_app | handle_exception:1617 | Unhandled exception: Could not build url for endpoint 'forgot'. Did you mean 'logout' instead? - URL: http://127.0.0.1:5000/login_page
+2025-10-27 16:40:29,171 | ERROR | restaurant_app | handle_exception:1619 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv1\app.py", line 12576, in login_page
+    return render_template("login.html")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Moxir_Coder\OneDrive\Desktop\Pro-Obuv1\templates\login.html", line 69, in top-level template code
+    <a href="{{ url_for('forgot') }}">Parolni unutdingiz?</a>
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\routing\map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'forgot'. Did you mean 'logout' instead?
+
+2025-10-27 16:49:59,766 | ERROR | app | log_exception:875 | Exception on /login_page [GET]
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 920, in full_dispatch_request
+    return self.finalize_request(rv)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 939, in finalize_request
+    response = self.make_response(rv)
+               ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 1212, in make_response
+    raise TypeError(
+TypeError: The view function for 'login_page' did not return a valid response. The function either returned None or ended without a return statement.
+2025-10-27 16:49:59,802 | ERROR | restaurant_app | internal_error:1554 | 500 Error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application. - URL: http://127.0.0.1:5000/login_page
+2025-10-27 16:50:01,085 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-10-27 16:58:17,035 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://127.0.0.1:5000/static/icons/logo-compact.png
+2025-10-27 16:58:20,469 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-10-27 16:58:40,486 | WARNING | restaurant_app | forgot:12625 | SMS send failed for forgot password: name 'sms_helper' is not defined
+2025-10-27 17:37:52,402 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 17:37:59,333 | WARNING | restaurant_app | wrapper:929 | role_required wrapper error: 'str' object is not callable
+2025-10-27 17:37:59,507 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://127.0.0.1:5000/static/icons/logo-compact.png
+2025-10-27 18:08:24,756 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-10-27 18:08:37,985 | WARNING | restaurant_app | forgot:12679 | SMS sending failed for forgot flow
+2025-10-27 18:37:17,425 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 18:37:19,211 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 18:37:23,737 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-10-27 18:37:35,631 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://127.0.0.1:5000/static/icons/logo-compact.png
+2025-10-27 18:43:58,802 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-10-27 18:44:27,427 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 18:44:30,123 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 18:44:32,653 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 18:44:37,083 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 18:44:39,740 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 18:44:40,987 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://localhost:5000/static/icons/logo-compact.png
+2025-10-27 18:44:41,026 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://localhost:5000/favicon.ico
+2025-10-27 19:27:12,665 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://localhost:5000/favicon.ico
+2025-10-27 19:27:36,608 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://localhost:5000/static/icons/logo-compact.png
+2025-10-27 19:33:54,041 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://localhost:5000/favicon.ico
+2025-10-27 19:34:04,807 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://localhost:5000/favicon.ico
+2025-10-27 19:37:19,249 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://localhost:5000/static/icons/logo-compact.png
+2025-10-27 19:37:21,215 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 19:37:23,309 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://localhost:5000/static/icons/logo-compact.png
+2025-10-27 19:45:31,392 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://localhost:5000/favicon.ico
+2025-10-27 19:45:35,443 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://localhost:5000/static/icons/logo-compact.png
+2025-10-27 19:56:14,064 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://localhost:5000/static/icons/logo-compact.png
+2025-10-27 20:04:59,044 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://localhost:5000/favicon.ico
+2025-10-27 20:05:10,800 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://localhost:5000/favicon.ico
+2025-10-27 20:05:17,692 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://localhost:5000/static/icons/logo-compact.png
+2025-10-27 20:15:47,330 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://localhost:5000/favicon.ico
+2025-10-27 20:34:39,559 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 20:34:55,919 | WARNING | restaurant_app | forgot:12715 | SMTP_PASS not set; cannot send forgot-password email
+2025-10-27 20:35:19,876 | WARNING | restaurant_app | forgot:12715 | SMTP_PASS not set; cannot send forgot-password email
+2025-10-27 20:39:32,248 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://localhost:5000/favicon.ico
+2025-10-27 20:40:21,969 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://localhost:5000/static/icons/logo-compact.png
+2025-10-27 20:40:38,243 | WARNING | restaurant_app | login_page:12566 | Failed login attempt for email: nasimjonnasimjon46@gmail.com
+2025-10-27 20:40:38,411 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://localhost:5000/static/icons/logo-compact.png
+2025-10-27 20:40:53,413 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://localhost:5000/None
+2025-10-27 20:40:54,149 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-27 20:47:37,745 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://localhost:5000/static/icons/logo-compact.png
+2025-10-27 20:53:40,417 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://localhost:5000/favicon.ico
+2025-10-27 20:54:03,223 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-27 21:44:52,680 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 21:44:59,689 | WARNING | restaurant_app | wrapper:929 | role_required wrapper error: 'str' object is not callable
+2025-10-27 21:44:59,904 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://127.0.0.1:5000/static/icons/logo-compact.png
+2025-10-27 21:45:01,070 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-10-27 21:46:04,414 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 21:46:46,536 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 21:46:49,985 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 21:46:56,546 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 21:46:57,001 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://127.0.0.1:5000/api/user-sessions
+2025-10-27 21:47:01,826 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://127.0.0.1:5000/api/user-sessions
+2025-10-27 21:47:05,581 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 21:47:07,100 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 21:47:07,582 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://127.0.0.1:5000/api/user-sessions
+2025-10-27 21:47:10,553 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 21:47:14,629 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 21:47:29,950 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://127.0.0.1:5000/static/icons/yandex.svg
+2025-10-27 21:48:05,032 | WARNING | restaurant_app | not_found_error:1501 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-27 22:54:10,122 | WARNING | restaurant_app | not_found_error:1535 | 404 Error: http://localhost:5000/favicon.ico
+2025-10-28 14:38:25,154 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-28 14:38:27,407 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-10-28 14:38:30,377 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-10-28 16:07:16,893 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/static/icons/yandex.svg

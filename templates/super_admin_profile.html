@@ -11,7 +11,7 @@
         type="text"
         name="username"
         class="form-control"
-        value="{{ user.username }}"
+        value="{{ user.username or '' }}"
         required />
     </div>
     <div class="mb-3">
@@ -24,7 +24,7 @@
         type="text"
         name="first_name"
         class="form-control"
-        value="{{ user.first_name }}" />
+        value="{{ user.first_name or '' }}" />
     </div>
     <div class="mb-3">
       <label class="form-label">Familiya</label>
@@ -32,7 +32,7 @@
         type="text"
         name="last_name"
         class="form-control"
-        value="{{ user.last_name }}" />
+        value="{{ user.last_name or '' }}" />
     </div>
     <div class="mb-3">
       <label class="form-label">Telefon</label>
@@ -40,14 +40,46 @@
         type="text"
         name="phone"
         class="form-control"
-        value="{{ user.phone }}" />
+        value="{{ user.phone or '' }}" />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Email</label>
+      <input
+        type="email"
+        name="email"
+        class="form-control"
+        value="{{ user.email or '' }}" />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Manzil</label>
+      <input
+        type="text"
+        name="address"
+        class="form-control"
+        value="{{ user.address or '' }}" />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Karta (faqat oxirgi 4 raqam saqlanadi)</label>
+      <input
+        type="text"
+        name="card_number"
+        class="form-control"
+        placeholder="XXXX-XXXX-XXXX-1234" />
+      {% if user.card_last4 %}
+      <div class="form-text">
+        Saqlangan karta: **** **** **** {{ user.card_last4 }}
+      </div>
+      {% endif %}
     </div>
     <div class="mb-3">
       <label class="form-label">Profil rasmi</label>
       <input type="file" name="avatar" accept="image/*" class="form-control" />
       {% if user.avatar %}
       <div class="mt-2">
-        <img src="{{ user.avatar }}" width="120" class="app-avatar" />
+        <img
+          src="{{ user.avatar or '/static/images/default-avatar.svg' }}"
+          width="120"
+          class="app-avatar" />
       </div>
       {% endif %}
     </div>

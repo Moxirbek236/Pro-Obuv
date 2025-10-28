@@ -51,8 +51,8 @@
         padding: 22px !important;
         gap: 14px !important;
         position: relative;
-        /* make p-3.position-relative cards taller by default */
-        min-height: 520px;
+        /* allow card height to be driven by its media/content */
+        min-height: auto;
         overflow: visible !important;
         transition: transform 180ms ease, box-shadow 180ms ease;
         box-shadow: 0 8px 22px rgba(10, 10, 10, 0.06);
@@ -276,7 +276,7 @@
       {% for item in news %}
       <article class="news-item card p-3 position-relative">
         <!-- Media at top -->
-        <div class="news-media">
+        <div class="news-media" data-video-url="{{ item.video_url or item.video }}">
           {% if item.youtube_embed %}
           <div class="youtube-embed-wrapper">
             <iframe src="{{ item.youtube_embed }}" allowfullscreen></iframe>
@@ -626,6 +626,71 @@
           container.style.display = "none";
         }
       });
+    })();
+  </script>
+
+  <script>
+    // Post-process news items: ensure YouTube links become embedded iframes.
+    // Handles three cases:
+    //  - server didn't render any media but data-video-url contains a YouTube link
+    //  - server rendered a <video> element whose <source> points to a YouTube link
+    //  - server rendered nothing and data-video-url is present (fallback)
+    (function(){
+      try{
+        const items = document.querySelectorAll('#news-list .news-item');
+        const ytRe = /(?:v=|\/embed\/|youtu\.be\/)([A-Za-z0-9_\-]{11})/;
+        items.forEach(function(it){
+          try{
+            const media = it.querySelector('.news-media');
+            if(!media) return;
+
+            // If there's already an iframe, nothing to do
+            if(media.querySelector('iframe')) return;
+
+            // If a <video> element exists, check its source; if it's a YouTube URL, replace it
+            const videoEl = media.querySelector('video');
+            if(videoEl){
+              try{
+                let src = '';
+                const sourceEl = videoEl.querySelector('source');
+                if(sourceEl) src = sourceEl.src || sourceEl.getAttribute('src') || '';
+                if(!src) src = videoEl.currentSrc || videoEl.getAttribute('src') || '';
+                if(src){
+                  const m = String(src).match(ytRe);
+                  if(m && m[1]){
+                    const id = m[1];
+                    const wrap = document.createElement('div');
+                    wrap.className = 'youtube-embed-wrapper';
+                    wrap.innerHTML = '<iframe src="https://www.youtube.com/embed/'+id+'" allowfullscreen></iframe>';
+                    media.innerHTML = '';
+                    media.appendChild(wrap);
+                    return;
+                  }
+                }
+                // If not YouTube, keep the video element as-is
+                return;
+              }catch(e){ /* continue to fallback below */ }
+            }
+
+            // If an <img> exists, prefer leaving it alone
+            if(media.querySelector('img')) return;
+
+            // Fallback: read data-video-url attribute (server may not have rendered media)
+            const vurl = (media.getAttribute('data-video-url')||'').trim();
+            if(!vurl) return;
+
+            const m = String(vurl).match(ytRe);
+            if(m && m[1]){
+              const id = m[1];
+              const wrap = document.createElement('div');
+              wrap.className = 'youtube-embed-wrapper';
+              wrap.innerHTML = '<iframe src="https://www.youtube.com/embed/'+id+'" allowfullscreen></iframe>';
+              media.innerHTML = '';
+              media.appendChild(wrap);
+            }
+          }catch(e){}
+        });
+      }catch(e){ console.warn('news embed postprocess failed', e); }
     })();
   </script>
   {% endif %} {% endblock %}

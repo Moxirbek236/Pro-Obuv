@@ -1272,7 +1272,7 @@
               <a class="nav-link" href="{{ url_for('contact') }}">{{ _('nav.contact') }}</a>
             </li>
             <li>
-              <a class="nav-link" href="https://maps.app.goo.gl/tQU6Axzj4JvLoGML8">Manzil</a>
+              <a class="nav-link" href="https://maps.app.goo.gl/tQU6Axzj4JvLoGML8">{{ _('nav.address') if _('nav.address') else 'Manzil' }}</a>
             </li>
             <li class="nav-item">
             <a class="nav-link" href="{{ url_for('news_page') }}">{{ _('nav.news') }}</a>
@@ -1402,6 +1402,9 @@
               <a class="nav-link" href="{{ url_for('contact') }}">{{ _('nav.contact') }}</a>
             </li>
             <li class="nav-item">
+              <a class="nav-link" href="https://maps.app.goo.gl/tQU6Axzj4JvLoGML8">{{ _('nav.address') if _('nav.address') else 'Manzil' }}</a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" href="{{ url_for('about') }}">{{ _('nav.about') }}</a>
             </li>
             <li class="nav-item">
@@ -1517,7 +1520,11 @@
               </a>
 
               <!-- Phone -->
+              {% if superadmin_settings and superadmin_settings.get('phone') %}
+              <a href="tel:{{ superadmin_settings.get('phone')|replace(' ', '') }}" class="social-icon-btn phone" aria-label="Phone" title="Call us">
+              {% else %}
               <a href="tel:{{ get_text('footer.phone_href') }}" class="social-icon-btn phone" aria-label="Phone" title="Call us">
+              {% endif %}
                 <img src="{{ url_for('static', filename='icons/phone.png') }}" alt="Phone" width="24" height="24">
               </a>
 
@@ -1583,7 +1590,13 @@
               <h6 class="d-none d-md-block">{{ _('footer.contact_info') }}</h6>
               <div id="contact-content" class="footer-section-content">
                 <ul>
-                  <li><a href="tel:{{ get_text('footer.phone_href') }}">{{ get_text('footer.phone_display') }}</a></li>
+                  <li>
+                    {% if superadmin_settings and superadmin_settings.get('phone') %}
+                    <a href="tel:{{ superadmin_settings.get('phone')|replace(' ', '') }}">{{ superadmin_settings.get('phone') }}</a>
+                    {% else %}
+                    <a href="tel:{{ get_text('footer.phone_href') }}">{{ get_text('footer.phone_display') }}</a>
+                    {% endif %}
+                  </li>
                   <li><a href="mailto:premiumsafety@mail.ru">premiumsafety@mail.ru</a></li>
                   <li><a href="https://maps.app.goo.gl/Ezg462SRmBYLxfUY6">{{ _('footer.address') }}</a></li>
                 </ul>
@@ -1631,7 +1644,17 @@
         background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
         border-top: 3px solid #ffc107;
         position: relative;
-        z-index: 1000 !important; /* Above news ticker (100) and filter sidebar (99) */
+        z-index: 1100 !important; /* Above news ticker (100) and filter sidebar (99). Raised to ensure footer stays above filter */
+      }
+      /* Ensure site-footer element and its container sit above floating panels like filter */
+      .site-footer {
+        position: relative;
+        z-index: 9999 !important;
+      }
+      .site-footer .container,
+      .site-footer .container-fluid {
+        position: relative;
+        z-index: 9999 !important;
       }
 
       .footer .hover-text-warning:hover {
@@ -1806,7 +1829,7 @@
         color: white;
         font-size: 22px;
         box-shadow: 0 8px 24px rgba(0,0,0,0.35);
-        z-index: 4000;
+        z-index: 1200; /* kept near top but below site chrome; user requested 1200 */
         cursor: pointer;
       }
 
@@ -1824,7 +1847,7 @@
         display: none;
         flex-direction: column;
         overflow: hidden;
-        z-index: 4000;
+        z-index: 1200; /* align with requested chat panel stacking */
       }
 
       .public-chat-panel.open { display: flex; }
@@ -3838,12 +3861,12 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        z-index: 2001;
+        z-index: 1200; /* lowered/normalized to match chat panel stacking */
         cursor: pointer;
         font-size: 22px;
         box-shadow: 0 8px 25px rgba(0,0,0,0.12);
       }
-      .public-chat-panel { position: fixed; right: 20px; bottom: 170px; width: 360px; max-width: calc(100% - 40px); height: 520px; background: white; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); display: none; z-index:2002; flex-direction:column; overflow:hidden; }
+      .public-chat-panel { position: fixed; right: 20px; bottom: 170px; width: 360px; max-width: calc(100% - 40px); height: 520px; background: white; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); display: none; z-index:1200; flex-direction:column; overflow:hidden; }
       .public-chat-panel.open { display:flex; }
       .public-chat-header{ background:linear-gradient(135deg,#6f42c1,#8a63d2); color:white; padding:10px 12px; font-weight:600; display:flex; justify-content:space-between; align-items:center }
       .public-chat-body{ padding:12px; flex:1; overflow:auto }
@@ -4260,7 +4283,7 @@
     <!-- Notify modal: composer visible only to superadmin. Other roles get a read-only viewer. -->
     {% if session.get('super_admin') %}
     <div
-      id="notifyModal"
+      id="notifyModalFloating"
       class="notify-modal"
       style="
         display: none;
@@ -4277,20 +4300,20 @@
       ">
   <h5>{{ _('notifications_ui.new_notification') }}</h5>
       <div class="mb-2">
-        <input id="notifyTitle" class="form-control" placeholder="{{ _('notifications_ui.title_label') }}" />
+        <input id="notifyTitleFloating" class="form-control" placeholder="{{ _('notifications_ui.title_label') }}" />
       </div>
       <div class="mb-2">
         <textarea
-          id="notifyBody"
+          id="notifyBodyFloating"
           class="form-control"
           rows="3"
           placeholder="{{ _('notifications_ui.body_label') }}"></textarea>
       </div>
       <div style="display: flex; gap: 8px; justify-content: flex-end">
-        <button id="notifyCancelBtn" class="btn btn-sm btn-secondary">
+        <button id="notifyCancelBtnFloating" class="btn btn-sm btn-secondary">
           {{ _('notifications_ui.cancel') }}
         </button>
-        <button id="notifySendBtn" class="btn btn-sm btn-primary">
+        <button id="notifySendBtnFloating" class="btn btn-sm btn-primary">
           {{ _('notifications_ui.send') }}
         </button>
       </div>
@@ -4298,7 +4321,7 @@
     {% else %}
     <!-- Read-only notify viewer for non-superadmin (shows latest notifications) -->
     <div
-      id="notifyModal"
+      id="notifyModalFloating"
       class="notify-modal"
       style="
         display: none;
@@ -4316,11 +4339,11 @@
         z-index: 11000; /* raised so it overlays other panels */
       ">
   <h5>{{ _('notifications') }}</h5>
-      <div id="notifyListPreview">
+      <div id="notifyListPreviewFloating">
         <!-- Filled by JS: latest notifications for this user -->
       </div>
       <div style="display: flex; justify-content: flex-end; margin-top: 8px">
-        <button id="notifyCloseViewer" class="btn btn-sm btn-secondary">
+        <button id="notifyCloseViewerFloating" class="btn btn-sm btn-secondary">
           {{ _('notifications_ui.cancel') }}
         </button>
       </div>
@@ -5576,6 +5599,84 @@
           if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initFooterToggles); else initFooterToggles();
         })();
       </script>
+
+    <!-- Hide AI chat widget and replace with Superadmin contact FAB -->
+    <style>
+      /* Force-hide any injected public AI chat widget to avoid overlap */
+      .public-chat-fab, .public-chat-panel, #public-chat-widget, .ai-chat-widget { display: none !important; visibility: hidden !important; }
+      /* New Superadmin FAB (bottom-right) */
+      .superadmin-contact-fab {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: linear-gradient(135deg,#006bb3,#00a8ff);
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1201;
+        cursor: pointer;
+        font-size: 20px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      }
+      .superadmin-contact-panel {
+        position: fixed;
+        right: 20px;
+        bottom: 90px;
+        width: 300px;
+        max-width: calc(100% - 40px);
+        background: rgba(13,22,27,0.98);
+        color: #fff;
+        border-radius: 10px;
+        padding: 12px;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+        display: none;
+        z-index: 1201;
+      }
+      .superadmin-contact-panel.open { display: block; }
+      .superadmin-contact-panel a { color: #fff; text-decoration: none; display:block; margin-bottom:8px }
+      .superadmin-contact-panel .sa-title { font-weight:700; margin-bottom:8px }
+    </style>
+
+    <div id="superadminContactPanel" class="superadmin-contact-panel" aria-hidden="true">
+      <div class="sa-title">{{ _('contact.superadmin') if _('contact.superadmin') else 'Superadmin bilan muloqot' }}</div>
+      {% if superadmin_settings and superadmin_settings.get('phone') %}
+      <a href="tel:{{ superadmin_settings.get('phone')|replace(' ', '') }}">📞 {{ superadmin_settings.get('phone') }}</a>
+      {% endif %}
+      {% if superadmin_settings and superadmin_settings.get('email') %}
+      <a href="mailto:{{ superadmin_settings.get('email') }}">✉️ {{ superadmin_settings.get('email') }}</a>
+      {% endif %}
+      {% if superadmin_settings and superadmin_settings.get('telegram') %}
+      <a href="{{ superadmin_settings.get('telegram') }}" target="_blank">💬 Telegram</a>
+      {% endif %}
+      <div style="font-size:12px;opacity:0.85;margin-top:6px">{{ _('contact.superadmin_hint') if _('contact.superadmin_hint') else 'Biz bilan bog\'laning — savollaringiz bo\'lsa, superadmin yordam beradi.' }}</div>
+    </div>
+
+    <button id="superadminContactFab" class="superadmin-contact-fab" aria-label="{{ _('contact.superadmin') if _('contact.superadmin') else 'Superadmin bilan muloqot' }}">👤</button>
+
+    <script>
+      (function(){
+        try {
+          const fab = document.getElementById('superadminContactFab');
+          const panel = document.getElementById('superadminContactPanel');
+          if(!fab || !panel) return;
+          fab.addEventListener('click', function(){
+            const open = panel.classList.toggle('open');
+            panel.setAttribute('aria-hidden', open ? 'false' : 'true');
+          });
+          // Close when clicking outside
+          document.addEventListener('click', function(e){
+            if(!panel.classList.contains('open')) return;
+            if(e.target === fab || panel.contains(e.target)) return;
+            panel.classList.remove('open');
+            panel.setAttribute('aria-hidden','true');
+          });
+        } catch(e) { console.warn('superadminContact init failed', e); }
+      })();
+    </script>
 
       <script>
         // Newsletter form handler (graceful, non-blocking)

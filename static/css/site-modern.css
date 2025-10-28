@@ -148,6 +148,8 @@ small {
   padding: 48px 0;
   background: var(--footer-bg);
   color: var(--footer-text);
+  position: relative;
+  z-index: 9999;
 }
 .site-footer .footer-grid {
   display: grid;

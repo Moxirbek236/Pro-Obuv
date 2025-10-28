@@ -265,6 +265,37 @@
     object-fit: contain;
     border-radius: 6px;
   }
+  /* Additional responsive improvements for product media */
+  /* Make the overall container slightly wider on large screens and
+     adapt the right column width at intermediate breakpoints. */
+  .product-container { max-width: 1200px; }
+
+  @media (max-width: 1200px) {
+    .product-container { grid-template-columns: 1fr 360px; gap: 20px; }
+    .media-stage { min-height: 380px; }
+    .thumbnails .thumb { width: 64px; height: 64px; }
+  }
+
+  @media (max-width: 900px) {
+    /* mobile: ensure media fills available height while keeping controls visible */
+    .media-stage { min-height: 50vh; max-height: 60vh; }
+    .media-stage img, .media-stage video { max-height: 60vh; width: auto; height: auto; }
+    .thumbnails .thumb { width: 60px; height: 60px; }
+    .media-btn { width: 40px; height: 40px; font-size: 18px; }
+    .product-details h1 { font-size: 20px; }
+    .product-details { padding: 8px 4px; }
+    .product-media { padding: 8px; }
+  }
+
+  @media (max-width: 480px) {
+    .thumbnails .thumb { width: 52px; height: 52px; }
+    .media-stage { min-height: 45vh; }
+    .media-btn.left, .media-btn.right { left: 8px; right: 8px; }
+    .media-btn.zoom { left: 8px; bottom: 8px; }
+    .add-cart-btn { width: 100%; padding: 12px; }
+    .options-row { flex-direction: column; gap: 10px; }
+    .select-wrapper { min-width: 0; width: 100%; }
+  }
 </style>
 
 <div class="product-container">

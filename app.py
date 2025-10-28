@@ -23,6 +23,12 @@ from concurrent.futures import ThreadPoolExecutor
 import utils
 from collections import defaultdict
 
+# Explicit import for SMS helper used in threaded SMS sending paths.
+try:
+    import sms_helper
+except Exception:
+    sms_helper = None
+
 # Third-party imports (use safe fallbacks so the module can be parsed
 # even if some optional dependencies are not installed in the environment)
 try:
@@ -1055,38 +1061,15 @@ def clear_session_conflicts():
                     f"Session conflicts cleared; new session_id={new_sid[:8]}..."
                 )
                 return True
-            except Exception as exc:
-                app_logger.error(
-                    f"Error while preserving session during conflict clear: {exc}"
-                )
-                # Fall back to previous conservative approach: remove common auth keys
-                keys_to_clear = [
-                    "user_id",
-                    "user_phone",
-                    "user_address",
-                    "user_first_name",
-                    "user_last_name",
-                    "user_address_latitude",
-                    "user_address_longitude",
-                    "staff_id",
-                    "staff_name",
-                    "staff_role",
-                    "staff_role_display",
-                    "courier_id",
-                    "courier_name",
-                    "courier_phone",
-                    "super_admin",
-                    "admin_name",
-                ]
-                for key in keys_to_clear:
-                    session.pop(key, None)
-                session.permanent = True
-                return True
+            except Exception as e:
+                app_logger.error(f"Session conflict clearing error: {str(e)}")
+                return False
 
-        return False
+        # If nothing to do, just return True
+        return True
 
     except Exception as e:
-        app_logger.error(f"Session conflict clearing error: {str(e)}")
+        app_logger.error(f"clear_session_conflicts unexpected error: {str(e)}")
         return False
 
 
@@ -1223,23 +1206,64 @@ def inject_navbar_context():
                 "email": session.get("user_email") or None,
             }
 
-            # Try to get unread notifications count (best-effort, silent on error)
+            # Try to get unread notifications count (best-effort, cached to reduce DB load)
             try:
-                if session.get("user_id"):
-                    # notifications table stores recipient as (recipient_type, recipient_id)
-                    # and the read flag column is named 'read_flag'. Use those columns.
-                    res = execute_query(
-                        "SELECT COUNT(1) FROM notifications WHERE recipient_type = 'user' AND recipient_id = ? AND read_flag = 0",
-                        (session.get("user_id"),),
-                        fetch_one=True,
-                    )
-                    if res:
+                uid = session.get("user_id")
+                if uid:
+                    try:
+                        cm = cache_manager or get_cache_manager()
+                    except Exception:
+                        cm = None
+
+                    cache_key = f"notif_count:user:{uid}"
+                    cached = None
+                    try:
+                        if cm:
+                            cached = cm.get(cache_key)
+                    except Exception:
+                        cached = None
+
+                    if cached is not None:
                         try:
-                            notifications_count = int(res[0])
+                            notifications_count = int(cached)
                         except Exception:
                             notifications_count = 0
+                    else:
+                        # Fallback to DB query and cache result for a short TTL (15s)
+                        try:
+                            res = execute_query(
+                                "SELECT COUNT(1) FROM notifications WHERE recipient_type = 'user' AND recipient_id = ? AND read_flag = 0",
+                                (uid,),
+                                fetch_one=True,
+                            )
+                            if res:
+                                try:
+                                    notifications_count = int(res[0])
+                                except Exception:
+                                    # dict-like support
+                                    try:
+                                        notifications_count = int(res.get("COUNT(1)") or list(res.values())[0])
+                                    except Exception:
+                                        notifications_count = 0
+                            else:
+                                notifications_count = 0
+                        except Exception:
+                            notifications_count = 0
+
+                        try:
+                            if cm:
+                                cm.set(cache_key, notifications_count, ttl=15)
+                        except Exception:
+                            pass
             except Exception:
                 notifications_count = 0
+
+        # Load superadmin persistent settings so templates can show contact info
+        # (phone, address, working_hours) and allow footer to prefer those values.
+        try:
+            superadmin_settings = load_superadmin_settings() or {}
+        except Exception:
+            superadmin_settings = {}
 
         # Provide a flattened translations map for client-side JS and keep the
         # nested translations available for server-side lookups. Many client-side
@@ -1257,6 +1281,8 @@ def inject_navbar_context():
             "is_super_admin": is_super_admin,
             "user_profile": user_profile,
             "notifications_count": notifications_count,
+            # Expose persistent superadmin settings to templates
+            "superadmin_settings": superadmin_settings,
             # expose flat translations mapping for client-side usage
             "translations": flat_trans,
         }
@@ -1810,7 +1836,17 @@ def before_request():
             ua = request.headers.get("User-Agent", "")
             # If user is logged in, associate user_id
             uid = session.get("user_id")
-            record_session_entry(sid, uid, ip, ua)
+            # Run session recording asynchronously to avoid blocking the request.
+            # safe_submit handles creating a ThreadPoolExecutor lazily and falls
+            # back to a daemon thread if necessary.
+            try:
+                safe_submit(record_session_entry, sid, uid, ip, ua)
+            except Exception:
+                # As a last resort, call inline (best-effort)
+                try:
+                    record_session_entry(sid, uid, ip, ua)
+                except Exception:
+                    pass
         except Exception:
             # Non-fatal
             pass
@@ -3279,6 +3315,86 @@ def init_db():
 
     conn.commit()
     conn.close()
+
+    # Create helpful indexes to speed up common queries (safe: IF NOT EXISTS)
+    try:
+        conn = get_db()
+        cur = conn.cursor()
+        # Notifications lookup by recipient + unread flag
+        try:
+            cur.execute(
+                "CREATE INDEX IF NOT EXISTS idx_notifications_recipient ON notifications(recipient_type, recipient_id, read_flag)"
+            )
+        except Exception:
+            pass
+
+        # Sessions lookup by session_id
+        try:
+            cur.execute(
+                "CREATE INDEX IF NOT EXISTS idx_sessions_session_id ON sessions(session_id)"
+            )
+        except Exception:
+            pass
+
+        # Users email lookup
+        try:
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)")
+        except Exception:
+            pass
+
+        # Orders by created_at/status for reporting and monitor pages
+        try:
+            cur.execute(
+                "CREATE INDEX IF NOT EXISTS idx_orders_created_at_status ON orders(created_at, status)"
+            )
+        except Exception:
+            pass
+
+        # Menu items: availability and category are used frequently
+        try:
+            cur.execute(
+                "CREATE INDEX IF NOT EXISTS idx_menu_items_available_category ON menu_items(available, category)"
+            )
+        except Exception:
+            pass
+
+        # Favorites quick lookup
+        try:
+            cur.execute(
+                "CREATE INDEX IF NOT EXISTS idx_favorites_user_item ON favorites(user_id, menu_item_id)"
+            )
+        except Exception:
+            pass
+
+        # Cart items by session/user
+        try:
+            cur.execute(
+                "CREATE INDEX IF NOT EXISTS idx_cart_items_session_user ON cart_items(session_id, user_id)"
+            )
+        except Exception:
+            pass
+
+        # Media and ratings lookups
+        try:
+            cur.execute(
+                "CREATE INDEX IF NOT EXISTS idx_product_media_menu_item ON product_media(menu_item_id)"
+            )
+        except Exception:
+            pass
+        try:
+            cur.execute(
+                "CREATE INDEX IF NOT EXISTS idx_ratings_menu_item ON ratings(menu_item_id)"
+            )
+        except Exception:
+            pass
+
+        conn.commit()
+        conn.close()
+    except Exception as idx_err:
+        try:
+            app_logger.warning(f"Index creation skipped or failed: {idx_err}")
+        except Exception:
+            pass
 
     # Card payment settings table - for superadmin management
     conn = get_db()
@@ -12590,6 +12706,342 @@ def login_page():
     return render_template("login.html")
 
 
+# ---- FORGOT PASSWORD (USER) ----
+@app.route("/forgot", methods=["GET", "POST"])
+def forgot():
+    """User-facing forgot password: accept email or phone and send a 6-digit code.
+
+    Stores code and user id in session for verification step.
+    """
+    try:
+        # Small helper to send email if SMTP configured; otherwise log the code.
+        def _send_email(to_addr, subject, body):
+            try:
+                # sensible defaults for Gmail sender; password should be provided via SMTP_PASS env var
+                smtp_host = os.environ.get('SMTP_HOST') or 'smtp.gmail.com'
+                smtp_port = int(os.environ.get('SMTP_PORT', '587') or 587)
+                smtp_user = os.environ.get('SMTP_USER') or 'safetyproobuv@gmail.com'
+                smtp_pass = os.environ.get('SMTP_PASS')
+                smtp_from = os.environ.get('SMTP_FROM') or smtp_user
+                if not smtp_pass:
+                    app_logger.info(f"SMTP credentials not provided (SMTP_PASS missing) - skip sending email to {to_addr}; code would be: {body}")
+                    return False
+
+                import smtplib
+                from email.message import EmailMessage
+
+                msg = EmailMessage()
+                msg['From'] = smtp_from
+                msg['To'] = to_addr
+                msg['Subject'] = subject
+                msg.set_content(body)
+
+                import ssl
+                if smtp_port == 465:
+                    # Provide local_hostname to avoid slow or blocking reverse-DNS lookups
+                    server = smtplib.SMTP_SSL(smtp_host, smtp_port, local_hostname='localhost', timeout=15)
+                    server.set_debuglevel(1)
+                    try:
+                        if getattr(server, 'sock', None):
+                            server.sock.settimeout(15)
+                    except Exception:
+                        pass
+                else:
+                    # Provide local_hostname to avoid slow or blocking reverse-DNS lookups
+                    server = smtplib.SMTP(smtp_host, smtp_port, local_hostname='localhost', timeout=15)
+                    # Enable SMTP debug output (prints low-level conversation to stdout)
+                    server.set_debuglevel(1)
+                    try:
+                        if getattr(server, 'sock', None):
+                            server.sock.settimeout(15)
+                    except Exception:
+                        pass
+                    try:
+                        server.ehlo()
+                    except Exception:
+                        pass
+                    server.starttls(context=ssl.create_default_context())
+                    try:
+                        if getattr(server, 'sock', None):
+                            server.sock.settimeout(15)
+                    except Exception:
+                        pass
+                    try:
+                        server.ehlo()
+                    except Exception:
+                        pass
+
+                try:
+                    if smtp_user and smtp_pass:
+                        server.login(smtp_user, smtp_pass)
+
+                    # ensure the underlying socket has a timeout to avoid indefinite blocking
+                    try:
+                        if getattr(server, 'sock', None):
+                            server.sock.settimeout(15)
+                    except Exception:
+                        pass
+
+                    # Run send_message in a separate thread and enforce a timeout to avoid blocking the request.
+                    import concurrent.futures
+
+                    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as ex:
+                        fut = ex.submit(server.send_message, msg)
+                        try:
+                            fut.result(timeout=15)
+                        except concurrent.futures.TimeoutError:
+                            try:
+                                server.close()
+                            except Exception:
+                                pass
+                            app_logger.warning('Email send timed out')
+                            return False
+
+                    try:
+                        server.quit()
+                    except Exception:
+                        try:
+                            server.close()
+                        except Exception:
+                            pass
+
+                    return True
+                except Exception as e:
+                    try:
+                        server.close()
+                    except Exception:
+                        pass
+                    raise
+            except Exception as e:
+                app_logger.warning(f"Email send failed: {e}")
+                return False
+
+        # Handle POST actions: send (method=email|phone), verify (code), reset (password)
+        if request.method == "POST":
+            method = (request.form.get('method') or '').lower()
+            action = (request.form.get('action') or '').lower()
+            # unified identifier: supports new form ('identifier') or legacy names ('email'/'phone')
+            identifier = (request.form.get('identifier') or request.form.get('email') or request.form.get('phone') or '').strip()
+
+            # Send a code via email
+            if method == 'email':
+                email = identifier
+                if not email or not utils.validate_email(email):
+                    flash("Iltimos to'g'ri email kiriting.", "error")
+                    return redirect(url_for('forgot'))
+
+                user = execute_query('SELECT * FROM users WHERE email = ?', (email,), fetch_one=True)
+
+                # If user not found, prompt to register instead of sending a code
+                if not user:
+                    # Show a clear call-to-action to register
+                    flash("Hisob topilmadi. Ro'yxatdan o'ting.", "info")
+                    return redirect(url_for('forgot'))
+
+                # Before generating a code, ensure SMTP credentials exist and a real send can be attempted.
+                smtp_pass = os.environ.get('SMTP_PASS')
+                smtp_user = os.environ.get('SMTP_USER') or 'safetyproobuv@gmail.com'
+                if not smtp_pass:
+                    app_logger.warning('SMTP_PASS not set; cannot send forgot-password email')
+                    flash("Tizim email yubora olmaydi (SMTP sozlanmagan). Iltimos administrator bilan bog'laning.", 'error')
+                    return redirect(url_for('forgot'))
+
+                # User exists -> generate and send code
+                code = str(secrets.randbelow(900000) + 100000)
+                session['forgot_code'] = code
+                session['forgot_expires'] = time.time() + 10 * 60
+                session['forgot_method'] = 'email'
+                try:
+                    session['forgot_user_id'] = dict(user).get('id')
+                except Exception:
+                    pass
+
+                # Try sending the email but keep a short timeout so the request doesn't hang too long.
+                try:
+                    import concurrent.futures
+
+                    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as ex:
+                        fut = ex.submit(_send_email, email, 'Parol tiklash kodi', f'Sizning tiklash kod: {code}')
+                        try:
+                            ok = fut.result(timeout=12)
+                        except concurrent.futures.TimeoutError:
+                            ok = False
+
+                    if not ok:
+                        # Clear the temporary forgot session keys so user doesn't see verification page for a code we couldn't deliver
+                        for k in ('forgot_code', 'forgot_user_id', 'forgot_expires', 'forgot_method'):
+                            session.pop(k, None)
+                        app_logger.warning(f'Failed to send forgot email to {email}')
+                        flash("Kod yuborilmadi. Iltimos keyinroq urinib ko'proq tekshiring yoki administrator bilan bog'laning.", 'error')
+                        return redirect(url_for('forgot'))
+
+                except Exception as e:
+                    app_logger.warning(f'Email send attempt failed: {e}')
+                    for k in ('forgot_code', 'forgot_user_id', 'forgot_expires', 'forgot_method'):
+                        session.pop(k, None)
+                    flash("Kod yuborilmadi (ichki xatolik). Iltimos keyinroq urinib ko'ring.", 'error')
+                    return redirect(url_for('forgot'))
+
+                flash('Kod emailga yuborildi. Iltimos emailingizni tekshiring.', 'info')
+                # Redirect user to the dedicated verification page
+                return redirect(url_for('forgot_verify'))
+
+            # Send a code via phone (SMS)
+            if method == 'phone':
+                phone = identifier
+                if not phone or not utils.validate_phone_number(phone):
+                    flash("Iltimos to'g'ri telefon raqam kiriting (+998901234567).", "error")
+                    return redirect(url_for('forgot'))
+
+                # find user by normalized phone
+                pn = phone.replace(' ', '')
+                user = execute_query("SELECT * FROM users WHERE REPLACE(phone, ' ', '') = ?", (pn,), fetch_one=True)
+
+                # If user not found, prompt to register
+                if not user:
+                    flash("Hisob topilmadi. Ro'yxatdan o'ting.", "info")
+                    return redirect(url_for('forgot'))
+
+                code = str(secrets.randbelow(900000) + 100000)
+                session['forgot_code'] = code
+                session['forgot_expires'] = time.time() + 10 * 60
+                session['forgot_method'] = 'phone'
+                try:
+                    session['forgot_user_id'] = dict(user).get('id')
+                except Exception:
+                    pass
+
+                try:
+                    import threading
+
+                    threading.Thread(
+                        target=sms_helper.send_sms,
+                        args=(phone, f'Sizning tiklash kod: {code}'),
+                        daemon=True,
+                    ).start()
+                    flash('Kod SMS orqali yuborildi. Iltimos telefoningizni tekshiring.', 'info')
+                    # Redirect to dedicated verification page
+                    return redirect(url_for('forgot_verify'))
+                except Exception:
+                    app_logger.warning('SMS sending failed for forgot flow')
+                    flash('Xatolik yuz berdi. Iltimos keyinroq urinib ko\'ring.', 'error')
+                return redirect(url_for('forgot'))
+
+            # Verify code step
+            if action == 'verify':
+                code = (request.form.get('code') or '').strip()
+                if not code:
+                    flash('Kod kiriting.', 'error')
+                    return redirect(url_for('forgot'))
+                expires = session.get('forgot_expires', 0)
+                if time.time() > expires:
+                    flash("Kod muddati o'tgan. Iltimos yana so'rang.", 'error')
+                    return redirect(url_for('forgot'))
+                if code == session.get('forgot_code'):
+                    session['forgot_verified'] = True
+                    flash('Kod tasdiqlandi. Iltimos yangi parolni kiriting.', 'success')
+                    # After verification, send the user to the reset page (keeps backward compatibility)
+                    return redirect(url_for('forgot_reset_password'))
+                else:
+                    flash("Kod noto'g'ri.", 'error')
+                    return redirect(url_for('forgot'))
+
+            # Reset password step
+            if action == 'reset':
+                if not session.get('forgot_verified'):
+                    flash("Siz tasdiqlanmagansiz. Iltimos kodni kiriting.", 'error')
+                    return redirect(url_for('forgot'))
+                user_id = session.get('forgot_user_id')
+                if not user_id:
+                    flash("Hech qanday tiklash so'rovi topilmadi. Iltimos qayta urinib ko'ring.", 'error')
+                    return redirect(url_for('forgot'))
+                password = request.form.get('password') or ''
+                password_confirm = request.form.get('password_confirm') or ''
+                if not password or password != password_confirm:
+                    flash("Parollar mos kelmadi yoki bo'sh.", 'error')
+                    return redirect(url_for('forgot'))
+                password_hash = generate_password_hash(password)
+                execute_query('UPDATE users SET password_hash = ? WHERE id = ?', (password_hash, user_id))
+                for k in ('forgot_code', 'forgot_user_id', 'forgot_expires', 'forgot_verified', 'forgot_method'):
+                    session.pop(k, None)
+                flash("Parolingiz yangilandi. Iltimos tizimga kiring.", 'success')
+                return redirect(url_for('login_page'))
+
+        # Default GET: allow clearing the forgot/session flow with ?reset=1
+        if request.method == 'GET' and request.args.get('reset'):
+            for k in ('forgot_code', 'forgot_user_id', 'forgot_expires', 'forgot_verified', 'forgot_method'):
+                session.pop(k, None)
+            # Redirect to remove querystring and show initial send stage
+            return redirect(url_for('forgot'))
+
+        return render_template('forgot.html')
+    except Exception as e:
+        app_logger.error(f"Forgot password handler error: {e}")
+        flash("Xatolik yuz berdi. Qayta urinib ko'ring.", "error")
+        return redirect(url_for("login_page"))
+
+
+@app.route("/forgot/verify", methods=["GET", "POST"])
+def forgot_verify():
+    try:
+        if request.method == "POST":
+            code = (request.form.get("code") or "").strip()
+            if not code:
+                flash("Kod kiriting.", "error")
+                return redirect(url_for("forgot_verify"))
+
+            expires = session.get("forgot_expires", 0)
+            if time.time() > expires:
+                flash("Kod muddati o'tgan. Iltimos yana so'rang.", "error")
+                return redirect(url_for("forgot"))
+
+            if code == session.get("forgot_code"):
+                return redirect(url_for("forgot_reset_password"))
+            else:
+                flash("Kod noto'g'ri.", "error")
+                return redirect(url_for("forgot_verify"))
+
+        return render_template("forgot_verify.html")
+    except Exception as e:
+        app_logger.error(f"Forgot verify error: {e}")
+        flash("Xatolik yuz berdi.", "error")
+        return redirect(url_for("forgot"))
+
+
+@app.route("/forgot/reset-password", methods=["GET", "POST"])
+def forgot_reset_password():
+    try:
+        user_id = session.get("forgot_user_id")
+        if not user_id:
+            flash("Hech qanday tiklash so'rovi topilmadi. Iltimos, qayta urinib ko'ring.", "error")
+            return redirect(url_for("forgot"))
+
+        if request.method == "POST":
+            password = request.form.get("password") or ""
+            password_confirm = request.form.get("password_confirm") or ""
+            if not password or password != password_confirm:
+                flash("Parollar mos kelmadi yoki bo'sh.", "error")
+                return redirect(url_for("forgot_reset_password"))
+
+            password_hash = generate_password_hash(password)
+            execute_query(
+                "UPDATE users SET password_hash = ? WHERE id = ?", (password_hash, user_id)
+            )
+
+            # cleanup session keys
+            for k in ("forgot_code", "forgot_user_id", "forgot_expires"):
+                session.pop(k, None)
+
+            flash("Parolingiz yangilandi. Iltimos tizimga kiring.", "success")
+            return redirect(url_for("login_page"))
+
+        return render_template("forgot_reset_password.html")
+    except Exception as e:
+        app_logger.error(f"Forgot reset error: {e}")
+        flash("Xatolik yuz berdi.", "error")
+        return redirect(url_for("forgot"))
+
+
 # ---- SUPER ADMIN ROUTES ----
 # Super admin kredentsiallari - universal konfiguratsiyadan
 SUPER_ADMIN_USERNAME = Config.SUPER_ADMIN_USERNAME
@@ -12642,6 +13094,14 @@ def get_superadmin_creds():
     first_name = settings.get("first_name") or settings.get("name") or ""
     last_name = settings.get("last_name") or ""
     phone = settings.get("phone") or ""
+    # optional contact fields
+    email = settings.get("email") or ""
+    address = settings.get("address") or ""
+    # social / contact profiles
+    telegram = settings.get("telegram") or ""
+    instagram = settings.get("instagram") or ""
+    # store only last4 of a card number for display; do NOT store full card
+    card_last4 = settings.get("card_last4") or ""
     avatar = settings.get("avatar") or None
     return {
         "username": username,
@@ -12649,6 +13109,11 @@ def get_superadmin_creds():
         "first_name": first_name,
         "last_name": last_name,
         "phone": phone,
+    "email": email,
+    "address": address,
+    "telegram": telegram,
+    "instagram": instagram,
+        "card_last4": card_last4,
         "avatar": avatar,
     }
 
@@ -13300,8 +13765,13 @@ def super_admin_profile():
         "first_name": creds.get("first_name", ""),
         "last_name": creds.get("last_name", ""),
         "phone": creds.get("phone", ""),
+        "email": creds.get("email", ""),
+        "address": creds.get("address", ""),
+        "telegram": creds.get("telegram", ""),
+        "instagram": creds.get("instagram", ""),
         "username": creds.get("username", ""),
         "avatar": creds.get("avatar") or "/static/images/default-avatar.svg",
+        "card_last4": creds.get("card_last4", ""),
     }
     return render_template("super_admin_profile.html", user=user)
 
@@ -13313,42 +13783,77 @@ def super_admin_advanced_settings():
     """Advanced system settings for super admin."""
     if request.method == 'POST':
         try:
-            # Load existing settings
-            with open('data/advanced_settings.json', 'r') as f:
-                settings = json.load(f)
-            
-            # Update settings from form
+            # Prepare path and ensure directory exists
+            json_path = os.path.join(os.getcwd(), 'data', 'advanced_settings.json')
+            os.makedirs(os.path.dirname(json_path), exist_ok=True)
+
+            # Load existing settings if present, otherwise start with defaults
+            settings = {}
+            if os.path.exists(json_path):
+                try:
+                    with open(json_path, 'r', encoding='utf-8') as f:
+                        settings = json.load(f) or {}
+                except Exception:
+                    # Corrupt/invalid file -> start fresh but keep the file path
+                    settings = {}
+
+            # Helper converters with safe fallbacks
+            def _int(name, default):
+                try:
+                    return int(request.form.get(name, default))
+                except Exception:
+                    return default
+
+            def _float(name, default):
+                try:
+                    return float(request.form.get(name, default))
+                except Exception:
+                    return default
+
+            def _bool(name):
+                return request.form.get(name) == '1'
+
+            # Update settings from form (safe conversions)
             settings.update({
-                'cache_ttl': int(request.form.get('cache_ttl', 3600)),
-                'debug_mode': request.form.get('debug_mode') == '1',
-                'log_level': request.form.get('log_level', 'INFO'),
-                'db_pool_size': int(request.form.get('db_pool_size', 10)),
-                'db_timeout': int(request.form.get('db_timeout', 30)),
-                'auto_migrate': request.form.get('auto_migrate') == '1',
-                'page_size': int(request.form.get('page_size', 24)),
-                'news_ticker_interval': int(request.form.get('news_ticker_interval', 5000)),
-                'preload_images': request.form.get('preload_images') == '1',
-                'mobile_animations': request.form.get('mobile_animations') == '1',
-                'api_caching': request.form.get('api_caching') == '1',
-                'api_rate_limit': int(request.form.get('api_rate_limit', 60)),
-                'api_timeout': int(request.form.get('api_timeout', 30)),
-                'security_level': request.form.get('security_level', 'medium'),
-                'image_quality': int(request.form.get('image_quality', 85)),
-                'max_image_size': float(request.form.get('max_image_size', 5)),
-                'allowed_image_types': request.form.get('allowed_image_types', 'jpg,jpeg,png,webp')
+                'cache_ttl': _int('cache_ttl', settings.get('cache_ttl', 3600)),
+                'debug_mode': _bool('debug_mode'),
+                'log_level': request.form.get('log_level', settings.get('log_level', 'INFO')),
+                'db_pool_size': _int('db_pool_size', settings.get('db_pool_size', 10)),
+                'db_timeout': _int('db_timeout', settings.get('db_timeout', 30)),
+                'auto_migrate': _bool('auto_migrate'),
+                'page_size': _int('page_size', settings.get('page_size', 24)),
+                'news_ticker_interval': _int('news_ticker_interval', settings.get('news_ticker_interval', 5000)),
+                'preload_images': _bool('preload_images'),
+                'mobile_animations': _bool('mobile_animations'),
+                'api_caching': _bool('api_caching'),
+                'api_rate_limit': _int('api_rate_limit', settings.get('api_rate_limit', 60)),
+                'api_timeout': _int('api_timeout', settings.get('api_timeout', 30)),
+                'security_level': request.form.get('security_level', settings.get('security_level', 'medium')),
+                'image_quality': _int('image_quality', settings.get('image_quality', 85)),
+                'max_image_size': _float('max_image_size', settings.get('max_image_size', 5)),
+                'allowed_image_types': request.form.get('allowed_image_types', settings.get('allowed_image_types', 'jpg,jpeg,png,webp'))
             })
-            
-            # Save settings
-            with open('data/advanced_settings.json', 'w') as f:
-                json.dump(settings, f, indent=4)
-            
-            # Apply some settings immediately
-            app.config['DEBUG'] = settings['debug_mode']
-            app.logger.setLevel(settings['log_level'])
-            
+
+            # Save settings back to disk (atomic write)
+            tmp = json_path + '.tmp'
+            with open(tmp, 'w', encoding='utf-8') as f:
+                json.dump(settings, f, indent=4, ensure_ascii=False)
+            os.replace(tmp, json_path)
+
+            # Apply some settings immediately where applicable
+            try:
+                app.config['DEBUG'] = bool(settings.get('debug_mode'))
+            except Exception:
+                pass
+            try:
+                lvl = settings.get('log_level', 'INFO')
+                app.logger.setLevel(lvl)
+            except Exception:
+                pass
+
             flash('Sozlamalar muvaffaqiyatli saqlandi', 'success')
             return redirect(url_for('super_admin_advanced_settings'))
-            
+
         except Exception as e:
             app_logger.error(f"Advanced settings update error: {str(e)}")
             flash('Xatolik yuz berdi: ' + str(e), 'error')
@@ -13485,6 +13990,11 @@ def super_admin_profile_update():
         first_name = request.form.get("first_name", "").strip()
         last_name = request.form.get("last_name", "").strip()
         phone = request.form.get("phone", "").strip()
+        email = request.form.get("email", "").strip()
+        address = request.form.get("address", "").strip()
+        telegram = request.form.get("telegram", "").strip()
+        instagram = request.form.get("instagram", "").strip()
+        card_number = request.form.get("card_number", "").strip()
 
         avatar_file = None
         try:
@@ -13501,6 +14011,26 @@ def super_admin_profile_update():
         settings["first_name"] = first_name
         settings["last_name"] = last_name
         settings["phone"] = phone
+        # optional contact fields
+        settings["email"] = email
+        settings["address"] = address
+        settings["telegram"] = telegram
+        settings["instagram"] = instagram
+
+        # Handle card: store only masked last4 digits (do NOT store full card)
+        try:
+            if card_number:
+                digits = ''.join([c for c in card_number if c.isdigit()])
+                if len(digits) >= 4:
+                    settings["card_last4"] = digits[-4:]
+                else:
+                    settings["card_last4"] = digits
+            else:
+                # if empty, remove stored value
+                if "card_last4" in settings:
+                    settings.pop("card_last4", None)
+        except Exception:
+            pass
 
         # handle avatar upload
         if avatar_file and avatar_file.filename:
@@ -13524,6 +14054,11 @@ def super_admin_profile_update():
             session["super_admin_first_name"] = settings.get("first_name", "")
             session["super_admin_last_name"] = settings.get("last_name", "")
             session["super_admin_phone"] = settings.get("phone", "")
+            session["super_admin_email"] = settings.get("email", "")
+            session["super_admin_address"] = settings.get("address", "")
+            session["super_admin_telegram"] = settings.get("telegram", "")
+            session["super_admin_instagram"] = settings.get("instagram", "")
+            session["super_admin_card_last4"] = settings.get("card_last4")
             session["super_admin_avatar"] = settings.get("avatar")
             # Also update the main user_avatar session key
             session["user_avatar"] = (
@@ -13546,7 +14081,6 @@ def super_admin_profile_update():
 @role_required("super_admin")
 def super_admin_get_orders():
     if not session.get("super_admin"):
-        return jsonify({"error": "Super admin huquqi kerak"}), 401
         return jsonify({"error": "Super admin huquqi kerak"}), 401
 
     try:
@@ -13576,7 +14110,6 @@ def super_admin_get_orders():
 def super_admin_get_menu():
     if not session.get("super_admin"):
         return jsonify({"error": "Super admin huquqi kerak"}), 401
-        return jsonify({"error": "Super admin huquqi kerak"}), 401
 
     try:
         menu_raw = execute_query(
@@ -13594,7 +14127,6 @@ def super_admin_get_menu():
 def super_admin_get_receipts():
     if not session.get("super_admin"):
         return jsonify({"error": "Super admin huquqi kerak"}), 401
-        return jsonify({"error": "Super admin huquqi kerak"}), 401
 
     try:
         receipts_raw = execute_query(
@@ -13608,6 +14140,7 @@ def super_admin_get_receipts():
 
 
 @app.route("/super-admin/get-ratings")
+@role_required("super_admin")
 def super_admin_get_ratings():
     if not session.get("super_admin"):
         return jsonify({"error": "Super admin huquqi kerak"}), 401
@@ -15334,9 +15867,6 @@ def debug_notifications_info():
     except Exception as e:
         app_logger.error(f"debug_notifications_info error: {str(e)}")
         return jsonify({"error": str(e)}), 500
-    except Exception as e:
-        app_logger.error(f"Chat messages error: {str(e)}")
-        return jsonify({"success": False, "message": "Server error"}), 500
 
 
 @app.route("/api/private-chats", methods=["GET"])

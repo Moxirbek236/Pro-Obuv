@@ -1,5 +1,5 @@
-{% extends "base.html" %} {% block title %}Aloqa - Pro Obuv{% endblock %} {%
-block seo_meta %}
+{% extends "base.html" %} {% block title %}{{ get_text("Aloqa - Pro Obuv") or
+'Aloqa - Pro Obuv' }}{% endblock %} {% block seo_meta %}
 <meta
   name="description"
   content="Biz bilan bog'laning — Savollar, takliflar va mijozlarni qo'llab-quvvatlash. Pro Obuv — spetsobuv, spetsodejda, oyoq kiyim va ish kiyimlari." />
@@ -35,54 +35,62 @@ block seo_meta %}
 {% endblock %} {% block content %}
 <div class="contact-page-container">
   <div class="contact-hero-section">
-    <h1 class="contact-hero-title animate-fade-in">Biz bilan bog'lanish</h1>
+    <h1 class="contact-hero-title animate-fade-in">
+      {{ get_text("Biz bilan bog'lanish") }}
+    </h1>
     <p class="contact-hero-subtitle animate-fade-in">
-      Sizning savollaringiz va takliflaringiz biz uchun muhim
+      {{ get_text("Sizning savollaringiz va takliflaringiz biz uchun muhim") }}
     </p>
   </div>
 
   <div class="card contact-card animate-slide-left">
     <div class="row">
       <div class="col-md-6">
-        <h4 data-translate="send_question">Savol yuborish</h4>
+        <h4 data-translate="send_question">{{ get_text("Savol yuborish") }}</h4>
         <form method="post">
           <div class="mb-3">
-            <label class="form-label">Ismingiz:</label>
+            <label class="form-label">{{ get_text("Ismingiz:") }}</label>
             <input type="text" class="form-control" name="name" required />
           </div>
           <div class="mb-3">
-            <label class="form-label">Email (ixtiyoriy):</label>
+            <label class="form-label"
+              >{{ get_text("Email (ixtiyoriy):") }}</label
+            >
             <input type="email" class="form-control" name="email" />
           </div>
           <div class="mb-3">
-            <label class="form-label">Telefon (ixtiyoriy):</label>
+            <label class="form-label"
+              >{{ get_text("Telefon (ixtiyoriy):") }}</label
+            >
             <input type="text" class="form-control" name="phone" />
           </div>
           <div class="mb-3">
-            <label class="form-label">Mavzu:</label>
+            <label class="form-label">{{ get_text("Mavzu:") }}</label>
             <input type="text" class="form-control" name="subject" required />
           </div>
           <div class="mb-3">
-            <label class="form-label">Xabar:</label>
+            <label class="form-label">{{ get_text("Xabar:") }}</label>
             <textarea
               class="form-control"
               name="message"
               rows="4"
               required></textarea>
           </div>
-          <button type="submit" class="btn big">Yuborish</button>
+          <button type="submit" class="btn big">
+            {{ get_text("Yuborish") }}
+          </button>
         </form>
       </div>
 
       <div class="col-md-6">
-        <h4>Aloqa ma'lumotlari</h4>
+        <h4>{{ get_text("Aloqa ma'lumotlari") }}</h4>
         <div class="contact-info">
           <div class="contact-item">
-            <p><strong> Ism:</strong> Avaz</p>
+            <p><strong> {{ get_text("Ism") }}:</strong> Avaz</p>
           </div>
           <div class="contact-item">
             <p>
-              <strong> Telefon:</strong>
+              <strong> {{ get_text("Telefon") }}:</strong>
               <a
                 href="tel:{{ get_text('footer.phone_href') }}"
                 class="contact-link"
@@ -92,7 +100,10 @@ block seo_meta %}
           </div>
           <div class="contact-item">
             <p>
-              <strong> Email:</strong>
+              <strong>
+                {{ get_text("Email (ixtiyoriy):") | replace('(ixtiyoriy):','')
+                }}:</strong
+              >
               <a href="mailto:premiumsafety@mail.ru" class="contact-link"
                 >premiumsafety@mail.ru</a
               >
@@ -128,21 +139,28 @@ block seo_meta %}
               class="contact-link ms-2"
               title="Open in Google Maps"
               style="margin-bottom: 0"
-              ><strong style="color: var(--text-secondary)"> Manzil:</strong>
-              Toshkent, Sergeli tumani, Yuqori Darxon mahalla fuqarolar
-              yigʻini</a
+              ><strong style="color: var(--text-secondary)">
+                {{ get_text("Manzil:") }}</strong
+              >
+              {{ get_text("Toshkent, Sergeli tumani, Yuqori Darxon mahalla
+              fuqarolar yigʻini") or 'Toshkent, Sergeli tumani, Yuqori Darxon
+              mahalla fuqarolar yigʻini' }}</a
             >
           </div>
           <div class="contact-item">
             <p>
-              <strong>� Ish vaqti:</strong> Dushanba - Juma: 9:00 - 18:00,
-              Shanba va Yakshanba: Dam
+              <strong>{{ get_text("Ish vaqti:") }}</strong> {{
+              get_text("Dushanba - Juma: 9:00 - 18:00, Shanba va Yakshanba:
+              Dam") or 'Dushanba - Juma: 9:00 - 18:00, Shanba va Yakshanba: Dam'
+              }}
             </p>
           </div>
 
           <!-- Social Media Links -->
           <div class="social-media-section mt-4">
-            <h5 class="mb-3">Ijtimoiy tarmoqlarda bizni kuzatib boring:</h5>
+            <h5 class="mb-3">
+              {{ get_text("Ijtimoiy tarmoqlarda bizni kuzatib boring:") }}
+            </h5>
             <div class="d-flex flex-wrap gap-3">
               <a
                 href="https://www.facebook.com/aklashoes/?ref=pl_edit_xav_ig_profile_page_web#"
@@ -217,13 +235,15 @@ block seo_meta %}
                 border-radius: 12px;
                 overflow: hidden;
                 box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+                width: 100%;
+                max-width: 100%;
               ">
               <!-- Use Google Maps embed with place link fallback to the provided shortlink -->
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3871.507884418295!2d69.2034331!3d41.2365664!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38ae61003e24fa7b%3A0x582c809e62c1776c!2sPro-Obuv!5e1!3m2!1suz!2s!4v1759051640636!5m2!1suz!2s"
-                width="600"
-                height="450"
-                style="border: 0"
+                width="100%"
+                height="500"
+                style="border: 0; width: 100%; height: 500px"
                 allowfullscreen=""
                 loading="lazy"
                 referrerpolicy="no-referrer-when-downgrade"></iframe>

@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% block title %}Savatcha - Pro Obuv{% endblock %} {%
+{% extends "base.html" %} {% block title %}{{ get_text("Savatcha - Pro Obuv") or 'Savatcha - Pro Obuv' }}{% endblock %} {%
 block seo_meta %}
 <meta
   name="description"
@@ -33,9 +33,9 @@ block seo_meta %}
 {% endblock %} {% block head %}{% endblock %} {% block content %}
 <div class="cart-page-container">
   <div class="cart-hero-section">
-    <h1 class="cart-hero-title animate-fade-in">Savatcha</h1>
+    <h1 class="cart-hero-title animate-fade-in">{{ get_text("Savatcha") }}</h1>
     <p class="cart-hero-subtitle animate-fade-in">
-      Tanlagan mahsulotlaringizni ko'ring va buyurtma bering
+      {{ get_text("Tanlagan mahsulotlaringizni ko'ring va buyurtma bering") }}
     </p>
   </div>
 
@@ -59,15 +59,15 @@ block seo_meta %}
           </div>
           {% endif %} {% if item.get('size') or item.get('color') %}
           <p style="font-size: 0.95em; color: #555; margin-top: 6px">
-            {% if item.get('size') %}<strong>O'lcham:</strong> {{ item.size }}{%
+            {% if item.get('size') %}<strong>{{ get_text("O'lcham:") }}</strong> {{ item.size }}{%
             endif %} {% if item.get('size') and item.get('color') %}
             &nbsp;|&nbsp; {% endif %} {% if item.get('color') %}<strong
-              >Rangi:</strong
+              >{{ get_text("Rangi:") }}:</strong
             >
             {{ item.color }}{% endif %}
           </p>
           {% endif %}
-          <p><strong>Miqdor:</strong> {{ item.quantity }} dona</p>
+          <p><strong>{{ get_text("Miqdor") }}:</strong> {{ item.quantity }} {{ get_text("dona") or 'dona' }}</p>
         </div>
         <form
           method="post"
@@ -76,8 +76,8 @@ block seo_meta %}
           <button
             type="submit"
             class="btn small danger"
-            onclick="return confirm('Rostdan ham olib tashlamoqchimisiz?')">
-            O'chirish
+            onclick="return confirm('{{ get_text("Rostdan ham olib tashlamoqchimisiz?") }}')">
+            {{ get_text("O'chirish") }}
           </button>
         </form>
       </div>
@@ -91,7 +91,7 @@ block seo_meta %}
         action="{{ url_for('place_order') }}"
         onsubmit="return validateOrder()">
         <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
-        <h3>Buyurtma berish</h3>
+  <h3>{{ get_text("Buyurtma berish") }}</h3>
 
         <!-- Removed in-store pickup option per request; default to delivery -->
         <input type="hidden" name="order_type" value="delivery" />
@@ -100,17 +100,17 @@ block seo_meta %}
           id="delivery-fields"
           class="delivery-section"
           style="display: none">
-          <h4>Yetkazib berish ma'lumotlari:</h4>
+          <h4>{{ get_text("Yetkazib berish ma'lumotlari:") }}</h4>
 
           <!-- Ko'rsatma -->
           <div class="delivery-instructions">
             <div class="instruction-card">
-              <h5>Qanday foydalanish kerak:</h5>
+              <h5>{{ get_text("Qanday foydalanish kerak:") }}</h5>
               <ul class="instruction-list">
-                <li>Xaritada o'zingizning joylashuvingizni tanlang</li>
-                <li>Yoki quyidagi qidiruv orqali manzilni kiriting</li>
-                <li>Tanlangan joylashuv asosida eng yaqin filial aniqlanadi</li>
-                <li>Yetkazib berish narxi va vaqti avtomatik hisoblanadi</li>
+                <li>{{ get_text("Xaritada o'zingizning joylashuvingizni tanlang") }}</li>
+                <li>{{ get_text("Yoki quyidagi qidiruv orqali manzilni kiriting") }}</li>
+                <li>{{ get_text("Tanlangan joylashuv asosida eng yaqin filial aniqlanadi") }}</li>
+                <li>{{ get_text("Yetkazib berish narxi va vaqti avtomatik hisoblanadi") }}</li>
               </ul>
             </div>
           </div>
@@ -120,19 +120,19 @@ block seo_meta %}
             <input
               type="text"
               id="address-search"
-              placeholder="Manzilni kiriting (masalan: Toshkent, Chilonzor)"
+              placeholder="{{ get_text("Manzilni kiriting (masalan: Toshkent, Chilonzor)") }}"
               class="form-control" />
             <button
               type="button"
               onclick="searchAddressOnMap()"
               class="btn btn-search">
-              Qidirish
+              {{ get_text("Qidirish") }}
             </button>
           </div>
 
           <!-- Xarita -->
           <div class="map-container">
-            <h5>Joylashuvingizni xaritadan tanlang:</h5>
+              <h5>{{ get_text("Joylashuvingizni xaritadan tanlang:") }}</h5>
             <div
               id="map"
               style="
@@ -141,10 +141,9 @@ block seo_meta %}
                 border: 2px solid #e2e8f0;
                 margin-top: 10px;
               "></div>
-            <p class="map-hint">
+              <p class="map-hint">
               <em
-                >Xaritaga bosib o'zingizning aniq joylashuvingizni belgilang
-                yoki GPS orqali avtomatik aniqlang</em
+                >{{ get_text("Xaritaga bosib o'zingizning aniq joylashuvingizni belgilang yoki GPS orqali avtomatik aniqlang") }}</em
               >
             </p>
 
@@ -161,13 +160,13 @@ block seo_meta %}
                 type="button"
                 onclick="getCurrentLocation()"
                 class="btn btn-info">
-                Joriy joylashuvni aniqlash
+                {{ get_text("Joriy joylashuvni aniqlash") }}
               </button>
               <button
                 type="button"
                 onclick="searchNearbyPlaces('do\'kon')"
                 class="btn btn-secondary">
-                Yaqin do'konlar
+                {{ get_text("Yaqin do'konlar") }}
               </button>
               <button
                 type="button"
@@ -180,7 +179,7 @@ block seo_meta %}
 
           <!-- Yetkazib berish ma'lumotlari -->
           <div id="delivery-info" class="delivery-info" style="display: none">
-            <h4>Yetkazib berish ma'lumotlari</h4>
+            <h4>{{ get_text("Yetkazib berish ma'lumotlari") }}</h4>
             <div class="info-grid">
               <div class="info-item">
                 <span class="info-icon"
@@ -189,7 +188,7 @@ block seo_meta %}
                     aria-hidden="true"></i
                 ></span>
                 <div class="info-content">
-                  <span class="info-label">Eng yaqin filial:</span>
+                  <span class="info-label">{{ get_text("Eng yaqin filial:") }}</span>
                   <span id="branch-name" class="info-value">-</span>
                 </div>
               </div>
@@ -200,7 +199,7 @@ block seo_meta %}
                     aria-hidden="true"></i
                 ></span>
                 <div class="info-content">
-                  <span class="info-label">Masofa:</span>
+                  <span class="info-label">{{ get_text("Masofa:") }}</span>
                   <span id="distance-display" class="info-value">-</span>
                 </div>
               </div>
@@ -211,7 +210,7 @@ block seo_meta %}
                     aria-hidden="true"></i
                 ></span>
                 <div class="info-content">
-                  <span class="info-label">Yetkazish narxi:</span>
+                  <span class="info-label">{{ get_text("Yetkazish narxi:") }}</span>
                   <span id="delivery-price-display" class="info-value">-</span>
                 </div>
               </div>
@@ -222,7 +221,7 @@ block seo_meta %}
                     aria-hidden="true"></i
                 ></span>
                 <div class="info-content">
-                  <span class="info-label">Yetkazish vaqti:</span>
+                  <span class="info-label">{{ get_text("Yetkazish vaqti:") }}</span>
                   <span id="delivery-time-display" class="info-value">-</span>
                 </div>
               </div>
@@ -233,7 +232,7 @@ block seo_meta %}
                     aria-hidden="true"></i
                 ></span>
                 <div class="info-content">
-                  <span class="info-label">Filial telefoni:</span>
+                  <span class="info-label">{{ get_text("Filial telefoni:") }}</span>
                   <span id="branch-phone" class="info-value">-</span>
                 </div>
               </div>
@@ -244,7 +243,7 @@ block seo_meta %}
                     aria-hidden="true"></i
                 ></span>
                 <div class="info-content">
-                  <span class="info-label">Filial reytingi:</span>
+                  <span class="info-label">{{ get_text("Filial reytingi:") }}</span>
                   <span id="branch-rating" class="info-value">-</span>
                 </div>
               </div>
@@ -252,19 +251,19 @@ block seo_meta %}
 
             <!-- Yetkazish haritasi -->
             <div class="delivery-route-info">
-              <h5>Yetkazish yo'li</h5>
+              <h5>{{ get_text("Yetkazish yo'li") }}</h5>
               <div class="route-details">
                 <div class="route-item">
                   <span class="route-icon"></span>
                   <span class="route-text"
-                    >Boshlang'ich nuqta:
+                    >{{ get_text("Boshlang'ich nuqta:") }}
                     <span id="branch-address">-</span></span
                   >
                 </div>
                 <div class="route-item">
                   <span class="route-icon"></span>
                   <span class="route-text"
-                    >Yetkazish manzili:
+                    >{{ get_text("Yetkazish manzili:") }}
                     <span id="delivery-address-display">-</span></span
                   >
                 </div>
@@ -273,12 +272,12 @@ block seo_meta %}
 
             <!-- Yetkazish shartlari -->
             <div class="delivery-terms">
-              <h6>Yetkazib berish shartlari:</h6>
+              <h6>{{ get_text("Yetkazib berish shartlari:") }}</h6>
               <ul class="terms-list">
-                <li>Minimal buyurtma summasi: 50,000 so'm</li>
-                <li>Yetkazib berish radiusi: 15 km gacha</li>
-                <li>Taxminiy yetkazib berish vaqti ko'rsatilgan</li>
-                <li>To'lov naqd yoki kartada</li>
+                <li>{{ get_text("Minimal buyurtma summasi: 50,000 so'm") }}</li>
+                <li>{{ get_text("Yetkazib berish radiusi: 15 km gacha") }}</li>
+                <li>{{ get_text("Taxminiy yetkazib berish vaqti ko'rsatilgan") }}</li>
+                <li>{{ get_text("To'lov naqd yoki kartada") }}</li>
               </ul>
             </div>
           </div>
@@ -305,13 +304,13 @@ block seo_meta %}
         <div class="total-section">
           <div class="total-breakdown">
             <div class="total-item">
-              <span>Buyurtma tayyorgarlik vaqti:</span>
-              <span>15-20 daqiqa</span>
+              <span>{{ get_text("Buyurtma tayyorgarlik vaqti:") }}</span>
+              <span>{{ get_text("15-20 daqiqa") or '15-20 daqiqa' }}</span>
             </div>
             <div class="delivery-cost-info">
               <span class="delivery-cost"
-                >Yetkazib berish:
-                <span id="delivery-cost-text">Mavjud</span></span
+                >{{ get_text("Yetkazib berish:") }}
+                <span id="delivery-cost-text">{{ get_text("Mavjud") or 'Mavjud' }}</span></span
               >
             </div>
           </div>
@@ -327,7 +326,7 @@ block seo_meta %}
             name="payment_data"
             value="" />
           <button type="submit" class="btn checkout-btn">
-            Buyurtma berish
+            {{ get_text("Buyurtma berish") }}
           </button>
         </div>
       </form>
@@ -1380,34 +1379,34 @@ block seo_meta %}
       </script>
       {% else %}
       <div class="alert alert-warning">
-        <p>Buyurtma berish uchun avval tizimga kiring</p>
+            <p>{{ get_text("Buyurtma berish uchun avval tizimga kiring") }}</p>
         <div style="display: flex; gap: 10px">
-          <a href="{{ url_for('menu') }}" class="btn"
+            <a href="{{ url_for('menu') }}" class="btn"
             ><i
               class="bi bi-arrow-left ui-icon ui-icon--muted"
               aria-hidden="true"></i>
-            Menuga qaytish</a
+            {{ get_text("Menuga qaytish") }}</a
           >
-          <a
+            <a
             href="{{ url_for('login_page') }}"
             class="btn big"
             style="background: #4caf50">
-            Foydalanuvchi kirishi</a
+            {{ get_text("Foydalanuvchi kirishi") }}</a
           >
-          <a
+            <a
             href="{{ url_for('register') }}"
             class="btn big"
             style="background: #2196f3">
-            Ro'yxatdan o'tish</a
+            {{ get_text("Ro'yxatdan o'tish") }}</a
           >
         </div>
       </div>
       {% endif %}
     </div>
     {% else %}
-    <div class="empty-cart">
-      <p>Savatchangiz bo'sh</p>
-      <a href="{{ url_for('menu') }}" class="btn big"> Mahsulot tanlash</a>
+      <div class="empty-cart">
+      <p>{{ get_text("Savatchangiz bo'sh") }}</p>
+      <a href="{{ url_for('menu') }}" class="btn big"> {{ get_text("Mahsulot tanlash") }}</a>
     </div>
     {% endif %}
   </div>

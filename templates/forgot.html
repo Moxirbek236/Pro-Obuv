@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="uz">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Parolni tiklash</title>
+    <style>
+      :root {
+        --accent: #0d6efd;
+        --muted: #666;
+      }
+      body.auth-page {
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f5f7fb;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+      }
+      .auth-card {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 6px 20px rgba(25, 40, 60, 0.08);
+        width: 420px;
+        max-width: 92%;
+        padding: 26px;
+      }
+      .auth-card h3 {
+        margin: 0 0 8px;
+        font-size: 20px;
+        color: #0b2546;
+      }
+      .muted {
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .form-group {
+        margin-bottom: 14px;
+      }
+      label {
+        display: block;
+        font-size: 13px;
+        color: #4b5563;
+        margin-bottom: 6px;
+      }
+      input.form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #e6e9ef;
+        border-radius: 6px;
+        font-size: 14px;
+      }
+      .btn {
+        display: inline-block;
+        padding: 10px 14px;
+        border-radius: 6px;
+        border: none;
+        background: var(--accent);
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .note {
+        background: #f1f5ff;
+        border-left: 4px solid #dbeafe;
+        padding: 10px;
+        border-radius: 6px;
+        margin-bottom: 12px;
+        color: #0b2546;
+      }
+      .actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 12px;
+      }
+    </style>
+  </head>
+  <body class="auth-page">
+    {% with messages = get_flashed_messages(with_categories=true) %}{% if
+    messages %}
+    <div class="flash">
+      {% for category, message in messages %}
+      <div
+        class="alert alert-{{ 'danger' if category=='error' else 'success' if category=='success' else category }}"
+        role="alert">
+        {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}{% endwith %}
+
+    <div class="auth-card">
+      <h3>Parolni tiklash</h3>
+      <p class="muted">
+        Iltimos, hisobingiz bilan bog'liq email yoki telefonni kiriting. Agar
+        hisob mavjud bo'lsa, sizga tasdiqlash kodi yuboriladi.
+      </p>
+
+      <div>
+        <div class="note">
+          Email yoki telefon orqali tiklashni boshlash uchun tegishli usulni
+          tanlang va qiymatni kiriting.
+        </div>
+        <form method="POST" action="{{ url_for('forgot') }}">
+          <div class="form-group">
+            <label>Usul</label>
+            <div
+              style="
+                display: flex;
+                gap: 12px;
+                align-items: center;
+                margin-bottom: 8px;
+              ">
+              <label
+                ><input type="radio" name="method" value="email" checked />
+                Email</label
+              >
+              <label
+                ><input type="radio" name="method" value="phone" />
+                Telefon</label
+              >
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="identifier">Email yoki telefon</label>
+            <input
+              id="identifier"
+              type="text"
+              name="identifier"
+              class="form-control"
+              placeholder="you@example.com yoki +998901234567"
+              required />
+          </div>
+
+          <div class="actions">
+            <button class="btn" type="submit">Davom etish</button>
+          </div>
+        </form>
+      </div>
+
+      <div
+        style="margin-top: 14px; display: flex; gap: 12px; align-items: center">
+        <a href="{{ url_for('login_page') }}">⬅ Kirish sahifasiga qaytish</a>
+      </div>
+    </div>
+  </body>
+</html>
