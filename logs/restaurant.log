@@ -1843,3 +1843,7 @@ TypeError: The view function for 'login_page' did not return a valid response. T
 2025-11-02 05:50:08,492 | WARNING | restaurant_app | ensure_db_schema:2254 | init_db warning: name 'init_db' is not defined
 2025-11-02 05:51:21,789 | WARNING | restaurant_app | ensure_db_schema:2254 | init_db warning: name 'init_db' is not defined
 2025-11-02 05:56:33,287 | WARNING | restaurant_app | ensure_db_schema:2254 | init_db warning: name 'init_db' is not defined
+2025-11-02 05:59:15,271 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: https://127.0.0.1:8001/favicon.ico
+2025-11-02 05:59:27,407 | WARNING | restaurant_app | login_page:12742 | Failed login attempt for email: moxirbekmoxirbek29@gmail.com
+2025-11-02 05:59:40,495 | WARNING | restaurant_app | login_page:12742 | Failed login attempt for email: moxirbekmoxirbek29@gmail.com
+2025-11-02 05:59:50,059 | WARNING | restaurant_app | forgot:12891 | SMTP_PASS not set; cannot send forgot-password email
