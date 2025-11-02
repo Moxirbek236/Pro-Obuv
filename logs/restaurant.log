@@ -1831,3 +1831,8 @@ TypeError: The view function for 'login_page' did not return a valid response. T
 2025-11-02 09:36:38,205 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/favicon.ico
 2025-11-02 09:36:43,812 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/static/icons/yandex.svg
 2025-11-02 09:37:13,643 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/yandex_dad000c350eb0a7e.html
+2025-11-02 09:52:49,730 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-11-02 09:53:01,881 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/templates/index.html
+2025-11-02 09:53:05,531 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/templates/index
+2025-11-02 09:53:13,622 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/templates/base.html
+2025-11-02 09:53:25,897 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/icons/gmail.png
