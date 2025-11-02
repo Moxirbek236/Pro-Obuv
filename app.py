@@ -7270,13 +7270,36 @@ def menu():
             )
 
         # Render menu using clothing store categories (women/men)
-        # SEO data for menu page
+        # SEO data for menu page - multilingual
+        current_lang = session.get("interface_language", "uz")
+        
+        seo_titles = {
+            "uz": "Pro Obuv — Spetsobuv, Botinki, Krasofka | Ish Kiyimlari, Himoya Poyabzal | Safety.uz",
+            "ru": "Pro Obuv — Спецобувь, Спецодежда, Рабочая Обувь | Профессиональная Обувь, Ботинки | Safety.uz",
+            "en": "Pro Obuv — Safety Shoes, Work Boots, Professional Footwear | Protective Shoes | Safety.uz",
+            "kz": "Pro Obuv — Арнайы Аяқ Киім, Жұмыс Аяқ Киімдері | Қорғаныс Аяқ Киімдері | Safety.uz"
+        }
+        
+        seo_descriptions = {
+            "uz": "Safety.uz – Pro Obuv do'koni. Spetsobuv, spest obuv, botinki, krasofka, ish kiyimlari, spetsodejda, himoya poyabzal. Yuqori sifatli professional obuv, work boots va safety shoes. Tez yetkazish va eng yaxshi narxlar.",
+            "ru": "Safety.uz – магазин Pro Obuv. Спецобувь, спетс обув, спецодежда, рабочая обувь, ботинки, кроссовки. Профессиональная обувь для работы, защитная обувь. Быстрая доставка, лучшие цены.",
+            "en": "Safety.uz – Pro Obuv store. Safety shoes, work boots, professional footwear, protective shoes, sneakers. High-quality workwear and safety equipment. Fast delivery, best prices in Uzbekistan.",
+            "kz": "Safety.uz – Pro Obuv дүкені. Арнайы аяқ киім, жұмыс аяқ киімдері, қорғаныс аяқ киімдері, кроссовкалар. Жоғары сапалы жұмыс киімдері және қауіпсіздік жабдықтары. Жылдам жеткізу, ең жақсы бағалар."
+        }
+        
+        seo_keywords = {
+            "uz": "pro obuv, obuv, spetsobuv, spest obuv, spestobuv, spetsodejda, safety, oyoq kiyim, tufli, etik, ish kiyimlari, himoya poyabzal, botinki, krasofka, professional obuv, work boots, safety shoes",
+            "ru": "про обувь, обувь, спецобувь, спетс обув, спецодежда, спест одежда, рабочая обувь, профессиональная обувь, ботинки, кроссовки, защитная обувь, safety shoes, work boots, professional footwear",
+            "en": "pro obuv, shoes, safety shoes, work boots, professional footwear, protective shoes, sneakers, workwear, work clothes, professional shoes, steel toe boots, composite toe shoes",
+            "kz": "про обувь, аяқ киім, арнайы аяқ киім, жұмыс аяқ киімдері, қорғаныс аяқ киімдері, кроссовкалар, жұмыс киімдері, қауіпсіздік аяқ киімдері"
+        }
+        
         seo_data = {
-            "page_title": "Pro Obuv — Spetsobuv va Ish kiyimlari do'koni | Safety.uz",
-            "meta_description": "Safety.uz – Pro Obuv do'koni. Spetsobuv, ish kiyimlari, spetsodejda va himoya poyabzallari. Botinki, krasofka, professional footwear, work boots, safety shoes.",
-            "meta_keywords": "pro obuv, obuv, spetsobuv, spetsodejda, safety, oyoq kiyim, tufli, etik, ish kiyimlari, himoya poyabzal, botinki, krasofka, спетсообув, спецодежда, обувь, кроссовки, ботинки, safety shoes, work boots, professional footwear, protective shoes",
-            "og_title": "Pro Obuv — Spetsobuv, Botinki, Krasofka va Ish kiyimlari",
-            "og_description": "Spetsobuv, spetsodejda, botinki, krasofka va ish kiyimlari — Pro Obuv. Safety.uz da eng sifatli himoya poyabzallari",
+            "page_title": seo_titles.get(current_lang, seo_titles["uz"]),
+            "meta_description": seo_descriptions.get(current_lang, seo_descriptions["uz"]),
+            "meta_keywords": seo_keywords.get(current_lang, seo_keywords["uz"]),
+            "og_title": seo_titles.get(current_lang, seo_titles["uz"]),
+            "og_description": seo_descriptions.get(current_lang, seo_descriptions["uz"]),
             "canonical_url": "https://www.safety.uz/menu",
         }
 
@@ -7302,13 +7325,36 @@ def menu():
             women = []  # No women's items
             men = menu_items  # All items are for men
 
-            # SEO data for fallback menu
+            # SEO data for fallback menu - multilingual
+            current_lang = session.get("interface_language", "uz")
+            
+            seo_titles = {
+                "uz": "Pro Obuv — Spetsobuv, Botinki, Krasofka | Ish Kiyimlari, Himoya Poyabzal | Safety.uz",
+                "ru": "Pro Obuv — Спецобувь, Спецодежда, Рабочая Обувь | Профессиональная Обувь, Ботинки | Safety.uz",
+                "en": "Pro Obuv — Safety Shoes, Work Boots, Professional Footwear | Protective Shoes | Safety.uz",
+                "kz": "Pro Obuv — Арнайы Аяқ Киім, Жұмыс Аяқ Киімдері | Қорғаныс Аяқ Киімдері | Safety.uz"
+            }
+            
+            seo_descriptions = {
+                "uz": "Safety.uz – Pro Obuv do'koni. Spetsobuv, spest obuv, botinki, krasofka, ish kiyimlari, spetsodejda, himoya poyabzal. Yuqori sifatli professional obuv, work boots va safety shoes. Tez yetkazish va eng yaxshi narxlar.",
+                "ru": "Safety.uz – магазин Pro Obuv. Спецобувь, спетс обув, спецодежда, рабочая обувь, ботинки, кроссовки. Профессиональная обувь для работы, защитная обувь. Быстрая доставка, лучшие цены.",
+                "en": "Safety.uz – Pro Obuv store. Safety shoes, work boots, professional footwear, protective shoes, sneakers. High-quality workwear and safety equipment. Fast delivery, best prices in Uzbekistan.",
+                "kz": "Safety.uz – Pro Obuv дүкені. Арнайы аяқ киім, жұмыс аяқ киімдері, қорғаныс аяқ киімдері, кроссовкалар. Жоғары сапалы жұмыс киімдері және қауіпсіздік жабдықтары. Жылдам жеткізу, ең жақсы бағалар."
+            }
+            
+            seo_keywords = {
+                "uz": "pro obuv, obuv, spetsobuv, spest obuv, spestobuv, spetsodejda, safety, oyoq kiyim, tufli, etik, ish kiyimlari, himoya poyabzal, botinki, krasofka, professional obuv, work boots, safety shoes",
+                "ru": "про обувь, обувь, спецобувь, спетс обув, спецодежда, спест одежда, рабочая обувь, профессиональная обувь, ботинки, кроссовки, защитная обувь, safety shoes, work boots, professional footwear",
+                "en": "pro obuv, shoes, safety shoes, work boots, professional footwear, protective shoes, sneakers, workwear, work clothes, professional shoes, steel toe boots, composite toe shoes",
+                "kz": "про обувь, аяқ киім, арнайы аяқ киім, жұмыс аяқ киімдері, қорғаныс аяқ киімдері, кроссовкалар, жұмыс киімдері, қауіпсіздік аяқ киімдері"
+            }
+            
             seo_data = {
-                "page_title": "Pro Obuv — Spetsobuv va Ish kiyimlari do'koni | Safety.uz",
-                "meta_description": "Safety.uz – Pro Obuv do'koni. Spetsobuv, ish kiyimlari, spetsodejda va himoya poyabzallari. Botinki, krasofka, professional footwear, work boots, safety shoes.",
-                "meta_keywords": "pro obuv, obuv, spetsobuv, spetsodejda, safety, oyoq kiyim, tufli, etik, ish kiyimlari, himoya poyabzal, botinki, krasofka, спетсообув, спецодежда, обувь, кроссовки, ботинки, safety shoes, work boots, professional footwear, protective shoes",
-                "og_title": "Pro Obuv — Spetsobuv, Botinki, Krasofka va Ish kiyimlari",
-                "og_description": "Spetsobuv, spetsodejda, botinki, krasofka va ish kiyimlari — Pro Obuv. Safety.uz da eng sifatli himoya poyabzallari",
+                "page_title": seo_titles.get(current_lang, seo_titles["uz"]),
+                "meta_description": seo_descriptions.get(current_lang, seo_descriptions["uz"]),
+                "meta_keywords": seo_keywords.get(current_lang, seo_keywords["uz"]),
+                "og_title": seo_titles.get(current_lang, seo_titles["uz"]),
+                "og_description": seo_descriptions.get(current_lang, seo_descriptions["uz"]),
                 "canonical_url": "https://www.safety.uz/menu",
             }
 
