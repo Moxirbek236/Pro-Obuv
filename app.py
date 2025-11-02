@@ -20058,6 +20058,36 @@ def sitemap():
         return abort(500)
 
 
+@app.route("/yandex_a6b3a9b8078d2078.html")
+def yandex_verification_1():
+    """Serve Yandex Webmaster verification file"""
+    try:
+        return send_from_directory(app.root_path, "yandex_a6b3a9b8078d2078.html")
+    except Exception as e:
+        app_logger.error(f"Error serving yandex_a6b3a9b8078d2078.html: {e}")
+        abort(404)
+
+
+@app.route("/yandex_dad000c350eb0a7e.html")
+def yandex_verification_2():
+    """Serve Yandex Webmaster verification file"""
+    try:
+        return send_from_directory(app.root_path, "yandex_dad000c350eb0a7e.html")
+    except Exception as e:
+        app_logger.error(f"Error serving yandex_dad000c350eb0a7e.html: {e}")
+        abort(404)
+
+
+@app.route("/google9f3be6eabf8cfac2.html")
+def google_verification():
+    """Serve Google Search Console verification file"""
+    try:
+        return send_from_directory(app.root_path, "google9f3be6eabf8cfac2.html")
+    except Exception as e:
+        app_logger.error(f"Error serving google9f3be6eabf8cfac2.html: {e}")
+        abort(404)
+
+
 # --- Minimal Uzbek AI chat endpoints ---
 @app.route("/api/chat/ai", methods=["GET", "POST"])
 def api_chat_ai():
