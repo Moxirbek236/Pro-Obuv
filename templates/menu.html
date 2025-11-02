@@ -3209,7 +3209,7 @@
       if (htmlLang) return htmlLang.split('-')[0];
       const cls = (document.body && document.body.className) || '';
       const m = cls.match(/lang-(uz|ru|en)/);
-      return (m && m[1]) ? m[1] : 'uz';
+      return (m && m[1]) ? m[1] : 'ru';
     }
 
     // Robust parser for option lists: accept arrays, JSON strings, comma lists

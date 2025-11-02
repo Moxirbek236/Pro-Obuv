@@ -1847,3 +1847,15 @@ TypeError: The view function for 'login_page' did not return a valid response. T
 2025-11-02 05:59:27,407 | WARNING | restaurant_app | login_page:12742 | Failed login attempt for email: moxirbekmoxirbek29@gmail.com
 2025-11-02 05:59:40,495 | WARNING | restaurant_app | login_page:12742 | Failed login attempt for email: moxirbekmoxirbek29@gmail.com
 2025-11-02 05:59:50,059 | WARNING | restaurant_app | forgot:12891 | SMTP_PASS not set; cannot send forgot-password email
+2025-11-02 11:11:17,804 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/icons/gmail.png
+2025-11-02 11:11:19,054 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/templates/base.html
+2025-11-02 11:11:27,658 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-11-02 11:12:29,562 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-11-02 11:21:25,127 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-11-02 11:21:26,492 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-11-02 11:21:56,315 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-11-02 11:26:25,520 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-11-02 11:26:27,540 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-11-02 11:26:35,589 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-11-02 11:32:22,136 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-11-02 11:32:26,551 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/static/icons/yandex.svg

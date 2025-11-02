@@ -395,7 +395,7 @@ class Config:
     )
 
     # Localization
-    DEFAULT_LANGUAGE = os.environ.get("DEFAULT_LANGUAGE", "uz")
+    DEFAULT_LANGUAGE = os.environ.get("DEFAULT_LANGUAGE", "ru")
     # Add 'kz' (Kazakh) to supported languages so URL-prefix detection and
     # language switching recognize it site-wide.
     SUPPORTED_LANGUAGES = ["uz", "ru", "en", "kz", "tr", "ar"]
@@ -1810,12 +1810,12 @@ def before_request():
             else:
                 # ensure g.interface_language is always set (fallback to session or default)
                 g.interface_language = session.get(
-                    "interface_language", getattr(Config, "DEFAULT_LANGUAGE", "uz")
+                    "interface_language", getattr(Config, "DEFAULT_LANGUAGE", "ru")
                 )
         except Exception:
             # Non-fatal; fallback to session or default
             g.interface_language = session.get(
-                "interface_language", getattr(Config, "DEFAULT_LANGUAGE", "uz")
+                "interface_language", getattr(Config, "DEFAULT_LANGUAGE", "ru")
             )
 
         # Database connection test
@@ -2353,7 +2353,7 @@ def api_set_settings():
             )
 
         if "language" in data:
-            session["interface_language"] = data.get("language") or "uz"
+            session["interface_language"] = data.get("language") or "ru"
 
         # If a user is logged in, persist to users table
         user_id = session.get("user_id")
@@ -2364,7 +2364,7 @@ def api_set_settings():
                     (
                         1 if session.get("dark_theme") else 0,
                         session.get("font_size", "medium"),
-                        session.get("interface_language", "uz"),
+                        session.get("interface_language", "ru"),
                         user_id,
                     ),
                 )
@@ -4529,7 +4529,7 @@ def inject_role_nav():
             "csrf_token": generate_csrf_token(),
             "session_dark_theme": bool(session.get("dark_theme", True)),
             "session_font_size": session.get("font_size", "medium"),
-            "session_language": session.get("interface_language", "uz"),
+            "session_language": session.get("interface_language", "ru"),
             "show_nav": show_nav,
         }
 
@@ -4629,7 +4629,7 @@ def inject_role_nav():
             "csrf_token": generate_csrf_token(),
             "session_dark_theme": True,
             "session_font_size": "medium",
-            "session_language": "uz",
+            "session_language": "ru",
         }
 
 
@@ -4664,7 +4664,7 @@ def translate(key, **kwargs):
 
     Usage in templates: {{ _('settings.title') }}
     """
-    lang = session.get("interface_language", "uz")
+    lang = session.get("interface_language", "ru")
     # prefer requested lang -> uz -> en -> raw key
     candidates = [lang, "uz", "en"]
     for c in candidates:
@@ -4750,7 +4750,7 @@ def inject_translations():
         # lookup) instead of the older LOCALES-based `translate` helper.
         "_": utils.translate,
         "supported_languages": SUPPORTED_LANGUAGES,
-        "current_language": session.get("interface_language", "uz"),
+        "current_language": session.get("interface_language", "ru"),
     }
 
 
@@ -7271,7 +7271,7 @@ def menu():
 
         # Render menu using clothing store categories (women/men)
         # SEO data for menu page - multilingual
-        current_lang = session.get("interface_language", "uz")
+        current_lang = session.get("interface_language", "ru")
         
         seo_titles = {
             "uz": "Pro Obuv — Spetsobuv, Botinki, Krasofka | Ish Kiyimlari, Himoya Poyabzal | Safety.uz",
@@ -7295,11 +7295,11 @@ def menu():
         }
         
         seo_data = {
-            "page_title": seo_titles.get(current_lang, seo_titles["uz"]),
-            "meta_description": seo_descriptions.get(current_lang, seo_descriptions["uz"]),
-            "meta_keywords": seo_keywords.get(current_lang, seo_keywords["uz"]),
-            "og_title": seo_titles.get(current_lang, seo_titles["uz"]),
-            "og_description": seo_descriptions.get(current_lang, seo_descriptions["uz"]),
+            "page_title": seo_titles.get(current_lang, seo_titles["ru"]),
+            "meta_description": seo_descriptions.get(current_lang, seo_descriptions["ru"]),
+            "meta_keywords": seo_keywords.get(current_lang, seo_keywords["ru"]),
+            "og_title": seo_titles.get(current_lang, seo_titles["ru"]),
+            "og_description": seo_descriptions.get(current_lang, seo_descriptions["ru"]),
             "canonical_url": "https://www.safety.uz/menu",
         }
 
@@ -7326,7 +7326,7 @@ def menu():
             men = menu_items  # All items are for men
 
             # SEO data for fallback menu - multilingual
-            current_lang = session.get("interface_language", "uz")
+            current_lang = session.get("interface_language", "ru")
             
             seo_titles = {
                 "uz": "Pro Obuv — Spetsobuv, Botinki, Krasofka | Ish Kiyimlari, Himoya Poyabzal | Safety.uz",
@@ -7350,11 +7350,11 @@ def menu():
             }
             
             seo_data = {
-                "page_title": seo_titles.get(current_lang, seo_titles["uz"]),
-                "meta_description": seo_descriptions.get(current_lang, seo_descriptions["uz"]),
-                "meta_keywords": seo_keywords.get(current_lang, seo_keywords["uz"]),
-                "og_title": seo_titles.get(current_lang, seo_titles["uz"]),
-                "og_description": seo_descriptions.get(current_lang, seo_descriptions["uz"]),
+                "page_title": seo_titles.get(current_lang, seo_titles["ru"]),
+                "meta_description": seo_descriptions.get(current_lang, seo_descriptions["ru"]),
+                "meta_keywords": seo_keywords.get(current_lang, seo_keywords["ru"]),
+                "og_title": seo_titles.get(current_lang, seo_titles["ru"]),
+                "og_description": seo_descriptions.get(current_lang, seo_descriptions["ru"]),
                 "canonical_url": "https://www.safety.uz/menu",
             }
 
@@ -8542,7 +8542,7 @@ def register():
             session["user_id"] = user_id
             session["user_name"] = f"{first_name} {last_name}".strip()
             session["user_email"] = email
-            session["interface_language"] = "uz"  # Default til
+            session["interface_language"] = "ru"  # Default til
             session["font_size"] = "medium"  # Default font size
             session["dark_theme"] = True  # Default theme
 
@@ -9063,7 +9063,7 @@ def profile_settings():
 
     # Provide current values with safe defaults so template inputs work
     profile_settings_data = {
-        "interface_language": session.get("interface_language", "uz"),
+        "interface_language": session.get("interface_language", "ru"),
         "font_size": session.get("font_size", "medium"),
         "dark_theme": bool(session.get("dark_theme", True)),
         "user_name": session.get("user_name", ""),
@@ -9199,7 +9199,7 @@ def general_settings_post():
 
         if "language" in data:
             session["interface_language"] = data.get("language") or session.get(
-                "interface_language", "uz"
+                "interface_language", "ru"
             )
 
         # Persist system_config if super_admin
@@ -9224,7 +9224,7 @@ def general_settings_post():
                     (
                         1 if session.get("dark_theme") else 0,
                         session.get("font_size", "medium"),
-                        session.get("interface_language", "uz"),
+                        session.get("interface_language", "ru"),
                         user_id,
                     ),
                 )
@@ -12210,11 +12210,11 @@ def api_set_language():
     "Set user language preference"
     try:
         data = request.get_json()
-        language = data.get("language", "uz")
+        language = data.get("language", "ru")
 
         # Validate language
         if language not in ["uz", "ru", "en"]:
-            language = "uz"
+            language = "ru"
 
         # Save to session
         session["interface_language"] = language
@@ -12722,7 +12722,7 @@ def login_page():
                     session["interface_language"] = (
                         user_dict.get("interface_language")
                         or session.get("interface_language")
-                        or "uz"
+                        or "ru"
                     )
                     session["font_size"] = (
                         user_dict.get("font_size")
@@ -17461,7 +17461,7 @@ def staff_dashboard():
         return (
             f"""
         <!DOCTYPE html>
-        <html lang="uz">
+        <html lang="ru">
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18921,7 +18921,7 @@ def change_language():
     """Change interface language"""
     # Allow both anonymous and authenticated users to change the language in session.
     data = request.get_json() or {}
-    language = data.get("language", "uz")
+    language = data.get("language", "ru")
 
     # Validate against configured supported languages
     try:
@@ -19050,7 +19050,7 @@ def save_settings():
                     font_size = ? 
                     WHERE id = ?""",
                 (
-                    session.get("interface_language", "uz"),
+                    session.get("interface_language", "ru"),
                     1 if session.get("dark_theme", True) else 0,
                     session.get("font_size", "medium"),
                     session.get("user_id"),
@@ -19074,7 +19074,7 @@ def reset_settings():
         return jsonify({"success": False, "message": "Authentication required"}), 401
 
     # Reset session to defaults
-    session["interface_language"] = "uz"
+    session["interface_language"] = "ru"
     session["dark_theme"] = True
     session["font_size"] = "medium"
     session["notifications_enabled"] = True
