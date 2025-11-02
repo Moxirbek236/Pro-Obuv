@@ -1,8 +1,32 @@
+# Universal rules for all crawlers
 User-agent: *
 Disallow: /admin/
 Disallow: /super_admin/
 Disallow: /static/uploads/
+Allow: /
+
+# Specific rules for major search engines (optional but useful)
+User-agent: Yandex
+Disallow: /admin/
+Disallow: /super_admin/
+Disallow: /static/uploads/
+Allow: /
+
+User-agent: Googlebot
+Disallow: /admin/
+Disallow: /super_admin/
+Disallow: /static/uploads/
+Allow: /
+
+User-agent: Bingbot
+Disallow: /admin/
+Disallow: /super_admin/
+Disallow: /static/uploads/
+Allow: /
 
 # Sitemap locations
 Sitemap: https://safety.uz/sitemap.xml
 Sitemap: https://www.safety.uz/sitemap.xml
+
+# Important for Yandex indexing (especially for .uz domains)
+Host: https://safety.uz
