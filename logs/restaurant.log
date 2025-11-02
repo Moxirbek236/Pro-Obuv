@@ -1842,3 +1842,4 @@ TypeError: The view function for 'login_page' did not return a valid response. T
 2025-11-02 05:49:40,212 | WARNING | restaurant_app | ensure_db_schema:2254 | init_db warning: name 'init_db' is not defined
 2025-11-02 05:50:08,492 | WARNING | restaurant_app | ensure_db_schema:2254 | init_db warning: name 'init_db' is not defined
 2025-11-02 05:51:21,789 | WARNING | restaurant_app | ensure_db_schema:2254 | init_db warning: name 'init_db' is not defined
+2025-11-02 05:56:33,287 | WARNING | restaurant_app | ensure_db_schema:2254 | init_db warning: name 'init_db' is not defined

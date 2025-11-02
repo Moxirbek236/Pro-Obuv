@@ -1287,6 +1287,14 @@
           </ul>
 
           <ul class="navbar-nav">
+            <li class="nav-item d-flex align-items-center me-2">
+              <div class="btn-group btn-group-sm" role="group" aria-label="Language selector">
+                <button type="button" class="btn btn-sm btn-outline-light {% if session.get('interface_language','uz') == 'uz' %}active{% endif %}" onclick="changeLanguage('uz')">UZ</button>
+                <button type="button" class="btn btn-sm btn-outline-light {% if session.get('interface_language','uz') == 'ru' %}active{% endif %}" onclick="changeLanguage('ru')">RU</button>
+                <button type="button" class="btn btn-sm btn-outline-light {% if session.get('interface_language','uz') == 'en' %}active{% endif %}" onclick="changeLanguage('en')">EN</button>
+                <button type="button" class="btn btn-sm btn-outline-light {% if session.get('interface_language','uz') == 'kz' %}active{% endif %}" onclick="changeLanguage('kz')">KZ</button>
+              </div>
+            </li>
             <li class="nav-item d-flex align-items-center">
               <img
                 src="{{ user_profile.avatar or session.get('user_avatar','/static/images/default-avatar.svg') }}"
@@ -1418,6 +1426,14 @@
           </ul>
 
           <ul class="navbar-nav">
+            <li class="nav-item d-flex align-items-center me-2">
+              <div class="btn-group btn-group-sm" role="group" aria-label="Language selector">
+                <button type="button" class="btn btn-sm btn-outline-light {% if session.get('interface_language','uz') == 'uz' %}active{% endif %}" onclick="changeLanguage('uz')">UZ</button>
+                <button type="button" class="btn btn-sm btn-outline-light {% if session.get('interface_language','uz') == 'ru' %}active{% endif %}" onclick="changeLanguage('ru')">RU</button>
+                <button type="button" class="btn btn-sm btn-outline-light {% if session.get('interface_language','uz') == 'en' %}active{% endif %}" onclick="changeLanguage('en')">EN</button>
+                <button type="button" class="btn btn-sm btn-outline-light {% if session.get('interface_language','uz') == 'kz' %}active{% endif %}" onclick="changeLanguage('kz')">KZ</button>
+              </div>
+            </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('login_page') }}"
                 >{{ _('nav.login') }}</a>
