@@ -1,11 +1,12 @@
 // Service Worker for PWA functionality
-const CACHE_NAME = "restaurant-v2.0.0";
+// Bump cache version when static assets change so clients refresh cached files
+const CACHE_NAME = "restaurant-v2.0.1";
 const urlsToCache = [
   "/",
   "/static/style.css",
   "/static/main.js",
-  "/static/default.png",
-  "/static/default.png",
+  // Prefer current default webp image
+  "/static/defoult.webp",
   // Do not pre-cache the /menu HTML page to avoid serving stale personalized content.
   // The menu data is fetched via API or embedded into pages; avoid caching HTML here.
   "/about",

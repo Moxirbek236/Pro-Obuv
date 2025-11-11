@@ -57,7 +57,7 @@
       "name": "Pro Obuv",
       "logo": {
         "@type": "ImageObject",
-        "url": "{{ request.url_root[:-1] }}/static/defoult.png"
+  "url": "{{ request.url_root[:-1] }}{{ prefer_webp(url_for('static', filename='defoult.png')) }}"
       }
     },
     "datePublished": "{{ news.created_at }}",

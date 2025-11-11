@@ -6,7 +6,7 @@
 <meta
   name="keywords"
   content="pro obuv, aloqa, bog'lanish, spetsobuv, spetsodejda, oyoq kiyim, ish kiyimlari" />
-<link rel="canonical" href="https://safety.uz{{ request.path }}" />
+<link rel="canonical" href="{{ canonical_url() }}" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Aloqa — Pro Obuv" />
 <meta
@@ -15,7 +15,7 @@
 <meta property="og:url" content="{{ request.url }}" />
 <meta
   property="og:image"
-  content="{{ url_for('static', filename='defoult.png') }}" />
+  content="{{ prefer_webp(url_for('static', filename='defoult.png')) }}" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Aloqa — Pro Obuv" />
 <meta
@@ -23,7 +23,7 @@
   content="Savollar va takliflar uchun Pro Obuv bilan bog'laning" />
 <meta
   name="twitter:image"
-  content="{{ url_for('static', filename='defoult.png') }}" />
+  content="{{ prefer_webp(url_for('static', filename='defoult.png')) }}" />
 <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -167,7 +167,7 @@
                 target="_blank"
                 class="social-btn facebook">
                 <img
-                  src="{{ url_for('static', filename='icons/facebook.svg') }}"
+                  src="{{ prefer_webp(url_for('static', filename='icons/facebook.svg')) }}"
                   alt="Facebook"
                   width="20"
                   height="20"
@@ -179,7 +179,7 @@
                 target="_blank"
                 class="social-btn instagram">
                 <img
-                  src="{{ url_for('static', filename='icons/instagram.svg') }}"
+                  src="{{ prefer_webp(url_for('static', filename='icons/instagram.svg')) }}"
                   alt="Instagram"
                   width="20"
                   height="20"
@@ -191,7 +191,7 @@
                 target="_blank"
                 class="social-btn telegram">
                 <img
-                  src="{{ url_for('static', filename='icons/telegram.svg') }}"
+                  src="{{ prefer_webp(url_for('static', filename='icons/telegram.svg')) }}"
                   alt="Telegram"
                   width="20"
                   height="20"
@@ -203,7 +203,7 @@
                 target="_blank"
                 class="social-btn threads">
                 <img
-                  src="{{ url_for('static', filename='icons/threads.svg') }}"
+                  src="{{ prefer_webp(url_for('static', filename='icons/threads.svg')) }}"
                   alt="Threads"
                   width="20"
                   height="20"
@@ -215,7 +215,7 @@
                 target="_blank"
                 class="social-btn uzum">
                 <img
-                  src="{{ url_for('static', filename='icons/uzum.png') }}"
+                  src="{{ prefer_webp(url_for('static', filename='icons/uzum.png')) }}"
                   alt="Uzum Market"
                   width="20"
                   height="20"

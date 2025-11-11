@@ -8,23 +8,23 @@
 <meta property="og:title" content="{{ localized_name }} — Pro Obuv" />
 <meta property="og:description" content="{{ localized_name }} — {{ _('meta_product_suffix') }} {{ (localized_description[:150] if localized_description else '') }}" />
 <meta property="og:type" content="product" />
-<meta property="og:url" content="{{ ('https://safety.uz' + request.path) if request else request.url }}" />
-        <meta property="og:image" content="{{ item.image_url if item.image_url else url_for('static', filename='defoult.png') }}" />
+<meta property="og:url" content="{{ canonical_url() }}" />
+  <meta property="og:image" content="{{ prefer_webp(item.image_url if item.image_url else url_for('static', filename='defoult.png')) }}" />
 <meta property="product:price:amount" content="{{ item.price if item.price else '0' }}" />
 <meta property="product:price:currency" content="UZS" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="{{ item.name }} — Pro Obuv" />
 <meta name="twitter:description" content="{{ item.name }} — Sifatli spetsobuv va ish kiyimlari" />
-        <meta name="twitter:image" content="{{ item.image_url if item.image_url else url_for('static', filename='defoult.png') }}" />
-<link rel="canonical" href="{{ ('https://safety.uz' + request.path) if request else request.url }}" />
+  <meta name="twitter:image" content="{{ prefer_webp(item.image_url if item.image_url else url_for('static', filename='defoult.png')) }}" />
+<link rel="canonical" href="{{ canonical_url() }}" />
 <script type="application/ld+json">
-{%- set _img = item.image_url if item.image_url else url_for('static', filename='defoult.png') -%}
+{%- set _img = prefer_webp(item.image_url if item.image_url else url_for('static', filename='defoult.png')) -%}
 {%- if _img and (_img.startswith('http://') or _img.startswith('https://')) -%}
   {%- set abs_image = _img -%}
 {%- else -%}
   {%- set abs_image = (request.url_root.rstrip('/') + (_img if _img.startswith('/') else ('/' + _img))) -%}
 {%- endif -%}
-{%- set abs_url = (request.url_root.rstrip('/') + request.path) if request else (('https://safety.uz' + request.path) if request else request.url) -%}
+{%- set abs_url = canonical_url() -%}
 {%- set price_val = (item.price|float(0)) -%}
 {%- set availability = 'https://schema.org/InStock' if (item.available or item.get('available') if item is mapping else (item.available if item is not none else True)) else 'https://schema.org/OutOfStock' -%}
 {{ {
@@ -312,7 +312,7 @@
         {% if first and first.media_type and first.media_type.startswith('video') %}
           <video id="mainMediaDesktop" src="{{ first.media_url }}" controls muted></video>
         {% else %}
-      <img id="mainMediaDesktop" src="{{ (first.media_url if first else item.image_url) or '/static/defoult.png' }}" alt="{{ localized_name }}" />
+      <img id="mainMediaDesktop" src="{{ prefer_webp((first.media_url if first else item.image_url) or url_for('static', filename='defoult.png')) }}" alt="{{ localized_name }}" />
         {% endif %}
 
         <button class="media-btn left" id="prevBtnDesktop" title="Oldingi">‹</button>
@@ -323,7 +323,7 @@
       <div class="thumbnails" id="thumbnailsDesktop">
         {% for m in all_media %}
           <div class="thumb" data-idx="{{ loop.index0 }}">
-            <img src="{{ m.media_url }}" alt="thumb" />
+            <img src="{{ prefer_webp(m.media_url) }}" alt="thumb" />
           </div>
         {% endfor %}
       </div>
@@ -337,7 +337,7 @@
             {% if m.media_type and m.media_type.startswith('video') %}
               <video controls muted preload="metadata" src="{{ m.media_url }}"></video>
             {% else %}
-              <img src="{{ m.media_url }}" alt="{{ localized_name }}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.png'" />
+              <img src="{{ prefer_webp(m.media_url) }}" alt="{{ localized_name }}" loading="lazy" decoding="async" onerror="this.src='{{ prefer_webp(url_for('static', filename='defoult.png')) }}'" />
             {% endif %}
           {% endfor %}
         </div>
@@ -346,7 +346,7 @@
       <div class="thumbnails" id="thumbnailsMobile">
         {% for m in all_media %}
           <div class="thumb" data-idx="{{ loop.index0 }}">
-            <img src="{{ m.media_url }}" alt="thumb" />
+            <img src="{{ prefer_webp(m.media_url) }}" alt="thumb" />
           </div>
         {% endfor %}
       </div>
@@ -651,7 +651,7 @@
 <script>
   // Media data from server
   const mediaData = {{ (media or [])|tojson }};
-  const defaultImage = '{{ item.image_url or '/static/defoult.png' }}';
+  const defaultImage = {{ (prefer_webp(item.image_url or url_for('static', filename='defoult.png'))) | tojson }};
   let currentIndex = 0;
 
   // Desktop elements

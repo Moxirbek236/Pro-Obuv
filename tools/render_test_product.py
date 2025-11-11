@@ -6,7 +6,7 @@ env = Environment(loader=FileSystemLoader(tpl_dir), autoescape=select_autoescape
 try:
     tpl = env.get_template('product.html')
     ctx = {
-        'item': {'id':123,'name':'Test Shoe','description':'Test','image_url':'/static/defoult.png','rating':4.2,'orders_count':5,'sizes':'40,41','colors':'black,white'},
+    'item': {'id':123,'name':'Test Shoe','description':'Test','image_url':'/static/defoult.webp','rating':4.2,'orders_count':5,'sizes':'40,41','colors':'black,white'},
         'media': [],
         'is_staff': False,
         'is_super_admin': False,

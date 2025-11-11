@@ -241,10 +241,10 @@ const MenuClient = (function () {
                 // Prefer localized name if provided by API
                 const altText = item.name_local || item.name || "";
                 return `<img src="${escapeHtml(
-                  src || "/static/defoult.png"
+                  src || "/static/defoult.webp"
                 )}" alt="${escapeHtml(
                   altText
-                )}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.png'" />`;
+                )}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.webp'" />`;
               })
               .join("");
             return `<div class="item-image"><div class="gallery" data-item-id="${escapeHtml(
@@ -254,10 +254,10 @@ const MenuClient = (function () {
         } catch (e) {}
         const altText = item.name_local || item.name || "";
         return `<div class="item-image"><img src="${escapeHtml(
-          item.image_url || "/static/defoult.png"
+          item.image_url || "/static/defoult.webp"
         )}" alt="${escapeHtml(
           altText
-        )}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.png'" /></div>`;
+        )}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.webp'" /></div>`;
       })();
 
       // Colors and add-to-cart removed by request (no UI controls needed on cards)
@@ -578,7 +578,7 @@ window.applyClientSideFilter = function () {
                     src
                   )}" alt="${escapeHtml(
                     it.title || ""
-                  )}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.png'"/></div>`;
+                  )}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.webp'"/></div>`;
                   break;
                 }
               } catch (e) {
@@ -592,7 +592,7 @@ window.applyClientSideFilter = function () {
                 it.image_url || ""
               )}" alt="${escapeHtml(
               it.title || ""
-            )}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.png'"/></div>
+            )}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.webp'"/></div>
             `;
           }
         } catch (e) {

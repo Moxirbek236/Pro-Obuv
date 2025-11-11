@@ -1095,3 +1095,363 @@ TypeError: The view function for 'login_page' did not return a valid response. T
 2025-11-02 09:34:26,807 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [02/Nov/2025 09:34:26] code 400, message Bad request version ("ÑtVi6,\x8d\x04Æ+F_ZYÅìª5Gçº\x98\x93ab'\x9bÍ\x8c¸v")
 2025-11-02 09:34:26,813 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [02/Nov/2025 09:34:26] code 400, message Bad request version ('PÑ')
 2025-11-02 09:34:27,077 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [02/Nov/2025 09:34:27] code 400, message Bad request version ('À\x97\x08u!j85\x13À\x90~\x9b¸L\x98vy¼b¤"¹H¦\x98yrz\x11í\x9byð\x80\x02{y')
+2025-11-10 15:31:48,211 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:31:48] code 400, message Bad request version ('**\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x06Eªª\x00\x00\x00')
+2025-11-10 15:31:48,227 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:31:48] code 400, message Bad request version ('Þ')
+2025-11-10 15:31:48,477 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:31:48] code 400, message Bad request version ('\x02ÏdÒy\x91#Í1ÿô.×')
+2025-11-10 15:31:48,538 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:31:48] code 400, message Bad request version ('ÚÚ\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x06¥ÊÊ\x00\x00\x00+\x00\x07\x06ªª\x03\x04\x03\x03\x00#\x00\x00\x00')
+2025-11-10 15:31:48,539 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:31:48] code 400, message Bad request version ('\x87þÁ~(Ø¡ÌÆµ;Û¨æ+¸\x17Ði\x9aø`åuv_³1D\x99±:(\x913\x19¬¾£ÊôåÆ\x14{\x96\x84ãÆyu"´\x84Áþ!ª\\$\x96(ñX±\x81Ê\x8d\x9bS^·Ê{\x12iºçeòs®i\'')
+2025-11-10 15:31:48,791 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:31:48] code 400, message Bad request version ('úú\x00\x00\x00\x1b\x00\x03\x02\x00\x02ÿ\x01\x00\x01\x00\x00+\x00\x07\x06\x9a\x9a\x03\x04\x03\x03\x00\x17\x00\x00\x00\x12\x00\x00\x00-\x00\x02\x01\x01\x00')
+2025-11-10 15:31:56,979 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:31:56] code 400, message Bad request version ('\x01TÙ\x9b\x88%\x8d')
+2025-11-10 15:31:56,980 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:31:56] code 400, message Bad request version ('\x965ºÒh\x8fs¨é¹\x86')
+2025-11-10 15:31:57,245 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:31:57] code 400, message Bad request syntax ('\x16\x03\x01\x06Ò\x01\x00\x06Î\x03\x036,*\x8eMüIOý2\x06û\x8bÓl')
+2025-11-10 15:31:57,292 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:31:57] code 400, message Bad request version ('ú\x10\x11}í\x05©FB\x98.6¸ï÷n,N\x90_3*He\\®XçË')
+2025-11-10 15:31:57,293 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:31:57] code 400, message Bad request version ('Q\x9fâ«å\x8dë\x80þê\x83\x07R®:[ü')
+2025-11-10 15:31:57,556 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:31:57] code 400, message Bad request version ('\x00\x12\x00\x10\x04\x03\x08\x04\x04\x01\x05\x03\x08\x05\x05\x01\x08\x06\x06\x01\x00\x05\x00\x05\x01\x00\x00\x00\x00\x00\x1b\x00\x03\x02\x00\x02\x00')
+2025-11-10 15:32:50,081 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:32:50] code 400, message Bad request version ('¢\x152\x90¢¯\x03`ìx-\x82°\x18:Æ`\x93\xad')
+2025-11-10 15:32:50,081 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:32:50] code 400, message Bad request version ('\x00\x12\x00\x10\x04\x03\x08\x04\x04\x01\x05\x03\x08\x05\x05\x01\x08\x06\x06\x01\x00')
+2025-11-10 15:32:50,343 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:32:50] code 400, message Bad HTTP/0.9 request type ('\x16\x03\x01\x06Ò\x01\x00\x06Î\x03\x03ÓvS\x8aLÍ\x05b')
+2025-11-10 15:32:50,389 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:32:50] code 400, message Bad request version ('ÊÊ\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x06¥êê\x00\x00\x00')
+2025-11-10 15:32:50,389 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:32:50] code 400, message Bad request version ('3ë\x04\x15ø\x11\x8bT;Vðl£]Å\x9aRú:\x99×d97¤')
+2025-11-10 15:32:50,656 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:32:50] code 400, message Bad request version ('A/Mcp\x90ìc')
+2025-11-10 15:32:57,755 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:32:57] code 400, message Bad request version ('\x00\x12\x00\x10\x04\x03\x08\x04\x04\x01\x05\x03\x08\x05\x05\x01\x08\x06\x06\x01\x00')
+2025-11-10 15:32:57,755 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:32:57] code 400, message Bad request version ('\x02h2\x08http/1.1\x00\x17\x00\x00\x00')
+2025-11-10 15:32:58,008 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:32:58] code 400, message Bad request version ("JXHÕñÄ'\x92Xéñ")
+2025-11-10 15:32:58,071 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:32:58] code 400, message Bad request version ('OÈ)wz\x86\x13ßG\x87\x93Ëj#ÑÆ\x87Ë\x11|ì·\x8dP¡\x0eàÄ(D®Hh\x19òlq»ñ')
+2025-11-10 15:32:58,072 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:32:58] code 400, message Bad request version ('\x02h2\x08http/1.1\x00')
+2025-11-10 15:32:58,324 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:32:58] code 400, message Bad request version ('ÊÊ\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x06eZZ\x00\x00\x00+\x00\x07\x06')
+2025-11-10 15:33:41,158 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:33:41] code 400, message Bad request version ('©»0\x00-Z>ó\x00k')
+2025-11-10 15:33:41,159 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:33:41] code 400, message Bad request version ('zz\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x06EÚÚ\x00\x00\x00')
+2025-11-10 15:33:41,423 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:33:41] code 400, message Bad request version ('localhostÿ\x01\x00\x01\x00\x00+\x00\x07\x06ZZ\x03\x04\x03\x03\x00#\x00\x00\x00')
+2025-11-10 15:33:41,474 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:33:41] code 400, message Bad request version ("ºU)\x89ÕÇ-'Ðd\x9a")
+2025-11-10 15:33:41,474 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:33:41] code 400, message Bad request version ('ahÃZ6\x97')
+2025-11-10 15:33:41,738 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:33:41] code 400, message Bad request version ('¶æ\x81úc\x13VuY©ç<Ô×G\x8bt`ÉÐ#õ\x16)åI\x9e¼li\x9btw:')
+2025-11-10 15:35:42,103 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:35:42] code 400, message Bad request version ('ÂTÆ)iGÁ')
+2025-11-10 15:35:42,104 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:35:42] code 400, message Bad request version ('zz\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x06e')
+2025-11-10 15:35:42,368 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:35:42] code 400, message Bad request version ('ZJÆ\x87u\x82Ö\x8bÎå:ÏT2WËë0&K\x00B)dQ¹¹\x94ÛxàÁWaâ\x1bGÃi\x10v\x83x\x81´^«\x16vÙhÜ«\x1bv:@_')
+2025-11-10 15:35:42,414 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:35:42] code 400, message Bad request syntax ('\x16\x03\x01\x06²\x01\x00\x06®\x03\x03Gø\x94g4\x91\x9b\x8bÌU')
+2025-11-10 15:35:42,415 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:35:42] code 400, message Bad request version ('C&ÖÜ')
+2025-11-10 15:35:42,680 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:35:42] code 400, message Bad request version ('\x1a\x1a\x00\x00\x00\x1b\x00\x03\x02\x00\x02\x00')
+2025-11-10 15:37:06,398 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:37:06] code 400, message Bad request version ('\x00\x12\x00\x10\x04\x03\x08\x04\x04\x01\x05\x03\x08\x05\x05\x01\x08\x06\x06\x01\x00')
+2025-11-10 15:37:06,398 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:37:06] code 400, message Bad request version ('Ä\x82\x7f')
+2025-11-10 15:37:06,651 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:37:06] code 400, message Bad request version ('JJ\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x06¥')
+2025-11-10 15:37:06,729 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:37:06] code 400, message Bad request version ('èürÃD\x95U\x92K\x9dÄ\x8fA\x076')
+2025-11-10 15:37:06,730 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:37:06] code 400, message Bad request version ('\x00\x12\x00\x10\x04\x03\x08\x04\x04\x01\x05\x03\x08\x05\x05\x01\x08\x06\x06\x01\x00')
+2025-11-10 15:37:06,962 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:37:06] code 400, message Bad request version ('\x00\x02\x01\x00DÍ\x00\x05\x00\x03\x02h2\x003\x04ï\x04í')
+2025-11-10 15:41:35,933 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:41:35] code 400, message Bad request version ('\x19«UµA\x80á¬T\x00')
+2025-11-10 15:41:35,934 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:41:35] code 400, message Bad request version ('\x02h2\x08http/1.1\x00\x12\x00\x00\x00\x05\x00\x05\x01\x00\x00\x00\x00DÍ\x00\x05\x00\x03\x02h2\x00')
+2025-11-10 15:41:36,188 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:41:36] code 400, message Bad request version ('[')
+2025-11-10 15:41:36,246 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:41:36] code 400, message Bad request version ('«ñh\x9bãÓ\x80\x00')
+2025-11-10 15:41:36,247 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:41:36] code 400, message Bad request version ('y«ZÚgQ\x87')
+2025-11-10 15:41:36,506 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [10/Nov/2025 15:41:36] code 400, message Bad request version ('?')
+2025-11-10 16:38:18,916 | ERROR | restaurant_app | cart:8427 | Cart sahifasida xatolik: invalid syntax for function call expression
+2025-11-10 16:38:18,923 | ERROR | restaurant_app | handle_exception:1824 | Unhandled exception: invalid syntax for function call expression - URL: http://127.0.0.1:5000/cart
+2025-11-10 16:38:18,935 | ERROR | restaurant_app | handle_exception:1826 | Full traceback:
+Traceback (most recent call last):
+  File "D:\Safety.uz\app.py", line 8422, in cart
+    return render_template(
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\cart.html", line 1, in top-level template code
+    {% extends "base.html" %} {% block title %}{{ get_text("Savatcha - Pro Obuv") or 'Savatcha - Pro Obuv' }}{% endblock %} {%
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\base.html", line 22, in template
+    {% set _canonical = url_for(request.endpoint, **(request.view_args or {}), _external=True) %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.TemplateSyntaxError: invalid syntax for function call expression
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Safety.uz\app.py", line 8428, in cart
+    return render_template("cart.html", cart_items=[], total=0)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\cart.html", line 1, in top-level template code
+    {% extends "base.html" %} {% block title %}{{ get_text("Savatcha - Pro Obuv") or 'Savatcha - Pro Obuv' }}{% endblock %} {%
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\base.html", line 22, in template
+    {% set _canonical = url_for(request.endpoint, **(request.view_args or {}), _external=True) %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.TemplateSyntaxError: invalid syntax for function call expression
+
+2025-11-10 16:38:29,889 | ERROR | restaurant_app | cart:8427 | Cart sahifasida xatolik: invalid syntax for function call expression
+2025-11-10 16:38:29,908 | ERROR | restaurant_app | handle_exception:1824 | Unhandled exception: invalid syntax for function call expression - URL: http://127.0.0.1:5000/cart
+2025-11-10 16:38:29,918 | ERROR | restaurant_app | handle_exception:1826 | Full traceback:
+Traceback (most recent call last):
+  File "D:\Safety.uz\app.py", line 8422, in cart
+    return render_template(
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\cart.html", line 1, in top-level template code
+    {% extends "base.html" %} {% block title %}{{ get_text("Savatcha - Pro Obuv") or 'Savatcha - Pro Obuv' }}{% endblock %} {%
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\base.html", line 22, in template
+    {% set _canonical = url_for(request.endpoint, **(request.view_args or {}), _external=True) %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.TemplateSyntaxError: invalid syntax for function call expression
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Safety.uz\app.py", line 8428, in cart
+    return render_template("cart.html", cart_items=[], total=0)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\cart.html", line 1, in top-level template code
+    {% extends "base.html" %} {% block title %}{{ get_text("Savatcha - Pro Obuv") or 'Savatcha - Pro Obuv' }}{% endblock %} {%
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\base.html", line 22, in template
+    {% set _canonical = url_for(request.endpoint, **(request.view_args or {}), _external=True) %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.TemplateSyntaxError: invalid syntax for function call expression
+
+2025-11-10 16:38:30,747 | ERROR | restaurant_app | menu:7466 | Menu endpoint error: invalid syntax for function call expression
+2025-11-10 16:38:30,754 | ERROR | restaurant_app | menu:7496 | Menu fallback error: invalid syntax for function call expression
+2025-11-10 16:38:57,765 | ERROR | restaurant_app | menu:7466 | Menu endpoint error: invalid syntax for function call expression
+2025-11-10 16:38:57,772 | ERROR | restaurant_app | menu:7496 | Menu fallback error: invalid syntax for function call expression
+2025-11-10 16:39:06,950 | ERROR | restaurant_app | cart:8427 | Cart sahifasida xatolik: invalid syntax for function call expression
+2025-11-10 16:39:06,957 | ERROR | restaurant_app | handle_exception:1824 | Unhandled exception: invalid syntax for function call expression - URL: http://127.0.0.1:5000/cart
+2025-11-10 16:39:06,964 | ERROR | restaurant_app | handle_exception:1826 | Full traceback:
+Traceback (most recent call last):
+  File "D:\Safety.uz\app.py", line 8422, in cart
+    return render_template(
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\cart.html", line 1, in top-level template code
+    {% extends "base.html" %} {% block title %}{{ get_text("Savatcha - Pro Obuv") or 'Savatcha - Pro Obuv' }}{% endblock %} {%
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\base.html", line 22, in template
+    {% set _canonical = url_for(request.endpoint, **(request.view_args or {}), _external=True) %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.TemplateSyntaxError: invalid syntax for function call expression
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Safety.uz\app.py", line 8428, in cart
+    return render_template("cart.html", cart_items=[], total=0)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\cart.html", line 1, in top-level template code
+    {% extends "base.html" %} {% block title %}{{ get_text("Savatcha - Pro Obuv") or 'Savatcha - Pro Obuv' }}{% endblock %} {%
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\base.html", line 22, in template
+    {% set _canonical = url_for(request.endpoint, **(request.view_args or {}), _external=True) %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.TemplateSyntaxError: invalid syntax for function call expression
+
+2025-11-10 17:37:02,982 | ERROR | restaurant_app | product_detail:7516 | product_detail error for id=42: 'app' is undefined
+2025-11-10 17:37:03,208 | ERROR | restaurant_app | menu:7317 | Menu endpoint error: 'app' is undefined
+2025-11-10 17:37:03,220 | ERROR | restaurant_app | menu:7347 | Menu fallback error: 'app' is undefined
+2025-11-10 17:37:21,504 | ERROR | restaurant_app | product_detail:7516 | product_detail error for id=42: 'app' is undefined
+2025-11-10 17:37:22,580 | ERROR | restaurant_app | product_detail:7516 | product_detail error for id=42: 'app' is undefined
+2025-11-10 18:10:13,202 | ERROR | restaurant_app | news_detail:13687 | news_detail error: name 'abort' is not defined
+2025-11-10 18:10:13,203 | ERROR | restaurant_app | handle_exception:1684 | Unhandled exception: name 'abort' is not defined - URL: http://localhost:5000/news/4
+2025-11-10 18:10:13,226 | ERROR | restaurant_app | handle_exception:1686 | Full traceback:
+Traceback (most recent call last):
+  File "D:\Safety.uz\app.py", line 13668, in news_detail
+    abort(404)
+    ^^^^^
+NameError: name 'abort' is not defined
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Safety.uz\app.py", line 13690, in news_detail
+    abort(500)
+    ^^^^^
+NameError: name 'abort' is not defined
+
+2025-11-10 18:10:20,071 | ERROR | restaurant_app | news_detail:13687 | news_detail error: name 'abort' is not defined
+2025-11-10 18:10:20,072 | ERROR | restaurant_app | handle_exception:1684 | Unhandled exception: name 'abort' is not defined - URL: http://localhost:5000/news/4
+2025-11-10 18:10:20,077 | ERROR | restaurant_app | handle_exception:1686 | Full traceback:
+Traceback (most recent call last):
+  File "D:\Safety.uz\app.py", line 13668, in news_detail
+    abort(404)
+    ^^^^^
+NameError: name 'abort' is not defined
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Safety.uz\app.py", line 13690, in news_detail
+    abort(500)
+    ^^^^^
+NameError: name 'abort' is not defined
+
+2025-11-10 23:06:50,867 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-11 07:17:45,938 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-11 07:17:45,938 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-11 08:33:27,284 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-11 08:33:27,284 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-11 08:33:27,284 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-11 08:33:28,929 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-11 08:33:30,536 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-11 08:33:30,635 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-11 08:33:30,748 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError

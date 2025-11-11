@@ -6,7 +6,7 @@
 <meta
   name="keywords"
   content="pro obuv, yangiliklar, aksiya, obuv, spetsobuv, spetsodejda, safety, oyoq kiyim, etik, tufli" />
-<link rel="canonical" href="https://safety.uz{{ request.path }}" />
+<link rel="canonical" href="{{ canonical_url() }}" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Yangiliklar - Pro Obuv" />
 <meta
@@ -15,7 +15,7 @@
 <meta property="og:url" content="{{ request.url }}" />
 <meta
   property="og:image"
-  content="{{ url_for('static', filename='defoult.png') }}" />
+  content="{{ prefer_webp(url_for('static', filename='defoult.png')) }}" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Yangiliklar - Pro Obuv" />
 <meta
@@ -23,7 +23,7 @@
   content="Spetsobuv va ish kiyimlari bo'yicha yangiliklar" />
 <meta
   name="twitter:image"
-  content="{{ url_for('static', filename='defoult.png') }}" />
+  content="{{ prefer_webp(url_for('static', filename='defoult.png')) }}" />
 <script type="application/ld+json">
   {
     "@context": "https://schema.org",

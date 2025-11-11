@@ -20,8 +20,10 @@
       content="Pro Obuv — O'zbekistondagi eng yaxshi spetsobuv va ish kiyimlari do'koni. Xavfsizlik poyabzallari, ish kiyimlari, himoya vositalari." />
     <meta name="yandex-verification" content="dad000c350eb0a7e" />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://safety.uz/" />
-    <meta property="og:image" content="https://safety.uz/static/defoult.png" />
+    <meta property="og:url" content="{{ canonical_url() }}" />
+    <meta
+      property="og:image"
+      content="{{ prefer_webp(url_for('static', filename='defoult.png', _external=True)) }}" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta
       name="twitter:title"
@@ -29,16 +31,18 @@
     <meta
       name="twitter:description"
       content="O'zbekistondagi eng yaxshi spetsobuv va ish kiyimlari do'koni. Tez yetkazib berish, kafolat." />
-    <meta name="twitter:image" content="https://safety.uz/static/defoult.png" />
-    <link rel="canonical" href="https://safety.uz/" />
+    <meta
+      name="twitter:image"
+      content="{{ prefer_webp(url_for('static', filename='defoult.png', _external=True)) }}" />
+    <link rel="canonical" href="{{ canonical_url() }}" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "Store",
         "name": "Pro Obuv",
         "description": "Sifatli spetsobuv va ish kiyimlari do'koni",
-        "url": "https://safety.uz/",
-        "logo": "https://safety.uz/static/defoult.png",
+        "url": "{{ canonical_url() }}",
+        "logo": "{{ prefer_webp(url_for('static', filename='defoult.png', _external=True)) }}",
         "address": {
           "@type": "PostalAddress",
           "addressLocality": "Toshkent",
