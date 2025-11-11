@@ -307,9 +307,7 @@ block head %}
     }
   }
 </style>
-{% endblock %} {% block content %} {% set LANG =
-request.environ.get('LANG_CODE', session.get('interface_language',
-config.get('DEFAULT_LANGUAGE', 'uz'))) %}
+{% endblock %} {% block content %}
 <div class="settings-container">
   <div class="settings-card">
     <div class="settings-header">
@@ -333,32 +331,31 @@ config.get('DEFAULT_LANGUAGE', 'uz'))) %}
       <h5>{{ _('settings.language_label') }}</h5>
       <div class="language-options">
         <div
-          <div
-          class="language-option {{ 'active' if LANG == 'uz' }}"
+          class="language-option {{ 'active' if session.get('interface_language', 'uz') == 'uz' }}"
           onclick="selectLanguage('uz')">
-          <input type="radio" name="language" value="uz" {{ 'checked' if LANG ==
-          'uz' }}>
+          <input type="radio" name="language" value="uz" {{ 'checked' if
+          session.get('interface_language', 'uz') == 'uz' }}>
           <div>🇺🇿 O'zbekcha</div>
         </div>
         <div
-          class="language-option {{ 'active' if LANG == 'ru' }}"
+          class="language-option {{ 'active' if session.get('interface_language', 'uz') == 'ru' }}"
           onclick="selectLanguage('ru')">
-          <input type="radio" name="language" value="ru" {{ 'checked' if LANG ==
-          'ru' }}>
+          <input type="radio" name="language" value="ru" {{ 'checked' if
+          session.get('interface_language', 'uz') == 'ru' }}>
           <div>🇷🇺 Русский</div>
         </div>
         <div
-          class="language-option {{ 'active' if LANG == 'en' }}"
+          class="language-option {{ 'active' if session.get('interface_language', 'uz') == 'en' }}"
           onclick="selectLanguage('en')">
-          <input type="radio" name="language" value="en" {{ 'checked' if LANG ==
-          'en' }}>
+          <input type="radio" name="language" value="en" {{ 'checked' if
+          session.get('interface_language', 'uz') == 'en' }}>
           <div>🇬🇧 English</div>
         </div>
         <div
-          class="language-option {{ 'active' if LANG == 'kz' }}"
+          class="language-option {{ 'active' if session.get('interface_language', 'uz') == 'kz' }}"
           onclick="selectLanguage('kz')">
-          <input type="radio" name="language" value="kz" {{ 'checked' if LANG ==
-          'kz' }}>
+          <input type="radio" name="language" value="kz" {{ 'checked' if
+          session.get('interface_language', 'uz') == 'kz' }}>
           <div>🇰🇿 Қазақша</div>
         </div>
       </div>
@@ -536,45 +533,25 @@ config.get('DEFAULT_LANGUAGE', 'uz'))) %}
 
   // Til o'zgartirish
   function changeLanguage(language) {
-    // Persist chosen language server-side (for logged-in users), then
-    // navigate to the same page with the language path segment replaced so
-    // URL and session stay synchronized.
-    (async function(){
-      try {
-        await fetch("/api/change-language", {
-          method: "POST",
-          credentials: 'same-origin',
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-Token": typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : ''
-          },
-          body: JSON.stringify({ language: language }),
-        }).catch(function(){});
-      } catch(e) {}
-
-      // Build new path similar to global changeLanguage helper
-      var supported = ["uz", "ru", "en", "kz"];
-      var path = window.location.pathname || "/";
-      var search = window.location.search || "";
-      var segs = path.split("/");
-      if (segs.length > 1 && supported.indexOf(segs[1]) !== -1) {
-        segs[1] = language;
-      } else {
-        segs.splice(1, 0, language);
-      }
-      var newPath = segs.join("/");
-      if (!newPath.startsWith("/")) newPath = "/" + newPath;
-      newPath = newPath.replace(/\/\/+/g, "/");
-      if (path === "/" || path === "") {
-        newPath = "/" + language + "/menu";
-      }
-      window.location.href = newPath + search;
-    })();
-    } catch (e) {
-      try {
-        window.location.reload();
-      } catch (err) {}
-    }
+    fetch("/api/change-language", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ language: language }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          // Sahifani yangilash
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
+        }
+      })
+      .catch((error) => {
+        console.error("Error changing language:", error);
+      });
   }
 
   // Mavzu o'zgartirish
@@ -654,29 +631,6 @@ config.get('DEFAULT_LANGUAGE', 'uz'))) %}
       .then((data) => {
         if (data.success) {
           alert("Sozlamalar saqlandi!");
-          // If language changed, navigate to same page under new language
-          try {
-            var newLang = settings.language;
-            if (newLang) {
-              var supported = ["uz", "ru", "en", "kz"];
-              var path = window.location.pathname || "/";
-              var search = window.location.search || "";
-              var segs = path.split("/");
-              if (segs.length > 1 && supported.indexOf(segs[1]) !== -1) {
-                segs[1] = newLang;
-              } else {
-                segs.splice(1, 0, newLang);
-              }
-              var newPath = segs.join("/");
-              if (!newPath.startsWith("/")) newPath = "/" + newPath;
-              newPath = newPath.replace(/\/\/+/, "/");
-              if (path === "/" || path === "") {
-                newPath = "/" + newLang + "/menu";
-              }
-              window.location.href = newPath + search;
-              return;
-            }
-          } catch (e) {}
           window.location.reload();
         } else {
           alert("Xatolik: " + data.message);

@@ -226,11 +226,11 @@ not initialize the map. #} {% if not config.get('YANDEX_MAPS_API') %}
     <div class="profile-header">
       <div class="profile-avatar">
         {% if user and user.avatar %}
-        <img src="{{ prefer_webp(user.avatar) }}" alt="Profil rasmi" />
-        {% else %}
         <img
-          src="{{ prefer_webp(url_for('static', filename='images/default-avatar.svg')) }}"
+          src="{{ user.avatar or '/static/images/default-avatar.svg' }}"
           alt="Profil rasmi" />
+        {% else %}
+        <img src="/static/images/default-avatar.svg" alt="Profil rasmi" />
         {% endif %}
       </div>
       <div class="profile-name">

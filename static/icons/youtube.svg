@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="YouTube"> 
+  <defs>
+    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#ff3d00"/>
+      <stop offset="100%" stop-color="#c40000"/>
+    </linearGradient>
+  </defs>
+  <rect rx="10" width="48" height="48" fill="url(#g)" />
+  <polygon points="20,15 35,24 20,33" fill="#fff" />
+</svg>

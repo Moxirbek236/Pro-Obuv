@@ -345,7 +345,7 @@ async def products_cmd_new(update: "Update", context: "ContextTypes.DEFAULT_TYPE
                 # Use first image or default
                 img = urls[0] if urls else ""
                 if not urls:
-                    default_img = FLASK_APP_URL.rstrip("/") + "/static/defoult.webp"
+                    default_img = FLASK_APP_URL.rstrip("/") + "/static/defoult.png"
                     urls = [default_img]
                     img = default_img
                     LOG.info(
@@ -441,7 +441,7 @@ async def products_cmd_new(update: "Update", context: "ContextTypes.DEFAULT_TYPE
                     # no images: send default local image bytes if available
                     try:
                         default_path = (
-                            LOGS_DIR.parent / "static" / "defoult.webp"
+                            LOGS_DIR.parent / "static" / "defoult.png"
                         ).resolve()
                         with open(default_path, "rb") as f:
                             data = f.read()

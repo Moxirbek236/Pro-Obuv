@@ -40,13 +40,12 @@
                   {{ get_text('language') }}
                 </a>
                 <ul class="dropdown-menu">
-                  {% set cur_lang = LANG if (LANG is defined) else
-                  (session.get('interface_language', config.DEFAULT_LANGUAGE if
-                  config is defined else 'uz')) %}
+                  {% set cur_lang = session.get('interface_language',
+                  config.DEFAULT_LANGUAGE if config is defined else 'uz') %}
                   <li>
                     <a
                       class="dropdown-item {{ 'active' if cur_lang == 'ru' }}"
-                      href="javascript:void(0)"
+                      href="#"
                       onclick="changeLanguage('ru')"
                       >{{ get_text('language_names.ru') }}</a
                     >
@@ -54,7 +53,7 @@
                   <li>
                     <a
                       class="dropdown-item {{ 'active' if cur_lang == 'uz' }}"
-                      href="javascript:void(0)"
+                      href="#"
                       onclick="changeLanguage('uz')"
                       >{{ get_text('language_names.uz') }}</a
                     >
@@ -62,7 +61,7 @@
                   <li>
                     <a
                       class="dropdown-item {{ 'active' if cur_lang == 'en' }}"
-                      href="javascript:void(0)"
+                      href="#"
                       onclick="changeLanguage('en')"
                       >{{ get_text('language_names.en') }}</a
                     >
@@ -70,7 +69,7 @@
                   <li>
                     <a
                       class="dropdown-item {{ 'active' if cur_lang == 'kz' }}"
-                      href="javascript:void(0)"
+                      href="#"
                       onclick="changeLanguage('kz')"
                       >{{ get_text('language_names.kz') }}</a
                     >
@@ -148,60 +147,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
     {% block extra_js %}{% endblock %}
-    <script>
-      // Provide a defensive fallback for changeLanguage in case this layout
-      // is used without the global changeLanguage helper defined in
-      // `base.html`. If a global exists, do nothing; otherwise implement a
-      // minimal behavior: persist to server and navigate to the language-\n      // prefixed path.
-      try {
-        if (
-          typeof window !== "undefined" &&
-          typeof window.changeLanguage !== "function"
-        ) {
-          window.changeLanguage = async function (lang) {
-            try {
-              var supported = ["uz", "ru", "en", "kz"];
-              var path = window.location.pathname || "/";
-              var search = window.location.search || "";
-              var segs = path.split("/");
-              if (segs.length > 1 && supported.indexOf(segs[1]) !== -1) {
-                segs[1] = lang;
-              } else {
-                segs.splice(1, 0, lang);
-              }
-              var newPath = segs.join("/");
-              if (!newPath.startsWith("/")) newPath = "/" + newPath;
-              newPath = newPath.replace(/\/\/+/g, "/");
-              if (
-                path === "/" ||
-                path === "" ||
-                path === "/menu" ||
-                path.startsWith("/menu")
-              ) {
-                newPath = "/" + lang + "/menu";
-              }
-              try {
-                await fetch("/api/change-language", {
-                  method: "POST",
-                  credentials: "same-origin",
-                  headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-Token":
-                      typeof CSRF_TOKEN !== "undefined" ? CSRF_TOKEN : "",
-                  },
-                  body: JSON.stringify({ language: lang }),
-                }).catch(function () {});
-              } catch (e) {}
-              window.location.href = newPath + search;
-            } catch (e) {
-              try {
-                window.location.reload();
-              } catch (err) {}
-            }
-          };
-        }
-      } catch (e) {}
 
+    <script>
       // Dark mode toggle
       document
         .getElementById("theme-toggle")

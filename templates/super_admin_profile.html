@@ -77,7 +77,7 @@
       {% if user.avatar %}
       <div class="mt-2">
         <img
-          src="{{ prefer_webp(user.avatar or url_for('static', filename='images/default-avatar.svg')) }}"
+          src="{{ user.avatar or '/static/images/default-avatar.svg' }}"
           width="120"
           class="app-avatar" />
       </div>

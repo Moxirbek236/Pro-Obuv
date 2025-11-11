@@ -28,6 +28,9 @@ try:
     import sms_helper
 except Exception:
     sms_helper = None
+
+# Third-party imports (use safe fallbacks so the module can be parsed
+# even if some optional dependencies are not installed in the environment)
 try:
     from flask import (
         Flask,
@@ -38,13 +41,14 @@ try:
         redirect,
         url_for,
         flash,
-        abort,
         jsonify,
         send_from_directory,
         send_file,
         get_flashed_messages,
         Response,
+        abort,
     )
+    from werkzeug.exceptions import HTTPException
 except Exception:
     # Minimal fallbacks to allow static analysis / parsing; runtime will still
     # require the real packages.
@@ -52,70 +56,71 @@ except Exception:
     request = None
     session = {}
     g = type("G", (), {})()
+
     def render_template(*a, **k):
         return ""
+
     def redirect(*a, **k):
         return ""
+
     def url_for(*a, **k):
         return ""
+
     def flash(*a, **k):
         return None
+
     def jsonify(obj=None):
         return obj
+
     def send_from_directory(*a, **k):
         return ""
+
+    def send_file(*a, **k):
+        return ""
+
+    def get_flashed_messages(*a, **k):
+        return []
+
+    def abort(code=500):
+        # Minimal fallback for abort during static analysis/testing.
+        raise Exception(f"HTTP abort called with code={code}")
+
     class Response:
         pass
+
 
 try:
     from werkzeug.middleware.proxy_fix import ProxyFix
 except Exception:
     ProxyFix = None
 
-# Third-party and stdlib imports that are optional at runtime but referenced
-# throughout the file. Import defensively so static analysis (Pylance)
-# recognizes the symbols while keeping runtime safe when packages are
-# missing in minimal environments.
+# Development-time: suppress noisy "Bad request version" / TLS-handshake prints from
+# BaseHTTPRequestHandler which often occur when an HTTPS client hits an HTTP server.
+# Prefer terminating TLS at a proxy in production; this is a small local workaround.
 try:
-    import requests
+    import http.server as _http_server
+
+    _orig_log_error = getattr(_http_server.BaseHTTPRequestHandler, "log_error", None)
+
+    def _filtered_log_error(self, format, *args):
+        try:
+            msg = format % args
+            # Filter out TLS handshake / binary noise messages that show as 400 logs
+            if (
+                "Bad request version" in msg
+                or "Bad HTTP/0.9 request type" in msg
+                or "Bad request" in msg and any(ch < ' ' for ch in msg)
+            ):
+                return
+        except Exception:
+            pass
+        if _orig_log_error:
+            return _orig_log_error(self, format, *args)
+
+    _http_server.BaseHTTPRequestHandler.log_error = _filtered_log_error
 except Exception:
-    requests = None
-
-try:
-    import qrcode
-except Exception:
-    qrcode = None
-
-import base64
-from io import BytesIO
-
-try:
-    import pandas as pd
-except Exception:
-    pd = None
-
-try:
-    from PIL import Image, UnidentifiedImageError
-except Exception:
-    Image = None
-
-try:
-    from openpyxl import Workbook
-except Exception:
-    Workbook = None
-
-import uuid
-
-try:
-    from werkzeug.exceptions import HTTPException
-except Exception:
-    HTTPException = Exception
-
-try:
-    from werkzeug.utils import secure_filename
-except Exception:
-    def secure_filename(x):
-        return x
+    # Non-fatal if monkeypatching fails
+    pass
 
 try:
     from flask_cors import CORS
@@ -145,6 +150,69 @@ try:
     from werkzeug.middleware.profiler import ProfilerMiddleware
 except Exception:
     ProfilerMiddleware = None
+
+# Optional third-party imports used in some routes/features. Use safe
+# fallbacks so the module can be parsed in environments where packages
+# are not installed. Real runtime requires installing these packages.
+try:
+    import requests
+except Exception:
+    requests = None
+
+try:
+    import qrcode
+except Exception:
+    qrcode = None
+
+try:
+    import base64
+except Exception:
+    base64 = None
+
+try:
+    from io import BytesIO
+except Exception:
+    BytesIO = None
+
+try:
+    import pandas as pd
+except Exception:
+    pd = None
+
+try:
+    from openpyxl import Workbook
+except Exception:
+    Workbook = None
+
+try:
+    import uuid
+except Exception:
+    uuid = None
+
+try:
+    from werkzeug.utils import secure_filename
+except Exception:
+    # Minimal fallback for static analysis; real sanitization requires werkzeug
+    def secure_filename(x):
+        try:
+            return os.path.basename(str(x))
+        except Exception:
+            return str(x)
+
+# Some helper functions (like `write_menu_json`) were moved/removed in refactors.
+# Provide a safe stub so tools and static analysis don't report undefined names.
+def write_menu_json(*args, **kwargs):
+    """Placeholder stub for write_menu_json.
+
+    If the full implementation is required, restore it from backups or
+    implement a proper version that writes the menu JSON used by the front-end.
+    """
+    try:
+        # No-op default to avoid runtime NameError in environments where it's
+        # called but the real generator is not necessary (e.g., static checks)
+        return None
+    except Exception:
+        return None
 
 try:
     # Preferred: use Werkzeug's secure password helpers
@@ -177,6 +245,7 @@ except Exception:
         except Exception:
             return False
 
+
 try:
     from flask_sqlalchemy import SQLAlchemy
 except Exception:
@@ -187,12 +256,10 @@ try:
 except Exception:
     pytz = None
 
-try:
-    import redis
-    REDIS_AVAILABLE = True
-except Exception:
-    redis = None
-    REDIS_AVAILABLE = False
+# Defer importing `redis` until we actually need it to avoid blocking imports
+# in environments where the redis package may try to import heavy async components.
+redis = None
+REDIS_AVAILABLE = False
 
 # Bring logging handlers into top-level imports so setup_logging() can use them
 try:
@@ -205,10 +272,28 @@ except Exception:
 app = Flask(__name__)
 
 print("DEBUG: Flask app created")
+try:
+    # Expose the Flask `app` object to Jinja templates so templates that
+    # reference `app.url_map` (guarded checks) will work during rendering.
+    app.jinja_env.globals.update(app=app)
+except Exception:
+    pass
+
+# Application start timestamp used for uptime calculations
+APP_START_TIME = time.time()
+
+try:
+    from api.news_api import register_news_api
+
+    register_news_api(app)
+    print("DEBUG: News API registered")
+except ImportError as e:
+    print(f"WARNING: News API import failed: {e}")
+except Exception as e:
+    print(f"WARNING: News API registration failed: {e}")
 
 
-# register filter with Jinja
-
+# Jinja filter: autolink URLs in plain text to clickable anchors
 def autolink(value):
     try:
         import re
@@ -231,6 +316,8 @@ def autolink(value):
     except Exception:
         return value
 
+
+# register filter with Jinja
 try:
     app.jinja_env.filters["autolink"] = autolink
     # Add get_text function to Jinja environment and expose a robust '_'
@@ -238,133 +325,6 @@ try:
     # receive a string (falls back to flattened translations when needed).
     app.jinja_env.globals.update(get_text=utils.get_text)
     app.jinja_env.globals.update(_=utils.translate)
-    # Provide a small fallback for write_menu_json so code paths that call it
-    # during menu updates don't trigger static analysis errors when the
-    # real implementation is provided elsewhere (or disabled in minimal
-    # environments). If utils supplies a concrete implementation prefer it.
-    def write_menu_json(*a, **k):
-        try:
-            if hasattr(utils, 'write_menu_json') and callable(utils.write_menu_json):
-                return utils.write_menu_json(*a, **k)
-        except Exception:
-            pass
-        # No-op fallback
-        return None
-    app.jinja_env.globals.update(write_menu_json=write_menu_json)
-    # Helper to generate language-prefixed URLs in templates. Use like:
-    #   {{ url_for_lang('menu') }} or {{ url_for_lang('product', id=1) }}
-    def url_for_lang(endpoint, **values):
-        """Generate a language-prefixed URL for templates.
-
-        Behavior:
-        - If caller passes `_external=True`, return an absolute URL including
-          the language prefix (e.g. https://example.com/ru/menu).
-        - Otherwise return a path beginning with /<lang>/... for internal
-          endpoints.
-        - If the generated `p` already contains a supported language segment
-          as the first path part, leave it unchanged.
-        """
-        try:
-            # honor a requested _external flag but don't forward it to the
-            # initial url_for call because we want to insert the language
-            # segment ourselves and then, if needed, make it absolute.
-            external = bool(values.pop("_external", False))
-            # Build the canonical internal path first
-            p = url_for(endpoint, **values)
-        except Exception:
-            try:
-                return url_for(endpoint)
-            except Exception:
-                return ""
-
-        try:
-            # If url_for returned an absolute URL (rare here), return as-is
-            if not p.startswith('/'):
-                # Still respect external flag: if external asked but url_for gave
-                # a relative/absolute mismatch, prefer the returned value.
-                return p
-
-            segs = p.split('/')
-
-            # Determine the current language with the following precedence:
-            # 1. request.environ['LANG_CODE'] (set by LangPrefixMiddleware)
-            # 2. g.interface_language (set in before_request)
-            # 3. session['interface_language'] (legacy/session persisted)
-            # 4. Config.DEFAULT_LANGUAGE
-            try:
-                lang = request.environ.get('LANG_CODE') or getattr(g, 'interface_language', None) or session.get('interface_language') or getattr(Config, 'DEFAULT_LANGUAGE', 'ru')
-            except Exception:
-                lang = session.get('interface_language', getattr(Config, 'DEFAULT_LANGUAGE', 'ru'))
-
-            supported = getattr(Config, 'SUPPORTED_LANGUAGES', ['ru', 'uz', 'en', 'kz'])
-
-            # If the generated path already contains a supported language prefix, keep as-is
-            if len(segs) > 1 and segs[1] in supported:
-                prefixed = p
-            else:
-                # Otherwise insert the authoritative language value
-                prefixed = f"/{lang}{p}"
-
-            if external:
-                # Build absolute URL with request.url_root as the host part
-                try:
-                    base = (request.url_root or "").rstrip('/')
-                except Exception:
-                    base = ""
-                if not base:
-                    return prefixed
-                return base + prefixed
-
-            return prefixed
-        except Exception:
-            return p
-
-    def canonical_url():
-        """Generate canonical URL for current page including language prefix.
-        
-        Takes current request path and language from session to build full URL.
-        Used in templates for canonical and og:url meta tags.
-        """
-        try:
-            # Get current URL path without query string
-            path = getattr(request, 'path', '')
-            if not path:
-                return ''
-
-            # Get current language (with fallback chain)
-            lang = session.get('interface_language', 
-                             getattr(Config, 'DEFAULT_LANGUAGE', 'ru'))
-            
-            # Strip any existing language prefix
-            segs = path.split('/')
-            supported = getattr(Config, 'SUPPORTED_LANGUAGES', 
-                             ['ru', 'uz', 'en', 'kz'])
-            if len(segs) > 1 and segs[1] in supported:
-                path = '/' + '/'.join(segs[2:])
-            
-            # Build language-prefixed absolute URL
-            try:
-                base = (request.url_root or '').rstrip('/')
-                if not base:
-                    return f"/{lang}{path}"
-                return f"{base}/{lang}{path}"
-            except Exception:
-                # Fallback to relative URL if we can't get base
-                return f"/{lang}{path}"
-        except Exception:
-            return ''
-
-    app.jinja_env.globals.update(url_for_lang=url_for_lang)
-    app.jinja_env.globals.update(canonical_url=canonical_url)
-    # Replace the `url_for` used in templates with a language-aware wrapper so
-    # server-rendered links automatically include the current interface language.
-    # Templates can still access the original Flask `url_for` by importing it in
-    # Python code; this only affects template globals.
-    try:
-        app.jinja_env.globals.update(url_for=url_for_lang)
-    except Exception:
-        # Avoid failing template registration; keep url_for_lang available.
-        pass
 except Exception:
     pass
 
@@ -435,8 +395,6 @@ class Config:
     )
 
     # Localization
-    # Default interface language for the application when no language is set
-    # Use Russian ('ru') as the site-wide default per requirement.
     DEFAULT_LANGUAGE = os.environ.get("DEFAULT_LANGUAGE", "ru")
     # Add 'kz' (Kazakh) to supported languages so URL-prefix detection and
     # language switching recognize it site-wide.
@@ -496,15 +454,6 @@ try:
     # can safely call config.get('KEY'). Previously a class object was
     # exposed which does not implement .get and caused template errors.
     app.jinja_env.globals["config"] = app.config
-    # Also expose the Flask `app` object to templates. Some legacy templates
-    # reference `app` directly (for example `app.config` or `app.name`) which
-    # caused runtime Jinja errors like "'app' is undefined". Exposing `app`
-    # here is a low-risk compatibility fix that prevents those template errors.
-    try:
-        app.jinja_env.globals.update(app=app)
-    except Exception:
-        # Non-fatal: if this fails, templates will still have `config`.
-        pass
 except Exception:
     pass
 # Ensure client-side Yandex Maps key is available in app.config.
@@ -530,63 +479,6 @@ except Exception:
 # GOOGLE_MAPS_API is always an empty string so no Google script tag is rendered.
 try:
     app.jinja_env.globals["GOOGLE_MAPS_API"] = ""
-
-    # Helper: prefer .webp static file when available
-    def prefer_webp(path_or_url):
-        """
-        Given a URL or path (usually starting with /static/ or generated by url_for('static', ...)),
-        return the same URL but with .webp extension if that file exists on disk under app.static_folder.
-        If not applicable or webp not found, return the original input.
-        """
-        try:
-            # If it's an absolute URL (http(s) or protocol-relative), try to normalize to the static path
-            static_url_path = app.static_url_path or '/static'
-
-            src = path_or_url or ''
-            # If it's a full URL that contains the static path, extract the path part
-            # Normalize when static_url_path appears anywhere in the path
-            # e.g. '/static/icons/x.png' or '/uz/static/icons/x.png' or an absolute URL containing '/static/'
-            idx = -1
-            if src.startswith('http://') or src.startswith('https://'):
-                idx = src.find(static_url_path)
-            else:
-                idx = src.find(static_url_path)
-
-            if idx == -1:
-                # No static segment found -> nothing to prefer
-                return path_or_url
-
-            # Preserve any prefix before /static (e.g. '/uz') so we can return a same-prefixed path
-            prefix = src[:idx]
-            # rel is the part after '/static/'
-            rel = src[idx + len(static_url_path):]
-            if rel.startswith('/'):
-                rel = rel[1:]
-
-            base, ext = os.path.splitext(rel)
-            webp_rel = base + '.webp'
-            webp_fs = os.path.join(app.static_folder, webp_rel.replace('/', os.sep))
-            if os.path.exists(webp_fs):
-                # Rebuild path preserving prefix and using the static_url_path
-                # Ensure we don't duplicate slashes
-                return f"{prefix}{static_url_path}/{webp_rel}" if prefix else f"{static_url_path}/{webp_rel}"
-        except Exception:
-            pass
-        return path_or_url
-
-    app.jinja_env.globals.update(prefer_webp=prefer_webp)
-    
-    # Helper: return a default static image (prefer webp) when a requested
-    # image is missing. Used by thumbnail fallback paths.
-    def send_default_static_image():
-        for name in ("defoult.webp", "defoult.png", "defoult.jpg"):
-            try:
-                p = os.path.join(os.getcwd(), 'static', name)
-                if os.path.exists(p):
-                    return send_file(p, conditional=True)
-            except Exception:
-                continue
-        abort(404)
 except Exception:
     pass
 
@@ -611,50 +503,6 @@ except Exception:
 
 # Professional middleware stack
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
-
-
-# LangPrefixMiddleware: allow all routes to be available under /<lang>/... by
-# stripping the language prefix from PATH_INFO early (WSGI stage) and exposing
-# the chosen language via environ['LANG_CODE']. Flask's `before_request`
-# will pick this up and set session/g accordingly. This avoids having to
-# re-register every route under a language prefix.
-class LangPrefixMiddleware:
-    def __init__(self, app, supported=None):
-        self.app = app
-        self.supported = set(supported or [])
-
-    def __call__(self, environ, start_response):
-        try:
-            path = environ.get("PATH_INFO", "") or ""
-            if path.startswith("/"):
-                # split into ['','lang', 'rest...']
-                parts = path.lstrip("/").split("/", 1)
-                if parts and parts[0] in self.supported:
-                    lang = parts[0]
-                    # store original for debugging if needed
-                    environ["ORIG_PATH_INFO"] = path
-                    environ["LANG_CODE"] = lang
-                    # rewrite PATH_INFO to the remainder. If the request was a
-                    # language root like '/en/' (no remainder), map it to the
-                    # public menu ('/menu') so the chosen language is applied
-                    # instead of letting the app's bare-root redirect override it.
-                    if len(parts) > 1 and parts[1]:
-                        rest = "/" + parts[1]
-                    else:
-                        # language-only root -> serve the menu page
-                        rest = "/menu"
-                    environ["PATH_INFO"] = rest
-        except Exception:
-            # Do not raise; allow request to continue unchanged
-            pass
-        return self.app(environ, start_response)
-
-
-# Insert LangPrefixMiddleware into the stack so upstream app sees stripped paths.
-try:
-    app.wsgi_app = LangPrefixMiddleware(app.wsgi_app, supported=getattr(Config, "SUPPORTED_LANGUAGES", ["ru", "uz", "en", "kz"]))
-except Exception:
-    pass
 
 
 # WSGI middleware to proactively reject overly large requests and handle MemoryError
@@ -1455,13 +1303,7 @@ def inject_translation_helpers():
     template local context used by render_template.
     """
     try:
-        # Expose current language (prefer request-scoped value) to templates as LANG
-        try:
-            current = utils.get_current_language()
-        except Exception:
-            current = session.get('interface_language', getattr(Config, 'DEFAULT_LANGUAGE', 'ru'))
-
-        return {"_": utils.translate, "get_text": utils.get_text, "LANG": current, "current_language": current}
+        return {"_": utils.translate, "get_text": utils.get_text}
     except Exception:
         return {}
 
@@ -1958,72 +1800,23 @@ def before_request():
 
         # URL-based language detection: support URLs like /ru/... or /uz
         try:
-            # Prefer LANG_CODE set by LangPrefixMiddleware (WSGI) if present.
-            lang_from_env = request.environ.get("LANG_CODE")
-            supported_langs = getattr(Config, "SUPPORTED_LANGUAGES", ["ru", "uz", "en", "kz"])
-            default_lang = getattr(Config, "DEFAULT_LANGUAGE", "ru")
-
-            if lang_from_env and lang_from_env in supported_langs:
-                # LANG_CODE provided by middleware takes highest precedence
-                session["interface_language"] = lang_from_env
-                g.interface_language = lang_from_env
-                try:
-                    app_logger.info(f"before_request: LANG_CODE env detected -> {lang_from_env} for {request.path}")
-                except Exception:
-                    pass
+            path = (request.path or "").lstrip("/")
+            parts = path.split("/", 1)
+            candidate = parts[0] if parts and parts[0] else None
+            if candidate and candidate in getattr(Config, "SUPPORTED_LANGUAGES", []):
+                # store canonical key used across the app
+                session["interface_language"] = candidate
+                g.interface_language = candidate
             else:
-                # Detect language from the first path segment for public pages.
-                # Admin, API and static routes should not be language-prefixed/enforced here.
-                path = (request.path or "").lstrip("/")
-                parts = path.split("/", 1)
-                candidate = parts[0] if parts and parts[0] else None
-
-                is_admin_or_api = any(
-                    request.path.startswith(p) for p in ("/admin", "/api", "/static")
+                # ensure g.interface_language is always set (fallback to session or default)
+                g.interface_language = session.get(
+                    "interface_language", getattr(Config, "DEFAULT_LANGUAGE", "ru")
                 )
-
-                if not is_admin_or_api:
-                    # For customer-facing pages the URL language is authoritative.
-                    if candidate and candidate in supported_langs:
-                        session["interface_language"] = candidate
-                        g.interface_language = candidate
-                        try:
-                            app_logger.info(f"before_request: language from URL -> {candidate} for {request.path}")
-                        except Exception:
-                            pass
-                    else:
-                        # If URL contains a first segment but it's not a supported
-                        # language, treat it as a bad URL and return 404. This
-                        # enforces strict language-prefixed routing for SEO.
-                        if candidate:
-                            try:
-                                app_logger.info(f"before_request: unsupported language segment -> {candidate} for {request.path}; aborting 404")
-                            except Exception:
-                                pass
-                            abort(404)
-
-                        # No language segment present: redirect browser navigations
-                        # to the default language prefix so public pages always
-                        # appear under /<lang>/...
-                        try:
-                            is_json_request = (request.headers.get('X-Requested-With') == 'XMLHttpRequest') or ('application/json' in (request.headers.get('Accept') or ''))
-                            if request.method == 'GET' and not is_json_request:
-                                new_path = '/' + default_lang + (request.path or '/')
-                                while '//' in new_path:
-                                    new_path = new_path.replace('//', '/')
-                                if not (request.path.startswith('/' + default_lang + '/') or request.path == '/' + default_lang):
-                                    qs = request.query_string.decode() if request.query_string else ''
-                                    if qs:
-                                        new_path = new_path + '?' + qs
-                                    return redirect(new_path, code=302)
-                        except Exception:
-                            pass
-                else:
-                    # For admin/api/static keep existing session value or default
-                    g.interface_language = session.get("interface_language", default_lang)
         except Exception:
             # Non-fatal; fallback to session or default
-            g.interface_language = session.get("interface_language", getattr(Config, "DEFAULT_LANGUAGE", "ru"))
+            g.interface_language = session.get(
+                "interface_language", getattr(Config, "DEFAULT_LANGUAGE", "ru")
+            )
 
         # Database connection test
         if not hasattr(g, "db_test_done"):
@@ -2560,7 +2353,7 @@ def api_set_settings():
             )
 
         if "language" in data:
-            session["interface_language"] = data.get("language") or app.config.get("DEFAULT_LANGUAGE", "ru")
+            session["interface_language"] = data.get("language") or "ru"
 
         # If a user is logged in, persist to users table
         user_id = session.get("user_id")
@@ -2571,7 +2364,7 @@ def api_set_settings():
                     (
                         1 if session.get("dark_theme") else 0,
                         session.get("font_size", "medium"),
-                        session.get("interface_language", "uz"),
+                        session.get("interface_language", "ru"),
                         user_id,
                     ),
                 )
@@ -3103,7 +2896,7 @@ def init_db():
                 850000,
                 "tufli",
                 "Yuqori sifatli teri tufli, rasmiy kiyinish uchun",
-                "/static/images/formal-shoes-black.webp",
+                "/static/images/formal-shoes-black.jpg",
                 1,
                 25,
                 5,
@@ -3118,7 +2911,7 @@ def init_db():
                 950000,
                 "tufli",
                 "Premium teri biznes tufli, har kunlik kiyish uchun",
-                "/static/images/business-shoes.webp",
+                "/static/images/business-shoes.jpg",
                 1,
                 30,
                 8,
@@ -3134,7 +2927,7 @@ def init_db():
                 1200000,
                 "etik",
                 "Issiq va chidamli qishki etik, barcha ob-havo uchun",
-                "/static/images/winter-boots.webp",
+                "/static/images/winter-boots.jpg",
                 1,
                 20,
                 12,
@@ -3149,7 +2942,7 @@ def init_db():
                 980000,
                 "etik",
                 "Mustahkam ishchi etigi, xavfsizlik uchun",
-                "/static/images/work-boots.webp",
+                "/static/images/work-boots.jpg",
                 1,
                 18,
                 3,
@@ -3165,7 +2958,7 @@ def init_db():
                 750000,
                 "krosovka",
                 "Qulay sport krosovka, yugurish va fitnes uchun",
-                "/static/images/sport-sneakers.webp",
+                "/static/images/sport-sneakers.jpg",
                 1,
                 50,
                 25,
@@ -3180,7 +2973,7 @@ def init_db():
                 650000,
                 "krosovka",
                 "Har kunlik kiyish uchun moslashgan zamonaviy krosovka",
-                "/static/images/casual-sneakers.webp",
+                "/static/images/casual-sneakers.jpg",
                 1,
                 40,
                 18,
@@ -3196,7 +2989,7 @@ def init_db():
                 550000,
                 "mokasima",
                 "Yumshoq va qulay teri mokasima, ofis va dam olish uchun",
-                "/static/images/leather-loafers.webp",
+                "/static/images/leather-loafers.jpg",
                 1,
                 35,
                 7,
@@ -3212,7 +3005,7 @@ def init_db():
                 480000,
                 "botik",
                 "Zamonaviy va qulay ayollar botiki, har kuni uchun",
-                "/static/images/womens-flats.webp",
+                "/static/images/womens-flats.jpg",
                 1,
                 45,
                 22,
@@ -3228,7 +3021,7 @@ def init_db():
                 120000,
                 "tapochka",
                 "Yumshoq va issiq uy tapochkasi, dam olish uchun",
-                "/static/images/house-slippers.webp",
+                "/static/images/house-slippers.jpg",
                 1,
                 60,
                 35,
@@ -3243,7 +3036,7 @@ def init_db():
                 85000,
                 "tapochka",
                 "Suv o'tkazmaydigan hammom tapochkasi",
-                "/static/images/bathroom-slippers.webp",
+                "/static/images/bathroom-slippers.jpg",
                 1,
                 80,
                 42,
@@ -3289,7 +3082,7 @@ def init_db():
                 "Yangi kolleksiya!",
                 "Bahorgi yangi oyoq kiyimlar kolleksiyasi do'konimizga keldi! 50% gacha chegirmalar.",
                 "advertisement",
-                "/static/defoult.webp",
+                "/static/images/default-men.jpg",
                 None,
                 1,
                 1,
@@ -3325,7 +3118,7 @@ def init_db():
                 "Click va Payme orqali to'lov",
                 "Endi sizlar uchun yanada qulay - Click va Payme orqali to'lov imkoni!",
                 "advertisement",
-                "/static/defoult.webp",
+                "/static/images/default-product.jpg",
                 None,
                 1,
                 4,
@@ -4473,10 +4266,10 @@ def fix_news_table():
         if wrong_images_count > 0:
             # Update wrong image paths
             cur.execute(
-                "UPDATE news SET image_url = '/static/defoult.webp' WHERE image_url = '/static/images/spring-collection.jpg'"
+                "UPDATE news SET image_url = '/static/images/default-men.jpg' WHERE image_url = '/static/images/spring-collection.jpg'"
             )
             cur.execute(
-                "UPDATE news SET image_url = '/static/defoult.webp' WHERE image_url = '/static/images/payment-methods.jpg'"
+                "UPDATE news SET image_url = '/static/images/default-product.jpg' WHERE image_url = '/static/images/payment-methods.jpg'"
             )
             conn.commit()
             app_logger.info(
@@ -4493,7 +4286,7 @@ def fix_news_table():
                     "Yangi kolleksiya!",
                     "Bahorgi yangi oyoq kiyimlar kolleksiyasi do'konimizga keldi! 50% gacha chegirmalar.",
                     "advertisement",
-                    "/static/defoult.webp",
+                    "/static/images/default-men.jpg",
                     None,
                     1,
                     1,
@@ -4529,7 +4322,7 @@ def fix_news_table():
                     "Click va Payme orqali to'lov",
                     "Endi sizlar uchun yanada qulay - Click va Payme orqali to'lov imkoni!",
                     "advertisement",
-                    "/static/defoult.webp",
+                    "/static/images/default-product.jpg",
                     None,
                     1,
                     4,
@@ -4736,7 +4529,7 @@ def inject_role_nav():
             "csrf_token": generate_csrf_token(),
             "session_dark_theme": bool(session.get("dark_theme", True)),
             "session_font_size": session.get("font_size", "medium"),
-            "session_language": session.get("interface_language", "uz"),
+            "session_language": session.get("interface_language", "ru"),
             "show_nav": show_nav,
         }
 
@@ -4836,7 +4629,7 @@ def inject_role_nav():
             "csrf_token": generate_csrf_token(),
             "session_dark_theme": True,
             "session_font_size": "medium",
-            "session_language": "uz",
+            "session_language": "ru",
         }
 
 
@@ -4871,7 +4664,7 @@ def translate(key, **kwargs):
 
     Usage in templates: {{ _('settings.title') }}
     """
-    lang = session.get("interface_language", "uz")
+    lang = session.get("interface_language", "ru")
     # prefer requested lang -> uz -> en -> raw key
     candidates = [lang, "uz", "en"]
     for c in candidates:
@@ -4957,7 +4750,7 @@ def inject_translations():
         # lookup) instead of the older LOCALES-based `translate` helper.
         "_": utils.translate,
         "supported_languages": SUPPORTED_LANGUAGES,
-        "current_language": session.get("interface_language", "uz"),
+        "current_language": session.get("interface_language", "ru"),
     }
 
 
@@ -7204,21 +6997,8 @@ def cache_result(ttl=300):
     def decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
-            # Determine current interface language so cached results can be
-            # scoped per-language (important for URL-driven language selection).
-            try:
-                lang_key = (
-                    request.environ.get('LANG_CODE')
-                    or getattr(g, 'interface_language', None)
-                    or session.get('interface_language')
-                    or session.get('language')
-                    or getattr(Config, 'DEFAULT_LANGUAGE', 'ru')
-                )
-            except Exception:
-                lang_key = getattr(Config, 'DEFAULT_LANGUAGE', 'ru')
-
-            # Cache key creation includes function identity, language and args
-            cache_key = f"{f.__name__}:{lang_key}:{hashlib.md5(str(args + tuple(sorted(kwargs.items()))).encode()).hexdigest()}"
+            # Cache key yaratish
+            cache_key = f"{f.__name__}:{hashlib.md5(str(args + tuple(kwargs.items())).encode()).hexdigest()}"
 
             # Cache dan olishga harakat qilish (lazy-get to avoid None)
             try:
@@ -7388,29 +7168,8 @@ def menu():
             menu_items = cached_menu
 
         # Treat menu_items as product catalogue (shoe shop) - men only.
-        # Implement server-side pagination to avoid rendering thousands of
-        # product cards at once which kills client performance.
-        try:
-            page = int(request.args.get("page", 1))
-        except Exception:
-            page = 1
-        try:
-            per_page = int(request.args.get("per_page", 36))
-        except Exception:
-            per_page = 36
-        # Cap per_page to a reasonable limit to avoid OOM or huge payloads
-        per_page = max(8, min(per_page, 100))
-
-        total_items = len(menu_items)
-        total_pages = max(1, (total_items + per_page - 1) // per_page)
-        if page < 1:
-            page = 1
-        if page > total_pages:
-            page = total_pages
-
-        start = (page - 1) * per_page
-        end = start + per_page
-        men = menu_items[start:end]
+        # All products are now categorized as men's shoes.
+        men = menu_items  # All items are for men
         women = []  # No women's items
 
         # Foydalanuvchi sevimlilarini olish
@@ -7511,13 +7270,36 @@ def menu():
             )
 
         # Render menu using clothing store categories (women/men)
-        # SEO data for menu page
+        # SEO data for menu page - multilingual
+        current_lang = session.get("interface_language", "ru")
+        
+        seo_titles = {
+            "uz": "Pro Obuv — Spetsobuv, Botinki, Krasofka | Ish Kiyimlari, Himoya Poyabzal | Safety.uz",
+            "ru": "Pro Obuv — Спецобувь, Спецодежда, Рабочая Обувь | Профессиональная Обувь, Ботинки | Safety.uz",
+            "en": "Pro Obuv — Safety Shoes, Work Boots, Professional Footwear | Protective Shoes | Safety.uz",
+            "kz": "Pro Obuv — Арнайы Аяқ Киім, Жұмыс Аяқ Киімдері | Қорғаныс Аяқ Киімдері | Safety.uz"
+        }
+        
+        seo_descriptions = {
+            "uz": "Safety.uz – Pro Obuv do'koni. Spetsobuv, spest obuv, botinki, krasofka, ish kiyimlari, spetsodejda, himoya poyabzal. Yuqori sifatli professional obuv, work boots va safety shoes. Tez yetkazish va eng yaxshi narxlar.",
+            "ru": "Safety.uz – магазин Pro Obuv. Спецобувь, спетс обув, спецодежда, рабочая обувь, ботинки, кроссовки. Профессиональная обувь для работы, защитная обувь. Быстрая доставка, лучшие цены.",
+            "en": "Safety.uz – Pro Obuv store. Safety shoes, work boots, professional footwear, protective shoes, sneakers. High-quality workwear and safety equipment. Fast delivery, best prices in Uzbekistan.",
+            "kz": "Safety.uz – Pro Obuv дүкені. Арнайы аяқ киім, жұмыс аяқ киімдері, қорғаныс аяқ киімдері, кроссовкалар. Жоғары сапалы жұмыс киімдері және қауіпсіздік жабдықтары. Жылдам жеткізу, ең жақсы бағалар."
+        }
+        
+        seo_keywords = {
+            "uz": "pro obuv, obuv, spetsobuv, spest obuv, spestobuv, spetsodejda, safety, oyoq kiyim, tufli, etik, ish kiyimlari, himoya poyabzal, botinki, krasofka, professional obuv, work boots, safety shoes",
+            "ru": "про обувь, обувь, спецобувь, спетс обув, спецодежда, спест одежда, рабочая обувь, профессиональная обувь, ботинки, кроссовки, защитная обувь, safety shoes, work boots, professional footwear",
+            "en": "pro obuv, shoes, safety shoes, work boots, professional footwear, protective shoes, sneakers, workwear, work clothes, professional shoes, steel toe boots, composite toe shoes",
+            "kz": "про обувь, аяқ киім, арнайы аяқ киім, жұмыс аяқ киімдері, қорғаныс аяқ киімдері, кроссовкалар, жұмыс киімдері, қауіпсіздік аяқ киімдері"
+        }
+        
         seo_data = {
-            "page_title": "Pro Obuv — Spetsobuv va Ish kiyimlari do'koni | Safety.uz",
-            "meta_description": "Safety.uz – Pro Obuv do'koni. Spetsobuv, ish kiyimlari, spetsodejda va himoya poyabzallari. Botinki, krasofka, professional footwear, work boots, safety shoes.",
-            "meta_keywords": "pro obuv, obuv, spetsobuv, spetsodejda, safety, oyoq kiyim, tufli, etik, ish kiyimlari, himoya poyabzal, botinki, krasofka, спетсообув, спецодежда, обувь, кроссовки, ботинки, safety shoes, work boots, professional footwear, protective shoes",
-            "og_title": "Pro Obuv — Spetsobuv, Botinki, Krasofka va Ish kiyimlari",
-            "og_description": "Spetsobuv, spetsodejda, botinki, krasofka va ish kiyimlari — Pro Obuv. Safety.uz da eng sifatli himoya poyabzallari",
+            "page_title": seo_titles.get(current_lang, seo_titles["ru"]),
+            "meta_description": seo_descriptions.get(current_lang, seo_descriptions["ru"]),
+            "meta_keywords": seo_keywords.get(current_lang, seo_keywords["ru"]),
+            "og_title": seo_titles.get(current_lang, seo_titles["ru"]),
+            "og_description": seo_descriptions.get(current_lang, seo_descriptions["ru"]),
             "canonical_url": "https://www.safety.uz/menu",
         }
 
@@ -7528,12 +7310,6 @@ def menu():
             favorites=favorites,
             current_page="menu",
             seo_data=seo_data,
-            pagination={
-                "page": page,
-                "per_page": per_page,
-                "total_items": total_items,
-                "total_pages": total_pages,
-            },
         )
 
     except Exception as e:
@@ -7549,13 +7325,36 @@ def menu():
             women = []  # No women's items
             men = menu_items  # All items are for men
 
-            # SEO data for fallback menu
+            # SEO data for fallback menu - multilingual
+            current_lang = session.get("interface_language", "ru")
+            
+            seo_titles = {
+                "uz": "Pro Obuv — Spetsobuv, Botinki, Krasofka | Ish Kiyimlari, Himoya Poyabzal | Safety.uz",
+                "ru": "Pro Obuv — Спецобувь, Спецодежда, Рабочая Обувь | Профессиональная Обувь, Ботинки | Safety.uz",
+                "en": "Pro Obuv — Safety Shoes, Work Boots, Professional Footwear | Protective Shoes | Safety.uz",
+                "kz": "Pro Obuv — Арнайы Аяқ Киім, Жұмыс Аяқ Киімдері | Қорғаныс Аяқ Киімдері | Safety.uz"
+            }
+            
+            seo_descriptions = {
+                "uz": "Safety.uz – Pro Obuv do'koni. Spetsobuv, spest obuv, botinki, krasofka, ish kiyimlari, spetsodejda, himoya poyabzal. Yuqori sifatli professional obuv, work boots va safety shoes. Tez yetkazish va eng yaxshi narxlar.",
+                "ru": "Safety.uz – магазин Pro Obuv. Спецобувь, спетс обув, спецодежда, рабочая обувь, ботинки, кроссовки. Профессиональная обувь для работы, защитная обувь. Быстрая доставка, лучшие цены.",
+                "en": "Safety.uz – Pro Obuv store. Safety shoes, work boots, professional footwear, protective shoes, sneakers. High-quality workwear and safety equipment. Fast delivery, best prices in Uzbekistan.",
+                "kz": "Safety.uz – Pro Obuv дүкені. Арнайы аяқ киім, жұмыс аяқ киімдері, қорғаныс аяқ киімдері, кроссовкалар. Жоғары сапалы жұмыс киімдері және қауіпсіздік жабдықтары. Жылдам жеткізу, ең жақсы бағалар."
+            }
+            
+            seo_keywords = {
+                "uz": "pro obuv, obuv, spetsobuv, spest obuv, spestobuv, spetsodejda, safety, oyoq kiyim, tufli, etik, ish kiyimlari, himoya poyabzal, botinki, krasofka, professional obuv, work boots, safety shoes",
+                "ru": "про обувь, обувь, спецобувь, спетс обув, спецодежда, спест одежда, рабочая обувь, профессиональная обувь, ботинки, кроссовки, защитная обувь, safety shoes, work boots, professional footwear",
+                "en": "pro obuv, shoes, safety shoes, work boots, professional footwear, protective shoes, sneakers, workwear, work clothes, professional shoes, steel toe boots, composite toe shoes",
+                "kz": "про обувь, аяқ киім, арнайы аяқ киім, жұмыс аяқ киімдері, қорғаныс аяқ киімдері, кроссовкалар, жұмыс киімдері, қауіпсіздік аяқ киімдері"
+            }
+            
             seo_data = {
-                "page_title": "Pro Obuv — Spetsobuv va Ish kiyimlari do'koni | Safety.uz",
-                "meta_description": "Safety.uz – Pro Obuv do'koni. Spetsobuv, ish kiyimlari, spetsodejda va himoya poyabzallari. Botinki, krasofka, professional footwear, work boots, safety shoes.",
-                "meta_keywords": "pro obuv, obuv, spetsobuv, spetsodejda, safety, oyoq kiyim, tufli, etik, ish kiyimlari, himoya poyabzal, botinki, krasofka, спетсообув, спецодежда, обувь, кроссовки, ботинки, safety shoes, work boots, professional footwear, protective shoes",
-                "og_title": "Pro Obuv — Spetsobuv, Botinki, Krasofka va Ish kiyimlari",
-                "og_description": "Spetsobuv, spetsodejda, botinki, krasofka va ish kiyimlari — Pro Obuv. Safety.uz da eng sifatli himoya poyabzallari",
+                "page_title": seo_titles.get(current_lang, seo_titles["ru"]),
+                "meta_description": seo_descriptions.get(current_lang, seo_descriptions["ru"]),
+                "meta_keywords": seo_keywords.get(current_lang, seo_keywords["ru"]),
+                "og_title": seo_titles.get(current_lang, seo_titles["ru"]),
+                "og_description": seo_descriptions.get(current_lang, seo_descriptions["ru"]),
                 "canonical_url": "https://www.safety.uz/menu",
             }
 
@@ -8743,7 +8542,7 @@ def register():
             session["user_id"] = user_id
             session["user_name"] = f"{first_name} {last_name}".strip()
             session["user_email"] = email
-            session["interface_language"] = "uz"  # Default til
+            session["interface_language"] = "ru"  # Default til
             session["font_size"] = "medium"  # Default font size
             session["dark_theme"] = True  # Default theme
 
@@ -8800,7 +8599,9 @@ def profile():
             )
             if user_row:
                 # Prioritize database avatar over session avatar
-                avatar_url = prefer_webp(user_row.get("avatar") or url_for('static', filename='images/default-avatar.svg'))
+                avatar_url = (
+                    user_row.get("avatar") or "/static/images/default-avatar.svg"
+                )
                 # Update session with current avatar from database
                 session["user_avatar"] = avatar_url
 
@@ -8852,7 +8653,10 @@ def profile():
                     "email": staff.get("email") or session.get("staff_email", ""),
                     "phone": staff.get("phone") or session.get("staff_phone", ""),
                     "address": staff.get("address") or "",
-                    "avatar": prefer_webp(staff.get("avatar") or session.get("staff_avatar") or session.get("user_avatar") or url_for('static', filename='images/default-avatar.svg')),
+                    "avatar": staff.get("avatar")
+                    or session.get("staff_avatar")
+                    or session.get("user_avatar")
+                    or "/static/images/default-avatar.svg",
                 }
             else:
                 user = {
@@ -8861,7 +8665,9 @@ def profile():
                     "email": session.get("staff_email", ""),
                     "phone": session.get("staff_phone", ""),
                     "address": "",
-                    "avatar": prefer_webp(session.get("staff_avatar") or session.get("user_avatar") or url_for('static', filename='images/default-avatar.svg')),
+                    "avatar": session.get("staff_avatar")
+                    or session.get("user_avatar")
+                    or "/static/images/default-avatar.svg",
                 }
 
         # Courier profile
@@ -8877,7 +8683,10 @@ def profile():
                     "email": courier.get("email") or session.get("courier_email", ""),
                     "phone": courier.get("phone") or session.get("courier_phone", ""),
                     "address": courier.get("address") or "",
-                    "avatar": prefer_webp(courier.get("avatar") or session.get("courier_avatar") or session.get("user_avatar") or url_for('static', filename='images/default-avatar.svg')),
+                    "avatar": courier.get("avatar")
+                    or session.get("courier_avatar")
+                    or session.get("user_avatar")
+                    or "/static/images/default-avatar.svg",
                 }
             else:
                 user = {
@@ -8886,14 +8695,18 @@ def profile():
                     "email": session.get("courier_email", ""),
                     "phone": session.get("courier_phone", ""),
                     "address": "",
-                    "avatar": prefer_webp(session.get("courier_avatar") or session.get("user_avatar") or url_for('static', filename='images/default-avatar.svg')),
+                    "avatar": session.get("courier_avatar")
+                    or session.get("user_avatar")
+                    or "/static/images/default-avatar.svg",
                 }
 
         # Super admin: profile from persistent settings
         elif is_super:
             creds = get_superadmin_creds()
             # Update session with current avatar from settings
-            persistent_avatar = prefer_webp(creds.get("avatar") or url_for('static', filename='images/default-avatar.svg'))
+            persistent_avatar = (
+                creds.get("avatar") or "/static/images/default-avatar.svg"
+            )
             session["user_avatar"] = persistent_avatar
 
             user = {
@@ -9250,7 +9063,7 @@ def profile_settings():
 
     # Provide current values with safe defaults so template inputs work
     profile_settings_data = {
-        "interface_language": session.get("interface_language", "uz"),
+        "interface_language": session.get("interface_language", "ru"),
         "font_size": session.get("font_size", "medium"),
         "dark_theme": bool(session.get("dark_theme", True)),
         "user_name": session.get("user_name", ""),
@@ -9386,7 +9199,7 @@ def general_settings_post():
 
         if "language" in data:
             session["interface_language"] = data.get("language") or session.get(
-                "interface_language", "uz"
+                "interface_language", "ru"
             )
 
         # Persist system_config if super_admin
@@ -9411,7 +9224,7 @@ def general_settings_post():
                     (
                         1 if session.get("dark_theme") else 0,
                         session.get("font_size", "medium"),
-                        session.get("interface_language", "uz"),
+                        session.get("interface_language", "ru"),
                         user_id,
                     ),
                 )
@@ -11132,152 +10945,6 @@ def api_get_product_media(item_id):
         )
 
 
-@app.route('/thumb')
-def thumb():
-    """Simple thumbnail generator/proxy for internal static images.
-
-    Usage: /thumb?src=/static/uploads/xxx.jpg&w=600&h=400
-    Only serves images under /static/ and caches resized images to
-    `static/thumbs/` using a hash of the source and sizing params.
-    """
-    src = request.args.get('src')
-    try:
-        w = int(request.args.get('w') or 0)
-    except Exception:
-        w = 0
-    try:
-        h = int(request.args.get('h') or 0)
-    except Exception:
-        h = 0
-    try:
-        q = int(request.args.get('q') or 82)
-    except Exception:
-        q = 82
-
-    if not src:
-        abort(400)
-
-    # Security: only allow internal static paths
-    if not src.startswith('/static/'):
-        abort(403)
-
-    # Map to file system path
-    # src like '/static/uploads/..' -> static/uploads/..
-    rel = src.lstrip('/')
-    orig_path = os.path.join(os.getcwd(), rel)
-    # If original source doesn't exist (user may have converted files to .webp),
-    # attempt alternate extensions in the same directory (webp, jpg, jpeg, png).
-    if not os.path.exists(orig_path):
-        try:
-            base, ext = os.path.splitext(rel)
-            found = False
-            for alt in ('.webp', '.jpg', '.jpeg', '.png'):
-                alt_rel = base + alt
-                alt_fs = os.path.join(os.getcwd(), alt_rel)
-                if os.path.exists(alt_fs):
-                    # Update src and orig_path to the found file
-                    orig_path = alt_fs
-                    # update src to the new path used for cache key later
-                    src = '/' + alt_rel.replace('\\', '/')
-                    rel = alt_rel
-                    found = True
-                    break
-            if not found:
-                # fallback to default image
-                return send_default_static_image()
-        except Exception:
-            try:
-                return send_default_static_image()
-            except Exception:
-                abort(404)
-
-    # Prepare thumbs cache
-    thumbs_dir = os.path.join(os.getcwd(), 'static', 'thumbs')
-    os.makedirs(thumbs_dir, exist_ok=True)
-
-    key = hashlib.md5(f"{src}|{w}|{h}|{q}".encode('utf-8')).hexdigest()
-    thumb_jpg = os.path.join(thumbs_dir, f"{key}.jpg")
-    thumb_webp = os.path.join(thumbs_dir, f"{key}.webp")
-
-    # If already generated, serve WebP when client accepts it, else JPEG
-    try:
-        accept = (request.headers.get('Accept') or '')
-    except Exception:
-        accept = ''
-
-    if os.path.exists(thumb_webp) or os.path.exists(thumb_jpg):
-        try:
-            if 'image/webp' in accept and os.path.exists(thumb_webp):
-                resp = send_file(thumb_webp, mimetype='image/webp', conditional=True)
-            else:
-                # fallback to jpeg if webp not present or not accepted
-                use_path = thumb_jpg if os.path.exists(thumb_jpg) else thumb_webp
-                mime = 'image/jpeg' if use_path.endswith('.jpg') else 'image/webp'
-                resp = send_file(use_path, mimetype=mime, conditional=True)
-            resp.headers['Cache-Control'] = 'public, max-age=31536000, immutable'
-            return resp
-        except Exception:
-            pass
-
-    # If Pillow not available, fall back to returning original file
-    if Image is None:
-        try:
-            return send_file(orig_path, conditional=True)
-        except Exception:
-            return send_default_static_image()
-
-    # Generate thumbnail(s)
-    try:
-        with Image.open(orig_path) as im:
-            im = im.convert('RGB')
-            orig_w, orig_h = im.size
-            if w and not h:
-                h = int(orig_h * (w / orig_w))
-            if h and not w:
-                w = int(orig_w * (h / orig_h))
-            if not w and not h:
-                # default width
-                w = 800
-                h = int(orig_h * (w / orig_w))
-
-            # Use thumbnail (in-place) to preserve aspect ratio
-            im.thumbnail((w, h), Image.LANCZOS)
-
-            # Save as optimized JPEG
-            try:
-                im.save(thumb_jpg, 'JPEG', quality=q, optimize=True)
-            except Exception:
-                im.save(thumb_jpg, 'JPEG', quality=q)
-
-            # Also save a WebP copy for modern browsers (smaller, faster)
-            try:
-                im.save(thumb_webp, 'WEBP', quality=max(60, q - 10), method=6)
-            except Exception:
-                try:
-                    # fallback WebP save with default options
-                    im.save(thumb_webp, 'WEBP')
-                except Exception:
-                    # ignore webp save failures
-                    pass
-
-        # Decide which to serve based on Accept header
-        try:
-            if 'image/webp' in accept and os.path.exists(thumb_webp):
-                resp = send_file(thumb_webp, mimetype='image/webp', conditional=True)
-            else:
-                resp = send_file(thumb_jpg, mimetype='image/jpeg', conditional=True)
-            resp.headers['Cache-Control'] = 'public, max-age=31536000, immutable'
-            return resp
-        except Exception:
-            pass
-    except Exception as e:
-        app_logger.warning(f"Thumb generation failed for {src}: {e}")
-        try:
-            return send_file(orig_path, conditional=True)
-        except Exception:
-            return send_default_static_image()
-
-
 @app.route("/api/product-media/<int:media_id>/set-main", methods=["POST"])
 @role_required("staff")
 def api_set_main_media(media_id):
@@ -11373,7 +11040,7 @@ def api_delete_product_media(media_id):
             # Hech qanday rasm qolmasa, default rasm qo'yish
             execute_query(
                 "UPDATE menu_items SET image_url = ? WHERE id = ?",
-                ("/static/defoult.webp", menu_item_id),
+                ("/static/images/default-men.jpg", menu_item_id),
             )
 
         return jsonify({"success": True, "message": "Media fayl o'chirildi"})
@@ -11617,7 +11284,7 @@ def admin_reset_menu_for_tests():
             name = f"Test Mahsulot {i} {'Oyoq kiyim' if cat=='specobuv' else 'Kiyim'}"
             price = 50000 + (i * 1000)
             desc = f"Avtomatik test mahsuloti #{i}"
-            image = "/static/defoult.webp"
+            image = "/static/images/default-men.jpg"
             available = 1
             stock = 10 + (i % 10)
             rating = round(3.5 + (i % 5) * 0.2, 1)
@@ -12543,11 +12210,11 @@ def api_set_language():
     "Set user language preference"
     try:
         data = request.get_json()
-        language = data.get("language", "uz")
+        language = data.get("language", "ru")
 
         # Validate language
         if language not in ["uz", "ru", "en"]:
-            language = "uz"
+            language = "ru"
 
         # Save to session
         session["interface_language"] = language
@@ -13055,7 +12722,7 @@ def login_page():
                     session["interface_language"] = (
                         user_dict.get("interface_language")
                         or session.get("interface_language")
-                        or "uz"
+                        or "ru"
                     )
                     session["font_size"] = (
                         user_dict.get("font_size")
@@ -14087,7 +13754,9 @@ def super_admin_login():
                     name_parts.append(creds.get("last_name"))
                 display_name = " ".join(name_parts) if name_parts else "Super Administrator"
                 # Load avatar from persistent settings
-                persistent_avatar = prefer_webp(creds.get("avatar") or url_for('static', filename='images/default-avatar.svg'))
+                persistent_avatar = (
+                    creds.get("avatar") or "/static/images/default-avatar.svg"
+                )
 
                 set_role_session(
                     "super_admin",
@@ -14147,7 +13816,7 @@ def super_admin_profile():
         "telegram": creds.get("telegram", ""),
         "instagram": creds.get("instagram", ""),
         "username": creds.get("username", ""),
-    "avatar": prefer_webp(creds.get("avatar") or url_for('static', filename='images/default-avatar.svg')),
+        "avatar": creds.get("avatar") or "/static/images/default-avatar.svg",
         "card_last4": creds.get("card_last4", ""),
     }
     return render_template("super_admin_profile.html", user=user)
@@ -14438,7 +14107,9 @@ def super_admin_profile_update():
             session["super_admin_card_last4"] = settings.get("card_last4")
             session["super_admin_avatar"] = settings.get("avatar")
             # Also update the main user_avatar session key
-            session["user_avatar"] = prefer_webp(settings.get("avatar") or url_for('static', filename='images/default-avatar.svg'))
+            session["user_avatar"] = (
+                settings.get("avatar") or "/static/images/default-avatar.svg"
+            )
 
             flash("Profil saqlandi", "success")
         else:
@@ -14669,7 +14340,7 @@ def admin_repair_missing_images():
         flash("Xodim huquqi kerak.", "error")
         return redirect(url_for("staff_login"))
 
-    default_image = "/static/defoult.webp"
+    default_image = "/static/images/default-product.jpg"
     try:
         rows = execute_query(
             "SELECT id FROM menu_items WHERE image_url IS NULL OR image_url = ''",
@@ -17790,7 +17461,7 @@ def staff_dashboard():
         return (
             f"""
         <!DOCTYPE html>
-        <html lang="uz">
+        <html lang="ru">
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17991,7 +17662,7 @@ def staff_menu():
                         # Default qiymatlarni qo'shish
                         item_dict.setdefault("description", "")
                         item_dict.setdefault(
-                            "image_url", "/static/defoult.webp"
+                            "image_url", "/static/images/default-men.jpg"
                         )
                         item_dict.setdefault("available", 1)
                         item_dict.setdefault("discount_percentage", 0)
@@ -19250,7 +18921,7 @@ def change_language():
     """Change interface language"""
     # Allow both anonymous and authenticated users to change the language in session.
     data = request.get_json() or {}
-    language = data.get("language", "uz")
+    language = data.get("language", "ru")
 
     # Validate against configured supported languages
     try:
@@ -19260,13 +18931,6 @@ def change_language():
 
     if language not in supported:
         return jsonify({"success": False, "message": "Invalid language"}), 400
-
-    # Log before/after for debugging
-    try:
-        prev = session.get("interface_language")
-        app_logger.info(f"change-language request from {request.remote_addr} prev_lang={prev} new_lang={language} session_id={session.get('session_id')}")
-    except Exception:
-        pass
 
     session["interface_language"] = language
     # Keep legacy key in sync
@@ -19283,42 +18947,7 @@ def change_language():
             app_logger.error(f"Failed to update user language: {e}")
 
     # Return JSON success so frontend can react without requiring a redirect
-    # Compute an optional redirect so client can immediately navigate to a language-prefixed URL
-    try:
-        # Prefer next param provided by client, else referrer, else build from root
-        next_path = data.get("next") or request.referrer or url_for("index")
-        # Parse next_path to extract path portion
-        parsed = None
-        try:
-            from urllib.parse import urlparse
-
-            parsed = urlparse(next_path)
-            path = parsed.path or "/"
-        except Exception:
-            path = next_path or "/"
-
-        segs = path.split("/")
-        if len(segs) > 1 and segs[1] in supported:
-            segs[1] = language
-        else:
-            segs.insert(1, language)
-
-        new_path = "/".join(segs)
-        if not new_path.startswith("/"):
-            new_path = "/" + new_path
-        new_path = new_path.replace("//", "/")
-        # Reattach query and fragment if available from original referrer
-        redirect_url = new_path
-        if parsed and parsed.query:
-            redirect_url = redirect_url + "?" + parsed.query
-    except Exception:
-        redirect_url = None
-
-    resp = {"success": True, "language": language}
-    if redirect_url:
-        resp["redirect"] = redirect_url
-
-    return jsonify(resp), 200
+    return jsonify({"success": True, "language": language}), 200
 
 
 @app.route("/api/change-theme", methods=["POST"])
@@ -19421,7 +19050,7 @@ def save_settings():
                     font_size = ? 
                     WHERE id = ?""",
                 (
-                    session.get("interface_language", "uz"),
+                    session.get("interface_language", "ru"),
                     1 if session.get("dark_theme", True) else 0,
                     session.get("font_size", "medium"),
                     session.get("user_id"),
@@ -19445,7 +19074,7 @@ def reset_settings():
         return jsonify({"success": False, "message": "Authentication required"}), 401
 
     # Reset session to defaults
-    session["interface_language"] = "uz"
+    session["interface_language"] = "ru"
     session["dark_theme"] = True
     session["font_size"] = "medium"
     session["notifications_enabled"] = True
@@ -20361,8 +19990,8 @@ def serve_data_file(filename):
         return jsonify({"error": "File not found"}), 404
 
 
-@app.route("/sitemap-legacy.xml")
-def sitemap_legacy():
+@app.route("/sitemap.xml")
+def sitemap():
     """Serve sitemap.xml. Try static/sitemap.xml first, then project root sitemap.xml.
 
     This avoids 404s when sitemap is generated at the repository root but
@@ -20473,6 +20102,36 @@ def sitemap_legacy():
         app_logger.exception("Error while serving sitemap.xml: %s", e)
         from flask import abort
         return abort(500)
+
+
+@app.route("/yandex_a6b3a9b8078d2078.html")
+def yandex_verification_1():
+    """Serve Yandex Webmaster verification file"""
+    try:
+        return send_from_directory(app.root_path, "yandex_a6b3a9b8078d2078.html")
+    except Exception as e:
+        app_logger.error(f"Error serving yandex_a6b3a9b8078d2078.html: {e}")
+        abort(404)
+
+
+@app.route("/yandex_dad000c350eb0a7e.html")
+def yandex_verification_2():
+    """Serve Yandex Webmaster verification file"""
+    try:
+        return send_from_directory(app.root_path, "yandex_dad000c350eb0a7e.html")
+    except Exception as e:
+        app_logger.error(f"Error serving yandex_dad000c350eb0a7e.html: {e}")
+        abort(404)
+
+
+@app.route("/google9f3be6eabf8cfac2.html")
+def google_verification():
+    """Serve Google Search Console verification file"""
+    try:
+        return send_from_directory(app.root_path, "google9f3be6eabf8cfac2.html")
+    except Exception as e:
+        app_logger.error(f"Error serving google9f3be6eabf8cfac2.html: {e}")
+        abort(404)
 
 
 # --- Minimal Uzbek AI chat endpoints ---
@@ -21002,71 +20661,6 @@ def _maybe_start_telegram_bot_logic():
             app_logger.error(f"_maybe_start_telegram_bot_logic failed: {e}")
         except Exception:
             pass
-
-
-# Dynamic sitemap that includes language-prefixed URLs for supported languages.
-@app.route('/sitemap.xml')
-def sitemap():
-    try:
-        base = (request.url_root or '').rstrip('/')
-        langs = getattr(Config, 'SUPPORTED_LANGUAGES', ['ru', 'uz', 'en', 'kz'])
-        # Core site paths to expose in sitemap
-        static_paths = ['/', '/menu', '/news', '/about', '/contact', '/downloads', '/favorites']
-
-        urls = []
-        today = datetime.datetime.utcnow().date().isoformat()
-
-        for lang in langs:
-            for p in static_paths:
-                if p == '/':
-                    loc = f"{base}/{lang}/menu"
-                else:
-                    loc = f"{base}/{lang}{p}"
-                urls.append({'loc': loc, 'lastmod': today})
-
-        # Dynamic product pages (best-effort)
-        try:
-            rows = execute_query('SELECT id, updated_at FROM menu_items WHERE available=1', fetch_all=True)
-            for r in (rows or []):
-                try:
-                    pid = r['id'] if isinstance(r, dict) or hasattr(r, 'get') else r[0]
-                except Exception:
-                    try:
-                        pid = r[0]
-                    except Exception:
-                        continue
-                lastmod = today
-                try:
-                    if isinstance(r, dict) and r.get('updated_at'):
-                        lastmod = str(r.get('updated_at')).split(' ')[0]
-                    elif hasattr(r, '__getitem__') and len(r) > 1 and r[1]:
-                        lastmod = str(r[1]).split(' ')[0]
-                except Exception:
-                    lastmod = today
-
-                for lang in langs:
-                    urls.append({'loc': f"{base}/{lang}/product/{pid}", 'lastmod': lastmod})
-        except Exception:
-            # If DB not available, it's fine — sitemap will include static pages
-            pass
-
-        xml_parts = [ '<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' ]
-        for u in urls:
-            xml_parts.append('<url>')
-            xml_parts.append(f"<loc>{u['loc']}</loc>")
-            xml_parts.append(f"<lastmod>{u['lastmod']}</lastmod>")
-            xml_parts.append('<changefreq>weekly</changefreq>')
-            xml_parts.append('<priority>0.6</priority>')
-            xml_parts.append('</url>')
-        xml_parts.append('</urlset>')
-
-        return Response('\n'.join(xml_parts), mimetype='application/xml')
-    except Exception as e:
-        try:
-            app_logger.error(f"sitemap generation error: {e}")
-        except Exception:
-            pass
-        return Response('<?xml version="1.0"?><urlset></urlset>', mimetype='application/xml')
 
 
 # Prefer to register as a Flask before_first_request handler when available; otherwise

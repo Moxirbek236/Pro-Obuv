@@ -1,5 +1,4 @@
-{% extends "base.html" %} {% block title %}Profil sozlamalari{% endblock %} {%
-block head %}
+{% extends "base.html" %} {% block title %}Profil sozlamalari{% endblock %} {% block head %}
 <style>
   .settings-container {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -206,7 +205,7 @@ block head %}
 <div class="settings-container">
   <div class="settings-card">
     <div class="settings-header">
-      <h3>Profil sozlamalari</h3>
+      <h3> Profil sozlamalari</h3>
       <p>
         {% if session.get('super_admin') %}
         <span class="role-badge role-super-admin">Super Admin</span> profil
@@ -235,29 +234,29 @@ block head %}
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-number">{{ session.get('user_orders_count', 0) }}</div>
-        <div class="stat-label">Jami buyurtmalar</div>
+        <div class="stat-label"> Jami buyurtmalar</div>
       </div>
       <div class="stat-card">
         <div class="stat-number">{{ session.get('user_total_spent', 0) }}</div>
-        <div class="stat-label">Jami sarflangan (so'm)</div>
+        <div class="stat-label"> Jami sarflangan (so'm)</div>
       </div>
       <div class="stat-card">
         <div class="stat-number">
           {{ session.get('user_sessions_count', 1) }}
         </div>
-        <div class="stat-label">Faol sessiyalar</div>
+        <div class="stat-label"> Faol sessiyalar</div>
       </div>
       <div class="stat-card">
         <div class="stat-number">
           {{ session.get('user_last_login', 'N/A') }}
         </div>
-        <div class="stat-label">So'nggi kirish</div>
+        <div class="stat-label"> So'nggi kirish</div>
       </div>
     </div>
 
     <!-- Parol o'zgartirish -->
     <div class="settings-section">
-      <h5>Parolni o'zgartirish</h5>
+      <h5> Parolni o'zgartirish</h5>
       <form method="POST" action="{{ url_for('change_password') }}">
         <div class="row">
           <div class="col-md-6 mb-3">
@@ -292,14 +291,16 @@ block head %}
             required
             minlength="6" />
         </div>
-        <button type="submit" class="btn btn-save">Parolni o'zgartirish</button>
+        <button type="submit" class="btn btn-save">
+           Parolni o'zgartirish
+        </button>
       </form>
     </div>
 
     <!-- Shaxsiy ma'lumotlar (faqat user uchun) -->
     {% if session.get('user_id') %}
     <div class="settings-section">
-      <h5>Shaxsiy ma'lumotlar</h5>
+      <h5> Shaxsiy ma'lumotlar</h5>
       <form
         method="POST"
         action="{{ url_for('update_profile') }}"
@@ -360,7 +361,7 @@ block head %}
           <label class="form-label">Profil rasmi</label>
           <div class="d-flex align-items-center gap-3">
             <img
-              src="{{ prefer_webp(session.get('user_avatar', url_for('static', filename='images/default-avatar.svg'))) }}"
+              src="{{ session.get('user_avatar','/static/images/default-avatar.svg') }}"
               alt="avatar"
               width="64"
               height="64"
@@ -374,7 +375,7 @@ block head %}
           </div>
         </div>
         <button type="submit" class="btn btn-save">
-          Ma'lumotlarni yangilash
+           Ma'lumotlarni yangilash
         </button>
       </form>
     </div>
@@ -382,19 +383,19 @@ block head %}
 
     <!-- Faol sessiyalar -->
     <div class="settings-section">
-      <h5>Faol sessiyalar</h5>
+      <h5> Faol sessiyalar</h5>
       <p class="text-muted mb-3">
         Barcha qurilmalardagi faol sessiyalarni boshqaring
       </p>
 
       <div class="mb-3">
         <button class="btn btn-danger" onclick="terminateAllSessions()">
-          Barcha sessiyalarni tugatish
+           Barcha sessiyalarni tugatish
         </button>
         <button
           class="btn btn-outline-primary ms-2"
           onclick="refreshSessions()">
-          Yangilash
+           Yangilash
         </button>
       </div>
 
@@ -406,20 +407,20 @@ block head %}
     <!-- Super Admin uchun maxsus sozlamalar -->
     {% if session.get('super_admin') %}
     <div class="settings-section">
-      <h5>Super Admin sozlamalari</h5>
+      <h5> Super Admin sozlamalari</h5>
       <div class="row">
         <div class="col-md-6">
           <a
             href="{{ url_for('super_admin_dashboard') }}"
             class="btn btn-outline-primary w-100 mb-2">
-            Admin Dashboard
+             Admin Dashboard
           </a>
         </div>
         <div class="col-md-6">
           <a
             href="{{ url_for('general_settings') }}"
             class="btn btn-outline-secondary w-100 mb-2">
-            Umumiy sozlamalar
+             Umumiy sozlamalar
           </a>
         </div>
       </div>
@@ -429,13 +430,13 @@ block head %}
     <!-- Navigatsiya tugmalari -->
     <div class="text-center">
       <a href="{{ url_for('profile') }}" class="btn btn-outline-secondary me-2">
-        Profil
+         Profil
       </a>
       <a href="{{ url_for('index') }}" class="btn btn-outline-primary me-2">
-        Bosh sahifa
+         Bosh sahifa
       </a>
       <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">
-        Chiqish
+         Chiqish
       </a>
     </div>
   </div>
@@ -520,15 +521,12 @@ block head %}
     try {
       const resp = await fetch("/api/terminate-session", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRF-Token": typeof CSRF_TOKEN !== "undefined" ? CSRF_TOKEN : "",
-        },
+        headers: { "Content-Type": "application/json", "X-CSRF-Token": typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : '' },
         body: JSON.stringify({ session_id: sessionId }),
       });
       const data = await resp.json();
       if (resp.ok && data.success) {
-        if (isCurrent) window.location.href = "/login_page";
+        if (isCurrent) window.location.href = '/login_page';
         else await loadSessions();
       } else {
         alert(data.message || "Sessiyani tugatishda xatolik");

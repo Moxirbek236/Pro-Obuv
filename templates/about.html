@@ -6,7 +6,7 @@ block seo_meta %}
 <meta
   name="keywords"
   content="pro obuv, savollar, FAQ, spetsobuv, spetsodejda, ish kiyimlari, oyoq kiyim" />
-<link rel="canonical" href="{{ canonical_url() }}" />
+<link rel="canonical" href="https://safety.uz{{ request.path }}" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Savollar - Pro Obuv" />
 <meta
@@ -15,7 +15,7 @@ block seo_meta %}
 <meta property="og:url" content="{{ request.url }}" />
 <meta
   property="og:image"
-  content="{{ prefer_webp(url_for('static', filename='defoult.png')) }}" />
+  content="{{ url_for('static', filename='defoult.png') }}" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Savollar - Pro Obuv" />
 <meta
@@ -23,7 +23,7 @@ block seo_meta %}
   content="Pro Obuv — ko'p so'raladigan savollar" />
 <meta
   name="twitter:image"
-  content="{{ prefer_webp(url_for('static', filename='defoult.png')) }}" />
+  content="{{ url_for('static', filename='defoult.png') }}" />
 <script type="application/ld+json">
   {
     "@context": "https://schema.org",

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200" viewBox="0 0 300 200" fill="none">
+  <!-- Background -->
+  <rect width="300" height="200" fill="#f3f4f6"/>
+  
+  <!-- Icon placeholder -->
+  <g transform="translate(150, 100)">
+    <!-- Person silhouette -->
+    <circle cx="0" cy="-20" r="15" fill="#9ca3af"/>
+    <path d="M-20 15 Q-20 -5 0 -5 Q20 -5 20 15 L20 30 L-20 30 Z" fill="#9ca3af"/>
+  </g>
+  
+  <!-- Text -->
+  <text x="150" y="170" text-anchor="middle" font-family="Arial" font-size="14" fill="#6b7280">Default Men's Shoes</text>
+</svg>
