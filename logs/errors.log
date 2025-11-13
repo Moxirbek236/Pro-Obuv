@@ -1222,3 +1222,5 @@ Traceback (most recent call last):
     ^^^^^^^^^^^^^^^^^^^^^^^^^
 jinja2.exceptions.TemplateSyntaxError: expected token 'end of statement block', got 'lat'
 
+2025-11-13 16:09:57,373 | ERROR | restaurant_app | menu:7540 | Menu endpoint error: unexpected char '\\' at 12488
+2025-11-13 16:09:57,414 | ERROR | restaurant_app | menu:7570 | Menu fallback error: unexpected char '\\' at 12488
