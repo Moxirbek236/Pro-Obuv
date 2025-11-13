@@ -37,16 +37,44 @@
   <link rel="alternate" hreflang="en" href="{{ _base }}/en{{ _rest }}" />
   <link rel="alternate" hreflang="kz" href="{{ _base }}/kz{{ _rest }}" />
   <link rel="alternate" hreflang="x-default" href="{{ _base }}/{{ config.get('DEFAULT_LANGUAGE', 'ru') }}{{ _rest }}" />
+  {# --- Multilingual SEO meta: keywords, OG/Twitter, JSON-LD --- #}
+  {% if LANG == 'ru' %}
+    {% set SEO_KW = "safety, Спецобувь, рабочая обувь, защитная обувь, Pro Obuv, ботинки, ботинка, ботинки рабочие, резиновые сапоги, стальная ноская обувь, антискользящая обувь, термо ботинки, средства защиты, spets obuv, spetsobuv, spest obuv" %}
+  {% elif LANG == 'en' %}
+    {% set SEO_KW = "safety, safety shoes, work shoes, protective footwear, steel toe boots, non slip shoes, thermal boots, work boots, pro obuv, industrial footwear" %}
+  {% elif LANG == 'kz' %}
+    {% set SEO_KW = "safety, қауіпсіздік аяқ киімі, жұмыс аяқ киімі, қорғаныш аяқ киімі, ботинки, ботинка, pro obuv, болат мұрынды етік, жұмыс етігі, сырғымайтын аяқ киім" %}
+  {% else %}
+    {% set SEO_KW = "safety, xavfsizlik oyoq kiyimi, ish kiyimi, maxsus oyoq kiyim, pro obuv, botinka, botinkalar, ishchi botinka, rezina etik, ish etiklari, antislip, po'lat ucli botinka, termo botinka, ish jihozlari, spets obuv, spetsobuv, spest obuv" %}
+  {% endif %}
+  <meta name="keywords" content="{{ SEO_KW }}" />
+
+  {# Open Graph / Twitter for better sharing & snippets #}
+  {% if LANG == 'ru' %}{% set OG_LOCALE = 'ru_RU' %}
+  {% elif LANG == 'en' %}{% set OG_LOCALE = 'en_US' %}
+  {% elif LANG == 'kz' %}{% set OG_LOCALE = 'kk_KZ' %}
+  {% else %}{% set OG_LOCALE = 'uz_UZ' %}{% endif %}
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="{{ OG_LOCALE }}" />
+  <meta property="og:title" content="{{ get_text('home_title', LANG) }}" />
+  <meta property="og:description" content="{{ get_text('meta_description', LANG) }}" />
+  <meta property="og:url" content="{{ _base }}/{{ LANG }}{{ _rest }}" />
+  <meta property="og:site_name" content="Safety.uz" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="{{ get_text('home_title', LANG) }}" />
+  <meta name="twitter:description" content="{{ get_text('meta_description', LANG) }}" />
+
+  {# JSON-LD: WebSite with SearchAction per language #}
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "name": "{{ get_text('home_title', LANG) }}",
-    "url": "{{ request.url_root }}",
-    "description": "{{ get_text('meta_description', LANG) }}",
+    "name": "Safety.uz",
+    "url": "{{ _base }}/{{ LANG }}/",
+    "inLanguage": "{{ OG_LOCALE }}",
     "potentialAction": {
       "@type": "SearchAction",
-      "target": "{{ request.url_root }}search?q={search_term_string}",
+      "target": "{{ _base }}/{{ LANG }}/menu?search={search_term_string}",
       "query-input": "required name=search_term_string"
     }
   }
@@ -763,51 +791,35 @@
       // /api/change-language and reloads the page so server-rendered labels update.
       async function changeLanguage(lang) {
         try {
-          // Build a new path by replacing or inserting the language segment
-          // Use supported languages from server-side config to avoid hardcoded lists
-          var supported = {{ config.get('SUPPORTED_LANGUAGES', ['uz','ru','en','kz']) | tojson | safe }};
-          var path = window.location.pathname || '/';
-          var search = window.location.search || '';
-          var segs = path.split('/'); // ['', 'maybe-lang', 'rest', ...]
-          if (segs.length > 1 && supported.indexOf(segs[1]) !== -1) {
-            // replace existing lang
-            segs[1] = lang;
-          } else {
-            // insert lang as first path segment
-            segs.splice(1, 0, lang);
-          }
-          var newPath = segs.join('/');
-          if (!newPath.startsWith('/')) newPath = '/' + newPath;
-          // Normalize double slashes
-          newPath = newPath.replace(/\/\/+/g, '/');
-
-          // If user is on the bare site root, or on the public menu page,
-          // force navigation to /<lang>/menu so the server-side language
-          // selection via LangPrefixMiddleware and the i18n blueprint runs.
-          if (path === '/' || path === '' || path === '/menu' || path.startsWith('/menu')) {
-            newPath = '/' + lang + '/menu';
-          }
-
-          // Persist language server-side (for logged-in users) then navigate.
-          // Use credentials so cookies are sent, and include CSRF token if available.
-          try {
-            await fetch('/api/change-language', {
-              method: 'POST',
-              credentials: 'same-origin',
-              headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : ''
-              },
-              body: JSON.stringify({ language: lang })
-            }).catch(function(){/*ignore*/});
-          } catch(e){}
-
-          // Navigate after POST completes (or at least settles)
-          window.location.href = newPath + search;
-        } catch (e) {
-          try { window.location.reload(); } catch (err) { /* ignore */ }
+          applyLanguageStyles(lang);
+          localStorage.setItem('language', lang);
+          document.body.setAttribute('data-language', lang);
+        } catch (e) {}
+        try {
+          fetch('/api/change-language', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ language: lang })
+          }).catch(function(){});
+        } catch (_) {}
+        var supported = {{ config.get('SUPPORTED_LANGUAGES', ['uz','ru','en','kz']) | tojson | safe }};
+        var path = window.location.pathname || '/';
+        var segs = path.split('/');
+        if (segs.length && segs[segs.length-1] === '') segs.pop();
+        if (segs.length > 1 && supported.indexOf(segs[1]) !== -1) {
+          segs[1] = lang;
+        } else {
+          segs.splice(1, 0, lang);
         }
-      }
+        if (segs.length <= 2 || (segs.length === 3 && segs[2] === '')) {
+          segs = ['', lang, 'menu'];
+        }
+        var newPath = segs.join('/');
+        if (!newPath.startsWith('/')) newPath = '/' + newPath;
+        var qs = window.location.search || '';
+        var hash = window.location.hash || '';
+        window.location.assign(newPath + qs + hash);
+      };
     </script>
     <!-- Set dark theme as default in JavaScript -->
     <script>
@@ -3356,75 +3368,34 @@
             // Enhanced Language Change Function
             window.changeLanguage = function(language) {
                 try {
-                    // Immediately apply styles
                     applyLanguageStyles(language);
                     localStorage.setItem('language', language);
                     document.body.setAttribute('data-language', language);
-
-                    // If server-provided translations for this language are available in window.TRANSLATIONS, use them
-                    if (window.TRANSLATIONS && Object.keys(window.TRANSLATIONS).length) {
-                        // set a global trans object for other scripts
-                        window.translations = window.TRANSLATIONS;
-                        translatePage(language);
-                    } else {
-                        // Fallback: ask server for translations for selected language (not yet implemented server-side for all keys)
-                        fetch('/api/translations?lang=' + encodeURIComponent(language))
-                          .then(r => r.json())
-                          .then(data => {
-                              if (data && typeof data === 'object') {
-                                  window.translations = data;
-                              }
-                translatePage(language);
-                try { if (window.MenuClient && typeof window.MenuClient.fetchAndRender === 'function') window.MenuClient.fetchAndRender(); } catch(e) {}
-                          })
-                          .catch(()=>{
-                              // still attempt to translate with best-effort
-                translatePage(language);
-                try { if (window.MenuClient && typeof window.MenuClient.fetchAndRender === 'function') window.MenuClient.fetchAndRender(); } catch(e) {}
-                          });
-                    }
-                } catch (error) {
-                    // ignore
+                } catch (e) {}
+                try {
+                    fetch('/api/change-language', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ language: language })
+                    }).catch(function(){});
+                } catch (_) {}
+                var supported = {{ config.get('SUPPORTED_LANGUAGES', ['uz','ru','en','kz']) | tojson | safe }};
+                var path = window.location.pathname || '/';
+                var segs = path.split('/');
+                if (segs.length && segs[segs.length-1] === '') segs.pop();
+                if (segs.length > 1 && supported.indexOf(segs[1]) !== -1) {
+                    segs[1] = language;
+                } else {
+                    segs.splice(1, 0, language);
                 }
-                document.body.classList.remove('lang-uz', 'lang-ru', 'lang-en', 'lang-kz');
-                document.body.classList.add('lang-' + language);
-
-                // Server ga yuborish (include CSRF) - persist to existing settings API
-                fetch('/api/set-settings', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : ''
-                  },
-                  body: JSON.stringify({ language: language })
-                }).then(response => {
-                  if (response.ok) {
-                    return response.json();
-                  }
-                  throw new Error('Network response was not ok');
-                })
-                .then(data => {
-                  if (data && data.success) {
-                    const msg = (window.translations && window.translations['settings'] && window.translations['settings']['language_saved']) || data.message || 'Til muvaffaqiyatli o\'zgartirildi';
-                    showNotification(msg);
-                    // If we're on a product page, reload so server-rendered product title/description
-                    // (which depend on session.interface_language) are updated. Otherwise refresh menu.
-                    try {
-                      const path = (window.location && window.location.pathname) || '';
-                      const isProduct = path.startsWith('/product') || /\/\w{2}\/product/.test(path);
-                      if (isProduct) {
-                        setTimeout(() => { window.location.reload(); }, 120);
-                      } else {
-                        setTimeout(() => {
-                          if (window.MenuClient && typeof window.MenuClient.fetchAndRender === 'function') window.MenuClient.fetchAndRender();
-                        }, 120);
-                      }
-                    } catch (e) {}
-                  }
-                }).catch(error => {
-                  const fallback = (window.translations && window.translations['settings'] && window.translations['settings']['language_local_change']) || 'Til mahalliy o\'zgartirildi';
-                  showNotification(fallback);
-                });
+                if (segs.length <= 2 || (segs.length === 3 && segs[2] === '')) {
+                    segs = ['', language, 'menu'];
+                }
+                var newPath = segs.join('/');
+                if (!newPath.startsWith('/')) newPath = '/' + newPath;
+                var qs = window.location.search || '';
+                var hash = window.location.hash || '';
+                window.location.assign(newPath + qs + hash);
             };
 
             // Notification function

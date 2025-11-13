@@ -1095,3 +1095,130 @@ TypeError: The view function for 'login_page' did not return a valid response. T
 2025-11-02 09:34:26,807 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [02/Nov/2025 09:34:26] code 400, message Bad request version ("ÑtVi6,\x8d\x04Æ+F_ZYÅìª5Gçº\x98\x93ab'\x9bÍ\x8c¸v")
 2025-11-02 09:34:26,813 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [02/Nov/2025 09:34:26] code 400, message Bad request version ('PÑ')
 2025-11-02 09:34:27,077 | ERROR | werkzeug | _log:97 | 127.0.0.1 - - [02/Nov/2025 09:34:27] code 400, message Bad request version ('À\x97\x08u!j85\x13À\x90~\x9b¸L\x98vy¼b¤"¹H¦\x98yrz\x11í\x9byð\x80\x02{y')
+2025-11-13 14:17:03,608 | ERROR | restaurant_app | menu:7540 | Menu endpoint error: expected token 'end of statement block', got 'lat'
+2025-11-13 14:17:03,618 | ERROR | restaurant_app | menu:7570 | Menu fallback error: expected token 'end of statement block', got 'lat'
+2025-11-13 14:17:03,807 | ERROR | restaurant_app | menu:7540 | Menu endpoint error: expected token 'end of statement block', got 'lat'
+2025-11-13 14:17:03,819 | ERROR | restaurant_app | menu:7570 | Menu fallback error: expected token 'end of statement block', got 'lat'
+2025-11-13 14:21:40,139 | ERROR | restaurant_app | handle_exception:1815 | Unhandled exception: expected token 'end of statement block', got 'lat' - URL: http://localhost:5000/contact
+2025-11-13 14:21:40,207 | ERROR | restaurant_app | handle_exception:1817 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Safety.uz\app.py", line 10069, in contact
+    return render_template("contact.html", current_page="contact")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\contact.html", line 1, in top-level template code
+    {% extends "base.html" %} {% block title %}{{ get_text("Aloqa - Pro Obuv") or
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\base.html", line 48, in template
+    {% set SEO_KW = 'safety, xavfsizlik oyoq kiyimi, ish kiyimi, maxsus oyoq kiyim, pro obuv, botinka, botinkalar, ishchi botinka, rezina etik, ish etiklari, antislip, po'lat ucli botinka, termo botinka, ish jihozlari, spets obuv, spetsobuv, spest obuv' %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.TemplateSyntaxError: expected token 'end of statement block', got 'lat'
+
+2025-11-13 14:21:47,882 | ERROR | restaurant_app | cart:8501 | Cart sahifasida xatolik: expected token 'end of statement block', got 'lat'
+2025-11-13 14:21:47,898 | ERROR | restaurant_app | handle_exception:1815 | Unhandled exception: expected token 'end of statement block', got 'lat' - URL: http://localhost:5000/cart
+2025-11-13 14:21:47,904 | ERROR | restaurant_app | handle_exception:1817 | Full traceback:
+Traceback (most recent call last):
+  File "D:\Safety.uz\app.py", line 8496, in cart
+    return render_template(
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\cart.html", line 1, in top-level template code
+    {% extends "base.html" %} {% block title %}{{ get_text("Savatcha - Pro Obuv") or 'Savatcha - Pro Obuv' }}{% endblock %} {%
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\base.html", line 48, in template
+    {% set SEO_KW = 'safety, xavfsizlik oyoq kiyimi, ish kiyimi, maxsus oyoq kiyim, pro obuv, botinka, botinkalar, ishchi botinka, rezina etik, ish etiklari, antislip, po'lat ucli botinka, termo botinka, ish jihozlari, spets obuv, spetsobuv, spest obuv' %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.TemplateSyntaxError: expected token 'end of statement block', got 'lat'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Safety.uz\app.py", line 8502, in cart
+    return render_template("cart.html", cart_items=[], total=0)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\cart.html", line 1, in top-level template code
+    {% extends "base.html" %} {% block title %}{{ get_text("Savatcha - Pro Obuv") or 'Savatcha - Pro Obuv' }}{% endblock %} {%
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\base.html", line 48, in template
+    {% set SEO_KW = 'safety, xavfsizlik oyoq kiyimi, ish kiyimi, maxsus oyoq kiyim, pro obuv, botinka, botinkalar, ishchi botinka, rezina etik, ish etiklari, antislip, po'lat ucli botinka, termo botinka, ish jihozlari, spets obuv, spetsobuv, spest obuv' %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.TemplateSyntaxError: expected token 'end of statement block', got 'lat'
+
+2025-11-13 14:22:39,036 | ERROR | restaurant_app | handle_exception:1815 | Unhandled exception: expected token 'end of statement block', got 'lat' - URL: http://localhost:5000/contact
+2025-11-13 14:22:39,051 | ERROR | restaurant_app | handle_exception:1817 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Safety.uz\app.py", line 10069, in contact
+    return render_template("contact.html", current_page="contact")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\contact.html", line 1, in top-level template code
+    {% extends "base.html" %} {% block title %}{{ get_text("Aloqa - Pro Obuv") or
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\base.html", line 48, in template
+    {% set SEO_KW = 'safety, xavfsizlik oyoq kiyimi, ish kiyimi, maxsus oyoq kiyim, pro obuv, botinka, botinkalar, ishchi botinka, rezina etik, ish etiklari, antislip, po'lat ucli botinka, termo botinka, ish jihozlari, spets obuv, spetsobuv, spest obuv' %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.TemplateSyntaxError: expected token 'end of statement block', got 'lat'
+
