@@ -1859,3 +1859,1385 @@ TypeError: The view function for 'login_page' did not return a valid response. T
 2025-11-02 11:26:35,589 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/static/icons/yandex.svg
 2025-11-02 11:32:22,136 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/static/icons/yandex.svg
 2025-11-02 11:32:26,551 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-11-11 18:00:28,103 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/ru/contact
+2025-11-11 18:00:28,137 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-11 18:00:29,080 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/ru/contact
+2025-11-11 18:00:29,395 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-11 18:00:30,016 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/ru/contact
+2025-11-11 18:00:30,033 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-11 18:00:30,394 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/ru/contact
+2025-11-11 18:00:30,711 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/ru/contact
+2025-11-11 18:00:30,914 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/ru/contact
+2025-11-11 18:00:31,037 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/ru/contact
+2025-11-11 18:00:31,089 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-11 18:00:31,226 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/ru/contact
+2025-11-11 18:00:31,366 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/ru/contact
+2025-11-11 18:00:31,385 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-11 18:00:31,551 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/ru/contact
+2025-11-11 18:00:31,707 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/ru/contact
+2025-11-11 18:00:31,879 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/ru/contact
+2025-11-11 18:00:32,034 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-11 18:00:32,049 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/ru/contact
+2025-11-11 18:00:32,210 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/ru/contact
+2025-11-11 18:00:32,226 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-11 18:00:32,673 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/ru/contact
+2025-11-11 18:00:32,689 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-11 18:00:33,001 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/ru/contact
+2025-11-11 18:00:33,020 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/ru/contact
+2025-11-11 18:00:33,316 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/ru/contact
+2025-11-11 18:00:33,457 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/ru/contact
+2025-11-11 18:00:33,624 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-11 18:00:33,764 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/ru/contact
+2025-11-11 18:00:33,783 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-11 18:00:34,015 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/ru/contact
+2025-11-11 18:00:34,134 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/ru/contact
+2025-11-11 18:00:34,246 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/ru/contact
+2025-11-11 18:00:34,346 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-11 18:00:34,397 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/ru/contact
+2025-11-11 18:00:34,464 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-11 18:00:34,566 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/ru/contact
+2025-11-11 18:00:34,586 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-11 18:00:37,071 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-11-11 18:02:36,492 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-11-11 18:02:38,752 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-11-11 18:02:40,418 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/static/icons/yandex.svg
+2025-11-11 18:02:46,367 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/ru/contact
+2025-11-11 18:02:46,406 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-11 18:03:10,792 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/ru/contact
+2025-11-11 18:03:11,049 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-11 18:03:11,272 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/ru/contact
+2025-11-11 18:03:11,580 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-11 18:03:12,410 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/ru/contact
+2025-11-11 18:03:12,428 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-11 18:03:12,847 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/ru/contact
+2025-11-11 18:03:13,157 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-11 18:03:13,657 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/ru/contact
+2025-11-11 18:03:13,687 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-11 18:03:13,939 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/ru/contact
+2025-11-11 18:03:14,244 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-11 18:03:14,692 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/ru/contact
+2025-11-11 18:03:14,710 | WARNING | restaurant_app | not_found_error:1541 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-11 18:04:18,932 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:04:19,227 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:04:21,026 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/41_5a66beadd27f4272bf7391facc3eaeda.png
+2025-11-11 18:04:21,038 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/41_0430a90f7882403f86892638f8054da1.png
+2025-11-11 18:04:21,051 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/41_0d6332038e8d40b4a2fa0ed587657a59.png
+2025-11-11 18:04:21,288 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/39_35d5113e743840b8bd7c20c91181d299.png
+2025-11-11 18:04:21,337 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/39_b0af2f0fced34f9984ac4c4310735a68.png
+2025-11-11 18:04:21,337 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/39_c8b71c736d8c43c0ba3e859d2b06c95d.png
+2025-11-11 18:04:21,337 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/40_9fff1211e53d4321a0742819530a4814.jpg
+2025-11-11 18:04:21,337 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/41_81a2b29b02fd4309813bc4735b426b4c.jpg
+2025-11-11 18:04:21,359 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/39_51c9f712fc684c7f94971709e6f1e560.png
+2025-11-11 18:04:21,668 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/${(typeof%20item%20===%20'object'%20&&%20(item.image_url%20||%20item.image))%20?%20(item.image_url%20||%20item.image)%20:%20'/static/defoult.webp'}
+2025-11-11 18:04:22,337 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/42_41109a91b09747019b5593cbff87580f.png
+2025-11-11 18:04:22,606 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/42_947ee6a856584eb19b59fbabc8037187.jpg
+2025-11-11 18:04:22,613 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/43_b55897f85fa34d75aaf45ecdd68d6cd0.png
+2025-11-11 18:04:22,638 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/43_213a5e20f27f4778aac7710c29083d91.jpg
+2025-11-11 18:04:22,641 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/45_cd49521666cf4cd58c17e633ff19c169.jpg
+2025-11-11 18:04:22,649 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/48_3e2f32e95cbf42ffbb23c19e4de369f9.jpg
+2025-11-11 18:04:22,665 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/50_bae6da7a89074b67a7d92076b9fab52f.jpg
+2025-11-11 18:04:22,918 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/44_d9bca2e4da804d3cbe0d1b354fc84524.jpg
+2025-11-11 18:04:22,926 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/52_5f7339192060462db595de88004deaef.jpg
+2025-11-11 18:04:22,950 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/53_e7a80d60e14d42508153a5fbfd8bebe9.jpg
+2025-11-11 18:04:22,958 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/49_2e1e61f690bf480a99454a1548463404.jpg
+2025-11-11 18:04:22,980 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:04:22,992 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:04:26,375 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/51_70f2a563d3d54c07969816731bad7f37.jpg
+2025-11-11 18:04:26,378 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/47_d59b5897e9fd42fa92cc261f9cbbcb8d.jpg
+2025-11-11 18:04:26,381 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/46_9017ddbf09ae4fcebd167fd56ba0a8be.jpg
+2025-11-11 18:04:26,651 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/55_33ecf4f6192144bc8268e6f3bfbdd053.jpg
+2025-11-11 18:04:26,689 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/54_f4dbf72d058349b9a3b037240aacf766.jpg
+2025-11-11 18:04:26,692 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/38_cb9432a802b44154b8ea4cbef63f1adf.jpg
+2025-11-11 18:04:26,699 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/38_d08cdac04280420a838fcb5b52da2c47.png
+2025-11-11 18:04:26,700 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/38_043f67fca2b1442d88415e49fc607e9d.png
+2025-11-11 18:04:26,983 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:04:26,983 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:04:27,649 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/${imgSrc}
+2025-11-11 18:04:31,682 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:04:31,986 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:04:36,997 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:04:36,997 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:04:42,006 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:04:42,018 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:04:46,668 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:04:46,977 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:04:51,994 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:04:51,994 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:04:53,280 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/39_51c9f712fc684c7f94971709e6f1e560.png
+2025-11-11 18:04:53,352 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/41_0d6332038e8d40b4a2fa0ed587657a59.png
+2025-11-11 18:04:53,353 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/39_b0af2f0fced34f9984ac4c4310735a68.png
+2025-11-11 18:04:53,354 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/41_5a66beadd27f4272bf7391facc3eaeda.png
+2025-11-11 18:04:53,363 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/39_35d5113e743840b8bd7c20c91181d299.png
+2025-11-11 18:04:53,365 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/39_c8b71c736d8c43c0ba3e859d2b06c95d.png
+2025-11-11 18:04:53,599 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/40_9fff1211e53d4321a0742819530a4814.jpg
+2025-11-11 18:04:53,662 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/41_81a2b29b02fd4309813bc4735b426b4c.jpg
+2025-11-11 18:04:53,670 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/42_41109a91b09747019b5593cbff87580f.png
+2025-11-11 18:04:53,671 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/41_0430a90f7882403f86892638f8054da1.png
+2025-11-11 18:04:53,681 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/42_947ee6a856584eb19b59fbabc8037187.jpg
+2025-11-11 18:04:53,683 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/43_b55897f85fa34d75aaf45ecdd68d6cd0.png
+2025-11-11 18:04:53,909 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/43_213a5e20f27f4778aac7710c29083d91.jpg
+2025-11-11 18:04:53,989 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/45_cd49521666cf4cd58c17e633ff19c169.jpg
+2025-11-11 18:04:53,990 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/50_bae6da7a89074b67a7d92076b9fab52f.jpg
+2025-11-11 18:04:53,995 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/44_d9bca2e4da804d3cbe0d1b354fc84524.jpg
+2025-11-11 18:04:54,001 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/48_3e2f32e95cbf42ffbb23c19e4de369f9.jpg
+2025-11-11 18:04:54,002 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/52_5f7339192060462db595de88004deaef.jpg
+2025-11-11 18:04:54,239 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/53_e7a80d60e14d42508153a5fbfd8bebe9.jpg
+2025-11-11 18:04:54,309 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/49_2e1e61f690bf480a99454a1548463404.jpg
+2025-11-11 18:04:56,992 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:04:56,994 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:05:03,002 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:05:03,003 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:05:07,677 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:05:07,991 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:05:12,988 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:05:12,992 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:05:17,670 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:05:17,992 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:05:22,683 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:05:22,995 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:05:27,990 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:05:27,992 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:05:32,669 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:05:32,975 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:05:37,975 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:05:37,975 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:05:42,976 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:05:42,991 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:05:47,685 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:05:47,993 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:05:52,998 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:05:52,999 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:05:58,006 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:05:58,021 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:06:02,720 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:06:03,016 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:06:07,975 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:06:07,975 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:06:13,001 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:06:13,002 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:07:09,982 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:07:09,984 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:08:04,973 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:08:04,986 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:08:06,145 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/${(typeof%20item%20===%20'object'%20&&%20(item.image_url%20||%20item.image))%20?%20(item.image_url%20||%20item.image)%20:%20'/static/defoult.webp'}
+2025-11-11 18:08:09,136 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:08:09,136 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:08:12,408 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:08:12,408 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:08:15,060 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/${imgSrc}
+2025-11-11 18:08:17,120 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:08:17,420 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:08:21,657 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/${(typeof%20item%20===%20'object'%20&&%20(item.image_url%20||%20item.image))%20?%20(item.image_url%20||%20item.image)%20:%20'/static/defoult.webp'}
+2025-11-11 18:08:22,462 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:08:22,509 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:08:24,301 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:08:24,312 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:08:29,076 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:08:29,078 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:08:30,369 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/${(typeof%20item%20===%20'object'%20&&%20(item.image_url%20||%20item.image))%20?%20(item.image_url%20||%20item.image)%20:%20'/static/defoult.webp'}
+2025-11-11 18:08:31,099 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:08:31,119 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:08:35,213 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:08:35,632 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/${(typeof%20item%20===%20'object'%20&&%20(item.image_url%20||%20item.image))%20?%20(item.image_url%20||%20item.image)%20:%20'/static/defoult.webp'}
+2025-11-11 18:08:38,550 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:08:38,550 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:08:43,525 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:08:43,613 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:08:45,851 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:08:46,156 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:08:50,550 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:08:50,860 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:08:53,829 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:08:53,848 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:08:55,269 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/${(typeof%20item%20===%20'object'%20&&%20(item.image_url%20||%20item.image))%20?%20(item.image_url%20||%20item.image)%20:%20'/static/defoult.webp'}
+2025-11-11 18:08:56,517 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:08:57,166 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:08:57,267 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:08:57,457 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:08:57,770 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:08:58,024 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:08:58,087 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:08:58,336 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:08:58,398 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:08:58,646 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:08:58,709 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:08:58,958 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:08:59,020 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:08:59,271 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:08:59,334 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:08:59,583 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:08:59,646 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:08:59,968 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/${(typeof%20item%20===%20'object'%20&&%20(item.image_url%20||%20item.image))%20?%20(item.image_url%20||%20item.image)%20:%20'/static/defoult.webp'}
+2025-11-11 18:09:00,353 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:00,356 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:00,358 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:00,671 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:00,673 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:00,682 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:00,872 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:00,966 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:00,982 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:00,983 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:00,990 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:00,993 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:01,184 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:01,273 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:01,303 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:01,303 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:01,303 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:09:01,303 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:09:01,492 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:01,585 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:01,616 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:01,616 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:01,616 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:01,616 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:01,803 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:01,897 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:01,930 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:01,935 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:01,937 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:01,939 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:02,125 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:02,219 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:02,254 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:02,255 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:02,255 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:02,256 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:02,440 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:02,534 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:02,564 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:02,565 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:02,573 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:02,575 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:02,750 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:02,843 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:02,874 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:02,875 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:02,882 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:02,884 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:03,061 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:03,154 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:03,186 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:03,187 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:03,194 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:03,195 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:03,372 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:03,467 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:03,497 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:03,498 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:03,504 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:03,508 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:03,684 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:03,778 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:03,811 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:03,812 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:03,819 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:03,821 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:03,999 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:04,093 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:04,124 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:04,125 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:04,131 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:04,134 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:04,309 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:04,402 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:04,433 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:04,435 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:04,446 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:04,450 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:04,620 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:04,715 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:04,747 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:04,748 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:04,757 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:04,758 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:04,934 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:05,029 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:05,061 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:05,062 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:05,068 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:05,072 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:05,246 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:05,339 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:05,372 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:05,373 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:05,379 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:05,381 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:05,560 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:05,652 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:05,686 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:05,687 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:05,694 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:05,699 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:05,872 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:05,964 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:05,994 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:05,999 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:06,007 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:06,008 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:06,183 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:06,277 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:06,319 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:09:06,323 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:09:06,327 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:06,327 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-11 18:09:10,981 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:09:10,984 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:09:12,014 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/${(typeof%20item%20===%20'object'%20&&%20(item.image_url%20||%20item.image))%20?%20(item.image_url%20||%20item.image)%20:%20'/static/defoult.webp'}
+2025-11-11 18:09:13,616 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:09:13,876 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:09:17,989 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:09:17,990 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:09:22,684 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:09:23,468 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/${(typeof%20item%20===%20'object'%20&&%20(item.image_url%20||%20item.image))%20?%20(item.image_url%20||%20item.image)%20:%20'/static/defoult.webp'}
+2025-11-11 18:09:24,382 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:09:24,383 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:09:28,436 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/${imgSrc}
+2025-11-11 18:09:29,685 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:09:29,994 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:09:34,996 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:09:34,997 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:09:39,691 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:09:39,998 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:09:44,681 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:09:44,989 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:09:49,977 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:09:49,988 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:09:54,980 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:09:54,981 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:09:59,686 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:09:59,994 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:10:04,685 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:10:04,998 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:10:09,991 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:10:09,994 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:10:14,984 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:10:14,984 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:10:19,685 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:10:19,998 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:10:24,679 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:10:24,987 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:11:43,950 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:11:43,950 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:12:09,658 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:12:09,957 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:13:09,940 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:13:09,952 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:14:09,961 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:14:09,978 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:15:09,951 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:15:09,976 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:16:09,970 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:16:09,972 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:17:09,960 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:17:09,966 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:18:09,935 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:18:09,937 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:19:09,969 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:19:09,969 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:20:09,948 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:20:09,964 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:21:09,956 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:21:09,956 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:22:09,947 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:22:09,963 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:23:09,972 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:23:09,972 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:24:09,950 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:24:09,951 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:25:09,959 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:25:09,959 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:26:09,946 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:26:09,946 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:27:09,953 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:27:09,954 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:28:09,961 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:28:09,972 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:29:09,933 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:29:09,933 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:30:09,956 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:30:09,958 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:31:09,960 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:31:09,961 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:32:09,948 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:32:09,959 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:33:09,930 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:33:09,946 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:34:09,934 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:34:09,949 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:35:09,952 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:35:09,967 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:36:09,940 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:36:09,940 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:37:09,948 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:37:09,963 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:38:09,958 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:38:09,967 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:39:09,959 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:39:09,959 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:40:09,946 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:40:09,946 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:41:09,948 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:41:09,949 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:42:09,947 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:42:09,947 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:43:09,655 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:43:09,961 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:44:09,938 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:44:09,940 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:45:09,951 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:45:09,951 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:46:09,944 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:46:09,964 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:47:09,957 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:47:09,959 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:48:09,966 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:48:09,967 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:49:09,954 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:49:09,968 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:50:09,972 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:50:09,972 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:51:09,946 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:51:09,948 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:52:09,953 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:52:09,954 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:53:09,954 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:53:09,954 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:54:09,949 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:54:09,960 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:55:09,968 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:55:09,968 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:56:09,945 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:56:09,945 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:57:09,937 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:57:09,941 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:58:09,956 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 18:58:09,956 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:59:09,940 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 18:59:09,958 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:00:09,937 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:00:09,937 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:01:09,937 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:01:09,937 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:02:09,956 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:02:09,957 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:03:09,942 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:03:09,944 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:04:09,938 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:04:09,939 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:05:09,949 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:05:09,949 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:06:09,970 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:06:09,974 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:07:09,957 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:07:09,960 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:08:09,977 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:08:09,979 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:09:09,957 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:09:09,958 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:10:09,971 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:10:09,983 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:11:09,640 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:11:09,973 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:12:09,960 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:12:09,977 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:13:09,964 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:13:09,965 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:14:09,957 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:14:09,967 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:15:09,952 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:15:09,953 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:16:09,946 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:16:09,947 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:17:09,953 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:17:09,956 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:18:09,957 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:18:09,958 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:19:09,957 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:19:09,958 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:20:09,972 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:20:09,973 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:21:09,970 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:21:09,975 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:22:09,949 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:22:09,963 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:23:09,959 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:23:09,959 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:24:09,957 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:24:09,966 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:25:09,985 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:25:09,986 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:26:09,955 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:26:09,958 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:27:09,960 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:27:09,961 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:28:09,639 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:28:09,970 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:29:09,940 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:29:09,941 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:30:09,958 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:30:09,959 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:31:09,948 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:31:09,949 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:32:09,963 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:32:09,966 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:33:09,953 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:33:09,966 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:34:09,944 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:34:09,945 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:35:09,933 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:35:09,949 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:36:09,960 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:36:09,974 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:37:09,944 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:37:09,968 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:38:09,954 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:38:09,955 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:39:09,945 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:39:09,959 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:40:09,948 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:40:09,956 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:40:25,698 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:40:26,027 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:40:29,934 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:40:29,944 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:40:34,635 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:40:34,949 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:40:39,950 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:40:39,950 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:40:44,949 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:40:44,965 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:40:49,947 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:40:49,949 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:40:54,627 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:40:54,951 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:40:59,944 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:40:59,945 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:41:04,948 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:41:04,949 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:41:09,635 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:41:09,944 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:41:14,944 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:41:14,947 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:41:19,629 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:41:19,949 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:41:24,961 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:41:24,962 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:42:09,963 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:42:09,979 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:42:42,564 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:42:42,574 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:42:43,727 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:42:44,042 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:42:49,052 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:42:49,053 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:42:53,733 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:42:54,042 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:42:59,049 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:42:59,050 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:43:04,638 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:43:04,950 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:43:09,946 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:43:09,972 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:43:14,632 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:43:14,953 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:43:19,934 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:43:19,937 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:43:24,952 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:43:24,956 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:43:29,635 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:43:29,952 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:43:34,952 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:43:34,955 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:43:39,635 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:43:39,956 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:43:44,640 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:43:44,945 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:43:49,939 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:43:49,941 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:43:54,630 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:43:54,950 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:44:09,957 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:44:09,970 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:45:09,944 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:45:09,947 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:46:09,959 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:46:09,959 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:47:09,968 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:47:09,968 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:48:09,948 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:48:09,961 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:49:09,946 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:49:09,949 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:50:09,950 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:50:09,950 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:51:09,948 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:51:09,959 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:52:09,957 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:52:09,958 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:53:09,946 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:53:09,947 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:54:09,942 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:54:09,980 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:54:15,776 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:54:15,777 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:54:19,637 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:54:19,943 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:54:24,639 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:54:24,945 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:54:29,943 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:54:29,943 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:54:34,945 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:54:34,950 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:54:39,629 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:54:39,947 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:54:44,646 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:54:44,955 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:54:49,953 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:54:49,954 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:54:54,959 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:54:54,960 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:54:59,636 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:54:59,945 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:55:04,636 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:55:04,945 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:55:09,951 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:55:09,951 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:55:14,953 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:55:14,971 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:55:19,637 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:55:19,956 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:55:24,648 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:55:24,956 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:55:29,944 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:55:29,946 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:55:34,943 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:55:34,944 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:55:39,655 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:55:39,979 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:55:44,644 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:55:44,951 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:56:09,939 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:56:09,953 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:57:09,950 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:57:09,950 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:58:09,966 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:58:09,981 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 19:59:09,940 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 19:59:09,949 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 20:00:09,954 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 20:00:09,956 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 20:01:09,942 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 20:01:09,954 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 20:02:09,952 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 20:02:09,965 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 20:03:09,979 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 20:03:09,991 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 20:04:09,959 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-11 20:04:09,969 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 20:05:09,946 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-11 20:05:09,947 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:55:46,381 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-12 12:55:54,399 | WARNING | restaurant_app | staff_login:17685 | Failed staff login attempt for ID: 1
+2025-11-12 12:56:01,151 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-avatar.svg
+2025-11-12 12:56:02,175 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-avatar.svg
+2025-11-12 12:56:02,185 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:56:02,422 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:56:07,115 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:56:07,117 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:56:12,937 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:56:12,937 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:56:16,900 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/${(typeof%20item%20===%20'object'%20&&%20(item.image_url%20||%20item.image))%20?%20(item.image_url%20||%20item.image)%20:%20'/static/defoult.webp'}
+2025-11-12 12:56:16,901 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-avatar.svg
+2025-11-12 12:56:20,313 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:56:20,337 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:56:20,652 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-avatar.svg
+2025-11-12 12:56:22,342 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:56:22,357 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:56:22,930 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:56:22,933 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:56:24,965 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-avatar.svg
+2025-11-12 12:56:26,233 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:56:26,236 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:56:27,608 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:56:27,928 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:56:28,717 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-avatar.svg
+2025-11-12 12:56:29,580 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-avatar.svg
+2025-11-12 12:56:29,915 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:56:29,922 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:56:32,613 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:56:32,922 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:56:34,916 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:56:34,931 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:56:37,912 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:56:37,912 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:56:39,616 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:56:39,928 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:56:42,611 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:56:42,918 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:56:45,232 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:56:45,243 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:56:45,620 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-avatar.svg
+2025-11-12 12:56:47,104 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/${imgSrc}
+2025-11-12 12:56:47,204 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/${(typeof%20item%20===%20'object'%20&&%20(item.image_url%20||%20item.image))%20?%20(item.image_url%20||%20item.image)%20:%20'/static/defoult.webp'}
+2025-11-12 12:56:47,956 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:56:47,960 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:56:48,473 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:56:48,475 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:56:49,923 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:56:49,924 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:56:50,875 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:56:51,192 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:56:52,912 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/${(typeof%20item%20===%20'object'%20&&%20(item.image_url%20||%20item.image))%20?%20(item.image_url%20||%20item.image)%20:%20'/static/defoult.webp'}
+2025-11-12 12:56:52,926 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-avatar.svg
+2025-11-12 12:56:53,576 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-avatar.svg
+2025-11-12 12:56:53,642 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:56:53,651 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:56:54,866 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:56:54,887 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:56:55,190 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:56:55,209 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:56:57,924 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:56:57,929 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:56:58,370 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:56:58,660 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:56:59,911 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:56:59,911 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:57:01,322 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/${(typeof%20item%20===%20'object'%20&&%20(item.image_url%20||%20item.image))%20?%20(item.image_url%20||%20item.image)%20:%20'/static/defoult.webp'}
+2025-11-12 12:57:01,656 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:01,999 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:02,291 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-avatar.svg
+2025-11-12 12:57:02,317 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-avatar.svg
+2025-11-12 12:57:02,936 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:57:02,940 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:57:02,954 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:02,955 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:03,256 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:03,256 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:03,257 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:03,268 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:03,273 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:03,273 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:03,566 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:03,572 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:03,575 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:03,585 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:03,586 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:03,597 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:57:03,891 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:57:03,893 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:03,893 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:03,895 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:03,904 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:03,918 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:04,221 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:04,222 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:04,223 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:04,230 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:04,236 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:04,546 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:04,546 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:04,546 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:04,546 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:04,546 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:04,593 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:04,865 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:04,866 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:04,868 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:04,868 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:04,868 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:04,913 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:05,194 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:57:05,196 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:57:05,199 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:05,201 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:05,203 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:05,219 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:05,503 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:05,509 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:05,513 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:05,519 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:05,520 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:05,526 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:05,822 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:05,822 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:05,822 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:05,822 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:05,838 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:05,838 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:06,141 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:06,142 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:06,148 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:06,151 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:06,157 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:06,160 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:06,451 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:06,452 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:06,458 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:06,462 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:06,468 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:06,470 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:06,764 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:06,764 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:06,772 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:06,775 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:06,778 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:06,778 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:07,079 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:07,079 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:07,079 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:07,079 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:07,096 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:07,096 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:07,391 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:07,391 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:07,391 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:07,406 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:07,406 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:07,406 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:07,712 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:07,712 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:07,712 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:07,712 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:07,727 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:57:07,727 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:57:08,029 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:08,029 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:08,029 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:08,044 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:08,050 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:08,065 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:57:08,346 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:08,346 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:08,358 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:08,363 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:08,363 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:08,363 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:57:08,661 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:08,661 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:08,661 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:08,677 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:08,677 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:08,677 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:08,978 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:08,979 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:08,985 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:08,988 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:08,994 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:08,994 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:09,295 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:09,295 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:09,295 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:09,295 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:09,310 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:09,312 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:09,604 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:09,604 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:09,619 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:09,619 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:09,619 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:09,916 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:09,932 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:09,932 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:09,932 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:57:09,932 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:09,948 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:57:10,241 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:10,241 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:10,241 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:10,257 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:10,257 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:10,257 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:10,557 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:10,557 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:10,557 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:10,557 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:10,573 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:10,573 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:10,878 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:10,878 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:10,878 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:10,894 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:10,894 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:11,555 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/${(typeof%20item%20===%20'object'%20&&%20(item.image_url%20||%20item.image))%20?%20(item.image_url%20||%20item.image)%20:%20'/static/defoult.webp'}
+2025-11-12 12:57:11,867 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:11,868 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:11,868 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:11,870 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:11,875 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:12,196 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:12,517 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:12,529 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:12,532 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:12,547 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:12,562 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:12,827 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:12,859 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-avatar.svg
+2025-11-12 12:57:12,864 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-avatar.svg
+2025-11-12 12:57:13,486 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:13,492 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:13,497 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:13,760 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:13,775 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:13,790 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:13,796 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:13,802 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:13,804 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:15,028 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:57:15,046 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:57:15,080 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:15,340 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:15,356 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:15,370 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:15,371 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:15,386 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:15,395 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:57:15,657 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:57:15,663 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:15,686 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:15,696 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:15,702 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:15,965 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:15,970 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:15,997 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:16,002 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:16,004 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:16,009 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:16,275 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:16,282 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:16,306 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:16,312 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:16,313 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:16,322 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:16,592 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:16,592 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:16,630 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:16,630 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:16,632 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:16,632 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:16,914 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:16,914 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:16,945 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:16,945 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:16,945 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:16,945 | WARNING | restaurant_app | rate_limit_error:1782 | Rate limit exceeded: 127.0.0.1
+2025-11-12 12:57:18,928 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:57:18,930 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:57:19,609 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:57:19,927 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:57:21,395 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:57:21,492 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:57:21,813 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:57:22,119 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:57:23,928 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:57:23,929 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:57:24,623 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:57:24,925 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:57:27,117 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:57:27,140 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:57:28,606 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:57:28,922 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:57:29,934 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:57:29,945 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:57:32,007 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-12 12:57:33,598 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:57:33,919 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:57:34,920 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:57:34,922 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:57:37,868 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:57:38,169 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:57:39,930 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:57:39,936 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:57:43,170 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:57:43,185 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:57:44,624 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:57:44,941 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:57:48,170 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:57:48,171 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:57:50,934 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:57:50,935 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:57:53,186 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:57:53,186 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:57:54,632 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:57:54,941 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:57:58,163 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:57:58,167 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:57:59,929 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:57:59,944 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:58:03,164 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:58:03,169 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:58:04,610 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:58:04,928 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:58:08,176 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:58:08,182 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:58:09,950 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:58:09,951 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:58:12,874 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:58:13,182 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:58:15,938 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:58:15,939 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:58:17,868 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:58:18,189 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:58:20,934 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:58:20,935 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:58:22,868 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:58:23,177 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:58:24,943 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:58:24,944 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:58:27,871 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:58:28,180 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:58:29,928 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:58:29,928 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:58:32,861 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:58:33,175 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:58:34,916 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:58:34,932 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:58:37,863 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:58:38,169 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:58:43,183 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:58:43,185 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:58:47,863 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:58:48,172 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:58:52,876 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:58:53,186 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:58:58,936 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:58:58,936 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:59:03,938 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:59:03,938 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:59:06,907 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:59:06,922 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:59:08,604 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:59:08,933 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:59:13,611 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:59:13,908 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:59:18,927 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:59:18,930 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:59:22,874 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:59:23,194 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:59:28,180 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:59:28,181 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:59:32,856 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:59:33,163 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:59:38,171 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:59:38,175 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:59:42,874 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:59:43,183 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:59:48,171 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:59:48,174 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:59:53,172 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:59:53,173 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 12:59:57,871 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 12:59:58,184 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:00:03,184 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:00:03,184 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:00:06,946 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:00:06,954 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:00:08,606 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:00:08,930 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:00:13,615 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:00:13,918 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:00:18,919 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:00:18,920 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:00:23,592 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:00:23,906 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:00:28,918 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:00:28,923 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:00:33,921 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:00:33,927 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:00:38,923 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:00:38,927 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:00:43,613 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:00:43,927 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:00:48,921 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:00:48,921 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:00:53,620 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:00:53,920 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:00:58,918 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:00:58,919 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:01:03,917 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:01:03,917 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:01:06,927 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:01:06,927 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:01:08,923 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:01:08,927 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:01:13,613 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:01:13,924 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:01:18,928 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:01:18,934 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:01:23,914 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:01:23,920 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:01:28,607 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:01:28,939 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:01:33,610 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:01:33,922 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:01:38,924 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:01:38,926 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:01:43,916 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:01:43,920 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:01:47,861 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:01:48,177 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:01:52,867 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:01:53,180 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:01:58,170 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:01:58,173 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:02:02,861 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:02:03,162 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:02:06,921 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:02:06,921 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:02:07,860 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:02:08,168 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:02:12,872 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:02:13,186 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:02:18,215 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:02:18,228 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:02:22,851 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:02:23,176 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:02:28,180 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:02:28,180 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:02:33,172 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:02:33,174 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:02:38,186 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:02:38,188 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:02:42,852 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:02:43,148 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:02:48,189 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:02:48,193 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:02:53,162 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:02:53,178 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:02:58,161 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:02:58,172 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:03:02,860 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:03:03,158 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:03:06,937 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:03:06,940 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:03:07,866 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:03:08,182 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:03:12,868 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:03:13,172 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:03:18,196 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:03:18,204 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:03:22,857 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:03:23,179 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:03:28,198 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:03:28,209 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:03:33,185 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:03:33,201 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:03:38,166 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:03:38,172 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:03:42,871 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:03:43,178 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:03:48,172 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:03:48,183 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:03:53,193 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:03:53,194 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:03:58,196 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:03:58,196 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:04:03,793 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:04:04,107 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:15:37,693 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:15:37,981 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:15:38,344 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:15:38,380 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:15:42,361 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:15:42,435 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:15:42,830 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:15:43,134 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:15:48,989 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:15:49,009 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:15:53,931 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:15:53,943 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:15:58,568 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:15:58,891 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:16:03,875 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:16:03,878 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:16:06,903 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:16:06,905 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:16:08,875 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:16:08,883 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:16:13,888 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:16:13,889 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:16:18,583 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:16:18,896 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:16:23,121 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:16:23,133 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:16:28,569 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:16:28,895 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:16:33,587 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:16:33,887 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:16:38,882 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:16:38,889 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:16:43,575 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:16:43,888 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:16:48,873 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:16:48,873 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:16:53,903 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:16:53,903 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:16:58,584 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:16:58,900 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:17:03,871 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:17:03,874 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:17:06,912 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:17:06,912 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:17:08,862 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:17:08,862 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:17:13,896 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:17:13,896 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:17:18,588 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:17:18,894 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:18:06,900 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:18:06,907 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:18:07,259 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:18:07,259 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:18:54,338 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:18:54,340 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:18:58,336 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:18:58,342 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:19:03,563 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:19:03,881 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:19:06,896 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:19:06,899 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:19:08,566 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:19:08,887 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:19:13,573 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:19:13,880 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:19:18,883 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:19:18,890 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:19:23,559 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:19:23,879 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:19:28,880 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:19:28,882 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:19:33,267 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:19:33,267 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:19:38,587 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:19:38,893 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:19:43,892 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:19:43,892 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:19:48,574 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:19:48,882 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:19:53,575 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:19:53,884 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:19:58,879 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:19:58,884 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:20:03,580 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:20:03,891 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:20:06,899 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:20:06,899 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:20:07,813 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:20:08,133 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:20:13,572 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:20:13,884 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:20:18,881 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:20:18,881 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:20:23,576 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:20:23,883 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:20:28,870 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:20:28,883 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:20:33,141 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:20:33,149 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:20:37,823 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:20:38,131 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:20:43,135 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:20:43,153 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:20:47,819 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:20:48,145 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:20:52,824 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:20:53,132 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:20:58,140 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:20:58,157 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:21:03,552 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:21:03,884 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:21:06,898 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:21:06,918 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:21:08,562 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:21:08,886 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:21:13,581 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:21:13,890 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:21:18,857 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:21:18,872 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:21:23,584 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:21:23,893 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:21:28,880 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:21:28,886 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:21:33,895 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:21:33,896 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:21:38,594 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:21:38,900 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:21:43,876 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:21:43,878 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:21:48,583 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:21:48,894 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:21:53,578 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:21:53,889 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:21:58,874 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:21:58,876 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:22:06,897 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:22:06,897 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:22:07,231 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:22:07,231 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:23:06,897 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:23:06,897 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:23:07,227 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:23:07,227 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:24:06,901 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:24:06,917 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:24:07,227 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:24:07,233 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:25:06,890 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:25:07,149 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:25:07,223 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:25:07,238 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:26:06,957 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:26:06,957 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:26:07,272 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:26:07,272 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:27:06,921 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:27:06,921 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:27:07,215 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:27:07,247 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:28:06,910 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:28:06,930 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:28:07,238 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:28:07,239 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:29:06,906 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:29:06,911 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:29:07,238 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:29:07,246 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:30:06,905 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:30:06,930 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:30:07,240 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:30:07,254 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:31:06,927 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:31:07,150 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:31:07,208 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:31:07,244 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:32:06,885 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:32:06,901 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:32:07,218 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:32:07,218 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:33:06,909 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:33:06,911 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:33:07,234 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:33:07,237 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:34:06,901 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:34:06,901 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:35:06,944 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:35:06,946 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:35:07,264 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:35:07,280 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:36:06,938 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:36:06,938 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:36:07,269 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:36:07,288 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:37:06,929 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:37:06,960 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:37:07,296 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:37:07,320 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:38:06,903 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:38:06,908 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:38:07,228 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:38:07,236 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:39:06,914 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:39:06,918 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg
+2025-11-12 13:39:07,213 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-product.jpg
+2025-11-12 13:39:07,239 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/images/default-men.jpg

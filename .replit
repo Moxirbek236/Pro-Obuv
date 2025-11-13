@@ -1,16 +1,15 @@
-modules = ["python-3.12", "nodejs-20"]
+modules = ["python-3.12"]
 
 [nix]
 channel = "stable-25_05"
-packages = ["cargo", "freetype", "lcms2", "libiconv", "libimagequant", "libjpeg", "libtiff", "libwebp", "libxcrypt", "openjpeg", "rustc", "tcl", "tk", "zlib"]
+packages = ["cargo", "libiconv", "rustc"]
 
 [[ports]]
 localPort = 5000
 externalPort = 80
-exposeLocalhost = true
 
 [workflows]
-runButton = "Project"
+runButton = "Fixed Restaurant Server v5"
 
 [[workflows.workflow]]
 name = "Run Flask App"
@@ -246,13 +245,13 @@ args = "Flask App"
 name = "Flask App"
 author = "agent"
 
-[workflows.workflow.metadata]
-outputType = "webview"
-
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node app.js"
+args = "python app.py"
 waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
 
 [[workflows.workflow]]
 name = "Fixed Restaurant Server Final"

@@ -1,17 +1,24 @@
-{% extends "base.html" %} {% block title %}{{ seo_data.page_title }}{% endblock %} {% block seo_meta %}
-<title>{{ seo_data.page_title }}</title>
-<meta name="description" content="{{ seo_data.meta_description }}" />
-<meta name="keywords" content="{{ seo_data.meta_keywords }}" />
-<link rel="canonical" href="{{ seo_data.canonical_url }}" />
+{% extends "base.html" %} {% block title %}Pro Obuv — Магазин спецобуви и рабочей одежды | Safety.uz
+Maxsus poyabzall, Spetsobuv va Ish kiyimlari do‘koni
+Safety uz Footwear Workwear Store
+Арнайы аяқ киім мен жұмыс киімдері дүкені{% endblock %} {% block seo_meta %}
+<title>Pro Obuv — Магазин спецобуви и рабочей одежды | Safety.uz</title>
+<meta
+  name="description"
+  content="Safety.uz – магазин Pro Obuv. Спецобувь, рабочая одежда и средства защиты. Качественные товары, выгодные цены и быстрая доставка. Pro Obuv do‘koni. Spetsobuv, ish kiyimlari, spetsodejda va himoya poyabzallari. Sifatli mahsulotlar, qulay narxlar va tez yetkazib berish. Pro Obuv store. Safety footwear, workwear and protective equipment. High-quality products, affordable prices and fast delivery. Pro Obuv дүкені. Арнайы аяқ киім, жұмыс киімдері және қорғаныс құралдары. Сапалы тауарлар, тиімді бағалар және жылдам жеткізу. spest obuv spets obuv спетс обув спецобувь спецодежда" />
+<meta
+  name="keywords"
+  content="pro obuv, obuv, spetsobuv, spetsodejda, safety, oyoq kiyim, tufli, etik, ish kiyimlari, himoya poyabzal, botinki, krasofka, спетсообув, спецодежда, обувь, кроссовки, ботинки, safety shoes, work boots, professional footwear, protective shoes" />
+<link rel="canonical" href="{{ canonical_url() }}" />
 <meta property="og:type" content="website" />
-<meta property="og:title" content="{{ seo_data.og_title }}" />
-<meta property="og:description" content="{{ seo_data.og_description }}" />
+<meta property="og:title" content="Pro Obuv — Spetsobuv, Botinki, Krasofka va Ish kiyimlari" />
+<meta property="og:description" content="Spetsobuv, spetsodejda, botinki, krasofka va ish kiyimlari — Pro Obuv. Safety.uz da eng sifatli himoya poyabzallari" />
 <meta property="og:url" content="{{ request.url }}" />
-<meta property="og:image" content="{{ url_for('static', filename='defoult.png') }}" />
+<meta property="og:image" content="{{ prefer_webp(url_for('static', filename='defoult.png')) }}" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="{{ seo_data.og_title }}" />
-<meta name="twitter:description" content="{{ seo_data.og_description }}" />
-<meta name="twitter:image" content="{{ url_for('static', filename='defoult.png') }}" />
+<meta name="twitter:title" content="Pro Obuv — Spetsobuv, Botinki, Krasofka va Ish kiyimlari" />
+<meta name="twitter:description" content="Spetsobuv, spetsodejda, botinki, krasofka va ish kiyimlari — Pro Obuv. Safety.uz da eng sifatli himoya poyabzallari" />
+<meta name="twitter:image" content="{{ prefer_webp(url_for('static', filename='defoult.png')) }}" />
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -607,10 +614,35 @@
                     {% if item.media %}
                       {% for m in item.media %}
                         {% set src = (m.media_url if (m.media_url is defined) else (m.image_url if (m.image_url is defined) else (m if m is string else ''))) %}
-                        <img src="{{ src or '/static/defoult.png' }}" alt="{{ localized_field(item, 'name') or item.name }}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.png'" />
+                        {% if src %}
+                          <img
+                            src="{{ url_for('thumb', src=src, w=600) }}"
+                            srcset="{{ url_for('thumb', src=src, w=400) }} 400w, {{ url_for('thumb', src=src, w=800) }} 800w"
+                            sizes="(max-width: 600px) 100vw, 33vw"
+                            alt="{{ localized_field(item, 'name') or item.name }}"
+                            loading="lazy"
+                            decoding="async"
+                            onerror="this.src='{{ prefer_webp(url_for('static', filename='defoult.png')) }}'"
+                          />
+                        {% else %}
+                          <img src="{{ prefer_webp(url_for('static', filename='defoult.png')) }}" alt="{{ localized_field(item, 'name') or item.name }}" loading="lazy" decoding="async" />
+                        {% endif %}
                       {% endfor %}
-                    {% else %}
-                      <img src="{{ item.image_url or '/static/defoult.png' }}" alt="{{ localized_field(item, 'name') or item.name }}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.png'" />
+                      {% else %}
+                      {% set img_src = item.image_url or url_for('static', filename='defoult.png') %}
+                      {% if img_src.startswith('/static/') %}
+                        <img
+                          src="{{ url_for('thumb', src=img_src, w=600) }}"
+                          srcset="{{ url_for('thumb', src=img_src, w=400) }} 400w, {{ url_for('thumb', src=img_src, w=800) }} 800w"
+                          sizes="(max-width: 600px) 100vw, 33vw"
+                          alt="{{ localized_field(item, 'name') or item.name }}"
+                          loading="lazy"
+                          decoding="async"
+                          onerror="this.src='{{ prefer_webp(url_for('static', filename='defoult.png')) }}'"
+                        />
+                      {% else %}
+                        <img src="{{ img_src }}" alt="{{ localized_field(item, 'name') or item.name }}" loading="lazy" decoding="async" onerror="this.src='{{ prefer_webp(url_for('static', filename='defoult.png')) }}'" />
+                      {% endif %}
                     {% endif %}
                   </div>
                 </div>
@@ -3012,22 +3044,22 @@
 </style>
 
 <script>
-    // Build a safe menuData mapping using tojson so strings are properly escaped.
-    // This avoids breaking the JS if item names/descriptions contain quotes or newlines.
+    // Prefer embedding the full menu dataset as a JSON payload to avoid
+    // generating Javascript tokens via many Jinja statements. Placing a
+    // JSON blob in a script[type="application/json"] prevents accidental
+    // JS syntax errors when items contain brackets, backticks or other
+    // characters that can break inline script parsing.
     let menuData = {};
-    {% for item in men %}
-    menuData[{{ item.id }}] = {{ {
-        "id": item.id,
-        "name": item.name,
-        "description": item.description or 'Mahsulot tavsifi',
-  "image_url": item.image_url or '/static/defoult.png',
-        "rating": item.rating or 0,
-        "orders_count": item.orders_count or 0,
-        "sizes": item.sizes or '',
-        "colors": item.colors or '',
-        "category": (item.category or 'product')|lower
-    } | tojson }};
-    {% endfor %}
+    <script id="menu-data-json" type="application/json">{{ men | tojson }}</script>
+    try {
+      const raw = document.getElementById('menu-data-json') && document.getElementById('menu-data-json').textContent;
+      if (raw) {
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr)) {
+          arr.forEach(it => { if (it && it.id !== undefined) menuData[it.id] = it; });
+        }
+      }
+    } catch (e) { console.warn('Failed to parse menu-data-json', e); menuData = {}; }
 
     // Expose whether the current session is a staff session so JS can show staff-only controls
     const IS_STAFF = {{ (session.get('staff_id') and True) | tojson }};
@@ -3209,7 +3241,7 @@
       if (htmlLang) return htmlLang.split('-')[0];
       const cls = (document.body && document.body.className) || '';
       const m = cls.match(/lang-(uz|ru|en)/);
-      return (m && m[1]) ? m[1] : 'ru';
+      return (m && m[1]) ? m[1] : 'uz';
     }
 
     // Robust parser for option lists: accept arrays, JSON strings, comma lists
@@ -3304,8 +3336,10 @@
         // ensure pointer events allowed
         div.style.pointerEvents = 'auto';
 
+        // compute safe src value to avoid leaving unrendered template literals in DOM
+        const imgSrc = (item && (item.image_url || item.image)) ? (item.image_url || item.image) : '/static/defoult.webp';
         div.innerHTML = `
-          <div class="card-image"><img src="${item.image_url || '/static/defoult.png'}" alt="${escapeHtml(item.name || 'Mahsulot rasm') }" title="${escapeHtml(item.name || 'Mahsulot')}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.png'"/></div>
+          <div class="card-image"><img src="${imgSrc}" alt="${escapeHtml(item.name || 'Mahsulot rasm') }" title="${escapeHtml(item.name || 'Mahsulot')}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.webp'"/></div>
           <div class="card-body">
             <h3 class="card-title">${item.name}</h3>
             <p class="card-category">${item.category || ''}</p>
@@ -4497,7 +4531,8 @@
                 </div>
                 <div class="rating-modal-body">
                     <div class="rating-item-info">
-                        <img src="${item.image_url || item.image || '/static/defoult.png'}" alt="${item.name}" class="rating-item-image" onerror="this.src='/static/defoult.png'">
+                        // compute image src for rating modal safely
+                        <img src="${(typeof item === 'object' && (item.image_url || item.image)) ? (item.image_url || item.image) : '/static/defoult.webp'}" alt="${item.name}" class="rating-item-image" onerror="this.src='/static/defoult.webp'">
                         <p class="rating-item-name">${item.name}</p>
                     </div>
 

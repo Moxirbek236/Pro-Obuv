@@ -1,0 +1,114 @@
+[33mf92f023[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mrestore-backup[m[33m)[m HEAD@{0}: reset: moving to HEAD@{5}
+[33m67dacc5[m HEAD@{1}: reset: moving to HEAD@{3}
+[33m447f2d5[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m HEAD@{2}: checkout: moving from main to restore-backup
+[33m447f2d5[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m HEAD@{3}: reset: moving to HEAD@{3}
+[33m447f2d5[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m HEAD@{4}: rebase (abort): returning to refs/heads/main
+[33m67dacc5[m HEAD@{5}: commit: fixerrors
+[33mf92f023[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mrestore-backup[m[33m)[m HEAD@{6}: pull origin main --rebase (start): checkout f92f0231712d369f718ec1be1dd9bd13687179b0
+[33m447f2d5[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m HEAD@{7}: commit: Ignore SQLite WAL file
+[33m8934bc8[m HEAD@{8}: commit: Save local changes
+[33m4f0d59c[m HEAD@{9}: commit: Save local changes
+[33mdc7a135[m HEAD@{10}: commit: pull
+[33m17586ac[m HEAD@{11}: commit: changes
+[33m492393a[m HEAD@{12}: commit: fixlanguage
+[33m7d3993a[m HEAD@{13}: commit: y4
+[33m9cf377c[m HEAD@{14}: commit: y3
+[33m44b36f3[m HEAD@{15}: commit: y2
+[33m3bdde9a[m HEAD@{16}: commit: y1
+[33me44e908[m HEAD@{17}: commit: yandex2
+[33me7ab2bd[m HEAD@{18}: commit: yandex1
+[33m026704a[m HEAD@{19}: commit: yandex
+[33m4582f34[m HEAD@{20}: commit: Fixedseo
+[33m0bd91cd[m HEAD@{21}: commit: changetitle
+[33m471572b[m HEAD@{22}: commit: newtitle
+[33mf4263e7[m HEAD@{23}: commit: fix(sitemap): serve sitemap.xml from static/ or project root to avoid 404s
+[33m70ad88e[m HEAD@{24}: commit: new languages
+[33m2104dcf[m HEAD@{25}: commit: newsedit
+[33m1abc859[m HEAD@{26}: commit: newsadd
+[33m9b2cbb4[m HEAD@{27}: commit: new shoes
+[33m4eaa40b[m HEAD@{28}: commit: fix errs
+[33m45e3333[m HEAD@{29}: commit: fix(news): preserve HTTPExceptions in news_detail so abort(404) returns 404 instead of 500
+[33m9672320[m HEAD@{30}: commit: fix(news): import abort and provide fallback abort() to avoid NameError
+[33mff07f15[m HEAD@{31}: commit: serach
+[33mbee0eef[m HEAD@{32}: commit: fix(seo): emit absolute image/url and numeric price for Product JSON-LD
+[33m03d4693[m HEAD@{33}: commit: davay
+[33mbb8c386[m HEAD@{34}: commit: fix(news): remove duplicate news_detail endpoint to avoid Flask route overwrite
+[33m792b95e[m HEAD@{35}: commit: fix(seo): emit safe JSON-LD for Product using tojson to avoid broken structured data
+[33mb4dca34[m HEAD@{36}: commit: feat(news): add seo_data to news detail and link ticker items to per-news pages
+[33m9336ff9[m HEAD@{37}: commit: fix(menu): harmonize menu & base responsive breakpoints; add centralized overrides for sidebar/content/menu-grid
+[33md5b2ba1[m HEAD@{38}: commit: soeerr
+[33m98a31e8[m HEAD@{39}: commit: fix(sitemap): serve sitemap.xml from static/ or project root to avoid 404s
+[33m059f1cd[m HEAD@{40}: commit: seoo
+[33m8f7d245[m HEAD@{41}: commit: newseo
+[33m0f85b94[m HEAD@{42}: commit: fix(ui): repair footer HTML, remove duplicate ticker button, replace chat/notify emoji with icons
+[33mcccc3ce[m HEAD@{43}: commit: feat(seo): add expanded keywords and site-wide search + popular searches to index
+[33m0944f2e[m HEAD@{44}: commit: feat(seo): add expanded keywords and site-wide search form to index
+[33meecf305[m HEAD@{45}: commit: menu
+[33m74061c6[m HEAD@{46}: commit: home
+[33m862cfa1[m HEAD@{47}: commit: chore(seo): prefer https://safety.uz canonical + social URLs for main templates
+[33m7e82fc5[m HEAD@{48}: commit: seoop
+[33mccf89cf[m HEAD@{49}: commit: chore: regenerate sitemap for safety.uz, www.safety.uz
+[33m009c306[m HEAD@{50}: commit: favicons
+[33m0b1892c[m HEAD@{51}: commit: title
+[33mea2a01c[m HEAD@{52}: commit: lenta1
+[33m2190d8a[m HEAD@{53}: commit: lenta
+[33m52dd6c9[m HEAD@{54}: commit: seo3]4
+[33md49bdb8[m HEAD@{55}: commit: seo3
+[33m002edbb[m HEAD@{56}: commit: seo2
+[33ma88ffa6[m HEAD@{57}: commit: seo1
+[33mc73adc4[m HEAD@{58}: commit: seo
+[33m954d875[m HEAD@{59}: commit: both5
+[33m97995b4[m HEAD@{60}: commit: both4
+[33m7aae1b9[m HEAD@{61}: commit: both3
+[33mb9fdc08[m HEAD@{62}: commit: both2
+[33m071df28[m HEAD@{63}: commit: both
+[33me904173[m HEAD@{64}: commit: new products
+[33m056cc81[m HEAD@{65}: commit: ai
+[33maa9ccba[m HEAD@{66}: commit: tg bot
+[33mabb5135[m HEAD@{67}: pull origin main --rebase (finish): returning to refs/heads/main
+[33mabb5135[m HEAD@{68}: pull origin main --rebase (pick): Remove locked log file and clean repo
+[33mf0735bb[m HEAD@{69}: pull origin main --rebase (pick): Local changes before rebase
+[33m276648d[m HEAD@{70}: pull origin main --rebase (pick): image
+[33mb347bb1[m HEAD@{71}: pull origin main --rebase (pick): icon add
+[33m57cb7ff[m HEAD@{72}: pull origin main --rebase (start): checkout 57cb7ffc37a572af76e17cbc2aa87c42ff5b71ee
+[33m781069f[m HEAD@{73}: commit: Remove locked log file and clean repo
+[33m90a6863[m HEAD@{74}: commit: Local changes before rebase
+[33ma3afd54[m HEAD@{75}: commit: image
+[33m4b15fbc[m HEAD@{76}: commit: icon add
+[33m5744e00[m HEAD@{77}: commit: tg bot added
+[33mb780cf4[m HEAD@{78}: commit: proobuv
+[33m13e5821[m HEAD@{79}: commit: sitemap
+[33m9d2ee96[m HEAD@{80}: commit: seo
+[33mb927aee[m HEAD@{81}: commit: seo optimization
+[33m77d8255[m HEAD@{82}: commit: py version1
+[33me3bf37b[m HEAD@{83}: commit: ure
+[33m977367e[m HEAD@{84}: commit: Fix: use Python 3.11.9 and Pillow 9.5.0 for Render deploy
+[33mf96e65d[m HEAD@{85}: commit: Fix: downgrade Pillow for Render compatibility
+[33m2d25733[m HEAD@{86}: commit: Fix: change python to 3.11.9 and Pillow version
+[33m073ab08[m HEAD@{87}: commit: Fix: use python 3.11.9 for Render deploy
+[33mdcab549[m HEAD@{88}: Branch: renamed refs/heads/main to refs/heads/main
+[33mdcab549[m HEAD@{90}: commit: runtime.xt versiya1
+[33maf2e865[m HEAD@{91}: Branch: renamed refs/heads/main to refs/heads/main
+[33maf2e865[m HEAD@{93}: commit: runtime.txt versiya1
+[33m733535a[m HEAD@{94}: Branch: renamed refs/heads/main to refs/heads/main
+[33m733535a[m HEAD@{96}: commit: runtime.txt versiya
+[33m95e20bf[m HEAD@{97}: Branch: renamed refs/heads/main to refs/heads/main
+[33m95e20bf[m HEAD@{99}: commit: runtime versiya
+[33mcb39235[m HEAD@{100}: Branch: renamed refs/heads/main to refs/heads/main
+[33mcb39235[m HEAD@{102}: commit: nev versiya
+[33mac98e66[m HEAD@{103}: commit: new add
+[33ma2bb121[m HEAD@{104}: commit: app.js yangilandi, python bilan ishlash qo‘shildi
+[33m2c2b973[m[33m ([m[1;31morigin/master[m[33m)[m HEAD@{105}: commit: Checkpoint before assistant change: Enhance restaurant system with improved styling and functionality
+[33m825e97b[m HEAD@{106}: commit: Yangilanish qo‘shildi
+[33mf981065[m HEAD@{107}: commit: go
+[33m82275b2[m HEAD@{108}: rebase (abort): returning to refs/heads/main
+[33m63c6b41[m HEAD@{109}: commit (amend): Checkpoint before assistant change: Improve staff login functionality and database connection handling
+[33mf89949d[m HEAD@{110}: rebase (pick): Checkpoint before assistant change: Improve staff login functionality and database connection handling
+[33m9bac073[m HEAD@{111}: rebase (pick): Assistant checkpoint: Super admin va staff sahifalarini tuzatish
+[33m75b4a58[m HEAD@{112}: rebase (pick): Checkpoint before assistant change: Fix error on admin and employee pages showing "page not found"
+[33me45c2ce[m HEAD@{113}: rebase (pick): Checkpoint before assistant change: Update the database file to fix errors and improve functionality
+[33m583ed35[m HEAD@{114}: rebase (pick): Assistant checkpoint: Navbarlarni asl oddiy holatiga qaytarildi
+[33m9e1978e[m HEAD@{115}: rebase (pick): Checkpoint before assistant change: Revert database changes to a previous state
+[33m896a2b0[m HEAD@{116}: rebase (pick): Assistant checkpoint: Xodim va kuryer navbarlarini yangilash
+[33mde9011e[m HEAD@{117}: rebase (pick): Assistant checkpoint
+[33m78cb77c[m HEAD@{1

@@ -201,6 +201,13 @@ _translations = load_translations()
 def get_current_language():
     """Joriy tilni qaytarish"""
     # Prefer unified 'interface_language' session key; fall back to legacy 'language'
+    # If a request-scoped value was set earlier (g.interface_language), prefer it.
+    try:
+        from flask import g
+        if hasattr(g, 'interface_language') and g.interface_language:
+            return g.interface_language
+    except Exception:
+        pass
     return session.get('interface_language', session.get('language', Config.DEFAULT_LANGUAGE))
 
 def set_language(lang_code):
