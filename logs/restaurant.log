@@ -28481,3 +28481,4 @@ jinja2.exceptions.TemplateSyntaxError: expected token 'end of statement block', 
 2025-11-13 20:18:41,651 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/44_d9bca2e4da804d3cbe0d1b354fc84524.webp
 2025-11-13 20:18:41,660 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/52_5f7339192060462db595de88004deaef.webp
 2025-11-13 20:18:41,667 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/53_e7a80d60e14d42508153a5fbfd8bebe9.webp
+2025-11-13 20:18:41,857 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/products/49_2e1e61f690bf480a99454a1548463404.webp
