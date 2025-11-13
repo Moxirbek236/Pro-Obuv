@@ -1,2 +1,4 @@
+logs/
+*.pid
 node_modules
 database.sqlite3-wal
