@@ -54870,3 +54870,4 @@ Make sure all imports, decorators, functions, etc. needed to set up the applicat
 2025-11-14 16:05:55,135 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/defoult.png
 2025-11-14 16:05:55,294 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/defoult.png
 2025-11-14 16:05:55,449 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/defoult.png
+2025-11-14 16:05:55,611 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/defoult.png
