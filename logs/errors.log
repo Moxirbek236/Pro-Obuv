@@ -1224,3 +1224,5 @@ jinja2.exceptions.TemplateSyntaxError: expected token 'end of statement block', 
 
 2025-11-13 16:09:57,373 | ERROR | restaurant_app | menu:7540 | Menu endpoint error: unexpected char '\\' at 12488
 2025-11-13 16:09:57,414 | ERROR | restaurant_app | menu:7570 | Menu fallback error: unexpected char '\\' at 12488
+2025-11-14 08:20:26,792 | ERROR | restaurant_app | add_to_cart:8445 | Add to cart error: The setup method 'route' can no longer be called on the application. It has already handled its first request, any changes will not be applied consistently.
+Make sure all imports, decorators, functions, etc. needed to set up the application are done before running it.
