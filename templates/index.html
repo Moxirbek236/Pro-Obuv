@@ -23,7 +23,7 @@
     <meta property="og:url" content="{{ canonical_url() }}" />
     <meta
       property="og:image"
-      content="{{ prefer_webp(url_for('static', filename='defoult.png', _external=True)) }}" />
+      content="{{ prefer_webp(url_for('static', filename='defoult.webp', _external=True)) }}" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta
       name="twitter:title"
@@ -33,7 +33,7 @@
       content="O'zbekistondagi eng yaxshi spetsobuv va ish kiyimlari do'koni. Tez yetkazib berish, kafolat." />
     <meta
       name="twitter:image"
-      content="{{ prefer_webp(url_for('static', filename='defoult.png', _external=True)) }}" />
+      content="{{ prefer_webp(url_for('static', filename='defoult.webp', _external=True)) }}" />
     <link rel="canonical" href="{{ canonical_url() }}" />
     <script type="application/ld+json">
       {
@@ -42,7 +42,7 @@
         "name": "Pro Obuv",
         "description": "Sifatli spetsobuv va ish kiyimlari do'koni",
         "url": "{{ canonical_url() }}",
-        "logo": "{{ prefer_webp(url_for('static', filename='defoult.png', _external=True)) }}",
+        "logo": "{{ prefer_webp(url_for('static', filename='defoult.webp', _external=True)) }}",
         "address": {
           "@type": "PostalAddress",
           "addressLocality": "Toshkent",
@@ -55,17 +55,17 @@
     <link
       rel="apple-touch-icon"
       sizes="180x180"
-      href="{{ url_for('static', filename='apple-touch-icon.png') }}" />
+      href="{{ url_for('static', filename='apple-touch-icon.webp') }}" />
     <link
       rel="icon"
-      type="image/png"
+      type="image/webp"
       sizes="32x32"
-      href="{{ url_for('static', filename='favicon-32x32.png') }}" />
+      href="{{ url_for('static', filename='favicon-32x32.webp') }}" />
     <link
       rel="icon"
-      type="image/png"
+      type="image/webp"
       sizes="16x16"
-      href="{{ url_for('static', filename='favicon-16x16.png') }}" />
+      href="{{ url_for('static', filename='favicon-16x16.webp') }}" />
     <link
       rel="manifest"
       href="{{ url_for('static', filename='site.webmanifest') }}" />

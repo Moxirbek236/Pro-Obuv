@@ -7,11 +7,11 @@
 <meta property="og:title" content="{{ seo_data.og_title }}" />
 <meta property="og:description" content="{{ seo_data.og_description }}" />
 <meta property="og:url" content="{{ request.url }}" />
-<meta property="og:image" content="{{ url_for('static', filename='defoult.png') }}" />
+<meta property="og:image" content="{{ url_for('static', filename='defoult.webp') }}" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="{{ seo_data.og_title }}" />
 <meta name="twitter:description" content="{{ seo_data.og_description }}" />
-<meta name="twitter:image" content="{{ url_for('static', filename='defoult.png') }}" />
+<meta name="twitter:image" content="{{ url_for('static', filename='defoult.webp') }}" />
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -607,10 +607,10 @@
                     {% if item.media %}
                       {% for m in item.media %}
                         {% set src = (m.media_url if (m.media_url is defined) else (m.image_url if (m.image_url is defined) else (m if m is string else ''))) %}
-                        <img src="{{ src or '/static/defoult.png' }}" alt="{{ localized_field(item, 'name') or item.name }}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.png'" />
+                        <img src="{{ src or '/static/defoult.webp' }}" alt="{{ localized_field(item, 'name') or item.name }}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.webp'" />
                       {% endfor %}
                     {% else %}
-                      <img src="{{ item.image_url or '/static/defoult.png' }}" alt="{{ localized_field(item, 'name') or item.name }}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.png'" />
+                      <img src="{{ item.image_url or '/static/defoult.webp' }}" alt="{{ localized_field(item, 'name') or item.name }}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.webp'" />
                     {% endif %}
                   </div>
                 </div>
@@ -3020,7 +3020,7 @@
         "id": item.id,
         "name": item.name,
         "description": item.description or 'Mahsulot tavsifi',
-  "image_url": item.image_url or '/static/defoult.png',
+  "image_url": item.image_url or '/static/defoult.webp',
         "rating": item.rating or 0,
         "orders_count": item.orders_count or 0,
         "sizes": item.sizes or '',
@@ -3305,7 +3305,7 @@
         div.style.pointerEvents = 'auto';
 
         div.innerHTML = `
-          <div class="card-image"><img src="${item.image_url || '/static/defoult.png'}" alt="${escapeHtml(item.name || 'Mahsulot rasm') }" title="${escapeHtml(item.name || 'Mahsulot')}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.png'"/></div>
+          <div class="card-image"><img src="${item.image_url || '/static/defoult.webp'}" alt="${escapeHtml(item.name || 'Mahsulot rasm') }" title="${escapeHtml(item.name || 'Mahsulot')}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.webp'"/></div>
           <div class="card-body">
             <h3 class="card-title">${item.name}</h3>
             <p class="card-category">${item.category || ''}</p>
@@ -4497,7 +4497,7 @@
                 </div>
                 <div class="rating-modal-body">
                     <div class="rating-item-info">
-                        <img src="${item.image_url || item.image || '/static/defoult.png'}" alt="${item.name}" class="rating-item-image" onerror="this.src='/static/defoult.png'">
+                        <img src="${item.image_url || item.image || '/static/defoult.webp'}" alt="${item.name}" class="rating-item-image" onerror="this.src='/static/defoult.webp'">
                         <p class="rating-item-name">${item.name}</p>
                     </div>
 

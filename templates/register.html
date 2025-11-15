@@ -19,7 +19,7 @@
     <div class="auth-card">
       <div class="brand">
         <img
-          src="{{ url_for('static', filename='icons/logo-compact.png') }}"
+          src="{{ url_for('static', filename='icons/logo-compact.webp') }}"
           alt="logo"
           onerror="this.style.display='none'" />
         <div>
@@ -299,7 +299,7 @@
 
           // Create map
           registerMap = L.map("register-map").setView(tashkent, 12);
-          L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.webp", {
             maxZoom: 19,
             attribution: "&copy; OpenStreetMap contributors",
           }).addTo(registerMap);

@@ -81,9 +81,9 @@
   </script>
   {% endblock %}
     <!-- Favicons -->
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='favicons/apple-touch-icon.png') }}" />
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicons/favicon-32x32.png') }}" />
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicons/favicon-16x16.png') }}" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='favicons/apple-touch-icon.webp') }}" />
+    <link rel="icon" type="image/webp" sizes="32x32" href="{{ url_for('static', filename='favicons/favicon-32x32.webp') }}" />
+    <link rel="icon" type="image/webp" sizes="16x16" href="{{ url_for('static', filename='favicons/favicon-16x16.webp') }}" />
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicons/favicon.ico') }}" />
     <link rel="manifest" href="{{ url_for('static', filename='favicons/site.webmanifest') }}" />
     <meta name="theme-color" content="#4299e1" />
@@ -1611,17 +1611,17 @@
               {% else %}
               <a href="tel:{{ get_text('footer.phone_href') }}" class="social-icon-btn phone" aria-label="Phone" title="Call us">
               {% endif %}
-                <img src="{{ prefer_webp(url_for('static', filename='icons/phone.png')) }}" alt="Phone" width="24" height="24">
+                <img src="{{ prefer_webp(url_for('static', filename='icons/phone.webp')) }}" alt="Phone" width="24" height="24">
               </a>
 
               <!-- Gmail / Email -->
               <a href="mailto:premiumsafety@mail.ru" class="social-icon-btn email" aria-label="Email" title="Email">
-                <img src="{{ prefer_webp(url_for('static', filename='icons/gmail.png')) }}" alt="Email" width="24" height="24">
+                <img src="{{ prefer_webp(url_for('static', filename='icons/gmail.webp')) }}" alt="Email" width="24" height="24">
               </a>
 
               <!-- Google Maps -->
               <a href="https://maps.app.goo.gl/Ezg462SRmBYLxfUY6" target="_blank" class="social-icon-btn maps" aria-label="Google Maps" title="Map">
-                <img src="{{ prefer_webp(url_for('static', filename='icons/maps.png')) }}" alt="Map" width="24" height="24">
+                <img src="{{ prefer_webp(url_for('static', filename='icons/maps.webp')) }}" alt="Map" width="24" height="24">
               </a>
 
               <!-- Threads -->
@@ -1636,12 +1636,12 @@
 
               <!-- Uzum (market) -->
               <a href="https://uzum.uz/" target="_blank" class="social-icon-btn uzum" aria-label="Uzum" title="Uzum">
-                <img src="{{ prefer_webp(url_for('static', filename='icons/uzum.png')) }}" alt="Uzum" width="24" height="24">
+                <img src="{{ prefer_webp(url_for('static', filename='icons/uzum.webp')) }}" alt="Uzum" width="24" height="24">
               </a>
 
-              <!-- Yandex Market (icon fallback to maps.png if specific svg missing) -->
+              <!-- Yandex Market (icon fallback to maps.webp if specific svg missing) -->
               <a href="https://market.yandex.ru/" target="_blank" class="social-icon-btn yandex" aria-label="Yandex Market" title="Yandex Market">
-                <img src="{{ prefer_webp(url_for('static', filename='icons/maps.png')) }}" alt="Yandex Market" width="24" height="24">
+                <img src="{{ prefer_webp(url_for('static', filename='icons/maps.webp')) }}" alt="Yandex Market" width="24" height="24">
               </a>
             </div>
             <!-- Newsletter signup (non-blocking, posts to /subscribe endpoint if available) -->
