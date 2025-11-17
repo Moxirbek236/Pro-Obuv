@@ -979,7 +979,8 @@
                   class="rounded-circle"
                   width="32"
                   height="32"
-                  style="object-fit: cover; margin-right: 8px" />
+                  style="object-fit: cover; margin-right: 8px"
+                  onerror="this.onerror=null;this.src='/static/images/default-avatar.svg';" />
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li class="px-3 py-2 d-flex align-items-center">
@@ -989,7 +990,8 @@
                     class="rounded-circle me-2"
                     width="48"
                     height="48"
-                    style="object-fit: cover" />
+                    style="object-fit: cover"
+                    onerror="this.onerror=null;this.src='/static/images/default-avatar.svg';" />
                   <div>
                     <div class="fw-bold">
                       {{ session.get('user_name', 'Foydalanuvchi') }}
@@ -1114,7 +1116,8 @@
                   class="rounded-circle"
                   width="32"
                   height="32"
-                  style="object-fit: cover; margin-right: 8px" />
+                  style="object-fit: cover; margin-right: 8px"
+                  onerror="this.onerror=null;this.src='/static/images/default-avatar.svg';" />
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li class="px-3 py-2 d-flex align-items-center">
@@ -1124,7 +1127,8 @@
                     class="rounded-circle me-2"
                     width="48"
                     height="48"
-                    style="object-fit: cover" />
+                    style="object-fit: cover"
+                    onerror="this.onerror=null;this.src='/static/images/default-avatar.svg';" />
                   <div>
                     <div class="fw-bold">
                       {{ session.get('staff_name', 'Xodim') }}
@@ -1262,7 +1266,8 @@
                   class="rounded-circle"
                   width="32"
                   height="32"
-                  style="object-fit: cover; margin-right: 8px" />
+                  style="object-fit: cover; margin-right: 8px"
+                  onerror="this.onerror=null;this.src='/static/images/default-avatar.svg';" />
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li class="px-3 py-2 d-flex align-items-center">
@@ -1272,7 +1277,8 @@
                     class="rounded-circle me-2"
                     width="48"
                     height="48"
-                    style="object-fit: cover" />
+                    style="object-fit: cover"
+                    onerror="this.onerror=null;this.src='/static/images/default-avatar.svg';" />
                   <div>
                     <div class="fw-bold">
                       {{ session.get('courier_name', 'Kuryer') }}
@@ -1367,7 +1373,8 @@
                 class="rounded-circle"
                 width="32"
                 height="32"
-                style="object-fit: cover; margin-right: 8px" />
+                style="object-fit: cover; margin-right: 8px"
+                onerror="this.onerror=null;this.src='/static/images/default-avatar.svg';" />
                 <span class="navbar-text text-white me-3">{{ user_profile.name or session.get('user_name', _('nav.profile')) }}</span>
               <button
                 type="button"
@@ -1401,7 +1408,8 @@
                     class="rounded-circle"
                     width="32"
                     height="32"
-                    style="object-fit: cover; margin-right: 8px" />
+                    style="object-fit: cover; margin-right: 8px"
+                    onerror="this.onerror=null;this.src='/static/images/default-avatar.svg';" />
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li class="px-3 py-2 d-flex align-items-center">
@@ -1411,7 +1419,8 @@
                     class="rounded-circle me-2"
                     width="48"
                     height="48"
-                    style="object-fit: cover" />
+                    style="object-fit: cover"
+                    onerror="this.onerror=null;this.src='/static/images/default-avatar.svg';" />
                   <div>
                     <div class="fw-bold">
                       {{ user_profile.name or session.get('user_name', 'Foydalanuvchi') }}
@@ -3710,20 +3719,9 @@
       })();
     </script>
 
-    <!-- News ticker is initialized from static/main.js to avoid duplicate implementations -->
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        try {
-          // If static/main.js provided a NewsTicker, use it; otherwise fire a refresh event
-          if (window.newsTicker && typeof window.newsTicker.loadNews === 'function') {
-            // ensure it's initialized
-            try { window.newsTicker.loadNews(); } catch (e) {}
-          } else {
-            try { window.dispatchEvent(new Event('refreshNewsTicker')); } catch (e) {}
-          }
-        } catch (e) { /* ignore */ }
-      });
-    </script>
+    <!-- News ticker is now fully managed from static/main.js (NewsTicker class).
+         Extra initialization here was causing duplicate requests to data/news.json,
+         so it has been removed. -->
 
     <!-- Enhanced Telegram-style Chat Widget - Only for Staff, Courier, SuperAdmin -->
     {% if is_staff or is_courier or is_super_admin %}
@@ -3896,8 +3894,8 @@
       /* Public AI chat widget styles */
       .public-chat-fab {
         position: fixed;
-        right: 20px;
-        bottom: 100px;
+        left: 16px;
+        bottom: 20px;
         width: 56px;
         height: 56px;
         border-radius: 50%;
@@ -3906,12 +3904,27 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        z-index: 1200; /* lowered/normalized to match chat panel stacking */
+        z-index: 1200; /* above content but below navbar/footer */
         cursor: pointer;
         font-size: 22px;
         box-shadow: 0 8px 25px rgba(0,0,0,0.12);
       }
-      .public-chat-panel { position: fixed; right: 20px; bottom: 170px; width: 360px; max-width: calc(100% - 40px); height: 520px; background: white; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); display: none; z-index:1200; flex-direction:column; overflow:hidden; }
+      /* Public chat panel (AI/operator chat window) created by static/chat_widget.js */
+      .public-chat-panel {
+        position: fixed;
+        left: 16px;
+        bottom: 90px;
+        width: 360px;
+        max-width: calc(100% - 40px);
+        height: 520px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        display: none;
+        z-index: 1200;
+        flex-direction: column;
+        overflow: hidden;
+      }
       .public-chat-panel.open { display:flex; }
       .public-chat-header{ background:linear-gradient(135deg,#6f42c1,#8a63d2); color:white; padding:10px 12px; font-weight:600; display:flex; justify-content:space-between; align-items:center }
       .public-chat-body{ padding:12px; flex:1; overflow:auto }
@@ -3921,6 +3934,37 @@
       .msg{ margin-bottom:8px; padding:8px 10px; border-radius:8px; max-width:80%; }
       .msg.ai{ background:#f1f5f9; align-self:flex-start }
       .msg.me{ background:#dcf8c6; align-self:flex-end }
+
+      /* Chat menu (AI / Operator / Savol yuborish) created by static/chat_widget.js */
+      .public-chat-menu {
+        position: fixed;
+        left: 16px;
+        bottom: 90px;
+        background: rgba(15,23,36,0.98);
+        color: #fff;
+        border-radius: 10px;
+        padding: 8px;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+        display: none;
+        flex-direction: column;
+        gap: 6px;
+        z-index: 1200;
+        min-width: 220px;
+      }
+      .public-chat-menu.open { display: flex; }
+      .chat-menu-item {
+        border: none;
+        background: transparent;
+        color: #fff;
+        text-align: left;
+        padding: 8px 10px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      .chat-menu-item:hover {
+        background: rgba(255,255,255,0.08);
+      }
 
       .chat-item-avatar {
         width: 40px;
@@ -5491,120 +5535,10 @@
             if(btn) btn.addEventListener('click', saveTickerNews);
           })();
     </script>
-    <!-- Global floating chat widget (visible for all users) -->
-    <style>
-      #chatWidgetBtn {
-        position: fixed;
-        right: 18px;
-        bottom: 18px;
-        z-index: 1080;
-        width: 56px;
-        height: 56px;
-        border-radius: 50%;
-        box-shadow: 0 6px 16px rgba(0,0,0,0.25);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      #chatWidgetPanel {
-        position: fixed;
-        right: 18px;
-        bottom: 86px;
-        z-index: 1080;
-        width: 340px;
-        max-width: calc(100vw - 24px);
-        height: 440px;
-        background: var(--bg-color);
-        color: var(--text-color);
-        border: 1px solid rgba(0,0,0,0.08);
-        border-radius: 12px;
-        box-shadow: 0 10px 24px rgba(0,0,0,0.18);
-        display: none;
-        overflow: hidden;
-      }
-      #chatWidgetHeader {
-        height: 56px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 12px;
-        background: #0f1724;
-        color: #fff;
-      }
-      #chatWidgetMessages {
-        height: 300px;
-        overflow-y: auto;
-        padding: 10px 12px;
-        background: rgba(0,0,0,0.02);
-      }
-      .chat-msg { margin: 6px 0; max-width: 82%; padding: 8px 10px; border-radius: 10px; font-size: 14px; line-height: 1.35; }
-      .chat-user { background: #0d6efd; color: #fff; margin-left: auto; border-bottom-right-radius: 2px; }
-      .chat-bot  { background: #e9ecef; color: #111; border-bottom-left-radius: 2px; }
-      body.dark-theme .chat-bot  { background: #1f2a37; color: #e6eef8; }
-      #chatWidgetInputRow { height: 84px; display: flex; flex-direction: column; padding: 8px; gap: 6px; background: var(--bg-color); }
-      #chatWidgetInput { flex: 1; resize: none; }
-    </style>
-
-    <button id="chatWidgetBtn" class="btn btn-primary" aria-label="Chat">
-      <i class="bi bi-chat-dots-fill" style="font-size:20px"></i>
-    </button>
-
-    <div id="chatWidgetPanel" role="dialog" aria-label="Live chat">
-        <div id="chatWidgetHeader">
-        <div style="font-weight:600">{{ _('chat.online_chat') }}</div>
-        <button id="chatWidgetClose" class="btn btn-sm btn-light">{{ _('chat.close') }}</button>
-      </div>
-      <div id="chatWidgetMessages"></div>
-      <div id="chatWidgetInputRow">
-        <textarea id="chatWidgetInput" class="form-control" rows="2" placeholder="{{ _('chat.write_message') }}"></textarea>
-        <div class="d-flex justify-content-end">
-          <button id="chatWidgetSend" class="btn btn-primary btn-sm">{{ _('chat.send') }}</button>
-        </div>
-      </div>
-    </div>
-
-    <script>
-      (function(){
-        const btn = document.getElementById('chatWidgetBtn');
-        const panel = document.getElementById('chatWidgetPanel');
-        const closeBtn = document.getElementById('chatWidgetClose');
-        const messages = document.getElementById('chatWidgetMessages');
-        const input = document.getElementById('chatWidgetInput');
-        const send = document.getElementById('chatWidgetSend');
-
-        function togglePanel(show){ panel.style.display = show ? 'block' : (panel.style.display==='block'?'none':'block'); }
-        function appendMsg(text, who){
-          const div = document.createElement('div');
-          div.className = 'chat-msg ' + (who==='user'?'chat-user':'chat-bot');
-          div.textContent = text;
-          messages.appendChild(div);
-          messages.scrollTop = messages.scrollHeight;
-        }
-        async function sendMsg(){
-          const t = (input.value||'').trim();
-          if(!t) return;
-          appendMsg(t, 'user');
-          input.value='';
-            try{
-            const r = await fetch('/api/chat/ai', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ text: t, sender: 'web' }) });
-            const j = await r.json().catch(()=>({}));
-            const reply = (j && j.reply) || {{ _('messages.message_received')|tojson }};
-            appendMsg(reply, 'bot');
-          }catch(e){ appendMsg({{ _('messages.connection_error')|tojson }}, 'bot'); }
-        }
-
-          if(btn) btn.addEventListener('click', ()=>togglePanel());
-        if(closeBtn) closeBtn.addEventListener('click', ()=>togglePanel(false));
-        if(send) send.addEventListener('click', sendMsg);
-        if(input) input.addEventListener('keydown', (e)=>{ if((e.key==='Enter' && !e.shiftKey)){ e.preventDefault(); sendMsg(); } });
-
-        // Optional: greeting message when opened first time
-        let greeted = false;
-        if(btn) btn.addEventListener('click', ()=>{
-          if(!greeted && panel.style.display !== 'none'){ appendMsg({{ _('chat.greeting')|tojson }}, 'bot'); greeted = true; }
-        });
-      })();
-    </script>
+    {# Legacy AI-only chat widget (chatWidgetBtn / chatWidgetPanel) removed.
+       Public chat for users is now handled by /static/chat_widget.js, which
+       shows a menu with options: AI bilan suhbat, Operator bilan suhbat,
+       Savol yuborish. #}
 
       <script>
         // Footer responsive toggles: allow mobile users to expand/collapse sections
@@ -5645,10 +5579,22 @@
         })();
       </script>
 
-    <!-- Hide AI chat widget and replace with Superadmin contact FAB -->
+    <!-- Hide legacy AI chat widget; keep public chat menu visible for users.
+         For staff/courier/super_admin, we still prefer the internal Telegram-style
+         chat (chatFab/chatPanel), so hide the public chat widget only for them. -->
+    {% if is_staff or is_courier or is_super_admin %}
     <style>
-      /* Force-hide any injected public AI chat widget to avoid overlap */
-      .public-chat-fab, .public-chat-panel, #public-chat-widget, .ai-chat-widget { display: none !important; visibility: hidden !important; }
+      .public-chat-fab,
+      .public-chat-panel,
+      #public-chat-widget,
+      .ai-chat-widget {
+        display: none !important;
+        visibility: hidden !important;
+      }
+    </style>
+    {% endif %}
+
+    <style>
       /* New Superadmin FAB (bottom-right) */
       .superadmin-contact-fab {
         position: fixed;
@@ -5686,44 +5632,7 @@
       .superadmin-contact-panel .sa-title { font-weight:700; margin-bottom:8px }
     </style>
 
-    <div id="superadminContactPanel" class="superadmin-contact-panel" aria-hidden="true">
-      <div class="sa-title">{{ _('contact.superadmin') if _('contact.superadmin') else 'Superadmin bilan muloqot' }}</div>
-      {% if superadmin_settings and superadmin_settings.get('phone') %}
-      <a href="tel:{{ superadmin_settings.get('phone')|replace(' ', '') }}">📞 {{ superadmin_settings.get('phone') }}</a>
-      {% endif %}
-      {% if superadmin_settings and superadmin_settings.get('email') %}
-      <a href="mailto:{{ superadmin_settings.get('email') }}">✉️ {{ superadmin_settings.get('email') }}</a>
-      {% endif %}
-      {% if superadmin_settings and superadmin_settings.get('telegram') %}
-      <a href="{{ superadmin_settings.get('telegram') }}" target="_blank">💬 Telegram</a>
-      {% endif %}
-      <div style="font-size:12px;opacity:0.85;margin-top:6px">{{ _('contact.superadmin_hint') if _('contact.superadmin_hint') else 'Biz bilan bog\'laning — savollaringiz bo\'lsa, superadmin yordam beradi.' }}</div>
-    </div>
-
-    <button id="superadminContactFab" class="superadmin-contact-fab" aria-label="{{ _('contact.superadmin') if _('contact.superadmin') else 'Superadmin bilan muloqot' }}">👤</button>
-
     <script>
-      (function(){
-        try {
-          const fab = document.getElementById('superadminContactFab');
-          const panel = document.getElementById('superadminContactPanel');
-          if(!fab || !panel) return;
-          fab.addEventListener('click', function(){
-            const open = panel.classList.toggle('open');
-            panel.setAttribute('aria-hidden', open ? 'false' : 'true');
-          });
-          // Close when clicking outside
-          document.addEventListener('click', function(e){
-            if(!panel.classList.contains('open')) return;
-            if(e.target === fab || panel.contains(e.target)) return;
-            panel.classList.remove('open');
-            panel.setAttribute('aria-hidden','true');
-          });
-        } catch(e) { console.warn('superadminContact init failed', e); }
-      })();
-    </script>
-
-      <script>
         // Newsletter form handler (graceful, non-blocking)
         function handleNewsletter(e){
           if(e) e.preventDefault();

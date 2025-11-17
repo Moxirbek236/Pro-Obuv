@@ -14,7 +14,7 @@ import atexit
 import time
 
 try:
-    from telegram import Update, Bot, InputMediaPhoto
+    from telegram import Update, Bot, InputMediaPhoto, ReplyKeyboardMarkup, KeyboardButton
 
     # v20+ imports
     from telegram.ext import (
@@ -200,6 +200,70 @@ def log_error(err: Exception, context: str = ""):
         LOG.exception("Failed to write error log")
 
 
+async def _send_text_to_telegram(chat_id: int, text: str) -> None:
+    """Yordamchi: bitta text xabarni Telegram foydalanuvchisiga yuborish.
+
+    Bu funksiya ApplicationBuilder dan foydalanadi. U run_both.py orqali
+    fon jarayon sifatida ishlayotgan botga mos keladi.
+    """
+    if not TELEGRAM_TOKEN or not Updater:
+        return
+    try:
+        app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
+        try:
+            await app.bot.send_message(chat_id=chat_id, text=text)
+        finally:
+            await app.shutdown()
+            await app.stop()
+    except Exception as e:
+        log_error(e, f"_send_text_to_telegram chat_id={chat_id}")
+
+
+def send_operator_reply(client_key: str, text: str, operator_name: str = "Operator") -> None:
+    """Flask backend dan chaqiriladigan soddalashtirilgan yordamchi.
+
+    client_key odatda 'tg:<user_id>' formatida bo'ladi. Bu funksiya ushbu
+    foydalanuvchiga bot orqali javob yuboradi. Flask tomoni sync bo'lgani
+    uchun ichida asyncio event loop ni best-effort ishga tushiramiz.
+    """
+    try:
+        if not client_key or not isinstance(client_key, str):
+            return
+        if not client_key.startswith("tg:"):
+            return
+        try:
+            chat_id = int(client_key.split(":", 1)[1])
+        except Exception:
+            return
+
+        # Xabar matniga operator ismini qo'shib yuboramiz
+        full_text = f"{operator_name}: {text}" if operator_name else text
+
+        import asyncio
+
+        # Agar allaqachon event loop ishlayotgan bo'lsa, create_task ishlatamiz,
+        # aks holda yangi loop yaratib, bitta marta ishlatamiz.
+        try:
+            loop = asyncio.get_event_loop()
+            if loop.is_running():
+                loop.create_task(_send_text_to_telegram(chat_id, full_text))
+            else:
+                loop.run_until_complete(_send_text_to_telegram(chat_id, full_text))
+        except RuntimeError:
+            # No running loop
+            try:
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                loop.run_until_complete(_send_text_to_telegram(chat_id, full_text))
+            finally:
+                try:
+                    loop.close()
+                except Exception:
+                    pass
+    except Exception as e:
+        log_error(e, f"send_operator_reply client_key={client_key}")
+
+
 # Prefer environment variable, but fallback to the token you provided so the
 # bot can run without setting env when testing locally. For production, set
 # TELEGRAM_BOT_TOKEN in environment and remove the hardcoded fallback.
@@ -226,11 +290,40 @@ else:
     FLASK_APP_URL = FLASK_APP_URL
 
 
+async def _send_main_keyboard(update: "Update"):
+    """Yagona joyda asosiy klaviaturani yuborish.
+
+    Har doim quyidagi tugmalar ko'rinadi:
+    - Mahsulotlar
+    - AI bilan suhbat
+    - Operator bilan suhbat
+    """
+    try:
+        kb = [
+            [
+                KeyboardButton("🛒 Mahsulotlar"),
+            ],
+            [
+                KeyboardButton("🤖 AI bilan suhbat"),
+                KeyboardButton("👨‍💼 Operator bilan suhbat"),
+            ],
+        ]
+        markup = ReplyKeyboardMarkup(kb, resize_keyboard=True)
+        await update.message.reply_text(
+            "Quyidagi tugmalardan foydalaning:", reply_markup=markup
+        )
+    except Exception as e:
+        log_error(e, "send_main_keyboard")
+
+
 async def start(update: "Update", context: "ContextTypes.DEFAULT_TYPE"):
     try:
+        # Standart rejim: AI bilan suhbat
+        context.user_data["chat_mode"] = "ai"
         await update.message.reply_text(
-            "Assalomu alaykum! Mahsulotlar va buyurtma uchun /products buyrug'ini bosing."
+            "Assalomu alaykum! Mahsulotlar uchun /products yoki '🛒 Mahsulotlar' tugmasini bosing."
         )
+        await _send_main_keyboard(update)
         uid = getattr(update.message.from_user, "id", None)
         log_action("start_command", user=f"tg:{uid}", detail="start command sent")
     except Exception as e:
@@ -309,24 +402,35 @@ async def products_cmd_new(update: "Update", context: "ContextTypes.DEFAULT_TYPE
 {social_links}"""
 
                 # Get product images
+                # Collect possible image URLs from multiple structures
+                # 1) Structured media list with media_url from /api/menu-search
+                imgs = []
+                media_list = it.get("media") or it.get("item_media") or []
+                if isinstance(media_list, (list, tuple)):
+                    for m in media_list:
+                        if isinstance(m, dict):
+                            u = m.get("media_url") or m.get("url")
+                            if isinstance(u, str) and u.strip():
+                                imgs.append(u.strip())
+
+                # 2) Legacy/simple fields used in some responses
                 candidate_keys = [
+                    "image_url",
                     "images",
                     "image_urls",
-                    "media",
                     "media_urls",
-                    "image_url",
                 ]
-                imgs = []
                 for k in candidate_keys:
                     v = it.get(k)
                     if not v:
                         continue
                     if isinstance(v, str):
-                        imgs.append(v)
+                        if v.strip():
+                            imgs.append(v.strip())
                     elif isinstance(v, (list, tuple)):
                         for _u in v:
-                            if isinstance(_u, str):
-                                imgs.append(_u)
+                            if isinstance(_u, str) and _u.strip():
+                                imgs.append(_u.strip())
 
                 # Get unique image URLs
                 seen = set()
@@ -375,10 +479,13 @@ async def products_cmd_new(update: "Update", context: "ContextTypes.DEFAULT_TYPE
 
                 # Validate image URL actually points to an image; otherwise skip photo
                 if normalized and not _is_valid_image_url(normalized):
+                    # If validation fails, keep the URL but log the issue and
+                    # still try to send it so real product photos are not lost
                     LOG.info(
-                        "products_cmd: skipping non-image url for photo: %s", normalized
+                        "products_cmd: image validation failed, sending anyway: %s",
+                        normalized,
                     )
-                    normalized = None
+                    # Do not nullify normalized here
 
                 # Build inline buttons
                 buttons = [InlineKeyboardButton("👁️ Mahsulotni ko'rish", url=view_url)]
@@ -480,37 +587,113 @@ async def products_cmd_new(update: "Update", context: "ContextTypes.DEFAULT_TYPE
 
 
 async def handle_message(update: "Update", context: "ContextTypes.DEFAULT_TYPE"):
-    # Basic echo + forward to site chat endpoint for AI processing
+    """Matnli xabarlar uchun handler.
+
+    Rejimlar:
+    - "ai": /api/chat/ai orqali AI javob
+    - "operator": operator bilan jonli chat (serverga yoziladi)
+    Maxsus tugmalar:
+    - "🛒 Mahsulotlar" -> /products
+    - "🤖 AI bilan suhbat" -> chat_mode = "ai"
+    - "👨‍💼 Operator bilan suhbat" -> chat_mode = "operator"
+    """
     try:
-        text = update.message.text or ""
+        if not update.message or not update.message.text:
+            return
+
+        text = update.message.text.strip()
         uid = getattr(update.message.from_user, "id", None)
-        # Log the incoming chat text to actions file
+        sender = f"tg:{uid}" if uid is not None else "tg:unknown"
+
+        # Log the incoming chat text
         try:
-            log_action("incoming_message", user=f"tg:{uid}", detail=text)
+            log_action("incoming_message", user=sender, detail=text)
         except Exception:
             LOG.exception("Failed to log incoming message")
 
-        payload = {"sender": f"tg:{uid}", "text": text}
+        # Build a unified payload for both AI and operator chat so that
+        # /api/chat/receive, /api/chat/ai va /api/operator-chat/user/send
+        # bir xil strukturani oladi.
+        payload = {
+            "sender": sender,
+            "text": text,
+            "source": "telegram",
+        }
+        # Mavjud bo'lsa, foydalanuvchi ismi va username ni ham qo'shamiz
+        try:
+            u = update.message.from_user
+            if u:
+                fullname = ((u.first_name or "") + " " + (u.last_name or "")).strip()
+                if fullname:
+                    payload["sender_name"] = fullname
+                if u.username:
+                    payload["client_username"] = u.username
+        except Exception:
+            pass
+
+        # Maxsus tugmalarni tekshiramiz
+        if text in ("/products", "🛒 Mahsulotlar"):
+            await products_cmd_new(update, context)
+            await _send_main_keyboard(update)
+            return
+        if text in ("/ai", "🤖 AI bilan suhbat"):
+            context.user_data["chat_mode"] = "ai"
+            await update.message.reply_text(
+                "AI rejimi yoqildi. Savollaringizni yozing.",
+            )
+            await _send_main_keyboard(update)
+            return
+        if text in ("/operator", "👨‍💼 Operator bilan suhbat"):
+            context.user_data["chat_mode"] = "operator"
+            await update.message.reply_text(
+                "Operator bilan suhbat rejimi yoqildi. Xabaringizni yozing, xodimlar ko'rishadi.",
+            )
+            await _send_main_keyboard(update)
+            return
+
+        mode = context.user_data.get("chat_mode") or "ai"
+
+        if FLASK_APP_URL and mode == "operator":
+            # Operator bilan real chat: alohida endpointga yozamiz
+            try:
+                r = requests.post(
+                    FLASK_APP_URL.rstrip("/") + "/api/operator-chat/user/send",
+                    json=payload,
+                    timeout=6,
+                )
+                if r is not None and r.ok:
+                    j = r.json() or {}
+                    ack = j.get("message") or "Xabar operatorga yuborildi."
+                else:
+                    ack = "Xabar operatorga yuborildi."
+            except Exception as e:
+                LOG.exception("operator-chat send failed")
+                log_error(e, "operator_chat_send_failed")
+                ack = "Xabar qabul qilindi. Tez orada javob olasiz."
+
+            await update.message.reply_text(ack)
+            return
+
+        # Default / AI rejimi
         if FLASK_APP_URL:
             try:
-                # best-effort log of inbound
-                requests.post(
-                    FLASK_APP_URL.rstrip("/") + "/api/chat/receive",
-                    json=payload,
-                    timeout=4,
-                )
-            except Exception as e:
-                LOG.exception("chat/receive POST failed")
-                log_error(e, "chat/receive POST failed")
+                # best-effort log of inbound (ai_respond + log uchun)
+                try:
+                    requests.post(
+                        FLASK_APP_URL.rstrip("/") + "/api/chat/receive",
+                        json=payload,
+                        timeout=4,
+                    )
+                except Exception as e:
+                    LOG.exception("chat/receive POST failed")
+                    log_error(e, "chat/receive POST failed")
 
-            # Call Uzbek AI endpoint and reply back to user
-            try:
+                # Call Uzbek AI endpoint and reply back to user
                 ai_r = requests.post(
                     FLASK_APP_URL.rstrip("/") + "/api/chat/ai", json=payload, timeout=8
                 )
                 ai_text = ""
                 ai_j = {}
-                # Only try to decode JSON when response looks valid
                 if ai_r is not None and ai_r.status_code == 200:
                     ct = (ai_r.headers or {}).get("Content-Type", "")
                     if "application/json" in ct.lower() or ai_r.text.strip().startswith("{"):
@@ -518,37 +701,30 @@ async def handle_message(update: "Update", context: "ContextTypes.DEFAULT_TYPE")
                             ai_j = ai_r.json() or {}
                         except Exception:
                             ai_j = {}
-                    else:
-                        ai_j = {}
-                else:
-                    ai_j = {}
 
                 ai_text = (ai_j or {}).get("reply") or ""
-                if not ai_text:
-                    # Fallback: call OpenAI directly from bot (uses env OPENAI_API_KEY)
-                    ai_text = _openai_generate_reply(text)
 
+                # Telegram bot AI javobi har doim sayt /api/chat/ai bilan bir xil
                 if not ai_text:
-                    # Log unknown AI reply case to a local file for later training
                     try:
                         with open(
                             LOGS_DIR / "ai_unknown_questions.txt", "a", encoding="utf-8"
                         ) as f:
-                            f.write(f"{_now_iso()} | tg:{uid} | {text}\n")
+                            f.write(f"{_now_iso()} | {sender} | {text}\n")
                     except Exception:
                         pass
-                    ai_text = "Xabar qabul qilindi. Tez orada javob olasiz."
+                    ai_text = "Xatolik: hozircha javob bera olmadim. Iltimos, savolingizni boshqacha qilib yozing."
 
                 await update.message.reply_text(ai_text)
             except Exception as e:
                 LOG.exception("chat/ai POST failed")
                 log_error(e, "chat/ai POST failed")
                 await update.message.reply_text(
-                    "Xabar qabul qilindi. Tez orada javob olasiz."
+                    "Xatolik: hozircha javob bera olmadim. Iltimos, savolingizni boshqacha qilib yozing."
                 )
         else:
             await update.message.reply_text(
-                "Xabar qabul qilindi. Tez orada javob olasiz."
+                "Xatolik: hozircha javob bera olmadim. Iltimos, savolingizni boshqacha qilib yozing."
             )
     except Exception as e:
         LOG.exception("handle_message")

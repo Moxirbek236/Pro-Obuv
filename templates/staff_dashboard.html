@@ -659,19 +659,7 @@
                 {% if notifications %}
                     {% for notification in notifications %}
                     <div class="notification-item {{ 'unread' if not notification.is_read else 'read' }}" data-notification-id="{{ notification.id }}">
-                        <div class="notification-icon">
-                            {% if notification.sender_type == 'super_admin' %}
-                                
-                            {% elif notification.sender_type == 'system' %}
-                                
-                            {% elif notification.sender_type == 'staff' %}
-                                
-                            {% elif notification.sender_type == 'courier' %}
-                                
-                            {% else %}
-                                
-                            {% endif %}
-                        </div>
+                        <div class="notification-icon"></div>
                         <div class="notification-content">
                             <div class="notification-header">
                                 <h6 class="notification-title">{{ notification.title }}</h6>
@@ -696,6 +684,30 @@
                         <p>Hozircha yangi bildirishnomalar yo'q</p>
                     </div>
                 {% endif %}
+            </div>
+        </div>
+
+        <!-- Operator chat section -->
+        <div class="orders-section" id="operatorChatSection">
+            <div class="section-header">
+                <h3> Operator bilan foydalanuvchi chatlari</h3>
+                <button class="btn btn-outline-secondary btn-sm" onclick="loadOperatorChats()">Yangilash</button>
+            </div>
+            <div class="row">
+                <div class="col-md-5 mb-3">
+                    <div class="list-group" id="operatorChatList" style="max-height: 400px; overflow-y: auto;">
+                        <div class="text-muted small px-2">Chatlar yuklanmoqda...</div>
+                    </div>
+                </div>
+                <div class="col-md-7">
+                    <div class="border rounded p-2" style="height: 260px; overflow-y: auto; background: #f8f9fa;" id="operatorChatMessages">
+                        <div class="text-muted small">Chap tomondan foydalanuvchini tanlang.</div>
+                    </div>
+                    <div class="mt-2 d-flex gap-2">
+                        <input type="text" id="operatorChatInput" class="form-control" placeholder="Javob yozing..." />
+                        <button class="btn btn-primary" type="button" onclick="sendOperatorReply()">Yuborish</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -867,6 +879,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // CSRF token from backend for protected AJAX POST requests
+        const CSRF_TOKEN = {{ csrf_token|tojson }};
+
         let refreshInterval;
         let refreshCountdown = 10;
 
@@ -1004,6 +1019,133 @@
         function refreshNotifications() {
             location.reload();
         }
+
+        // -----------------
+        // Operator chat JS
+        // -----------------
+        let currentOperatorChatId = null;
+
+        function loadOperatorChats() {
+            fetch('/api/operator-chat/staff/chats')
+                .then(r => r.json().catch(() => ({})))
+                .then(j => {
+                    const listEl = document.getElementById('operatorChatList');
+                    if (!listEl) return;
+                    listEl.innerHTML = '';
+                    if (!j || j.success === false || !j.chats || j.chats.length === 0) {
+                        listEl.innerHTML = '<div class="text-muted small px-2">Chatlar yo\'q</div>';
+                        return;
+                    }
+                    j.chats.forEach(c => {
+                        const item = document.createElement('button');
+                        item.type = 'button';
+                        item.className = 'list-group-item list-group-item-action d-flex justify-content-between align-items-start ' + (c.is_new ? 'list-group-item-warning' : '');
+                        item.dataset.chatId = c.id;
+                        const main = document.createElement('div');
+                        main.className = 'ms-2 me-auto';
+                        const title = document.createElement('div');
+                        title.className = 'fw-bold';
+                        title.textContent = (c.client_name || 'Foydalanuvchi');
+                        const phone = document.createElement('div');
+                        phone.className = 'small text-muted';
+                        phone.textContent = c.client_phone || '';
+                        const last = document.createElement('div');
+                        last.className = 'small';
+                        last.textContent = c.last_text || '';
+                        main.appendChild(title);
+                        if (phone.textContent) main.appendChild(phone);
+                        if (last.textContent) main.appendChild(last);
+                        const right = document.createElement('div');
+                        if (c.unread_count && c.unread_count > 0) {
+                            const badge = document.createElement('span');
+                            badge.className = 'badge bg-danger rounded-pill';
+                            badge.textContent = c.unread_count;
+                            right.appendChild(badge);
+                        }
+                        item.appendChild(main);
+                        item.appendChild(right);
+                        item.addEventListener('click', function () {
+                            const chatId = this.dataset.chatId;
+                            currentOperatorChatId = chatId;
+                            Array.from(listEl.querySelectorAll('.list-group-item')).forEach(b => b.classList.remove('active'));
+                            this.classList.add('active');
+                            loadOperatorMessages(chatId);
+                        });
+                        listEl.appendChild(item);
+                    });
+                })
+                .catch(() => {});
+        }
+
+        function loadOperatorMessages(chatId) {
+            fetch(`/api/operator-chat/staff/chats/${chatId}/messages`)
+                .then(r => r.json().catch(() => ({})))
+                .then(j => {
+                    const box = document.getElementById('operatorChatMessages');
+                    if (!box) return;
+                    box.innerHTML = '';
+                    if (!j || j.success === false || !j.messages || j.messages.length === 0) {
+                        box.innerHTML = '<div class="text-muted small">Xabarlar yo\'q</div>';
+                        return;
+                    }
+                    j.messages.forEach(m => {
+                        const row = document.createElement('div');
+                        row.className = 'mb-1';
+                        const bubble = document.createElement('div');
+                        bubble.className = 'p-2 rounded';
+                        bubble.style.maxWidth = '100%';
+                        if (m.sender_type === 'user') {
+                            bubble.classList.add('bg-light');
+                        } else {
+                            bubble.classList.add('bg-primary', 'text-white');
+                        }
+                        const meta = document.createElement('div');
+                        meta.className = 'small text-muted';
+                        meta.textContent = (m.sender_name || (m.sender_type === 'user' ? 'Foydalanuvchi' : 'Operator')) + (m.created_at ? ` • ${m.created_at}` : '');
+                        const text = document.createElement('div');
+                        text.textContent = m.text || '';
+                        bubble.appendChild(meta);
+                        bubble.appendChild(text);
+                        row.appendChild(bubble);
+                        box.appendChild(row);
+                    });
+                    box.scrollTop = box.scrollHeight;
+                })
+                .catch(() => {});
+        }
+
+        function sendOperatorReply() {
+            const input = document.getElementById('operatorChatInput');
+            if (!input || !currentOperatorChatId) return;
+            const text = (input.value || '').trim();
+            if (!text) return;
+            fetch(`/api/operator-chat/staff/chats/${currentOperatorChatId}/send`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': (typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : ''),
+                },
+                body: JSON.stringify({ text, csrf_token: (typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : '') }),
+            })
+                .then(r => r.json().catch(() => ({})))
+                .then(j => {
+                    if (j && j.success) {
+                        input.value = '';
+                        loadOperatorMessages(currentOperatorChatId);
+                        loadOperatorChats();
+                    } else {
+                        alert('Xabar yuborishda xatolik');
+                    }
+                })
+                .catch(() => {
+                    alert('Xabar yuborishda xatolik');
+                });
+        }
+
+        // Staff page init: load operator chats as well
+        document.addEventListener('DOMContentLoaded', function () {
+            loadOperatorChats();
+        });
     </script>
 {% endblock %}
 </body>

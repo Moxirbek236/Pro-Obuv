@@ -96,6 +96,39 @@
     border-radius: 12px;
     padding: 12px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+    position: relative; /* sevimli tugma uchun konteyner */
+  }
+
+  /* Product sahifasida sevimlilar tugmasi */
+  .favorite-form-product {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 10;
+  }
+
+  .btn-favorite-product {
+    background: #ffffffcc;
+    color: #e91e63;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+    transition: transform 0.18s ease, background 0.18s ease;
+  }
+
+  .btn-favorite-product:hover,
+  .btn-favorite-product.active {
+    background: #e91e63;
+    color: #fff;
+    transform: scale(1.06);
   }
 
   .media-stage {
@@ -300,6 +333,16 @@
 
 <div class="product-container">
   <div class="product-media">
+    <form
+      method="post"
+      action="{{ url_for('add_to_favorites', menu_item_id=item.id) }}"
+      class="favorite-form-product"
+      onclick="event.stopPropagation()">
+      <button
+        type="submit"
+        class="btn-favorite-product{% if is_favorite %} active{% endif %}">❤</button>
+    </form>
+
     {# Desktop: classic main image + thumbnails, visible on larger viewports #}
     <div class="media-stage-desktop">
       <div class="media-stage" id="mediaStageDesktop">
@@ -652,6 +695,8 @@
   // Media data from server
   const mediaData = {{ (media or [])|tojson }};
   const defaultImage = {{ (prefer_webp(item.image_url or url_for('static', filename='defoult.webp'))) | tojson }};
+  const IS_FAVORITES_USER = {{ (session.get('user_id') and not session.get('staff_id') and not session.get('courier_id') and not session.get('super_admin')) | tojson }};
+  const FAVORITES_LOGIN_MESSAGE = {{ "Iltimos oldin saytdan avtorizatsiyadan o'ting"|tojson }};
   let currentIndex = 0;
 
   // Desktop elements
@@ -790,6 +835,46 @@
         updateSwatch();
       }
     }catch(e){ console.warn('compact color select wiring failed', e); }
+  })();
+
+  // Favorites (sevimlilar) tugmasi – product sahifasida AJAX orqali ishlaydi
+  (function(){
+    try {
+      const form = document.querySelector('.favorite-form-product');
+      const btn = form ? form.querySelector('.btn-favorite-product') : null;
+      if (!form || !btn) return;
+
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (!IS_FAVORITES_USER) {
+          alert(FAVORITES_LOGIN_MESSAGE);
+          return;
+        }
+
+        const actionUrl = form.getAttribute('action');
+        fetch(actionUrl, {
+          method: 'POST',
+          headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+          .then(r => r.json())
+          .then(data => {
+            if (data && data.success) {
+              btn.classList.add('active');
+              alert(data.message || 'Sevimlilarga saqlandi');
+            } else {
+              alert((data && data.message) || 'Xatolik yuz berdi');
+            }
+          })
+          .catch(err => {
+            console.warn('add-to-favorites(product) error', err);
+            alert('Sevimlilarga saqlashda xatolik yuz berdi');
+          });
+      });
+    } catch (e) {
+      console.warn('product favorites wiring failed', e);
+    }
   })();
 </script>
 

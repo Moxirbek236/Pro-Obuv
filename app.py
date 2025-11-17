@@ -2523,7 +2523,7 @@ def safe_count(query, params=None):
 @csrf_protect
 def api_set_settings():
     """Minimal API to accept settings and avoid 404s from frontend. It stores settings in a simple config table."""
-    data = request.get_json() or {}
+    data = request.get_json(silent=True) or {}
 
     # If super_admin is setting system-wide config, persist to file
     if session.get("super_admin"):
@@ -4156,21 +4156,51 @@ def ensure_product_marketplaces_table():
 
 
 def ensure_ratings_columns():
-    """Ensure ratings table has branch_id column and a schema that supports branch ratings.
+    """Ensure ``ratings`` table schema matches current code expectations.
 
-    If the existing ratings table lacks branch_id or has menu_item_id NOT NULL, perform a safe
-    table rebuild: create a new table with menu_item_id nullable and branch_id column, copy data,
-    then replace the old table.
+    Goals:
+      * Table always exists (even on a brand new database).
+      * Has a nullable ``menu_item_id`` and a ``branch_id`` column so both
+        product and branch ratings can be stored.
+      * Keeps existing data when upgrading from older schemas that do not
+        have ``branch_id`` or have ``menu_item_id`` marked NOT NULL.
     """
     conn = None
     try:
         conn = get_db()
         cur = conn.cursor()
 
+        # Inspect current schema (if any)
         cur.execute("PRAGMA table_info(ratings);")
         cols_info = cur.fetchall() or []
+
+        # If the ratings table does NOT exist yet, create it with the
+        # latest schema and return early.
+        if not cols_info:
+            app_logger.info("Creating ratings table with branch_id support (fresh DB)")
+            cur.execute(
+                """
+                CREATE TABLE IF NOT EXISTS ratings (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_id INTEGER NOT NULL,
+                    menu_item_id INTEGER,
+                    branch_id INTEGER,
+                    rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+                    comment TEXT,
+                    created_at TEXT NOT NULL,
+                    FOREIGN KEY (user_id) REFERENCES users(id),
+                    FOREIGN KEY (menu_item_id) REFERENCES menu_items(id),
+                    FOREIGN KEY (branch_id) REFERENCES branches(id),
+                    UNIQUE(user_id, menu_item_id, branch_id)
+                );
+                """
+            )
+            conn.commit()
+            return
+
         cols = [r[1] for r in cols_info]
 
+        # Decide whether we need to rebuild an existing table
         need_rebuild = False
         if "branch_id" not in cols:
             need_rebuild = True
@@ -4190,11 +4220,15 @@ def ensure_ratings_columns():
             "Rebuilding ratings table to add branch_id and allow NULL menu_item_id"
         )
 
-        # Read existing rows
-        cur.execute(
-            "SELECT id, user_id, menu_item_id, rating, comment, created_at FROM ratings"
-        )
-        existing = cur.fetchall() or []
+        # Read existing rows (if any) from the legacy table
+        try:
+            cur.execute(
+                "SELECT id, user_id, menu_item_id, rating, comment, created_at FROM ratings"
+            )
+            existing = cur.fetchall() or []
+        except Exception:
+            # If we cannot read existing rows for some reason, treat as empty
+            existing = []
 
         # Start migration in a transaction
         cur.execute("BEGIN TRANSACTION;")
@@ -4227,7 +4261,8 @@ def ensure_ratings_columns():
             comment = row[4]
             created_at = row[5]
             cur.execute(
-                "INSERT INTO ratings_new (id, user_id, menu_item_id, branch_id, rating, comment, created_at) VALUES (?, ?, ?, NULL, ?, ?, ?)",
+                "INSERT INTO ratings_new (id, user_id, menu_item_id, branch_id, rating, comment, created_at) "
+                "VALUES (?, ?, ?, NULL, ?, ?, ?)",
                 (rid, uid, mid, rating_val, comment, created_at),
             )
 
@@ -4242,14 +4277,14 @@ def ensure_ratings_columns():
         try:
             if conn:
                 conn.rollback()
-        except:
+        except Exception:
             pass
         app_logger.error(f"Ratings table migration failed: {str(e)}")
     finally:
         if conn:
             try:
                 conn.close()
-            except:
+            except Exception:
                 pass
 
 
@@ -7727,6 +7762,24 @@ def product_detail(item_id):
         except Exception:
             pass
 
+        # Determine whether current product is already in user's favorites
+        is_favorite = False
+        try:
+            user_id = session.get("user_id")
+            if user_id and not (
+                session.get("staff_id")
+                or session.get("courier_id")
+                or session.get("super_admin")
+            ):
+                fav = execute_query(
+                    "SELECT 1 FROM favorites WHERE user_id = ? AND menu_item_id = ?",
+                    (user_id, item_id),
+                    fetch_one=True,
+                )
+                is_favorite = bool(fav)
+        except Exception:
+            is_favorite = False
+
         return render_template(
             "product.html",
             item=item,
@@ -7734,6 +7787,7 @@ def product_detail(item_id):
             comments=comments,
             marketplaces=marketplaces,
             current_page="product",
+            is_favorite=is_favorite,
         )
     except Exception as e:
         app_logger.error(f"product_detail error for id={item_id}: {str(e)}")
@@ -7744,6 +7798,12 @@ def product_detail(item_id):
 @app.route("/product/<int:item_id>/comment", methods=["POST"])
 def post_comment(item_id):
     try:
+        # Require authenticated user so ratings.user_id and FK to users(id) are valid.
+        # This aligns behavior with /api/submit-rating which also enforces login.
+        if not session.get("user_id"):
+            flash("Sharh qoldirish va baho berish uchun avval tizimga kiring.", "error")
+            return redirect(url_for("product_detail", item_id=item_id))
+
         # Determine author: prefer logged-in user's real name, then form fields, then session values, fall back to 'Guest'
         author = None
         user_id = session.get("user_id")
@@ -8036,9 +8096,27 @@ def api_menu_search():
                         fetch_all=True,
                     )
                     item_media = [dict(m) for m in media_rows] if media_rows else []
+                    # Prefer WebP versions of media URLs when available on disk
+                    try:
+                        for m in item_media:
+                            try:
+                                url = m.get("media_url")
+                                if url:
+                                    m["media_url"] = prefer_webp(url)
+                            except Exception:
+                                continue
+                    except Exception:
+                        pass
                     item["media"] = item_media
                 except Exception:
                     item["media"] = []
+
+                # Ensure the primary image_url also prefers WebP when available
+                try:
+                    if isinstance(item, dict) and item.get("image_url"):
+                        item["image_url"] = prefer_webp(item["image_url"])
+                except Exception:
+                    pass
 
                 # Attach localized fields (name_local, description_local) for client-side rendering
                 try:
@@ -11751,7 +11829,7 @@ def api_submit_rating():
                 401,
             )
 
-        data = request.get_json() or {}
+        data = request.get_json(silent=True) or {}
         menu_item_id = data.get("menu_item_id")
         rating = data.get("rating")
         comment = (data.get("comment") or "").strip()
@@ -11899,7 +11977,7 @@ def api_chat_receive():
     This endpoint stores minimal message info and triggers AI responder.
     """
     try:
-        data = request.get_json() or {}
+        data = request.get_json(silent=True) or {}
         sender = (data.get("sender") or "guest")[:128]
         text = (data.get("text") or "").strip()
         if not text:
@@ -11947,7 +12025,7 @@ def api_chat_send():
     Returns: { success: True, reply: str }
     """
     try:
-        data = request.get_json() or {}
+        data = request.get_json(silent=True) or {}
         text = (data.get("text") or "").strip()
         sender_name = (data.get("sender_name") or session.get("user_name") or "Guest")[
             :128
@@ -11978,6 +12056,516 @@ def api_chat_send():
     except Exception as e:
         app_logger.error(f"chat_send error: {e}")
         return jsonify({"success": False, "message": "server error"}), 500
+
+
+# ------------------------
+# Operator chat (user <-> staff) helpers and endpoints
+# ------------------------
+
+
+def ensure_operator_chat_tables():
+    """Ensure operator chat tables exist.
+
+    Tables:
+      - operator_chats: one row per conversation (per user/session/telegram id)
+      - operator_chat_messages: individual messages for each chat
+    """
+    try:
+        # Conversations table
+        execute_query(
+            """
+            CREATE TABLE IF NOT EXISTS operator_chats (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                client_key TEXT NOT NULL UNIQUE,
+                client_name TEXT,
+                client_phone TEXT,
+                source TEXT,
+                is_new INTEGER DEFAULT 1,
+                created_at TEXT NOT NULL,
+                last_message_at TEXT NOT NULL
+            );
+            """
+        )
+        # Messages table
+        execute_query(
+            """
+            CREATE TABLE IF NOT EXISTS operator_chat_messages (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                chat_id INTEGER NOT NULL,
+                sender_type TEXT NOT NULL,  -- 'user' yoki 'operator'
+                sender_id INTEGER,
+                sender_name TEXT,
+                text TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                is_read INTEGER DEFAULT 0,
+                FOREIGN KEY (chat_id) REFERENCES operator_chats (id) ON DELETE CASCADE
+            );
+            """
+        )
+    except Exception as e:
+        try:
+            app_logger.error(f"operator chat tables init error: {e}")
+        except Exception:
+            pass
+
+
+def _operator_chat_ident_from_request(data=None):
+    """Compute a stable client_key/name/phone for operator chat.
+
+    Priority:
+      - If user is logged in (web): user:<user_id>
+      - Else if explicit sender (e.g. 'tg:123'): use that as key
+      - Else: guest_session:<session_id>
+    """
+    data = data or {}
+    try:
+        source = (data.get("source") or "").strip() or "web"
+    except Exception:
+        source = "web"
+
+    client_name = (data.get("sender_name") or "").strip()
+    # phone can come from explicit field or be stored as 'client_phone'
+    client_phone = (data.get("phone") or data.get("client_phone") or "").strip()
+
+    client_key = None
+    try:
+        if session.get("user_id"):
+            client_key = f"user:{session.get('user_id')}"
+            if not client_name:
+                client_name = (
+                    session.get("user_name")
+                    or session.get("user_first_name")
+                    or "Foydalanuvchi"
+                )
+            if not client_phone:
+                client_phone = session.get("user_phone") or ""
+        else:
+            sender = (data.get("sender") or "").strip()
+            if sender:
+                client_key = sender
+            else:
+                sid = session.get("session_id") or get_session_id()
+                client_key = f"guest_session:{sid}"
+    except Exception:
+        # As a last resort fall back to a guest key
+        sid = session.get("session_id") or get_session_id()
+        client_key = client_key or f"guest_session:{sid}"
+
+    return client_key, client_name, client_phone, source
+
+
+def get_or_create_operator_chat(client_key, client_name, client_phone, source):
+    """Return chat_id for given client_key, creating a row if needed."""
+    ensure_operator_chat_tables()
+    now = get_current_time().isoformat()
+    try:
+        row = execute_query(
+            "SELECT id FROM operator_chats WHERE client_key = ?",
+            (client_key,),
+            fetch_one=True,
+        )
+        if row:
+            chat_id = row.get("id") if hasattr(row, "get") else row[0]
+            # Best-effort metadata update
+            try:
+                execute_query(
+                    "UPDATE operator_chats SET client_name = COALESCE(?, client_name), client_phone = COALESCE(?, client_phone), source = COALESCE(?, source), last_message_at = ? WHERE id = ?",
+                    (client_name or None, client_phone or None, source or None, now, chat_id),
+                )
+            except Exception:
+                pass
+            return chat_id
+    except Exception:
+        pass
+
+    # Create new chat row
+    try:
+        execute_query(
+            "INSERT INTO operator_chats (client_key, client_name, client_phone, source, is_new, created_at, last_message_at) VALUES (?, ?, ?, ?, 1, ?, ?)",
+            (client_key, client_name, client_phone, source, now, now),
+        )
+        row2 = execute_query(
+            "SELECT id FROM operator_chats WHERE client_key = ?",
+            (client_key,),
+            fetch_one=True,
+        )
+        if row2:
+            return row2.get("id") if hasattr(row2, "get") else row2[0]
+    except Exception as e:
+        try:
+            app_logger.error(f"create operator_chat error: {e}")
+        except Exception:
+            pass
+    return None
+
+
+@app.route("/api/operator-chat/user/send", methods=["POST"])
+def api_operator_chat_user_send():
+    """User (web yoki telegram) dan operatorga xabar.
+
+    Expected JSON:
+      { text: str, sender_name?: str, phone?: str, source?: 'web'|'telegram', sender?: 'tg:123' }
+    """
+    try:
+        data = request.get_json(silent=True) or {}
+        text = (data.get("text") or "").strip()
+        if not text:
+            return (
+                jsonify({"success": False, "message": "text required"}),
+                400,
+            )
+
+        client_key, client_name, client_phone, source = _operator_chat_ident_from_request(
+            data
+        )
+        chat_id = get_or_create_operator_chat(
+            client_key, client_name, client_phone, source
+        )
+        if not chat_id:
+            raise Exception("operator chat not created")
+
+        now = get_current_time().isoformat()
+        try:
+            execute_query(
+                "INSERT INTO operator_chat_messages (chat_id, sender_type, sender_id, sender_name, text, created_at, is_read) VALUES (?, ?, ?, ?, ?, ?, 0)",
+                (
+                    chat_id,
+                    "user",
+                    session.get("user_id"),
+                    client_name or client_key,
+                    text,
+                    now,
+                ),
+            )
+            execute_query(
+                "UPDATE operator_chats SET last_message_at = ?, is_new = 1 WHERE id = ?",
+                (now, chat_id),
+            )
+        except Exception:
+            pass
+
+        return jsonify({"success": True, "message": "Xabar operatorga yuborildi."})
+    except Exception as e:
+        try:
+            app_logger.error(f"operator_chat user send error: {e}")
+        except Exception:
+            pass
+        return (
+            jsonify({"success": False, "message": "Server xatoligi"}),
+            500,
+        )
+
+
+@app.route("/api/operator-chat/user/history", methods=["GET"])
+def api_operator_chat_user_history():
+    """Return chat history for current web user/guest.
+
+    Telegram foydalanuvchilar uchun alohida integratsiya talab qilinadi; bu
+    endpoint asosan sayt (web) chat widgeti uchun.
+    """
+    try:
+        ensure_operator_chat_tables()
+        client_key, client_name, client_phone, source = _operator_chat_ident_from_request(
+            {}
+        )
+        row = execute_query(
+            "SELECT id FROM operator_chats WHERE client_key = ?",
+            (client_key,),
+            fetch_one=True,
+        )
+        if not row:
+            return jsonify({"success": True, "messages": []})
+        chat_id = row.get("id") if hasattr(row, "get") else row[0]
+
+        rows = execute_query(
+            "SELECT sender_type, sender_name, text, created_at FROM operator_chat_messages WHERE chat_id = ? ORDER BY id ASC",
+            (chat_id,),
+            fetch_all=True,
+        )
+        messages = []
+        for r in rows or []:
+            try:
+                if isinstance(r, dict) or hasattr(r, "keys"):
+                    sender_type = r.get("sender_type")
+                    sender_name = r.get("sender_name")
+                    text = r.get("text")
+                    created_at = r.get("created_at")
+                else:
+                    sender_type, sender_name, text, created_at = (
+                        r[0],
+                        r[1],
+                        r[2],
+                        r[3],
+                    )
+                messages.append(
+                    {
+                        "sender_type": sender_type,
+                        "sender_name": sender_name,
+                        "text": text,
+                        "created_at": created_at,
+                    }
+                )
+            except Exception:
+                continue
+
+        return jsonify({"success": True, "messages": messages})
+    except Exception as e:
+        try:
+            app_logger.error(f"operator_chat user history error: {e}")
+        except Exception:
+            pass
+        return jsonify({"success": False, "messages": []}), 500
+
+
+@app.route("/api/operator-chat/staff/chats", methods=["GET"])
+@role_required("staff")
+def api_operator_chat_staff_chats():
+    """Return list of operator chats for staff panel."""
+    try:
+        ensure_operator_chat_tables()
+        rows = execute_query(
+            "SELECT id, client_name, client_phone, source, is_new, last_message_at FROM operator_chats ORDER BY last_message_at DESC",
+            fetch_all=True,
+        )
+        chats = []
+        for r in rows or []:
+            try:
+                if isinstance(r, dict) or hasattr(r, "keys"):
+                    chat_id = r.get("id")
+                    client_name = r.get("client_name")
+                    client_phone = r.get("client_phone")
+                    source = r.get("source")
+                    is_new = int(r.get("is_new") or 0)
+                    last_message_at = r.get("last_message_at")
+                else:
+                    chat_id, client_name, client_phone, source, is_new, last_message_at = (
+                        r[0],
+                        r[1],
+                        r[2],
+                        r[3],
+                        r[4],
+                        r[5],
+                    )
+
+                # last message text
+                last_row = execute_query(
+                    "SELECT text FROM operator_chat_messages WHERE chat_id = ? ORDER BY id DESC LIMIT 1",
+                    (chat_id,),
+                    fetch_one=True,
+                )
+                if last_row:
+                    last_text = (
+                        last_row.get("text")
+                        if hasattr(last_row, "get")
+                        else last_row[0]
+                    )
+                else:
+                    last_text = ""
+
+                # unread count for user messages
+                unread_count = safe_count(
+                    "SELECT COUNT(1) FROM operator_chat_messages WHERE chat_id = ? AND sender_type = 'user' AND is_read = 0",
+                    (chat_id,),
+                )
+
+                chats.append(
+                    {
+                        "id": chat_id,
+                        "client_name": client_name or "Foydalanuvchi",
+                        "client_phone": client_phone or "",
+                        "source": source or "web",
+                        "is_new": bool(is_new),
+                        "last_message_at": last_message_at,
+                        "last_text": last_text,
+                        "unread_count": unread_count,
+                    }
+                )
+            except Exception:
+                continue
+
+        # Sort so that chats with unread messages come first
+        chats.sort(
+            key=lambda c: (0 if (c.get("unread_count") or 0) > 0 else 1, c.get("last_message_at") or ""),
+        )
+
+        return jsonify({"success": True, "chats": chats})
+    except Exception as e:
+        try:
+            app_logger.error(f"operator_chat staff chats error: {e}")
+        except Exception:
+            pass
+        return jsonify({"success": False, "chats": []}), 500
+
+
+@app.route("/api/operator-chat/staff/chats/<int:chat_id>/messages", methods=["GET"])
+@role_required("staff")
+def api_operator_chat_staff_messages(chat_id):
+    """Return messages for a specific chat and mark user messages as read."""
+    try:
+        ensure_operator_chat_tables()
+        rows = execute_query(
+            "SELECT sender_type, sender_id, sender_name, text, created_at, is_read FROM operator_chat_messages WHERE chat_id = ? ORDER BY id ASC",
+            (chat_id,),
+            fetch_all=True,
+        )
+        messages = []
+        for r in rows or []:
+            try:
+                if isinstance(r, dict) or hasattr(r, "keys"):
+                    sender_type = r.get("sender_type")
+                    sender_name = r.get("sender_name")
+                    text = r.get("text")
+                    created_at = r.get("created_at")
+                else:
+                    sender_type, _, sender_name, text, created_at, _ = (
+                        r[0],
+                        r[1],
+                        r[2],
+                        r[3],
+                        r[4],
+                        r[5],
+                    )
+                messages.append(
+                    {
+                        "sender_type": sender_type,
+                        "sender_name": sender_name,
+                        "text": text,
+                        "created_at": created_at,
+                    }
+                )
+            except Exception:
+                continue
+
+        # Mark user messages as read and clear is_new flag for chat
+        try:
+            execute_query(
+                "UPDATE operator_chat_messages SET is_read = 1 WHERE chat_id = ? AND sender_type = 'user'",
+                (chat_id,),
+            )
+            execute_query(
+                "UPDATE operator_chats SET is_new = 0 WHERE id = ?",
+                (chat_id,),
+            )
+        except Exception:
+            pass
+
+        return jsonify({"success": True, "messages": messages})
+    except Exception as e:
+        try:
+            app_logger.error(f"operator_chat staff messages error: {e}")
+        except Exception:
+            pass
+        return jsonify({"success": False, "messages": []}), 500
+
+
+@app.route("/api/operator-chat/staff/chats/<int:chat_id>/send", methods=["POST"])
+@role_required("staff")
+@csrf_protect
+def api_operator_chat_staff_send(chat_id):
+    """Staff operator sends a reply to user.
+
+    Xabar har doim operator_chat_messages jadvaliga yoziladi. Agar chat manbai
+    telegram bo'lsa (operator_chats.source = 'telegram'), qo'shimcha ravishda
+    Telegram bot orqali foydalanuvchiga yuboriladi. Agar manba 'web' bo'lsa,
+    foydalanuvchi sayt chat vidjetida tarixni yangilab javobni ko'radi.
+    """
+    try:
+        data = request.get_json(silent=True) or {}
+        text = (data.get("text") or "").strip()
+        if not text:
+            return (
+                jsonify({"success": False, "message": "text required"}),
+                400,
+            )
+
+        ensure_operator_chat_tables()
+        now = get_current_time().isoformat()
+        sender_name = session.get("staff_name") or "Operator"
+
+        # Bazaga operator xabarini yozamiz
+        try:
+            execute_query(
+                "INSERT INTO operator_chat_messages (chat_id, sender_type, sender_id, sender_name, text, created_at, is_read) VALUES (?, ?, ?, ?, ?, ?, 1)",
+                (
+                    chat_id,
+                    "operator",
+                    session.get("staff_id"),
+                    sender_name,
+                    text,
+                    now,
+                ),
+            )
+            execute_query(
+                "UPDATE operator_chats SET last_message_at = ?, is_new = 0 WHERE id = ?",
+                (now, chat_id),
+            )
+        except Exception:
+            pass
+
+        # Chat manbaini aniqlash va telegram/webga yetkazish
+        try:
+            row = execute_query(
+                "SELECT client_key, source FROM operator_chats WHERE id = ?",
+                (chat_id,),
+                fetch_one=True,
+            )
+        except Exception:
+            row = None
+
+        client_key = None
+        source = "web"
+        if row:
+            try:
+                if hasattr(row, "get"):
+                    client_key = row.get("client_key")
+                    source = row.get("source") or "web"
+                else:
+                    # (id, client_key, client_name, client_phone, source, ...)
+                    client_key = row[0]
+                    source = row[1] or "web"
+            except Exception:
+                pass
+
+        # Agar manba telegram bo'lsa va client_key tg:<user_id> formatida bo'lsa,
+        # javobni bot orqali yuborishga urinamiz.
+        if client_key and isinstance(client_key, str) and source == "telegram":
+            try:
+                # Telegram bot moduli ichida yordamchi funksiyadan foydalanamiz.
+                # Bu funksiya mavjud bo'lmasa, xatoni jilovlaymiz.
+                from bot import telegram_bot
+
+                if hasattr(telegram_bot, "send_operator_reply") and callable(
+                    telegram_bot.send_operator_reply
+                ):
+                    try:
+                        # client_key masalan 'tg:123456789' ko'rinishida bo'ladi
+                        recipient = client_key
+                        telegram_bot.send_operator_reply(recipient, text, sender_name)
+                    except Exception as te:
+                        try:
+                            app_logger.error(
+                                f"Failed to forward operator reply to telegram for chat {chat_id}: {te}"
+                            )
+                        except Exception:
+                            pass
+            except Exception as import_err:
+                try:
+                    app_logger.error(
+                        f"Telegram bot integration not available for operator reply: {import_err}"
+                    )
+                except Exception:
+                    pass
+
+        # Web manbasi uchun alohida push kerak emas: foydalanuvchi /api/operator-chat/user/history
+        # endpointi orqali xabarlarni ko'radi.
+
+        return jsonify({"success": True})
+    except Exception as e:
+        try:
+            app_logger.error(f"operator_chat staff send error: {e}")
+        except Exception:
+            pass
+        return jsonify({"success": False, "message": "Server xatoligi"}), 500
 
 
 def ai_respond(text, sender="guest"):
@@ -12020,24 +12608,24 @@ def ai_respond(text, sender="guest"):
                 pass
         # Check ai_knowledge table for a matching pattern (simple substring match)
         try:
-            q = text.lower()
+            q = (text or "").lower()
             rows = execute_query(
-                "SELECT answer FROM ai_knowledge ORDER BY id DESC",
+                "SELECT question_pattern, answer FROM ai_knowledge",
                 fetch_all=True,
             )
             if rows:
                 for r in rows:
-                    ans = r[0] if isinstance(r, tuple) else r.get("answer")
-                    pat = r[0] if isinstance(r, tuple) else r.get("question_pattern")
-                # We'll perform a simple substring match against question_pattern
-            # More efficient approach: iterate properly
-            rows2 = execute_query(
-                "SELECT question_pattern, answer FROM ai_knowledge", fetch_all=True
-            )
-            if rows2:
-                for qp, ans in rows2:
                     try:
-                        if qp and qp.strip().lower() in q:
+                        if isinstance(r, (list, tuple)):
+                            qp = r[0]
+                            ans = r[1] if len(r) > 1 else None
+                        else:
+                            qp = r.get("question_pattern")
+                            ans = r.get("answer")
+                    except Exception:
+                        continue
+                    try:
+                        if qp and str(qp).strip().lower() in q:
                             return ans
                     except Exception:
                         continue
@@ -12542,8 +13130,8 @@ def api_get_payment_methods():
 def api_set_language():
     "Set user language preference"
     try:
-        data = request.get_json()
-        language = data.get("language", "uz")
+        data = request.get_json(silent=True) or {}
+        language = (data.get("language") or "uz")
 
         # Validate language
         if language not in ["uz", "ru", "en"]:
@@ -12579,7 +13167,7 @@ def api_set_language():
 def api_set_theme():
     "Set user theme preference"
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True) or {}
         dark_theme = data.get("dark_theme", True)
 
         # Save to session
@@ -12615,7 +13203,7 @@ def api_set_theme():
 def api_set_font_size():
     "Set user font size preference"
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True) or {}
         font_size = data.get("font_size", "medium")
 
         # Validate font size
@@ -12659,7 +13247,7 @@ def api_set_font_size():
 def api_search_nearby_places():
     "Yaqin joylarni qidirish API"
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True) or {}
         query = data.get("query", "restoran")
         user_latitude = float(data.get("latitude", 41.2995))
         user_longitude = float(data.get("longitude", 69.2401))
@@ -12755,7 +13343,7 @@ def api_search_nearby_places():
 def api_find_nearest_branch():
     "Eng yaqin filialni topish API"
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True) or {}
         user_latitude = float(data.get("latitude", 41.2995))
         user_longitude = float(data.get("longitude", 69.2401))
 
@@ -13674,6 +14262,28 @@ def news_page():
         app_logger.error(f"News page error: {e}")
         flash("Yangiliklarni yuklashda xatolik.", "error")
         return redirect(url_for("index"))
+
+
+@app.route("/data/news.json")
+def public_news_json():
+    """Serve the JSON file used by the public footer news ticker."""
+    try:
+        json_path = os.path.join(os.getcwd(), "data", "news.json")
+        if os.path.exists(json_path):
+            # Use send_file so conditional/caching headers work as usual
+            return send_file(json_path, mimetype="application/json")
+    except Exception as e:
+        try:
+            app_logger.warning(f"public_news_json error: {e}")
+        except Exception:
+            pass
+    # Fallback: return an empty payload so the client can show a friendly message
+    return jsonify(
+        {
+            "news": [],
+            "metadata": {"total_count": 0, "active_count": 0},
+        }
+    )
 
 
 @app.route("/super-admin/news", methods=["GET"])
@@ -17780,8 +18390,15 @@ def staff_dashboard():
         )
 
         # Template ni render qilish
+        try:
+            csrf = generate_csrf_token()
+        except Exception:
+            csrf = session.get("csrf_token")
         return render_template(
-            "staff_dashboard.html", orders=orders, notifications=notifications
+            "staff_dashboard.html",
+            orders=orders,
+            notifications=notifications,
+            csrf_token=csrf,
         )
 
     except Exception as e:
@@ -19361,7 +19978,7 @@ def change_font_size():
     ):
         return jsonify({"success": False, "message": "Authentication required"}), 401
 
-    data = request.get_json() or {}
+    data = request.get_json(silent=True) or {}
     font_size = data.get("font_size", "medium")
 
     if font_size not in ["small", "medium", "large"]:
@@ -19393,7 +20010,7 @@ def save_settings():
     ):
         return jsonify({"success": False, "message": "Authentication required"}), 401
 
-    data = request.get_json() or {}
+    data = request.get_json(silent=True) or {}
 
     # Update session
     if "language" in data:
@@ -20739,8 +21356,9 @@ def api_chat_ai():
                 except Exception:
                     pass
 
-                # Acknowledge receipt — superadmin will answer and can teach the AI
-                reply = "Xabaringiz qabul qilindi. Superadmin tez orada javob beradi."
+                # Acknowledge receipt in a neutral, short form; superadmin ko'rib chiqadi,
+                # lekin foydalanuvchiga bevosita va'da bermaymiz.
+                reply = "Xabaringiz qabul qilindi. Tez orada javob olishingiz mumkin."
 
         try:
             app_logger.info(f"chat_ai sender=%s text=%s", sender, text)
@@ -20756,10 +21374,49 @@ def api_chat_ai():
         return jsonify({"success": False, "message": "AI xatolik"}), 500
 
 
+@app.route("/api/chat/superadmin-question", methods=["POST"])
+@limiter.limit("30/minute")
+def api_superadmin_question():
+    """Oddiy savolni superadmin uchun navbatga qo'yadi.
+
+    Frontend: chat widgetdagi "Savol yuborish" menyusi.
+    JSON: {"text": str, "source"?: 'web' | 'telegram'}
+    """
+    try:
+        data = request.get_json(silent=True) or {}
+        text = (data.get("text") or "").strip()
+        if not text:
+            return jsonify({"success": False, "message": "Savol matni bo'sh bo'lmasligi kerak"}), 400
+
+        source = (data.get("source") or "web").strip() or "web"
+        sender = "user" if session.get("user_id") else "guest"
+        now = get_current_time().isoformat()
+
+        try:
+            execute_query(
+                "INSERT INTO ai_unanswered (text, sender, times_asked, last_asked_at) VALUES (?, ?, ?, ?)",
+                (f"[QUESTION][{source}] {text}", sender, 1, now),
+            )
+        except Exception as e:
+            try:
+                app_logger.error(f"api_superadmin_question insert error: {e}")
+            except Exception:
+                pass
+
+        return jsonify({"success": True, "message": "Savolingiz qabul qilindi. Superadmin ko'rib chiqadi."})
+    except Exception as e:
+        try:
+            app_logger.error(f"api_superadmin_question error: {e}")
+        except Exception:
+            pass
+        return jsonify({"success": False, "message": "Server xatoligi"}), 500
+
+
 # Flask app runner
 if __name__ == "__main__":
-    host = "0.0.0.0"
-    port = int(os.environ.get("PORT", 10000))
+    # Allow overriding host/port via environment; default to standard dev port 5000
+    host = os.environ.get("FLASK_HOST", "0.0.0.0")
+    port = int(os.environ.get("FLASK_PORT") or os.environ.get("PORT", 5000))
     print(f"\nDastur quyidagi URLda ishga tushdi: http://{host}:{port}\n")
 
     # Optionally start the Telegram bot as a separate process when the app starts.

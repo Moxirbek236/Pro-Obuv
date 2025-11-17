@@ -319,3 +319,149 @@
 2025-10-10 06:57:41 | ACTION | products_sent_bytes | user:tg:1656193663 | item:38
 2025-10-10 06:57:41 | ACTION | incoming_message | user:tg:1656193663 | salom
 2025-10-10 06:58:21 | ACTION | incoming_message | user:tg:1656193663 | salom,
+2025-11-17 11:49:05 | ACTION | start_command | user:tg:1656193663 | start command sent
+2025-11-17 11:49:10 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
+2025-11-17 11:49:17 | ACTION | incoming_message | user:tg:1656193663 | 🤖 AI bilan suhbat
+2025-11-17 11:49:22 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-11-17 11:49:26 | ACTION | incoming_message | user:tg:1656193663 | 👨‍💼 Operator bilan suhbat
+2025-11-17 11:49:28 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-11-17 12:13:12 | ACTION | incoming_message | user:tg:1656193663 | 👨‍💼 Operator bilan suhbat
+2025-11-17 12:13:15 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-11-17 12:13:19 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
+2025-11-17 12:13:24 | ACTION | incoming_message | user:tg:1656193663 | 🤖 AI bilan suhbat
+2025-11-17 12:13:26 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-11-17 12:18:43 | ACTION | incoming_message | user:tg:1656193663 | 👨‍💼 Operator bilan suhbat
+2025-11-17 12:18:46 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-11-17 14:23:50 | ACTION | start_command | user:tg:1656193663 | start command sent
+2025-11-17 14:23:50 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
+2025-11-17 14:32:41 | ACTION | incoming_message | user:tg:1656193663 | 🤖 AI bilan suhbat
+2025-11-17 14:32:47 | ACTION | incoming_message | user:tg:1656193663 | men kimman
+2025-11-17 14:32:50 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-11-17 14:32:53 | ACTION | incoming_message | user:tg:1656193663 | assalomu alekom
+2025-11-17 14:32:57 | ACTION | incoming_message | user:tg:1656193663 | 👨‍💼 Operator bilan suhbat
+2025-11-17 14:32:59 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-11-17 14:33:04 | ACTION | incoming_message | user:tg:1656193663 | kim bu
+2025-11-17 15:06:05 | ACTION | incoming_message | user:tg:1656193663 | 👨‍💼 Operator bilan suhbat
+2025-11-17 15:06:08 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-11-17 15:06:33 | ACTION | incoming_message | user:tg:6616986769 | salom
+2025-11-17 15:06:51 | ACTION | start_command | user:tg:6616986769 | start command sent
+2025-11-17 15:06:52 | ACTION | incoming_message | user:tg:6616986769 | 👨‍💼 Operator bilan suhbat
+2025-11-17 15:06:54 | ACTION | incoming_message | user:tg:6616986769 | salom
+2025-11-17 16:15:24 | ACTION | start_command | user:tg:6616986769 | start command sent
+2025-11-17 16:15:26 | ACTION | incoming_message | user:tg:6616986769 | 👨‍💼 Operator bilan suhbat
+2025-11-17 16:15:30 | ACTION | incoming_message | user:tg:6616986769 | salom, kim bu
+2025-11-17 16:24:15 | ACTION | incoming_message | user:tg:6616986769 | slaom
+2025-11-17 16:24:23 | ACTION | incoming_message | user:tg:6616986769 | 👨‍💼 Operator bilan suhbat
+2025-11-17 16:24:25 | ACTION | incoming_message | user:tg:6616986769 | salom
+2025-11-17 16:33:38 | ACTION | incoming_message | user:tg:6616986769 | 👨‍💼 Operator bilan suhbat
+2025-11-17 16:33:40 | ACTION | incoming_message | user:tg:6616986769 | salom
+2025-11-17 16:40:24 | ACTION | products_sent_bytes | user:tg:6616986769 | item:39
+2025-11-17 16:40:25 | ACTION | products_sent_bytes | user:tg:6616986769 | item:40
+2025-11-17 16:40:26 | ACTION | products_sent_bytes | user:tg:6616986769 | item:41
+2025-11-17 16:40:27 | ACTION | products_sent_bytes | user:tg:6616986769 | item:42
+2025-11-17 16:40:28 | ACTION | products_sent_bytes | user:tg:6616986769 | item:43
+2025-11-17 16:40:29 | ACTION | products_sent_bytes | user:tg:6616986769 | item:48
+2025-11-17 16:40:52 | ACTION | incoming_message | user:tg:6616986769 | 🛒 Mahsulotlar
+2025-11-17 16:40:53 | ACTION | products_sent_bytes | user:tg:6616986769 | item:39
+2025-11-17 16:40:54 | ACTION | products_sent_bytes | user:tg:6616986769 | item:40
+2025-11-17 16:40:55 | ACTION | products_sent_bytes | user:tg:6616986769 | item:41
+2025-11-17 16:40:56 | ACTION | products_sent_bytes | user:tg:6616986769 | item:42
+2025-11-17 16:40:56 | ACTION | products_sent_bytes | user:tg:6616986769 | item:43
+2025-11-17 16:40:57 | ACTION | products_sent_bytes | user:tg:6616986769 | item:48
+2025-11-17 16:40:59 | ACTION | incoming_message | user:tg:6616986769 | 👨‍💼 Operator bilan suhbat
+2025-11-17 16:41:02 | ACTION | incoming_message | user:tg:6616986769 | salom
+2025-11-17 16:44:36 | ACTION | incoming_message | user:tg:6616986769 | salom
+2025-11-17 16:44:41 | ACTION | incoming_message | user:tg:6616986769 | 👨‍💼 Operator bilan suhbat
+2025-11-17 16:44:44 | ACTION | incoming_message | user:tg:6616986769 | salom
+2025-11-17 16:53:34 | ACTION | incoming_message | user:tg:1656193663 | 👨‍💼 Operator bilan suhbat
+2025-11-17 16:53:35 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-11-17 16:55:37 | ACTION | incoming_message | user:tg:1656193663 | =o
+2025-11-17 16:55:59 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-11-17 16:56:00 | ACTION | incoming_message | user:tg:1656193663 | slaom
+2025-11-17 16:56:01 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-11-17 16:56:03 | ACTION | incoming_message | user:tg:1656193663 | sako
+saind
+2025-11-17 16:56:04 | ACTION | incoming_message | user:tg:1656193663 | nfuawnf'
+2025-11-17 16:57:45 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-11-17 16:57:52 | ACTION | incoming_message | user:tg:1656193663 | 🤖 AI bilan suhbat
+2025-11-17 16:57:54 | ACTION | incoming_message | user:tg:1656193663 | slaom
+2025-11-17 16:57:58 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-11-17 16:58:07 | ACTION | incoming_message | user:tg:1656193663 | mahsulotlar
+2025-11-17 16:58:14 | ACTION | incoming_message | user:tg:1656193663 | savatcha
+2025-11-17 16:58:20 | ACTION | incoming_message | user:tg:1656193663 | buyurtma berish
+2025-11-17 17:04:25 | ACTION | incoming_message | user:tg:6616986769 | slaom
+2025-11-17 17:04:33 | ACTION | incoming_message | user:tg:6616986769 | 👨‍💼 Operator bilan suhbat
+2025-11-17 17:04:35 | ACTION | incoming_message | user:tg:6616986769 | salom
+2025-11-17 17:04:37 | ACTION | incoming_message | user:tg:6616986769 | salom
+2025-11-17 17:04:37 | ACTION | incoming_message | user:tg:6616986769 | salom
+2025-11-17 17:04:38 | ACTION | incoming_message | user:tg:6616986769 | sslaosm
+2025-11-17 17:04:39 | ACTION | incoming_message | user:tg:6616986769 | asamsonifas
+2025-11-17 17:04:39 | ACTION | incoming_message | user:tg:6616986769 | vnevinwe
+2025-11-17 17:04:40 | ACTION | incoming_message | user:tg:6616986769 | ves
+2025-11-17 17:04:40 | ACTION | incoming_message | user:tg:6616986769 | vnweoivn
+2025-11-17 17:04:40 | ACTION | incoming_message | user:tg:6616986769 | env
+2025-11-17 17:04:41 | ACTION | incoming_message | user:tg:6616986769 | ewnv
+2025-11-17 17:04:41 | ACTION | incoming_message | user:tg:6616986769 | enbv
+2025-11-17 17:04:41 | ACTION | incoming_message | user:tg:6616986769 | wenbv
+2025-11-17 17:04:41 | ACTION | incoming_message | user:tg:6616986769 | wenb
+2025-11-17 17:04:42 | ACTION | incoming_message | user:tg:6616986769 | ewnb
+2025-11-17 17:04:42 | ACTION | incoming_message | user:tg:6616986769 | ewnbe
+2025-11-17 17:04:42 | ACTION | incoming_message | user:tg:6616986769 | wnb
+2025-11-17 17:04:43 | ACTION | incoming_message | user:tg:6616986769 | ewbnew
+2025-11-17 17:04:43 | ACTION | incoming_message | user:tg:6616986769 | binewo
+2025-11-17 17:04:43 | ACTION | incoming_message | user:tg:6616986769 | bin
+2025-11-17 17:04:43 | ACTION | incoming_message | user:tg:6616986769 | ewbine
+2025-11-17 17:04:43 | ACTION | incoming_message | user:tg:6616986769 | ibne
+2025-11-17 17:04:44 | ACTION | incoming_message | user:tg:6616986769 | bne
+2025-11-17 17:04:44 | ACTION | incoming_message | user:tg:6616986769 | bne
+2025-11-17 17:04:44 | ACTION | incoming_message | user:tg:6616986769 | bn
+2025-11-17 17:04:44 | ACTION | incoming_message | user:tg:6616986769 | ienbe
+2025-11-17 17:04:45 | ACTION | incoming_message | user:tg:6616986769 | ibne
+2025-11-17 17:04:45 | ACTION | incoming_message | user:tg:6616986769 | bnewi
+2025-11-17 17:04:45 | ACTION | incoming_message | user:tg:6616986769 | bne
+2025-11-17 17:04:45 | ACTION | incoming_message | user:tg:6616986769 | ne
+2025-11-17 17:04:46 | ACTION | incoming_message | user:tg:6616986769 | ne
+2025-11-17 17:04:46 | ACTION | incoming_message | user:tg:6616986769 | bjewp
+2025-11-17 17:04:46 | ACTION | incoming_message | user:tg:6616986769 | bins
+2025-11-17 17:04:46 | ACTION | incoming_message | user:tg:6616986769 | bjnseknvds
+2025-11-17 17:04:46 | ACTION | incoming_message | user:tg:6616986769 | vnslkrbn
+2025-11-17 17:04:47 | ACTION | incoming_message | user:tg:6616986769 | rbnri
+2025-11-17 17:04:47 | ACTION | incoming_message | user:tg:6616986769 | onbiornb
+2025-11-17 17:04:47 | ACTION | incoming_message | user:tg:6616986769 | snbvdknblsknb
+2025-11-17 17:04:48 | ACTION | incoming_message | user:tg:6616986769 | rnb
+2025-11-17 17:04:48 | ACTION | incoming_message | user:tg:6616986769 | rnb
+2025-11-17 17:04:48 | ACTION | incoming_message | user:tg:6616986769 | ornbiodrn
+2025-11-17 17:04:49 | ACTION | incoming_message | user:tg:6616986769 | snv
+2025-11-17 17:04:49 | ACTION | incoming_message | user:tg:6616986769 | snb
+2025-11-17 17:04:49 | ACTION | incoming_message | user:tg:6616986769 | rejbn
+2025-11-17 17:04:49 | ACTION | incoming_message | user:tg:6616986769 | rinb
+2025-11-17 17:04:50 | ACTION | incoming_message | user:tg:6616986769 | rnb
+2025-11-17 17:04:50 | ACTION | incoming_message | user:tg:6616986769 | rdnb
+2025-11-17 17:04:50 | ACTION | incoming_message | user:tg:6616986769 | ernbsei
+2025-11-17 17:04:51 | ACTION | incoming_message | user:tg:6616986769 | v
+2025-11-17 17:04:51 | ACTION | incoming_message | user:tg:6616986769 | senvb
+2025-11-17 17:04:51 | ACTION | incoming_message | user:tg:6616986769 | sienb
+2025-11-17 17:04:52 | ACTION | incoming_message | user:tg:6616986769 | iorebn
+2025-11-17 17:04:52 | ACTION | incoming_message | user:tg:6616986769 | pbnr
+2025-11-17 17:04:52 | ACTION | incoming_message | user:tg:6616986769 | nbd
+2025-11-17 17:04:52 | ACTION | incoming_message | user:tg:6616986769 | onbsd
+2025-11-17 17:04:52 | ACTION | incoming_message | user:tg:6616986769 | knbspen
+2025-11-17 17:04:53 | ACTION | incoming_message | user:tg:6616986769 | aon
+2025-11-17 17:04:53 | ACTION | incoming_message | user:tg:6616986769 | gn
+2025-11-17 17:04:53 | ACTION | incoming_message | user:tg:6616986769 | ang
+2025-11-17 17:04:53 | ACTION | incoming_message | user:tg:6616986769 | NAG
+2025-11-17 17:04:53 | ACTION | incoming_message | user:tg:6616986769 | PANBOA
+2025-11-17 17:04:53 | ACTION | incoming_message | user:tg:6616986769 | NGP
+2025-11-17 17:04:54 | ACTION | incoming_message | user:tg:6616986769 | SNGP
+2025-11-17 17:04:54 | ACTION | incoming_message | user:tg:6616986769 | ARKNGOSPNGOSNBGOP
+2025-11-17 17:04:54 | ACTION | incoming_message | user:tg:6616986769 | ernoip
+2025-11-17 17:04:55 | ACTION | incoming_message | user:tg:6616986769 | eNKBNASPOBNA
+2025-11-17 17:04:55 | ACTION | incoming_message | user:tg:6616986769 | BN
+2025-11-17 17:04:57 | ACTION | incoming_message | user:tg:6616986769 | nba
+2025-11-17 17:06:44 | ACTION | incoming_message | user:tg:6616986769 | salpm
+2025-11-17 17:07:21 | ACTION | incoming_message | user:tg:1656193663 | 🤖 AI bilan suhbat
+2025-11-17 17:07:24 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-11-17 17:07:34 | ACTION | incoming_message | user:tg:1656193663 | 👨‍💼 Operator bilan suhbat
+2025-11-17 17:07:37 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-11-17 17:07:41 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
+2025-11-17 17:07:41 | ACTION | products_cmd | user:tg:1656193663 | no items found

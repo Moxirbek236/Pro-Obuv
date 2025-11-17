@@ -599,6 +599,8 @@
             class="menu-item-card"
             data-id="{{ item.id }}"
             data-category="{{ (item.category or 'product')|lower }}"
+            data-sizes="{{ (item.sizes or '')|lower }}"
+            data-colors="{{ (item.colors or '')|lower }}"
             onclick="event.stopPropagation(); window.location.href='{{ url_for('product_detail', item_id=item.id) }}';">
             <div class="card-image">
               <a href="{{ url_for('product_detail', item_id=item.id) }}" onclick="event.stopPropagation();">
@@ -606,26 +608,26 @@
                   <div class="gallery-track">
                     {% if item.media %}
                       {% for m in item.media %}
-                        {% set src = (m.media_url if (m.media_url is defined) else (m.image_url if (m.image_url is defined) else (m if m is string else ''))) %}
-                        <img src="{{ src or '/static/defoult.webp' }}" alt="{{ localized_field(item, 'name') or item.name }}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.webp'" />
+                        {% set raw_src = (m.media_url if (m.media_url is defined) else (m.image_url if (m.image_url is defined) else (m if m is string else ''))) %}
+                        {% set src = prefer_webp(raw_src or '/static/defoult.webp') %}
+                        <img src="{{ src }}" alt="{{ localized_field(item, 'name') or item.name }}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.webp'" />
                       {% endfor %}
                     {% else %}
-                      <img src="{{ item.image_url or '/static/defoult.webp' }}" alt="{{ localized_field(item, 'name') or item.name }}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.webp'" />
+                      <img src="{{ prefer_webp(item.image_url or '/static/defoult.webp') }}" alt="{{ localized_field(item, 'name') or item.name }}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.webp'" />
                     {% endif %}
                   </div>
                 </div>
               </a>
             </div>
             <div class="card-body">
-              {% if session.user_id %}
               <form
                 method="post"
                 action="{{ url_for('add_to_favorites', menu_item_id=item.id) }}"
                 class="favorite-form"
+                data-item-id="{{ item.id }}"
                 onclick="event.stopPropagation()">
-                <button type="submit" class="btn-favorite-top"></button>
+                <button type="submit" class="btn-favorite-top">❤</button>
               </form>
-              {% endif %}
               <h3 class="card-title">
                 <a
                   href="{{ url_for('product_detail', item_id=item.id) }}"
@@ -1817,11 +1819,11 @@
     transform: scale(1.05);
   }
 
-  /* Sevimli button chap tepa burchakda */
+  /* Sevimli (favorites) tugma – karta va product sahifalarida yuqori o'ng burchakda */
   .favorite-form {
     position: absolute;
     top: 10px;
-    left: 10px;
+    right: 10px;
     z-index: 10;
   }
 
@@ -1833,11 +1835,16 @@
     border-radius: 50%;
     cursor: pointer;
     font-size: 18px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     transition: transform 0.18s ease, background 0.18s ease;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
   }
 
-  .btn-favorite-top:hover {
+  .btn-favorite-top:hover,
+  .btn-favorite-top.active {
     background: #e91e63;
     color: white;
     transform: scale(1.1);
@@ -2139,6 +2146,11 @@
     .menu-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 26px !important; }
     /* Ensure cards fill their grid column instead of being artificially narrow */
     .menu-item-card { max-width: none !important; margin: 0 !important; width: 100% !important; box-sizing: border-box !important; }
+  }
+
+  /* Favorites tugmasi uchun karta konteynerini nisbiy (relative) qilamiz */
+  .menu-item-card {
+    position: relative;
   }
 
   @media (min-width: 1900px) {
@@ -3015,6 +3027,10 @@
     // Build a safe menuData mapping using tojson so strings are properly escaped.
     // This avoids breaking the JS if item names/descriptions contain quotes or newlines.
     let menuData = {};
+    // Oddiy foydalanuvchi (staff/courier/super_admin emas) bo'lsa favorites ishlaydi
+    const IS_FAVORITES_USER = {{ (session.get('user_id') and not session.get('staff_id') and not session.get('courier_id') and not session.get('super_admin')) | tojson }};
+    const FAVORITES_LOGIN_MESSAGE = {{ "Iltimos oldin saytdan avtorizatsiyadan o'ting"|tojson }};
+
     {% for item in men %}
     menuData[{{ item.id }}] = {{ {
         "id": item.id,
@@ -3288,46 +3304,27 @@
     }
 
     function renderMenuItems(items) {
-      const grid = document.querySelector('.menu-grid');
-      if (!grid) return;
-      grid.innerHTML = '';
-
-      items.forEach(item => {
-    const div = document.createElement('div');
-  div.className = 'menu-item-card';
-  // ensure both data-id and data-category are available for robust selection
-  div.dataset.id = item.id;
-  // normalize category on dataset for consistent comparisons
-  div.dataset.category = (item.category || 'product').toString();
-  // ensure click opens modal even if inner elements call stopPropagation
-  div.addEventListener('click', function(e){ try { window.location.href = '/product/' + encodeURIComponent(item.id); } catch(err) { console.warn('navigation failed', err); } });
-        // ensure pointer events allowed
-        div.style.pointerEvents = 'auto';
-
-        div.innerHTML = `
-          <div class="card-image"><img src="${item.image_url || '/static/defoult.webp'}" alt="${escapeHtml(item.name || 'Mahsulot rasm') }" title="${escapeHtml(item.name || 'Mahsulot')}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.webp'"/></div>
-          <div class="card-body">
-            <h3 class="card-title">${item.name}</h3>
-            <p class="card-category">${item.category || ''}</p>
-            <p class="card-description">${item.description || ''}</p>
-            <div class="card-rating">
-              <div class="stars">
-                ${(() => {
-                  const r = Math.round((parseFloat(item.rating)||0));
-                  let s = '';
-                  for (let i=1;i<=5;i++) s += `<span class="star ${i<=r?'filled':''}"><i class="bi bi-star-fill ui-icon ui-icon--accent" aria-hidden="true"></i></span>`;
-                  return s;
-                })()}
-              </div>
-              <div class="rating-text">${(parseFloat(item.rating)||0).toFixed(1)} (${item.orders_count||0} buyurtma)</div>
-            </div>
-          </div>
-        `;
-
-        grid.appendChild(div);
-      });
-      // After dynamically rendering, ensure handlers are attached for new cards
-      try { attachCardHandlers(); } catch (e) { console.warn('attachCardHandlers after render failed', e); }
+      // LEGACY STUB:
+      // Old versiyada bu funksiya `.menu-grid` ichidagi kartalarni butunlay
+      // qayta chizardi va /api/menu-search natijasidan yangi "ikkinchi" menyu
+      // hosil bo'lardi. Bu foydalanuvchiga bir vaqtning o'zida bir nechta menyu
+      // yuklangandek ko'rinish va qo'shimcha yuklamani keltirib chiqarardi.
+      // 
+      // Endi esa faqat `menuData` keshini yangilaymiz, mavjud server-rander
+      // qilingan kartalar esa o'z holicha qoladi. Shunday qilib sahifada faqat
+      // bitta asosiy menyu ishlaydi.
+      try {
+        if (!items || !Array.isArray(items)) return;
+        if (!menuData || typeof menuData !== 'object') {
+          menuData = {};
+        }
+        items.forEach(function(item) {
+          if (!item || typeof item.id === 'undefined') return;
+          menuData[item.id] = item;
+        });
+      } catch (e) {
+        console.warn('renderMenuItems (stub) error', e);
+      }
     }
 
     // Normalize category strings to simple slugs for comparison
@@ -3347,95 +3344,59 @@
   const PAGE_SIZE = 10;
   let lastTotalCount = 0;
 
+  // Simplified search: use only client-side filtering over server-rendered cards.
+  // This avoids re-drawing the menu multiple times with different styles.
   async function performMenuSearch() {
-    console.log('performMenuSearch called');
-    
-    // Read filter inputs defensively
-    const qEl = document.getElementById('menuSearchInput');
-    const catEl = document.getElementById('filterCategory');
-    const sortEl = document.getElementById('filterSort');
-    const sizeEl = document.getElementById('filterSize');
-    const colorEl = document.getElementById('filterColor');
-
-    const q = qEl ? (qEl.value || '').trim() : '';
-    const category = catEl ? (catEl.value || '') : '';
-    const sort = sortEl ? (sortEl.value || '') : '';
-    const size = sizeEl ? (sizeEl.value || '').trim() : '';
-    const color = colorEl ? (colorEl.value || '').trim() : '';
-
-    console.log('Filter values:', { q, category, sort, size, color });
-
-    // Build query params for server-side search
-    const params = new URLSearchParams();
-    if (q) params.set('q', q);
-    if (category) params.set('category', category);
-    if (sort) params.set('sort', sort);
-    if (size) params.set('size', size);
-    if (color) params.set('color', color);
-    params.set('limit', PAGE_SIZE);
-    params.set('offset', (currentPage - 1) * PAGE_SIZE);
-
-    // Try server-side search first; fall back to client-side filtering on any error
     try {
-      // Debug: log the params so developer can inspect in console
-      try { console.debug('[performMenuSearch] params', Object.fromEntries(params.entries())); } catch(e) {}
-      const res = await fetch('/api/menu-search?' + params.toString());
-      if (!res.ok) throw new Error('Network response not ok: ' + res.status);
-      const data = await res.json();
-
-      try { console.debug('[performMenuSearch] response', { status: res.status, ok: res.ok, payload: data }); } catch(e) {}
-
-      if (data && data.success && Array.isArray(data.items)) {
-        console.log('API returned items:', data.items.length);
-        // Render items returned by API
-        renderMenuItems(data.items);
-        // Update local cache for modal interactions and client-side operations
-        menuData = {};
-        data.items.forEach(it => { if (it && it.id !== undefined) menuData[it.id] = it; });
-        // Update pagination controls if available
-        lastTotalCount = parseInt(data.total_count || 0, 10) || 0;
-        renderPaginationControls(lastTotalCount, PAGE_SIZE, currentPage);
-      } else {
-        console.log('API returned unexpected payload, falling back to client-side filter');
-        // API returned unexpected payload; fallback to client-side filter
-        applyClientSideFilter();
-      }
+      applyClientSideFilter();
     } catch (err) {
-      console.warn('performMenuSearch failed, falling back to client-side filter', err);
-      try { applyClientSideFilter(); } catch (e) { console.warn('client-side filter also failed', e); }
+      console.warn('performMenuSearch failed:', err);
     }
   }
 
   function applyClientSideFilter() {
-      console.log('Applying client-side filter');
-      // Defensive DOM access
-      const qEl = document.getElementById('menuSearchInput');
-      const catEl = document.getElementById('filterCategory');
-      const sizeEl = document.getElementById('filterSize');
-      const colorEl = document.getElementById('filterColor');
-  const q = qEl ? (qEl.value || '').trim().toLowerCase() : '';
-  const category = catEl ? (catEl.value || '') : '';
-  // Normalize size/color like the server: remove spaces and lowercase
-  const size = sizeEl ? (sizeEl.value || '').trim().toLowerCase().replace(/\s+/g,'') : '';
-  const color = colorEl ? (colorEl.value || '').trim().toLowerCase().replace(/\s+/g,'') : '';
+    console.log('Applying client-side filter (DOM-based)');
+    const qEl = document.getElementById('menuSearchInput');
+    const catEl = document.getElementById('filterCategory');
+    const sizeEl = document.getElementById('filterSize');
+    const colorEl = document.getElementById('filterColor');
 
-      const allItems = Object.values(menuData || {});
-      const filtered = allItems.filter(it => {
-        if (category && slugifyCategory(it.category || '') !== slugifyCategory(category)) return false;
-        if (q && !(it.name.toLowerCase().includes(q) || (it.description||'').toLowerCase().includes(q))) return false;
-        if (size) {
-          const sizesRaw = (it.sizes || '').toString().toLowerCase().replace(/\s+/g,'');
-          if (!sizesRaw.includes(size)) return false;
+    const q = qEl ? (qEl.value || '').trim().toLowerCase() : '';
+    const category = catEl ? (catEl.value || '') : '';
+    const size = sizeEl ? (sizeEl.value || '').trim().toLowerCase().replace(/\s+/g, '') : '';
+    const color = colorEl ? (colorEl.value || '').trim().toLowerCase().replace(/\s+/g, '') : '';
+
+    const normCategory = slugifyCategory(category || 'all');
+    const cards = document.querySelectorAll('.menu-item-card');
+    if (!cards || !cards.length) return;
+
+    cards.forEach(card => {
+      let visible = true;
+      try {
+        const itemCat = slugifyCategory(card.dataset.category || 'product');
+        if (category && normCategory !== 'all' && itemCat !== normCategory) {
+          visible = false;
         }
-        if (color) {
-          const colorsRaw = (it.colors || '').toString().toLowerCase().replace(/\s+/g,'');
-          if (!colorsRaw.includes(color)) return false;
+        if (visible && q) {
+          const titleEl = card.querySelector('.card-title');
+          const descEl = card.querySelector('.card-body');
+          const text = ((titleEl && titleEl.innerText) || '') + ' ' + ((descEl && descEl.innerText) || '');
+          if (!text.toLowerCase().includes(q)) visible = false;
         }
-        return true;
-      });
-      console.log('Client-side filter result:', filtered.length, 'items');
-      renderMenuItems(filtered);
-    }
+        if (visible && size) {
+          const sizesRaw = (card.dataset.sizes || '').toLowerCase().replace(/\s+/g, '');
+          if (!sizesRaw.includes(size)) visible = false;
+        }
+        if (visible && color) {
+          const colorsRaw = (card.dataset.colors || '').toLowerCase().replace(/\s+/g, '');
+          if (!colorsRaw.includes(color)) visible = false;
+        }
+      } catch (e) {
+        console.warn('applyClientSideFilter error for card', e);
+      }
+      card.style.display = visible ? 'block' : 'none';
+    });
+  }
 
   const debouncedSearch = debounce(performMenuSearch, 300);
 
@@ -3838,6 +3799,67 @@
           }
         }
 
+    // Sevimlilar (favorites) tugmalarini AJAX orqali boshqarish
+    function wireFavoriteButtons() {
+      try {
+        const forms = document.querySelectorAll('.favorite-form');
+        forms.forEach(form => {
+          if (form._favWired) return;
+          form._favWired = true;
+
+          const btn = form.querySelector('.btn-favorite-top');
+          if (!btn) return;
+
+          // Ikonka doim ko'rinib turishi uchun
+          if (!btn.innerHTML || !btn.innerHTML.trim()) {
+            btn.textContent = '❤';
+          }
+
+          btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const itemId = form.dataset.itemId || (form.getAttribute('data-item-id') || '').trim();
+            if (!itemId) return;
+
+            if (!IS_FAVORITES_USER) {
+              showToast(FAVORITES_LOGIN_MESSAGE, 'warning');
+              return;
+            }
+
+            const actionUrl = form.getAttribute('action') || (`/add-to-favorites/${encodeURIComponent(itemId)}`);
+
+            fetch(actionUrl, {
+              method: 'POST',
+              headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+              .then(r => r.json())
+              .then(data => {
+                if (data && data.success) {
+                  btn.classList.add('active');
+                  showToast(data.message || 'Sevimlilarga saqlandi', 'success');
+                } else {
+                  const msg = (data && data.message) || 'Xatolik yuz berdi';
+                  // Agar allaqachon sevimlilarda bo'lsa, informatsion xabar beramiz
+                  if (msg.toLowerCase().includes('allaqachon sevimlilarda')) {
+                    btn.classList.add('active');
+                    showToast(msg, 'info');
+                  } else {
+                    showToast(msg, 'error');
+                  }
+                }
+              })
+              .catch(err => {
+                console.warn('add-to-favorites error', err);
+                showToast('Sevimlilarga saqlashda xatolik yuz berdi', 'error');
+              });
+          });
+        });
+      } catch (e) {
+        console.warn('wireFavoriteButtons failed', e);
+      }
+    }
+
     // Savatcha badge-ni yangilash
     function updateCartCountDisplay() {
         fetch('/api/cart-count')
@@ -4213,6 +4235,7 @@
     document.addEventListener('DOMContentLoaded', function() {
       updateCartCountDisplay();
       try { loadMenuData(); } catch(e) { console.warn('loadMenuData failed', e); }
+      try { wireFavoriteButtons(); } catch(e) { console.warn('wireFavoriteButtons on DOMContentLoaded failed', e); }
       // If server rendered items exist, ensure menuData is populated from DOM
       try { buildMenuDataFromDOM(); } catch(e) { console.warn('buildMenuDataFromDOM failed', e); }
       // Instrumentation: helpful debug logs to capture whether handlers attach

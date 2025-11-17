@@ -1226,3 +1226,386 @@ jinja2.exceptions.TemplateSyntaxError: expected token 'end of statement block', 
 2025-11-13 16:09:57,414 | ERROR | restaurant_app | menu:7570 | Menu fallback error: unexpected char '\\' at 12488
 2025-11-14 08:20:26,792 | ERROR | restaurant_app | add_to_cart:8445 | Add to cart error: The setup method 'route' can no longer be called on the application. It has already handled its first request, any changes will not be applied consistently.
 Make sure all imports, decorators, functions, etc. needed to set up the application are done before running it.
+2025-11-17 14:01:42,008 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: ratings.user_id
+2025-11-17 14:01:42,513 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: ratings.user_id
+2025-11-17 14:01:43,019 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: ratings.user_id
+2025-11-17 14:01:43,019 | ERROR | restaurant_app | execute_query:2731 | execute_query error after 3 attempts: NOT NULL constraint failed: ratings.user_id - Query: INSERT INTO ratings (menu_item_id, user_id, rating, comment, created_at) VALUES (?, ?, ?, ?, ?)...
+2025-11-17 14:01:43,020 | ERROR | restaurant_app | post_comment:7937 | Failed to insert rating for item 39: NOT NULL constraint failed: ratings.user_id
+2025-11-17 16:21:14,771 | ERROR | restaurant_app | add_to_cart:8523 | Add to cart error: The setup method 'route' can no longer be called on the application. It has already handled its first request, any changes will not be applied consistently.
+Make sure all imports, decorators, functions, etc. needed to set up the application are done before running it.
+2025-11-17 16:50:06,580 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:06,580 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:06,580 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:06,580 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:06,581 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:06,581 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:06,581 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:06,581 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:06,581 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:06,581 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:06,639 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:06,708 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:06,732 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:06,792 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:06,795 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:06,796 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:06,947 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:07,018 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:07,053 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:07,106 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:07,111 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:07,115 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:07,258 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:07,330 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:07,363 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:07,415 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:07,420 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:07,429 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:08,300 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:11,220 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:20,742 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:20,777 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:20,952 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:20,982 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:21,043 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:21,068 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 16:50:21,088 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-11-17 20:06:33,631 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 20:06:34,138 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 20:06:34,640 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 20:06:34,641 | ERROR | restaurant_app | execute_query:2731 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-11-17 20:06:34,644 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 20:06:35,145 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 20:06:35,647 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 20:06:35,648 | ERROR | restaurant_app | execute_query:2731 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-11-17 21:24:15,663 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:24:16,224 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:24:16,726 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:24:16,728 | ERROR | restaurant_app | execute_query:2731 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-11-17 21:24:16,735 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:24:17,240 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:24:17,742 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:24:17,746 | ERROR | restaurant_app | execute_query:2731 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-11-17 21:44:36,785 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:44:37,294 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:44:37,797 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:44:37,799 | ERROR | restaurant_app | execute_query:2731 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-11-17 21:44:37,808 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:44:38,310 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:44:38,830 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:44:38,830 | ERROR | restaurant_app | execute_query:2731 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-11-17 21:57:54,512 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:57:55,018 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:57:55,520 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:57:55,520 | ERROR | restaurant_app | execute_query:2731 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-11-17 21:57:55,526 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:57:56,027 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:57:56,528 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:57:56,529 | ERROR | restaurant_app | execute_query:2731 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-11-17 21:57:58,846 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:57:59,347 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:57:59,849 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:57:59,849 | ERROR | restaurant_app | execute_query:2731 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-11-17 21:57:59,850 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:58:00,351 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:58:00,852 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:58:00,852 | ERROR | restaurant_app | execute_query:2731 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-11-17 21:58:07,515 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:58:08,015 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:58:08,517 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:58:08,517 | ERROR | restaurant_app | execute_query:2731 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-11-17 21:58:08,518 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:58:09,019 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:58:09,520 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:58:09,521 | ERROR | restaurant_app | execute_query:2731 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-11-17 21:58:14,226 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:58:14,728 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:58:15,229 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:58:15,230 | ERROR | restaurant_app | execute_query:2731 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-11-17 21:58:15,231 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:58:15,733 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:58:16,234 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:58:16,234 | ERROR | restaurant_app | execute_query:2731 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-11-17 21:58:20,812 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:58:21,314 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:58:21,815 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:58:21,816 | ERROR | restaurant_app | execute_query:2731 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-11-17 21:58:21,817 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:58:22,318 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:58:22,819 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 21:58:22,819 | ERROR | restaurant_app | execute_query:2731 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-11-17 22:04:25,670 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 22:04:26,173 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 22:04:26,674 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 22:04:26,675 | ERROR | restaurant_app | execute_query:2731 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-11-17 22:04:26,682 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 22:04:27,183 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 22:04:27,684 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 22:04:27,685 | ERROR | restaurant_app | execute_query:2731 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-11-17 22:07:24,641 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 22:07:25,146 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 22:07:25,648 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 22:07:25,649 | ERROR | restaurant_app | execute_query:2731 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-11-17 22:07:25,655 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 22:07:26,157 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 22:07:26,659 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-17 22:07:26,660 | ERROR | restaurant_app | execute_query:2731 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...

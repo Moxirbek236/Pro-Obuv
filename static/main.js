@@ -491,10 +491,13 @@ window.performMenuSearch = function () {
 window.debouncedSearch = debounce(window.performMenuSearch, 300);
 
 // Simple client-side filter that hides/shows existing .menu-item-card elements based on inputs
+// NOTE: this function must only work with menu cards. Previous versions
+// accidentally mixed in news-ticker logic which broke the whole script.
 window.applyClientSideFilter = function () {
   try {
     const grid = document.querySelector(".menu-grid");
     if (!grid) return;
+
     const q = (document.getElementById("menuSearchInput")?.value || "")
       .toLowerCase()
       .trim();
@@ -510,6 +513,7 @@ window.applyClientSideFilter = function () {
 
     const cards = Array.from(grid.querySelectorAll(".menu-item-card"));
     cards.forEach((card) => {
+      let visible = true;
       try {
         const title = (
           card.querySelector(".item-name")?.textContent ||
@@ -517,96 +521,29 @@ window.applyClientSideFilter = function () {
           ""
         ).toLowerCase();
         const cat = (card.getAttribute("data-category") || "").toLowerCase();
-        // Build media HTML: support youtube iframe, video files, media array, or image.
-        let mediaHtml = "";
-        let hasMedia = false;
-        try {
-          const renderVideo = (src) => `
-              <div class="news-media video-wrapper">
-                <video controls preload="metadata" playsinline>
-                  <source src="${escapeHtml(src)}" />
-                  Your browser does not support the video tag.
-                </video>
-              </div>`;
 
-          if (it.youtube_embed) {
-            hasMedia = true;
-            mediaHtml = `
-              <div class="news-media">
-                <div class="youtube-embed-wrapper">
-                  <iframe src="${escapeHtml(
-                    it.youtube_embed
-                  )}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                </div>
-              </div>
-            `;
-          } else if (it.video_url) {
-            hasMedia = true;
-            mediaHtml = renderVideo(it.video_url);
-          } else if (Array.isArray(it.media) && it.media.length) {
-            for (let m of it.media) {
-              try {
-                let src = null;
-                let type = null;
-                if (!m) continue;
-                if (typeof m === "string") {
-                  src = m;
-                } else if (typeof m === "object") {
-                  src =
-                    m.media_url || m.url || m.src || m.image_url || m.video_url;
-                  type = m.type || m.media_type || null;
-                }
-                if (!src) continue;
-                const lower = String(src).toLowerCase();
-                if (type && type.indexOf("video") !== -1) {
-                  hasMedia = true;
-                  mediaHtml = renderVideo(src);
-                  break;
-                }
-                if (
-                  lower.endsWith(".mp4") ||
-                  lower.endsWith(".webm") ||
-                  lower.endsWith(".ogg")
-                ) {
-                  hasMedia = true;
-                  mediaHtml = renderVideo(src);
-                  break;
-                }
-                if (lower.match(/\.(jpg|jpeg|png|gif|webp)$/)) {
-                  hasMedia = true;
-                  mediaHtml = ` <div class="news-media"><img src="${escapeHtml(
-                    src
-                  )}" alt="${escapeHtml(
-                    it.title || ""
-                  )}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.webp'"/></div>`;
-                  break;
-                }
-              } catch (e) {
-                continue;
-              }
-            }
-          } else if (it.image_url) {
-            hasMedia = true;
-            mediaHtml = `
-              <div class="news-media"><img src="${escapeHtml(
-                it.image_url || ""
-              )}" alt="${escapeHtml(
-              it.title || ""
-            )}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.webp'"/></div>
-            `;
-          }
-        } catch (e) {
-          mediaHtml = "";
-          hasMedia = false;
+        if (category && !cat.includes(category)) {
+          visible = false;
+        }
+        if (visible && q && !title.includes(q)) {
+          visible = false;
+        }
+        if (visible && size) {
+          const sizesRaw = (card.dataset.sizes || "").toLowerCase();
+          if (!sizesRaw.includes(size)) visible = false;
+        }
+        if (visible && color) {
+          const colorsRaw = (card.dataset.colors || "").toLowerCase();
+          if (!colorsRaw.includes(color)) visible = false;
         }
       } catch (e) {
-        /* ignore per-card errors */
+        console.warn("applyClientSideFilter error for card", e);
       }
+      card.style.display = visible ? "block" : "none";
     });
   } catch (e) {
     console.warn("applyClientSideFilter error", e);
   }
-  if (!hasMedia) itemWrap.classList.add("no-media");
 };
 
 function initImageGalleries(root = document) {
@@ -966,28 +903,86 @@ class NewsTicker {
           document.body.dataset.language) ||
         document.documentElement.lang ||
         "ru";
-      const response = await fetch(
-        `/api/news?ticker=1&lang=${encodeURIComponent(preferredLang)}`
+
+      // Read directly from data/news.json so footer ticker always reflects
+      // the JSON-backed multilingual news configuration.
+      const res = await fetch(
+        `/data/news.json?ts=${Date.now()}`,
+        { cache: "no-cache" }
       );
-      const data = await response.json();
-      if (data && data.success && data.news && data.news.length > 0) {
-        this.newsItems = data.news;
-        this.updateDisplay();
-      } else {
-        // Fallback to all news if no ticker-specific news
-        const response2 = await fetch(
-          `/api/news?lang=${encodeURIComponent(preferredLang)}`
-        );
-        const data2 = await response2.json();
-        if (data2 && data2.success && data2.news && data2.news.length > 0) {
-          this.newsItems = data2.news;
-          this.updateDisplay();
-        } else {
-          this.showNoNews();
-        }
+      if (!res || !res.ok) {
+        throw new Error("Failed to load data/news.json");
       }
+      const blob = await res.json().catch(() => null);
+      if (!blob) {
+        throw new Error("Invalid news.json payload");
+      }
+
+      let items = Array.isArray(blob.news)
+        ? blob.news
+        : Array.isArray(blob)
+        ? blob
+        : [];
+
+      if (!items || !items.length) {
+        this.showNoNews();
+        return;
+      }
+
+      const lang = String(preferredLang || "ru").toLowerCase();
+      const supported = ["uz", "ru", "en", "kz"];
+      const langKey = supported.indexOf(lang) !== -1 ? lang : "ru";
+
+      // Helper to pick localized field from news.json structure
+      const pickLocalized = (obj, base) => {
+        if (!obj || !base) return "";
+        const direct = obj[`${base}_${langKey}`];
+        if (direct) return String(direct);
+        return (
+          obj[`${base}_uz`] ||
+          obj[`${base}_ru`] ||
+          obj[`${base}_en`] ||
+          obj[`${base}_kz`] ||
+          obj[base] ||
+          ""
+        );
+      };
+
+      // Keep only active items and sort by display_order then created_at
+      items = items
+        .filter((it) => it && (it.is_active === undefined || it.is_active))
+        .sort((a, b) => {
+          const odA = a && a.display_order != null ? Number(a.display_order) : 9999;
+          const odB = b && b.display_order != null ? Number(b.display_order) : 9999;
+          if (odA !== odB) return odA - odB;
+          const ca = (a && a.created_at) || "";
+          const cb = (b && b.created_at) || "";
+          if (ca < cb) return -1;
+          if (ca > cb) return 1;
+          return 0;
+        });
+
+      this.newsItems = items.map((it) => {
+        const title = pickLocalized(it, "title");
+        const content = pickLocalized(it, "content");
+        return {
+          ...it,
+          title,
+          content,
+          localized_title: title,
+          localized_content: content,
+        };
+      });
+
+      if (!this.newsItems.length) {
+        this.showNoNews();
+        return;
+      }
+
+      this.currentIndex = 0;
+      this.updateDisplay();
     } catch (e) {
-      console.warn("News loading failed:", e);
+      console.warn("News loading failed from news.json:", e);
       this.showNoNews();
     }
   }
@@ -1037,7 +1032,7 @@ class NewsTicker {
       } catch (e) {
         mediaHtml = "";
       }
-      // Prefer localized fields populated by /api/news?lang=...
+      // Prefer localized fields populated by data/news.json or /api/news?lang=...
       const titleText =
         it.localized_title ||
         it.title ||
@@ -1063,9 +1058,9 @@ class NewsTicker {
 
       itemWrap.innerHTML = `
         ${mediaHtml}
-        <div class=\"news-body\">
-          <h4 class=\"news-title\">${escapeHtml(it.title || "")}</h4>
-          <p class=\"news-excerpt\">${excerpt}</p>
+        <div class="news-body">
+          <h4 class="news-title">${escapeHtml(titleText || "")}</h4>
+          <p class="news-excerpt">${excerpt}</p>
         </div>
       `;
 
