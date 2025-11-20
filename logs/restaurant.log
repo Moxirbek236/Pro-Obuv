@@ -529,3 +529,4 @@
 2025-11-17 22:58:33,530 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/avatar_f5cb07487d084999868fe158cf41e313.jpg
 2025-11-17 22:58:37,675 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/avatar_f5cb07487d084999868fe158cf41e313.jpg
 2025-11-17 22:58:39,267 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-11-17 23:18:20,658 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/avatar_f5cb07487d084999868fe158cf41e313.jpg
