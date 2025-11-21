@@ -11,6 +11,14 @@
 let cartCount = 0;
 window.currentPath = window.currentPath || window.location.pathname;
 
+function autoUpdatesAllowed() {
+  try {
+    return !window.DISABLE_AUTO_UPDATES;
+  } catch (e) {
+    return true;
+  }
+}
+
 // --- Utilities ---
 function escapeHtml(s) {
   if (s === null || s === undefined) return "";
@@ -103,7 +111,9 @@ class CartManager {
   }
   constructor() {
     this.updateCartCount();
-    setInterval(() => this.updateCartCount(), 20000);
+    if (autoUpdatesAllowed()) {
+      this.pollTimer = setInterval(() => this.updateCartCount(), 20000);
+    }
   }
   addToCart(itemId, quantity = 1) {
     fetch("/add_to_cart", {
@@ -1174,6 +1184,7 @@ class NewsTicker {
   }
 
   startAutoSlide() {
+    if (!autoUpdatesAllowed()) return;
     if (this.newsItems.length <= 1) return;
     this.autoSlideInterval = setInterval(() => {
       this.nextSlide();

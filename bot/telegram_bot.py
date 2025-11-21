@@ -201,43 +201,51 @@ def log_error(err: Exception, context: str = ""):
 
 
 async def _send_text_to_telegram(chat_id: int, text: str) -> None:
-    """Yordamchi: bitta text xabarni Telegram foydalanuvchisiga yuborish.
+    """Yordamchi: bitta text xabarni Telegram foydalanuvchisiga yuborish.  
 
-    Bu funksiya ApplicationBuilder dan foydalanadi. U run_both.py orqali
+    Bu funksiya ApplicationBuilder dan foydalanadi. U run_both.py orqali   
     fon jarayon sifatida ishlayotgan botga mos keladi.
     """
     if not TELEGRAM_TOKEN or not Updater:
         return
     try:
-        app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
+        # Global bot application instance dan foydalanish
+        # Agar bot allaqachon ishlayotgan bo'lsa, yangi application yaratmaslik kerak
+        from telegram import Bot
+        bot = Bot(token=TELEGRAM_TOKEN)
         try:
-            await app.bot.send_message(chat_id=chat_id, text=text)
+            await bot.send_message(chat_id=chat_id, text=text)
         finally:
-            await app.shutdown()
-            await app.stop()
+            try:
+                await bot.close()
+            except Exception:
+                pass
     except Exception as e:
         log_error(e, f"_send_text_to_telegram chat_id={chat_id}")
 
 
 def send_operator_reply(client_key: str, text: str, operator_name: str = "Operator") -> None:
-    """Flask backend dan chaqiriladigan soddalashtirilgan yordamchi.
+    """Flask backend dan chaqiriladigan soddalashtirilgan yordamchi.       
 
-    client_key odatda 'tg:<user_id>' formatida bo'ladi. Bu funksiya ushbu
-    foydalanuvchiga bot orqali javob yuboradi. Flask tomoni sync bo'lgani
-    uchun ichida asyncio event loop ni best-effort ishga tushiramiz.
+    client_key odatda 'tg:<user_id>' formatida bo'ladi. Bu funksiya ushbu  
+    foydalanuvchiga bot orqali javob yuboradi. Flask tomoni sync bo'lgani  
+    uchun ichida asyncio event loop ni best-effort ishga tushiramiz.       
     """
     try:
         if not client_key or not isinstance(client_key, str):
+            LOG.warning(f"send_operator_reply: invalid client_key: {client_key}")
             return
         if not client_key.startswith("tg:"):
+            LOG.warning(f"send_operator_reply: client_key not telegram format: {client_key}")
             return
         try:
             chat_id = int(client_key.split(":", 1)[1])
-        except Exception:
+        except Exception as e:
+            LOG.warning(f"send_operator_reply: failed to parse chat_id from {client_key}: {e}")
             return
 
         # Xabar matniga operator ismini qo'shib yuboramiz
-        full_text = f"{operator_name}: {text}" if operator_name else text
+        full_text = f"{operator_name}: {text}" if operator_name else text  
 
         import asyncio
 
@@ -246,20 +254,37 @@ def send_operator_reply(client_key: str, text: str, operator_name: str = "Operat
         try:
             loop = asyncio.get_event_loop()
             if loop.is_running():
+                # Running loop mavjud - background task sifatida ishga tushiramiz
                 loop.create_task(_send_text_to_telegram(chat_id, full_text))
+                LOG.info(f"send_operator_reply: scheduled message to {chat_id} via running loop")
             else:
+                # Loop mavjud lekin ishlamayapti - run_until_complete ishlatamiz
                 loop.run_until_complete(_send_text_to_telegram(chat_id, full_text))
+                LOG.info(f"send_operator_reply: sent message to {chat_id} via existing loop")
         except RuntimeError:
-            # No running loop
+            # No running loop - yangi loop yaratamiz
             try:
                 loop = asyncio.new_event_loop()
                 asyncio.set_event_loop(loop)
                 loop.run_until_complete(_send_text_to_telegram(chat_id, full_text))
+                LOG.info(f"send_operator_reply: sent message to {chat_id} via new loop")
             finally:
                 try:
                     loop.close()
                 except Exception:
                     pass
+        except Exception as e:
+            LOG.exception(f"send_operator_reply: error in event loop handling: {e}")
+            # Fallback: to'g'ridan-to'g'ri requests orqali yuborishga urinamiz
+            try:
+                from telegram import Bot
+                import asyncio
+                bot = Bot(token=TELEGRAM_TOKEN)
+                asyncio.run(bot.send_message(chat_id=chat_id, text=full_text))
+                bot.close()
+                LOG.info(f"send_operator_reply: sent message to {chat_id} via fallback method")
+            except Exception as fallback_error:
+                LOG.exception(f"send_operator_reply: fallback method also failed: {fallback_error}")
     except Exception as e:
         log_error(e, f"send_operator_reply client_key={client_key}")
 
@@ -285,7 +310,8 @@ if not FLASK_APP_URL:
             FLASK_APP_URL = "http://127.0.0.1:5000"
     except Exception:
         # no local server detected; fall back to configured env var or default
-        FLASK_APP_URL = os.environ.get("FLASK_APP_URL", "https://safety.uz")
+        # Local development uchun default localhost
+        FLASK_APP_URL = os.environ.get("FLASK_APP_URL", "http://127.0.0.1:5000")
 else:
     FLASK_APP_URL = FLASK_APP_URL
 
@@ -354,8 +380,9 @@ async def products_cmd_new(update: "Update", context: "ContextTypes.DEFAULT_TYPE
         LOG.exception("Failed to send loading message")
 
     try:
-        url = FLASK_APP_URL.rstrip("/") + "/api/menu-search?limit=10"
-        r = requests.get(url, timeout=6)
+        # Barcha mahsulotlarni yuklash uchun limitni katta qilamiz
+        url = FLASK_APP_URL.rstrip("/") + "/api/menu-search?limit=1000"
+        r = requests.get(url, timeout=10)
         j = r.json()
         items = j.get("items", [])
         if not items:
@@ -364,7 +391,8 @@ async def products_cmd_new(update: "Update", context: "ContextTypes.DEFAULT_TYPE
             log_action("products_cmd", user=f"tg:{uid}", detail="no items found")
             return
 
-        for it in items[:6]:
+        # Barcha mahsulotlarni yuborish
+        for it in items:
             try:
                 # Extract product data
                 item_id = it.get("id")
@@ -388,10 +416,10 @@ async def products_cmd_new(update: "Update", context: "ContextTypes.DEFAULT_TYPE
                 # Social media links
                 social_links = f"""
 📱 Bizni kuzating:
-• Instagram: @proobuv_uz
-• Telegram: @proobuv_channel  
-• YouTube: Pro Obuv TV
-• Facebook: Pro Obuv Uzbekistan
+• <a href="https://www.instagram.com/proguarduz/">INSTAGRAM</a>   
+• <a href="https://t.me/specobuv">TELEGRAM</a>   
+• <a href="https://www.youtube.com/channel/UCAsyOqztQHOgWX95086LCIA">YOUTUBE</a>   
+• <a href="https://www.facebook.com/aklashoes/">FACEBOOK</a>
 
 🔗 Mahsulot haqida batafsil: {view_url}"""
 
@@ -655,11 +683,13 @@ async def handle_message(update: "Update", context: "ContextTypes.DEFAULT_TYPE")
 
         if FLASK_APP_URL and mode == "operator":
             # Operator bilan real chat: alohida endpointga yozamiz
+            # source va sender maydonlarini to'g'ri o'rnatamiz
+            payload["source"] = "telegram"
             try:
                 r = requests.post(
                     FLASK_APP_URL.rstrip("/") + "/api/operator-chat/user/send",
                     json=payload,
-                    timeout=6,
+                    timeout=10,
                 )
                 if r is not None and r.ok:
                     j = r.json() or {}
@@ -690,7 +720,7 @@ async def handle_message(update: "Update", context: "ContextTypes.DEFAULT_TYPE")
 
                 # Call Uzbek AI endpoint and reply back to user
                 ai_r = requests.post(
-                    FLASK_APP_URL.rstrip("/") + "/api/chat/ai", json=payload, timeout=8
+                    FLASK_APP_URL.rstrip("/") + "/api/chat/ai", json=payload, timeout=10
                 )
                 ai_text = ""
                 ai_j = {}
@@ -790,6 +820,7 @@ def main():
         return
 
     # Build the v20+ Application with a custom HTTPXRequest to increase timeouts
+    app = None
     try:
         # Use default HTTPXRequest without unsupported kwargs to avoid TypeError
         from telegram.request import HTTPXRequest
@@ -799,44 +830,53 @@ def main():
     except Exception:
         # If HTTPXRequest import or construction fails, fall back to default builder
         LOG.info("HTTPXRequest unavailable or failed, using default ApplicationBuilder")
-        app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
-    
-        # Global error handler for the Application (python-telegram-bot v20+)
-        async def _global_error_handler(update: object, context: "ContextTypes.DEFAULT_TYPE"):
-            """Centralized error handler to capture exceptions raised in handlers.
-
-            This prevents the library from printing unhandled tracebacks and lets
-            us write a concise message to our own logs and error file.
-            """
-            try:
-                # context.error is set by PTB when an exception occurs
-                err = getattr(context, "error", None)
-                if err is None:
-                    # Fallback: try to extract exception from sys.exc_info
-                    import sys
-
-                    err = sys.exc_info()[1]
-
-                LOG.exception("Telegram handler exception: %s", err)
-                # Persist a brief traceback to our persistent error log
-                try:
-                    log_error(err, context=str(update))
-                except Exception:
-                    LOG.exception("Failed to write to telegram error log")
-            except Exception:
-                # Ensure the error handler never raises
-                LOG.exception("Global error handler failed")
-
-        # Register the global error handler so the Application logs exceptions via our handler
         try:
-            app.add_error_handler(_global_error_handler)
-        except Exception:
-            # Some older/newer variants might expose different API - try dispatcher fallback
+            app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
+        except Exception as e:
+            LOG.exception("Failed to create Application: %s", e)
+            return
+    
+    if not app:
+        LOG.error("Failed to create Telegram Application")
+        return
+    
+    # Global error handler for the Application (python-telegram-bot v20+)
+    async def _global_error_handler(update: object, context: "ContextTypes.DEFAULT_TYPE"):
+        """Centralized error handler to capture exceptions raised in handlers.
+
+        This prevents the library from printing unhandled tracebacks and lets
+        us write a concise message to our own logs and error file.
+        """
+        try:
+            # context.error is set by PTB when an exception occurs
+            err = getattr(context, "error", None)
+            if err is None:
+                # Fallback: try to extract exception from sys.exc_info
+                import sys
+
+                err = sys.exc_info()[1]
+
+            LOG.exception("Telegram handler exception: %s", err)
+            # Persist a brief traceback to our persistent error log
             try:
-                if hasattr(app, "dispatcher") and app.dispatcher:
-                    app.dispatcher.add_error_handler(_global_error_handler)
+                log_error(err, context=str(update))
             except Exception:
-                LOG.exception("Failed to register global telegram error handler")
+                LOG.exception("Failed to write to telegram error log")
+        except Exception:
+            # Ensure the error handler never raises
+            LOG.exception("Global error handler failed")
+
+    # Register the global error handler so the Application logs exceptions via our handler
+    try:
+        app.add_error_handler(_global_error_handler)
+    except Exception:
+        # Some older/newer variants might expose different API - try dispatcher fallback
+        try:
+            if hasattr(app, "dispatcher") and app.dispatcher:
+                app.dispatcher.add_error_handler(_global_error_handler)
+        except Exception:
+            LOG.exception("Failed to register global telegram error handler")
+    
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("test", test_cmd))
     app.add_handler(CommandHandler("products", products_cmd_new))

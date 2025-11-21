@@ -465,3 +465,102 @@ saind
 2025-11-17 17:07:37 | ACTION | incoming_message | user:tg:1656193663 | salom
 2025-11-17 17:07:41 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
 2025-11-17 17:07:41 | ACTION | products_cmd | user:tg:1656193663 | no items found
+2025-11-21 03:23:07 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
+2025-11-21 03:23:19 | ACTION | products_sent | user:tg:1656193663 | item:39
+2025-11-21 03:23:26 | ACTION | products_sent | user:tg:1656193663 | item:40
+2025-11-21 03:23:28 | ACTION | products_sent | user:tg:1656193663 | item:41
+2025-11-21 03:26:07 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
+2025-11-21 03:26:41 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
+2025-11-21 03:38:26 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
+2025-11-21 03:38:39 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
+2025-11-21 03:38:57 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
+2025-11-21 03:39:03 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
+2025-11-21 03:39:34 | ACTION | incoming_message | user:tg:1656193663 | 👨‍💼 Operator bilan suhbat
+2025-11-21 03:39:35 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
+2025-11-21 04:13:23 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
+2025-11-21 04:13:58 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
+2025-11-21 04:14:03 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
+2025-11-21 04:14:30 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
+2025-11-21 04:16:07 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
+2025-11-21 04:16:09 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
+2025-11-21 04:16:11 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
+2025-11-21 04:16:12 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
+2025-11-21 04:16:13 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
+2025-11-21 04:16:15 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
+2025-11-21 04:16:16 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
+2025-11-21 04:16:18 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
+2025-11-21 04:25:20 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
+2025-11-21 06:41:41 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-11-21 06:42:09 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
+2025-11-21 06:42:47 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-11-21 06:43:13 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
+2025-11-21 06:43:16 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-11-21 06:43:35 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-11-21 06:44:13 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-11-21 06:44:27 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-11-21 06:44:32 | ACTION | incoming_message | user:tg:1656193663 | slaom
+2025-11-21 06:44:37 | ACTION | incoming_message | user:tg:1656193663 | slaom
+2025-11-21 06:44:41 | ACTION | incoming_message | user:tg:1656193663 | msoa
+2025-11-21 06:44:45 | ACTION | incoming_message | user:tg:1656193663 | mola
+2025-11-21 06:44:49 | ACTION | incoming_message | user:tg:1656193663 | amodaa
+2025-11-21 06:44:54 | ACTION | incoming_message | user:tg:1656193663 | wwmowqw
+2025-11-21 06:44:58 | ACTION | incoming_message | user:tg:1656193663 | qwqmoqww
+2025-11-21 06:45:02 | ACTION | incoming_message | user:tg:1656193663 | wmowpqwq
+2025-11-21 16:47:07 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
+2025-11-21 16:47:23 | ACTION | incoming_message | user:tg:1656193663 | 🤖 AI bilan suhbat
+2025-11-21 16:47:26 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-11-21 16:51:36 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-11-21 16:51:48 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-11-21 16:52:01 | ACTION | incoming_message | user:tg:1656193663 | 🤖 AI bilan suhbat
+2025-11-21 16:52:01 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-11-21 17:00:19 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
+2025-11-21 17:05:31 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
+2025-11-21 17:05:46 | ACTION | incoming_message | user:tg:1656193663 | 👨‍💼 Operator bilan suhbat
+2025-11-21 17:05:48 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-11-21 17:27:58 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-11-21 17:28:01 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
+2025-11-21 17:28:02 | ACTION | products_sent_bytes | user:tg:1656193663 | item:39
+2025-11-21 17:28:03 | ACTION | products_sent_bytes | user:tg:1656193663 | item:40
+2025-11-21 17:28:04 | ACTION | products_sent_bytes | user:tg:1656193663 | item:41
+2025-11-21 17:28:04 | ACTION | products_sent_bytes | user:tg:1656193663 | item:42
+2025-11-21 17:28:04 | ACTION | products_sent_bytes | user:tg:1656193663 | item:43
+2025-11-21 17:28:05 | ACTION | products_sent_bytes | user:tg:1656193663 | item:48
+2025-11-21 17:28:05 | ACTION | products_sent_bytes | user:tg:1656193663 | item:50
+2025-11-21 17:28:06 | ACTION | products_sent_bytes | user:tg:1656193663 | item:44
+2025-11-21 17:28:07 | ACTION | products_sent_bytes | user:tg:1656193663 | item:52
+2025-11-21 17:28:07 | ACTION | products_sent_bytes | user:tg:1656193663 | item:53
+2025-11-21 17:28:08 | ACTION | products_sent_bytes | user:tg:1656193663 | item:49
+2025-11-21 17:28:09 | ACTION | products_sent_bytes | user:tg:1656193663 | item:46
+2025-11-21 17:28:10 | ACTION | products_sent_bytes | user:tg:1656193663 | item:51
+2025-11-21 17:28:11 | ACTION | products_sent_bytes | user:tg:1656193663 | item:47
+2025-11-21 17:28:11 | ACTION | products_sent_bytes | user:tg:1656193663 | item:55
+2025-11-21 17:28:12 | ACTION | products_sent_bytes | user:tg:1656193663 | item:54
+2025-11-21 17:28:13 | ACTION | products_sent_bytes | user:tg:1656193663 | item:38
+2025-11-21 17:28:13 | ACTION | products_sent_bytes | user:tg:1656193663 | item:45
+2025-11-21 17:28:14 | ACTION | products_sent_bytes | user:tg:1656193663 | item:56
+2025-11-21 17:28:14 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
+2025-11-21 17:28:15 | ACTION | products_sent_bytes | user:tg:1656193663 | item:39
+2025-11-21 17:28:15 | ACTION | products_sent_bytes | user:tg:1656193663 | item:40
+2025-11-21 17:28:16 | ACTION | products_sent_bytes | user:tg:1656193663 | item:41
+2025-11-21 17:28:16 | ACTION | products_sent_bytes | user:tg:1656193663 | item:42
+2025-11-21 17:28:17 | ACTION | products_sent_bytes | user:tg:1656193663 | item:43
+2025-11-21 17:28:17 | ACTION | products_sent_bytes | user:tg:1656193663 | item:48
+2025-11-21 17:28:17 | ACTION | products_sent_bytes | user:tg:1656193663 | item:50
+2025-11-21 17:28:18 | ACTION | products_sent_bytes | user:tg:1656193663 | item:44
+2025-11-21 17:28:18 | ACTION | products_sent_bytes | user:tg:1656193663 | item:52
+2025-11-21 17:28:19 | ACTION | products_sent_bytes | user:tg:1656193663 | item:53
+2025-11-21 17:28:19 | ACTION | products_sent_bytes | user:tg:1656193663 | item:49
+2025-11-21 17:28:20 | ACTION | products_sent_bytes | user:tg:1656193663 | item:46
+2025-11-21 17:28:20 | ACTION | products_sent_bytes | user:tg:1656193663 | item:51
+2025-11-21 17:28:21 | ACTION | products_sent_bytes | user:tg:1656193663 | item:47
+2025-11-21 17:28:21 | ACTION | products_sent_bytes | user:tg:1656193663 | item:55
+2025-11-21 17:28:22 | ACTION | products_sent_bytes | user:tg:1656193663 | item:54
+2025-11-21 17:28:22 | ACTION | products_sent_bytes | user:tg:1656193663 | item:38
+2025-11-21 17:28:23 | ACTION | products_sent_bytes | user:tg:1656193663 | item:45
+2025-11-21 17:28:23 | ACTION | products_sent_bytes | user:tg:1656193663 | item:56
+2025-11-21 17:28:24 | ACTION | incoming_message | user:tg:1656193663 | 🤖 AI bilan suhbat
+2025-11-21 17:28:24 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-11-21 17:28:26 | ACTION | incoming_message | user:tg:1656193663 | 👨‍💼 Operator bilan suhbat
+2025-11-21 17:28:27 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-11-21 17:28:30 | ACTION | incoming_message | user:tg:1656193663 | 👨‍💼 Operator bilan suhbat
+2025-11-21 17:28:32 | ACTION | incoming_message | user:tg:1656193663 | salom

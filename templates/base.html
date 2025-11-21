@@ -3080,8 +3080,266 @@
           max-height: 70vh;
         }
       }
+
+      /* 2025 footer refresh overrides */
+      :root {
+        --footer-bg-primary: #0f172a;
+        --footer-bg-secondary: #111c32;
+        --footer-text-color: #f8fafc;
+        --footer-text-muted: rgba(248, 250, 252, 0.72);
+        --footer-accent: #22d3ee;
+        --footer-border: rgba(255, 255, 255, 0.08);
+      }
+
+      .site-footer {
+        background: linear-gradient(
+            180deg,
+            var(--footer-bg-primary) 0%,
+            var(--footer-bg-secondary) 80%
+          )
+          no-repeat;
+        color: var(--footer-text-color);
+        padding: 48px 0 36px;
+        border-top: 1px solid var(--footer-border);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+      }
+
+      .site-footer h5,
+      .site-footer h6 {
+        color: var(--footer-text-color);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.95rem;
+      }
+
+      .site-footer p,
+      .site-footer li,
+      .site-footer a,
+      .site-footer small {
+        color: var(--footer-text-muted);
+      }
+
+      .site-footer a {
+        text-decoration: none;
+      }
+
+      .site-footer a:hover,
+      .site-footer button:hover {
+        color: var(--footer-accent);
+      }
+
+      .site-footer .footer-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 32px 24px;
+        width: 100%;
+      }
+
+      .site-footer .footer-col {
+        min-width: 0;
+      }
+
+      .site-footer .footer-section-content ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .site-footer .footer-section-toggle {
+        border: none;
+        background: transparent;
+        color: var(--footer-text-color);
+        padding: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .site-footer .footer-section-toggle::after {
+        content: "▾";
+        font-size: 0.85rem;
+        transition: transform 0.2s ease;
+      }
+
+      .site-footer .footer-section-toggle[aria-expanded="true"]::after {
+        transform: rotate(180deg);
+      }
+
+      .site-footer .social-row {
+        gap: 10px;
+      }
+
+      .site-footer .social-icon-btn {
+        width: 42px;
+        height: 42px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: none;
+        box-shadow: none;
+        transition: transform 0.2s ease, border-color 0.2s ease;
+      }
+
+      .site-footer .social-icon-btn:hover {
+        transform: translateY(-2px);
+        border-color: var(--footer-accent);
+      }
+
+      .site-footer .newsletter-form .form-control {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        color: var(--footer-text-color);
+      }
+
+      .site-footer .newsletter-form .form-control:focus {
+        border-color: var(--footer-accent);
+        box-shadow: none;
+      }
+
+      .site-footer .newsletter-form .btn {
+        background: var(--footer-accent);
+        border: none;
+        color: #0f172a;
+        font-weight: 600;
+      }
+
+      .site-footer .footer-bottom {
+        margin-top: 32px;
+        padding-top: 18px;
+        border-top: 1px solid var(--footer-border);
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        justify-content: space-between;
+      }
+
+      .site-footer .news-ticker-container {
+        background: #0b1526;
+        border-top: 1px solid var(--footer-border);
+        box-shadow: none;
+        padding: 0;
+      }
+
+      .site-footer .news-ticker-wrapper {
+        padding: 14px 0;
+        gap: 12px;
+        width: 100%;
+      }
+
+      .site-footer .news-ticker {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        box-shadow: none;
+      }
+
+      .site-footer .news-ticker-content {
+        gap: 10px;
+        padding: 10px 12px;
+      }
+
+      .site-footer .news-ticker-content .news-item {
+        min-width: 240px;
+        min-height: 140px;
+        background: rgba(16, 24, 40, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        padding: 12px 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        box-shadow: none;
+      }
+
+      .site-footer .news-ticker-content .news-item:hover {
+        transform: translateY(-2px);
+        border-color: var(--footer-accent);
+      }
+
+      .site-footer .news-ticker-content .news-title {
+        font-size: 0.95rem;
+        text-align: left;
+        color: var(--footer-text-color);
+      }
+
+      .site-footer .news-ticker-content .news-excerpt,
+      .site-footer .news-ticker-content .news-text {
+        font-size: 0.85rem;
+        text-align: left;
+        color: var(--footer-text-muted);
+      }
+
+      .site-footer .news-nav-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        background: rgba(255, 255, 255, 0.05);
+        box-shadow: none;
+      }
+
+      .site-footer .news-nav-btn span {
+        transform: translateY(-1px);
+      }
+
+      @media (max-width: 768px) {
+        .site-footer {
+          padding: 32px 0 26px;
+        }
+
+        .site-footer .footer-grid {
+          gap: 20px;
+        }
+
+        .site-footer .footer-bottom {
+          flex-direction: column;
+        }
+
+        .site-footer .news-ticker-wrapper {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .site-footer .news-nav-btn {
+          position: static;
+          width: 100%;
+        }
+
+        .site-footer .news-ticker-content {
+          white-space: normal;
+          overflow-x: auto;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .site-footer *,
+        .site-footer *::before,
+        .site-footer *::after,
+        .news-ticker * {
+          transition: none !important;
+          animation: none !important;
+        }
+      }
   </style>
 
+    <script>
+      window.DISABLE_AUTO_UPDATES = true;
+      (function () {
+        const original =
+          window._originalSetInterval || window.setInterval.bind(window);
+        window._originalSetInterval = original;
+        function intervalProxy() {
+          if (window.DISABLE_AUTO_UPDATES) {
+            return null;
+          }
+          return original.apply(window, arguments);
+        }
+        window.safeSetInterval = intervalProxy;
+        window.setInterval = intervalProxy;
+      })();
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='main.js') }}"></script>
 

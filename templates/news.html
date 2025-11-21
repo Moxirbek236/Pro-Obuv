@@ -34,62 +34,99 @@
   }
 </script>
 {% endblock %} {% block content %}
-  <!-- equalize() removed intentionally to prevent forced heights; feed is stacked vertically -->
+  <!-- equalize() removed intentionally to prevent forced heights; endi barcha foydalanuvchilar uchun yagona ko'rinish -->
   <style>
-      /* Ensure media area has sensible defaults (was previously rendered as raw text) */
-      /* Layout: stacked vertical feed (one column) */
-      #news-list {
-        display: block;
-      }
+    #news-list {
+      display: flex;
+      flex-direction: column;
+      gap: 26px;
+      margin: 0;
+      padding: 0;
+    }
 
-      /* Larger stacked news cards */
-      #news-list .news-item.card {
-        width: 100%;
-        max-width: 1100px;
-        margin: 0 auto 26px; /* centered column with bottom spacing */
-        display: block !important;
-        padding: 22px !important;
-        gap: 14px !important;
-        position: relative;
-        /* allow card height to be driven by its media/content */
-        min-height: auto;
-        overflow: visible !important;
-        transition: transform 180ms ease, box-shadow 180ms ease;
-        box-shadow: 0 8px 22px rgba(10, 10, 10, 0.06);
-        border-radius: 12px;
-        background: #fff;
-      }
+    #news-list .news-item.card {
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: stretch !important;
+      padding: 22px !important;
+      gap: 14px !important;
+      position: relative;
+      min-height: 0;
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 8px 22px rgba(10, 10, 10, 0.06);
+      transition: transform 180ms ease, box-shadow 180ms ease;
+      overflow: visible !important;
+      cursor: pointer;
+      outline: none;
+    }
 
-      #news-list .news-item.card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 18px 40px rgba(10, 10, 10, 0.12);
-      }
+    #news-list .news-item.card:hover,
+    #news-list .news-item.card:focus-visible {
+      transform: translateY(-6px);
+      box-shadow: 0 18px 40px rgba(10, 10, 10, 0.12);
+    }
 
-      /* Media area: wide responsive container for stacked layout */
-      #news-list .news-media {
-        width: 100%;
-        height: 520px;
-        max-height: 640px;
-        border-radius: 10px;
-        overflow: hidden;
-        background: #000;
-        display: block;
-        margin-bottom: 12px;
-      }
+    #news-list .news-media {
+      width: 100%;
+      min-height: 240px;
+      max-height: 640px;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #000;
+      position: relative;
+    }
 
-      /* Title and body styling */
-      #news-list .news-title {
-        margin: 0 0 6px 0;
-        font-size: 22px;
-        font-weight: 800;
-        color: #0b5a6f;
-        line-height: 1.12;
-      }
+    .youtube-embed-wrapper,
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+      background: #000;
+    }
 
-      #news-list .news-body { margin-bottom: 12px; }
+    .youtube-embed-wrapper iframe,
+    .video-wrapper video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+    }
 
-      /* Timestamp below content to avoid overlap */
-      #news-list .news-card-meta { position: static; margin-top: 8px; }
+    #news-list .news-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    #news-list .news-title {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 800;
+      color: #0b5a6f;
+      line-height: 1.18;
+      white-space: normal !important;
+      overflow: visible !important;
+    }
+
+    #news-list .news-body {
+      margin: 4px 0 12px;
+      color: #333;
+    }
+
+    #news-list .news-card-meta {
+      position: static;
+      margin-top: 8px;
+    }
 
       @media (max-width: 1024px) {
         #news-list .news-item.card { max-width: 900px; padding: 18px !important; }
@@ -176,91 +213,6 @@
       Yangilik qo'shish
     </button>
   </div>
-  <style>
-    /* Override/ensure news card content is visible and titles are not truncated */
-    #news-list .news-item.card {
-      /* allow content to size naturally and avoid forced clipping */
-      display: flex !important;
-      flex-direction: column !important;
-      align-items: stretch !important;
-      padding: 16px !important;
-      gap: 12px !important;
-      position: relative;
-      overflow: visible !important;
-      height: auto !important;
-      min-height: 0 !important;
-    }
-
-    /* Media area: responsive 16:9 container for iframe/video, fallback to image */
-    #news-list .news-media,
-    #news-list .youtube-embed-wrapper,
-    #news-list .video-wrapper {
-      width: 100%;
-      max-width: 100%;
-      margin: 0;
-      background: #000;
-      overflow: hidden;
-    }
-
-    /* Responsive embed wrapper */
-    .youtube-embed-wrapper {
-      position: relative;
-      padding-bottom: 56.25%; /* 16:9 */
-      height: 0;
-      overflow: hidden;
-    }
-
-    .youtube-embed-wrapper iframe,
-    .video-wrapper video {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border: 0;
-      display: block;
-    }
-
-    /* Images should not force a small card height and should be responsive */
-    #news-list .news-media img {
-      width: 100%;
-      height: auto;
-      max-height: 420px;
-      object-fit: cover;
-      display: block;
-    }
-
-    /* Title: allow wrapping and visible full text */
-    #news-list .news-title {
-      margin: 0;
-      font-size: 18px;
-      font-weight: 800;
-      color: #22d3ee;
-      white-space: normal !important;
-      overflow: visible !important;
-      text-overflow: clip !important;
-      -webkit-line-clamp: none !important;
-      display: block;
-    }
-
-    /* Description: ensure it's visible */
-    #news-list .news-body,
-    #news-list .news-content {
-      display: block !important;
-      color: #333;
-      max-height: none !important;
-      overflow: visible !important;
-      margin-top: 8px;
-    }
-
-    /* Make sure timestamp doesn't overlap content on small cards */
-    #news-list .news-card-meta { position: static; margin-top: 12px; }
-
-    @media (min-width: 992px) {
-      /* On wide screens, allow a slightly larger title */
-      #news-list .news-title { font-size: 20px; }
-    }
-  </style>
   {% endif %} {% if session.get('super_admin') %}
   <!-- Floating Add News button -->
   <button
@@ -296,7 +248,12 @@
     {% if news %}
     <div id="news-list">
       {% for item in news %}
-      <article class="news-item card p-3 position-relative">
+      <article
+        class="news-item card p-3 position-relative"
+        role="link"
+        tabindex="0"
+        aria-label="{{ (item.localized_title or item.title) }}"
+        data-detail-url="{{ url_for('news_detail', news_id=item.id) }}">
         <!-- Media at top -->
         <div class="news-media" data-video-url="{{ item.video_url or item.video }}">
           {% if item.youtube_embed %}
@@ -393,6 +350,53 @@
         }
       }
     </script>
+    <script>
+      (function () {
+        const cards = document.querySelectorAll(
+          "#news-list .news-item[data-detail-url]"
+        );
+        cards.forEach(function (card) {
+          const url = card.getAttribute("data-detail-url");
+          if (!url) return;
+
+          const navigate = function () {
+            window.location.href = url;
+          };
+
+          card.addEventListener("click", function (evt) {
+            if (evt.defaultPrevented) return;
+            if (evt.target.closest(".news-share-links")) return;
+            navigate();
+          });
+
+          card.addEventListener("keydown", function (evt) {
+            if (evt.code === "Space" || evt.code === "Enter") {
+              if (
+                evt.target.closest(".news-share-links") ||
+                evt.target.closest(".share-btn")
+              ) {
+                return;
+              }
+              evt.preventDefault();
+              navigate();
+            }
+          });
+        });
+
+        document
+          .querySelectorAll(
+            "#news-list .news-share-links a, #news-list .news-share-links button"
+          )
+          .forEach(function (el) {
+            el.addEventListener("click", function (evt) {
+              evt.stopPropagation();
+            });
+            el.addEventListener("keydown", function (evt) {
+              evt.stopPropagation();
+            });
+          });
+      })();
+    </script>
           ticker.innerText = items.join('  •  ');
         } else {
           ticker.innerText = 'Yangiliklar yo\'q';
@@ -404,38 +408,6 @@
   {% if session.get('super_admin') %}
   <div class="modal fade" id="newsModalPublic" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-      <style>
-          /* Force vertical stacked news cards on the news page */
-          #news-list .news-item.card {
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: stretch !important;
-            padding: 16px !important;
-            gap: 12px !important;
-            position: relative;
-            overflow: hidden;
-          }
-
-          #news-list .news-media {
-            order: 1;
-            width: 100%;
-            height: 360px;
-            max-height: 420px;
-            border-radius: 10px;
-            overflow: hidden;
-            background: #000;
-          }
-
-          #news-list .news-title {
-            order: 2;
-            margin: 0;
-            font-size: 18px;
-            font-weight: 800;
-            color: #22d3ee;
-          }
-          #news-list .news-body {
-            order: 3;
-          }
                   <small class="form-text text-muted"
                     >Agar YouTube havolasi kiritilsa, yuklangan video o'rniga
                     shu manba ishlatiladi.</small

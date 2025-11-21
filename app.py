@@ -3365,7 +3365,7 @@ def init_db():
         now = get_current_time().isoformat()
         # Single main branch that accepts international orders including Russia
         main_branch = (
-            "Pro-Obuv Markaziy Filial",
+            "ObuvPro- Markaziy Filial",
             "Markaziy filial - Butun dunyo bo'ylab yetkazib berish",
             41.236832,  # Updated coordinates
             69.203578,
@@ -12129,7 +12129,14 @@ def _operator_chat_ident_from_request(data=None):
 
     client_key = None
     try:
-        if session.get("user_id"):
+        # Telegram botdan kelgan xabarlar uchun sender maydonini tekshiramiz
+        sender = data.get("sender") or ""
+        if sender and isinstance(sender, str) and sender.startswith("tg:"):
+            client_key = sender
+            source = "telegram"
+            if not client_name:
+                client_name = data.get("sender_name") or "Telegram foydalanuvchi"
+        elif session.get("user_id"):
             client_key = f"user:{session.get('user_id')}"
             if not client_name:
                 client_name = (
