@@ -1624,3 +1624,4 @@ MemoryError
 2025-11-21 22:28:25,575 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
 2025-11-21 22:28:26,077 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
 2025-11-21 22:28:26,578 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-21 22:28:26,579 | ERROR | restaurant_app | execute_query:2731 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...

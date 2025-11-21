@@ -557,3 +557,4 @@
 2025-11-21 22:28:26,077 | WARNING | restaurant_app | execute_query:2725 | Query execution failed, retrying (attempt 2): NOT NULL constraint failed: chat_messages.chat_id
 2025-11-21 22:28:26,578 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
 2025-11-21 22:28:26,579 | ERROR | restaurant_app | execute_query:2731 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-11-21 22:32:05,154 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/favicon.ico
