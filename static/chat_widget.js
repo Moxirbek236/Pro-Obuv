@@ -63,7 +63,9 @@
       switchMode(m);
       panel.classList.add("open");
       menu.classList.remove("open");
-      try { input.focus(); } catch (_) {}
+      try {
+        input.focus();
+      } catch (_) {}
     }
 
     function renderMessages(list) {
@@ -88,7 +90,7 @@
       try {
         const res = await fetch("/api/operator-chat/user/history", {
           method: "GET",
-          headers: { "Accept": "application/json" },
+          headers: { Accept: "application/json" },
         });
         const j = await res.json().catch(() => ({}));
         const msgs = (j && j.messages) || [];
@@ -125,7 +127,10 @@
         input.placeholder = "Operator uchun xabar yozing...";
         fetchOperatorHistory();
         if (!operatorPollTimer) {
-          operatorPollTimer = setInterval(fetchOperatorHistory, 5000);
+          // Use the original native setInterval in case a global proxy disables intervals
+          operatorPollTimer = (
+            window._originalSetInterval || window.setInterval
+          )(fetchOperatorHistory, 5000);
         }
       }
     }
@@ -227,11 +232,7 @@
           const j = await res.json().catch(() => ({}));
           const msg = (j && j.message) || "Xabar operatorga yuborildi.";
           // Show acknowledgement as bot message
-          renderMessages([
-            ...(body.innerText
-              ? []
-              : []),
-          ]);
+          renderMessages([...(body.innerText ? [] : [])]);
           // Just append short ack to current view
           const ackNode = create("div", { class: "msg ai" }, [msg]);
           body.appendChild(ackNode);

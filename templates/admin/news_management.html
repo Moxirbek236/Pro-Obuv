@@ -310,9 +310,7 @@ endblock %} {% block additional_css %}
         <li class="breadcrumb-item">
           <a href="{{ url_for('super_admin_dashboard') }}"> Dashboard</a>
         </li>
-        <li class="breadcrumb-item active" aria-current="page">
-           Yangiliklar
-        </li>
+        <li class="breadcrumb-item active" aria-current="page">Yangiliklar</li>
       </ol>
     </nav>
 
@@ -320,35 +318,35 @@ endblock %} {% block additional_css %}
     <div class="nav-pills-container mb-4">
       <ul class="nav nav-pills justify-content-center">
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('super_admin_dashboard') }}"
-            > Dashboard</a
+          <a class="nav-link" href="{{ url_for('super_admin_dashboard') }}">
+            Dashboard</a
           >
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('super_admin_analytics') }}"
-            > Analytics</a
+          <a class="nav-link" href="{{ url_for('super_admin_analytics') }}">
+            Analytics</a
           >
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('super_admin_reports') }}"
-            > Hisobotlar</a
+          <a class="nav-link" href="{{ url_for('super_admin_reports') }}">
+            Hisobotlar</a
           >
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('super_admin_system') }}"
-            > Tizim</a
+          <a class="nav-link" href="{{ url_for('super_admin_system') }}">
+            Tizim</a
           >
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('super_admin_logs') }}"
-            > Loglar</a
+          <a class="nav-link" href="{{ url_for('super_admin_logs') }}">
+            Loglar</a
           >
         </li>
         <li class="nav-item">
           <a
             class="nav-link active"
-            href="{{ url_for('admin_news_management') }}"
-            > Yangiliklar</a
+            href="{{ url_for('admin_news_management') }}">
+            Yangiliklar</a
           >
         </li>
       </ul>
@@ -356,7 +354,7 @@ endblock %} {% block additional_css %}
 
     <!-- Header -->
     <div class="admin-header text-center">
-      <h1 class="mb-3"> Yangiliklar boshqaruvi</h1>
+      <h1 class="mb-3">Yangiliklar boshqaruvi</h1>
       <p class="mb-0">Saytdagi yangiliklar va reklamalarni boshqaring</p>
       <!-- Debug info -->
       <div class="mt-2" style="font-size: 12px; opacity: 0.8">
@@ -524,7 +522,9 @@ endblock %} {% block additional_css %}
           <div class="row">
             <div class="col-md-8">
               <div class="mb-3">
-                <label for="newsTitle" class="form-label">Sarlavha *</label>
+                <label for="newsTitle" class="form-label"
+                  >Sarlavha (Default) *</label
+                >
                 <input
                   type="text"
                   class="form-control"
@@ -537,21 +537,160 @@ endblock %} {% block additional_css %}
               <div class="mb-3">
                 <label for="newsType" class="form-label">Turi</label>
                 <select class="form-control" id="newsType">
-                  <option value="news"> Yangilik</option>
-                  <option value="advertisement"> Reklama</option>
+                  <option value="news">Yangilik</option>
+                  <option value="advertisement">Reklama</option>
                 </select>
               </div>
             </div>
           </div>
 
+          <!-- Multi-language Tabs -->
           <div class="mb-3">
-            <label for="newsContent" class="form-label">Matn</label>
+            <ul class="nav nav-tabs" id="langTabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button
+                  class="nav-link active"
+                  id="uz-tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#uz-panel"
+                  type="button"
+                  role="tab">
+                  🇺🇿 O'zbek
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button
+                  class="nav-link"
+                  id="ru-tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#ru-panel"
+                  type="button"
+                  role="tab">
+                  🇷🇺 Русский
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button
+                  class="nav-link"
+                  id="en-tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#en-panel"
+                  type="button"
+                  role="tab">
+                  🇺🇸 English
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button
+                  class="nav-link"
+                  id="kz-tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#kz-panel"
+                  type="button"
+                  role="tab">
+                  🇰🇿 Қазақша
+                </button>
+              </li>
+            </ul>
+            <div class="tab-content" id="langTabContent">
+              <!-- O'zbek -->
+              <div
+                class="tab-pane fade show active"
+                id="uz-panel"
+                role="tabpanel">
+                <div class="mt-3">
+                  <label for="newsTitle_uz" class="form-label"
+                    >Sarlavha (O'zbek)</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="newsTitle_uz"
+                    maxlength="200" />
+                  <label for="newsContent_uz" class="form-label mt-3"
+                    >Matn (O'zbek)</label
+                  >
+                  <textarea
+                    class="form-control"
+                    id="newsContent_uz"
+                    rows="3"
+                    maxlength="2000"></textarea>
+                </div>
+              </div>
+              <!-- Русский -->
+              <div class="tab-pane fade" id="ru-panel" role="tabpanel">
+                <div class="mt-3">
+                  <label for="newsTitle_ru" class="form-label"
+                    >Sarlavha (Русский)</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="newsTitle_ru"
+                    maxlength="200" />
+                  <label for="newsContent_ru" class="form-label mt-3"
+                    >Matn (Русский)</label
+                  >
+                  <textarea
+                    class="form-control"
+                    id="newsContent_ru"
+                    rows="3"
+                    maxlength="2000"></textarea>
+                </div>
+              </div>
+              <!-- English -->
+              <div class="tab-pane fade" id="en-panel" role="tabpanel">
+                <div class="mt-3">
+                  <label for="newsTitle_en" class="form-label"
+                    >Sarlavha (English)</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="newsTitle_en"
+                    maxlength="200" />
+                  <label for="newsContent_en" class="form-label mt-3"
+                    >Matn (English)</label
+                  >
+                  <textarea
+                    class="form-control"
+                    id="newsContent_en"
+                    rows="3"
+                    maxlength="2000"></textarea>
+                </div>
+              </div>
+              <!-- Қазақша -->
+              <div class="tab-pane fade" id="kz-panel" role="tabpanel">
+                <div class="mt-3">
+                  <label for="newsTitle_kz" class="form-label"
+                    >Sarlavha (Қазақша)</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="newsTitle_kz"
+                    maxlength="200" />
+                  <label for="newsContent_kz" class="form-label mt-3"
+                    >Matn (Қазақша)</label
+                  >
+                  <textarea
+                    class="form-control"
+                    id="newsContent_kz"
+                    rows="3"
+                    maxlength="2000"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="newsContent" class="form-label">Matn (Default) *</label>
             <textarea
               class="form-control"
               id="newsContent"
               rows="3"
-              maxlength="500"></textarea>
-            <small class="form-text text-muted">Maksimal 500 ta belgi</small>
+              maxlength="2000"></textarea>
+            <small class="form-text text-muted">Maksimal 2000 ta belgi</small>
           </div>
 
           <div class="row">
@@ -738,7 +877,7 @@ endblock %} {% block additional_css %}
       .catch(function () {});
   }
   // CSRF Token
-  const CSRF_TOKEN = '{{ csrf_token if csrf_token else "" }}';
+  if (typeof window.CSRF_TOKEN === 'undefined') { try { window.CSRF_TOKEN = {{ csrf_token|tojson }}; } catch(e) { window.CSRF_TOKEN = ''; } }
 
   // Global variables
   let newsDataTable;
@@ -769,6 +908,14 @@ endblock %} {% block additional_css %}
       document.getElementById("newsId").value = newsData.id;
       document.getElementById("newsTitle").value = newsData.title || "";
       document.getElementById("newsContent").value = newsData.content || "";
+      document.getElementById("newsTitle_uz").value = newsData.title_uz || newsData.title || "";
+      document.getElementById("newsTitle_ru").value = newsData.title_ru || newsData.title || "";
+      document.getElementById("newsTitle_en").value = newsData.title_en || newsData.title || "";
+      document.getElementById("newsTitle_kz").value = newsData.title_kz || newsData.title || "";
+      document.getElementById("newsContent_uz").value = newsData.content_uz || newsData.content || "";
+      document.getElementById("newsContent_ru").value = newsData.content_ru || newsData.content || "";
+      document.getElementById("newsContent_en").value = newsData.content_en || newsData.content || "";
+      document.getElementById("newsContent_kz").value = newsData.content_kz || newsData.content || "";
       document.getElementById("newsType").value = newsData.type || "news";
       document.getElementById("newsImageUrl").value = newsData.image_url || "";
       document.getElementById("newsVideoUrl").value = newsData.video_url || "";
@@ -823,6 +970,14 @@ endblock %} {% block additional_css %}
     const formData = {
       title: document.getElementById("newsTitle").value.trim(),
       content: document.getElementById("newsContent").value.trim(),
+      title_uz: document.getElementById("newsTitle_uz").value.trim(),
+      title_ru: document.getElementById("newsTitle_ru").value.trim(),
+      title_en: document.getElementById("newsTitle_en").value.trim(),
+      title_kz: document.getElementById("newsTitle_kz").value.trim(),
+      content_uz: document.getElementById("newsContent_uz").value.trim(),
+      content_ru: document.getElementById("newsContent_ru").value.trim(),
+      content_en: document.getElementById("newsContent_en").value.trim(),
+      content_kz: document.getElementById("newsContent_kz").value.trim(),
       type: document.getElementById("newsType").value,
       image_url: document.getElementById("newsImageUrl").value.trim(),
       video_url: computedVideoUrl,
@@ -834,7 +989,7 @@ endblock %} {% block additional_css %}
     console.log("Form data:", formData);
 
     // Validation
-    if (!formData.title) {
+    if (!formData.title && !formData.title_uz && !formData.title_ru && !formData.title_en && !formData.title_kz) {
       console.warn("Title is required");
       showNotification("Sarlavha kiritilishi shart", "error");
       return;

@@ -1,0 +1,29 @@
+{% extends "base.html" %} {% block content %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/chat.css') }}" />
+<div class="staff-chat-app">
+  <aside class="chat-list" id="chatList">
+    <div class="chat-list-header">Chats</div>
+    <div class="chat-items" id="chatItems">Yuklanmoqda...</div>
+  </aside>
+  <main class="chat-window" id="chatWindow">
+    <div class="chat-window-header" id="chatWindowHeader">Select a chat</div>
+    <div class="chat-messages" id="chatMessages" aria-live="polite">
+      Tanlang yoki yangilang.
+    </div>
+    <form id="chatSendForm" class="chat-send-form" onsubmit="return false;">
+      <input
+        type="text"
+        id="chatInput"
+        placeholder="Type a message..."
+        autocomplete="off" />
+      <button id="chatSendBtn" type="button">Send</button>
+    </form>
+  </main>
+</div>
+<script>
+  window.STAFF_CSRF_TOKEN = "{{ csrf_token }}";
+</script>
+<script src="{{ url_for('static', filename='js/staff_chat.js') }}"></script>
+{% endblock %}

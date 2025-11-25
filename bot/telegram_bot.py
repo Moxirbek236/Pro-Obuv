@@ -125,6 +125,34 @@ def _openai_generate_reply(user_text: str) -> str:
     Returns empty string on failure. Reads API key from OPENAI_API_KEY (or OPENAI_API).
     """
     try:
+        # Prefer Anthropic Claude Haiku when enabled, fallback to OpenAI
+        anthropic_key = os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("CLAUDE_API_KEY")
+        enable_claude = str(os.environ.get("ENABLE_CLAUDE_HAIKU", "0")).lower() in ("1", "true", "yes")
+
+        if enable_claude and anthropic_key and user_text:
+            try:
+                sys_prompt = (
+                    "Siz Pro Obuv do'koni uchun yordamchi AI. Har doim o'zbek tilida, qisqa va aniq javob bering."
+                )
+                prompt = f"{sys_prompt}\nHuman: {user_text}\n\nAssistant:"
+                body = {"model": "claude-haiku-4.5", "prompt": prompt, "max_tokens_to_sample": 350, "temperature": 0.3}
+                hdrs = {"x-api-key": anthropic_key, "Content-Type": "application/json"}
+                r = requests.post("https://api.anthropic.com/v1/complete", headers=hdrs, json=body, timeout=8)
+                if r and r.ok:
+                    jr = r.json() or {}
+                    if jr.get("completion"):
+                        return (jr.get("completion") or "").strip()
+                    if jr.get("completion_text"):
+                        return (jr.get("completion_text") or "").strip()
+                    out = jr.get("output") or jr.get("text")
+                    if out:
+                        if isinstance(out, dict):
+                            return (out.get("text") or "").strip()
+                        return str(out).strip()
+            except Exception:
+                LOG.exception("Anthropic call failed in bot helper")
+
+        # Fallback to OpenAI if Anthropic not used or failed
         api_key = os.environ.get("OPENAI_API_KEY") or os.environ.get("OPENAI_API")
         if not api_key or not user_text:
             return ""

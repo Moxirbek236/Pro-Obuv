@@ -1,8 +1,5 @@
-/* Improved menu card + responsive rules
-   - Targets .menu-grid and .menu-item-card (used throughout templates/menu.html)
-   - Small, high-specificity rules so it reliably overrides older inline/legacy styles
-   - Focus on readable typography, accessible contrast, consistent spacing, and
-     predictable responsive breakpoints.
+/* menu-cards.css - Improved version
+   Purpose: Better menu card design with improved responsive, animations, and reduced !important usage
 */
 
 :root {
@@ -11,631 +8,547 @@
   --menu-card-border: rgba(0, 0, 0, 0.06);
   --menu-gap: 20px;
   --menu-radius: 12px;
-  --menu-shadow: 0 8px 20px rgba(16, 24, 40, 0.06);
-  --menu-accent: #2b6cb0; /* blue accent */
+  --menu-shadow: 0 4px 12px rgba(16, 24, 40, 0.08);
+  --menu-shadow-hover: 0 12px 24px rgba(16, 24, 40, 0.12);
+  --menu-accent: #2563eb;
+  --menu-accent-hover: #1d4ed8;
   --muted: #64748b;
+  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Grid layout - use responsive auto-fill for flexibility */
+/* Grid layout - responsive by design */
 .menu-grid {
-  display: grid !important;
-  /* mobile-first: single-column by default */
-  grid-template-columns: 1fr !important;
-  gap: var(--menu-gap) !important;
-  padding: 12px 0 !important;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--menu-gap);
+  padding: 12px 0;
   align-items: start;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* Card baseline */
 .menu-item-card,
 .menu-item {
-  background: var(--menu-card-bg) !important;
-  border-radius: var(--menu-radius) !important;
-  overflow: hidden !important;
-  box-shadow: var(--menu-shadow) !important;
-  border: 1px solid var(--menu-card-border) !important;
-  display: flex !important;
-  flex-direction: column !important;
-  transition: transform 0.18s ease, box-shadow 0.18s ease !important;
-  cursor: pointer !important;
-  text-align: left !important;
+  background: var(--menu-card-bg);
+  border-radius: var(--menu-radius);
+  overflow: hidden;
+  box-shadow: var(--menu-shadow);
+  border: 1px solid var(--menu-card-border);
+  display: flex;
+  flex-direction: column;
+  transition: var(--transition);
+  cursor: pointer;
+  text-align: left;
+  position: relative;
+  height: 100%;
 }
 
 .menu-item-card:hover,
 .menu-item:hover {
-  transform: translateY(-6px) !important;
-  box-shadow: 0 20px 40px rgba(16, 24, 40, 0.08) !important;
+  transform: translateY(-4px);
+  box-shadow: var(--menu-shadow-hover);
 }
 
-/* Image area - keep aspect ratio and center */
+.menu-item-card:focus-within,
+.menu-item:focus-within {
+  outline: 2px solid var(--menu-accent);
+  outline-offset: 2px;
+}
+
+/* Image area - aspect ratio maintained */
 .menu-item-card .card-image,
 .menu-item .item-image {
-  width: 100% !important;
-  /* Use a fixed (responsive) height so images line up with the larger card sizes */
-  height: 380px !important;
-  overflow: hidden !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  position: relative !important;
-  background: linear-gradient(180deg, #f8fafc, #eef2f7) !important;
+  width: 100%;
+  height: 240px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: linear-gradient(180deg, #f8fafc, #eef2f7);
 }
+
 .menu-item-card .card-image img,
 .menu-item .item-image img {
-  position: relative !important;
-  width: auto !important;
-  height: 100% !important;
-  object-fit: contain !important;
-  border-radius: 0 !important;
-  display: block !important;
+  position: relative;
+  width: auto;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 0;
+  display: block;
 }
 
 /* Body content */
 .menu-item-card .card-body,
 .menu-item .menu-item-content,
 .menu-item .card-body {
-  padding: 12px 14px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 8px !important;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-grow: 1;
 }
 
 .menu-item-card .card-title,
 .menu-item .card-title,
 .menu-item .item-name {
-  font-size: 16px !important;
-  font-weight: 700 !important;
-  margin: 0 !important;
-  color: #0f1724 !important;
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0;
+  color: #0f1724;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 .menu-item-card .card-category,
 .menu-item .card-category {
-  font-size: 13px !important;
-  color: var(--muted) !important;
-  font-weight: 600 !important;
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .menu-item-card .card-description,
 .menu-item .card-description {
-  font-size: 13px !important;
-  color: #475569 !important;
-  line-height: 1.3 !important;
-  display: block !important;
-  max-height: 3.6em !important; /* clamp to ~3 lines */
-  overflow: hidden !important;
+  font-size: 13px;
+  color: #475569;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0;
 }
 
-/* Rating area - keep compact and layout as requested:
-   Order in card-body should be: image -> title -> description -> rating ->
-   actions where the first row is "- 1 + [cart icon]" and below it a centered
-   "Baholash" (rating) button. Prices are hidden by default.
-*/
-/* Image area - keep aspect ratio and center
-  Note: do NOT apply padding/height to the <img> element itself — only to the
-  container (.card-image/.item-image). The <img> inside is positioned
-  absolutely to fill the container. This avoids images disappearing when
-  template-level rules conflict. */
-
-/* Compact rating row: show stars and average score inline */
+/* Rating area */
 .menu-item-card .card-rating,
 .menu-item .card-rating {
-  display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  font-size: 13px !important;
-  color: var(--muted) !important;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--muted);
 }
 
-/* Card actions: stack rows (quantity+cart row, then rating button) */
+.menu-item-card .stars,
+.menu-item .stars {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.menu-item-card .star,
+.menu-item .star {
+  color: #ddd;
+  font-size: 14px;
+}
+
+.menu-item-card .star.filled,
+.menu-item .star.filled {
+  color: #ffc107;
+}
+
+/* Card actions */
 .menu-item-card .card-actions,
 .menu-item .card-actions {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 8px !important;
-  margin-top: auto !important; /* keep actions at the bottom */
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 8px;
+  border-top: 1px solid rgba(0, 0, 0, 0.04);
 }
 
-/* First row: form with quantity controls and cart icon aligned horizontally */
+/* Quantity + cart row */
 .menu-item-card .card-actions > form,
 .menu-item .card-actions > form {
-  display: flex !important;
-  align-items: center !important;
-  gap: 10px !important;
-  justify-content: flex-start !important;
-  width: 100% !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-start;
+  width: 100%;
 }
 
 .menu-item-card .qty-controls,
 .menu-item .qty-controls {
-  display: inline-flex !important;
-  gap: 6px !important;
-  align-items: center !important;
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  background: #f1f5fb;
+  border-radius: 6px;
+  padding: 4px;
 }
 
 .menu-item-card .qty-btn,
 .menu-item .qty-btn {
-  width: 34px !important;
-  height: 34px !important;
-  border-radius: 6px !important;
-  border: 1px solid rgba(0, 0, 0, 0.06) !important;
-  background: #f1f5fb !important;
-  color: var(--menu-accent) !important;
-  font-weight: 700 !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  cursor: pointer !important;
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  background: transparent;
+  color: var(--menu-accent);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 14px;
+}
+
+.menu-item-card .qty-btn:hover,
+.menu-item .qty-btn:hover {
+  background: #e0ebff;
 }
 
 .menu-item-card .qty-input,
 .menu-item .qty-input {
-  width: 48px !important;
-  padding: 6px !important;
-  border-radius: 6px !important;
-  border: 1px solid rgba(0, 0, 0, 0.06) !important;
-  text-align: center !important;
-  font-weight: 600 !important;
+  width: 40px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  text-align: center;
+  font-weight: 600;
+  font-size: 13px;
 }
 
-/* Cart icon button placed to the right of the quantity controls */
+/* Cart button */
 .menu-item-card .btn-add-cart,
 .menu-item .btn-add-cart {
-  min-width: 44px !important;
-  height: 44px !important;
-  border-radius: 10px !important;
-  background: var(--menu-accent) !important;
-  color: #fff !important;
-  border: none !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  box-shadow: 0 8px 20px rgba(43, 108, 176, 0.18) !important;
-}
-
-/* Rating button: centered below the qty+cart row */
-.menu-item-card .btn-rate,
-.menu-item .btn-rate {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 8px !important;
-  padding: 8px 12px !important;
-  border-radius: 8px !important;
-  border: 1px solid rgba(0, 0, 0, 0.06) !important;
-  background: transparent !important;
-  color: var(--menu-accent) !important;
-  font-weight: 700 !important;
-  cursor: pointer !important;
-  margin: 0 auto !important; /* center */
-}
-
-/* Favorite/heart button: prefer top-right corner */
-.menu-item-card .btn-favorite-top,
-.menu-item .btn-favorite-top {
-  position: absolute !important;
-  top: 8px !important;
-  right: 8px !important;
-  left: auto !important; /* prefer right corner */
-  width: 36px !important;
-  height: 36px !important;
-  border-radius: 50% !important;
-  background: rgba(255, 255, 255, 0.95) !important;
-  border: 1px solid rgba(0, 0, 0, 0.06) !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-/* Hide prices by default inside menu cards. Page-level `body.show-prices` can reveal them. */
-.menu-item-card .menu-item-price,
-.menu-item .menu-item-price,
-.menu-item-card .item-price {
-  visibility: hidden !important;
-  height: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  overflow: hidden !important;
-}
-
-/* Ensure accessibility for focus states */
-.menu-item-card:focus-within,
-.menu-item-card:focus {
-  outline: 3px solid rgba(43, 108, 176, 0.12) !important;
-  outline-offset: 2px !important;
-}
-
-/* Media queries: mobile-first improvements */
-/* Tablet: two columns */
-@media (min-width: 576px) {
-  .menu-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 20px !important;
-  }
-  .menu-item-card .card-image {
-    height: 260px !important;
-  }
-}
-
-/* Laptop / desktop: make cards bigger and taller images for notebooks */
-/* Notebook/Desktop: three columns */
-@media (min-width: 992px) {
-  .menu-grid {
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 28px !important;
-  }
-  .menu-item-card {
-    border-radius: 16px !important;
-  }
-  .menu-item-card .card-image {
-    height: 380px !important; /* default desktop image height */
-  }
-  .menu-item-card .card-body {
-    padding: 16px 18px !important;
-  }
-  .menu-item-card .card-title {
-    font-size: 20px !important;
-  }
-}
-
-@media (max-width: 575px) {
-  .menu-grid {
-    grid-template-columns: 1fr !important;
-    gap: 12px !important;
-  }
-  .menu-item-card {
-    border-radius: 10px !important;
-  }
-  .menu-item-card .card-image {
-    height: 200px !important;
-  }
-  .menu-item-card .card-body {
-    padding: 10px !important;
-  }
-  .menu-item-card .card-actions {
-    flex-direction: row !important;
-    gap: 10px !important;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .menu-item-card,
-  .menu-item {
-    transition: none !important;
-    animation: none !important;
-  }
-}
-
-/* Utility: compact grid for very narrow sidebars or embeds */
-.menu-grid.compact {
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)) !important;
-  gap: 12px !important;
-}
-
-/* Responsive column counts requested by user:
-   - Phone: 2 columns
-   - Tablet: 3 columns
-   - Laptop/Desktop: 4 columns
-   Also slightly reduce the card min width so cards feel less wide on large screens.
-*/
-/* Mobile first: default two columns for narrow phones */
-@media (max-width: 575px) {
-  .menu-grid {
-    /* phone: single column */
-    grid-template-columns: 1fr !important;
-    gap: 12px !important;
-  }
-  .menu-item-card {
-    border-radius: 10px !important;
-  }
-  .menu-item-card .card-image {
-    height: 200px !important;
-  }
-}
-
-/* Tablet: three columns */
-@media (min-width: 576px) and (max-width: 991px) {
-  .menu-grid {
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 18px !important;
-  }
-}
-
-/* Laptop / Desktop: show 3 columns on typical computer screens */
-@media (min-width: 992px) {
-  .menu-grid {
-    /* 3 columns on typical desktop but keep responsive min width */
-    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)) !important;
-    gap: 28px !important;
-    grid-auto-columns: minmax(380px, 1fr) !important;
-  }
-}
-
-/* Modal styling improvements for #itemModal */
-.modal-overlay {
-  display: none; /* shown by JS via display='flex' */
-  position: fixed !important;
-  inset: 0 !important;
-  z-index: 1200 !important;
-  align-items: center !important;
-  justify-content: center !important;
-  background: rgba(0, 0, 0, 0.48) !important;
-  padding: 20px !important;
-}
-.modal-content {
-  width: min(980px, 98%) !important;
-  max-height: calc(100vh - 120px) !important;
-  overflow: hidden !important;
-  display: flex !important;
-  gap: 18px !important;
-  background: var(--menu-card-bg) !important;
-  border-radius: 14px !important;
-  box-shadow: 0 30px 80px rgba(2, 6, 23, 0.6) !important;
-  padding: 0 !important;
-}
-.modal-body {
-  display: flex !important;
-  gap: 18px !important;
-  width: 100% !important;
-  padding: 18px !important;
-  box-sizing: border-box !important;
-}
-.modal-image {
-  flex: 0 0 62% !important;
-  max-width: 62% !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 8px !important;
-  position: relative !important; /* to position overlay controls */
-}
-.modal-media-container {
-  width: 100% !important;
-  min-height: 380px !important; /* bigger image area */
-  max-height: 740px !important;
-  overflow: hidden !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  background: linear-gradient(180deg, #f8fafc, #eef2f7) !important;
-}
-.modal-media-item {
-  max-width: 100% !important;
-  max-height: 740px !important;
-  width: auto !important;
-  height: auto !important;
-  object-fit: contain !important;
-  display: block !important;
-  transition: transform 0.28s ease, opacity 0.18s ease !important;
-}
-.modal-media-item.active {
-  opacity: 1 !important;
-}
-.modal-media-item:not(.active) {
-  opacity: 0;
-  pointer-events: none;
-}
-.modal-media-item.zoomed {
-  transform: scale(1.8) !important;
-  cursor: zoom-out;
-}
-
-/* Overlay controls on the image */
-.modal-media-controls {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-.modal-media-controls .modal-nav-btn,
-.modal-media-controls .modal-zoom-btn {
-  pointer-events: auto; /* re-enable clicks for the buttons */
-}
-.modal-media-controls .modal-nav-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.48);
+  min-width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: var(--menu-accent);
   color: #fff;
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+  transition: var(--transition);
   cursor: pointer;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  margin-left: auto;
+  flex-shrink: 0;
 }
-#modalPrevBtn {
-  left: 12px !important;
+
+.menu-item-card .btn-add-cart:hover,
+.menu-item .btn-add-cart:hover {
+  background: var(--menu-accent-hover);
+  box-shadow: 0 8px 16px rgba(37, 99, 235, 0.3);
 }
-#modalNextBtn {
-  right: 12px !important;
-}
-.modal-media-controls .modal-zoom-btn {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 42px;
-  height: 42px;
+
+/* Rating button */
+.menu-item-card .btn-rate,
+.menu-item .btn-rate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
   border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: transparent;
+  color: var(--menu-accent);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 12px;
+  width: 100%;
+}
+
+.menu-item-card .btn-rate:hover,
+.menu-item .btn-rate:hover {
+  background: rgba(37, 99, 235, 0.05);
+  border-color: var(--menu-accent);
+}
+
+/* Favorite button */
+.menu-item-card .btn-favorite-top,
+.menu-item .btn-favorite-top {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
   background: rgba(255, 255, 255, 0.95);
-  color: #111;
+  border: 1px solid rgba(0, 0, 0, 0.08);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 6px 18px rgba(2, 6, 23, 0.2);
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  transition: var(--transition);
+  color: #999;
+  font-size: 18px;
 }
 
-/* Make image nav buttons larger on hover for clarity */
-.modal-media-controls .modal-nav-btn:hover,
-.modal-media-controls .modal-zoom-btn:hover {
-  transform: translateY(-50%) scale(1.06);
+.menu-item-card .btn-favorite-top:hover,
+.menu-item .btn-favorite-top:hover {
+  background: #fff;
+  color: #e74c3c;
+  transform: scale(1.1);
 }
 
-/* Modal details (right column) improvements */
-.modal-details {
-  padding: 20px !important;
+/* Hide prices by default */
+.menu-item-card .menu-item-price,
+.menu-item .menu-item-price,
+.menu-item-card .item-price {
+  visibility: hidden;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 }
-.modal-details #modalDescription {
-  color: #334155;
-  font-size: 15px;
-  line-height: 1.45;
+
+/* Responsive: Mobile first */
+@media (max-width: 575px) {
+  .menu-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 8px 0;
+  }
+
+  .menu-item-card .card-image {
+    height: 180px;
+  }
+
+  .menu-item-card .card-body {
+    padding: 10px 12px;
+  }
+
+  .menu-item-card .card-title {
+    font-size: 14px;
+  }
 }
-.modal-rating {
+
+/* Tablet: 2 columns */
+@media (min-width: 576px) and (max-width: 991px) {
+  .menu-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+
+  .menu-item-card .card-image {
+    height: 220px;
+  }
+}
+
+/* Desktop: 3 columns */
+@media (min-width: 992px) {
+  .menu-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .menu-item-card .card-image {
+    height: 280px;
+  }
+
+  .menu-item-card .card-body {
+    padding: 14px 16px;
+  }
+
+  .menu-item-card .card-title {
+    font-size: 16px;
+  }
+}
+
+/* Large screens: 4 columns */
+@media (min-width: 1200px) {
+  .menu-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+
+  .menu-item-card .card-image {
+    height: 300px;
+  }
+}
+
+/* Modal - improved */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  overflow: auto;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-content {
+  width: min(900px, 98%);
+  max-height: calc(100vh - 40px);
+  overflow: auto;
+  display: flex;
+  gap: 20px;
+  background: var(--menu-card-bg);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  padding: 0;
+  animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-body {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.modal-image {
+  flex: 0 0 58%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+}
+
+.modal-media-container {
+  width: 100%;
+  height: 400px;
+  overflow: hidden;
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  background: linear-gradient(180deg, #f8fafc, #eef2f7);
+  border-radius: 12px;
 }
-.modal-rating .rating-text {
-  font-weight: 700;
+
+.modal-media-item {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  transition: var(--transition);
+}
+
+.modal-media-item.active {
+  opacity: 1;
+}
+
+.modal-media-item:not(.active) {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.modal-details {
+  flex: 1 1 42%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-details h2 {
+  font-size: 20px;
+  margin: 0;
   color: #0f1724;
 }
 
-/* Size/color selects: make them visually consistent */
-.modal-select {
-  width: 100%;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  background: #fff;
-}
-.select-wrapper {
-  position: relative;
-}
-.select-arrow {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-  color: var(--muted);
-}
-
-/* Quantity selector and Add button */
-.quantity-selector {
+.modal-rating {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--menu-accent);
 }
-.quantity-selector button {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  background: #f1f5fb;
-  cursor: pointer;
-  font-weight: 700;
-}
-.quantity-selector input {
-  width: 72px;
-  text-align: center;
-  padding: 8px;
-  border-radius: 8px;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-}
-.modal-cart-form {
+
+.modal-actions {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  margin-top: auto;
 }
+
 .modal-actions form {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
+
 .modal-actions .btn-add-cart {
   width: 100%;
   padding: 12px 16px;
-  border-radius: 10px;
-  font-weight: 700;
+  font-size: 14px;
 }
 
-/* Responsive: stack modal content on small screens */
-@media (max-width: 780px) {
+/* Close button */
+.modal-close {
+  position: absolute;
+  top: -30px;
+  right: 0;
+  width: 30px;
+  height: 30px;
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 24px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.modal-close:hover {
+  color: #333;
+  transform: scale(1.1);
+}
+
+/* Mobile modal */
+@media (max-width: 768px) {
   .modal-content {
-    flex-direction: column !important;
-    max-height: calc(100vh - 60px) !important;
+    flex-direction: column;
+    width: min(95vw, 600px);
   }
+
   .modal-image {
-    flex: 0 0 auto !important;
-    max-width: 100% !important;
+    flex: 0 0 auto;
   }
+
   .modal-media-container {
-    min-height: 260px !important;
+    height: 250px;
   }
+
   .modal-details {
-    max-width: 100% !important;
+    flex: 0 0 auto;
   }
-  .modal-media-controls .modal-nav-btn {
-    width: 40px;
-    height: 40px;
+
+  .modal-body {
+    flex-direction: column;
+    padding: 16px;
   }
 }
-.modal-details {
-  flex: 1 1 52% !important;
-  max-width: 52% !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 12px !important;
-  padding-right: 12px !important;
-}
-.modal-rating .stars .star {
-  font-size: 20px !important;
-  color: #e6e9eb !important;
-  margin-right: 6px !important;
-}
-.modal-rating .stars .star.filled {
-  color: #ffd166 !important;
-}
-.modal-actions {
-  margin-top: 8px !important;
-}
 
-/* Increase overall content width so menu-section has more space */
-.menu-container {
-  max-width: 1600px !important;
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .menu-item-card,
+  .menu-item,
+  .modal-content {
+    transition: none;
+    animation: none;
+  }
 }
-.content-area {
-  width: calc(100% - 360px) !important; /* account for sidebar */
-  max-width: 1320px !important;
-}
-
-/* Option badges for sizes and colors on cards */
-.card-options {
-  display: flex !important;
-  gap: 8px !important;
-  flex-wrap: wrap;
-  align-items: center;
-}
-.option-badge {
-  display: inline-block;
-  padding: 4px 8px;
-  border-radius: 8px;
-  background: #f1f5fb;
-  color: #0f1724;
-  font-weight: 600;
-  font-size: 12px;
-  margin-right: 6px;
-}
-.color-badge {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  margin-right: 6px;
-  vertical-align: middle;
-}
-.card-sizes,
-.card-colors {
-  font-size: 12px;
-  color: var(--muted);
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-/* End of menu-cards.css */

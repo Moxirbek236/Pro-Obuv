@@ -161,6 +161,37 @@
           padding: 0;
         }
       }
+      /* Dark theme adjustments so news cards match site dark look */
+      body.dark-theme #news-list .news-item.card {
+        background: linear-gradient(180deg, #071018 0%, #0b1116 100%);
+        box-shadow: 0 10px 30px rgba(2,6,10,0.6);
+        color: #e6f7fb;
+      }
+
+      body.dark-theme #news-list .news-title {
+        color: #dff7ff;
+      }
+
+      body.dark-theme #news-list .news-body,
+      body.dark-theme #news-list .news-content {
+        color: rgba(255,255,255,0.85);
+      }
+
+      body.dark-theme .news-share-links .share-btn {
+        background: rgba(255,255,255,0.03);
+        border-color: rgba(255,255,255,0.06);
+        color: #cdeff8;
+      }
+
+      body.dark-theme .news-item.card .news-card-meta {
+        background: rgba(7,10,12,0.6);
+        color: rgba(255,255,255,0.85);
+        backdrop-filter: blur(4px);
+      }
+
+      /* Improve readability of ticker in dark mode */
+      body.dark-theme #news-ticker { background: #071216; }
+      body.dark-theme #ticker-inner { color: rgba(255,255,255,0.9); }
       /* Share links and meta layout */
       .news-share-and-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 8px; }
       .news-share-links { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
@@ -209,17 +240,18 @@
       class="btn btn-primary"
       data-bs-toggle="modal"
       data-bs-target="#newsModalPublic"
-      onclick="openNewsModalPublic()">
+      onclick="openNewsModalPublic(event); return false;">
       Yangilik qo'shish
     </button>
   </div>
-  {% endif %} {% if session.get('super_admin') %}
+  {% endif %}
+  {% if session.get('super_admin') %}
   <!-- Floating Add News button -->
   <button
     class="fab-add-news"
     title="Yangilik qo'shish"
     aria-label="Yangilik qo'shish"
-    onclick="openNewsModalPublic()">
+    onclick="openNewsModalPublic(event); return false;">
     +
   </button>
   {% endif %}
@@ -323,8 +355,15 @@
         const ticker = document.getElementById('ticker-inner');
         if(items.length){
 
-    <script>
-      function copyNewsLink(url) {
+            ticker.innerText = items.join('  •  ');
+          } else {
+            ticker.innerText = 'Yangiliklar yo\'q';
+          }
+      })();
+  </script>
+
+  <script>
+    function copyNewsLink(url) {
         try {
           if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(url).then(function(){ alert('Link nusxalandi'); }, function(){ prompt('Ko' + "'" + 'chirish uchun linkni belgilang va nusxa oling:', url); });
@@ -397,17 +436,41 @@
           });
       })();
     </script>
-          ticker.innerText = items.join('  •  ');
-        } else {
-          ticker.innerText = 'Yangiliklar yo\'q';
-        }
-      })();
-  </script>
 
   <!-- Public Add News Modal (for superadmin on /news page) -->
   {% if session.get('super_admin') %}
   <div class="modal fade" id="newsModalPublic" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Yangilik qo'shish</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="newsFormPublic">
+            <div class="mb-3">
+              <label class="form-label">Sarlavha</label>
+              <input type="text" id="newsTitlePublic" class="form-control" required maxlength="200" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Matn</label>
+              <textarea id="newsContentPublic" class="form-control" rows="4" maxlength="1000"></textarea>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <label class="form-label">Rasm</label>
+                <input type="file" id="newsImageFilePublic" class="form-control" accept="image/*" onchange="uploadMediaFilePublic('image')" />
+                <input type="hidden" id="newsImageUrlPublic" />
+                <img id="imagePreviewPublic" style="display:none; max-width:180px; margin-top:8px" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Video</label>
+                <input type="file" id="newsVideoFilePublic" class="form-control" accept="video/*" onchange="uploadMediaFilePublic('video')" />
+                <input type="hidden" id="newsVideoUrlPublic" />
+                <video id="videoPreviewPublic" style="display:none; max-width:180px; margin-top:8px" controls muted></video>
+                <div class="mt-2">
+                  <label class="form-label">YouTube URL</label>
+                  <input type="url" id="newsYoutubeUrlPublic" class="form-control" placeholder="https://www.youtube.com/watch?v=..." />
                   <small class="form-text text-muted"
                     >Agar YouTube havolasi kiritilsa, yuklangan video o'rniga
                     shu manba ishlatiladi.</small
@@ -477,7 +540,11 @@
   </div>
 
   <script>
-    function openNewsModalPublic() {
+    function openNewsModalPublic(event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
       document.getElementById("newsFormPublic").reset();
       document.getElementById("imagePreviewPublic").style.display = "none";
       document.getElementById("videoPreviewPublic").style.display = "none";
@@ -565,7 +632,7 @@
 
       fetch("/api/news", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "X-CSRF-Token": typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : '' },
         body: JSON.stringify(payload),
       })
         .then((r) => r.json())
@@ -687,5 +754,4 @@
       }catch(e){ console.warn('news embed postprocess failed', e); }
     })();
   </script>
-  {% endif %} {% endblock %}
-</div>
+  {% endblock %}

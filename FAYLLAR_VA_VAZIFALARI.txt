@@ -1,0 +1,712 @@
+═══════════════════════════════════════════════════════════════════════════════
+                    SAFETY.UZ - DASTUR FAYLLAR RO'YXATI VA VAZIFALARI
+                        (Program Files List and Descriptions)
+═══════════════════════════════════════════════════════════════════════════════
+
+ASOSIY FAYLLAR (MAIN APPLICATION FILES):
+─────────────────────────────────────────────────────────────────────────────
+
+1. app.py (ASOSIY ILOVASI)
+   - Dashtu Flask ilovasining asosiy fayli
+   - API endpoints va marshruttalarni (routes) belgilaydi
+   - Database bilan bog'lanishni boshqaradi
+   - Foydalanuvchi autentifikatsiyasini amalga oshiradi
+   - Buyurtma, tovar, xabar va chat sistemalarini boshqaradi
+   - Admin panelini xalqaro tilga tarjima qilishni boshqaradi
+   - ~22,000 qatorda kod bor
+   - O'rnida: app.py.bak (zaxira nusxasi)
+
+2. config.py
+   - Ilovaning sozlamalarini (configuration) saqlaydi
+   - Database URL, parollar, API kalitlari
+   - Turli muhitlar uchun sozlamalar (development, production)
+   - Tillar va lokalizatsiya parametrlari
+
+3. utils.py
+   - Foydalanish qilinadigan funksiyalar (utility functions)
+   - Xalqaro tilga tarjima funksiyalari
+   - Vaqt, sanalar bilan ishlash funksiyalari
+   - Ma'lumotlarni validatsiya qilish funksiyalari
+   - Ruxsat boshqarish funksiyalari
+
+4. i18n.py
+   - Xalqaro tilga tarjima (Internationalization) uchun modul
+   - Tillar orasida o'tishni boshqaradi
+   - Matn tarjimalari bilan ishlaydi
+   - Tilga mos sozlamalarni qo'llaydi
+
+5. location_service.py
+   - Geolokatsiya xizmatini boshqaradi
+   - Foydalanuvchining manzili bilan ishlaydi
+   - Dostavka zonalarini aniqlaydi
+   - Xarita bilan muloqotni amalga oshiradi
+
+6. sms_helper.py
+   - SMS xabarlarini yuboradi
+   - Foydalanuvchiga bildirishnomalarni jo'natadi
+   - OTP (bir martalik kodi) yuborishni boshqaradi
+
+7. payment_settings.py
+   - To'lov tizimining sozlamalarini o'rnatadi
+   - To'lov vositalarini (Stripe, Click, Payme) konfiguratsiyalaydi
+   - To'lov ma'lumotlarini xavfsiz saqlaydi
+
+8. database.sqlite3
+   - ASOSIY DATABASE FAYLI
+   - Barcha ma'lumotlar shu yerda saqlanadi:
+     * Foydalanuvchilar (users)
+     * Tovarlar (menu_items)
+     * Buyurtmalar (orders)
+     * Xabarlar (news)
+     * Ratinglar (ratings)
+     * Chat xabarlar (chat messages)
+     * Va boshqa ma'lumotlar
+   - To'g'ri nusxalari: database.sqlite3-shm, database.sqlite3-wal
+
+═══════════════════════════════════════════════════════════════════════════════
+MODUL VA XIZMATLAR (MODULES & SERVICES):
+─────────────────────────────────────────────────────────────────────────────
+
+TELEGRAM BOT (/bot/):
+────────────────────
+
+1. telegram_bot.py
+   - Telegram chatbot'ni (roboti) boshqaradi
+   - Foydalanuvchilar Telegram orqali buyurtma qilishlari mumkin
+   - AI yordamida javob beradi
+   - Tovar katalogini ko'rsatadi
+   - Buyurtma holati haqida xabar beradi
+
+2. import_test.py
+   - Telegram bot modulini sinab ko'rish fayli
+   - Import xatalari tekshiradi
+
+API MODULI (/api/):
+──────────────────
+
+1. news_api.py
+   - Xabarlar API'si
+   - Xabarlarni qo'shish, o'qish, yangilash va o'chirish
+   - Xabarlar kategoriyalari bilan ishlaydi
+   - API endpoint: /api/news
+
+═══════════════════════════════════════════════════════════════════════════════
+SABLON VA FRONTEND (/templates/ va /static/):
+─────────────────────────────────────────────────────────────────────────────
+
+SABLONLAR (/templates/):
+───────────────────────
+
+1. base.html
+   - Barcha sahifalarning asosiy sabloni
+   - Navbor, footer, menyu
+   - Xalqaro til tanlash
+   - CSS va JS fayllari bu yerdan yuklanadi
+
+2. index.html
+   - Bosh sahifa
+   - Mahsulot karusel'i
+   - Reklama banerlari
+   - Eng so'ngi xabarlar
+
+3. menu.html
+   - Mahsulot katalogi sahifasi
+   - Tovarlarni qatorlarga bo'lib ko'rsatadi
+   - Filtr va qidirish imkoniyati
+   - Ratinglar va sharhlar
+
+4. product.html
+   - Bitta tovar haqidagi batafsil sahifa
+   - Rasm galereya
+   - Opisanie va xususiyatlar
+   - Otzivlar va ratinglar
+   - Savat qo'shish tugmasi
+
+5. cart.html
+   - Savat sahifasi
+   - Tovarlar ro'yxati
+   - Jami summani hisoblash
+   - Oformlenie buyurtma
+
+6. checkout.html
+   - Buyurtma rasmiylashtirish sahifasi
+   - Dostavka manzili
+   - To'lov usuli
+   - Shaxsiy ma'lumotlar
+
+7. orders.html
+   - Foydalanuvchi buyurtmalarining tarixiy sahifasi
+   - Buyurtma holati
+   - Tafsil va qayta buyurtma imkoniyati
+
+8. order_details.html
+   - Bitta buyurtma haqidagi batafsil sahifa
+   - Tovarlar ro'yxati
+   - Holat o'zgarishlari
+   - Boglanish ma'lumotlari
+
+9. news.html
+   - Xabarlar sahifasi
+   - Xabarlar ro'yxati
+   - Kategoriyalar bo'yicha filtrlash
+   - Qidirish imkoniyati
+
+10. news_detail.html
+    - Bitta xabar haqidagi batafsil sahifa
+    - To'liq matn
+    - Muallif va sana
+    - Tegishli xabarlar
+
+11. admin/dashboard.html
+    - Admin boshqaruv paneli
+    - Statistika va hisobotlar
+    - Admin menyusi
+    - Foydalanuvchilar, buyurtmalar, tovarlar boshqaruvi
+
+12. admin/menu_management.html
+    - Tovarlarni boshqarish sahifasi
+    - Tovar qo'shish, o'zgartirish, o'chirish
+    - Rasmlari va opisaniyasi
+
+13. admin/orders_management.html
+    - Buyurtmalarni boshqarish
+    - Holat o'zgartirish
+    - Dostavka bochusuvi
+
+14. admin/users_management.html
+    - Foydalanuvchilarni boshqarish
+    - Profil ma'lumotlari
+    - Ruxsatlar (permissions)
+    - Blokirovka/yechish
+
+15. admin/settings.html
+    - Ilovaning sozlamalarini boshqarish
+    - Turli til sozlamalarini o'rnatish
+    - Email va SMS shablonlari
+    - API kalitlari
+
+16. admin/reports.html
+    - Hisobotlar sahifasi
+    - Sotuvlar analitikasi
+    - Foydalanuvchi statistikasi
+    - Export imkoniyati
+
+17. chat.html
+    - Chat sahifasi (foydalanuvchilar uchun)
+    - Operator bilan gaplashish
+    - Xabar tarixiy
+
+18. admin/chat.html
+    - Admin chat sahifasi (operatorlar uchun)
+    - Foydalanuvchilar ro'yxati
+    - Real vaqt xabarlar
+
+19. super_admin_login.html
+    - Super admin kirish sahifasi
+    - Maxfiy oq'imlash
+
+20. login.html, register.html
+    - Kirish va ro'yxatdan o'tish sahifalari
+    - Foydalanuvchi autentifikatsiyasi
+
+STATIK FAYLLAR (/static/):
+──────────────────────────
+
+1. /static/css/ (Uslublar)
+   - style.css - Asosiy uslublar
+   - responsive.css - Turli ekranlar uchun
+   - admin.css - Admin paneli uchun
+   - chat.css - Chat uchun uslublar
+
+2. /static/js/ (JavaScript kodlari)
+   - main.js - Asosiy skriptlar
+   - cart.js - Savat operatsiyalari
+   - checkout.js - Buyurtma forması
+   - chat_widget.js - Chat mini-oyna
+   - staff_chat.js - Admin chat skripti
+   - menu.js - Tovar katalogi skripti
+   - admin.js - Admin paneli skriptlari
+
+3. /static/uploads/ (Yuklanadigan fayllar)
+   - product/ - Tovar rasmlari
+   - news/ - Xabar rasmlari
+   - avatars/ - Foydalanuvchi avatarlari
+
+4. /static/defoult.webp
+   - Standart rasm (lokal rasmlar yuklanmaganda)
+
+5. /static/images/
+   - Ilovaning o'zining rasmlari (logotip, ikonkalar)
+
+═══════════════════════════════════════════════════════════════════════════════
+ISHCHI SKRIPTYLAR VA SINOV FAYLLAR:
+──────────────────────────────────────────────────────────────────────────────
+
+ISHCHI SKRIPTYLAR:
+──────────────────
+
+1. run.py
+   - Ilovani ishga tushirish uchun asosiy skript
+   - python run.py - buning orqali ishga tushirilaadi
+
+2. run_debug.py
+   - Debug rejimida ilovani ishga tushiradi
+   - Xatolarni ko'rish oson bo'ladi
+   - Avtomatik yangilanish
+
+3. run_high_performance.py
+   - Yuqori samaradorlik rejimida ishga tushiradi
+   - Ko'p foydalanuvchilar uchun optimizatsiyalangan
+
+4. run_both.py
+   - Flask ilovasi va Telegram botini bir vaqtda ishga tushiradi
+
+5. start_and_test.py
+   - Ilovani ishga tushiradi va sinov qiladi
+
+6. keep_alive.py
+   - Ilovani turg'un ishlashini ta'minlaydi
+   - Server o'chmasligini ta'minlaydi (Replit uchun)
+
+SINOV FAYLLAR (test_*.py):
+─────────────────────────
+
+1. test_app_startup.py
+   - Ilovaning tez ishga tushirish vaqtini tekshiradi
+   - Cache sozlamalarini sinab ko'radi
+
+2. test_rating_system.py
+   - Rating tizimini sinab ko'radi
+   - Ratinglar to'g'ri hisoblashini tekshiradi
+
+3. test_payment_api.py
+   - To'lov API'larini sinab ko'radi
+   - To'lov operatsiyalarini tekshiradi
+
+4. test_news_ticker.html
+   - Xabarlar karuselinini web brauzer'da sinab ko'radi
+
+5. test_admin_fix.py
+   - Admin paneli tuzilmasini tekshiradi
+   - Foydalanuvchi ruxsatlari boshqaruvini sinab ko'radi
+
+6. test_performance.py
+   - Ilovaning samaradorligini tekshiradi
+   - Urinish vaqtlarini o'lchaydi
+
+7. final_test.py
+   - Barcha asosiy xususiyatlarni sinab ko'radi
+   - Buyurtma oformlenie, chat, xabarlar
+
+DIAGNOSTIK SKRIPTYLAR:
+─────────────────────
+
+1. check_db.py
+   - Database'ni tekshiradi
+   - Jadvallari va ma'lumotlarini ko'radi
+
+2. check_news_table.py
+   - Xabarlar jadvalini tekshiradi
+
+3. tmp_inspect_db.py
+   - Database'ni chuqur tekshiradi
+   - Jadvallaning tuzilmasini ko'rsatadi
+
+4. debug_payment.py
+   - To'lov tizimini debug qiladi
+   - Xatolarni topadi
+
+═══════════════════════════════════════════════════════════════════════════════
+MIGRATSIYA VA DATABASE SKRIPTYLAR (/scripts/ va /tools/):
+──────────────────────────────────────────────────────────────────────────────
+
+DATABASE YARATISH:
+──────────────────
+
+1. init_database.py
+   - Yangi database yaratadi
+   - Barcha zarur jadvallarni yaratadi
+   - Ilk ma'lumotlarni (seed data) qo'shadi
+
+2. create_ai_tables.py
+   - AI uchun jadvallarni yaratadi
+   - Chat tarixiy jadvallar
+
+3. create_missing_tables.py
+   - Yo'q bo'lgan jadvallarni yaratadi
+   - Database'ni to'g'ri yo'lga keltiriladi
+
+MIGRATSIYA SKRIPTYLAR (Database sxemani o'zgartirish):
+───────────────────────────────────────────────────────
+
+1. migrate_categories.py
+   - Tovar kategoriyalarini migratsiya qiladi
+   - Qadimgi ma'lumotlarni yangi formatga o'zgartiradi
+
+2. migrate_ratings.py
+   - Rating jadvalini yaratadi va migratsiya qiladi
+
+3. migrate_news_i18n.py
+   - Xabarlarni xalqaro tilga tarjima uchun tayyorlaydi
+
+4. migrate_add_i18n_menu_items.py
+   - Tovarlarni turli tillarda qo'llab-quvvatlash uchun
+
+5. migrate_product_marketplaces_multi.py
+   - Tovarlar bozorlarini (marketplaces) bilan bog'lash
+
+6. add_product_marketplaces_table.py
+   - Tovarlarni maritallar'dagi bazilikladi ma'lumotlar jadvalini yaratadi
+
+SEED VA POPULATE SKRIPTYLAR:
+────────────────────────────
+
+1. seed_test_db.py
+   - Test database'ni sinov ma'lumotlari bilan to'ldiradi
+   - Testlar uchun test mo'ljali data
+
+2. seed_shoes.py
+   - Database'ni oyoq poyabzal ma'lumotlari bilan to'ldiradi
+   - Katalog rasmiylashtirladi
+
+3. populate_i18n_descriptions.py
+   - Tovar opisaniyalarini turli tillarda yaratadi
+   - Tarjima ma'lumotlarini qo'shadi
+
+EXPORT VA IMPORT:
+─────────────────
+
+1. export_translations.py
+   - Tilga tarjima ma'lumotlarini eksport qiladi
+   - Excel yoki CSV formatida
+
+2. import_and_crawl.py
+   - Tashqi manbadan ma'lumotlarni import qiladi
+   - Web scraping bilan
+
+TEKSHIRUV SKRIPTYLAR (Check & Inspect):
+─────────────────────────────────────────
+
+1. check_menu.py
+   - Tovar katalogini tekshiradi
+   - Tovarlar to'g'ri ma'lumotlanganligini kontrol qiladi
+
+2. check_translations.py
+   - Tarjima ma'lumotlarini tekshiradi
+   - Yo'q bo'lgan tarjimalarni topadi
+
+3. check_payments.py
+   - To'lov ma'lumotlarini tekshiradi
+
+4. check_ratings_fk.py
+   - Rating jadvalining chet kalit (foreign key) munosabatlarini tekshiradi
+
+5. check_news_ticker.py
+   - Xabarlar karuselini tekshiradi
+
+6. list_tables.py
+   - Database'dagi barcha jadvallarini ro'yxati
+
+7. list_routes.py
+   - Ilovaning barcha API endpointlarini ro'yxati
+
+8. inspect_db.py
+   - Database'ni chuqur tekshiradi
+   - Jadval tuzilmasini ko'rsatadi
+
+9. count_rows.py
+   - Har bir jadvalidagi qatorlar sonini hisoblaydi
+
+10. dump_menu_items.py
+    - Tovarlarni dump (nusxa) qiladi
+
+11. dump_chats.py
+    - Chat ma'lumotlarini dump qiladi
+
+TAMIR VA CLEANUP:
+─────────────────
+
+1. cleanup_db.py
+   - Database'ni tozalaydi
+   - Yo'q bo'lgan ma'lumotlarni o'chirib tashlaydi
+
+2. repair_db.py
+   - Database'ni tamir qiladi
+   - Nosozlik fikalashtiradi
+
+3. fix_menu_columns.py
+   - Tovar jadvalining ustunlarini to'g'ri qiladi
+
+4. fix_cart_order_columns.py
+   - Savat va buyurtma jadvallarini to'g'ri qiladi
+
+5. remove_emojis.py
+   - Emoji'larni ma'lumotlardan o'chirib tashlaydi
+   - Muammoli emoji'larni tozalaydi
+
+RASM VA MEDIA:
+───────────────
+
+1. convert_db_images_to_webp.py
+   - Rasmlarni WebP formatiga o'zgartiradi
+   - Tezligini oshiradi, hajmi kamayadi
+
+2. convert_product_media_to_webp.py
+   - Tovar rasmlarini WebP formatiga o'zgartiradi
+
+3. generate_product_media_report.py
+   - Tovar mediasi haqida hisobot yaratadi
+
+4. add_show_in_ticker.py
+   - Xabarlarni karusel'da ko'rsatish parametrini qo'shadi
+
+PERFORMANCE VA OPTIMIZATSIYA:
+──────────────────────────────
+
+1. profile_menu_query.py
+   - Tovar katalogu query'larining samaradorligini o'lchaydi
+   - Qaysi query'lar sekin ekanligini topadi
+
+2. menu_diagnostics.py
+   - Tovar menyu'sining samaradorligini diagnostika qiladi
+
+3. warmup_menu_cache.py
+   - Cache'ni ilg'ak qo'shadi
+   - Birinchi murojaat tez bo'lishi uchun
+
+4. MENU_OPTIMIZATION_REPORT.py
+   - Tovar menyu'si optimizatsiya hisoboti
+   - Yaxsishlash tavsiyalari
+
+5. verify_optimization.py
+   - Optimizatsiya natijalari tekshiradi
+
+═══════════════════════════════════════════════════════════════════════════════
+KO'MAKCHI VA SOZLAMA FAYLLAR:
+────────────────────────────────────────────────────────────────────────────
+
+1. .env va .env.example
+   - Muhit o'zgaruvchilari (environment variables)
+   - API kalitlari, parollar, server manzillari
+   - .env.example - namuna fayl (gerege nusxa)
+   - .env - haqiqiy sozlamalar (zaxira qilinmaydi)
+
+2. requirements.txt
+   - Zarur Python kutubxonalari ro'yxati
+   - pip install -r requirements.txt - orqali o'rnatiladi
+
+3. package.json va package-lock.json
+   - Node.js kutubxonalari
+   - npm install - orqali o'rnatiladi
+   - Frontend JavaScript kutubxonalari
+
+4. config.py
+   - Ilovaning asosiy sozlamalari
+   - Turli muhitlar (development, production, testing)
+   - Database URL, session sozlamalari
+
+5. runtime.txt
+   - Python versiyasini ko'rsatadi
+   - Replit uchun
+
+6. .replit va .replit.bak
+   - Replit konfiguratsiyasi
+   - Ilovani tug'ri ishga tushirish uchun
+
+7. .gitignore
+   - Git'ka saqlanmashi gereken fayllar ro'yxati
+
+8. .python-version
+   - Python versiyasini belgilaydi
+   - pyenv uchun
+
+SOZLAMA FAYLLAR:
+────────────────
+
+1. superadmin_settings.json
+   - Super admin sozlamalari
+   - Uning ruxsatlari va parametrlari
+
+2. payment_settings.py
+   - To'lov tizimi sozlamalari
+   - Stripe, Click, Payme kalitlari
+
+3. deploy_config.py
+   - Deployment sozlamalari
+   - Serverni ishga tushirish uchun
+
+4. high_performance_config.py
+   - Yuqori samaradorlik rejimi sozlamalari
+   - Ko'p foydalanuvchilar uchun
+
+TARJIMA VA LOKALIZATSIYA:
+─────────────────────────
+
+1. translation.json
+   - Til tarjimalarinig asosiy fayli
+   - UI matni va sportikellar
+   - Formatı: { "uz": {...}, "ru": {...}, "en": {...} }
+
+2. i18n.py
+   - Tarjima sistemasini boshqaradi
+   - Til o'zgarishi
+
+═══════════════════════════════════════════════════════════════════════════════
+XARIJ FAYLLAR VA NUSXALAR:
+──────────────────────────────────────────────────────────────────────────────
+
+BACKUP (ZAXIRA NUSXALAR):
+─────────────────────────
+
+1. app.py.bak
+   - app.py ning eski versiyasi
+   - Muammoli o'zgarishlardan qaytish uchun
+
+2. run_debug.py.bak
+   - run_debug.py ning eski versiyasi
+
+3. database_backup_*.sqlite3
+   - /backups/ papkasida
+   - Database'ning eski nusxalari
+   - Muammoli holatlarda qaytish uchun
+
+MARKDOWN VA HISOBOTLAR:
+──────────────────────
+
+1. README_CHAT.md
+   - Chat sistemasining dokumentatsiyasi
+
+2. ADMIN_FIXES_SUMMARY.md
+   - Admin paneli tuzilmasi haqida xulosa
+
+3. SUPERADMIN_FIELDS.md
+   - Super admin fields (maydonlari) dokumentatsiyasi
+
+4. MENU_PERFORMANCE_OPTIMIZATION.md
+   - Tovar menyu'si optimizatsiyasi haqida
+   - Yaxsishlash xulosasi
+
+SCHEMA VA ANALYTICS:
+────────────────────
+
+1. schema_out.txt
+   - Database'ning jadvallari tuzilmasi
+   - SQL sxemasi
+
+2. route_audit_report.json
+   - Barcha routelar (urllar) auditlari
+
+JSON SOZLAMALAR:
+────────────────
+
+1. courier.json
+   - Kuryerlari haqida sozlamalar
+
+2. employees.json
+   - Xodimlar haqida ma'lumotlar
+
+3. users.json
+   - Foydalanuvchilar ma'lumotlari test fayli
+
+XARITA VA SEO:
+───────────────
+
+1. robots.txt
+   - Search enginelar'ga instruktor
+   - Qaysi bo'limlari qidirish mumkinligi
+
+2. sitemap.xml
+   - Sait xaritasi
+   - Google Search Console uchun
+
+3. google9f3be6eabf8cfac2.html
+   - Google tekshiruvi fayli
+
+4. yandex_*.html
+   - Yandex tekshiruvi faylları
+
+═══════════════════════════════════════════════════════════════════════════════
+PAPKALAR VA JILDLAR:
+──────────────────────────────────────────────────────────────────────────────
+
+1. /templates/ - HTML sablonlari
+2. /static/ - CSS, JavaScript, rasmlar
+3. /api/ - API modulyar
+4. /bot/ - Telegram botni
+5. /scripts/ - Migratsiya va sinov skriptylar
+6. /tools/ - Yordamchi alatlar va utilities
+7. /data/ - Ma'lumot faylları
+8. /logs/ - Tuzilgan loglar
+9. /instance/ - Flask instance faylları
+10. /tests/ - Sinov faylları
+11. /backups/ - Database zaxira nusxalari
+12. /node_modules/ - NPM kutubxonalari
+13. /.git/ - Git version boshqaruvi
+14. /attached_assets/ - Qo'shimcha aktivlar
+
+═══════════════════════════════════════════════════════════════════════════════
+XULOSA - ASOSIY VAZIFALARI:
+──────────────────────────────────────────────────────────────────────────────
+
+BACKEND (Server tomon):
+  ✓ app.py - Asosiy ilovasi
+  ✓ config.py - Sozlamalar
+  ✓ database.sqlite3 - Ma'lumotlar bazasi
+  ✓ utils.py, i18n.py - Yordamchi modullar
+  ✓ Telegram boti (/bot/telegram_bot.py)
+  ✓ API'lar (/api/)
+
+FRONTEND (Brauzer tomon):
+  ✓ /templates/ - HTML sablonlari
+  ✓ /static/ - CSS, JavaScript, rasmlar
+  ✓ Responsive dizayn - telefon, planshet, komp'yuter
+
+ADMIN BOSHQARUVI:
+  ✓ Admin paneli tovarlar, buyurtmalar, foydalanuvchilar boshqarish
+  ✓ Chat operatori boshqaruvi
+  ✓ Sozlamalar va konfiguratsiya
+
+XALQARO TIL:
+  ✓ O'zbek (uz), Rus (ru), Ingliz (en), Qozoq (kz)
+  ✓ translation.json - Tarjimalar
+  ✓ i18n.py - Tarjima tizimi
+
+DATABASE:
+  ✓ SQLite3 ma'lumotlar bazasi
+  ✓ Foydalanuvchilar, tovarlar, buyurtmalar, xabarlar
+  ✓ Chat, ratinglar, favorit ro'yxati
+
+PAYMENT (TO'LOV):
+  ✓ Stripe, Click, Payme integratsiyalari
+  ✓ To'lov xavfsizligi
+
+XIZMATLARI:
+  ✓ Tovar katalogi
+  ✓ Buyurtma qilish va holat kuzatish
+  ✓ Chat operatori bilan bog'lanish
+  ✓ Xabarlar va elon-U
+
+═══════════════════════════════════════════════════════════════════════════════
+QUYIDAGI TEXNOLOGIYALAR ISHLATILADI:
+──────────────────────────────────────────────────────────────────────────────
+
+Backend:
+  • Python + Flask (Web Framework)
+  • SQLite3 (Database)
+  • Telegram Bot API
+  • REST API's
+
+Frontend:
+  • HTML5
+  • CSS3 (Responsive)
+  • JavaScript (ES6+)
+  • jQuery (optional)
+
+Payment:
+  • Stripe, Click, Payme
+
+Hosting:
+  • Replit (development)
+  • Could be deployed to Heroku, Railway, etc.
+
+═══════════════════════════════════════════════════════════════════════════════

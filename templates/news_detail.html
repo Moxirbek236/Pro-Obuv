@@ -182,11 +182,29 @@
         </div>
       </article>
 
-      <!-- Related News -->
+      <!-- Related News (horizontal ribbon) -->
       <div class="related-news mt-5">
-        <h3 class="related-title">Boshqa yangiliklar</h3>
-        <div class="related-grid">
-          <!-- Bu qism JavaScript orqali to'ldiriladi -->
+        <div class="ribbon-header">
+          <h3 class="related-title">Boshqa yangiliklar</h3>
+          <div class="ribbon-controls">
+            <button
+              class="ribbon-btn"
+              data-target="related-ribbon"
+              data-action="prev">
+              ‹
+            </button>
+            <button
+              class="ribbon-btn"
+              data-target="related-ribbon"
+              data-action="next">
+              ›
+            </button>
+          </div>
+        </div>
+        <div
+          class="related-grid ribbon-track"
+          id="related-ribbon"
+          aria-label="Boshqa yangiliklar">
           <div class="related-loading">
             <div class="spinner-border text-primary" role="status">
               <span class="visually-hidden">Yuklanmoqda...</span>
@@ -371,9 +389,12 @@
   }
 
   .related-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
   }
 
   .related-loading {
@@ -447,9 +468,11 @@
       const response = await fetch('/api/news');
       const data = await response.json();
 
-      if (data && data.success && data.items) {
-        const relatedNews = data.items
-          .filter(item => item.id !== {{ news.id }} && item.is_active)
+      // API historically returned either `items` or `news` depending on endpoint/version.
+      const list = (data && data.items) ? data.items : (data && data.news ? data.news : null);
+      if (data && Array.isArray(list)) {
+        const relatedNews = list
+          .filter(item => item && (item.id || item.id === 0) && item.id !== {{ news.id }} && (item.is_active === undefined ? true : item.is_active))
           .slice(0, 6); // Show up to 6 related news
 
         renderRelatedNews(relatedNews);
@@ -463,7 +486,7 @@
   }
 
   function renderRelatedNews(news) {
-    const container = document.querySelector('.related-grid');
+    const container = document.querySelector('#related-ribbon');
     if (!container) return;
 
     if (news.length === 0) {
@@ -471,24 +494,57 @@
       return;
     }
 
-    container.innerHTML = news.map(item => `
-      <div class="related-item">
-        <a href="/news/${item.id}" class="related-link">
-          <div class="related-card">
-            ${item.image_url ? `<img src="${item.image_url}" alt="${item.title}" class="related-image" />` : ''}
-            <div class="related-content">
-              <h4 class="related-item-title">${item.title}</h4>
-              <p class="related-item-text">${(item.content || '').substring(0, 100)}...</p>
-              <span class="related-item-date">${item.created_at ? item.created_at.split('T')[0] : ''}</span>
-            </div>
-          </div>
-        </a>
-      </div>
-    `).join('');
+    container.innerHTML = '';
+    news.forEach(item => {
+      const wrap = document.createElement('div');
+      wrap.className = 'related-item';
+      const a = document.createElement('a');
+      a.href = '/news/' + (item.id || item['id']);
+      a.className = 'related-link';
+
+      const card = document.createElement('div');
+      card.className = 'related-card';
+
+      if (item.image_url) {
+        const img = document.createElement('img');
+        img.className = 'related-image';
+        img.loading = 'lazy';
+        img.src = item.image_url;
+        img.alt = item.title || '';
+        card.appendChild(img);
+      }
+
+      const content = document.createElement('div');
+      content.className = 'related-content';
+      content.innerHTML = `
+        <h4 class="related-item-title">${(item.title || '').substring(0,80)}</h4>
+        <p class="related-item-text">${((item.content || '')).substring(0,100)}...</p>
+        <span class="related-item-date">${item.created_at ? (item.created_at.split && item.created_at.split('T')[0]) : ''}</span>
+      `;
+
+      card.appendChild(content);
+      a.appendChild(card);
+      wrap.appendChild(a);
+      container.appendChild(wrap);
+    });
+
+    // ensure controls wired (idempotent)
+    document.querySelectorAll('.ribbon-btn').forEach(btn => {
+      if (btn._wired) return; btn._wired = true;
+      btn.addEventListener('click', function(){
+        const target = this.dataset.target;
+        const action = this.dataset.action;
+        const track = document.getElementById(target);
+        if(!track) return;
+        const amount = Math.round(track.clientWidth * 0.8) || 300;
+        if(action === 'next') track.scrollBy({ left: amount, behavior: 'smooth' });
+        else track.scrollBy({ left: -amount, behavior: 'smooth' });
+      });
+    });
   }
 
   function showRelatedNewsError() {
-    const container = document.querySelector('.related-grid');
+    const container = document.querySelector('#related-ribbon') || document.querySelector('.related-grid');
     if (container) {
       container.innerHTML = '<p class="text-center text-muted">Boshqa yangiliklar yuklanmadi.</p>';
     }
@@ -512,6 +568,47 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+  }
+
+  /* Ribbon-specific tweaks */
+  .ribbon-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .ribbon-controls {
+    display: flex;
+    gap: 8px;
+  }
+  .ribbon-btn {
+    background: #fff;
+    border: 1px solid #e6e6e6;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .related-grid .related-item {
+    flex: 0 0 320px;
+    width: 320px;
+    scroll-snap-align: start;
+  }
+  .related-image {
+    height: 180px;
+  }
+  @media (max-width: 720px) {
+    .related-grid .related-item {
+      flex: 0 0 260px;
+      width: 260px;
+    }
+    .related-image {
+      height: 140px;
+    }
   }
 
   .related-card:hover {

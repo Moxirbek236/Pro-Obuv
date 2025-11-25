@@ -45,6 +45,90 @@
   "category": (item.category or "Spetsobuv va Ish Kiyimlari")
 } | tojson }}
 </script>
+
+<script>
+  (function(){
+    // Template URL to build links to product pages. Replace trailing /0 with actual id.
+    const PRODUCT_URL_TEMPLATE = {{ (url_for('product_detail', item_id=0))|tojson }};
+
+    function buildProductUrl(id){
+      try{
+        // Replace trailing /0 or /0/ with /<id>
+        return PRODUCT_URL_TEMPLATE.replace(/\/0(\/)?$/, '/' + id);
+      }catch(e){
+        return '/product/' + id;
+      }
+    }
+
+    function renderCard(item){
+      const a = document.createElement('a');
+      a.className = 'ribbon-card';
+      a.href = buildProductUrl(item.id || item['id']);
+      a.setAttribute('aria-label', item.name_local || item.name || 'product');
+
+      const img = document.createElement('img');
+      img.src = item.image_url || (item.media && item.media[0] && item.media[0].media_url) || '';
+      img.loading = 'lazy';
+      img.alt = item.name_local || item.name || '';
+      a.appendChild(img);
+
+      const name = document.createElement('div');
+      name.className = 'name';
+      name.textContent = item.name_local || item.name || '';
+      a.appendChild(name);
+
+      const price = document.createElement('div');
+      price.className = 'price';
+      price.textContent = (item.price ? (item.price + ' UZS') : '—');
+      a.appendChild(price);
+
+      return a;
+    }
+
+    async function loadRibbon(category, trackEl){
+      try{
+        const url = '/api/menu-search?category=' + encodeURIComponent(category) + '&limit=12';
+        const res = await fetch(url);
+        if(!res.ok) throw new Error('Network');
+        const data = await res.json();
+        if(!data || !data.items) throw new Error('No data');
+
+        trackEl.innerHTML = '';
+        data.items.forEach(it => {
+          const card = renderCard(it);
+          trackEl.appendChild(card);
+        });
+      }catch(e){
+        try{ trackEl.innerHTML = '<div style="color:#666;padding:8px">Mahsulotlar yuklanmadi.</div>'; }catch(_){}
+        console.warn('ribbon load failed', category, e);
+      }
+    }
+
+    // Initialize both ribbons
+    document.addEventListener('DOMContentLoaded', function(){
+      const tracks = document.querySelectorAll('.ribbon-track');
+      tracks.forEach(t => {
+        const cat = t.dataset.category || '';
+        if(cat) loadRibbon(cat, t);
+      });
+
+      // Wire controls
+      document.querySelectorAll('.ribbon-btn').forEach(btn => {
+        btn.addEventListener('click', function(){
+          const target = this.dataset.target;
+          const action = this.dataset.action;
+          const ribbon = document.getElementById(target);
+          if(!ribbon) return;
+          const track = ribbon.querySelector('.ribbon-track');
+          if(!track) return;
+          const amount = Math.round(track.clientWidth * 0.8) || 300;
+          if(action === 'next') track.scrollBy({ left: amount, behavior: 'smooth' });
+          else track.scrollBy({ left: -amount, behavior: 'smooth' });
+        });
+      });
+    });
+  })();
+</script>
 {% endblock %}
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/color_select.css') }}">
@@ -680,6 +764,40 @@
         {% endif %}
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Related product ribbons (under comments) -->
+<style>
+  .product-ribbons { max-width:1200px; margin:18px auto 40px; padding:0 12px; }
+  .product-ribbon { margin-top:18px; }
+  .ribbon-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+  .ribbon-title { font-weight:800; font-size:16px; }
+  .ribbon-track { display:flex; gap:12px; overflow-x:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; padding-bottom:6px; }
+  .ribbon-card { flex:0 0 200px; width:200px; background:#fff; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.06); padding:8px; scroll-snap-align:start; text-decoration:none; color:inherit; }
+  .ribbon-card img { width:100%; height:140px; object-fit:cover; border-radius:6px; display:block; }
+  .ribbon-card .name { font-weight:700; margin-top:8px; font-size:14px; min-height:36px; }
+  .ribbon-card .price { margin-top:6px; color:#0f766e; font-weight:800; display:none; }
+  .ribbon-controls { display:flex; gap:8px; align-items:center; }
+  .ribbon-btn { background:#fff; border:1px solid #e6e6e6; width:36px; height:36px; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; }
+  @media (max-width:720px){ .ribbon-card{flex:0 0 160px;width:160px} .ribbon-card img{height:110px} }
+</style>
+
+<div class="product-ribbons">
+  <div class="product-ribbon" id="ribbon-spetsobuv">
+    <div class="ribbon-header">
+      <div class="ribbon-title">{{ _('footer.cat_specobuv') }} — Tegishli mahsulotlar</div>
+      <div class="ribbon-controls"><button class="ribbon-btn" data-target="ribbon-spetsobuv" data-action="prev">‹</button><button class="ribbon-btn" data-target="ribbon-spetsobuv" data-action="next">›</button></div>
+    </div>
+    <div class="ribbon-track" data-category="specobuv" id="track-spetsobuv" aria-label="Spetsobuv products"></div>
+  </div>
+
+  <div class="product-ribbon" id="ribbon-spetsodejda">
+    <div class="ribbon-header">
+      <div class="ribbon-title">{{ _('footer.cat_specodezhda') }} — Tegishli mahsulotlar</div>
+      <div class="ribbon-controls"><button class="ribbon-btn" data-target="ribbon-spetsodejda" data-action="prev">‹</button><button class="ribbon-btn" data-target="ribbon-spetsodejda" data-action="next">›</button></div>
+    </div>
+    <div class="ribbon-track" data-category="specodezhda" id="track-spetsodejda" aria-label="Spetsodejda products"></div>
   </div>
 </div>
 

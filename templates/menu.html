@@ -638,17 +638,20 @@
               <p class="card-category">{{ item.category or '' }}</p>
               <!-- Colors removed from card per request -->
               <div class="card-rating">
+                {% set rating = item.rating or 0 %}
+                {% set full_stars = rating | int %}
+                {% set partial = (rating - full_stars) * 100 %}
                 <style>
                   .card-stars-wrap{display:inline-block;position:relative;font-size:16px;line-height:1}
                   .card-stars-bottom,.card-stars-top{white-space:nowrap}
                   .card-stars-bottom{color:#e6e6e6}
-                  .card-stars-top{color:#ffd700;position:absolute;left:0;top:0;overflow:hidden}
+                  .card-stars-top{color:#ffd700;position:absolute;left:0;top:0;overflow:hidden;width:{{ full_stars * 20 + partial / 5 }}%}
                 </style>
-                <div class="card-stars-wrap" title="{{ "%.1f"|format(item.rating or 0) }}">
+                <div class="card-stars-wrap" title="{{ "%.1f"|format(rating) }}">
                   <div class="card-stars-bottom">★★★★★</div>
-                  <div class="card-stars-top" style="width:{{ ((item.rating or 0)/5.0)*100 }}%">★★★★★</div>
+                  <div class="card-stars-top">★★★★★</div>
                 </div>
-                <div class="rating-text">{{ "%.1f"|format(item.rating or 0) }} ({{ item.orders_count or 0 }} buyurtma)</div>
+                <div class="rating-text">{{ "%.1f"|format(rating) }} ({{ item.orders_count or 0 }} buyurtma)</div>
               </div>
 
             </div>
@@ -664,8 +667,6 @@
     </div>
   </div>
 </div>
-
-<!-- Floating Cart Icon -->
 
 <style>
 
@@ -1895,16 +1896,29 @@
   .stars {
     display: flex;
     gap: 2px;
+    position: relative;
   }
 
   .star {
     font-size: 18px;
     color: #ffd70033;
     transition: color 0.3s ease;
+    position: relative;
   }
 
   .star.filled {
     color: #ffd700;
+  }
+
+  /* Fractional star - used with ::after pseudo-element for partial fill */
+  .star.partial::after {
+    content: '★';
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: #ffd700;
+    overflow: hidden;
+    width: var(--partial-percent, 50%);
   }
 
   .rating-text {
@@ -3024,6 +3038,13 @@
 </style>
 
 <script>
+// Ensure menu initialization runs only once per page load to avoid
+// duplicate fetches, duplicate handler wiring and style reflows.
+if (window.__menuInitDone) {
+  try { console.debug('menu: initialization skipped (already run)'); } catch(e){}
+} else {
+  window.__menuInitDone = true;
+
     // Build a safe menuData mapping using tojson so strings are properly escaped.
     // This avoids breaking the JS if item names/descriptions contain quotes or newlines.
     let menuData = {};
@@ -4901,7 +4922,8 @@
           debouncedSearch();
         });
       });
-</script>
+    }
+  </script>
 
 
 {% endblock %}

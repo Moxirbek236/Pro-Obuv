@@ -1,0 +1,117 @@
+{% extends "base.html" %} {% block title %}API Tools - Admin{% endblock %} {%
+block content %}
+<div class="container mt-4">
+  <h1>API Tools (Superadmin)</h1>
+
+  <p class="text-muted">
+    Ushbu sahifa ichki APIlarni tekshirish va cache warmup uchun mo'ljallangan.
+  </p>
+
+  <div class="card mb-3 p-3">
+    <h5>Endpoint test</h5>
+    <div class="mb-2">
+      <label class="form-label"
+        >Path (masalan: /api/menu-search?limit=10)</label
+      >
+      <input id="test-path" class="form-control" value="/api/menu-search" />
+    </div>
+    <div class="mb-2">
+      <label class="form-label">Method</label>
+      <select id="test-method" class="form-select">
+        <option>GET</option>
+        <option>POST</option>
+      </select>
+    </div>
+    <div class="mb-2">
+      <label class="form-label">Body (JSON, optional for POST)</label>
+      <textarea id="test-body" class="form-control" rows="4">{}</textarea>
+    </div>
+    <button id="run-test" class="btn btn-primary">Run</button>
+    <pre
+      id="test-result"
+      class="mt-3 bg-light p-3"
+      style="max-height: 400px; overflow: auto"></pre>
+  </div>
+
+  <div class="card p-3">
+    <h5>Menu cache warmup</h5>
+    <p class="text-muted">
+      Precompute menu cache for a given language to speed up public menu page.
+    </p>
+    <div class="row">
+      <div class="col-md-3">
+        <input
+          id="warm-lang"
+          class="form-control"
+          placeholder="uz"
+          value="uz" />
+      </div>
+      <div class="col-md-3">
+        <button id="warmup-btn" class="btn btn-success">
+          Warmup Menu Cache
+        </button>
+      </div>
+    </div>
+    <pre
+      id="warmup-result"
+      class="mt-3 bg-light p-3"
+      style="max-height: 200px; overflow: auto"></pre>
+  </div>
+</div>
+
+<script>
+  document
+    .getElementById("run-test")
+    .addEventListener("click", async function () {
+      const path = document.getElementById("test-path").value.trim();
+      const method = document.getElementById("test-method").value;
+      let body = {};
+      try {
+        body = JSON.parse(document.getElementById("test-body").value || "{}");
+      } catch (e) {
+        document.getElementById("test-result").textContent =
+          "Invalid JSON body";
+        return;
+      }
+      document.getElementById("test-result").textContent = "Running...";
+      try {
+        const resp = await fetch("/admin/api-tools/check", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ path, method, body }),
+        });
+        const j = await resp.json();
+        document.getElementById("test-result").textContent = JSON.stringify(
+          j,
+          null,
+          2
+        );
+      } catch (e) {
+        document.getElementById("test-result").textContent = "Error: " + e;
+      }
+    });
+
+  document
+    .getElementById("warmup-btn")
+    .addEventListener("click", async function () {
+      const lang = document.getElementById("warm-lang").value || "uz";
+      document.getElementById("warmup-result").textContent = "Warming up...";
+      try {
+        const resp = await fetch("/admin/api-tools/warmup-menu", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ lang }),
+        });
+        const j = await resp.json();
+        document.getElementById("warmup-result").textContent = JSON.stringify(
+          j,
+          null,
+          2
+        );
+      } catch (e) {
+        document.getElementById("warmup-result").textContent = "Error: " + e;
+      }
+    });
+</script>
+
+{% endblock %}

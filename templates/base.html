@@ -105,6 +105,10 @@
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/global-enhancements.css') }}" />
+    <!-- Base styles improvements (typography, buttons, forms, accessibility) -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/base-clean.css') }}" />
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/responsive.css') }}" />
@@ -774,7 +778,9 @@
     </script>
     {% endif %} {% endblock %} {% block extra_head %}{% endblock %}
     <script>
-      const CSRF_TOKEN = '{{ csrf_token|default('') }}';
+      if (typeof window.CSRF_TOKEN === 'undefined') {
+        try { window.CSRF_TOKEN = {{ csrf_token|tojson }}; } catch(e) { window.CSRF_TOKEN = ''; }
+      }
     </script>
   </head>
   <body
@@ -1744,12 +1750,73 @@
       /* Ensure site-footer element and its container sit above floating panels like filter */
       .site-footer {
         position: relative;
-        z-index: 9999 !important;
+        z-index: 1200;
+      }
+      /* Footer: improved accessibility and responsive layout tweaks */
+      .site-footer h6,
+      .site-footer h5 {
+        color: #eef8fb; /* brighter headings for contrast */
+      }
+
+      .site-footer a {
+        color: rgba(255,255,255,0.92);
+        text-decoration: none;
+        transition: color 0.18s ease, transform 0.18s ease;
+      }
+
+      .site-footer a:hover,
+      .site-footer a:focus {
+        color: #22d3ee;
+        transform: translateY(-2px);
+        text-decoration: underline;
+      }
+
+      .site-footer .footer-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+        align-items: start;
+      }
+
+      @media (max-width: 992px) {
+        .site-footer .footer-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 576px) {
+        .site-footer .footer-grid {
+          grid-template-columns: 1fr;
+          gap: 14px;
+        }
+      }
+
+      .site-footer .footer-bottom {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        padding-top: 18px;
+        border-top: 1px solid rgba(255,255,255,0.04);
+      }
+
+      .site-footer .legal {
+        color: rgba(255,255,255,0.8);
+        font-size: 0.95rem;
+      }
+
+      /* Make badges and social icons keyboard focus visible */
+      .social-icon-btn:focus,
+      .footer-section-toggle:focus,
+      .share-btn:focus {
+        outline: 3px solid rgba(34,211,238,0.14);
+        outline-offset: 2px;
       }
       .site-footer .container,
       .site-footer .container-fluid {
         position: relative;
-        z-index: 9999 !important;
+        z-index: inherit;
       }
 
       .footer .hover-text-warning:hover {
@@ -1758,27 +1825,31 @@
       }
 
       /* ================================
-         SOCIAL MEDIA ICONS
+         SOCIAL MEDIA ICONS - IMPROVED
          ================================ */
       :root {
-        --footer-icon-size: 45px;
-        --footer-icon-gap: 10px;
+        --footer-icon-size: 50px;
+        --footer-icon-gap: 12px;
         --footer-icon-inner-size: 24px;
+        --footer-icon-transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
       }
+
       .social-icon-btn {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 45px;
-        height: 45px;
+        width: var(--footer-icon-size);
+        height: var(--footer-icon-size);
         border-radius: 50%;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: var(--footer-icon-transition);
         text-decoration: none;
-        border: 2px solid rgba(255, 255, 255, 0.15);
+        border: 2px solid rgba(255, 255, 255, 0.2);
         background: rgba(255, 255, 255, 0.08);
-        backdrop-filter: blur(15px) saturate(180%);
+        backdrop-filter: blur(16px) saturate(180%);
         position: relative;
         overflow: hidden;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2),
+                    inset 0 1px 1px rgba(255, 255, 255, 0.1);
       }
 
       /* Container that holds the social icons */
@@ -1788,7 +1859,7 @@
         gap: var(--footer-icon-gap);
         align-items: center;
         justify-content: flex-start;
-        margin-top: 8px;
+        margin-top: 12px;
       }
 
       .social-row .social-icon-btn {
@@ -1800,42 +1871,11 @@
       .social-row .social-icon-btn img {
         width: var(--footer-icon-inner-size);
         height: var(--footer-icon-inner-size);
+        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+        transition: filter 0.2s ease;
       }
 
-      /* Universal responsive adjustments for social-row */
-      @media (min-width: 1800px) {
-        :root { --footer-icon-size: 64px; --footer-icon-inner-size: 28px; --footer-icon-gap: 18px; }
-        .social-row { justify-content: flex-start; }
-      }
-
-      @media (min-width: 1200px) and (max-width: 1799px) {
-        :root { --footer-icon-size: 56px; --footer-icon-inner-size: 26px; --footer-icon-gap: 16px; }
-        .social-row { justify-content: flex-start; }
-      }
-
-      /* Desktop / Laptop primary */
-      @media (min-width: 992px) and (max-width: 1199px) {
-        :root { --footer-icon-size: 48px; --footer-icon-inner-size: 22px; --footer-icon-gap: 14px; }
-        .social-row { justify-content: flex-start; }
-      }
-
-      /* Tablet */
-      @media (min-width: 768px) and (max-width: 991px) {
-        :root { --footer-icon-size: 44px; --footer-icon-inner-size: 20px; --footer-icon-gap: 12px; }
-        .social-row { justify-content: center; }
-      }
-
-      /* Phone - tight, centered flow */
-      @media (max-width: 767px) {
-        :root { --footer-icon-size: 40px; --footer-icon-inner-size: 18px; --footer-icon-gap: 10px; }
-        .social-row {
-          justify-content: center;
-          gap: 10px;
-          margin-top: 10px;
-        }
-        .social-row .social-icon-btn { margin: 0 6px; }
-      }
-
+      /* Shimmer effect overlay */
       .social-icon-btn::before {
         content: "";
         position: absolute;
@@ -1846,26 +1886,95 @@
         background: linear-gradient(
           90deg,
           transparent,
-          rgba(255, 255, 255, 0.2),
+          rgba(255, 255, 255, 0.25),
           transparent
         );
-        transition: left 0.5s ease;
+        transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
       }
 
       .social-icon-btn:hover::before {
         left: 100%;
       }
 
-      .social-icon-btn:hover {
-        transform: translateY(-4px) scale(1.15);
-        text-decoration: none;
-        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
-        border-color: rgba(255, 255, 255, 0.3);
+      /* Responsive icon sizes */
+      @media (min-width: 1800px) {
+        :root {
+          --footer-icon-size: 60px;
+          --footer-icon-inner-size: 28px;
+          --footer-icon-gap: 16px;
+        }
       }
 
+      @media (min-width: 1200px) and (max-width: 1799px) {
+        :root {
+          --footer-icon-size: 54px;
+          --footer-icon-inner-size: 26px;
+          --footer-icon-gap: 14px;
+        }
+      }
+
+      @media (min-width: 992px) and (max-width: 1199px) {
+        :root {
+          --footer-icon-size: 50px;
+          --footer-icon-inner-size: 24px;
+          --footer-icon-gap: 12px;
+        }
+      }
+
+      @media (min-width: 768px) and (max-width: 991px) {
+        :root {
+          --footer-icon-size: 46px;
+          --footer-icon-inner-size: 22px;
+          --footer-icon-gap: 11px;
+        }
+        .social-row {
+          justify-content: center;
+        }
+      }
+
+      @media (max-width: 767px) {
+        :root {
+          --footer-icon-size: 42px;
+          --footer-icon-inner-size: 20px;
+          --footer-icon-gap: 10px;
+        }
+        .social-row {
+          justify-content: center;
+          gap: 10px;
+          margin-top: 12px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        :root {
+          --footer-icon-size: 38px;
+          --footer-icon-inner-size: 18px;
+          --footer-icon-gap: 8px;
+        }
+        .social-row {
+          gap: 8px;
+        }
+      }
+
+      /* Hover effects - base */
+      .social-icon-btn:hover {
+        transform: translateY(-6px) scale(1.12);
+        text-decoration: none;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35),
+                    inset 0 1px 1px rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.4);
+      }
+
+      .social-icon-btn:hover img {
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)) brightness(1.1);
+      }
+
+      /* Platform-specific gradient colors on hover */
       .social-icon-btn.facebook:hover {
         background: linear-gradient(135deg, #1877f2 0%, #166fe5 100%);
-        box-shadow: 0 12px 35px rgba(24, 119, 242, 0.5);
+        box-shadow: 0 16px 40px rgba(24, 119, 242, 0.4),
+                    inset 0 1px 1px rgba(255, 255, 255, 0.15);
+        border-color: rgba(24, 119, 242, 0.5);
       }
 
       .social-icon-btn.instagram:hover {
@@ -1875,12 +1984,98 @@
           #833ab4 50%,
           #fccc63 100%
         );
-        box-shadow: 0 12px 35px rgba(228, 64, 95, 0.5);
+        box-shadow: 0 16px 40px rgba(228, 64, 95, 0.4),
+                    inset 0 1px 1px rgba(255, 255, 255, 0.15);
+        border-color: rgba(228, 64, 95, 0.5);
       }
 
       .social-icon-btn.telegram:hover {
         background: linear-gradient(135deg, #0088cc 0%, #006bb3 100%);
-        box-shadow: 0 12px 35px rgba(0, 136, 204, 0.5);
+        box-shadow: 0 16px 40px rgba(0, 136, 204, 0.4),
+                    inset 0 1px 1px rgba(255, 255, 255, 0.15);
+        border-color: rgba(0, 136, 204, 0.5);
+      }
+
+      .social-icon-btn.youtube:hover {
+        background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+        box-shadow: 0 16px 40px rgba(255, 0, 0, 0.4),
+                    inset 0 1px 1px rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 0, 0, 0.5);
+      }
+
+      .social-icon-btn.email:hover {
+        background: linear-gradient(135deg, #ea4335 0%, #d33425 100%);
+        box-shadow: 0 16px 40px rgba(234, 67, 53, 0.4),
+                    inset 0 1px 1px rgba(255, 255, 255, 0.15);
+        border-color: rgba(234, 67, 53, 0.5);
+      }
+
+      .social-icon-btn.phone:hover {
+        background: linear-gradient(135deg, #34c759 0%, #30b950 100%);
+        box-shadow: 0 16px 40px rgba(52, 199, 89, 0.4),
+                    inset 0 1px 1px rgba(255, 255, 255, 0.15);
+        border-color: rgba(52, 199, 89, 0.5);
+      }
+
+      .social-icon-btn.maps:hover {
+        background: linear-gradient(135deg, #4285f4 0%, #3367d6 100%);
+        box-shadow: 0 16px 40px rgba(66, 133, 244, 0.4),
+                    inset 0 1px 1px rgba(255, 255, 255, 0.15);
+        border-color: rgba(66, 133, 244, 0.5);
+      }
+
+      .social-icon-btn.threads:hover {
+        background: linear-gradient(135deg, #000000 0%, #333333 100%);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5),
+                    inset 0 1px 1px rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.5);
+      }
+
+      .social-icon-btn.olx:hover {
+        background: linear-gradient(135deg, #002f6c 0%, #1a4d8f 100%);
+        box-shadow: 0 16px 40px rgba(0, 47, 108, 0.4),
+                    inset 0 1px 1px rgba(255, 255, 255, 0.15);
+        border-color: rgba(0, 47, 108, 0.5);
+      }
+
+      .social-icon-btn.uzum:hover {
+        background: linear-gradient(135deg, #a856ff 0%, #8a2be2 100%);
+        box-shadow: 0 16px 40px rgba(168, 86, 255, 0.4),
+                    inset 0 1px 1px rgba(255, 255, 255, 0.15);
+        border-color: rgba(168, 86, 255, 0.5);
+      }
+
+      .social-icon-btn.yandex:hover {
+        background: linear-gradient(135deg, #ffcc00 0%, #ffb800 100%);
+        box-shadow: 0 16px 40px rgba(255, 204, 0, 0.4),
+                    inset 0 1px 1px rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 204, 0, 0.5);
+        color: #000;
+      }
+
+      /* Active/focus state */
+      .social-icon-btn:focus,
+      .social-icon-btn:focus-visible {
+        outline: 3px solid rgba(34, 211, 238, 0.5);
+        outline-offset: 3px;
+      }
+
+      /* Touch device optimizations */
+      @media (hover: none) {
+        .social-icon-btn {
+          min-height: 48px;
+          min-width: 48px;
+        }
+      }
+
+      /* Accessibility: reduced motion */
+      @media (prefers-reduced-motion: reduce) {
+        .social-icon-btn,
+        .social-icon-btn::before {
+          transition: none;
+          animation: none;
+        }
+      }
       }
 
       .social-icon-btn.threads:hover {
@@ -1910,7 +2105,7 @@
       }
 
       /* Chat FAB + panel styles */
-      .public-chat-fab {
+      #public-chat-fab {
         position: fixed;
         left: 16px;
         bottom: 20px;
@@ -1924,11 +2119,24 @@
         color: white;
         font-size: 22px;
         box-shadow: 0 8px 24px rgba(0,0,0,0.35);
-        z-index: 1200; /* kept near top but below site chrome; user requested 1200 */
+        z-index: 1200;
         cursor: pointer;
+        border: none;
+        padding: 0;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
       }
 
-      .public-chat-panel {
+      #public-chat-fab:hover {
+        transform: translateY(-4px) scale(1.08);
+        box-shadow: 0 12px 32px rgba(0, 168, 255, 0.4);
+      }
+
+      #public-chat-fab:focus-visible {
+        outline: 2px solid #00a8ff;
+        outline-offset: 2px;
+      }
+
+      #public-chat-panel {
         position: fixed;
         left: 16px;
         bottom: 90px;
@@ -1942,10 +2150,10 @@
         display: none;
         flex-direction: column;
         overflow: hidden;
-        z-index: 1200; /* align with requested chat panel stacking */
+        z-index: 1200;
       }
 
-      .public-chat-panel.open { display: flex; }
+      #public-chat-panel.open { display: flex; }
 
       .public-chat-header { padding: 10px 12px; background: linear-gradient(90deg,#0b2b3a,#083a4e); font-weight:600; display:flex; align-items:center; justify-content:space-between }
       .public-chat-body { flex:1; padding:10px; overflow:auto; background: linear-gradient(180deg,#071018 0%, #0b1116 100%); }
@@ -3099,9 +3307,10 @@
           )
           no-repeat;
         color: var(--footer-text-color);
-        padding: 48px 0 36px;
+        padding: 40px 0 28px;
         border-top: 1px solid var(--footer-border);
         box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+        z-index: 1200;
       }
 
       .site-footer h5,
@@ -4087,6 +4296,40 @@
       .chat-header-btn:hover {
         background: rgba(255, 255, 255, 0.3);
         transform: scale(1.1);
+      }
+
+      /* Responsive public chat */
+      @media (max-width: 480px) {
+        #public-chat-fab {
+          left: 12px;
+          bottom: 12px;
+          width: 48px;
+          height: 48px;
+          font-size: 18px;
+        }
+
+        #public-chat-panel {
+          left: 8px;
+          right: 8px;
+          bottom: 70px;
+          width: auto;
+          max-width: none;
+          height: 60vh;
+          border-radius: 10px;
+        }
+      }
+
+      @media (min-width: 481px) and (max-width: 768px) {
+        #public-chat-fab {
+          left: 14px;
+          bottom: 16px;
+        }
+
+        #public-chat-panel {
+          left: 14px;
+          width: 340px;
+          height: 450px;
+        }
       }
 
       /* Chat Content */
@@ -5696,11 +5939,15 @@
             // reset fields
             const form = document.getElementById('tickerNewsForm');
             if(form) form.reset();
-            document.getElementById('tickerImagePreview').style.display = 'none';
-            document.getElementById('tickerVideoPreview').style.display = 'none';
+            const imgPrev = document.getElementById('tickerImagePreview');
+            if(imgPrev) imgPrev.style.display = 'none';
+            const vidPrev = document.getElementById('tickerVideoPreview');
+            if(vidPrev) vidPrev.style.display = 'none';
             const modalEl = document.getElementById('tickerNewsModal');
-            const bs = new bootstrap.Modal(modalEl);
-            bs.show();
+            if(modalEl) {
+              const bs = new bootstrap.Modal(modalEl);
+              bs.show();
+            }
           }
 
           function saveTickerNews(){
@@ -5726,7 +5973,10 @@
 
             fetch('/api/news', {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
+              headers: { 
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : ''
+              },
               body: JSON.stringify(payload)
             }).then(r=>r.json()).then(data=>{
                 if(data && data.success){
@@ -5751,7 +6001,12 @@
             const formData = new FormData();
             formData.append('file', file);
 
-            fetch('/admin/upload-news-media', { method: 'POST', body: formData })
+            fetch('/admin/upload-news-media', { 
+              method: 'POST', 
+              headers: {
+                'X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : ''
+              },
+              body: formData })
               .then(r=>r.json())
               .then(data=>{
                 if(data && data.success){
@@ -5837,13 +6092,12 @@
         })();
       </script>
 
-    <!-- Hide legacy AI chat widget; keep public chat menu visible for users.
-         For staff/courier/super_admin, we still prefer the internal Telegram-style
-         chat (chatFab/chatPanel), so hide the public chat widget only for them. -->
+    <!-- Hide legacy AI chat widget and public chat only for staff/courier/admin
+         Regular users SHOULD see public chat FAB and panels -->
     {% if is_staff or is_courier or is_super_admin %}
     <style>
-      .public-chat-fab,
-      .public-chat-panel,
+      #public-chat-fab,
+      #public-chat-panel,
       #public-chat-widget,
       .ai-chat-widget {
         display: none !important;
@@ -5890,7 +6144,301 @@
       .superadmin-contact-panel .sa-title { font-weight:700; margin-bottom:8px }
     </style>
 
+    <!-- Public Chat Widget (for non-staff users) -->
+    {% if (session.get('user_id') or session.get('staff_id') or session.get('courier_id') or session.get('super_admin')) %}
+    <div id="public-chat-fab" class="public-chat-fab" title="Chat" role="button" tabindex="0" aria-label="Open chat">
+      <i class="bi bi-chat-dots" aria-hidden="true"></i>
+    </div>
+
+    <div id="public-chat-panel" class="public-chat-panel" role="dialog" aria-hidden="true">
+      <div class="public-chat-header">
+        <span>Chat</span>
+        <button id="public-chat-close" class="btn btn-sm btn-link" style="color: #fff; padding: 0; border: none;" aria-label="Close chat">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+      <div class="public-chat-body">
+        <div id="public-chat-messages" style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="text-align: center; color: #888; padding: 20px; font-size: 12px;">
+            Select a chat option below to start
+          </div>
+        </div>
+      </div>
+      <div class="public-chat-input">
+        <div style="width: 100%; display: flex; flex-direction: column; gap: 8px; padding: 8px 0;">
+          <button id="public-chat-ai" class="btn btn-sm" style="width: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 6px; padding: 10px; font-weight: 600; cursor: pointer;">
+            <i class="bi bi-robot"></i> AI Chatbot
+          </button>
+          <button id="public-chat-operator" class="btn btn-sm" style="width: 100%; background: linear-gradient(135deg, #0a7a9a 0%, #006bb3 100%); color: white; border: none; border-radius: 6px; padding: 10px; font-weight: 600; cursor: pointer;">
+            <i class="bi bi-headset"></i> Chat with Operator
+          </button>
+          <button id="public-chat-question" class="btn btn-sm" style="width: 100%; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border: none; border-radius: 6px; padding: 10px; font-weight: 600; cursor: pointer;">
+            <i class="bi bi-question-circle"></i> Ask a Question
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script>
+        // Public Chat Widget Handler
+        (function() {
+          const fab = document.getElementById('public-chat-fab');
+          const panel = document.getElementById('public-chat-panel');
+          const closeBtn = document.getElementById('public-chat-close');
+          const aiBtn = document.getElementById('public-chat-ai');
+          const operatorBtn = document.getElementById('public-chat-operator');
+          const questionBtn = document.getElementById('public-chat-question');
+
+          if (!fab || !panel) return;
+
+          // Toggle panel on FAB click
+          fab.addEventListener('click', function(e) {
+            e.stopPropagation();
+            panel.classList.toggle('open');
+            panel.setAttribute('aria-hidden', panel.classList.contains('open') ? 'false' : 'true');
+          });
+
+          // Close panel
+          closeBtn && closeBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            panel.classList.remove('open');
+            panel.setAttribute('aria-hidden', 'true');
+          });
+
+          // Close on outside click
+          document.addEventListener('click', function(e) {
+            if (!panel.contains(e.target) && !fab.contains(e.target)) {
+              panel.classList.remove('open');
+              panel.setAttribute('aria-hidden', 'true');
+            }
+          });
+
+          // AI Chat button - Open modal dialog for AI chat
+          aiBtn && aiBtn.addEventListener('click', function() {
+            panel.classList.remove('open');
+            panel.setAttribute('aria-hidden', 'true');
+            
+            // Create simple AI chat modal
+            const modal = document.createElement('div');
+            modal.id = 'ai-chat-modal-' + Date.now();
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: flex-end; z-index: 2000; font-family: system-ui, -apple-system, sans-serif;';
+            
+            const chatBox = document.createElement('div');
+            chatBox.style.cssText = 'width: 100%; max-width: 480px; max-height: 80vh; background: #0d161b; color: #fff; border-radius: 12px 12px 0 0; display: flex; flex-direction: column; margin: auto; margin-bottom: 0;';
+            
+            chatBox.innerHTML = `
+              <div style="padding: 12px 16px; background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); border-radius: 12px 12px 0 0; display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-weight: 600; font-size: 14px;">AI Chatbot</span>
+                <button onclick="this.closest('[style*=position: fixed]').remove()" style="background: none; border: none; color: #fff; font-size: 18px; cursor: pointer; padding: 0;">&times;</button>
+              </div>
+              <div id="ai-messages-container" style="flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; background: linear-gradient(180deg, #071018 0%, #0b1116 100%);"></div>
+              <div style="padding: 8px; display: flex; gap: 8px; background: transparent; border-top: 1px solid rgba(255,255,255,0.03);">
+                <input type="text" id="ai-chat-input" placeholder="Ask anything..." style="flex: 1; padding: 8px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff; font-size: 13px;">
+                <button id="ai-send-btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: 600;">Send</button>
+              </div>
+            `;
+            
+            modal.appendChild(chatBox);
+            document.body.appendChild(modal);
+            
+            // Focus input
+            setTimeout(() => document.getElementById('ai-chat-input')?.focus(), 100);
+            
+            // Close on outside click
+            modal.addEventListener('click', function(e) {
+              if (e.target === modal) modal.remove();
+            });
+            
+            // Send message handler
+            const sendBtn = document.getElementById('ai-send-btn');
+            const input = document.getElementById('ai-chat-input');
+            const messagesContainer = document.getElementById('ai-messages-container');
+            
+            const sendMessage = () => {
+              const text = (input.value || '').trim();
+              if (!text) return;
+              
+              // Add user message
+              const userMsg = document.createElement('div');
+              userMsg.style.cssText = 'align-self: flex-end; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); max-width: 80%; padding: 8px 10px; border-radius: 8px; font-size: 13px;';
+              userMsg.textContent = text;
+              messagesContainer.appendChild(userMsg);
+              
+              input.value = '';
+              messagesContainer.scrollTop = messagesContainer.scrollHeight;
+              
+              // Get AI response
+              fetch('/api/chat/ai', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text })
+              })
+              .then(r => r.json())
+              .then(data => {
+                if (data && data.success) {
+                  const aiMsg = document.createElement('div');
+                  aiMsg.style.cssText = 'align-self: flex-start; background: rgba(255,255,255,0.08); max-width: 80%; padding: 8px 10px; border-radius: 8px; font-size: 13px;';
+                  aiMsg.textContent = data.message || data.response || 'Thank you for your message.';
+                  messagesContainer.appendChild(aiMsg);
+                  messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                }
+              })
+              .catch(err => console.warn('AI chat error:', err));
+            };
+            
+            sendBtn && sendBtn.addEventListener('click', sendMessage);
+            input && input.addEventListener('keypress', (e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+              }
+            });
+          });
+
+          // Operator Chat button
+          operatorBtn && operatorBtn.addEventListener('click', function() {
+            panel.classList.remove('open');
+            panel.setAttribute('aria-hidden', 'true');
+            
+            // Try to open staff chat FAB if user is logged in
+            const chatFab = document.getElementById('chatFab');
+            if (chatFab) {
+              chatFab.click();
+            } else {
+              // User not logged in - show login/phone modal
+              const modal = document.createElement('div');
+              modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 2000; font-family: system-ui, -apple-system, sans-serif;';
+              
+              const loginBox = document.createElement('div');
+              loginBox.style.cssText = 'width: 100%; max-width: 340px; background: #0d161b; color: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 12px 40px rgba(0,0,0,0.5);';
+              
+              loginBox.innerHTML = `
+                <div style="margin-bottom: 16px;">
+                  <h5 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 600;">Chat with Operator</h5>
+                  <p style="margin: 0; font-size: 13px; color: rgba(255,255,255,0.7);">Please enter your phone number to start</p>
+                </div>
+                <form id="operator-login-form" style="display: flex; flex-direction: column; gap: 12px;">
+                  <div>
+                    <input type="tel" name="phone" placeholder="+998901234567" required style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff; font-size: 13px; box-sizing: border-box;">
+                  </div>
+                  <button type="submit" style="background: linear-gradient(135deg, #0a7a9a 0%, #006bb3 100%); color: #fff; border: none; padding: 10px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 14px;">Connect</button>
+                </form>
+                <button onclick="this.closest('[style*=position: fixed]').remove()" style="width: 100%; margin-top: 8px; background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 8px; border-radius: 6px; cursor: pointer; font-size: 13px;">Cancel</button>
+              `;
+              
+              modal.appendChild(loginBox);
+              document.body.appendChild(modal);
+              
+              // Form submission
+              const form = document.getElementById('operator-login-form');
+              form && form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const phone = this.querySelector('input[name="phone"]').value;
+                
+                // Create temp chat session
+                try {
+                  const response = await fetch('/api/chats', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: phone })
+                  });
+                  
+                  if (response.ok) {
+                    modal.remove();
+                    alert('Chat connection established. Redirecting...');
+                    window.location.href = '/chat?phone=' + encodeURIComponent(phone);
+                  }
+                } catch (err) {
+                  alert('Error connecting. Please try again.');
+                }
+              });
+              
+              // Close on outside click
+              modal.addEventListener('click', function(e) {
+                if (e.target === modal) modal.remove();
+              });
+            }
+          });
+
+          // Ask Question button - Open question form modal
+          questionBtn && questionBtn.addEventListener('click', function() {
+            panel.classList.remove('open');
+            panel.setAttribute('aria-hidden', 'true');
+            
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 2000; font-family: system-ui, -apple-system, sans-serif;';
+            
+            const form = document.createElement('div');
+            form.style.cssText = 'width: 100%; max-width: 400px; background: #0d161b; color: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 12px 40px rgba(0,0,0,0.5);';
+            
+            form.innerHTML = `
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h5 style="margin: 0; font-size: 16px; font-weight: 600;">Send us a Question</h5>
+                <button onclick="this.closest('[style*=position: fixed]').remove()" style="background: none; border: none; color: #fff; font-size: 18px; cursor: pointer;">&times;</button>
+              </div>
+              <form id="question-form" style="display: flex; flex-direction: column; gap: 12px;">
+                <div>
+                  <label style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600;">Name</label>
+                  <input type="text" name="name" placeholder="Your name" required style="width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff; font-size: 13px; box-sizing: border-box;">
+                </div>
+                <div>
+                  <label style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600;">Email</label>
+                  <input type="email" name="email" placeholder="your@email.com" required style="width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff; font-size: 13px; box-sizing: border-box;">
+                </div>
+                <div>
+                  <label style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600;">Phone</label>
+                  <input type="tel" name="phone" placeholder="+998..." style="width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff; font-size: 13px; box-sizing: border-box;">
+                </div>
+                <div>
+                  <label style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600;">Question</label>
+                  <textarea name="question" placeholder="Your question..." required rows="4" style="width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff; font-size: 13px; box-sizing: border-box; font-family: inherit; resize: vertical;"></textarea>
+                </div>
+                <button type="submit" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: #fff; border: none; padding: 10px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 14px;">Send Question</button>
+              </form>
+            `;
+            
+            modal.appendChild(form);
+            document.body.appendChild(modal);
+            
+            // Close on outside click
+            modal.addEventListener('click', function(e) {
+              if (e.target === modal) modal.remove();
+            });
+            
+            // Form submission
+            const questionForm = document.getElementById('question-form');
+            questionForm && questionForm.addEventListener('submit', async function(e) {
+              e.preventDefault();
+              
+              const formData = {
+                name: this.querySelector('input[name="name"]').value,
+                email: this.querySelector('input[name="email"]').value,
+                phone: this.querySelector('input[name="phone"]').value,
+                question: this.querySelector('textarea[name="question"]').value
+              };
+              
+              try {
+                const response = await fetch('/api/chat/superadmin-question', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                  alert('Thank you! Your question has been sent.');
+                  modal.remove();
+                } else {
+                  alert('Error sending question. Please try again.');
+                }
+              } catch (err) {
+                console.warn('Question submission error:', err);
+                alert('Error sending question. Please try again.');
+              }
+            });
+          });
+        })();
+
         // Newsletter form handler (graceful, non-blocking)
         function handleNewsletter(e){
           if(e) e.preventDefault();
@@ -5910,7 +6458,59 @@
           }catch(err){ console.warn('newsletter error', err); }
           return false;
         }
+
+        // News Ticker Navigation Functions
+        let newsItemsGlobal = [];
+        let currentNewsIndex = 0;
+
+        function loadNews() {
+          fetch('/api/news?ticker=1')
+            .then(r => r.json())
+            .then(data => {
+              if (data && data.news && Array.isArray(data.news)) {
+                newsItemsGlobal = data.news;
+                currentNewsIndex = 0;
+                renderNewsItem();
+              }
+            })
+            .catch(err => console.error('Failed to load news:', err));
+        }
+
+        function renderNewsItem() {
+          if (!newsItemsGlobal || newsItemsGlobal.length === 0) return;
+          const item = newsItemsGlobal[currentNewsIndex];
+          const content = document.getElementById('newsTickerContent');
+          if (content) {
+            const title = item.title_local || item.title || '';
+            const text = item.content_local || item.content || '';
+            content.innerHTML = '<div class="news-item ' + (item.type || 'news') + '"><strong>' + title + '</strong><br>' + text + '</div>';
+          }
+        }
+
+        function prevNews() {
+          if (!newsItemsGlobal || newsItemsGlobal.length === 0) return;
+          currentNewsIndex = (currentNewsIndex - 1 + newsItemsGlobal.length) % newsItemsGlobal.length;
+          renderNewsItem();
+        }
+
+        function nextNews() {
+          if (!newsItemsGlobal || newsItemsGlobal.length === 0) return;
+          currentNewsIndex = (currentNewsIndex + 1) % newsItemsGlobal.length;
+          renderNewsItem();
+        }
+
+        // Load news on page load
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', loadNews);
+        } else {
+          loadNews();
+        }
+
+        // Refresh on event
+        window.addEventListener('refreshNewsTicker', loadNews);
       </script>
+
+      {% endif %}
 
     </body>
 </html>
