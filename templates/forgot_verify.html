@@ -76,6 +76,21 @@
   <body class="auth-page">
     <div class="auth-card">
       <h3>SMS kodni kiriting</h3>
+      {% if session.get('forgot_show_code') and session.get('forgot_code') %}
+      <div class="mb-3" style="margin-top: 12px">
+        <label>Kod (ekranda):</label>
+        <div
+          style="
+            font-weight: 700;
+            font-size: 20px;
+            background: #f7f7f7;
+            padding: 10px;
+            border-radius: 6px;
+          ">
+          {{ session.get('forgot_code') }}
+        </div>
+      </div>
+      {% endif %}
       <form method="POST" action="{{ url_for('forgot_verify') }}">
         <div class="mb-3">
           <label>Kod</label>

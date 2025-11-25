@@ -240,7 +240,7 @@
       class="btn btn-primary"
       data-bs-toggle="modal"
       data-bs-target="#newsModalPublic"
-      onclick="openNewsModalPublic(event); return false;">
+      onclick="openNewsModalPublic(event);">
       Yangilik qo'shish
     </button>
   </div>
@@ -251,7 +251,7 @@
     class="fab-add-news"
     title="Yangilik qo'shish"
     aria-label="Yangilik qo'shish"
-    onclick="openNewsModalPublic(event); return false;">
+    onclick="openNewsModalPublic(event);">
     +
   </button>
   {% endif %}
@@ -329,10 +329,8 @@
             <a class="share-btn" href="https://www.facebook.com/sharer/sharer.php?u={{ detail_url }}" target="_blank" rel="noopener noreferrer">Facebook</a>
             <a class="share-btn" href="https://twitter.com/intent/tweet?text={{ (item.localized_title or item.title) | urlencode }}&url={{ detail_url }}" target="_blank" rel="noopener noreferrer">Twitter</a>
             <a class="share-btn" href="https://api.whatsapp.com/send?text={{ (item.localized_title or item.title) | urlencode }}%20{{ detail_url }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
-            <button type="button" class="share-btn" onclick="copyNewsLink('{{ detail_url }}')">Copy link</button>
-            <button type="button" class="share-btn" onclick="nativeShare('{{ (item.localized_title or item.title) | replace("'","\'") }}', '{{ detail_url }}')">Uzatish</button>
-          </div>
-
+            <button type="button" class="share-btn" onclick="copyNewsLink({{ detail_url|tojson }})">Copy link</button>
+            <button type="button" class="share-btn" onclick="nativeShare({{ (item.localized_title or item.title)|tojson }}, {{ detail_url|tojson }})">Uzatish</button>
           <div class="news-card-meta">
             <small class="text-muted news-card-date">{{ item.created_at.split('T')[0] if item.created_at else '' }}</small>
           </div>
@@ -350,7 +348,7 @@
         const news = {{ (news|length if news else 0) }};
         const items = [];
     {% for it in news %}
-    items.push("{{ (it.localized_title or it.title)|replace('"','\"') }}");
+    items.push({{ (it.localized_title or it.title)|tojson }});
     {% endfor %}
         const ticker = document.getElementById('ticker-inner');
         if(items.length){
@@ -542,8 +540,8 @@
   <script>
     function openNewsModalPublic(event) {
       if (event) {
-        event.preventDefault();
-        event.stopPropagation();
+        // do not preventDefault so Bootstrap can open the modal via data-bs-toggle
+        try { event.stopPropagation(); } catch(e) {}
       }
       document.getElementById("newsFormPublic").reset();
       document.getElementById("imagePreviewPublic").style.display = "none";
@@ -557,6 +555,26 @@
         const ytIframe = document.getElementById("youtubePreviewPublic");
         if (ytIframe) ytIframe.src = "";
       }
+      // Ensure modal is shown via Bootstrap API so aria-hidden and focus are managed
+      try {
+        const modalEl = document.getElementById('newsModalPublic');
+        if (modalEl) {
+          // Use getOrCreateInstance for compatibility with different Bootstrap versions
+          const modalInstance = (bootstrap && bootstrap.Modal && bootstrap.Modal.getOrCreateInstance)
+            ? bootstrap.Modal.getOrCreateInstance(modalEl)
+            : new bootstrap.Modal(modalEl);
+          modalInstance.show();
+        }
+      } catch (e) {
+        // If Bootstrap isn't available or showing fails, fallback to toggling display
+        try {
+          const m = document.getElementById('newsModalPublic');
+          if (m) {
+            m.style.display = 'block';
+            m.removeAttribute('aria-hidden');
+          }
+        } catch (e2) {}
+      }
     }
 
     function uploadMediaFilePublic(type) {
@@ -569,8 +587,8 @@
       const formData = new FormData();
       formData.append("file", file);
 
-      fetch("/admin/upload-news-media", { method: "POST", body: formData })
-        .then((r) => r.json())
+      fetch("/admin/upload-news-media", { method: "POST", credentials: 'same-origin', headers: { 'X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : '' }, body: formData })
+        .then(async (r) => { try { return await r.json(); } catch(e) { return { success: false, message: r.statusText || 'Upload failed' }; } })
         .then((data) => {
           if (data.success) {
             if (type === "image") {
@@ -632,22 +650,25 @@
 
       fetch("/api/news", {
         method: "POST",
+        credentials: 'same-origin',
         headers: { "Content-Type": "application/json", "X-CSRF-Token": typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : '' },
         body: JSON.stringify(payload),
       })
-        .then((r) => r.json())
-        .then((data) => {
-          if (data.success) {
+        .then(async (r) => {
+          let data;
+          try { data = await r.json(); } catch(e) { data = { error: r.statusText || 'Unknown error', status: r.status }; }
+          if (r.ok && data && data.success) {
             alert("Yangilik qo'shildi");
             const modal = bootstrap.Modal.getInstance(
               document.getElementById("newsModalPublic")
             );
             if (modal) modal.hide();
-            // reload page to show new item
             window.location.reload();
-          } else {
-            alert("Xato: " + (data.message || ""));
+            return;
           }
+          // Show meaningful error
+          const msg = (data && (data.message || data.error)) || ('HTTP ' + (data && data.status ? data.status : r.status));
+          alert("Xato: " + msg);
         })
         .catch((err) => {
           console.error(err);
@@ -754,4 +775,5 @@
       }catch(e){ console.warn('news embed postprocess failed', e); }
     })();
   </script>
+  {% endif %}
   {% endblock %}

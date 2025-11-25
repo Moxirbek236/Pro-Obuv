@@ -1102,3 +1102,179 @@ MemoryError
 2025-11-25 14:07:41,141 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
 2025-11-25 14:07:52,234 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/robots.txt
 2025-11-25 14:07:55,886 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-11-25 14:08:03,466 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-11-25 14:41:35,856 | ERROR | restaurant_app | news_page:14269 | News page error: Encountered unknown tag 'endblock'. You probably made a nesting mistake. Jinja is expecting this tag, but currently looking for 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-11-25 14:41:53,680 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-11-25 14:42:00,172 | ERROR | restaurant_app | news_page:14269 | News page error: Encountered unknown tag 'endblock'. You probably made a nesting mistake. Jinja is expecting this tag, but currently looking for 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-11-25 14:42:03,197 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-11-25 14:45:46,729 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-11-25 14:45:49,925 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-11-25 14:45:53,616 | ERROR | restaurant_app | news_page:14269 | News page error: Encountered unknown tag 'endblock'. You probably made a nesting mistake. Jinja is expecting this tag, but currently looking for 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-11-25 14:45:54,442 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-11-25 14:47:40,397 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-11-25 14:54:06,384 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-11-25 14:55:46,381 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-11-25 14:56:09,446 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-11-25 15:05:20,217 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/icons/telegram.svg
+2025-11-25 15:05:36,650 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/icons/telegram.svg
+2025-11-25 15:06:31,690 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/icons/telegram.svg
+2025-11-25 15:07:29,146 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/icons/telegram.svg
+2025-11-25 15:08:18,484 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/icons/telegram.svg
+2025-11-25 15:09:47,923 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/icons/telegram.svg
+2025-11-25 15:09:48,074 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/icons/olx.svg
+2025-11-25 15:09:56,780 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-11-25 15:11:27,575 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-11-25 15:11:28,644 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/icons/telegram.svg
+2025-11-25 15:11:29,001 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/icons/olx.svg
+2025-11-25 15:11:39,128 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-11-25 15:11:39,138 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/icons/telegram.svg
+2025-11-25 15:11:39,938 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/icons/olx.svg
+2025-11-25 15:12:12,003 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/icons/telegram.svg
+2025-11-25 15:12:12,352 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/icons/olx.svg
+2025-11-25 15:15:21,988 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-25 15:15:22,031 | WARNING | restaurant_app | execute_query:2725 | Query execution failed, retrying (attempt 1): NOT NULL constraint failed: chat_messages.chat_id
+2025-11-25 15:15:22,533 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-25 15:15:22,537 | WARNING | restaurant_app | execute_query:2725 | Query execution failed, retrying (attempt 2): NOT NULL constraint failed: chat_messages.chat_id
+2025-11-25 15:15:23,038 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-25 15:15:23,039 | ERROR | restaurant_app | execute_query:2731 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-11-25 15:15:23,040 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-25 15:15:23,041 | WARNING | restaurant_app | execute_query:2725 | Query execution failed, retrying (attempt 1): NOT NULL constraint failed: chat_messages.chat_id
+2025-11-25 15:15:23,542 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-25 15:15:23,543 | WARNING | restaurant_app | execute_query:2725 | Query execution failed, retrying (attempt 2): NOT NULL constraint failed: chat_messages.chat_id
+2025-11-25 15:15:24,044 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-25 15:15:24,046 | ERROR | restaurant_app | execute_query:2731 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-11-25 15:16:30,416 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-25 15:16:32,467 | WARNING | restaurant_app | staff_login:18302 | Failed staff login attempt for ID: 1
+2025-11-25 15:16:35,440 | WARNING | restaurant_app | staff_login:18302 | Failed staff login attempt for ID: 1
+2025-11-25 15:16:37,649 | WARNING | restaurant_app | staff_login:18302 | Failed staff login attempt for ID: 1
+2025-11-25 15:17:47,023 | WARNING | restaurant_app | forgot:13819 | SMTP_PASS not set; cannot send forgot-password email
+2025-11-25 15:19:35,016 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-25 15:19:37,649 | WARNING | restaurant_app | forgot:13819 | SMTP_PASS not set; cannot send forgot-password email
+2025-11-25 15:20:00,653 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-25 15:20:08,104 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 2adb3069b0e04-5969db7478esm4916593e87.6 - gsmtp')
+2025-11-25 15:20:08,105 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:21:44,756 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-25 15:21:50,582 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 2adb3069b0e04-5969db89396sm5055310e87.35 - gsmtp')
+2025-11-25 15:21:50,583 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:21:57,922 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-25 15:22:11,099 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-25 15:22:17,452 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 2adb3069b0e04-5969db877e0sm5134515e87.32 - gsmtp')
+2025-11-25 15:22:17,452 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:22:39,488 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 2adb3069b0e04-5969dbbecb9sm5081213e87.58 - gsmtp')
+2025-11-25 15:22:39,491 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:24:54,799 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-25 15:24:58,845 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-b7655029543sm1562340466b.61 - gsmtp')
+2025-11-25 15:24:58,845 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:25:07,218 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-25 15:25:16,948 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-25 15:25:22,196 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-b7654d502cfsm1541784266b.19 - gsmtp')
+2025-11-25 15:25:22,196 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:25:41,759 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-b7655028400sm1492715466b.56 - gsmtp')
+2025-11-25 15:25:41,760 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:26:23,161 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-b7654cdd5bfsm1574578466b.9 - gsmtp')
+2025-11-25 15:26:23,162 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:26:27,144 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-b7654ff3987sm1563851466b.48 - gsmtp')
+2025-11-25 15:26:27,144 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:26:31,450 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-b7654cdd60csm1554258766b.3 - gsmtp')
+2025-11-25 15:26:31,451 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:27:49,289 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-25 15:27:53,252 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-b7654ff3c6asm1530587966b.52 - gsmtp')
+2025-11-25 15:27:53,253 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:28:05,494 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-645363b5fe9sm14516482a12.11 - gsmtp')
+2025-11-25 15:28:05,495 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to nasimjonnasimjon46@gmail.com
+2025-11-25 15:28:05,799 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-645363b5a46sm14762808a12.8 - gsmtp')
+2025-11-25 15:28:05,800 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to nasimjonnasimjon46@gmail.com
+2025-11-25 15:28:22,624 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-6453645f2easm14501876a12.33 - gsmtp')
+2025-11-25 15:28:22,625 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:28:55,861 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-645363ac97esm15077998a12.1 - gsmtp')
+2025-11-25 15:28:55,862 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:28:56,064 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-b7654d502fasm1528937866b.17 - gsmtp')
+2025-11-25 15:28:56,064 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:28:56,317 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-6453642d267sm14382059a12.22 - gsmtp')
+2025-11-25 15:28:56,318 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:29:01,788 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-b7654ff3987sm1564437766b.48 - gsmtp')
+2025-11-25 15:29:01,789 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to nasimjonnasimjon46@gmail.com
+2025-11-25 15:29:28,733 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-645364437b2sm14345819a12.25 - gsmtp')
+2025-11-25 15:29:28,733 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:29:49,518 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-b7654d73430sm1564067666b.24 - gsmtp')
+2025-11-25 15:29:49,519 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:29:59,437 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-b7654fd4f59sm1512110466b.36 - gsmtp')
+2025-11-25 15:29:59,437 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to nasimjonnasimjon46@gmail.com
+2025-11-25 15:30:14,247 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-645363b5fe9sm14521748a12.11 - gsmtp')
+2025-11-25 15:30:14,247 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:31:04,987 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-b765f840a30sm1389297066b.58 - gsmtp')
+2025-11-25 15:31:04,988 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:31:45,072 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-b7655051625sm1552165366b.65 - gsmtp')
+2025-11-25 15:31:45,073 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:31:53,930 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-64536442993sm15342388a12.27 - gsmtp')
+2025-11-25 15:31:53,930 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:32:13,204 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-b765c1379ddsm1466174566b.0 - gsmtp')
+2025-11-25 15:32:13,205 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:32:22,808 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-645ef325a4asm1306821a12.28 - gsmtp')
+2025-11-25 15:32:22,809 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:32:33,937 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-25 15:32:39,788 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-b76550283f4sm1524851666b.55 - gsmtp')
+2025-11-25 15:32:39,789 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:32:52,028 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-25 15:32:56,003 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-6453633fe28sm14811966a12.0 - gsmtp')
+2025-11-25 15:32:56,004 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:33:55,025 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-25 15:34:00,317 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-b76550191c8sm1498909566b.54 - gsmtp')
+2025-11-25 15:34:00,317 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:34:05,607 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-b7654fd51fbsm1506125266b.33 - gsmtp')
+2025-11-25 15:34:05,607 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:34:31,925 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-645363ac97esm15090456a12.1 - gsmtp')
+2025-11-25 15:34:31,926 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:35:05,613 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-b7654d7cafdsm1523210766b.30 - gsmtp')
+2025-11-25 15:35:05,629 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:35:53,881 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-b7654d3bfcesm1538400666b.15 - gsmtp')
+2025-11-25 15:35:53,882 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:36:21,221 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-64536443337sm14592007a12.23 - gsmtp')
+2025-11-25 15:36:21,221 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:37:02,373 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-b7654d7cb3bsm1572859966b.27 - gsmtp')
+2025-11-25 15:37:02,374 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:37:46,600 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-b7654ff3fc0sm1577282066b.46 - gsmtp')
+2025-11-25 15:37:46,601 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:37:49,226 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-25 15:37:54,108 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-645363b6075sm14615524a12.10 - gsmtp')
+2025-11-25 15:37:54,108 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to nasimjonnasimjon46@gmail.com
+2025-11-25 15:38:19,331 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-645363ac97esm15098256a12.1 - gsmtp')
+2025-11-25 15:38:19,332 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:39:09,964 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-b76b4d2db23sm399634066b.66 - gsmtp')
+2025-11-25 15:39:09,964 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:40:35,788 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 2adb3069b0e04-596a70a9b0bsm3201597e87.44 - gsmtp')
+2025-11-25 15:40:35,789 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:41:30,908 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 38308e7fff4ca-37cc6b63acbsm32164301fa.21 - gsmtp')
+2025-11-25 15:41:30,909 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:41:59,391 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 2adb3069b0e04-5969db81b1dsm4918262e87.23 - gsmtp')
+2025-11-25 15:41:59,392 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:43:27,796 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 2adb3069b0e04-5969db881cbsm5078213e87.33 - gsmtp')
+2025-11-25 15:43:27,798 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:43:32,889 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 2adb3069b0e04-5969dbc5be9sm4954384e87.81 - gsmtp')
+2025-11-25 15:43:32,889 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:44:53,714 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 2adb3069b0e04-5969db75677sm5108659e87.19 - gsmtp')
+2025-11-25 15:44:53,714 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:55:29,239 | WARNING | restaurant_app | _send_email:13790 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 2adb3069b0e04-5969dbc5c42sm4939964e87.82 - gsmtp')
+2025-11-25 15:55:29,247 | WARNING | restaurant_app | forgot:13848 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-11-25 15:55:40,836 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/avatar_f5cb07487d084999868fe158cf41e313.jpg
+2025-11-25 15:56:27,290 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/avatar_f5cb07487d084999868fe158cf41e313.jpg
+2025-11-25 15:56:27,746 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/icons/telegram.svg
+2025-11-25 15:56:34,518 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/avatar_f5cb07487d084999868fe158cf41e313.jpg
+2025-11-25 15:56:34,973 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/icons/telegram.svg
+2025-11-25 15:56:58,437 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/avatar_f5cb07487d084999868fe158cf41e313.jpg
+2025-11-25 15:56:58,947 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/icons/telegram.svg
+2025-11-25 15:57:24,564 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/avatar_f5cb07487d084999868fe158cf41e313.jpg
+2025-11-25 15:57:46,742 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/avatar_f5cb07487d084999868fe158cf41e313.jpg
+2025-11-25 15:58:17,774 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/avatar_f5cb07487d084999868fe158cf41e313.jpg
+2025-11-25 15:58:23,946 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/avatar_f5cb07487d084999868fe158cf41e313.jpg
+2025-11-25 15:58:24,611 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/static/uploads/avatar_f5cb07487d084999868fe158cf41e313.jpg
+2025-11-25 15:58:58,365 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/favicon.ico
+2025-11-25 16:00:11,141 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-11-25 16:00:16,300 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-11-25 16:00:21,778 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-11-25 16:00:33,490 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-11-25 16:00:37,495 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-11-25 16:00:42,921 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-11-25 16:00:48,182 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-11-25 16:00:53,666 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-11-25 16:00:59,003 | WARNING | restaurant_app | not_found_error:1699 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json

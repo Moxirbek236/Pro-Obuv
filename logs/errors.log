@@ -1880,3 +1880,14 @@ MemoryError
 2025-11-25 13:48:32,563 | ERROR | restaurant_app | news_page:14269 | News page error: Encountered unknown tag 'endif'. Jinja was looking for the following tags: 'endblock'. The innermost block that needs to be closed is 'block'.
 2025-11-25 13:49:02,691 | ERROR | restaurant_app | news_page:14269 | News page error: Encountered unknown tag 'endif'. Jinja was looking for the following tags: 'endblock'. The innermost block that needs to be closed is 'block'.
 2025-11-25 13:49:15,625 | ERROR | restaurant_app | news_page:14269 | News page error: Encountered unknown tag 'endif'. Jinja was looking for the following tags: 'endblock'. The innermost block that needs to be closed is 'block'.
+2025-11-25 14:41:35,856 | ERROR | restaurant_app | news_page:14269 | News page error: Encountered unknown tag 'endblock'. You probably made a nesting mistake. Jinja is expecting this tag, but currently looking for 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-11-25 14:42:00,172 | ERROR | restaurant_app | news_page:14269 | News page error: Encountered unknown tag 'endblock'. You probably made a nesting mistake. Jinja is expecting this tag, but currently looking for 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-11-25 14:45:53,616 | ERROR | restaurant_app | news_page:14269 | News page error: Encountered unknown tag 'endblock'. You probably made a nesting mistake. Jinja is expecting this tag, but currently looking for 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-11-25 15:15:21,988 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-25 15:15:22,533 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-25 15:15:23,038 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-25 15:15:23,039 | ERROR | restaurant_app | execute_query:2731 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-11-25 15:15:23,040 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-25 15:15:23,542 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-25 15:15:24,044 | ERROR | restaurant_app | get_connection:2277 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-25 15:15:24,046 | ERROR | restaurant_app | execute_query:2731 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...

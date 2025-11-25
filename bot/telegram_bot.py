@@ -343,6 +343,12 @@ if not FLASK_APP_URL:
 else:
     FLASK_APP_URL = FLASK_APP_URL
 
+# Log resolved FLASK_APP_URL for easier debugging when bot can't reach the app
+try:
+    LOG.info(f"Resolved FLASK_APP_URL for Telegram bot: {FLASK_APP_URL}")
+except Exception:
+    pass
+
 
 async def _send_main_keyboard(update: "Update"):
     """Yagona joyda asosiy klaviaturani yuborish.
@@ -410,8 +416,26 @@ async def products_cmd_new(update: "Update", context: "ContextTypes.DEFAULT_TYPE
     try:
         # Barcha mahsulotlarni yuklash uchun limitni katta qilamiz
         url = FLASK_APP_URL.rstrip("/") + "/api/menu-search?limit=1000"
-        r = requests.get(url, timeout=10)
-        j = r.json()
+        try:
+            r = requests.get(url, timeout=10)
+            if not r.ok:
+                LOG.error("products_cmd: /api/menu-search returned non-OK status %s for url=%s", r.status_code, url)
+                await update.message.reply_text("Mahsulotlarni yuklashda xatolik yuz berdi (server javobi). Iltimos administrator bilan bog'laning.")
+                uid = getattr(update.message.from_user, "id", None)
+                log_action("products_cmd_error", user=f"tg:{uid}", detail=f"status:{r.status_code} url:{url}")
+                return
+            try:
+                j = r.json()
+            except Exception:
+                LOG.exception("products_cmd: failed to parse JSON from /api/menu-search %s", url)
+                await update.message.reply_text("Mahsulotlarni yuklashda xatolik yuz berdi (JSON parse error).")
+                return
+        except Exception as req_err:
+            LOG.exception("products_cmd: request to %s failed: %s", url, req_err)
+            await update.message.reply_text("Mahsulotlarni yuklashda tarmoq xatoligi yuz berdi. Iltimos administrator bilan bog'laning.")
+            uid = getattr(update.message.from_user, "id", None)
+            log_error(req_err, f"products_cmd_request_failed user:tg:{uid} url:{url}")
+            return
         items = j.get("items", [])
         if not items:
             await update.message.reply_text("Hech qanday mahsulot topilmadi.")

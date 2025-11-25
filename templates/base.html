@@ -1607,17 +1607,17 @@
 
               <!-- Instagram -->
               <a href="https://www.instagram.com/proguarduz/" target="_blank" class="social-icon-btn instagram" aria-label="Instagram" title="Instagram">
-                <img src="{{ prefer_webp(url_for('static', filename='icons/instagram.svg')) }}" alt="Instagram" width="24" height="24">
+                <img src="{{ prefer_webp(url_for('static', filename='icons/instagram.webp')) }}" alt="Instagram" width="24" height="24">
               </a>
 
               <!-- Facebook -->
               <a href="https://www.facebook.com/aklashoes/" target="_blank" class="social-icon-btn facebook" aria-label="Facebook" title="Facebook">
-                <img src="{{ prefer_webp(url_for('static', filename='icons/facebook.svg')) }}" alt="Facebook" width="24" height="24">
+                <img src="{{ prefer_webp(url_for('static', filename='icons/facebook.webp')) }}" alt="Facebook" width="24" height="24">
               </a>
 
               <!-- Telegram channel -->
               <a href="https://t.me/specobuv" target="_blank" class="social-icon-btn telegram" aria-label="Telegram channel" title="Telegram channel">
-                <img src="{{ prefer_webp(url_for('static', filename='icons/telegram.svg')) }}" alt="Telegram" width="24" height="24">
+                <img src="{{ prefer_webp(url_for('static', filename='icons/telegram.jpg')) }}" alt="Telegram" width="24" height="24">
               </a>
 
               <!-- Phone -->
@@ -1646,7 +1646,7 @@
 
               <!-- OLX -->
               <a href="https://www.olx.uz/" target="_blank" class="social-icon-btn olx" aria-label="OLX" title="OLX">
-                <img src="{{ prefer_webp(url_for('static', filename='icons/olx.svg')) }}" alt="OLX" width="24" height="24">
+                <img src="{{ prefer_webp(url_for('static', filename='icons/olx.png')) }}" alt="OLX" width="24" height="24">
               </a>
 
               <!-- Uzum (market) -->
@@ -3384,17 +3384,72 @@
       .site-footer .social-icon-btn {
         width: 42px;
         height: 42px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
         border: 1px solid rgba(255, 255, 255, 0.12);
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: none;
-        box-shadow: none;
-        transition: transform 0.2s ease, border-color 0.2s ease;
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(6px) saturate(120%);
+        box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+        transition: transform 260ms cubic-bezier(0.2, 0.9, 0.2, 1),
+                    box-shadow 260ms ease,
+                    border-color 220ms ease,
+                    background 260ms ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* subtle inner icon uplift */
+      .site-footer .social-icon-btn img {
+        width: 20px;
+        height: 20px;
+        transition: transform 200ms ease, filter 200ms ease;
+        transform-origin: center;
+        filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15));
+      }
+
+      /* Decorative glow ring on hover (uses ::after so layout doesn't shift) */
+      .site-footer .social-icon-btn::after {
+        content: '';
+        position: absolute;
+        inset: -6px;
+        border-radius: 14px;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 260ms ease, transform 260ms ease;
+        transform: scale(0.9);
+        box-shadow: 0 8px 24px rgba(34, 211, 238, 0.06);
       }
 
       .site-footer .social-icon-btn:hover {
-        transform: translateY(-2px);
-        border-color: var(--footer-accent);
+        transform: translateY(-4px) scale(1.06);
+        border-color: rgba(34, 211, 238, 0.45);
+        box-shadow: 0 18px 40px rgba(2,6,10,0.24);
       }
+
+      .site-footer .social-icon-btn:hover img {
+        transform: translateY(-2px) scale(1.06);
+        filter: brightness(1.05) drop-shadow(0 3px 8px rgba(0,0,0,0.25));
+      }
+
+      .site-footer .social-icon-btn:active {
+        transform: translateY(-1px) scale(0.99);
+        box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+      }
+
+      .site-footer .social-icon-btn:focus-visible {
+        outline: 3px solid rgba(34,211,238,0.28);
+        outline-offset: 3px;
+      }
+
+      /* Platform-specific hover fills use existing classes, make the glow color match */
+      .site-footer .social-icon-btn.facebook:hover::after { box-shadow: 0 10px 30px rgba(24,117,242,0.18); opacity: 1; transform: scale(1); }
+      .site-footer .social-icon-btn.instagram:hover::after { box-shadow: 0 10px 30px rgba(228,64,95,0.18); opacity: 1; transform: scale(1); }
+      .site-footer .social-icon-btn.telegram:hover::after { box-shadow: 0 10px 30px rgba(0,136,204,0.18); opacity: 1; transform: scale(1); }
+      .site-footer .social-icon-btn.youtube:hover::after { box-shadow: 0 10px 30px rgba(255,0,0,0.18); opacity: 1; transform: scale(1); }
+      .site-footer .social-icon-btn.email:hover::after { box-shadow: 0 10px 30px rgba(234,67,53,0.18); opacity: 1; transform: scale(1); }
+      .site-footer .social-icon-btn.phone:hover::after { box-shadow: 0 10px 30px rgba(52,199,89,0.12); opacity: 1; transform: scale(1); }
 
       .site-footer .newsletter-form .form-control {
         background: rgba(255, 255, 255, 0.04);
