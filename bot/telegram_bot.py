@@ -125,34 +125,6 @@ def _openai_generate_reply(user_text: str) -> str:
     Returns empty string on failure. Reads API key from OPENAI_API_KEY (or OPENAI_API).
     """
     try:
-        # Prefer Anthropic Claude Haiku when enabled, fallback to OpenAI
-        anthropic_key = os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("CLAUDE_API_KEY")
-        enable_claude = str(os.environ.get("ENABLE_CLAUDE_HAIKU", "0")).lower() in ("1", "true", "yes")
-
-        if enable_claude and anthropic_key and user_text:
-            try:
-                sys_prompt = (
-                    "Siz Pro Obuv do'koni uchun yordamchi AI. Har doim o'zbek tilida, qisqa va aniq javob bering."
-                )
-                prompt = f"{sys_prompt}\nHuman: {user_text}\n\nAssistant:"
-                body = {"model": "claude-haiku-4.5", "prompt": prompt, "max_tokens_to_sample": 350, "temperature": 0.3}
-                hdrs = {"x-api-key": anthropic_key, "Content-Type": "application/json"}
-                r = requests.post("https://api.anthropic.com/v1/complete", headers=hdrs, json=body, timeout=8)
-                if r and r.ok:
-                    jr = r.json() or {}
-                    if jr.get("completion"):
-                        return (jr.get("completion") or "").strip()
-                    if jr.get("completion_text"):
-                        return (jr.get("completion_text") or "").strip()
-                    out = jr.get("output") or jr.get("text")
-                    if out:
-                        if isinstance(out, dict):
-                            return (out.get("text") or "").strip()
-                        return str(out).strip()
-            except Exception:
-                LOG.exception("Anthropic call failed in bot helper")
-
-        # Fallback to OpenAI if Anthropic not used or failed
         api_key = os.environ.get("OPENAI_API_KEY") or os.environ.get("OPENAI_API")
         if not api_key or not user_text:
             return ""
@@ -343,12 +315,6 @@ if not FLASK_APP_URL:
 else:
     FLASK_APP_URL = FLASK_APP_URL
 
-# Log resolved FLASK_APP_URL for easier debugging when bot can't reach the app
-try:
-    LOG.info(f"Resolved FLASK_APP_URL for Telegram bot: {FLASK_APP_URL}")
-except Exception:
-    pass
-
 
 async def _send_main_keyboard(update: "Update"):
     """Yagona joyda asosiy klaviaturani yuborish.
@@ -409,33 +375,21 @@ async def products_cmd_new(update: "Update", context: "ContextTypes.DEFAULT_TYPE
 
     # Simple fallback first
     try:
-        await update.message.reply_text("🛍️ Mahsulotlar yuklanmoqda...")
+        # Instead of immediately listing all products, ask user to choose a category
+        kb = [[KeyboardButton("спецобувь")], [KeyboardButton("спецодежда")]]
+        markup = ReplyKeyboardMarkup(kb, resize_keyboard=True)
+        await update.message.reply_text(
+            "Iltimos, kategoriyani tanlang:", reply_markup=markup
+        )
+        return
     except Exception as e:
         LOG.exception("Failed to send loading message")
 
     try:
         # Barcha mahsulotlarni yuklash uchun limitni katta qilamiz
         url = FLASK_APP_URL.rstrip("/") + "/api/menu-search?limit=1000"
-        try:
-            r = requests.get(url, timeout=10)
-            if not r.ok:
-                LOG.error("products_cmd: /api/menu-search returned non-OK status %s for url=%s", r.status_code, url)
-                await update.message.reply_text("Mahsulotlarni yuklashda xatolik yuz berdi (server javobi). Iltimos administrator bilan bog'laning.")
-                uid = getattr(update.message.from_user, "id", None)
-                log_action("products_cmd_error", user=f"tg:{uid}", detail=f"status:{r.status_code} url:{url}")
-                return
-            try:
-                j = r.json()
-            except Exception:
-                LOG.exception("products_cmd: failed to parse JSON from /api/menu-search %s", url)
-                await update.message.reply_text("Mahsulotlarni yuklashda xatolik yuz berdi (JSON parse error).")
-                return
-        except Exception as req_err:
-            LOG.exception("products_cmd: request to %s failed: %s", url, req_err)
-            await update.message.reply_text("Mahsulotlarni yuklashda tarmoq xatoligi yuz berdi. Iltimos administrator bilan bog'laning.")
-            uid = getattr(update.message.from_user, "id", None)
-            log_error(req_err, f"products_cmd_request_failed user:tg:{uid} url:{url}")
-            return
+        r = requests.get(url, timeout=10)
+        j = r.json()
         items = j.get("items", [])
         if not items:
             await update.message.reply_text("Hech qanday mahsulot topilmadi.")
@@ -666,6 +620,171 @@ async def products_cmd_new(update: "Update", context: "ContextTypes.DEFAULT_TYPE
         await update.message.reply_text("Mahsulotlarni yuklashda xatolik yuz berdi.")
 
 
+async def _item_matches_category(item: dict, slug: str) -> bool:
+    """Return True if the provided item appears to belong to category `slug`.
+
+    This is a best-effort check that looks at several possible fields that
+    the API/DB might populate (`category`, `category_slug`, `categories`,
+    `tags`) so it is tolerant to different backend shapes.
+    """
+    try:
+        if not item or not slug:
+            return False
+        s = slug.lower()
+        # Common fields
+        for k in ("category", "category_slug", "cat", "category_id"):
+            v = item.get(k)
+            if isinstance(v, str) and v.lower() == s:
+                return True
+        # categories or tags lists
+        for k in ("categories", "tags", "categories_slugs"):
+            v = item.get(k)
+            if isinstance(v, (list, tuple)):
+                for el in v:
+                    try:
+                        if isinstance(el, str) and el.lower() == s:
+                            return True
+                        if isinstance(el, dict):
+                            # maybe {"slug": "specobuv"}
+                            if el.get("slug", "").lower() == s or el.get("id", "").lower() == s:
+                                return True
+                    except Exception:
+                        continue
+        # Fallback: sometimes category is stored as human-readable name
+        v = item.get("category") or item.get("group") or item.get("type")
+        if isinstance(v, str) and s in v.lower():
+            return True
+    except Exception:
+        pass
+    return False
+
+
+async def products_cmd_category(update: "Update", context: "ContextTypes.DEFAULT_TYPE", category_slug: str = ""):
+    """List products filtered by `category_slug`.
+
+    This reuses the main listing logic but filters items client-side if the
+    backend does not offer category query parameters.
+    """
+    LOG.info("products_cmd_category called for %s", category_slug)
+    try:
+        await update.message.reply_text("🛍️ Mahsulotlar yuklanmoqda...")
+    except Exception:
+        pass
+
+    try:
+        url = FLASK_APP_URL.rstrip('/') + "/api/menu-search?limit=1000"
+        r = requests.get(url, timeout=10)
+        j = r.json() if r is not None and r.ok else {}
+        items = j.get("items", [])
+        if not items:
+            await update.message.reply_text("Hech qanday mahsulot topilmadi.")
+            return
+
+        # Filter by category_slug
+        if category_slug:
+            filtered = []
+            for it in items:
+                try:
+                    if await _item_matches_category(it, category_slug):
+                        filtered.append(it)
+                except Exception:
+                    continue
+            items = filtered
+
+        if not items:
+            await update.message.reply_text("Ushbu kategoriyada mahsulotlar topilmadi.")
+            return
+
+        # Reuse existing sending logic (send first N items to avoid flooding)
+        for it in items:
+            try:
+                item_id = it.get("id")
+                if not item_id:
+                    continue
+                item_name = it.get("name", "Mahsulot")
+                item_description = (it.get("description", "")[:200] if it.get("description") else "Sifatli mahsulot")
+                view_url = FLASK_APP_URL.rstrip('/') + f"/product/{item_id}"
+                text = f"🛍️ <b>{item_name}</b>\n\n{item_description}\n\n🔗 Mahsulot: {view_url}"
+
+                # pick image same way as products_cmd_new
+                imgs = []
+                media_list = it.get("media") or it.get("item_media") or []
+                if isinstance(media_list, (list, tuple)):
+                    for m in media_list:
+                        if isinstance(m, dict):
+                            u = m.get("media_url") or m.get("url")
+                            if isinstance(u, str) and u.strip():
+                                imgs.append(u.strip())
+                candidate_keys = ["image_url", "images", "image_urls", "media_urls"]
+                for k in candidate_keys:
+                    v = it.get(k)
+                    if not v:
+                        continue
+                    if isinstance(v, str):
+                        if v.strip():
+                            imgs.append(v.strip())
+                    elif isinstance(v, (list, tuple)):
+                        for _u in v:
+                            if isinstance(_u, str) and _u.strip():
+                                imgs.append(_u.strip())
+
+                seen = set()
+                urls = []
+                for u in imgs:
+                    if not u:
+                        continue
+                    uu = u.strip()
+                    if not uu or uu in seen:
+                        continue
+                    seen.add(uu)
+                    urls.append(uu)
+                    if len(urls) >= 10:
+                        break
+
+                img = urls[0] if urls else ''
+                if not urls:
+                    default_img = FLASK_APP_URL.rstrip('/') + '/static/defoult.webp'
+                    urls = [default_img]
+                    img = default_img
+
+                normalized = None
+                if img:
+                    if img.startswith('http://') or img.startswith('https://'):
+                        normalized = img
+                    elif img.startswith('/'):
+                        normalized = FLASK_APP_URL.rstrip('/') + img
+                    else:
+                        normalized = FLASK_APP_URL.rstrip('/') + '/' + img
+
+                buttons = [InlineKeyboardButton("👁️ Mahsulotni ko'rish", url=view_url)]
+                markup = InlineKeyboardMarkup([buttons])
+
+                if normalized:
+                    try:
+                        await update.message.reply_photo(photo=normalized, caption=text, reply_markup=markup, parse_mode='HTML')
+                    except Exception:
+                        try:
+                            rimg = requests.get(normalized, timeout=10)
+                            rimg.raise_for_status()
+                            data = rimg.content
+                            await update.message.reply_photo(photo=data, caption=text, reply_markup=markup, parse_mode='HTML')
+                        except Exception:
+                            await update.message.reply_text(text, reply_markup=markup, parse_mode='HTML')
+                else:
+                    try:
+                        default_path = (LOGS_DIR.parent / 'static' / 'defoult.webp').resolve()
+                        with open(default_path, 'rb') as f:
+                            data = f.read()
+                        await update.message.reply_photo(photo=data, caption=text, reply_markup=markup, parse_mode='HTML')
+                    except Exception:
+                        await update.message.reply_text(text, reply_markup=markup, parse_mode='HTML')
+            except Exception:
+                continue
+    except Exception as e:
+        LOG.exception('products_cmd_category failed')
+        await update.message.reply_text('Mahsulotlarni yuklashda xatolik yuz berdi.')
+
+
 async def handle_message(update: "Update", context: "ContextTypes.DEFAULT_TYPE"):
     """Matnli xabarlar uchun handler.
 
@@ -713,7 +832,19 @@ async def handle_message(update: "Update", context: "ContextTypes.DEFAULT_TYPE")
 
         # Maxsus tugmalarni tekshiramiz
         if text in ("/products", "🛒 Mahsulotlar"):
+            # Show product category keyboard (do not immediately restore main keyboard)
             await products_cmd_new(update, context)
+            return
+        # Category quick buttons (from products_cmd_new reply keyboard)
+        if text == "спецобувь":
+            # Map Russian label to internal category slug
+            await products_cmd_category(update, context, category_slug="specobuv")
+            # After listing items, return user to main keyboard for further actions
+            await _send_main_keyboard(update)
+            return
+        if text == "спецодежда":
+            await products_cmd_category(update, context, category_slug="spetsodejda")
+            # After listing items, return user to main keyboard for further actions
             await _send_main_keyboard(update)
             return
         if text in ("/ai", "🤖 AI bilan suhbat"):

@@ -914,25 +914,21 @@ class NewsTicker {
         document.documentElement.lang ||
         "ru";
 
-      // Read directly from data/news.json so footer ticker always reflects
-      // the JSON-backed multilingual news configuration.
-      const res = await fetch(
-        `/data/news.json?ts=${Date.now()}`,
-        { cache: "no-cache" }
-      );
+      // Load news from the API (DB-backed). Use same-origin credentials
+      // so admin-authenticated content can be included when needed.
+      const res = await fetch(`/api/news?active=true&lang=${preferredLang}`, {
+        cache: "no-cache",
+        credentials: "same-origin",
+      });
       if (!res || !res.ok) {
-        throw new Error("Failed to load data/news.json");
+        throw new Error("Failed to load /api/news");
       }
       const blob = await res.json().catch(() => null);
-      if (!blob) {
-        throw new Error("Invalid news.json payload");
+      if (!blob || !blob.success) {
+        throw new Error("Invalid /api/news payload");
       }
 
-      let items = Array.isArray(blob.news)
-        ? blob.news
-        : Array.isArray(blob)
-        ? blob
-        : [];
+      let items = Array.isArray(blob.news) ? blob.news : [];
 
       if (!items || !items.length) {
         this.showNoNews();
@@ -962,8 +958,10 @@ class NewsTicker {
       items = items
         .filter((it) => it && (it.is_active === undefined || it.is_active))
         .sort((a, b) => {
-          const odA = a && a.display_order != null ? Number(a.display_order) : 9999;
-          const odB = b && b.display_order != null ? Number(b.display_order) : 9999;
+          const odA =
+            a && a.display_order != null ? Number(a.display_order) : 9999;
+          const odB =
+            b && b.display_order != null ? Number(b.display_order) : 9999;
           if (odA !== odB) return odA - odB;
           const ca = (a && a.created_at) || "";
           const cb = (b && b.created_at) || "";
@@ -975,6 +973,31 @@ class NewsTicker {
       this.newsItems = items.map((it) => {
         const title = pickLocalized(it, "title");
         const content = pickLocalized(it, "content");
+        // Ensure arrays exist even if API omitted them
+        it.images = Array.isArray(it.images)
+          ? it.images
+          : it.images_json
+          ? JSON.parse(it.images_json || "[]")
+          : it.image_url
+          ? [it.image_url]
+          : [];
+        it.videos = Array.isArray(it.videos)
+          ? it.videos
+          : it.videos_json
+          ? JSON.parse(it.videos_json || "[]")
+          : it.video_url
+          ? [it.video_url]
+          : [];
+        it.youtube_embeds = Array.isArray(it.youtube_embeds)
+          ? it.youtube_embeds
+          : it.youtube_embed
+          ? [it.youtube_embed]
+          : (it.videos || []).map((v) => {
+              const m =
+                v &&
+                v.match(/(?:v=|\/embed\/|youtu\.be\/)([A-Za-z0-9_\-]{11})/);
+              return m ? "https://www.youtube.com/embed/" + m[1] : null;
+            });
         return {
           ...it,
           title,
@@ -1018,27 +1041,64 @@ class NewsTicker {
       itemWrap.style.width = "280px";
       itemWrap.style.marginRight = "12px";
 
-      // Build media HTML: prefer YouTube iframe when `youtube_embed` is set,
-      // otherwise show image if available.
+      // Build media HTML: support multiple youtube embeds, videos and images.
       let mediaHtml = "";
       try {
-        if (it.youtube_embed) {
-          mediaHtml = `
-            <div class="news-media">
-              <div class="youtube-embed-wrapper">
-                <iframe src="${escapeHtml(
-                  it.youtube_embed
-                )}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-              </div>
-            </div>
-          `;
-        } else if (it.image_url) {
-          mediaHtml = `
-            <div class="news-media"><img src="${escapeHtml(
-              it.image_url || ""
-            )}" alt="${escapeHtml(it.title || "")}"/></div>
-          `;
+        const mediaMainId = `news-media-main-${idx}`;
+        const thumbsId = `news-media-thumbs-${idx}`;
+        // Determine primary media (prefer youtube embed, then video, then image)
+        let primaryHtml = "";
+        if (
+          it.youtube_embeds &&
+          it.youtube_embeds.length &&
+          it.youtube_embeds[0]
+        ) {
+          primaryHtml = `<iframe src="${escapeHtml(
+            it.youtube_embeds[0]
+          )}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+        } else if (it.videos && it.videos.length && it.videos[0]) {
+          primaryHtml = `<video controls muted playsinline src="${escapeHtml(
+            it.videos[0]
+          )}"></video>`;
+        } else if (it.images && it.images.length && it.images[0]) {
+          primaryHtml = `<img src="${escapeHtml(
+            it.images[0]
+          )}" alt="${escapeHtml(it.title || "")}">`;
         }
+
+        // Build thumbnails (images + video thumbnails + youtube thumbnails)
+        const thumbs = [];
+        (it.images || []).forEach((src) => {
+          if (src) thumbs.push({ type: "image", src: src });
+        });
+        (it.videos || []).forEach((src) => {
+          if (src) thumbs.push({ type: "video", src: src });
+        });
+        (it.youtube_embeds || []).forEach((src, ii) => {
+          if (src) {
+            // derive youtube thumbnail from embed id
+            const m = String(src).match(/embed\/([A-Za-z0-9_\-]{11})/);
+            const thumb = m
+              ? `https://img.youtube.com/vi/${m[1]}/mqdefault.jpg`
+              : null;
+            if (thumb) thumbs.push({ type: "youtube", src: src, thumb: thumb });
+          }
+        });
+
+        const thumbsHtml = thumbs.length
+          ? `<div id="${thumbsId}" class="news-media-thumbs">${thumbs
+              .map(
+                (t, ti) =>
+                  `<button data-index="${ti}" class="thumb-btn" data-type="${
+                    t.type
+                  }" data-src="${escapeHtml(t.src)}" ${
+                    t.thumb ? `data-thumb="${escapeHtml(t.thumb)}"` : ""
+                  }><img src="${escapeHtml(t.thumb || t.src)}"/></button>`
+              )
+              .join("")}</div>`
+          : "";
+
+        mediaHtml = `<div class="news-media"><div id="${mediaMainId}" class="news-media-main">${primaryHtml}</div>${thumbsHtml}</div>`;
       } catch (e) {
         mediaHtml = "";
       }
@@ -1080,7 +1140,42 @@ class NewsTicker {
           window.location.href = "/news/" + id;
         } catch (e) {}
       });
-
+      // Attach thumbnail behavior if any
+      try {
+        // defer to next tick so DOM exists
+        setTimeout(() => {
+          const main = itemWrap.querySelector(".news-media-main");
+          const thumbs = itemWrap.querySelectorAll(".thumb-btn");
+          if (!main || !thumbs || thumbs.length === 0) return;
+          thumbs.forEach((btn) => {
+            btn.addEventListener("click", (ev) => {
+              ev.stopPropagation();
+              const type = btn.getAttribute("data-type");
+              const src = btn.getAttribute("data-src");
+              if (!src) return;
+              try {
+                if (type === "image") {
+                  main.innerHTML = `<img src="${escapeHtml(
+                    src
+                  )}" alt="${escapeHtml(it.title || "")}">`;
+                } else if (type === "video") {
+                  main.innerHTML = `<video controls muted playsinline src="${escapeHtml(
+                    src
+                  )}"></video>`;
+                } else if (type === "youtube") {
+                  main.innerHTML = `<iframe src="${escapeHtml(
+                    src
+                  )}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                }
+                // adjust heights after swapping
+                try {
+                  window.newsTicker && window.newsTicker.equalizeHeights();
+                } catch (e) {}
+              } catch (e) {}
+            });
+          });
+        }, 1);
+      } catch (e) {}
       container.appendChild(itemWrap);
     });
 

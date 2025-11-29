@@ -1,0 +1,158 @@
+{% extends "base.html" %} {% block title %}Yangiliklar boshqaruvi (Yagona
+panel){% endblock %} {% block additional_css %}
+<style>
+  .admin-news-manager {
+    padding: 20px 0;
+  }
+  .news-actions button {
+    margin-right: 6px;
+  }
+  .nowrap {
+    white-space: nowrap;
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="container admin-news-manager">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Yangiliklar boshqaruvi</h1>
+    <div>
+      <a class="btn btn-success" href="{{ url_for('admin_news_new') }}"
+        >Yangilik qo'shish</a
+      >
+      <a class="btn btn-secondary" href="{{ url_for('super_admin_dashboard') }}"
+        >Orqaga</a
+      >
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover table-striped">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Sarlavha</th>
+              <th>Turi</th>
+              <th>Faol</th>
+              <th>Tasmada</th>
+              <th>Tartib</th>
+              <th class="nowrap">Amallar</th>
+            </tr>
+          </thead>
+          <tbody id="newsTableBody">
+            <tr>
+              <td colspan="7" class="text-center">Yuklanmoqda...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %} {% block additional_js %}
+<script>
+  const CSRF = (typeof CSRF_TOKEN !== 'undefined') ? CSRF_TOKEN : ({{ csrf_token|tojson }} || '');
+
+  document.addEventListener('DOMContentLoaded', () => {
+    loadAdminNews();
+  });
+
+  function loadAdminNews() {
+    const body = document.getElementById('newsTableBody');
+    body.innerHTML = '<tr><td colspan="7" class="text-center">Yuklanmoqda...</td></tr>';
+    fetch('/api/news/admin?t=' + Date.now(), { credentials: 'same-origin', headers: { 'X-CSRF-Token': CSRF } })
+      .then(r => r.json())
+      .then(data => {
+        if (!data || !data.success) {
+          body.innerHTML = '<tr><td colspan="7" class="text-danger text-center">Yuklab bo\'lmadi</td></tr>';
+          return;
+        }
+        const items = data.news || [];
+        if (items.length === 0) {
+          body.innerHTML = '<tr><td colspan="7" class="text-center">Yangilik yo\'q</td></tr>';
+          return;
+        }
+        body.innerHTML = items.map(renderRow).join('');
+      }).catch(err => {
+        console.error(err);
+        body.innerHTML = '<tr><td colspan="7" class="text-danger text-center">Xatolik</td></tr>';
+      });
+  }
+
+  function renderRow(it) {
+    return `
+      <tr>
+        <td>${it.id}</td>
+        <td>${escapeHtml(it.title || '')}</td>
+        <td>${it.type || ''}</td>
+        <td>${it.is_active ? 'Ha' : 'Yo\'q'}</td>
+        <td>${it.show_in_ticker ? 'Ha' : 'Yo\'q'}</td>
+        <td>${it.display_order || 0}</td>
+        <td class="news-actions nowrap">
+          <button class="btn btn-sm btn-primary" onclick="openEdit(${it.id})">Tahrir</button>
+          <button class="btn btn-sm btn-danger" onclick="removeNews(${it.id})">O'chirish</button>
+          <button class="btn btn-sm btn-outline-secondary" onclick="toggleActive(${it.id})">Holat</button>
+          <button class="btn btn-sm btn-outline-secondary" onclick="toggleTicker(${it.id})">Tasmada</button>
+        </td>
+      </tr>
+    `;
+  }
+
+  function openAddModal() {
+    // Redirect to full-page add form
+    window.location.href = '/admin/news/new';
+  }
+
+  function openEdit(id) {
+    // Redirect to full-page edit form
+    window.location.href = '/admin/news/edit/' + id;
+  }
+
+  function saveNews() {
+    const id = document.getElementById('newsId').value;
+    const payload = {
+      title: document.getElementById('newsTitle').value.trim(),
+      content: document.getElementById('newsContent').value.trim(),
+      image_url: document.getElementById('newsImageUrl').value.trim(),
+      video_url: document.getElementById('newsYoutubeUrl').value.trim(),
+      type: document.getElementById('newsType').value,
+      is_active: document.getElementById('newsIsActive').checked,
+      show_in_ticker: document.getElementById('newsShowInTicker').checked,
+      display_order: parseInt(document.getElementById('newsOrder').value || 0, 10)
+    };
+
+    const opts = { credentials: 'same-origin', headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF }, body: JSON.stringify(payload) };
+    if (id) {
+      opts.method = 'PUT';
+      fetch('/api/news/' + id, opts).then(r => r.json()).then(res => {
+        if (res && res.success) { location.reload(); } else { alert(res.message || 'Xatolik'); }
+      }).catch(e => { console.error(e); alert('Xatolik'); });
+    } else {
+      opts.method = 'POST';
+      fetch('/api/news', opts).then(r => r.json()).then(res => {
+        if (res && res.success) { location.reload(); } else { alert(res.message || 'Xatolik'); }
+      }).catch(e => { console.error(e); alert('Xatolik'); });
+    }
+  }
+
+  function removeNews(id) {
+    if (!confirm('Haqiqatan ham o\'chirmoqchimisiz?')) return;
+    fetch('/api/news/' + id, { method: 'DELETE', credentials: 'same-origin', headers: { 'X-CSRF-Token': CSRF } })
+      .then(r => r.json()).then(res => { if (res && res.success) location.reload(); else alert(res.message || 'Xatolik'); }).catch(e => { console.error(e); alert('Xatolik'); });
+  }
+
+  function toggleActive(id) {
+    fetch('/api/news/toggle/' + id, { method: 'POST', credentials: 'same-origin', headers: { 'X-CSRF-Token': CSRF } })
+      .then(r => r.json()).then(res => { if (res && res.success) loadAdminNews(); else alert(res.message || 'Xatolik'); }).catch(e => { console.error(e); alert('Xatolik'); });
+  }
+
+  function toggleTicker(id) {
+    fetch('/api/news/ticker/toggle/' + id, { method: 'POST', credentials: 'same-origin', headers: { 'X-CSRF-Token': CSRF } })
+      .then(r => r.json()).then(res => { if (res && res.success) loadAdminNews(); else alert(res.message || 'Xatolik'); }).catch(e => { console.error(e); alert('Xatolik'); });
+  }
+
+  function escapeHtml(s) { return (s || '').replace(/[&<>\"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":"&#39;"}[c])); }
+</script>
+{% endblock %}

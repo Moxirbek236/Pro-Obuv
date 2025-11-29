@@ -206,6 +206,48 @@ app = Flask(__name__)
 
 print("DEBUG: Flask app created")
 
+# Performance: enable response compression and long static cache lifetime
+# Flask-Compress is listed in `requirements.txt`; call it if available.
+try:
+    # Configure long caching for static files (1 year)
+    app.config.setdefault('SEND_FILE_MAX_AGE_DEFAULT', 31536000)
+    # Compression settings (defaults are reasonable; can be tuned)
+    app.config.setdefault('COMPRESS_LEVEL', 6)
+    app.config.setdefault('COMPRESS_MIN_SIZE', 500)
+    # Initialize Compress extension if provided earlier
+    try:
+        Compress  # may be imported above or patched to a noop
+        Compress(app)
+    except Exception:
+        # If Compress symbol isn't callable, try to import lazily
+        try:
+            from flask_compress import Compress as _Compress
+            _Compress(app)
+        except Exception:
+            pass
+except Exception:
+    pass
+
+
+@app.after_request
+def _set_static_cache_headers(response):
+    """Set long Cache-Control for static assets to improve repeat load performance.
+
+    This will help Lighthouse by reducing network transfer on repeat visits.
+    """
+    try:
+        # `request` is available in the module scope when Flask is imported
+        p = getattr(request, 'path', '') or ''
+        if p.startswith('/static/') or p.startswith('/favicons/') or p.endswith('.svg') or p.endswith('.woff2'):
+            # One year, immutable
+            response.headers.setdefault('Cache-Control', 'public, max-age=31536000, immutable')
+        else:
+            # Shorter default for dynamic content
+            response.headers.setdefault('Cache-Control', 'public, max-age=60')
+    except Exception:
+        pass
+    return response
+
 
 # register filter with Jinja
 
@@ -20758,6 +20800,26 @@ def api_admin_news():
         return jsonify({"success": False, "message": "Failed to load news"}), 500
 
 
+@app.route('/admin/sync-news', methods=['POST'])
+@role_required('super_admin')
+def admin_sync_news():
+    """Admin endpoint to sync `data/news.json` into the SQL `news` table.
+
+    This will back up the database file and then replace the contents of the
+    `news` table with items from `data/news.json`. It is a convenience for
+    administrators who want the DB to reflect the canonical JSON store.
+    """
+    try:
+        # Lazy import to avoid circular imports at module load time
+        from scripts.sync_news_from_json import sync_news
+
+        result = sync_news(backup=True)
+        return jsonify({"success": True, "message": "Sync completed", "result": result})
+    except Exception as e:
+        app_logger.error(f"Admin sync-news error: {str(e)}")
+        return jsonify({"success": False, "message": f"Sync failed: {str(e)}"}), 500
+
+
 @app.route("/api/news/toggle/<int:news_id>", methods=["POST"])
 @role_required("super_admin")
 @csrf_protect
@@ -20803,11 +20865,208 @@ def admin_news_management():
     try:
         # CSRF token yaratish
         csrf_token = generate_csrf_token()
-        return render_template("admin/news_management.html", csrf_token=csrf_token)
+        # Provide initial news data so the admin UI can render immediately
+        try:
+            # import lazily to avoid circular imports at module load
+            from api.news_api import load_news_data
+
+            data = load_news_data()
+            initial_news = data.get("news", [])
+        except Exception:
+            initial_news = []
+
+        return render_template(
+            "admin/news_management.html",
+            csrf_token=csrf_token,
+            initial_news=initial_news,
+        )
     except Exception as e:
         app_logger.error(f"News management page error: {str(e)}")
         flash("Sahifani yuklashda xatolik yuz berdi", "danger")
         return redirect(url_for("dashboard"))
+
+
+# Legacy/alias endpoint expected by templates: `admin_news_manager`.
+# Some templates call `url_for('admin_news_manager')`; provide a working
+# endpoint that renders the same admin news management UI.
+@app.route("/admin/news-manager")
+@role_required("super_admin")
+def admin_news_manager():
+    """Alias endpoint for admin news management used by dashboard links."""
+    try:
+        csrf_token = generate_csrf_token()
+        try:
+            from api.news_api import load_news_data
+
+            data = load_news_data()
+            initial_news = data.get("news", [])
+        except Exception:
+            initial_news = []
+
+        return render_template(
+            "admin/news_management.html",
+            csrf_token=csrf_token,
+            initial_news=initial_news,
+        )
+    except Exception as e:
+        app_logger.error(f"admin_news_manager error: {str(e)}")
+        flash("Sahifani yuklashda xatolik yuz berdi", "danger")
+        return redirect(url_for("super_admin_dashboard"))
+
+
+@app.route("/admin/news/new")
+@role_required("super_admin")
+def admin_news_new():
+    """Render the full-page news add form."""
+    try:
+        csrf_token = generate_csrf_token()
+        return render_template(
+            "admin/news_form.html", csrf_token=csrf_token, edit_id=None
+        )
+    except Exception as e:
+        app_logger.error(f"admin_news_new error: {str(e)}")
+        flash("Sahifani yuklashda xatolik yuz berdi", "danger")
+        return redirect(url_for("admin_news_manager"))
+
+
+@app.route("/admin/news/edit/<int:news_id>")
+@role_required("super_admin")
+def admin_news_edit(news_id):
+    """Render the full-page news edit form for a specific news item."""
+    try:
+        csrf_token = generate_csrf_token()
+        # Try to load the specific news item server-side so the form is pre-filled
+        try:
+            from api.news_api import load_news_data
+
+            data = load_news_data()
+            edit_news = None
+            for n in data.get("news", []):
+                if n.get("id") == news_id:
+                    edit_news = n
+                    break
+        except Exception:
+            edit_news = None
+
+        return render_template(
+            "admin/news_form.html",
+            csrf_token=csrf_token,
+            edit_id=news_id,
+            edit_news=edit_news,
+        )
+    except Exception as e:
+        app_logger.error(f"admin_news_edit error: {str(e)}")
+        flash("Sahifani yuklashda xatolik yuz berdi", "danger")
+        return redirect(url_for("admin_news_manager"))
+
+
+@app.route('/admin/news/save', methods=['POST'])
+@role_required('super_admin')
+@csrf_protect
+def admin_news_save():
+    """Handle news create/update from the admin full-page form (non-AJAX fallback).
+
+    This reads form fields and writes them into `data/news.json` using the
+    same helpers used elsewhere (`load_news_data` / `save_news_data`).
+    """
+    try:
+        from api.news_api import load_news_data, save_news_data
+        from datetime import datetime
+
+        form = request.form
+        news_id = form.get('news_id')
+        title = (form.get('title') or '').strip()
+        content = (form.get('content') or '').strip()
+        # per-language
+        title_uz = (form.get('title_uz') or '').strip()
+        title_ru = (form.get('title_ru') or '').strip()
+        title_en = (form.get('title_en') or '').strip()
+        title_kz = (form.get('title_kz') or '').strip()
+        content_uz = (form.get('content_uz') or '').strip()
+        content_ru = (form.get('content_ru') or '').strip()
+        content_en = (form.get('content_en') or '').strip()
+        content_kz = (form.get('content_kz') or '').strip()
+
+        image_url = (form.get('image_url') or '').strip()
+        # prefer explicit youtube url if provided
+        youtube = (form.get('youtube_url') or '').strip()
+        video_url = youtube or (form.get('video_url') or '').strip()
+        ntype = form.get('type') or 'news'
+        try:
+            display_order = int(form.get('display_order') or 0)
+        except Exception:
+            display_order = 0
+        is_active = True if form.get('is_active') in ('on', 'true', '1') else False
+
+        data = load_news_data()
+
+        now = datetime.utcnow().isoformat() + 'Z'
+
+        if news_id:
+            try:
+                nid = int(news_id)
+            except Exception:
+                nid = None
+            # find item
+            item = None
+            for n in data.get('news', []):
+                if n.get('id') == nid:
+                    item = n
+                    break
+            if not item:
+                flash('Yangilik topilmadi', 'danger')
+                return redirect(url_for('admin_news_manager'))
+
+            # update fields
+            item['title'] = title or item.get('title', '')
+            item['content'] = content or item.get('content', '')
+            for k, v in (('title_uz', title_uz), ('title_ru', title_ru), ('title_en', title_en), ('title_kz', title_kz)):
+                if v: item[k] = v
+            for k, v in (('content_uz', content_uz), ('content_ru', content_ru), ('content_en', content_en), ('content_kz', content_kz)):
+                if v: item[k] = v
+            item['image_url'] = image_url or item.get('image_url', '')
+            item['video_url'] = video_url or item.get('video_url', '')
+            item['type'] = ntype
+            item['display_order'] = display_order
+            item['is_active'] = bool(is_active)
+            item['updated_at'] = now
+
+        else:
+            # create new
+            max_id = max([n.get('id', 0) for n in data.get('news', [])], default=0)
+            new_id = max_id + 1
+            new_news = {
+                'id': new_id,
+                'title': title,
+                'content': content,
+                'title_uz': title_uz,
+                'title_ru': title_ru,
+                'title_en': title_en,
+                'title_kz': title_kz,
+                'content_uz': content_uz,
+                'content_ru': content_ru,
+                'content_en': content_en,
+                'content_kz': content_kz,
+                'type': ntype,
+                'image_url': image_url,
+                'video_url': video_url,
+                'is_active': bool(is_active),
+                'display_order': display_order,
+                'created_at': now,
+                'updated_at': now,
+            }
+            data['news'].append(new_news)
+
+        if save_news_data(data):
+            flash('Yangilik saqlandi', 'success')
+        else:
+            flash('Saqlashda xatolik yuz berdi', 'danger')
+
+        return redirect(url_for('admin_news_manager'))
+    except Exception as e:
+        app_logger.error(f"admin_news_save failed: {str(e)}")
+        flash('Ichki xatolik yuz berdi', 'danger')
+        return redirect(url_for('admin_news_manager'))
 
 
 @app.route("/admin/news-ticker")

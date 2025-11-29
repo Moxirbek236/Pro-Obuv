@@ -6,7 +6,7 @@ import os
 import time
 from datetime import datetime
 from werkzeug.utils import secure_filename
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, jsonify, current_app, session
 import uuid
 
 news_api = Blueprint("news_api", __name__)
@@ -40,26 +40,79 @@ def ensure_directories():
 
 
 def load_news_data():
-    """JSON fayldan yangiliklar ma'lumotlarini yuklash"""
+    """Load news from the database. Returns a dict with keys 'news' and 'metadata'.
+
+    This function queries the application's database (via `execute_query`) so
+    the application no longer depends on `data/news.json` as the primary source.
+    """
     try:
-        if os.path.exists(NEWS_FILE):
-            with open(NEWS_FILE, "r", encoding="utf-8") as f:
-                return json.load(f)
-        else:
-            # Default data
-            default_data = {
-                "news": [],
-                "metadata": {
-                    "total_count": 0,
-                    "active_count": 0,
-                    "last_updated": datetime.utcnow().isoformat() + "Z",
-                    "version": "1.0",
-                },
-            }
-            save_news_data(default_data)
-            return default_data
+        # Import lazily to avoid circular imports at module load
+        from app import execute_query
+
+        rows = execute_query(
+            "SELECT * FROM news ORDER BY display_order ASC, created_at DESC",
+            fetch_all=True,
+        ) or []
+
+        # compute metadata
+        total = execute_query("SELECT COUNT(1) FROM news", fetch_one=True)[0]
+        active = execute_query("SELECT COUNT(1) FROM news WHERE is_active = 1", fetch_one=True)[0]
+
+        # Normalize rows into plain dicts
+        news_list = []
+        for r in rows:
+            try:
+                n = dict(r) if hasattr(r, 'keys') else r
+                # Normalize multi-media fields: support images_json/videos_json (JSON text) and legacy image_url/video_url
+                try:
+                    # images: stored as JSON string in images_json
+                    if isinstance(n.get('images_json'), str) and n.get('images_json'):
+                        try:
+                            n['images'] = json.loads(n.get('images_json') or '[]') or []
+                        except Exception:
+                            n['images'] = []
+                    else:
+                        # fall back to legacy single image_url
+                        n['images'] = [n.get('image_url')] if n.get('image_url') else []
+
+                    # videos: stored as JSON string in videos_json
+                    if isinstance(n.get('videos_json'), str) and n.get('videos_json'):
+                        try:
+                            n['videos'] = json.loads(n.get('videos_json') or '[]') or []
+                        except Exception:
+                            n['videos'] = []
+                    else:
+                        n['videos'] = [n.get('video_url')] if n.get('video_url') else []
+
+                    # Compute per-video youtube embeds
+                    embeds = []
+                    for v in (n.get('videos') or []):
+                        try:
+                            e = extract_youtube_embed_local(v or '')
+                            embeds.append(e)
+                        except Exception:
+                            embeds.append(None)
+                    n['youtube_embeds'] = embeds
+                except Exception:
+                    n.setdefault('images', [])
+                    n.setdefault('videos', [])
+                    n.setdefault('youtube_embeds', [])
+
+                news_list.append(n)
+            except Exception:
+                news_list.append(r)
+
+        return {
+            "news": news_list,
+            "metadata": {
+                "total_count": int(total) if total is not None else len(news_list),
+                "active_count": int(active) if active is not None else len([n for n in news_list if n.get('is_active')]),
+                "last_updated": datetime.utcnow().isoformat() + "Z",
+                "version": "db",
+            },
+        }
     except Exception as e:
-        current_app.logger.error(f"Error loading news data: {str(e)}")
+        current_app.logger.error(f"Error loading news data from DB: {str(e)}")
         return {"news": [], "metadata": {"total_count": 0, "active_count": 0}}
 
 
@@ -80,75 +133,9 @@ def extract_youtube_embed_local(url: str):
 
 
 def save_news_data(data):
-    """Yangiliklar ma'lumotlarini JSON faylga saqlash"""
-    try:
-        ensure_directories()
-        # Ensure each item carries a youtube_embed if the video_url is YouTube
-        def extract_youtube_embed_local(url: str):
-            try:
-                if not url:
-                    return None
-                import re
-
-                u = url.strip()
-                m = re.search(r'(?:v=|\/embed\/|youtu\.be\/)([A-Za-z0-9_\-]{11})', u)
-                if m:
-                    return f"https://www.youtube.com/embed/{m.group(1)}"
-            except Exception:
-                return None
-            return None
-
-        for i, n in enumerate(data.get("news", [])):
-            try:
-                n_obj = dict(n) if not isinstance(n, dict) else n
-                n_obj["youtube_embed"] = extract_youtube_embed_local(
-                    n_obj.get("video_url") or ""
-                )
-
-                # Ensure the social footer is present in content fields.
-                # Support both legacy single 'content' and per-language content_uz/content_ru/content_en/content_kz
-                try:
-                    # Helper to append footer if missing for a given content string
-                    def _ensure_footer(s: str):
-                        if not s:
-                            return s
-                        if "https://www.youtube.com/@proobuv-safety" in s:
-                            return s
-                        return s.rstrip() + SOCIAL_FOOTER
-
-                    # Legacy content
-                    if "content" in n_obj:
-                        n_obj["content"] = _ensure_footer(n_obj.get("content") or "")
-
-                    # Per-language content
-                    for lang in ("uz", "ru", "en", "kz"):
-                        key = f"content_{lang}"
-                        if key in n_obj:
-                            n_obj[key] = _ensure_footer(n_obj.get(key) or "")
-
-                except Exception:
-                    pass
-
-                data["news"][i] = n_obj
-            except Exception:
-                try:
-                    data["news"][i]["youtube_embed"] = None
-                except Exception:
-                    pass
-
-        # Metadata yangilash
-        data["metadata"]["last_updated"] = datetime.utcnow().isoformat() + "Z"
-        data["metadata"]["total_count"] = len(data["news"])
-        data["metadata"]["active_count"] = len(
-            [n for n in data["news"] if n.get("is_active", False)]
-        )
-
-        with open(NEWS_FILE, "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
-        return True
-    except Exception as e:
-        current_app.logger.error(f"Error saving news data: {str(e)}")
-        return False
+    """Placeholder: saving to JSON is deprecated when DB-backed mode is active; no-op."""
+    current_app.logger.warning("save_news_data called but DB-backed mode is active; no-op")
+    return False
 
 
 def allowed_file(filename, file_type="image"):
@@ -185,24 +172,20 @@ def get_all_news():
         data = load_news_data()
         news_list = data.get("news", [])
 
-        # Ensure each returned item has a computed youtube_embed so front-end
-        # components (ticker, listing) can render YouTube iframes immediately.
+        # Backwards compatibility: ensure each item has images/videos arrays and youtube_embeds
         for i, n in enumerate(news_list):
             try:
-                if isinstance(n, dict):
-                    news_list[i]["youtube_embed"] = extract_youtube_embed_local(
-                        n.get("video_url") or ""
-                    )
-                else:
+                if not isinstance(n, dict):
                     news_list[i] = dict(n)
-                    news_list[i]["youtube_embed"] = extract_youtube_embed_local(
-                        n.get("video_url") or ""
-                    )
+                    n = news_list[i]
+                n.setdefault('images', [])
+                n.setdefault('videos', [])
+                # youtube_embeds populated in load_news_data normalization; ensure key exists
+                n.setdefault('youtube_embeds', [])
+                # Backwards-compat: provide single youtube_embed key for legacy consumers
+                n['youtube_embed'] = (n['youtube_embeds'][0] if n['youtube_embeds'] and len(n['youtube_embeds'])>0 else None)
             except Exception:
-                try:
-                    news_list[i]["youtube_embed"] = None
-                except Exception:
-                    pass
+                continue
 
         # Query parametrlarni tekshirish
         active_only = request.args.get("active", "").lower() == "true"
@@ -274,9 +257,9 @@ def get_active_news():
 def get_admin_news():
     """Admin uchun barcha yangiliklar (faol va nofaol)"""
     try:
-        # Session tekshirish (bu yerda sizning session mantiqingiz bo'lishi kerak)
-        # if not session.get('super_admin'):
-        #     return jsonify({"success": False, "message": "Admin huquqi kerak"}), 403
+        # Require super_admin in session to access admin APIs
+        if not session.get("super_admin"):
+            return jsonify({"success": False, "message": "Admin huquqi kerak"}), 403
 
         data = load_news_data()
         return jsonify(
@@ -304,6 +287,9 @@ def get_admin_news():
 def create_news():
     """Yangi yangilik qo'shish"""
     try:
+        if not session.get("super_admin"):
+            return jsonify({"success": False, "message": "Admin huquqi kerak"}), 403
+
         # JSON ma'lumotlarni olish
         news_data = request.get_json()
 
@@ -321,56 +307,45 @@ def create_news():
                 400,
             )
 
-        # Mavjud ma'lumotlarni yuklash
-        data = load_news_data()
+        # Persist to DB
+        from app import execute_query
 
-        # Yangi ID generatsiya qilish
-        max_id = max([n.get("id", 0) for n in data["news"]], default=0)
-        new_id = max_id + 1
+        # Determine available columns on the news table
+        cols_info = execute_query("PRAGMA table_info(news)", fetch_all=True) or []
+        available_cols = [c[1] if not isinstance(c, dict) else c.get('name') for c in cols_info]
 
-        # Yangi yangilik yaratish
-        # Build new item including per-language title/content if provided
-        new_news = {"id": new_id}
-        # Legacy fields
-        new_news["title"] = (news_data.get("title") or "").strip()
-        new_news["content"] = (news_data.get("content") or "").strip()
+        now = datetime.utcnow().isoformat() + "Z"
 
-        # Per-language fields
-        for lang in ("uz", "ru", "en", "kz"):
-            new_news[f"title_{lang}"] = (news_data.get(f"title_{lang}") or "").strip()
-            new_news[f"content_{lang}"] = (news_data.get(f"content_{lang}") or "").strip()
+        # Build insert column list and values
+        insert_map = {
+            'title': (news_data.get('title') or '').strip(),
+            'content': (news_data.get('content') or '').strip(),
+            'type': news_data.get('type', 'news'),
+            'image_url': news_data.get('image_url', ''),
+            'video_url': news_data.get('video_url', ''),
+            # Support arrays: images/videos stored as JSON in images_json/videos_json columns if available
+            'images_json': json.dumps(news_data.get('images') or []) if news_data.get('images') is not None else None,
+            'videos_json': json.dumps(news_data.get('videos') or []) if news_data.get('videos') is not None else None,
+            'is_active': 1 if news_data.get('is_active', True) else 0,
+            'display_order': news_data.get('display_order', 0) or 0,
+            'created_at': now,
+            'updated_at': now,
+        }
+        for lang in ('uz', 'ru', 'en', 'kz'):
+            insert_map[f'title_{lang}'] = (news_data.get(f'title_{lang}') or '').strip()
+            insert_map[f'content_{lang}'] = (news_data.get(f'content_{lang}') or '').strip()
 
-        new_news.update(
-            {
-                "type": news_data.get("type", "news"),
-                "is_active": news_data.get("is_active", True),
-                "display_order": news_data.get(
-                    "display_order", len(data["news"]) + 1
-                ),
-                "image_url": news_data.get("image_url", ""),
-                "video_url": news_data.get("video_url", ""),
-                "created_at": datetime.utcnow().isoformat() + "Z",
-                "updated_at": datetime.utcnow().isoformat() + "Z",
-            }
-        )
+        insert_cols = [c for c in insert_map.keys() if c in available_cols]
+        values = [insert_map[c] for c in insert_cols]
 
-        # Ro'yxatga qo'shish
-        data["news"].append(new_news)
+        if not insert_cols:
+            return jsonify({'success': False, 'message': 'No writable columns available'}), 500
 
-        # Saqlash
-        if save_news_data(data):
-            return jsonify(
-                {
-                    "success": True,
-                    "message": "Yangilik muvaffaqiyatli qo'shildi",
-                    "news": new_news,
-                }
-            )
-        else:
-            return (
-                jsonify({"success": False, "message": "Saqlashda xatolik yuz berdi"}),
-                500,
-            )
+        placeholders = ','.join(['?'] * len(insert_cols))
+        sql = f"INSERT INTO news ({','.join(insert_cols)}) VALUES ({placeholders})"
+        lastid = execute_query(sql, params=tuple(values))
+        new_item = execute_query("SELECT * FROM news WHERE id = ?", (lastid,), fetch_one=True)
+        return jsonify({'success': True, 'message': 'Yangilik muvaffaqiyatli qo\'shildi', 'news': dict(new_item) if new_item else {}})
 
     except Exception as e:
         current_app.logger.error(f"Error creating news: {str(e)}")
@@ -384,6 +359,9 @@ def create_news():
 def update_news(news_id):
     """Yanglikni yangilash"""
     try:
+        if not session.get("super_admin"):
+            return jsonify({"success": False, "message": "Admin huquqi kerak"}), 403
+
         news_data = request.get_json()
 
         if not news_data:
@@ -399,61 +377,48 @@ def update_news(news_id):
                 400,
             )
 
-        # Mavjud ma'lumotlarni yuklash
-        data = load_news_data()
+        from app import execute_query
 
-        # Yanglikni topish
-        news_item = None
-        for i, news in enumerate(data["news"]):
-            if news.get("id") == news_id:
-                news_item = news
-                break
+        cols_info = execute_query("PRAGMA table_info(news)", fetch_all=True) or []
+        available_cols = [c[1] if not isinstance(c, dict) else c.get('name') for c in cols_info]
 
-        if not news_item:
+        # Find existing
+        existing = execute_query("SELECT * FROM news WHERE id = ?", (news_id,), fetch_one=True)
+        if not existing:
             return jsonify({"success": False, "message": "Yangilik topilmadi"}), 404
 
-        # Ma'lumotlarni yangilash
-        # Update legacy and per-language fields if provided
-        news_item["title"] = (news_data.get("title") or news_item.get("title") or "").strip()
-        news_item["content"] = (news_data.get("content") or news_item.get("content") or "").strip()
-
-        for lang in ("uz", "ru", "en", "kz"):
-            tkey = f"title_{lang}"
-            ckey = f"content_{lang}"
+        update_map = {}
+        update_map['title'] = (news_data.get('title') or existing.get('title') or '').strip()
+        update_map['content'] = (news_data.get('content') or existing.get('content') or '').strip()
+        for lang in ('uz','ru','en','kz'):
+            tkey = f'title_{lang}'
+            ckey = f'content_{lang}'
             if tkey in news_data:
-                news_item[tkey] = (news_data.get(tkey) or "").strip()
+                update_map[tkey] = (news_data.get(tkey) or '').strip()
             if ckey in news_data:
-                news_item[ckey] = (news_data.get(ckey) or "").strip()
+                update_map[ckey] = (news_data.get(ckey) or '').strip()
 
-        news_item.update(
-            {
-                "type": news_data.get("type", news_item.get("type", "news")),
-                "is_active": news_data.get(
-                    "is_active", news_item.get("is_active", True)
-                ),
-                "display_order": news_data.get(
-                    "display_order", news_item.get("display_order", 0)
-                ),
-                "image_url": news_data.get("image_url", news_item.get("image_url", "")),
-                "video_url": news_data.get("video_url", news_item.get("video_url", "")),
-                "updated_at": datetime.utcnow().isoformat() + "Z",
-            }
-        )
+        update_map['type'] = news_data.get('type', existing.get('type','news'))
+        update_map['is_active'] = 1 if news_data.get('is_active', existing.get('is_active',1)) else 0
+        update_map['display_order'] = news_data.get('display_order', existing.get('display_order',0))
+        update_map['image_url'] = news_data.get('image_url', existing.get('image_url',''))
+        update_map['video_url'] = news_data.get('video_url', existing.get('video_url',''))
+        # Accept arrays; store as JSON text if provided
+        if 'images' in news_data:
+            update_map['images_json'] = json.dumps(news_data.get('images') or [])
+        if 'videos' in news_data:
+            update_map['videos_json'] = json.dumps(news_data.get('videos') or [])
+        update_map['updated_at'] = datetime.utcnow().isoformat() + 'Z'
 
-        # Saqlash
-        if save_news_data(data):
-            return jsonify(
-                {
-                    "success": True,
-                    "message": "Yangilik muvaffaqiyatli yangilandi",
-                    "news": news_item,
-                }
-            )
-        else:
-            return (
-                jsonify({"success": False, "message": "Saqlashda xatolik yuz berdi"}),
-                500,
-            )
+        set_cols = [k for k in update_map.keys() if k in available_cols]
+        if not set_cols:
+            return jsonify({'success': False, 'message': 'No updatable columns available'}), 500
+
+        sql = 'UPDATE news SET ' + ','.join([f"{c} = ?" for c in set_cols]) + ' WHERE id = ?'
+        params = [update_map[c] for c in set_cols] + [news_id]
+        execute_query(sql, params=tuple(params))
+        updated = execute_query('SELECT * FROM news WHERE id = ?', (news_id,), fetch_one=True)
+        return jsonify({'success': True, 'message':'Yangilik muvaffaqiyatli yangilandi','news': dict(updated) if updated else {}})
 
     except Exception as e:
         current_app.logger.error(f"Error updating news: {str(e)}")
@@ -463,10 +428,55 @@ def update_news(news_id):
         )
 
 
+@news_api.route("/api/news/<int:news_id>", methods=["GET"])
+def get_single_news(news_id):
+    """Return a single news item by id (for admin edit)."""
+    try:
+        data = load_news_data()
+        for n in data.get("news", []):
+            if n.get("id") == news_id:
+                # Normalize media arrays and youtube embeds for the single item
+                n_obj = dict(n) if isinstance(n, dict) else n
+                try:
+                    if isinstance(n_obj.get('images_json'), str) and n_obj.get('images_json'):
+                        n_obj['images'] = json.loads(n_obj.get('images_json') or '[]') or []
+                    else:
+                        n_obj['images'] = [n_obj.get('image_url')] if n_obj.get('image_url') else []
+                except Exception:
+                    n_obj['images'] = []
+                try:
+                    if isinstance(n_obj.get('videos_json'), str) and n_obj.get('videos_json'):
+                        n_obj['videos'] = json.loads(n_obj.get('videos_json') or '[]') or []
+                    else:
+                        n_obj['videos'] = [n_obj.get('video_url')] if n_obj.get('video_url') else []
+                except Exception:
+                    n_obj['videos'] = []
+                # compute youtube_embeds
+                embeds = []
+                for v in (n_obj.get('videos') or []):
+                    try:
+                        embeds.append(extract_youtube_embed_local(v or '') )
+                    except Exception:
+                        embeds.append(None)
+                n_obj['youtube_embeds'] = embeds
+                return jsonify({"success": True, "news": n_obj})
+
+        return jsonify({"success": False, "message": "Yangilik topilmadi"}), 404
+    except Exception as e:
+        current_app.logger.error(f"Error getting single news: {str(e)}")
+        return (
+            jsonify({"success": False, "message": f"Ma'lumot yuklashda xatolik: {str(e)}"}),
+            500,
+        )
+
+
 @news_api.route("/api/news/<int:news_id>", methods=["DELETE"])
 def delete_news(news_id):
     """Yanglikni o'chirish"""
     try:
+        if not session.get("super_admin"):
+            return jsonify({"success": False, "message": "Admin huquqi kerak"}), 403
+
         data = load_news_data()
 
         # Yanglikni topish va o'chirish
@@ -499,6 +509,9 @@ def delete_news(news_id):
 def toggle_news_status(news_id):
     """Yangilik holatini o'zgartirish (faol/nofaol)"""
     try:
+        if not session.get("super_admin"):
+            return jsonify({"success": False, "message": "Admin huquqi kerak"}), 403
+
         data = load_news_data()
 
         # Yanglikni topish
@@ -546,6 +559,9 @@ def toggle_news_status(news_id):
 def upload_media():
     """Media fayl yuklash (rasmlar va videolar)"""
     try:
+        if not session.get("super_admin"):
+            return jsonify({"success": False, "message": "Admin huquqi kerak"}), 403
+
         if "file" not in request.files:
             return jsonify({"success": False, "message": "Fayl tanlanmadi"}), 400
 

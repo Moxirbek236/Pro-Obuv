@@ -147,7 +147,6 @@
   .product-container {
     max-width: 1100px;
     margin: 20px auto;
-    display: grid;
     grid-template-columns: 1fr 420px;
     gap: 28px;
     align-items: start;
@@ -165,22 +164,39 @@
   @media (max-width: 900px) {
     .product-container {
       grid-template-columns: 1fr;
-      padding: 0 12px;
+      padding: 0;
+      gap: 0;
+      margin: 0;
     }
     .product-media {
       order: 1;
+      padding: 0;
+      box-shadow: none;
+      border-radius: 0;
+      background: transparent;
     }
     .product-details {
       order: 2;
+      padding: 16px 12px;
+      background: #fff;
     }
   }
 
   .product-media {
-    background: #fff;
-    border-radius: 12px;
-    padding: 12px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-    position: relative; /* sevimli tugma uchun konteyner */
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
+    box-shadow: none;
+    position: relative;
+  }
+
+  @media (min-width: 901px) {
+    .product-media {
+      background: #fff;
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+    }
   }
 
   /* Product sahifasida sevimlilar tugmasi */
@@ -224,6 +240,16 @@
     align-items: center;
     justify-content: center;
     min-height: 420px;
+    width: 100%;
+  }
+
+  @media (max-width: 900px) {
+    .media-stage {
+      border-radius: 0;
+      background: #fff;
+      min-height: 55vh;
+      max-height: 65vh;
+    }
   }
 
   .media-stage img,
@@ -394,24 +420,33 @@
   }
 
   @media (max-width: 900px) {
-    /* mobile: ensure media fills available height while keeping controls visible */
-    .media-stage { min-height: 50vh; max-height: 60vh; }
-    .media-stage img, .media-stage video { max-height: 60vh; width: auto; height: auto; }
-    .thumbnails .thumb { width: 60px; height: 60px; }
-    .media-btn { width: 40px; height: 40px; font-size: 18px; }
-    .product-details h1 { font-size: 20px; }
-    .product-details { padding: 8px 4px; }
-    .product-media { padding: 8px; }
+    /* mobile: ensure media fills full width and height */
+    .media-stage { min-height: 55vh; max-height: 65vh; width: 100%; }
+    .media-stage img, .media-stage video { max-height: 65vh; width: 100%; height: auto; }
+    .thumbnails { margin-left: 0; margin-right: 0; padding-left: 8px; padding-right: 8px; }
+    .thumbnails .thumb { width: 64px; height: 64px; }
+    .media-btn { width: 42px; height: 42px; font-size: 20px; }
+    .product-details h1 { font-size: 22px; line-height: 1.3; margin: 0 0 6px 0; }
+    .product-details p.description { font-size: 15px; line-height: 1.5; margin: 6px 0 12px 0; }
   }
 
   @media (max-width: 480px) {
-    .thumbnails .thumb { width: 52px; height: 52px; }
-    .media-stage { min-height: 45vh; }
-    .media-btn.left, .media-btn.right { left: 8px; right: 8px; }
-    .media-btn.zoom { left: 8px; bottom: 8px; }
-    .add-cart-btn { width: 100%; padding: 12px; }
+    .product-container { margin: 0; padding: 0; }
+    .product-media { padding: 0; }
+    .product-details { padding: 14px 10px; background: #fff; }
+    .product-details h1 { font-size: 18px; margin: 0 0 4px 0; }
+    .product-details p.description { font-size: 13px; margin: 4px 0 10px 0; }
+    .media-stage { min-height: 50vh; max-height: 60vh; }
+    .media-stage img { max-height: 60vh; width: 100%; }
+    .thumbnails { padding-left: 6px; padding-right: 6px; }
+    .thumbnails .thumb { width: 56px; height: 56px; }
+    .media-btn.left, .media-btn.right { width: 38px; height: 38px; font-size: 18px; left: 6px; right: 6px; }
+    .media-btn.zoom { left: 6px; bottom: 6px; width: 38px; height: 38px; }
+    .add-cart-btn { width: 100%; padding: 12px; font-size: 14px; }
     .options-row { flex-direction: column; gap: 10px; }
     .select-wrapper { min-width: 0; width: 100%; }
+    .rating-row { font-size: 13px; }
+    .stars-wrap { font-size: 16px; }
   }
 </style>
 
@@ -766,6 +801,32 @@
     </div>
   </div>
 </div>
+<!-- Mobile sticky buy bar (visible on small screens) -->
+<style>
+@media (max-width:900px){
+  .mobile-sticky-bar{ position:fixed; left:12px; right:12px; bottom:12px; background:#0b1220; color:#fff; padding:10px; display:flex; gap:10px; align-items:center; z-index:1400; border-radius:12px; box-shadow:0 12px 30px rgba(2,6,23,0.6); }
+  .mobile-sticky-bar .left{ flex:1; min-width:0; overflow:hidden; }
+  .mobile-sticky-bar .title{ font-weight:800; font-size:15px; white-space:nowrap; text-overflow:ellipsis; overflow:hidden; }
+  .mobile-sticky-bar .price{ color:#ff8a75; font-weight:800; margin-top:4px; font-size:14px; }
+  .mobile-sticky-bar .qty{ display:flex; gap:6px; align-items:center; margin-right:8px; }
+  .mobile-sticky-bar .qty .qty-input{ width:56px; }
+  .mobile-sticky-bar .cta{ background:#ff6b5a; border:none; color:#fff; padding:10px 12px; border-radius:10px; font-weight:800; cursor:pointer; }
+  body{ padding-bottom: 84px; }
+}
+</style>
+
+<div id="mobileStickyBar" class="mobile-sticky-bar" aria-hidden="false" style="display:none;" role="region" aria-label="Buy bar">
+  <div class="left">
+    <div class="title">{{ localized_name }}</div>
+    <div class="price">{{ (item.price if item.price else '—') }} UZS</div>
+  </div>
+  <div class="qty" aria-hidden="false">
+    <button type="button" id="mobileDecQty" class="qty-btn">−</button>
+    <input type="number" id="mobileQtyInput" class="qty-input" value="1" min="1" max="99" />
+    <button type="button" id="mobileIncQty" class="qty-btn">+</button>
+  </div>
+  <button type="button" id="mobileAddToCart" class="cta">Buyurtma berish</button>
+</div>
 
 <!-- Related product ribbons (under comments) -->
 <style>
@@ -994,6 +1055,81 @@
       console.warn('product favorites wiring failed', e);
     }
   })();
+  })();
+
+  // Mobile sticky bar wiring
+  (function(){
+    function showBarIfNeeded(){
+      try{
+        const bar = document.getElementById('mobileStickyBar');
+        if(!bar) return;
+        if(window.innerWidth <= 900){
+          bar.style.display = 'flex';
+        }else{
+          bar.style.display = 'none';
+        }
+      }catch(e){}
+    }
+
+    // sync qty inputs
+    function syncQtyFromMobile(){
+      const m = document.getElementById('mobileQtyInput');
+      const main = document.getElementById('quantityInput');
+      if(!m) return;
+      if(main) main.value = m.value;
+    }
+
+    document.addEventListener('DOMContentLoaded', function(){
+      showBarIfNeeded();
+      window.addEventListener('resize', showBarIfNeeded);
+
+      const mobileDec = document.getElementById('mobileDecQty');
+      const mobileInc = document.getElementById('mobileIncQty');
+      const mobileInput = document.getElementById('mobileQtyInput');
+      const mobileAdd = document.getElementById('mobileAddToCart');
+      const mainInput = document.getElementById('quantityInput');
+
+      if(mobileDec && mobileInput){
+        mobileDec.addEventListener('click', function(){ mobileInput.value = Math.max(1, parseInt(mobileInput.value||1,10)-1); syncQtyFromMobile(); });
+      }
+      if(mobileInc && mobileInput){
+        mobileInc.addEventListener('click', function(){ mobileInput.value = Math.min(99, parseInt(mobileInput.value||1,10)+1); syncQtyFromMobile(); });
+      }
+      if(mobileInput){
+        mobileInput.addEventListener('change', syncQtyFromMobile);
+      }
+
+      if(mobileAdd){
+        mobileAdd.addEventListener('click', function(){
+          // apply qty to main input if present
+          if(mainInput && mobileInput) mainInput.value = mobileInput.value;
+
+          // prefer click on existing add-to-cart button
+          const mainBtn = document.querySelector('.add-cart-btn');
+          if(mainBtn){
+            mainBtn.click();
+            return;
+          }
+
+          // otherwise open first marketplace link
+          const mp = document.querySelector('.marketplace-buttons a');
+          if(mp){
+            window.open(mp.href, '_blank', 'noopener');
+            return;
+          }
+
+          // fallback: submit staff form if present
+          const form = document.getElementById('addToCartForm');
+          if(form){
+            form.submit();
+          }else{
+            alert('Iltimos, mahsulotni tanlang va Buyurtma berish tugmasini bosing.');
+          }
+        });
+      }
+    });
+  })();
+
 </script>
 
 {% endblock %}

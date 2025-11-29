@@ -343,9 +343,7 @@ endblock %} {% block additional_css %}
           >
         </li>
         <li class="nav-item">
-          <a
-            class="nav-link active"
-            href="{{ url_for('admin_news_management') }}">
+          <a class="nav-link active" href="{{ url_for('admin_news_manager') }}">
             Yangiliklar</a
           >
         </li>
@@ -434,15 +432,10 @@ endblock %} {% block additional_css %}
             </ul>
           </div>
 
-          <!-- Add News Button -->
-          <button
-            type="button"
-            class="btn btn-add-news"
-            data-bs-toggle="modal"
-            data-bs-target="#newsModal"
-            onclick="openNewsModal()">
+          <!-- Add News Button (navigates to full-page form) -->
+          <a href="{{ url_for('admin_news_new') }}" class="btn btn-add-news">
             <i class="bi bi-plus-circle me-2"></i>Yangilik qo'shish
-          </button>
+          </a>
         </div>
       </div>
     </div>
@@ -855,10 +848,79 @@ endblock %} {% block additional_css %}
     </div>
   </div>
 </div>
-{% endblock %} {% block additional_js %}
-<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+{% endblock %} {% block scripts %}
+<!-- Dynamic loader: load jQuery then DataTables, then initialize page -->
 <script>
+  // Helper to load external scripts sequentially
+  function loadScript(src) {
+    return new Promise(function (resolve, reject) {
+      try {
+        var s = document.createElement('script');
+        s.src = src;
+        s.async = false;
+        s.onload = function () {
+          resolve(src);
+        };
+        s.onerror = function (e) {
+          reject(new Error('Failed to load ' + src));
+        };
+        document.head.appendChild(s);
+      } catch (e) {
+        reject(e);
+      }
+    });
+  }
+
+  function loadScriptsSequentially(list) {
+    return list.reduce(function (p, src) {
+      return p.then(function () {
+        return loadScript(src);
+      });
+    }, Promise.resolve());
+  }
+
+  // Start loading libs (no integrity attributes to avoid SRI blocking)
+  // Try primary CDN, then fallback CDN for jQuery if primary fails.
+  var primaryJq = 'https://code.jquery.com/jquery-3.6.0.min.js';
+  var fallbackJq = 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js';
+  var dtCore = 'https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js';
+  var dtBs = 'https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js';
+
+  // Attempt to load jQuery from primary, fallback to cdnjs on failure, then DataTables
+  (function ensureLibs() {
+    loadScript(primaryJq)
+      .catch(function () {
+        console.warn('Primary jQuery failed, trying fallback');
+        return loadScript(fallbackJq);
+      })
+      .then(function () {
+        return loadScriptsSequentially([dtCore, dtBs]);
+      })
+      .then(function () {
+        console.log('jQuery and DataTables loaded');
+        // Wait for DOM ready then call adminInit
+        function callAdminInit() {
+          try {
+            if (typeof adminInit === 'function') {
+              adminInit();
+            }
+          } catch (e) {
+            console.error('adminInit call failed', e);
+          }
+        }
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', callAdminInit);
+        } else {
+          callAdminInit();
+        }
+      })
+      .catch(function (e) {
+        console.error('Library loader failed', e);
+      });
+
+  })();
+
+  // Begin admin script (definitions). adminInit() will be invoked when libs are ready.
   // Disable service workers on this admin page to prevent stale caches
   if (
     typeof navigator !== "undefined" &&
@@ -878,6 +940,15 @@ endblock %} {% block additional_css %}
   }
   // CSRF Token
   if (typeof window.CSRF_TOKEN === 'undefined') { try { window.CSRF_TOKEN = {{ csrf_token|tojson }}; } catch(e) { window.CSRF_TOKEN = ''; } }
+
+  // Initial news payload provided by server to avoid blank page when AJAX fails
+  try {
+    if (typeof window.__INITIAL_NEWS__ === 'undefined') {
+      window.__INITIAL_NEWS__ = {{ (initial_news|default([]))|tojson }};
+    }
+  } catch (e) {
+    window.__INITIAL_NEWS__ = [];
+  }
 
   // Global variables
   let newsDataTable;
@@ -948,6 +1019,44 @@ endblock %} {% block additional_css %}
       // Add mode
       title.textContent = "Yangilik qo'shish";
       document.getElementById("newsIsActive").checked = true;
+    }
+
+    // Ensure the Bootstrap modal is shown programmatically to avoid timing issues
+    try {
+      const modalEl = document.getElementById("newsModal");
+      if (modalEl) {
+        // Remove any stray backdrops that might hide the modal immediately
+        try {
+          document.querySelectorAll('.modal-backdrop').forEach((b) => b.remove());
+        } catch (e) {}
+
+        // Blur any currently focused element to avoid aria-hidden conflicts
+        try {
+          if (document.activeElement && typeof document.activeElement.blur === 'function') {
+            document.activeElement.blur();
+          }
+        } catch (e) {}
+
+        // Show after a tiny delay to avoid race conditions with DataTables or other scripts
+        setTimeout(() => {
+          try {
+            const bs = new bootstrap.Modal(modalEl);
+            // focus using Bootstrap's shown event to ensure aria-hidden is false
+            modalEl.addEventListener('shown.bs.modal', function onShown() {
+              try {
+                const first = document.getElementById("newsTitle");
+                if (first) first.focus();
+              } catch (e) {}
+              try { modalEl.removeEventListener('shown.bs.modal', onShown); } catch (e) {}
+            });
+            bs.show();
+          } catch (e) {
+            console.warn("openNewsModal: failed to show Bootstrap modal", e);
+          }
+        }, 60);
+      }
+    } catch (e) {
+      console.warn("openNewsModal: unexpected error", e);
     }
   }
 
@@ -1153,26 +1262,91 @@ endblock %} {% block additional_css %}
     );
   }
 
-  // Initialize when page loads
-  $(document).ready(function () {
-    console.log("News management page loaded");
-    console.log("Session info:", {
-      staff_id: '{{ session.get("staff_id") }}',
-      staff_name: '{{ session.get("staff_name") }}',
-      staff_role: '{{ session.get("staff_role") }}',
-    });
-    initializeDataTable();
-    loadNewsData();
-    setupEventListeners();
-  });
+  // Entry point for admin script once libs loaded
+  function adminInit() {
+    try {
+      console.log("News management page loaded");
+      console.log("Session info:", {
+        staff_id: '{{ session.get("staff_id") }}',
+        staff_name: '{{ session.get("staff_name") }}',
+        staff_role: '{{ session.get("staff_role") }}',
+      });
+
+      // Initialize DataTable only after jQuery and DataTables are available
+      // If the server provided an initial news payload, render it immediately.
+      // updateNewsTable will render rows into the DOM and then initialize DataTable.
+      try {
+        if (window.__INITIAL_NEWS__ && window.__INITIAL_NEWS__.length) {
+          console.log('Rendering initial news payload (count):', window.__INITIAL_NEWS__.length);
+          updateNewsTable(window.__INITIAL_NEWS__);
+        } else {
+          // No initial payload: load from server/public JSON which will render and init when ready
+          try { loadNewsData(); } catch (e) { console.error('loadNewsData failed', e); }
+        }
+      } catch (e) {
+        console.warn('Initial news render failed', e);
+      }
+
+      try {
+        setupEventListeners();
+      } catch (e) {
+        console.warn('setupEventListeners failed', e);
+      }
+    } catch (e) {
+      console.error('adminInit unexpected error', e);
+    }
+  }
 
   // Initialize DataTable
   function initializeDataTable() {
-    newsDataTable = $("#newsTable").DataTable({
+    try {
+      // Safety: ensure table has matching header and at least one row before initializing
+      var maxInitAttempts = 10;
+      var initAttempt = 0;
+      function tryInit() {
+        initAttempt++;
+        try {
+          var headerCount = document.querySelectorAll('#newsTable thead th').length;
+          var firstRow = document.querySelector('#newsTable tbody tr');
+          var firstRowCount = firstRow ? firstRow.children.length : 0;
+          console.log('initializeDataTable attempt', initAttempt, 'headerCount=', headerCount, 'firstRowCount=', firstRowCount);
+          if (firstRowCount === 0 && initAttempt <= maxInitAttempts) {
+            // No rows yet, wait a bit
+            setTimeout(tryInit, 150);
+            return;
+          }
+          if (firstRowCount !== 0 && headerCount !== firstRowCount) {
+            console.warn('DataTable init aborted due to column mismatch', headerCount, firstRowCount);
+            if (initAttempt <= maxInitAttempts) {
+              setTimeout(tryInit, 150);
+            }
+            return;
+          }
+        } catch (e) {
+          console.warn('initializeDataTable precheck failed', e);
+        }
+        // proceed with initializing DataTable below
+        _doInit();
+      }
+
+      function _doInit() {
+      // If DataTable already exists, destroy it to avoid state conflicts
+      try {
+        if (window.jQuery && $.fn && $.fn.DataTable && $.fn.DataTable.isDataTable('#newsTable')) {
+          try {
+            $('#newsTable').DataTable().clear().destroy();
+          } catch (e) {}
+        }
+      } catch (inner) {
+        console.warn('DataTable destroy check failed', inner);
+      }
+
+      // Initialize DataTable on the current DOM table. Do NOT clear tbody here; keep existing rows so DataTables can map columns correctly.
+      newsDataTable = $("#newsTable").DataTable({
       responsive: true,
       pageLength: 10,
       language: {
-        url: "//cdn.datatables.net/plug-ins/1.13.4/i18n/uz.json",
+        // Removed remote language URL to avoid CORS; inline translations below used instead.
         emptyTable: "Yangiliklar topilmadi",
         info: "_START_ dan _END_ gacha (_TOTAL_ ta yanglik)",
         infoEmpty: "0 dan 0 gacha (0 ta yanglik)",
@@ -1193,6 +1367,14 @@ endblock %} {% block additional_css %}
         { width: "60px", targets: [1] }, // ID column width
       ],
     });
+      }
+
+      // Start the init attempts
+      tryInit();
+    } catch (e) {
+      console.error('Failed to initialize DataTable', e);
+      // leave newsDataTable undefined so updateNewsTable can fallback to DOM rendering
+    }
   }
 
   // Load news data from server
@@ -1207,67 +1389,127 @@ endblock %} {% block additional_css %}
       CSRF_TOKEN
     );
 
-    // Show loading message
+    // Show loading message while we attempt to load data
     document.getElementById("newsTableBody").innerHTML =
       '<tr><td colspan="8" class="text-center">Yuklanmoqda...</td></tr>';
 
-    console.log("Making fetch request to /api/news/admin");
-    const url = "/api/news/admin?t=" + Date.now();
-    fetch(url, {
-      method: "GET",
-      headers: {
-        "X-CSRF-Token": typeof CSRF_TOKEN !== "undefined" ? CSRF_TOKEN : "",
-        "Cache-Control": "no-cache, no-store, must-revalidate",
-        Pragma: "no-cache",
-        Expires: "0",
-      },
-      cache: "no-store",
-      credentials: "same-origin",
-    })
-      .then((response) => {
-        console.log("API Response status:", response.status);
-        console.log("API Response headers:", response.headers);
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log("API Response data:", data);
-        if (data.success) {
-          console.log(
-            "News data loaded successfully, count:",
-            data.news ? data.news.length : 0
-          );
-          updateNewsTable(data.news || []);
-        } else {
-          console.error("API returned error:", data.message);
-          showNotification(
-            "Yangiliklar yuklanmadi: " + (data.message || "Noma'lum xatolik"),
-            "error"
-          );
-          document.getElementById("newsTableBody").innerHTML =
-            '<tr><td colspan="8" class="text-center text-danger">Ma\'lumotlar yuklanmadi: ' +
-            (data.message || "Xatolik") +
-            "</td></tr>";
+    // Fast path: try public JSON first (very likely present and fast)
+    fetch('/data/news.json', { cache: 'no-store' })
+      .then((r) => r.json())
+      .then((fallback) => {
+        try {
+          const fallbackNews = (fallback && fallback.news) || window.__INITIAL_NEWS__ || [];
+          if (fallbackNews && fallbackNews.length) {
+            console.log('Loaded news from /data/news.json, count:', fallbackNews.length);
+            updateNewsTable(fallbackNews);
+          }
+        } catch (e) {
+          console.warn('Failed to render /data/news.json fallback', e);
         }
       })
-      .catch((error) => {
-        console.error("Load news error:", error);
-        showNotification(
-          "Yangiliklar yuklanishida xatolik: " + error.message,
-          "error"
-        );
-        document.getElementById("newsTableBody").innerHTML =
-          '<tr><td colspan="8" class="text-center text-danger">Xatolik: ' +
-          error.message +
-          "</td></tr>";
+      .catch((e) => {
+        console.warn('Public JSON fallback not available or invalid:', e);
+      })
+      .finally(() => {
+        // Background refresh: try admin API (may provide more recent data if user is super_admin)
+        console.log('Attempting admin API refresh');
+        const url = "/api/news/admin?t=" + Date.now();
+        fetch(url, {
+          method: "GET",
+          headers: {
+            "X-CSRF-Token": typeof CSRF_TOKEN !== "undefined" ? CSRF_TOKEN : "",
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            Pragma: "no-cache",
+            Expires: "0",
+          },
+          cache: "no-store",
+          credentials: "same-origin",
+        })
+          .then((response) => {
+            console.log("API Response status:", response.status);
+            if (!response.ok) {
+              throw response;
+            }
+            return response.json();
+          })
+          .then((data) => {
+            console.log("API Response data:", data);
+            if (data && data.success) {
+              updateNewsTable(data.news || []);
+            } else {
+              console.warn('Admin API returned no data or error', data && data.message);
+            }
+          })
+          .catch((err) => {
+            console.warn('Admin API failed (will rely on public JSON):', err);
+            // If admin API fails and we have server-provided initial payload, ensure it's used
+            try {
+              if (window.__INITIAL_NEWS__ && window.__INITIAL_NEWS__.length) {
+                updateNewsTable(window.__INITIAL_NEWS__);
+              }
+            } catch (e2) {
+              console.error('Failed to render initial_news fallback', e2);
+            }
+          });
       });
   }
 
   // Update news table with data
   function updateNewsTable(newsItems) {
-    newsDataTable.clear();
+    // If DataTable is not initialized, render rows into the DOM first, then initialize DataTable
+    if (!newsDataTable || typeof newsDataTable.clear !== 'function') {
+      try {
+        const tbody = document.getElementById('newsTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        let activeCountF = 0, inactiveCountF = 0;
+        if (newsItems && newsItems.length) {
+          newsItems.forEach((item) => {
+            if (item.is_active) activeCountF++; else inactiveCountF++;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td><input type="checkbox" class="news-checkbox form-check-input" value="${item.id}" onchange="updateBulkActions()"/></td>
+              <td>${item.id}</td>
+              <td>${item.title || ''}</td>
+              <td>${item.type === 'advertisement' ? '<span class="news-type-advertisement"> Reklama</span>' : '<span class="news-type-news"> Yangilik</span>'}</td>
+              <td>${item.is_active ? '<span class="news-status-active"> Faol</span>' : '<span class="news-status-inactive"> Nofaol</span>'}</td>
+              <td>${item.display_order || 0}</td>
+              <td>${item.created_at ? new Date(item.created_at).toLocaleDateString('uz-UZ') : ''}</td>
+              <td>
+                <div class="news-actions">
+                  <button class="btn btn-toggle" onclick="toggleNews(${item.id})" title="Holatni o'zgartirish"><i class="bi bi-toggle-${item.is_active ? 'on' : 'off'}"></i></button>
+                  <button class="btn btn-edit" onclick="window.location.href='/admin/news/edit/${item.id}'" title="Tahrirlash"><i class="bi bi-pencil"></i></button>
+                  <button class="btn btn-delete" onclick="deleteNews(${item.id})" title="O'chirish"><i class="bi bi-trash"></i></button>
+                </div>
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+        } else {
+          tbody.innerHTML = '<tr><td colspan="8" class="text-center">Yangiliklar topilmadi</td></tr>';
+        }
+        document.getElementById('total-news').textContent = newsItems ? newsItems.length : 0;
+        document.getElementById('active-news').textContent = activeCountF;
+        document.getElementById('inactive-news').textContent = inactiveCountF;
+
+        // Now initialize DataTable on the populated table
+        try {
+          initializeDataTable();
+        } catch (initErr) {
+          console.warn('initializeDataTable failed after DOM render', initErr);
+        }
+        return;
+      } catch (domErr) {
+        console.error('Fallback DOM render failed', domErr);
+      }
+    }
+
+    // At this point DataTable exists and we can use API to update rows
+    try {
+      newsDataTable.clear();
+    } catch (e) {
+      console.error('Failed to clear DataTable', e);
+    }
 
     let activeCount = 0;
     let inactiveCount = 0;
@@ -1350,22 +1592,20 @@ endblock %} {% block additional_css %}
 
   // Edit news
   function editNews(newsId) {
-    // Get news data from server
-    getNewsDataById(newsId).then((newsData) => {
-      if (newsData) {
-        openNewsModal(newsData);
-        const modal = new bootstrap.Modal(document.getElementById("newsModal"));
-        modal.show();
-      } else {
-        showNotification("Yangilik ma'lumotlari topilmadi", "error");
-      }
-    });
+    // Redirect to full-page edit form for this news item
+    try {
+      window.location.href = '/admin/news/edit/' + newsId;
+    } catch (e) {
+      console.error('Failed to redirect to edit page', e);
+      showNotification("Tahrirlash sahifasiga o'tishda xatolik", "error");
+    }
   }
 
   // Get news data by ID (from current table data)
   function getNewsDataById(newsId) {
     return fetch(`/api/news/admin`, {
       method: "GET",
+      credentials: 'same-origin',
       headers: {
         "X-CSRF-Token": typeof CSRF_TOKEN !== "undefined" ? CSRF_TOKEN : "",
       },
@@ -1468,13 +1708,13 @@ endblock %} {% block additional_css %}
   }
 
   // Delete news with confirmation
-  var deleteNewsId = null;
 
   function confirmDelete() {
     if (!deleteNewsId) return;
 
     fetch(`/api/news/${deleteNewsId}`, {
       method: "DELETE",
+      credentials: 'same-origin',
       headers: {
         "X-CSRF-Token": typeof CSRF_TOKEN !== "undefined" ? CSRF_TOKEN : "",
       },
@@ -1505,6 +1745,7 @@ endblock %} {% block additional_css %}
   function toggleNews(newsId) {
     fetch(`/api/news/toggle/${newsId}`, {
       method: "POST",
+      credentials: 'same-origin',
       headers: {
         "X-CSRF-Token": typeof CSRF_TOKEN !== "undefined" ? CSRF_TOKEN : "",
       },
@@ -1636,6 +1877,7 @@ endblock %} {% block additional_css %}
   function exportNews(format) {
     fetch("/api/news/admin", {
       method: "GET",
+      credentials: 'same-origin',
       headers: {
         "X-CSRF-Token": typeof CSRF_TOKEN !== "undefined" ? CSRF_TOKEN : "",
       },
@@ -1711,5 +1953,61 @@ endblock %} {% block additional_css %}
     URL.revokeObjectURL(url);
     showNotification("CSV eksport muvaffaqiyatli yakunlandi", "success");
   }
+
+  // Expose commonly used handlers to global scope for inline handlers
+  try {
+    window.openNewsModal = openNewsModal;
+    window.saveNews = saveNews;
+    window.uploadMediaFile = uploadMediaFile;
+    window.removeMedia = removeMedia;
+    window.exportNews = exportNews;
+    window.confirmDelete = confirmDelete;
+    window.toggleNews = toggleNews;
+    window.deleteNews = deleteNews;
+    window.editNews = editNews;
+    window.toggleSelectAll = toggleSelectAll;
+    window.bulkToggle = bulkToggle;
+    window.bulkDelete = bulkDelete;
+  } catch (e) {
+    console.warn('Failed to bind admin handlers to window', e);
+  }
+
+  // Modal focus safety: ensure no element inside a hidden modal remains focused.
+  (function modalFocusSafety() {
+    try {
+      const modalEl = document.getElementById('newsModal');
+      if (!modalEl) return;
+
+      // Before showing, blur any currently focused element to avoid aria-hidden conflicts
+      modalEl.addEventListener('show.bs.modal', function () {
+        try {
+          if (document.activeElement && typeof document.activeElement.blur === 'function') {
+            document.activeElement.blur();
+          }
+        } catch (e) {}
+      });
+
+      // When hiding, if focus is inside the modal, blur it so ancestor aria-hidden won't block AT
+      modalEl.addEventListener('hide.bs.modal', function () {
+        try {
+          const active = document.activeElement;
+          if (active && modalEl.contains(active) && typeof active.blur === 'function') {
+            active.blur();
+          }
+        } catch (e) {}
+      });
+
+      // After fully hidden, ensure focus moved to body (or to a safe control) to avoid retained focus
+      modalEl.addEventListener('hidden.bs.modal', function () {
+        try {
+          if (document.body && typeof document.body.focus === 'function') {
+            document.body.focus();
+          }
+        } catch (e) {}
+      });
+    } catch (e) {
+      /* ignore */
+    }
+  })();
 </script>
 {% endblock %}

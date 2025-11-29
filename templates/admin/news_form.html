@@ -1,0 +1,568 @@
+{% extends "base.html" %} {% block title %}Yangilik qo'shish / Tahrirlash -
+Admin{% endblock %} {% block additional_css %}
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+  rel="stylesheet" />
+<style>
+  .form-page {
+    padding: 30px 0;
+  }
+  .form-card {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="form-page">
+  <div class="container">
+    <div class="form-card card">
+      <div
+        class="card-header d-flex justify-content-between align-items-center">
+        <h4 id="pageTitle">Yangilik qo'shish</h4>
+        <a href="{{ url_for('admin_news_manager') }}" class="btn btn-secondary"
+          >Ortga</a
+        >
+      </div>
+      <div class="card-body">
+        <form
+          id="newsFormPage"
+          method="POST"
+          action="{{ url_for('admin_news_save') }}">
+          <input type="hidden" id="newsId" name="news_id" />
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+
+          <div class="mb-3">
+            <label for="newsTitle" class="form-label"
+              >Sarlavha (Default) *</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              id="newsTitle"
+              name="title"
+              required
+              maxlength="200" />
+          </div>
+
+          <div class="mb-3">
+            <label for="newsContent" class="form-label">Matn (Default) *</label>
+            <textarea
+              class="form-control"
+              id="newsContent"
+              name="content"
+              rows="6"
+              maxlength="2000"></textarea>
+          </div>
+
+          <!-- Multi-language fields -->
+          <div class="mb-3">
+            <h5>Tillar</h5>
+            <div class="row">
+              <div class="col-md-6 mb-2">
+                <label for="newsTitle_uz" class="form-label"
+                  >Sarlavha (O'zbek)</label
+                >
+                <input
+                  type="text"
+                  id="newsTitle_uz"
+                  name="title_uz"
+                  class="form-control"
+                  maxlength="200" />
+              </div>
+              <div class="col-md-6 mb-2">
+                <label for="newsTitle_ru" class="form-label"
+                  >Sarlavha (Русский)</label
+                >
+                <input
+                  type="text"
+                  id="newsTitle_ru"
+                  name="title_ru"
+                  class="form-control"
+                  maxlength="200" />
+              </div>
+              <div class="col-md-6 mb-2">
+                <label for="newsTitle_en" class="form-label"
+                  >Sarlavha (English)</label
+                >
+                <input
+                  type="text"
+                  id="newsTitle_en"
+                  name="title_en"
+                  class="form-control"
+                  maxlength="200" />
+              </div>
+              <div class="col-md-6 mb-2">
+                <label for="newsTitle_kz" class="form-label"
+                  >Sarlavha (Қазақша)</label
+                >
+                <input
+                  type="text"
+                  id="newsTitle_kz"
+                  name="title_kz"
+                  class="form-control"
+                  maxlength="200" />
+              </div>
+            </div>
+
+            <div class="row mt-2">
+              <div class="col-md-6 mb-2">
+                <label for="newsContent_uz" class="form-label"
+                  >Matn (O'zbek)</label
+                >
+                <textarea
+                  id="newsContent_uz"
+                  name="content_uz"
+                  class="form-control"
+                  rows="3"
+                  maxlength="2000"></textarea>
+              </div>
+              <div class="col-md-6 mb-2">
+                <label for="newsContent_ru" class="form-label"
+                  >Matn (Русский)</label
+                >
+                <textarea
+                  id="newsContent_ru"
+                  name="content_ru"
+                  class="form-control"
+                  rows="3"
+                  maxlength="2000"></textarea>
+              </div>
+              <div class="col-md-6 mb-2">
+                <label for="newsContent_en" class="form-label"
+                  >Matn (English)</label
+                >
+                <textarea
+                  id="newsContent_en"
+                  name="content_en"
+                  class="form-control"
+                  rows="3"
+                  maxlength="2000"></textarea>
+              </div>
+              <div class="col-md-6 mb-2">
+                <label for="newsContent_kz" class="form-label"
+                  >Matn (Қазақша)</label
+                >
+                <textarea
+                  id="newsContent_kz"
+                  name="content_kz"
+                  class="form-control"
+                  rows="3"
+                  maxlength="2000"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="newsType" class="form-label">Turi</label>
+            <select class="form-control" id="newsType" name="type">
+              <option value="news">Yangilik</option>
+              <option value="advertisement">Reklama</option>
+            </select>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="newsDisplayOrder" class="form-label"
+                >Tartib raqami</label
+              >
+              <input
+                type="number"
+                class="form-control"
+                id="newsDisplayOrder"
+                name="display_order"
+                value="0"
+                min="0" />
+            </div>
+            <div class="col-md-6 mb-3">
+              <div class="form-check mt-3">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  id="newsIsActive"
+                  name="is_active"
+                  checked />
+                <label class="form-check-label" for="newsIsActive"
+                  >Faol (ko'rsatilsin)</label
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="newsImageFile" class="form-label">Rasm yuklash</label>
+            <input
+              type="file"
+              class="form-control"
+              id="newsImageFile"
+              accept="image/*"
+              onchange="uploadMediaFile('image')" />
+            <div class="mt-2">
+              <img
+                id="imagePreview"
+                class="news-media-preview"
+                style="display: none; max-width: 220px" />
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-danger"
+                id="removeImageBtn"
+                style="display: none"
+                onclick="removeMedia('image')">
+                <i class="bi bi-trash"></i> Rasmni olib tashlash
+              </button>
+            </div>
+            <input type="hidden" id="newsImageUrl" name="image_url" />
+          </div>
+
+          <div class="mb-3">
+            <label for="newsImagesFiles" class="form-label"
+              >Qo'shimcha rasmlar (bir nechta)</label
+            >
+            <input
+              type="file"
+              id="newsImagesFiles"
+              class="form-control"
+              accept="image/*"
+              multiple
+              onchange="uploadMultipleMediaFiles('image')" />
+            <input type="hidden" id="newsImagesJson" name="images_json" />
+            <div
+              id="additionalImagesPreview"
+              style="
+                margin-top: 8px;
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+              "></div>
+          </div>
+
+          <div class="mb-3">
+            <label for="newsVideoFile" class="form-label">Video yuklash</label>
+            <input
+              type="file"
+              class="form-control"
+              id="newsVideoFile"
+              accept="video/*"
+              onchange="uploadMediaFile('video')" />
+            <div class="mt-2">
+              <video
+                id="videoPreview"
+                class="news-media-preview"
+                style="display: none; max-width: 220px"
+                controls
+                muted></video>
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-danger"
+                id="removeVideoBtn"
+                style="display: none"
+                onclick="removeMedia('video')">
+                <i class="bi bi-trash"></i> Videoni olib tashlash
+              </button>
+            </div>
+            <input type="hidden" id="newsVideoUrl" name="video_url" />
+          </div>
+
+          <div class="mb-3">
+            <label for="newsVideosFiles" class="form-label"
+              >Qo'shimcha videolar (bir nechta)</label
+            >
+            <input
+              type="file"
+              id="newsVideosFiles"
+              class="form-control"
+              accept="video/*"
+              multiple
+              onchange="uploadMultipleMediaFiles('video')" />
+            <input type="hidden" id="newsVideosJson" name="videos_json" />
+            <div
+              id="additionalVideosPreview"
+              style="
+                margin-top: 8px;
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+              "></div>
+          </div>
+
+          <div class="mb-3">
+            <label for="newsYoutubeUrl" class="form-label"
+              >YouTube URL (ixtiyoriy)</label
+            >
+            <input
+              type="url"
+              id="newsYoutubeUrl"
+              name="youtube_url"
+              class="form-control"
+              placeholder="https://www.youtube.com/watch?v=..." />
+            <small class="form-text text-muted"
+              >YouTube havolasi bo'lsa, bu video fayl o'rniga
+              ishlatiladi.</small
+            >
+          </div>
+
+          <div class="mb-3">
+            <label for="newsYoutubeUrls" class="form-label"
+              >Qo'shimcha YouTube URL'lar (har bir qatorga bittadan)</label
+            >
+            <textarea
+              id="newsYoutubeUrls"
+              class="form-control"
+              rows="3"
+              placeholder="https://www.youtube.com/watch?v=...\nhttps://youtu.be/..."></textarea>
+            <small class="form-text text-muted"
+              >Har bir satrga bitta YouTube havolasini joylang.</small
+            >
+          </div>
+
+          <div class="d-flex justify-content-end gap-2">
+            <a
+              href="{{ url_for('admin_news_manager') }}"
+              class="btn btn-secondary"
+              >Bekor</a
+            >
+            <button type="button" class="btn btn-primary" id="saveNewsBtnPage">
+              Saqlash
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block scripts %}
+<script>
+  // Minimal helper: showNotification (copied from admin script)
+  function showNotification(message, type = 'info', duration = 5000) {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = 'top:20px; right:20px; z-index:9999; max-width:350px;';
+    notification.innerHTML = `${message} <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+    document.body.appendChild(notification);
+    setTimeout(() => { if (notification.parentNode) notification.remove(); }, duration);
+  }
+
+  // Save handler for full-page form
+  // Upload multiple images or videos, update hidden JSON input and show previews
+  async function uploadMultipleMediaFiles(kind) {
+    const input = document.getElementById(kind === 'image' ? 'newsImagesFiles' : 'newsVideosFiles');
+    if (!input || !input.files || input.files.length === 0) return;
+    const hidden = document.getElementById(kind === 'image' ? 'newsImagesJson' : 'newsVideosJson');
+    const preview = document.getElementById(kind === 'image' ? 'additionalImagesPreview' : 'additionalVideosPreview');
+    input.disabled = true;
+    const uploaded = [];
+    for (let i = 0; i < input.files.length; i++) {
+      const f = input.files[i];
+      const fd = new FormData();
+      fd.append('file', f);
+      try {
+        const res = await fetch('/admin/upload-news-media', { method: 'POST', body: fd, credentials: 'same-origin' });
+        if (!res.ok) throw new Error('Upload failed: ' + res.status);
+        const data = await res.json();
+        const url = data.file_url || data.url || data.path || '';
+        if (url) {
+          uploaded.push(url);
+          if (preview) {
+            if (kind === 'image') {
+              const img = document.createElement('img');
+              img.src = url; img.style.maxWidth = '180px'; img.style.margin = '6px'; img.alt = '';
+              preview.appendChild(img);
+            } else {
+              const vid = document.createElement('video');
+              vid.src = url; vid.controls = true; vid.style.maxWidth = '240px'; vid.style.margin = '6px';
+              preview.appendChild(vid);
+            }
+          }
+        }
+      } catch (err) {
+        console.error('uploadMultipleMediaFiles error', err);
+      }
+    }
+    // merge with existing JSON array
+    try {
+      const existing = hidden && hidden.value ? JSON.parse(hidden.value) : [];
+      const merged = existing.concat(uploaded);
+      if (hidden) hidden.value = JSON.stringify(merged);
+    } catch (e) {
+      if (hidden) hidden.value = JSON.stringify(uploaded);
+    }
+    input.value = '';
+    input.disabled = false;
+  }
+  window.uploadMultipleMediaFiles = uploadMultipleMediaFiles;
+
+  async function saveNewsPage() {
+    const saveBtn = document.getElementById('saveNewsBtnPage');
+    const originalText = saveBtn.innerHTML;
+    saveBtn.innerHTML = '<i class="spinner-border spinner-border-sm me-2"></i>Saqlanmoqda...';
+    saveBtn.disabled = true;
+
+    const newsId = document.getElementById('newsId').value;
+    const isEdit = !!newsId;
+    const url = isEdit ? `/api/news/${newsId}` : '/api/news';
+    const method = isEdit ? 'PUT' : 'POST';
+
+    const youtubeUrl = document.getElementById('newsYoutubeUrl').value.trim();
+    const computedVideoUrl = youtubeUrl || document.getElementById('newsVideoUrl').value.trim();
+
+    // Build arrays for multiple media
+    const imagesArr = [];
+    try {
+      const primary = (document.getElementById('newsImageUrl')||{}).value.trim();
+      if (primary) imagesArr.push(primary);
+      const addJson = (document.getElementById('newsImagesJson')||{}).value || '';
+      if (addJson) {
+        const parsed = JSON.parse(addJson || '[]');
+        if (Array.isArray(parsed)) parsed.forEach(u=>{ if(u) imagesArr.push(u); });
+      }
+    } catch(e){}
+
+    const videosArr = [];
+    try {
+      // include single video/url entries
+      const primaryVideo = (computedVideoUrl||'').trim();
+      if (primaryVideo) videosArr.push(primaryVideo);
+      const addJsonV = (document.getElementById('newsVideosJson')||{}).value || '';
+      if (addJsonV) {
+        const parsedV = JSON.parse(addJsonV || '[]');
+        if (Array.isArray(parsedV)) parsedV.forEach(u=>{ if(u) videosArr.push(u); });
+      }
+      // additional YouTube URLs from textarea (multi-line)
+      const extraY = (document.getElementById('newsYoutubeUrls')||{}).value || '';
+      if (extraY) {
+        extraY.split(/\r?\n/).map(s=>s.trim()).filter(s=>s).forEach(u=>videosArr.push(u));
+      }
+    } catch(e){}
+
+    const formData = {
+      title: document.getElementById('newsTitle').value.trim(),
+      content: document.getElementById('newsContent').value.trim(),
+      title_uz: document.getElementById('newsTitle_uz').value.trim(),
+      title_ru: document.getElementById('newsTitle_ru').value.trim(),
+      title_en: document.getElementById('newsTitle_en').value.trim(),
+      title_kz: document.getElementById('newsTitle_kz').value.trim(),
+      content_uz: document.getElementById('newsContent_uz').value.trim(),
+      content_ru: document.getElementById('newsContent_ru').value.trim(),
+      content_en: document.getElementById('newsContent_en').value.trim(),
+      content_kz: document.getElementById('newsContent_kz').value.trim(),
+      type: document.getElementById('newsType').value,
+      image_url: document.getElementById('newsImageUrl').value.trim(),
+      video_url: computedVideoUrl,
+      images: imagesArr,
+      videos: videosArr,
+      display_order: parseInt(document.getElementById('newsDisplayOrder').value) || 0,
+      is_active: document.getElementById('newsIsActive').checked
+    };
+
+    if (!formData.title) { showNotification('Sarlavha kiritilishi shart','error'); saveBtn.innerHTML = originalText; saveBtn.disabled=false; return; }
+
+    try {
+      const resp = await fetch(url, { method, credentials: 'same-origin', headers: { 'Content-Type':'application/json','X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : '' }, body: JSON.stringify(formData) });
+      const data = await resp.json();
+      if (data.success) {
+        showNotification(isEdit ? 'Yangilik yangilandi' : 'Yangilik qo'shildi','success');
+        window.location.href = '{{ url_for("admin_news_manager") }}';
+      } else {
+        showNotification('Xatolik: ' + (data.message || 'Noma\'lum'),'error');
+      }
+    } catch (e) { console.error(e); showNotification('Saqlashda xatolik yuz berdi','error'); }
+    finally { saveBtn.innerHTML = originalText; saveBtn.disabled=false; }
+  }
+
+  // uploadMediaFile and removeMedia copied minimal versions
+  window.uploadMediaFile = function(type) {
+    const fileInput = document.getElementById(type==='image'?'newsImageFile':'newsVideoFile');
+    const file = fileInput.files[0]; if (!file) return;
+    const preview = document.getElementById(type==='image'?'imagePreview':'videoPreview');
+    const removeBtn = document.getElementById(type==='image'?'removeImageBtn':'removeVideoBtn');
+    const hiddenInput = document.getElementById(type==='image'?'newsImageUrl':'newsVideoUrl');
+    const loadingDiv = document.createElement('div'); loadingDiv.className='text-center'; loadingDiv.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"></div> Yuklanmoqda...';
+    preview.parentNode.insertBefore(loadingDiv, preview);
+    const fd = new FormData(); fd.append('file', file);
+    fetch('/admin/upload-news-media',{ method:'POST', credentials: 'same-origin', headers: { 'X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : '' }, body: fd })
+      .then(r=>r.json()).then(data=>{ loadingDiv.remove(); if (data.success) { hiddenInput.value = data.file_url; preview.src = data.file_url; preview.style.display='block'; removeBtn.style.display='inline-block'; showNotification(data.message,'success'); } else { showNotification(data.message,'error'); } })
+      .catch(e=>{ loadingDiv.remove(); console.error(e); showNotification('Fayl yuklashda xatolik','error'); });
+  }
+  window.removeMedia = function(type) { const preview = document.getElementById(type==='image'?'imagePreview':'videoPreview'); const removeBtn = document.getElementById(type==='image'?'removeImageBtn':'removeVideoBtn'); const hiddenInput = document.getElementById(type==='image'?'newsImageUrl':'newsVideoUrl'); const fileInput = document.getElementById(type==='image'?'newsImageFile':'newsVideoFile'); preview.style.display='none'; preview.src=''; removeBtn.style.display='none'; hiddenInput.value=''; fileInput.value=''; showNotification('Media olib tashlandi','info'); }
+
+  // On page load, attach save handler and populate fields if server provided edit data
+  document.addEventListener('DOMContentLoaded', function() {
+    const editId = {{ edit_id|tojson }};
+    const serverEdit = {{ edit_news|tojson if edit_news is defined else 'null' }};
+    // Debug: show whether server provided the edit object (open DevTools Console)
+    try { console.log('serverEdit (from server):', serverEdit); } catch(e) {}
+    document.getElementById('saveNewsBtnPage').addEventListener('click', saveNewsPage);
+
+    if (serverEdit) {
+      // Server provided the news item; populate all fields immediately
+      const item = serverEdit;
+      document.getElementById('pageTitle').textContent = 'Yangilikni tahrirlash';
+      document.getElementById('newsId').value = item.id;
+      document.getElementById('newsTitle').value = item.title || '';
+      document.getElementById('newsContent').value = item.content || '';
+      document.getElementById('newsTitle_uz').value = item.title_uz || item.title || '';
+      document.getElementById('newsTitle_ru').value = item.title_ru || item.title || '';
+      document.getElementById('newsTitle_en').value = item.title_en || item.title || '';
+      document.getElementById('newsTitle_kz').value = item.title_kz || item.title || '';
+      document.getElementById('newsContent_uz').value = item.content_uz || item.content || '';
+      document.getElementById('newsContent_ru').value = item.content_ru || item.content || '';
+      document.getElementById('newsContent_en').value = item.content_en || item.content || '';
+      document.getElementById('newsContent_kz').value = item.content_kz || item.content || '';
+      document.getElementById('newsType').value = item.type || 'news';
+      document.getElementById('newsDisplayOrder').value = item.display_order || 0;
+      document.getElementById('newsIsActive').checked = !!item.is_active;
+      if (item.image_url) {
+        document.getElementById('newsImageUrl').value = item.image_url;
+        const p = document.getElementById('imagePreview');
+        p.src = item.image_url;
+        p.style.display = 'block';
+        document.getElementById('removeImageBtn').style.display = 'inline-block';
+      }
+      if (item.video_url) {
+        if ((item.video_url || '').includes('youtube') || (item.video_url || '').includes('youtu.be')) {
+          document.getElementById('newsYoutubeUrl').value = item.video_url;
+        } else {
+          document.getElementById('newsVideoUrl').value = item.video_url;
+          const v = document.getElementById('videoPreview');
+          v.src = item.video_url;
+          v.style.display = 'block';
+          document.getElementById('removeVideoBtn').style.display = 'inline-block';
+        }
+      }
+    } else if (editId) {
+      // Fallback: client-side fetch when server didn't provide the item (should be rare)
+      document.getElementById('pageTitle').textContent = 'Yangilikni tahrirlash';
+      fetch('/api/news/' + editId, { method: 'GET', credentials: 'same-origin', headers: { 'X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : '' } })
+        .then(r => r.json())
+        .then(data => {
+          if (data && data.success && data.news) {
+            const item = data.news;
+            document.getElementById('newsId').value = item.id;
+            document.getElementById('newsTitle').value = item.title || '';
+            document.getElementById('newsContent').value = item.content || '';
+            document.getElementById('newsTitle_uz').value = item.title_uz || item.title || '';
+            document.getElementById('newsTitle_ru').value = item.title_ru || item.title || '';
+            document.getElementById('newsTitle_en').value = item.title_en || item.title || '';
+            document.getElementById('newsTitle_kz').value = item.title_kz || item.title || '';
+            document.getElementById('newsContent_uz').value = item.content_uz || item.content || '';
+            document.getElementById('newsContent_ru').value = item.content_ru || item.content || '';
+            document.getElementById('newsContent_en').value = item.content_en || item.content || '';
+            document.getElementById('newsContent_kz').value = item.content_kz || item.content || '';
+            document.getElementById('newsType').value = item.type || 'news';
+            document.getElementById('newsDisplayOrder').value = item.display_order || 0;
+            document.getElementById('newsIsActive').checked = !!item.is_active;
+            if (item.image_url) { document.getElementById('newsImageUrl').value=item.image_url; const p=document.getElementById('imagePreview'); p.src=item.image_url; p.style.display='block'; document.getElementById('removeImageBtn').style.display='inline-block'; }
+            if (item.video_url) {
+              if (item.video_url.includes('youtube') || item.video_url.includes('youtu.be')) {
+                document.getElementById('newsYoutubeUrl').value = item.video_url;
+              } else {
+                document.getElementById('newsVideoUrl').value=item.video_url; const v=document.getElementById('videoPreview'); v.src=item.video_url; v.style.display='block'; document.getElementById('removeVideoBtn').style.display='inline-block';
+              }
+            }
+          } else {
+            showNotification('Yangilik ma\'lumotlarini olishda xatolik','error');
+          }
+        }).catch(e=>{ console.error(e); showNotification('Yangilik ma\'lumotlarini yuklashda xatolik','error'); });
+    }
+  });
+</script>
+{% endblock %}
