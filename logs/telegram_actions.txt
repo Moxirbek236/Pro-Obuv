@@ -682,3 +682,6 @@ saind
 2025-11-28 18:37:39 | ACTION | incoming_message | user:tg:1656193663 | спецодежда
 2025-11-28 18:37:40 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
 2025-11-28 18:37:41 | ACTION | incoming_message | user:tg:1656193663 | спецобувь
+2025-11-29 16:03:23 | ACTION | incoming_message | user:tg:1656193663 | salom
+2025-11-29 16:03:25 | ACTION | incoming_message | user:tg:1656193663 | slaom
+2025-11-29 16:03:35 | ACTION | incoming_message | user:tg:1656193663 | спецобувь

@@ -2134,6 +2134,13 @@ def after_request(response):
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["X-Frame-Options"] = "DENY"
         response.headers["X-XSS-Protection"] = "1; mode=block"
+        # Allow certain cross-origin popups/postMessage flows (Google Identity,
+        # third-party auth widgets) to function while keeping a sane default.
+        # Using `same-origin-allow-popups` permits popups to open and communicate
+        # back to the opener via postMessage which some identity providers rely on.
+        # If your deployment environment or proxy already sets COOP, this will
+        # not overwrite the preexisting header.
+        response.headers.setdefault('Cross-Origin-Opener-Policy', 'same-origin-allow-popups')
 
         # Cache headers faqat static files uchun emas
         if not request.path.startswith("/static/"):

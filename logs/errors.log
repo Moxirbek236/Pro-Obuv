@@ -1917,3 +1917,19 @@ MemoryError
 2025-11-28 22:37:30,876 | ERROR | restaurant_app | get_connection:2319 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
 2025-11-28 22:37:31,377 | ERROR | restaurant_app | get_connection:2319 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
 2025-11-28 22:37:31,377 | ERROR | restaurant_app | execute_query:2773 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-11-29 21:03:23,525 | ERROR | restaurant_app | get_connection:2319 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-29 21:03:24,027 | ERROR | restaurant_app | get_connection:2319 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-29 21:03:24,528 | ERROR | restaurant_app | get_connection:2319 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-29 21:03:24,529 | ERROR | restaurant_app | execute_query:2773 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-11-29 21:03:24,537 | ERROR | restaurant_app | get_connection:2319 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-29 21:03:25,038 | ERROR | restaurant_app | get_connection:2319 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-29 21:03:25,540 | ERROR | restaurant_app | get_connection:2319 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-29 21:03:25,541 | ERROR | restaurant_app | execute_query:2773 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-11-29 21:03:25,776 | ERROR | restaurant_app | get_connection:2319 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-29 21:03:26,277 | ERROR | restaurant_app | get_connection:2319 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-29 21:03:26,779 | ERROR | restaurant_app | get_connection:2319 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-29 21:03:26,780 | ERROR | restaurant_app | execute_query:2773 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-11-29 21:03:26,781 | ERROR | restaurant_app | get_connection:2319 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-29 21:03:27,283 | ERROR | restaurant_app | get_connection:2319 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-29 21:03:27,784 | ERROR | restaurant_app | get_connection:2319 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-29 21:03:27,785 | ERROR | restaurant_app | execute_query:2773 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...

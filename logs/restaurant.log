@@ -1609,3 +1609,50 @@ MemoryError
 2025-11-29 14:28:42,769 | WARNING | restaurant_app | not_found_error:1741 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
 2025-11-29 14:33:02,962 | WARNING | restaurant_app | not_found_error:1741 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
 2025-11-29 14:33:02,962 | WARNING | restaurant_app | not_found_error:1741 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-11-29 21:03:23,525 | ERROR | restaurant_app | get_connection:2319 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-29 21:03:23,526 | WARNING | restaurant_app | execute_query:2767 | Query execution failed, retrying (attempt 1): NOT NULL constraint failed: chat_messages.chat_id
+2025-11-29 21:03:24,027 | ERROR | restaurant_app | get_connection:2319 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-29 21:03:24,028 | WARNING | restaurant_app | execute_query:2767 | Query execution failed, retrying (attempt 2): NOT NULL constraint failed: chat_messages.chat_id
+2025-11-29 21:03:24,528 | ERROR | restaurant_app | get_connection:2319 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-29 21:03:24,529 | ERROR | restaurant_app | execute_query:2773 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-11-29 21:03:24,537 | ERROR | restaurant_app | get_connection:2319 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-29 21:03:24,538 | WARNING | restaurant_app | execute_query:2767 | Query execution failed, retrying (attempt 1): NOT NULL constraint failed: chat_messages.chat_id
+2025-11-29 21:03:25,038 | ERROR | restaurant_app | get_connection:2319 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-29 21:03:25,039 | WARNING | restaurant_app | execute_query:2767 | Query execution failed, retrying (attempt 2): NOT NULL constraint failed: chat_messages.chat_id
+2025-11-29 21:03:25,540 | ERROR | restaurant_app | get_connection:2319 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-29 21:03:25,541 | ERROR | restaurant_app | execute_query:2773 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-11-29 21:03:25,776 | ERROR | restaurant_app | get_connection:2319 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-29 21:03:25,776 | WARNING | restaurant_app | execute_query:2767 | Query execution failed, retrying (attempt 1): NOT NULL constraint failed: chat_messages.chat_id
+2025-11-29 21:03:26,277 | ERROR | restaurant_app | get_connection:2319 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-29 21:03:26,278 | WARNING | restaurant_app | execute_query:2767 | Query execution failed, retrying (attempt 2): NOT NULL constraint failed: chat_messages.chat_id
+2025-11-29 21:03:26,779 | ERROR | restaurant_app | get_connection:2319 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-29 21:03:26,780 | ERROR | restaurant_app | execute_query:2773 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-11-29 21:03:26,781 | ERROR | restaurant_app | get_connection:2319 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-29 21:03:26,782 | WARNING | restaurant_app | execute_query:2767 | Query execution failed, retrying (attempt 1): NOT NULL constraint failed: chat_messages.chat_id
+2025-11-29 21:03:27,283 | ERROR | restaurant_app | get_connection:2319 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-29 21:03:27,284 | WARNING | restaurant_app | execute_query:2767 | Query execution failed, retrying (attempt 2): NOT NULL constraint failed: chat_messages.chat_id
+2025-11-29 21:03:27,784 | ERROR | restaurant_app | get_connection:2319 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-11-29 21:03:27,785 | ERROR | restaurant_app | execute_query:2773 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-12-02 12:27:52,418 | WARNING | restaurant_app | not_found_error:1741 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-12-02 12:28:07,983 | WARNING | restaurant_app | not_found_error:1741 | 404 Error: http://127.0.0.1:5000/static/icons/logo-compact.webp
+2025-12-02 12:28:33,294 | WARNING | restaurant_app | not_found_error:1741 | 404 Error: http://127.0.0.1:5000/static/uploads/avatar_f5cb07487d084999868fe158cf41e313.jpg
+2025-12-02 12:28:52,156 | WARNING | restaurant_app | login_page:13712 | Failed login attempt for email: nasimjonnasimjon46@gmail.com
+2025-12-02 12:28:56,948 | WARNING | restaurant_app | not_found_error:1741 | 404 Error: http://127.0.0.1:5000/static/uploads/avatar_f5cb07487d084999868fe158cf41e313.jpg
+2025-12-02 12:29:24,511 | WARNING | restaurant_app | not_found_error:1741 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-02 12:30:13,404 | WARNING | restaurant_app | not_found_error:1741 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-02 12:30:15,259 | WARNING | restaurant_app | not_found_error:1741 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-02 12:30:15,466 | WARNING | restaurant_app | not_found_error:1741 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-12-02 12:30:22,138 | WARNING | restaurant_app | not_found_error:1741 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-02 12:30:22,913 | WARNING | restaurant_app | not_found_error:1741 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-12-02 12:30:58,140 | WARNING | restaurant_app | not_found_error:1741 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-02 12:34:00,607 | WARNING | restaurant_app | not_found_error:1741 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-02 12:34:02,074 | WARNING | restaurant_app | not_found_error:1741 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-12-02 12:34:07,839 | WARNING | restaurant_app | not_found_error:1741 | 404 Error: http://127.0.0.1:5000/auth/google
+2025-12-02 12:34:29,922 | WARNING | restaurant_app | not_found_error:1741 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-02 12:34:38,597 | WARNING | restaurant_app | not_found_error:1741 | 404 Error: http://127.0.0.1:5000/auth/google
+2025-12-02 12:36:47,690 | WARNING | restaurant_app | not_found_error:1741 | 404 Error: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-02 12:36:49,215 | WARNING | restaurant_app | not_found_error:1741 | 404 Error: http://127.0.0.1:5000/favicon.ico
+2025-12-02 12:36:58,014 | WARNING | restaurant_app | not_found_error:1741 | 404 Error: http://127.0.0.1:5000/auth/google
+2025-12-02 12:40:07,681 | WARNING | restaurant_app | not_found_error:1741 | 404 Error: http://127.0.0.1:5000/auth/google
+2025-12-02 12:41:40,902 | WARNING | restaurant_app | not_found_error:1741 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-02 12:41:43,199 | WARNING | restaurant_app | not_found_error:1741 | 404 Error: http://localhost:5000/favicon.ico

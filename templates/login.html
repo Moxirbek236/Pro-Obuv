@@ -65,6 +65,10 @@
         <button type="submit" class="btn btn-login">Kirish</button>
       </form>
 
+      <div class="text-center mt-3">
+        <div id="g_id_signin"></div>
+      </div>
+
       <div class="text-center mt-2">
         <a href="{{ url_for('forgot') }}">Parolni unutdingiz?</a>
       </div>
@@ -81,5 +85,64 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Initialize Google Sign-In when the GSI client script has loaded
+      function handleCredentialResponse(response) {
+        if (!response || !response.credential) return;
+        fetch('/auth/google', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id_token: response.credential })
+        }).then(r => r.json()).then(data => {
+          if (data && data.success) {
+            window.location = data.next || '/';
+          } else {
+            alert('Google login failed: ' + (data && data.message || ''));
+          }
+        }).catch(e => { console.error(e); alert('Google login error'); });
+      }
+
+      function initGoogleSignIn() {
+        try {
+          if (!window.google || !google.accounts || !google.accounts.id) {
+            console.warn('Google Identity script not available yet');
+            return;
+          }
+          const CLIENT_ID = '129732978754-8tuaicuscmuhjq9n58arm710i7ojshuo.apps.googleusercontent.com';
+          google.accounts.id.initialize({ client_id: CLIENT_ID, callback: handleCredentialResponse });
+          google.accounts.id.renderButton(document.getElementById('g_id_signin'), { theme: 'outline', size: 'large' });
+        } catch (e) {
+          console.warn('Google Sign-In init failed', e);
+        }
+      }
+
+      // Load GSI script dynamically and call init on load to ensure availability
+      (function loadGsi(){
+        var s = document.createElement('script');
+        s.src = 'https://accounts.google.com/gsi/client';
+        s.async = true; s.defer = true;
+        s.onload = function(){ initGoogleSignIn(); };
+        s.onerror = function(){ console.warn('Failed to load Google Identity Services script'); };
+        document.head.appendChild(s);
+        // Also try init after DOM ready in case script is cached
+        document.addEventListener('DOMContentLoaded', function(){ setTimeout(initGoogleSignIn, 50); });
+      })();
+    </script>
+          google.accounts.id.initialize({
+            client_id: CLIENT_ID,
+            callback: handleCredentialResponse,
+          });
+          google.accounts.id.renderButton(
+            document.getElementById("g_id_signin"),
+            { theme: "outline", size: "large" }
+          );
+          // Optionally enable auto select/one-tap by calling prompt()
+          // google.accounts.id.prompt();
+        } catch (e) {
+          console.warn("Google Sign-In init failed", e);
+        }
+      });
+    </script>
   </body>
 </html>
