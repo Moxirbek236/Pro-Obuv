@@ -109,7 +109,7 @@
             console.warn('Google Identity script not available yet');
             return;
           }
-          const CLIENT_ID = '129732978754-8tuaicuscmuhjq9n58arm710i7ojshuo.apps.googleusercontent.com';
+          const CLIENT_ID = '{{ GOOGLE_CLIENT_ID }}';
           google.accounts.id.initialize({ client_id: CLIENT_ID, callback: handleCredentialResponse });
           google.accounts.id.renderButton(document.getElementById('g_id_signin'), { theme: 'outline', size: 'large' });
         } catch (e) {
@@ -125,24 +125,8 @@
         s.onload = function(){ initGoogleSignIn(); };
         s.onerror = function(){ console.warn('Failed to load Google Identity Services script'); };
         document.head.appendChild(s);
-        // Also try init after DOM ready in case script is cached
-        document.addEventListener('DOMContentLoaded', function(){ setTimeout(initGoogleSignIn, 50); });
       })();
     </script>
-          google.accounts.id.initialize({
-            client_id: CLIENT_ID,
-            callback: handleCredentialResponse,
-          });
-          google.accounts.id.renderButton(
-            document.getElementById("g_id_signin"),
-            { theme: "outline", size: "large" }
-          );
-          // Optionally enable auto select/one-tap by calling prompt()
-          // google.accounts.id.prompt();
-        } catch (e) {
-          console.warn("Google Sign-In init failed", e);
-        }
-      });
     </script>
   </body>
 </html>

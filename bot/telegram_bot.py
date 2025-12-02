@@ -289,31 +289,38 @@ def send_operator_reply(client_key: str, text: str, operator_name: str = "Operat
         log_error(e, f"send_operator_reply client_key={client_key}")
 
 
-# Prefer environment variable, but fallback to the token you provided so the
-# bot can run without setting env when testing locally. For production, set
-# TELEGRAM_BOT_TOKEN in environment and remove the hardcoded fallback.
+# Prefer environment variable for the Flask app base URL. Allow multiple
+# environment variable names for backwards compatibility and override.
 TELEGRAM_TOKEN = os.environ.get(
     "TELEGRAM_BOT_TOKEN", "8443912951:AAF-1gKuqQv0b0BQw_KOPCS85gYZk-n10V4"
 )
 
-# FLASK_APP_URL should be set in environment; default to safety.uz if missing.
-FLASK_APP_URL = (os.environ.get("FLASK_APP_URL") or "").strip()
-# If no FLASK_APP_URL provided, prefer a local dev server if reachable, otherwise
-# fall back to the production default. This helps local runs where the app is
-# started together with the bot (no external URL needed).
+# Try several env var names (set in hosting) before falling back to sensible
+# defaults. If running locally together with the Flask app, the probe below
+# will detect a local server and use it. In production we prefer the public
+# site URL rather than defaulting to localhost which often isn't reachable.
+FLASK_APP_URL = (
+    os.environ.get("FLASK_APP_URL")
+    or os.environ.get("BOT_API_BASE")
+    or os.environ.get("API_BASE")
+    or ""
+).strip()
+
 if not FLASK_APP_URL:
     try:
-        # probe local Flask default address quickly
+        # Quick local probe to see if a dev Flask server is running alongside
+        # the bot (useful for development). Non-blocking and short timeout.
         _probe = requests.get("http://127.0.0.1:5000/api/chat/ai", timeout=0.8)
-        # If we get any 200-range or 405/501 (method not allowed, etc.), assume local server exists
         if _probe is not None and (_probe.status_code // 100) in (2, 4, 5):
             FLASK_APP_URL = "http://127.0.0.1:5000"
     except Exception:
-        # no local server detected; fall back to configured env var or default
-        # Local development uchun default localhost
-        FLASK_APP_URL = os.environ.get("FLASK_APP_URL", "http://127.0.0.1:5000")
-else:
-    FLASK_APP_URL = FLASK_APP_URL
+        # No local server detected; fall back to the public site URL so the
+        # bot can still reach the app when deployed (change via env var).
+        FLASK_APP_URL = os.environ.get("FLASK_APP_URL") or os.environ.get("BOT_API_BASE") or "https://safety.uz"
+
+# Normalize (ensure no trailing slash)
+FLASK_APP_URL = FLASK_APP_URL.rstrip("/")
+LOG.info("Using FLASK_APP_URL for API calls: %s", FLASK_APP_URL)
 
 
 async def _send_main_keyboard(update: "Update"):

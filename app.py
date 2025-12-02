@@ -228,6 +228,12 @@ try:
 except Exception:
     pass
 
+# Expose configured Google client id to templates so client and server use the same value
+try:
+    app.jinja_env.globals.update(GOOGLE_CLIENT_ID=os.environ.get('GOOGLE_CLIENT_ID', '129732978754-8tuaicuscmuhjq9n58arm710i7ojshuo.apps.googleusercontent.com'))
+except Exception:
+    pass
+
 
 @app.after_request
 def _set_static_cache_headers(response):
