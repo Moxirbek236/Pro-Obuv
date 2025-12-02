@@ -13662,6 +13662,85 @@ def login():
         return redirect(url_for("login_page"))
 
 
+@app.route('/favicon.ico')
+def favicon_redirect():
+    # Some browsers still request /favicon.ico even when a link tag is present.
+    # Redirect to the static favicon path used by templates to avoid 404s.
+    try:
+        return redirect(url_for('static', filename='favicons/favicon.ico'))
+    except Exception:
+        # Fallback: serve a 204 (no content) instead of 404 to reduce noise.
+        return ('', 204)
+
+
+@app.route('/auth/google', methods=['POST'])
+def auth_google():
+    """Handle Google Identity credential POST from the client.
+
+    Expects JSON body like {"credential": "<ID_TOKEN>"} or form-encoded.
+    Verifies via Google's tokeninfo endpoint and logs in/creates the user.
+    """
+    try:
+        token = None
+        if request.is_json:
+            token = (request.get_json(silent=True) or {}).get('credential')
+        if not token:
+            token = request.form.get('credential') or request.values.get('credential')
+
+        if not token:
+            return jsonify({'success': False, 'error': 'missing_token'}), 400
+
+        # Validate token with Google
+        # Prefer configured client id, fallback to known dev id if absent
+        GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '129732978754-8tuaicuscmuhjq9n58arm710i7ojshuo.apps.googleusercontent.com')
+        try:
+            resp = requests.get(f'https://oauth2.googleapis.com/tokeninfo?id_token={token}', timeout=6)
+            if not resp.ok:
+                return jsonify({'success': False, 'error': 'token_invalid'}), 401
+            info = resp.json() or {}
+        except Exception as e:
+            app_logger.exception('Google tokeninfo call failed')
+            return jsonify({'success': False, 'error': 'tokeninfo_failed'}), 500
+
+        # Ensure audience matches
+        aud = info.get('aud') or info.get('audience')
+        if not aud or str(aud) != str(GOOGLE_CLIENT_ID):
+            return jsonify({'success': False, 'error': 'invalid_audience'}), 403
+
+        # Extract user info
+        email = info.get('email')
+        name = info.get('name') or ''
+        sub = info.get('sub')  # Google user id
+
+        if not email:
+            return jsonify({'success': False, 'error': 'no_email'}), 400
+
+        # Find or create user (minimal): lookup by email
+        try:
+            existing = execute_query('SELECT * FROM users WHERE email = ?', (email,), fetch_one=True)
+            if existing:
+                user = dict(existing)
+                # perform secure session login helper if available
+                session['user_id'] = user.get('id')
+                session['user_email'] = email
+            else:
+                # Insert a new user record (lightweight)
+                now = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+                execute_query('INSERT INTO users (email, name, created_at) VALUES (?, ?, ?)', (email, name, now))
+                # reload user id
+                new_u = execute_query('SELECT * FROM users WHERE email = ?', (email,), fetch_one=True)
+                if new_u:
+                    session['user_id'] = dict(new_u).get('id')
+                    session['user_email'] = email
+        except Exception as e:
+            app_logger.exception('Failed to create/find user for google login')
+
+        return jsonify({'success': True})
+    except Exception as e:
+        app_logger.exception('auth_google error')
+        return jsonify({'success': False, 'error': 'internal_error'}), 500
+
+
 @app.route("/login_page", methods=["GET", "POST"])
 def login_page():
     if request.method == "POST":
