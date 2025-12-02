@@ -200,6 +200,41 @@ def log_error(err: Exception, context: str = ""):
         LOG.exception("Failed to write error log")
 
 
+def api_post(path: str, json: dict = None, timeout: int = 10, retries: int = 3):
+    """Helper to POST to the Flask app API using the configured FLASK_APP_URL.
+
+    - Composes the full URL from `FLASK_APP_URL` and `path`.
+    - Retries on connection errors with small backoff.
+    - Returns the `requests.Response` or `None` on failure.
+    """
+    try:
+        if not FLASK_APP_URL:
+            LOG.debug("api_post: FLASK_APP_URL not configured")
+            return None
+
+        # Ensure leading slash
+        if not path.startswith("/"):
+            path = "/" + path
+        url = FLASK_APP_URL.rstrip("/") + path
+
+        for attempt in range(1, max(1, int(retries)) + 1):
+            try:
+                r = requests.post(url, json=json, timeout=timeout)
+                return r
+            except Exception as e:
+                # Log and retry briefly for transient network issues
+                log_error(e, f"api_post error url={url} attempt={attempt}")
+                if attempt < retries:
+                    try:
+                        time.sleep(0.4 * attempt)
+                    except Exception:
+                        pass
+        return None
+    except Exception as e:
+        log_error(e, f"api_post fatal for path={path}")
+        return None
+
+
 async def _send_text_to_telegram(chat_id: int, text: str) -> None:
     """Yordamchi: bitta text xabarni Telegram foydalanuvchisiga yuborish.  
 
@@ -316,7 +351,7 @@ if not FLASK_APP_URL:
     except Exception:
         # No local server detected; fall back to the public site URL so the
         # bot can still reach the app when deployed (change via env var).
-        FLASK_APP_URL = os.environ.get("FLASK_APP_URL") or os.environ.get("BOT_API_BASE") or "https://safety.uz"
+        FLASK_APP_URL = os.environ.get("FLASK_APP_URL") or os.environ.get("BOT_API_BASE") or "https://www.safety.uz"
 
 # Normalize (ensure no trailing slash)
 FLASK_APP_URL = FLASK_APP_URL.rstrip("/")
@@ -876,14 +911,13 @@ async def handle_message(update: "Update", context: "ContextTypes.DEFAULT_TYPE")
             # source va sender maydonlarini to'g'ri o'rnatamiz
             payload["source"] = "telegram"
             try:
-                r = requests.post(
-                    FLASK_APP_URL.rstrip("/") + "/api/operator-chat/user/send",
-                    json=payload,
-                    timeout=10,
-                )
+                r = api_post("/api/operator-chat/user/send", json=payload, timeout=10, retries=3)
                 if r is not None and r.ok:
-                    j = r.json() or {}
-                    ack = j.get("message") or "Xabar operatorga yuborildi."
+                    try:
+                        j = r.json() or {}
+                        ack = j.get("message") or "Xabar operatorga yuborildi."
+                    except Exception:
+                        ack = "Xabar operatorga yuborildi."
                 else:
                     ack = "Xabar operatorga yuborildi."
             except Exception as e:
@@ -899,19 +933,13 @@ async def handle_message(update: "Update", context: "ContextTypes.DEFAULT_TYPE")
             try:
                 # best-effort log of inbound (ai_respond + log uchun)
                 try:
-                    requests.post(
-                        FLASK_APP_URL.rstrip("/") + "/api/chat/receive",
-                        json=payload,
-                        timeout=4,
-                    )
+                    api_post("/api/chat/receive", json=payload, timeout=4, retries=1)
                 except Exception as e:
                     LOG.exception("chat/receive POST failed")
                     log_error(e, "chat/receive POST failed")
 
                 # Call Uzbek AI endpoint and reply back to user
-                ai_r = requests.post(
-                    FLASK_APP_URL.rstrip("/") + "/api/chat/ai", json=payload, timeout=10
-                )
+                ai_r = api_post("/api/chat/ai", json=payload, timeout=10, retries=3)
                 ai_text = ""
                 ai_j = {}
                 if ai_r is not None and ai_r.status_code == 200:
