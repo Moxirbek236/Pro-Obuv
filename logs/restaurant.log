@@ -1656,3 +1656,4 @@ MemoryError
 2025-12-02 12:40:07,681 | WARNING | restaurant_app | not_found_error:1741 | 404 Error: http://127.0.0.1:5000/auth/google
 2025-12-02 12:41:40,902 | WARNING | restaurant_app | not_found_error:1741 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
 2025-12-02 12:41:43,199 | WARNING | restaurant_app | not_found_error:1741 | 404 Error: http://localhost:5000/favicon.ico
+2025-12-02 12:41:47,325 | WARNING | restaurant_app | not_found_error:1741 | 404 Error: http://localhost:5000/auth/google
