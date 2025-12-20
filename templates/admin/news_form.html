@@ -331,6 +331,10 @@ Admin{% endblock %} {% block additional_css %}
 </div>
 {% endblock %} {% block scripts %}
 <script>
+  // CSRF token for AJAX requests
+  const CSRF_TOKEN = '{{ csrf_token }}';
+</script>
+<script>
   // Minimal helper: showNotification (copied from admin script)
   function showNotification(message, type = 'info', duration = 5000) {
     const notification = document.createElement('div');
@@ -434,6 +438,7 @@ Admin{% endblock %} {% block additional_css %}
     } catch(e){}
 
     const formData = {
+      csrf_token: CSRF_TOKEN,
       title: document.getElementById('newsTitle').value.trim(),
       content: document.getElementById('newsContent').value.trim(),
       title_uz: document.getElementById('newsTitle_uz').value.trim(),
@@ -490,7 +495,16 @@ Admin{% endblock %} {% block additional_css %}
     const serverEdit = {{ edit_news|tojson if edit_news is defined else 'null' }};
     // Debug: show whether server provided the edit object (open DevTools Console)
     try { console.log('serverEdit (from server):', serverEdit); } catch(e) {}
-    document.getElementById('saveNewsBtnPage').addEventListener('click', saveNewsPage);
+    document.getElementById('saveNewsBtnPage').addEventListener('click', function() {
+      console.log('Save button clicked');
+      saveNewsPage();
+    });
+
+    // Prevent form submission on enter key or accidental submit
+    document.getElementById('newsFormPage').addEventListener('submit', function(e) {
+      e.preventDefault();
+      saveNewsPage();
+    });
 
     if (serverEdit) {
       // Server provided the news item; populate all fields immediately

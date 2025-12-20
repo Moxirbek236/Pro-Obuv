@@ -56,117 +56,9 @@
   ]
 }
 </script>
-<style>
-  /* Enforce strict, predictable grid breakpoints requested by product owner:
-     phone = 1 column (default/mobile-first)
-     tablet = 2 columns (>=576px)
-     laptop = 3 columns (>=992px)
-     tv/large = 4 columns (>=1400px)
-  */
-  .menu-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
-    padding: 0;
-    max-width: none;
-  }
 
-  @media (min-width: 576px) {
-    .menu-grid {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 22px;
-    }
-  }
-
-  @media (min-width: 992px) {
-    .menu-grid {
-      grid-template-columns: repeat(3, 1fr);
-      gap: 28px;
-    }
-  }
-
-  @media (min-width: 1400px) {
-    .menu-grid {
-      grid-template-columns: repeat(4, 1fr);
-      gap: 32px;
-    }
-  }
-
-  /* Card image heights - responsive but consistent */
-  .menu-item-card .card-image {
-    height: 300px;
-    overflow: hidden;
-  }
-  @media (min-width: 992px) {
-    .menu-item-card .card-image {
-      height: 420px;
-    }
-  }
-  @media (min-width: 1400px) {
-    .menu-item-card .card-image {
-      height: 480px;
-    }
-  }
-
-  /* Rating star visuals */
-  .card-rating .stars .star {
-    color: #dcdcdc;
-    font-size: 18px;
-    display: inline-block;
-    margin-right: 2px;
-  }
-  .card-rating .stars .star.filled {
-    color: #ffd700;
-  }
-
-  /* Quantity controls (visible on cards) */
-  .qty-controls {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .qty-controls .qty-input {
-    width: 56px;
-    text-align: center;
-    border: 1px solid #e2e8f0;
-    border-radius: 6px;
-    padding: 6px;
-  }
-  .qty-controls .qty-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 6px;
-    border: 1px solid #e2e8f0;
-    background: #fff;
-    cursor: pointer;
-  }
-
-  /* Small screens tweaks */
-  @media (max-width: 480px) {
-    .menu-item-card .card-image {
-      height: 200px;
-    }
-    .card-title {
-      font-size: 14px;
-    }
-    .card-category {
-      font-size: 12px;
-    }
-    .qty-controls .qty-btn {
-      width: 32px;
-      height: 32px;
-    }
-  }
-
-  /* Ensure add-to-cart button sizing remains usable on phones */
-  @media (max-width: 767px) {
-    .btn-add-cart {
-      width: 46px;
-      height: 46px;
-    }
-  }
-</style>
-{% endblock %} {% block content %}
+{% endblock %}{% block content %}
+{% include 'components/hero_slider.html' %}
 
 <div class="menu-container">
   <div class="main-content">
@@ -183,58 +75,6 @@
       <div class="filter-section">
         <label for="menuSearchInput">Qidirish</label>
         <!-- Early showCategory function to avoid "before init" warnings -->
-        <script>
-          try {
-            if (typeof window !== 'undefined' && typeof window.showCategory !== 'function') {
-              window.showCategory = function (event, category) {
-                try {
-                  // support both signatures
-                  if (typeof event === 'string' && (category === undefined || category === null)) {
-                    category = event; event = null;
-                  }
-                  
-                  console.log('showCategory called (early version):', category);
-                  
-                  // Update button active state
-                  const buttons = document.querySelectorAll('.category-btn');
-                  buttons.forEach(btn => btn.classList.remove('active'));
-                  
-                  // Find and activate the correct button
-                  const targetButton = Array.from(buttons).find(btn => {
-                    const btnCat = btn.getAttribute('data-cat') || 'all';
-                    return btnCat === category;
-                  });
-                  if (targetButton) {
-                    targetButton.classList.add('active');
-                  }
-                  
-                  // Update select dropdown
-                  const select = document.getElementById('filterCategory');
-                  if (select) {
-                    select.value = category === 'all' ? '' : (category || '');
-                    // trigger change to reuse wiring later
-                    try { select.dispatchEvent(new Event('change', { bubbles: true })); } catch (e) { /* ignore */ }
-                  }
-                  
-                  // Show/hide items directly
-                  const norm = String(category || 'all').toLowerCase().replace(/\s+/g,'');
-                  const items = document.querySelectorAll('.menu-item-card');
-                  items.forEach(item => {
-                    const ic = (item.dataset.category || '').toLowerCase().replace(/\s+/g,'');
-                    item.style.display = (norm === 'all' || ic === norm) ? 'block' : 'none';
-                  });
-                  
-                  // Trigger search if available
-                  if (typeof debouncedSearch === 'function') {
-                    try { debouncedSearch(); } catch (e) { /* ignore */ }
-                  }
-                  
-                } catch (err) { console.warn('showCategory early version failed', err); }
-              };
-            }
-          } catch (e) { /* ignore */ }
-        </script>
-
         <!-- Diagnostic/wiring helper: prints status and re-wires category buttons & search input -->
         <script>
           // Defer diagnostics/wiring until DOMContentLoaded so we don't reference
@@ -398,74 +238,8 @@
           <option value="navy" data-color="#000080">{{ _('colors.navy') }}</option>
           <option value="khaki" data-color="#F0E68C">{{ _('colors.khaki') }}</option>
         </select>
-        <style>
-          /* Color select styling */
-          .color-select {
-            padding-left: 35px !important; /* Space for color swatch */
-          }
-          
-          .color-select option {
-            padding-left: 35px;
-            position: relative;
-          }
-          
-          /* Custom styled select with color swatches */
-          .color-select-wrapper {
-            position: relative;
-            width: 100%;
-          }
-          
-          .color-swatch {
-            width: 20px;
-            height: 20px;
-            border-radius: 4px;
-            display: inline-block;
-            margin-right: 8px;
-            vertical-align: middle;
-            border: 1px solid rgba(0,0,0,0.1);
-          }
-          
-          /* Color preview for selected option */
-          .color-select-preview {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 20px;
-            height: 20px;
-            border-radius: 4px;
-            border: 1px solid rgba(0,0,0,0.1);
-            pointer-events: none;
-          }
-        </style>
-        <script>
-          document.addEventListener('DOMContentLoaded', function() {
-            const colorSelect = document.getElementById('filterColor');
-            if (!colorSelect) return;
-            
-            // Wrap select in a container
-            const wrapper = document.createElement('div');
-            wrapper.className = 'color-select-wrapper';
-            colorSelect.parentNode.insertBefore(wrapper, colorSelect);
-            wrapper.appendChild(colorSelect);
-            
-            // Add color preview element
-            const preview = document.createElement('div');
-            preview.className = 'color-select-preview';
-            wrapper.appendChild(preview);
-            
-            // Update color preview when selection changes
-            function updateColorPreview() {
-              const selected = colorSelect.options[colorSelect.selectedIndex];
-              const color = selected.getAttribute('data-color');
-              preview.style.backgroundColor = color || 'transparent';
-              preview.style.display = color ? 'block' : 'none';
-            }
-            
-            colorSelect.addEventListener('change', updateColorPreview);
-            updateColorPreview(); // Initial state
-          });
-        </script>
+
+
       </div>
 
       <!-- Clear Filters -->
@@ -540,6 +314,45 @@
             }
           };
         }
+        if (!window.changeGalleryImage) {
+          window.changeGalleryImage = function (itemId, imageIndex) {
+            try {
+              const galleryTrack = document.querySelector(`.gallery[data-item-id="${itemId}"] .gallery-track`);
+              const thumbnails = document.querySelectorAll(`#gallery_${itemId} img[data-idx]`);
+
+              if (!galleryTrack) return;
+
+              // Update main images - hide all, show active
+              const images = galleryTrack.querySelectorAll('img');
+              images.forEach((img, index) => {
+                if (index === imageIndex) {
+                  img.classList.add('active');
+                } else {
+                  img.classList.remove('active');
+                }
+              });
+
+              // Update thumbnail active states
+              thumbnails.forEach((thumb) => {
+                const idx = parseInt(thumb.getAttribute('data-idx'));
+                if (idx === imageIndex) {
+                  thumb.classList.add('active');
+                } else {
+                  thumb.classList.remove('active');
+                }
+              });
+
+              // Update gallery data attribute
+              const gallery = document.querySelector(`.gallery[data-item-id="${itemId}"]`);
+              if (gallery) {
+                gallery.setAttribute('data-active-image', imageIndex);
+              }
+
+            } catch (e) {
+              console.warn("changeGalleryImage error", e);
+            }
+          };
+        }
       })();
     </script>
 
@@ -597,1184 +410,134 @@
           {% for item in men %}
           <div
             class="menu-item-card"
+            data-aos="fade-up"
+            data-aos-delay="{{ loop.index0 * 50 }}"
             data-id="{{ item.id }}"
             data-category="{{ (item.category or 'product')|lower }}"
             data-sizes="{{ (item.sizes or '')|lower }}"
             data-colors="{{ (item.colors or '')|lower }}"
-            onclick="event.stopPropagation(); window.location.href='{{ url_for('product_detail', item_id=item.id) }}';">
-            <div class="card-image">
+            data-rating="{{ item.rating or 0 }}"
+            data-orders-count="{{ item.orders_count or 0 }}"
+            data-product-url="{{ url_for('product_detail', item_id=item.id) }}"
+            onclick="event.stopPropagation(); window.location.href=this.dataset.productUrl;">
+            <div class="item-image">
               <a href="{{ url_for('product_detail', item_id=item.id) }}" onclick="event.stopPropagation();">
-                <div class="gallery" data-item-id="{{ item.id }}">
-                  <div class="gallery-track">
-                    {% if item.media %}
+                <div class="image-container">
+                  <div class="image-skeleton"></div>
+                  {% if item.media and item.media|length > 1 %}
+                  <!-- Swiper for multiple images -->
+                  <div class="swiper product-swiper">
+                    <div class="swiper-wrapper">
                       {% for m in item.media %}
                         {% set raw_src = (m.media_url if (m.media_url is defined) else (m.image_url if (m.image_url is defined) else (m if m is string else ''))) %}
                         {% set src = prefer_webp(raw_src or '/static/defoult.webp') %}
-                        <img src="{{ src }}" alt="{{ localized_field(item, 'name') or item.name }}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.webp'" />
+                        <div class="swiper-slide">
+                          <img src="{{ src }}" alt="{{ localized_field(item, 'name') or item.name }}" loading="lazy" decoding="async" class="swiper-lazy" />
+                        </div>
                       {% endfor %}
-                    {% else %}
-                      <img src="{{ prefer_webp(item.image_url or '/static/defoult.webp') }}" alt="{{ localized_field(item, 'name') or item.name }}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.webp'" />
-                    {% endif %}
+                    </div>
+                    <!-- Navigation arrows -->
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
+                    <!-- Pagination -->
+                    <div class="swiper-pagination"></div>
                   </div>
+                  {% else %}
+                  <!-- Single image - no swiper needed -->
+                  <div class="gallery" data-item-id="{{ item.id }}">
+                    <div class="gallery-track">
+                      {% if item.media %}
+                        {% for m in item.media %}
+                          {% set raw_src = (m.media_url if (m.media_url is defined) else (m.image_url if (m.image_url is defined) else (m if m is string else ''))) %}
+                          {% set src = prefer_webp(raw_src or '/static/defoult.webp') %}
+                          <img src="{{ src }}" alt="{{ localized_field(item, 'name') or item.name }}" loading="lazy" decoding="async" class="gallery-lazy{% if loop.first %} active{% endif %}" />
+                        {% endfor %}
+                      {% else %}
+                        <img src="{{ prefer_webp(item.image_url or '/static/defoult.webp') }}" alt="{{ localized_field(item, 'name') or item.name }}" loading="lazy" decoding="async" class="gallery-lazy active" />
+                      {% endif %}
+                    </div>
+                  </div>
+                  {% endif %}
+
+                  <!-- Grid thumbnail gallery (only for multiple images) -->
+                  {% if item.media and item.media|length > 1 %}
+                  <div class="BKd5K" aria-hidden="true" data-active-idx="0" id="gallery_{{ item.id }}">
+                    {% for m in item.media %}
+                      {% set raw_src = (m.media_url if (m.media_url is defined) else (m.image_url if (m.image_url is defined) else (m if m is string else ''))) %}
+                        {% set src = prefer_webp(raw_src or '/static/defoult.webp') %}
+                        <img src="{{ src }}"
+                          alt="{{ localized_field(item, 'name') or item.name }} - {{ loop.index }}"
+                          loading="lazy"
+                          decoding="async"
+                          data-idx="{{ loop.index0 }}"
+                          class="thumb{% if loop.first %} active{% endif %}"
+                          onclick="event.stopPropagation(); changeGalleryImage({{ item.id }}, {{ loop.index0 }});"
+                          onerror="this.src='/static/defoult.webp'" />
+                    {% endfor %}
+                  </div>
+                  {% endif %}
                 </div>
               </a>
             </div>
-            <div class="card-body">
-              <form
-                method="post"
-                action="{{ url_for('add_to_favorites', menu_item_id=item.id) }}"
-                class="favorite-form"
-                data-item-id="{{ item.id }}"
-                onclick="event.stopPropagation()">
-                <button type="submit" class="btn-favorite-top">❤</button>
-              </form>
-              <h3 class="card-title">
+            <div class="item-content">
+              <h3 class="item-name">
                 <a
                   href="{{ url_for('product_detail', item_id=item.id) }}"
                   onclick="event.stopPropagation();"
                   >{{ localized_field(item, 'name') or item.name }}</a
                 >
               </h3>
-              <p class="card-category">{{ item.category or '' }}</p>
-              <!-- Colors removed from card per request -->
-              <div class="card-rating">
-                {% set rating = item.rating or 0 %}
-                {% set full_stars = rating | int %}
-                {% set partial = (rating - full_stars) * 100 %}
-                <style>
-                  .card-stars-wrap{display:inline-block;position:relative;font-size:16px;line-height:1}
-                  .card-stars-bottom,.card-stars-top{white-space:nowrap}
-                  .card-stars-bottom{color:#e6e6e6}
-                  .card-stars-top{color:#ffd700;position:absolute;left:0;top:0;overflow:hidden;width:{{ full_stars * 20 + partial / 5 }}%}
-                </style>
-                <div class="card-stars-wrap" title="{{ "%.1f"|format(rating) }}">
-                  <div class="card-stars-bottom">★★★★★</div>
-                  <div class="card-stars-top">★★★★★</div>
+              <div class="rating-section">
+                <div class="stars">
+                  {% set rating = item.rating or 0 %}
+                  {% for i in range(1, 6) %}
+                    {% if rating >= i %}
+                      <span class="star filled">⭐</span>
+                    {% elif rating >= i - 0.5 %}
+                      <span class="star half">⭐</span>
+                    {% else %}
+                      <span class="star">☆</span>
+                    {% endif %}
+                  {% endfor %}
                 </div>
-                <div class="rating-text">{{ "%.1f"|format(rating) }} ({{ item.orders_count or 0 }} buyurtma)</div>
+                <span class="rating-text">{{ "%.1f"|format(rating) }} ({{ item.orders_count or 0 }})</span>
               </div>
-
+              
+              <!-- item-footer (price/add-to-cart) removed intentionally -->
             </div>
           </div>
           {% endfor %}
         </div>
-        <!-- Pagination controls will be inserted here by client JS -->
-        <div
-          id="menu-pagination"
-          class="menu-pagination"
-          aria-live="polite"></div>
+        
+        <script type="application/json" id="menu-page-config">
+        {
+          "is_favorites_user": {{ (session.get('user_id') and not session.get('staff_id') and not session.get('courier_id') and not session.get('super_admin')) | tojson }},
+          "favorites_login_message": {{ "Iltimos oldin saytdan avtorizatsiyadan o'ting"|tojson }},
+          "is_staff": {{ (session.get('staff_id') and True) | tojson }},
+          "csrf_token": {{ csrf_token|tojson }},
+          "items": {
+            {% for item in men %}
+            "{{ item.id }}": {{ {
+                "id": item.id,
+                "name": item.name,
+                "description": item.description or 'Mahsulot tavsifi',
+                "image_url": item.image_url or '/static/defoult.webp',
+                "rating": item.rating or 0,
+                "orders_count": item.orders_count or 0,
+                "sizes": item.sizes or '',
+                "colors": item.colors or '',
+                "category": (item.category or 'product')|lower
+            } | tojson }}{% if not loop.last %},{% endif %}
+            {% endfor %}
+          }
+        }
+        </script>
       </div>
     </div>
   </div>
-</div>
 
-<style>
 
-  /* ================================
-     MENU PAGE LAYOUT
-     ================================ */
-  .menu-container {
-    max-width: 1600px;
-    margin: 0 auto;
-    padding: 20px;
-    animation: fadeIn 0.6s ease-out;
-  }
-
-  .main-content {
-    display: flex;
-    gap: 30px;
-    margin-top: 20px;
-    max-width: 1600px;
-    margin-left: auto;
-    margin-right: auto;
-    position: relative;
-  }
-
-  /* ================================
-     FILTER SIDEBAR
-     ================================ */
-  .filter-sidebar {
-    position: fixed;
-    left: 24px;
-    top: 120px;
-    width: 340px; /* increased width to make sidebar slightly larger */
-    background: rgba(255, 255, 255, 0.98);
-    border-radius: 16px;
-    padding: 25px; /* Reduced from 30px */
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-    height: fit-content;
-    max-height: calc(100vh - 400px); /* Leave space for news ticker and footer */
-    overflow-y: auto;
-  z-index: 50; /* Keep filter clearly below news ticker and footer */
-    border: 1px solid rgba(226, 232, 240, 0.8);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-  }
-
-  /* MOBILE: make layout flow vertically and hide fixed sidebar */
-  @media (max-width: 991px) {
-    .main-content {
-      display: block;
-      gap: 12px;
-      padding: 0 12px;
-    }
-
-    .filter-sidebar {
-      position: relative;
-      width: 100%;
-      left: 0;
-      top: 0;
-      margin-bottom: 12px;
-      background: transparent;
-      padding: 0;
-      box-shadow: none;
-    }
-
-    /* Make category buttons horizontally scrollable and touch-friendly */
-    .category-buttons-wrapper {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      padding: 8px 0 12px 0;
-    }
-
-    .category-buttons {
-      display: inline-flex;
-      gap: 8px;
-      padding-left: 6px;
-    }
-
-    .category-btn {
-      min-width: 86px;
-      padding: 10px 14px;
-      font-size: 14px;
-      border-radius: 10px;
-      white-space: nowrap;
-      box-shadow: 0 4px 12px rgba(2,6,23,0.06);
-    }
-
-    /* Make cards full-width with larger image for touch devices */
-    .menu-grid {
-      padding: 6px 0;
-    }
-
-    .menu-item-card {
-      border-radius: 12px;
-      padding: 0;
-    }
-
-    .menu-item-card .card-image {
-      height: 220px;
-    }
-
-    .menu-item-card .card-body {
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .menu-item-card .card-title {
-      font-size: 16px;
-      line-height: 1.25;
-    }
-
-    .menu-item-card .btn-favorite-top {
-      width: 44px;
-      height: 44px;
-      top: 10px;
-      right: 10px;
-      font-size: 18px;
-    }
-
-    .card-actions .btn-add-cart {
-      width: 100%;
-      height: 48px;
-      font-size: 16px;
-      padding: 10px 12px;
-    }
-
-    /* Increase tap targets for quantity controls */
-    .qty-btn, .qty-input {
-      height: 40px;
-    }
-
-    /* Hide long breadcrumbs on small screens to save space */
-    nav[aria-label="breadcrumb"] {
-      display: none;
-    }
-  }
-
-  /* Hide sidebar completely on small screens; toggleable via JS by adding .show */
-  @media (max-width: 767px) {
-    .filter-sidebar {
-      display: none !important;
-      position: fixed;
-      left: 0;
-      right: 0;
-      top: 0;
-      margin: 0;
-      width: 100%;
-      height: 100%;
-      border-radius: 0;
-      padding: 20px;
-      max-height: 100vh;
-      box-shadow: none;
-      background: rgba(255,255,255,0.98);
-      /* Keep the mobile filter below the footer (footer z-index: 1000).
-         Lowering this to 900 ensures the footer will visually sit on top
-         of the filter panel on small viewports. */
-      z-index: 900;
-      overflow: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .filter-sidebar.show {
-      display: block !important;
-      transform: translateY(0);
-      opacity: 1;
-    }
-
-    /* Mobile close button visible only on small screens */
-      /* keep close button below footer to avoid overlapping; footer z-index is 1000 */
-      .mobile-close-btn { display: flex; z-index: 999; }
-
-    /* Ensure toggle button remains visible in flow */
-    .mobile-filter-toggle { display: block; }
-    .content-area { margin-left: 0; width: 100%; }
-  }
-
-  /* Ensure proper z-index hierarchy */
-  .navbar {
-    z-index: 1050 !important;
-    position: relative;
-  }
-
-  .footer {
-    z-index: 1100;
-    position: relative;
-  }
-
-  .news-ticker-container {
-    z-index: 100 !important;
-    position: relative;
-  }
-
-  .filter-title {
-    color: #2d3748;
-    font-size: 1.3rem;
-    font-weight: 600;
-    margin-bottom: 25px;
-    text-align: center;
-    border-bottom: 2px solid #e2e8f0;
-    padding-bottom: 15px;
-  }
-
-  .filter-section {
-    margin-bottom: 20px;
-  }
-
-  .filter-section label {
-    display: block;
-    color: #4a5568;
-    font-weight: 500;
-    margin-bottom: 8px;
-    font-size: 0.9rem;
-  }
-
-  .filter-input {
-    width: 100%;
-    padding: 12px;
-    border-radius: 8px;
-    border: 2px solid #e2e8f0;
-    font-size: 0.95rem;
-    transition: all 0.3s ease;
-    box-sizing: border-box;
-  }
-
-  .filter-input:focus {
-    outline: none;
-    border-color: #4299e1;
-    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
-  }
-
-  .filter-select {
-    width: 100%;
-    padding: 12px;
-    border-radius: 8px;
-    border: 2px solid #e2e8f0;
-    background: white;
-    font-size: 0.95rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-sizing: border-box;
-  }
-
-  .filter-select:focus {
-    outline: none;
-    border-color: #4299e1;
-    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
-  }
-
-  .clear-btn {
-    width: 100%;
-    padding: 12px;
-    background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.95rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-top: 10px;
-  }
-
-  .clear-btn:hover {
-    background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(245, 101, 101, 0.4);
-  }
-
-  /* ================================
-     MOBILE FILTER TOGGLE
-     ================================ */
-  .mobile-filter-toggle {
-    width: 100%;
-    padding: 12px 20px;
-    background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 1rem;
-    cursor: pointer;
-    margin-bottom: 20px;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(66, 153, 225, 0.3);
-  }
-
-  .mobile-filter-toggle:hover {
-    background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(66, 153, 225, 0.4);
-  }
-
-  /* Mobile Close Button */
-  .mobile-close-btn {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    width: 35px;
-    height: 35px;
-    background: #e53e3e;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    font-size: 20px;
-    font-weight: bold;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1001;
-    box-shadow: 0 2px 8px rgba(229, 62, 62, 0.3);
-    transition: all 0.3s ease;
-  }
-
-  .mobile-close-btn:hover {
-    background: #c53030;
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(229, 62, 62, 0.4);
-  }
-
-  .mobile-close-btn span {
-    line-height: 1;
-  }
-
-  .filter-links {
-    margin-top: 25px;
-    padding-top: 20px;
-    border-top: 2px solid #e2e8f0;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .filter-link {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 16px;
-    background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
-    color: white;
-    text-decoration: none;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(66, 153, 225, 0.3);
-  }
-
-  .filter-link:hover {
-    background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(66, 153, 225, 0.4);
-    color: white;
-    text-decoration: none;
-  }
-
-  .filter-link:nth-child(2) {
-    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-    box-shadow: 0 2px 4px rgba(72, 187, 120, 0.3);
-  }
-
-  .filter-link:nth-child(2):hover {
-    background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
-    box-shadow: 0 4px 8px rgba(72, 187, 120, 0.4);
-  }
-
-  .filter-link:nth-child(3) {
-    background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
-    box-shadow: 0 2px 4px rgba(237, 137, 54, 0.3);
-  }
-
-  .filter-link:nth-child(3):hover {
-    background: linear-gradient(135deg, #dd6b20 0%, #c05621 100%);
-    box-shadow: 0 4px 8px rgba(237, 137, 54, 0.4);
-  }
-
-  /* ================================
-     CONTENT AREA
-     ================================ */
-  .content-area {
-    margin-left: 380px; /* leave space for wider sidebar */
-    flex: 1;
-    min-width: 0;
-    width: calc(100% - 460px); /* adjusted for wider sidebar */
-    max-width: 1400px; /* allow larger content area */
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    padding-right: 20px; /* Reduced padding */
-    padding-left: 10px;
-    box-sizing: border-box;
-    margin-right: auto; /* Center the content area */
-    display: flex;
-    flex-direction: column;
-    align-items: stretch !important; /* allow children (menu-grid) to fill full width */
-  }
-
-  /* ================================
-     PROFESSIONAL HEADER WITH ANIMATED CONSTRUCTION TAPE
-     ================================ */
-  .professional-header {
-    position: relative;
-    text-align: center;
-    margin-bottom: 40px;
-    padding: 60px 20px;
-    overflow: hidden;
-    width: 100%;
-    max-width: 800px;
-    border-radius: 20px;
-    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  }
-
-  .construction-tape-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    pointer-events: none;
-    overflow: hidden;
-  }
-
-  .construction-tape {
-    position: absolute;
-    background: repeating-linear-gradient(
-      45deg,
-      #ffcc00 0,
-      #ffcc00 15px,
-      #000000 15px,
-      #000000 30px
-    );
-    transform-origin: center;
-    border: 2px solid #e6b800;
-    box-shadow:
-      inset 0 2px 4px rgba(255, 255, 255, 0.3),
-      inset 0 -2px 4px rgba(0, 0, 0, 0.3),
-      0 4px 12px rgba(0, 0, 0, 0.4);
-  }
-
-  .tape-1 {
-    width: 25px;
-    height: 140%;
-    left: -12px;
-    top: -20%;
-    animation: tapeWaveVertical1 8s ease-in-out infinite;
-    border-radius: 12px;
-    transform-style: preserve-3d;
-  }
-
-  .tape-2 {
-    width: 25px;
-    height: 140%;
-    right: -12px;
-    top: -20%;
-    animation: tapeWaveVertical2 8s ease-in-out infinite;
-    border-radius: 12px;
-    transform-style: preserve-3d;
-    animation-delay: -2s;
-  }
-
-  .tape-3 {
-    width: 140%;
-    height: 25px;
-    top: -12px;
-    left: -20%;
-    animation: tapeWaveHorizontal1 8s ease-in-out infinite;
-    border-radius: 12px;
-    transform-style: preserve-3d;
-    animation-delay: -4s;
-  }
-
-  .tape-4 {
-    width: 140%;
-    height: 25px;
-    bottom: -12px;
-    left: -20%;
-    animation: tapeWaveHorizontal2 8s ease-in-out infinite;
-    border-radius: 12px;
-    transform-style: preserve-3d;
-    animation-delay: -6s;
-  }
-
-  /* Flexible ribbon-like wave animations */
-  @keyframes tapeWaveVertical1 {
-    0% {
-      transform: rotateY(0deg) rotateZ(2deg) scaleY(0.98) translateX(5px);
-      filter: brightness(1);
-    }
-    25% {
-      transform: rotateY(15deg) rotateZ(-3deg) scaleY(1.02) translateX(-3px);
-      filter: brightness(1.1);
-    }
-    50% {
-      transform: rotateY(0deg) rotateZ(1deg) scaleY(0.99) translateX(7px);
-      filter: brightness(0.9);
-    }
-    75% {
-      transform: rotateY(-12deg) rotateZ(-2deg) scaleY(1.01) translateX(-4px);
-      filter: brightness(1.05);
-    }
-    100% {
-      transform: rotateY(0deg) rotateZ(2deg) scaleY(0.98) translateX(5px);
-      filter: brightness(1);
-    }
-  }
-
-  @keyframes tapeWaveVertical2 {
-    0% {
-      transform: rotateY(0deg) rotateZ(-2deg) scaleY(1.01) translateX(-5px);
-      filter: brightness(1.05);
-    }
-    25% {
-      transform: rotateY(-15deg) rotateZ(3deg) scaleY(0.98) translateX(4px);
-      filter: brightness(0.95);
-    }
-    50% {
-      transform: rotateY(0deg) rotateZ(-1deg) scaleY(1.02) translateX(-6px);
-      filter: brightness(1.1);
-    }
-    75% {
-      transform: rotateY(12deg) rotateZ(2deg) scaleY(0.99) translateX(3px);
-      filter: brightness(0.9);
-    }
-    100% {
-      transform: rotateY(0deg) rotateZ(-2deg) scaleY(1.01) translateX(-5px);
-      filter: brightness(1.05);
-    }
-  }
-
-  @keyframes tapeWaveHorizontal1 {
-    0% {
-      transform: rotateX(0deg) rotateZ(1deg) scaleX(0.99) translateY(4px);
-      filter: brightness(1);
-    }
-    25% {
-      transform: rotateX(12deg) rotateZ(-2deg) scaleX(1.01) translateY(-3px);
-      filter: brightness(1.08);
-    }
-    50% {
-      transform: rotateX(0deg) rotateZ(1.5deg) scaleX(0.98) translateY(6px);
-      filter: brightness(0.92);
-    }
-    75% {
-      transform: rotateX(-10deg) rotateZ(-1deg) scaleX(1.02) translateY(-2px);
-      filter: brightness(1.06);
-    }
-    100% {
-      transform: rotateX(0deg) rotateZ(1deg) scaleX(0.99) translateY(4px);
-      filter: brightness(1);
-    }
-  }
-
-  @keyframes tapeWaveHorizontal2 {
-    0% {
-      transform: rotateX(0deg) rotateZ(-1deg) scaleX(1.01) translateY(-4px);
-      filter: brightness(1.06);
-    }
-    25% {
-      transform: rotateX(-12deg) rotateZ(2deg) scaleX(0.98) translateY(5px);
-      filter: brightness(0.94);
-    }
-    50% {
-      transform: rotateX(0deg) rotateZ(-1.5deg) scaleX(1.02) translateY(-5px);
-      filter: brightness(1.1);
-    }
-    75% {
-      transform: rotateX(10deg) rotateZ(1deg) scaleX(0.99) translateY(3px);
-      filter: brightness(0.88);
-    }
-    100% {
-      transform: rotateX(0deg) rotateZ(-1deg) scaleX(1.01) translateY(-4px);
-      filter: brightness(1.06);
-    }
-  }
-
-  .main-title-container {
-    position: relative;
-    z-index: 10;
-  }
-
-  .main-pro-obuv-title {
-    font-size: 4.5rem;
-    font-weight: 900;
-    letter-spacing: 0.1em;
-    margin: 0 0 20px 0;
-    text-transform: uppercase;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    text-shadow:
-      0 0 20px rgba(255, 102, 0, 0.8),
-      0 0 40px rgba(255, 102, 0, 0.6),
-      0 0 60px rgba(255, 102, 0, 0.4),
-      2px 2px 4px rgba(0, 0, 0, 0.8);
-  }
-
-  .title-gradient {
-    background: linear-gradient(45deg,
-      #ff6600 0%,
-      #ffaa00 25%,
-      #ffffff 50%,
-      #ffaa00 75%,
-      #ff6600 100%);
-    background-size: 200% 200%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: titleGradientShift 3s ease-in-out infinite;
-  }
-
-  .title-separator {
-    font-size: 3rem;
-    color: #ffcc00;
-    animation: separatorPulse 2s ease-in-out infinite;
-    text-shadow: 0 0 30px #ffcc00;
-  }
-
-  @keyframes titleGradientShift {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-  }
-
-  @keyframes separatorPulse {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.2); opacity: 0.8; }
-  }
-
-  .subtitle-masters {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #ffcc00;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    background: linear-gradient(90deg,
-      transparent 0%,
-      rgba(255, 204, 0, 0.2) 50%,
-      transparent 100%);
-    padding: 10px 20px;
-    border-radius: 25px;
-    border: 2px solid rgba(255, 204, 0, 0.3);
-    animation: subtitleGlow 4s ease-in-out infinite;
-    text-shadow: 0 0 10px rgba(255, 204, 0, 0.8);
-  }
-
-  @keyframes subtitleGlow {
-    0%, 100% { box-shadow: 0 0 20px rgba(255, 204, 0, 0.3); }
-    50% { box-shadow: 0 0 40px rgba(255, 204, 0, 0.6); }
-  }
-
-  /* ================================
-     PROFESSIONAL CONSTRUCTION MENU TITLE
-     ================================ */
-  .menu-title {
-    position: relative;
-    width: 100%;
-    margin-bottom: 40px;
-    padding: 40px 30px;
-    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #404040 100%);
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow:
-      0 20px 50px rgba(0, 0, 0, 0.4),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1),
-      0 0 0 3px #ff6600;
-    text-align: center;
-    border: 3px solid #ff6600;
-    animation: professionalGlow 4s ease-in-out infinite alternate;
-  }
-
-  /* Professional Construction Header */
-  .construction-header {
-    position: relative;
-    z-index: 2;
-    margin-bottom: 25px;
-  }
-
-  .safety-icons {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 20px;
-    animation: iconsFloat 3s ease-in-out infinite alternate;
-  }
-
-  .safety-icon {
-    font-size: 2.5rem;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-    transition: all 0.3s ease;
-    animation-delay: calc(var(--i, 0) * 0.2s);
-  }
-
-  .safety-icon:nth-child(1) { --i: 0; }
-  .safety-icon:nth-child(2) { --i: 1; }
-  .safety-icon:nth-child(3) { --i: 2; }
-  .safety-icon:nth-child(4) { --i: 3; }
-  .safety-icon:nth-child(5) { --i: 4; }
-
-  /* Individual icon animations */
-  .safety-icon.rotating {
-    animation: iconRotate 3s linear infinite;
-  }
-
-  .safety-icon.bouncing {
-    animation: iconBounce 2s ease-in-out infinite;
-  }
-
-  .safety-icon.waving {
-    animation: iconWave 2.5s ease-in-out infinite;
-  }
-
-  .safety-icon.scaling {
-    animation: iconScale 2s ease-in-out infinite;
-  }
-
-  .safety-icon.pulsing {
-    animation: iconPulse 1.8s ease-in-out infinite;
-  }
-
-  /* Professional Title Styling */
-  .professional-title {
-    font-size: 3rem;
-    font-weight: 900;
-    margin: 0;
-    color: #ff6600 !important;
-    text-shadow:
-      0 2px 4px rgba(0, 0, 0, 0.8),
-      0 0 20px rgba(255, 102, 0, 0.5);
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    z-index: 2;
-    animation: titleGlow 3s ease-in-out infinite alternate;
-  }
-
-  /* PRO-OBUV Brand Name */
-  .title-brand {
-    font-size: 2.8rem;
-    font-weight: 900;
-    color: #ff6600 !important;
-    text-shadow:
-      0 2px 4px rgba(0, 0, 0, 0.8),
-      0 0 25px rgba(255, 102, 0, 0.8),
-      0 0 35px rgba(255, 102, 0, 0.6);
-    letter-spacing: 3px;
-    animation: brandGlow 2s ease-in-out infinite alternate;
-    background: linear-gradient(45deg, #ff6600, #ffaa00, #ff6600);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 10px;
-  }
-
-  .title-main {
-    font-size: 2.5rem;
-    font-weight: 900;
-    color: #ffffff !important;
-    text-shadow:
-      0 2px 4px rgba(0, 0, 0, 0.8),
-      0 0 15px rgba(255, 255, 255, 0.3);
-    letter-spacing: 2px;
-    animation: titlePulse 2s ease-in-out infinite alternate;
-  }
-
-  .title-sub {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #ffcc00 !important;
-    text-shadow:
-      0 2px 4px rgba(0, 0, 0, 0.8),
-      0 0 15px rgba(255, 204, 0, 0.5);
-    letter-spacing: 1px;
-    animation: subtitleShine 3s ease-in-out infinite;
-  }
-
-  .construction-badge.premium-badge {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    background: linear-gradient(135deg, #ff6600 0%, #ffaa00 50%, #ff6600 100%);
-    padding: 10px 25px;
-    border-radius: 30px;
-    margin-top: 15px;
-    border: 3px solid #ffffff;
-    box-shadow:
-      0 4px 20px rgba(255, 102, 0, 0.5),
-      inset 0 2px 4px rgba(255, 255, 255, 0.3);
-    animation: premiumBadgePulse 2s ease-in-out infinite;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .premium-badge::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    animation: premiumShine 3s linear infinite;
-  }
-
-  .badge-text {
-    color: #ffffff;
-    font-weight: 700;
-    font-size: 0.9rem;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-  }
-
-  .badge-check.glowing {
-    color: #ffffff;
-    font-size: 1.2rem;
-    font-weight: 900;
-    animation: checkGlow 1.5s ease-in-out infinite;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-  }
-
-  .professional-subtitle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-    margin: 20px 0;
-    padding: 15px 25px;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 25px;
-    border: 1px solid rgba(255, 102, 0, 0.3);
-    backdrop-filter: blur(10px);
-  }
-
-  .subtitle-left.gradient-text,
-  .subtitle-right.gradient-text {
-    font-size: 1.1rem;
-    font-weight: 600;
-    background: linear-gradient(45deg, #ffffff, #ffaa00, #ffffff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
-    animation: gradientShift 3s ease-in-out infinite;
-  }
-
-  .subtitle-center.diamond {
-    font-size: 1.5rem;
-    color: #ff6600;
-    animation: diamondSpin 2s ease-in-out infinite;
-    text-shadow: 0 0 15px rgba(255, 102, 0, 0.8);
-  }
-
-  .quality-indicators {
-    display: flex;
-    justify-content: center;
-    gap: 25px;
-    margin-top: 25px;
-    flex-wrap: wrap;
-  }
-
-  .quality-item.enhanced {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    padding: 15px 20px;
-    background: linear-gradient(135deg, rgba(255, 102, 0, 0.1), rgba(255, 170, 0, 0.1));
-    border-radius: 15px;
-    border: 2px solid rgba(255, 102, 0, 0.3);
-    backdrop-filter: blur(15px);
-    transition: all 0.3s ease;
-    animation: enhancedQualityFloat 4s ease-in-out infinite;
-    animation-delay: calc(var(--delay, 0) * 0.5s);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .quality-item.enhanced::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    animation: qualityShine 3s linear infinite;
-    animation-delay: calc(var(--delay, 0) * 0.8s);
-  }
-
-  .quality-item.enhanced:nth-child(1) { --delay: 0; }
-  .quality-item.enhanced:nth-child(2) { --delay: 1; }
-  .quality-item.enhanced:nth-child(3) { --delay: 2; }
-  .quality-item.enhanced:nth-child(4) { --delay: 3; }
-
-  .quality-item:hover {
-    transform: translateY(-5px) scale(1.05);
-    background: rgba(255, 102, 0, 0.2);
-    border-color: #ff6600;
-    box-shadow: 0 10px 25px rgba(255, 102, 0, 0.3);
-  }
-
-  .quality-icon {
-    font-size: 2rem;
-    animation: iconRotate 3s ease-in-out infinite;
-  }
-
-  .quality-text {
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: #ffffff;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
-    letter-spacing: 1px;
-  }
-
-  .title-glow {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 300px;
-    height: 300px;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-    border-radius: 50%;
-    animation: glowPulse 4s ease-in-out infinite;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* Professional Keyframe Animations */
-  @keyframes professionalGlow {
-    0% {
-      box-shadow:
-        0 20px 50px rgba(0, 0, 0, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1),
-        0 0 0 3px #ff6600;
-    }
-    100% {
-      box-shadow:
-        0 25px 60px rgba(0, 0, 0, 0.5),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2),
-        0 0 0 3px #ff8800,
-        0 0 30px rgba(255, 102, 0, 0.3);
-    }
-  }
-
-  @keyframes iconsFloat {
-    0%, 100% {
-      transform: translateY(0px);
-    }
-    50% {
-      transform: translateY(-8px);
-    }
-  }
-
-  @keyframes iconBounce {
-    0%, 100% {
-      transform: translateY(0px) scale(1);
-    }
-    50% {
-      transform: translateY(-10px) scale(1.1);
-    }
-  }
-
-  @keyframes titleGlow {
-    0% {
-      text-shadow:
-        0 2px 4px rgba(0, 0, 0, 0.8),
-        0 0 20px rgba(255, 102, 0, 0.5);
-    }
-    100% {
-      text-shadow:
-        0 2px 4px rgba(0, 0, 0, 0.8),
-        0 0 30px rgba(255, 102, 0, 0.8),
-        0 0 40px rgba(255, 136, 0, 0.3);
-    }
-  }
-
-  @keyframes titlePulse {
-    0%, 100% {
-      transform: scale(1);
-      text-shadow:
-        0 2px 4px rgba(0, 0, 0, 0.8),
-        0 0 15px rgba(255, 255, 255, 0.3);
-    }
-    50% {
-      transform: scale(1.05);
-      text-shadow:
-        0 2px 4px rgba(0, 0, 0, 0.8),
-        0 0 25px rgba(255, 255, 255, 0.5);
-    }
-  }
-
-  @keyframes subtitleShine {
-    0%, 100% {
-      text-shadow:
-        0 2px 4px rgba(0, 0, 0, 0.8),
-        0 0 15px rgba(255, 204, 0, 0.5);
-    }
-    50% {
-      text-shadow:
-        0 2px 4px rgba(0, 0, 0, 0.8),
-        0 0 25px rgba(255, 204, 0, 0.8),
-        0 0 35px rgba(255, 255, 0, 0.3);
-    }
-  }
-
-  @keyframes badgePulse {
-    0%, 100% {
-      transform: scale(1);
-      box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
-    }
-    50% {
-      transform: scale(1.05);
-      box-shadow: 0 6px 20px rgba(40, 167, 69, 0.6);
-    }
-  }
-
-  @keyframes checkPulse {
-    0%, 100% {
-      transform: scale(1);
-      opacity: 1;
-    }
-    50% {
-      transform: scale(1.2);
-      opacity: 0.8;
-    }
-  }
-
-  @keyframes subtitleGlow {
-    0%, 100% {
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
-    }
-    50% {
-      text-shadow:
-        0 2px 4px rgba(0, 0, 0, 0.8),
-        0 0 15px rgba(255, 255, 255, 0.4);
-    }
-  }
-
-  @keyframes dotPulse {
-    0%, 100% {
-      transform: scale(1);
-      opacity: 1;
-    }
-    50% {
-      transform: scale(1.3);
-      opacity: 0.7;
-    }
-  }
-
-  @keyframes qualityFloat {
-    0%, 100% {
-      transform: translateY(0px);
-    }
-    50% {
-      transform: translateY(-5px);
-    }
-  }
-
-  @keyframes iconRotate {
-    0%, 100% {
-      transform: rotate(0deg) scale(1);
-    }
-    25% {
-      transform: rotate(-5deg) scale(1.1);
-    }
-    75% {
-      transform: rotate(5deg) scale(1.1);
-    }
-  }
-
-  /* Responsive Animations for menu-title */
-  @media (max-width: 768px) {
-    .menu-title {
-      padding: 40px 15px;
-      margin-bottom: 30px;
-    }
-
-    .menu-title h1 {
-      font-size: 2.5rem;
-    }
-
-    .menu-title::before,
-    .menu-title::after {
-      height: 40px;
-    }
-
-    .title-subtitle {
-      font-size: 1rem;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .menu-title h1 {
-      font-size: 2rem;
-    }
-
-    .menu-title::before,
-    .menu-title::after {
-      height: 30px;
-    }
-
-    .title-subtitle {
-      font-size: 0.9rem;
-    }
-  }
+<!-- <style disabled>
 
   /* ================================
      CATEGORY BUTTONS
@@ -1789,6 +552,16 @@
     background: #f8fafc;
     border-radius: 12px;
     border: 1px solid #e2e8f0;
+    position: sticky;
+    top: 20px;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .category-buttons-wrapper {
+    position: relative;
+    margin-bottom: 20px;
   }
 
   .category-btn {
@@ -1844,8 +617,38 @@
     }
   }
 
+  /* Filter sidebar */
+  .filter-sidebar {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), 0 0 40px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+    position: sticky !important;
+    top: 20px !important;
+    width: 320px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    border: 1px solid #e2e8f0;
+    z-index: 50;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+  }
+
+  .filter-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
   /* Notebook / Desktop: 3 columns (>=992px) */
   @media (min-width: 992px) {
+    .main-content {
+      display: flex;
+      gap: 20px;
+    }
     .menu-grid {
       grid-template-columns: repeat(3, 1fr);
       gap: 30px;
@@ -1857,11 +660,67 @@
       height: 560px;
     }
     .content-area {
-      margin-left: 320px;
-      width: calc(100% - 360px);
+      flex: 1;
+      width: auto;
+      padding: 30px 25px;
+      border-radius: 16px;
+      box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.02);
+      min-height: calc(100vh - 200px);
+      transition: all 0.3s ease;
     }
     .filter-sidebar {
       width: 320px;
+      position: sticky !important;
+      top: 80px !important;
+      max-height: calc(100vh - 80px - 320px);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+  }
+
+  @media (max-width: 575px) {
+    .menu-item-card {
+      min-width: unset;
+      border-radius: 8px;
+    }
+    .card-image {
+      height: 200px;
+    }
+    .menu-item {
+      min-height: 350px;
+    }
+    .item-name {
+      font-size: 1.2rem;
+    }
+    .filter-sidebar {
+      width: 280px;
+      padding: 16px;
+    }
+  }
+
+  @media (min-width: 576px) and (max-width: 767px) {
+    .menu-grid { grid-template-columns: repeat(2, 1fr); gap: 18px; }
+    .menu-item-card {
+      min-width: 200px;
+    }
+    .card-image {
+      height: 220px;
+    }
+    .menu-item {
+      min-height: 400px;
+    }
+  }
+
+  @media (min-width: 768px) and (max-width: 991px) {
+    .menu-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .menu-item-card {
+      min-width: 220px;
+    }
+    .card-image {
+      height: 250px;
+    }
+    .menu-item {
+      min-height: 450px;
     }
   }
 
@@ -1952,6 +811,7 @@
     justify-content: flex-start;
     align-items: center;
     text-align: center;
+    background: white;
   }
 
   .item-name {
@@ -1960,6 +820,14 @@
     font-weight: 700;
     margin-bottom: 6px;
     text-transform: capitalize;
+  }
+  .item-name a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  .item-name a:hover {
+    color: #4299e1;
   }
   .item-category {
     color: #9aa3b2;
@@ -2115,66 +983,110 @@
     color: #2d3748;
   }
 
-  .btn-cart {
-    background: #2f9f6a;
-    color: white;
-    border: none;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 18px;
+  /* MUI Rating Styles */
+  @media (min-width: 0px) {
+    .css-1741isb {
+        font-size: 40px;
+    }
+  }
+
+  .css-1741isb {
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 6px 18px rgba(47,159,106,0.18);
-  }
-
-  .btn-cart:hover {
-    transform: translateY(-2px);
-  }
-
-  /* Baholash tugmasi stillari */
-  .rating-button-section {
-    display: flex;
-    justify-content: center;
-    margin-top: 6px;
-  }
-
-  .btn-rate {
-    background: linear-gradient(180deg,#ffd24d,#ffbf00);
-    color: #2d2d2d;
-    border: none;
-    padding: 12px 26px;
-    border-radius: 999px;
+    position: relative;
+    font-size: 1.5rem;
+    color: rgb(250, 175, 0);
     cursor: pointer;
-    font-size: 16px;
-    font-weight: 700;
-    transition: transform 0.12s ease;
-    box-shadow: 0 8px 20px rgba(255,191,0,0.18);
+    text-align: left;
+    width: min-content;
+    -webkit-tap-highlight-color: transparent;
   }
 
-  .btn-rate:hover {
-    background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(255, 165, 0, 0.4);
+  .css-ykqdxu {
+    cursor: inherit;
+    display: inline-flex;
+    position: relative;
+    -webkit-tap-highlight-color: transparent;
   }
 
-  /* Item modal removed: product preview modal CSS was intentionally removed
-     in favor of dedicated product pages at /product/<id>. Remaining modal
-     styles are provided globally in base templates or static CSS files. */
-
-  .modal-actions {
-    border-top: 1px solid #eee;
-    padding-top: 20px;
-    margin-bottom: 20px;
+  .css-1xh6k8t {
+    user-select: none;
+    width: 1em;
+    height: 1em;
+    display: inline-block;
+    fill: currentcolor;
+    flex-shrink: 0;
+    transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    font-size: 1.5rem;
   }
 
-  .quantity-selector {
+  .css-79elbk {
+    position: relative;
+  }
+
+  .MuiRating-visuallyHidden {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+  }
+
+  .css-1cw4hi4 {
+    user-select: none;
+    width: 1em;
+    height: 1em;
+    display: inline-block;
+    fill: currentcolor;
+    flex-shrink: 0;
+    font-size: inherit;
+  }
+
+  .MuiRating-iconFilled {
+    color: rgb(250, 175, 0);
+  }
+
+  .MuiRating-iconEmpty {
+    color: rgba(0, 0, 0, 0.26);
+  }
+
+  /* Modal styles */
+  .css-y1h3gr {
+    background-color: rgb(255, 255, 255);
+    color: rgba(0, 0, 0, 0.87);
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 11px 15px -7px, rgba(0, 0, 0, 0.14) 0px 24px 38px 3px, rgba(0, 0, 0, 0.12) 0px 9px 46px 8px;
+    position: relative;
+    overflow-y: auto;
     display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 15px;
+    flex-direction: column;
+    max-height: calc(100% - 64px);
+    max-width: 640px;
+    transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 4px;
+    margin: 32px;
+  }
+
+  * {
+    box-sizing: border-box;
+    font-family: "SB Sans Text", Helvetica, Arial, sans-serif;
+    font-weight: 400;
+  }
+</style> -->
+{% endblock %}
+{% block scripts %}
+<script>
+  // Menu load counter
+  window.menuLoadCount = (window.menuLoadCount || 0) + 1;
+  console.log(`🟢 MENU LOAD #${window.menuLoadCount} - ${new Date().toLocaleTimeString()}`);
+
+  window.menuData = {}; /* Not used but kept for legacy compat */
+
+
+
+<style>
     justify-content: center;
   }
 
@@ -2237,7 +1149,7 @@
     overflow-y: auto;
   }
 
-  /* Responsive grid adjustments: phone=1, tablet=2, notebook=3, tv=4 */
+  /* Responsive grid adjustments: phone=1, tablet=2, notebook=3, desktop=4, large=5 */
   .menu-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -2249,22 +1161,131 @@
     .menu-grid { grid-template-columns: repeat(2, 1fr); gap: 22px; }
   }
 
-  @media (min-width: 992px) {
-    .menu-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 26px !important; }
-    /* Ensure cards fill their grid column instead of being artificially narrow */
-    .menu-item-card { max-width: none !important; margin: 0 !important; width: 100% !important; box-sizing: border-box !important; }
+  @media (min-width: 819px) {
+    .menu-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 24px !important; }
+    /* Ensure cards fill their grid column properly */
+    .menu-item-card {
+      max-width: none !important;
+      margin: 0 !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+      /* Prevent any flex properties that might cause sizing issues */
+      flex: none !important;
+      flex-basis: auto !important;
+    }
   }
 
-  /* Favorites tugmasi uchun karta konteynerini nisbiy (relative) qilamiz */
-  .menu-item-card {
-    position: relative;
+  @media (min-width: 1200px) {
+    .menu-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 26px !important; }
+  }
+
+  @media (min-width: 1400px) {
+    .menu-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 24px !important; }
   }
 
   @media (min-width: 1900px) {
     .menu-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 30px !important; }
   }
 
+  @media (min-width: 992px) {
+    .content-area {
+      width: calc(100% - 360px);
+      padding: 30px 25px;
+      /* background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); */
+      border-radius: 16px 0 0 16px;
+      box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.02);
+      min-height: calc(100vh - 200px);
+      transition: all 0.3s ease;
+    }
+  }
+
+  /* General menu card styling */
+  .menu-item-card {
+    position: relative;
+    min-width: 280px; /* Prevent cards from becoming too narrow */
+    /* Prevent any flex properties that might cause sizing issues */
+    flex: none !important;
+    flex-basis: auto !important;
+    background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 1px solid #e2e8f0;
+  }
+
+  .menu-item-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05), 0 0 25px rgba(66, 153, 225, 0.3);
+    background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%);
+    border-color: #4299e1;
+  }
+
+  /* Responsive minimum widths for cards */
+  @media (max-width: 575px) {
+    .menu-item-card {
+      min-width: unset; /* Allow full width on mobile */
+    }
+  }
+
+  @media (min-width: 576px) and (max-width: 818px) {
+    .menu-item-card {
+      min-width: 250px;
+    }
+  }
+
+  @media (min-width: 819px) and (max-width: 1199px) {
+    .menu-item-card {
+      min-width: 220px;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .menu-item-card {
+      min-width: 200px;
+    }
+  }
+
   /* Force image visibility and sizing to avoid accidental hiding */
+  .menu-item-card .card-image {
+    width: 100%;
+    height: 300px; /* Fixed height for image container */
+    background: #f3f6fb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px 12px 0 0;
+    position: relative;
+  }
+
+  .image-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .image-skeleton {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 8px;
+    z-index: 1;
+  }
+
+  @keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
   .menu-item-card .card-image img,
   .menu-item .item-image img {
     display: block !important;
@@ -2281,8 +1302,15 @@
   .menu-item-card .gallery {
     width: 100%;
     height: 100%;
-    overflow: hidden;
-    position: relative;
+    overflow: hidden; /* Clip the track to gallery bounds */
+    position: absolute;
+    top: 0;
+    left: 0;
+    cursor: pointer; /* Indicate interactive gallery */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
   }
 
   .menu-item-card .gallery .gallery-track,
@@ -2291,17 +1319,28 @@
     align-items: center;
     gap: 0;
     height: 100%;
-    transition: transform 220ms ease;
-    will-change: transform;
+    position: relative;
+    width: 100%;
+    /* Remove transform-based sliding, use opacity instead */
   }
 
   .menu-item-card .gallery .gallery-track img,
   .menu-item .gallery .gallery-track img {
     height: 100%;
-    width: auto;
-    object-fit: contain;
+    width: 100%;
+    object-fit: cover;
     display: block;
-    flex-shrink: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity 220ms ease;
+    /* First image visible by default */
+  }
+
+  .menu-item-card .gallery .gallery-track img:first-child,
+  .menu-item .gallery .gallery-track img:first-child {
+    opacity: 1;
   }
 
   .comment-item {
@@ -2847,6 +1886,78 @@
     border-radius: 12px 12px 0 0;
   }
 
+  /* Filter input styling */
+  .filter-input, .filter-select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    background: #ffffff;
+    color: #2d3748;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+  }
+
+  .filter-input:focus, .filter-select:focus {
+    outline: none;
+    border-color: #4299e1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+    background: #f8fafc;
+  }
+
+  .filter-input::placeholder {
+    color: #a0aec0;
+  }
+
+  .filter-section {
+    margin-bottom: 20px;
+  }
+
+  .filter-section label {
+    display: block;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+  }
+
+  .clear-btn {
+    width: 100%;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+  }
+
+  .clear-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+  }
+
+  .filter-links {
+    border-top: 1px solid #e2e8f0;
+    padding-top: 20px;
+  }
+
+  .filter-link {
+    display: block;
+    color: #4299e1;
+    text-decoration: none;
+    padding: 8px 0;
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+
+  .filter-link:hover {
+    color: #2d3748;
+  }
+
   @media (max-width: 768px) {
     .floating-cart-icon {
       width: 55px;
@@ -2905,18 +2016,6 @@
       width: 100% !important;
       margin-left: 0 !important;
       padding: 0 15px;
-    }
-
-    .filter-title {
-      font-size: 1.3rem;
-      margin-bottom: 25px;
-      text-align: center;
-      color: #2d3748;
-      padding-bottom: 15px;
-      border-bottom: 2px solid #e2e8f0;
-    }
-
-    .category-buttons {
       justify-content: center;
       padding: 15px;
       flex-wrap: wrap;
@@ -2926,6 +2025,14 @@
       font-size: 0.9rem;
       padding: 10px 18px;
       margin: 5px;
+    }
+
+    .category-buttons {
+      position: static !important;
+      top: auto !important;
+      margin-bottom: 20px;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
     }
 
     .modal-content {
@@ -2945,7 +2052,7 @@
 
     /* Mobile filter toggle improvements */
     .mobile-filter-toggle {
-      position: sticky;
+      position: fixed;
       top: 20px;
       z-index: 100;
       margin-bottom: 25px;
@@ -3127,8 +2234,31 @@
     cursor: pointer;
   }
 
+</script>
+
+<!-- <style disabled>
+    justify-content: center;
+  }
+
+  .quantity-selector button {
+    background: #f0f0f0;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+  }
+
+  .quantity-selector button:hover {
+    background: #4299e1;
+    color: white;
+  }
+
   .media-toolbar .btn-danger { background: rgba(245,101,101,0.95); color: white; }
-</style>
+</style> -->
 
 <script>
 // Ensure menu initialization runs only once per page load to avoid
@@ -3138,29 +2268,116 @@ if (window.__menuInitDone) {
 } else {
   window.__menuInitDone = true;
 
-    // Build a safe menuData mapping using tojson so strings are properly escaped.
-    // This avoids breaking the JS if item names/descriptions contain quotes or newlines.
-    let menuData = {};
-    // Oddiy foydalanuvchi (staff/courier/super_admin emas) bo'lsa favorites ishlaydi
-    const IS_FAVORITES_USER = {{ (session.get('user_id') and not session.get('staff_id') and not session.get('courier_id') and not session.get('super_admin')) | tojson }};
-    const FAVORITES_LOGIN_MESSAGE = {{ "Iltimos oldin saytdan avtorizatsiyadan o'ting"|tojson }};
+  // Function to hide image skeleton when image loads - defined early for inline handlers
+  // Make it globally available for inline event handlers
+  if (typeof window.hideSkeleton !== 'function') {
+    window.hideSkeleton = function(imgElement) {
+      try {
+        const container = imgElement.closest('.image-container');
+        if (container) {
+          const skeleton = container.querySelector('.image-skeleton');
+          if (skeleton) {
+            skeleton.style.display = 'none';
+          }
+        }
+      } catch (e) {
+        console.warn('hideSkeleton error:', e);
+      }
+    };
+  }
 
-    {% for item in men %}
-    menuData[{{ item.id }}] = {{ {
-        "id": item.id,
-        "name": item.name,
-        "description": item.description or 'Mahsulot tavsifi',
-  "image_url": item.image_url or '/static/defoult.webp',
-        "rating": item.rating or 0,
-        "orders_count": item.orders_count or 0,
-        "sizes": item.sizes or '',
-        "colors": item.colors or '',
-        "category": (item.category or 'product')|lower
-    } | tojson }};
-    {% endfor %}
+  // Set up skeleton image handlers immediately (DOM should be ready)
+  (function setupSkeletonHandlers() {
+    // Find all images that should hide skeletons on load
+    const swiperImages = document.querySelectorAll('.swiper-lazy');
+    const galleryImages = document.querySelectorAll('.gallery-lazy');
 
-    // Expose whether the current session is a staff session so JS can show staff-only controls
-    const IS_STAFF = {{ (session.get('staff_id') and True) | tojson }};
+    // Handle swiper images
+    swiperImages.forEach(img => {
+      img.addEventListener('load', function() {
+        if (typeof window.hideSkeleton === 'function') {
+          window.hideSkeleton(this);
+        }
+      });
+      img.addEventListener('error', function() {
+        this.src = '/static/defoult.webp';
+        if (typeof window.hideSkeleton === 'function') {
+          window.hideSkeleton(this);
+        }
+      });
+    });
+
+    // Handle gallery images
+    galleryImages.forEach(img => {
+      img.addEventListener('load', function() {
+        if (typeof window.hideSkeleton === 'function') {
+          window.hideSkeleton(this);
+        }
+      });
+      img.addEventListener('error', function() {
+        this.src = '/static/defoult.webp';
+        if (typeof window.hideSkeleton === 'function') {
+          window.hideSkeleton(this);
+        }
+      });
+    });
+  })();
+
+  // Add hover gallery functionality
+  (function setupHoverGallery() {
+    // Disable on mobile devices
+    if (window.innerWidth < 768) return;
+
+    const galleries = document.querySelectorAll('.gallery');
+    galleries.forEach(gallery => {
+      const track = gallery.querySelector('.gallery-track');
+      if (!track) return;
+      const images = track.querySelectorAll('img');
+      if (images.length <= 1) return;
+
+      gallery.addEventListener('mousemove', function(e) {
+        const rect = gallery.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const width = rect.width;
+        const index = Math.floor((x / width) * images.length);
+        const clampedIndex = Math.max(0, Math.min(images.length - 1, index));
+
+        images.forEach((img, i) => {
+          img.style.opacity = i === clampedIndex ? '1' : '0';
+        });
+
+        // Update thumbnails if exist
+        const thumbnails = gallery.parentElement.querySelectorAll('.BKd5K img');
+        thumbnails.forEach((thumb, i) => {
+          thumb.setAttribute('data-active', i === clampedIndex ? 'true' : 'false');
+        });
+      });
+
+      gallery.addEventListener('mouseleave', function() {
+        // Reset to first image
+        images.forEach((img, i) => {
+          img.style.opacity = i === 0 ? '1' : '0';
+        });
+        const thumbnails = gallery.parentElement.querySelectorAll('.BKd5K img');
+        thumbnails.forEach((thumb, i) => {
+          thumb.setAttribute('data-active', i === 0 ? 'true' : 'false');
+        });
+      });
+    });
+  })();
+
+    // Load configuration from JSON block
+    let rawConfig = {};
+    try {
+      const el = document.getElementById('menu-page-config');
+      if(el) rawConfig = JSON.parse(el.textContent);
+    } catch(e) { console.error('Failed to parse menu config', e); }
+
+    let menuData = rawConfig.items || {};
+    const IS_FAVORITES_USER = rawConfig.is_favorites_user || false;
+    const FAVORITES_LOGIN_MESSAGE = rawConfig.favorites_login_message || "Login required";
+    const IS_STAFF = rawConfig.is_staff || false;
+    const CSRF_TOKEN = rawConfig.csrf_token || "";
 
   // Track whether the user has performed a real (trusted) interaction yet.
   // We prefer a boolean flag set only when a trusted event occurs. This prevents
@@ -3453,11 +2670,6 @@ if (window.__menuInitDone) {
       }
     }
 
-  // Pagination state: 10 items per page
-  let currentPage = 1;
-  const PAGE_SIZE = 10;
-  let lastTotalCount = 0;
-
   // Simplified search: use only client-side filtering over server-rendered cards.
   // This avoids re-drawing the menu multiple times with different styles.
   async function performMenuSearch() {
@@ -3472,18 +2684,24 @@ if (window.__menuInitDone) {
     console.log('Applying client-side filter (DOM-based)');
     const qEl = document.getElementById('menuSearchInput');
     const catEl = document.getElementById('filterCategory');
+    const sortEl = document.getElementById('filterSort');
     const sizeEl = document.getElementById('filterSize');
     const colorEl = document.getElementById('filterColor');
 
     const q = qEl ? (qEl.value || '').trim().toLowerCase() : '';
     const category = catEl ? (catEl.value || '') : '';
+    const sort = sortEl ? (sortEl.value || '') : '';
     const size = sizeEl ? (sizeEl.value || '').trim().toLowerCase().replace(/\s+/g, '') : '';
     const color = colorEl ? (colorEl.value || '').trim().toLowerCase().replace(/\s+/g, '') : '';
 
     const normCategory = slugifyCategory(category || 'all');
-    const cards = document.querySelectorAll('.menu-item-card');
+    const cards = Array.from(document.querySelectorAll('.menu-item-card'));
     if (!cards || !cards.length) return;
 
+    // Filter cards
+    const visibleCards = [];
+    const hiddenCards = [];
+    
     cards.forEach(card => {
       let visible = true;
       try {
@@ -3508,8 +2726,70 @@ if (window.__menuInitDone) {
       } catch (e) {
         console.warn('applyClientSideFilter error for card', e);
       }
-      card.style.display = visible ? 'block' : 'none';
+      
+      if (visible) {
+        visibleCards.push(card);
+      } else {
+        hiddenCards.push(card);
+      }
     });
+
+    // Sort visible cards
+    if (sort) {
+      visibleCards.sort((a, b) => {
+        try {
+          switch (sort) {
+            case 'popularity':
+              // Assume higher orders_count means more popular
+              const aOrders = parseInt(a.dataset.ordersCount || '0', 10);
+              const bOrders = parseInt(b.dataset.ordersCount || '0', 10);
+              return bOrders - aOrders;
+            case 'rating':
+              const aRating = parseFloat(a.dataset.rating || '0');
+              const bRating = parseFloat(b.dataset.rating || '0');
+              return bRating - aRating;
+            case 'name_asc':
+              const aName = (a.querySelector('.card-title')?.innerText || '').trim().toLowerCase();
+              const bName = (b.querySelector('.card-title')?.innerText || '').trim().toLowerCase();
+              return aName.localeCompare(bName);
+            case 'name_desc':
+              const aNameDesc = (a.querySelector('.card-title')?.innerText || '').trim().toLowerCase();
+              const bNameDesc = (b.querySelector('.card-title')?.innerText || '').trim().toLowerCase();
+              return bNameDesc.localeCompare(aNameDesc);
+            default:
+              return 0;
+          }
+        } catch (e) {
+          console.warn('Sorting error', e);
+          return 0;
+        }
+      });
+    }
+
+    // Reorder DOM: visible cards first, then hidden
+    const menuGrid = document.querySelector('.menu-grid');
+    if (menuGrid) {
+      // Update visibility styles
+      visibleCards.forEach(card => {
+        card.style.display = 'block';
+      });
+
+      hiddenCards.forEach(card => {
+        card.style.display = 'none';
+      });
+
+      // Reorder cards without clearing the grid (preserves CSS)
+      // Move hidden cards to the end
+      hiddenCards.forEach(card => {
+        if (card.parentNode) {
+          card.parentNode.appendChild(card);
+        }
+      });
+    } else {
+      // Fallback: just set display
+      visibleCards.forEach(card => card.style.display = 'block');
+      hiddenCards.forEach(card => card.style.display = 'none');
+    }
   }
 
   const debouncedSearch = debounce(performMenuSearch, 300);
@@ -3524,17 +2804,7 @@ if (window.__menuInitDone) {
     }
   });
 
-  // Also trigger on DOMContentLoaded as backup
-  document.addEventListener('DOMContentLoaded', function() {
-    try {
-      console.log('DOM loaded, triggering initial search');
-      setTimeout(() => {
-        debouncedSearch();
-      }, 100);
-    } catch (e) {
-      console.warn('DOM loaded search failed:', e);
-    }
-  });
+
 
   // Expose performMenuSearch for manual testing in console
   try { 
@@ -3556,27 +2826,27 @@ if (window.__menuInitDone) {
         const clearBtn = document.getElementById('clearFiltersBtn');
 
         if (searchInput && !searchInput._menuWired) {
-          searchInput.addEventListener('input', function() { currentPage = 1; debouncedSearch(); });
+          searchInput.addEventListener('input', function() { debouncedSearch(); });
           searchInput._menuWired = true;
         }
 
         if (categorySelect && !categorySelect._menuWired) {
-          categorySelect.addEventListener('change', function() { currentPage = 1; debouncedSearch(); });
+          categorySelect.addEventListener('change', function() { debouncedSearch(); });
           categorySelect._menuWired = true;
         }
 
         if (sortSelect && !sortSelect._menuWired) {
-          sortSelect.addEventListener('change', function() { currentPage = 1; debouncedSearch(); });
+          sortSelect.addEventListener('change', function() { debouncedSearch(); });
           sortSelect._menuWired = true;
         }
 
         if (sizeInput && !sizeInput._menuWired) {
-          sizeInput.addEventListener('input', function() { currentPage = 1; debouncedSearch(); });
+          sizeInput.addEventListener('input', function() { debouncedSearch(); });
           sizeInput._menuWired = true;
         }
 
         if (colorInput && !colorInput._menuWired) {
-          colorInput.addEventListener('input', function() { currentPage = 1; debouncedSearch(); });
+          colorInput.addEventListener('input', function() { debouncedSearch(); });
           colorInput._menuWired = true;
         }
 
@@ -3588,7 +2858,6 @@ if (window.__menuInitDone) {
               if (sortSelect) sortSelect.value = '';
               if (sizeInput) sizeInput.value = '';
               if (colorInput) colorInput.value = '';
-              currentPage = 1;
               debouncedSearch();
             } catch (e) { console.warn('clear filters handler error', e); }
           });
@@ -3599,104 +2868,14 @@ if (window.__menuInitDone) {
 
     // Ensure filters are wired now and also on DOMContentLoaded (idempotent)
     try { wireFilters(); } catch (e) {}
-  document.addEventListener('DOMContentLoaded', function() { 
-    try { 
-      wireFilters(); 
-      // Initial load
-      debouncedSearch();
-    } catch (e) {
-      console.warn('Filter initialization error:', e);
-    } 
-  });
 
-    // Wire inputs
-    document.addEventListener('DOMContentLoaded', function() {
-      const searchInput = document.getElementById('menuSearchInput');
-      const categorySelect = document.getElementById('filterCategory');
-      const sortSelect = document.getElementById('filterSort');
-      const sizeInput = document.getElementById('filterSize');
-      const colorInput = document.getElementById('filterColor');
-      const clearBtn = document.getElementById('clearFiltersBtn');
 
-      if (searchInput) searchInput.addEventListener('input', function(){ currentPage = 1; debouncedSearch(); });
-      if (categorySelect) categorySelect.addEventListener('change', function(){ currentPage = 1; debouncedSearch(); });
-      if (sortSelect) sortSelect.addEventListener('change', function(){ currentPage = 1; debouncedSearch(); });
-      if (sizeInput) sizeInput.addEventListener('input', function(){ currentPage = 1; debouncedSearch(); });
-      if (colorInput) colorInput.addEventListener('input', function(){ currentPage = 1; debouncedSearch(); });
-      if (clearBtn) clearBtn.addEventListener('click', function() {
-        searchInput.value = '';
-        categorySelect.value = '';
-        sortSelect.value = '';
-        sizeInput.value = '';
-        colorInput.value = '';
-        currentPage = 1;
-        // reload original menu by triggering search (empty)
-        debouncedSearch();
-      });
 
-      // Ensure the select matches the active category button on initial load
-      try {
-        const activeBtn = document.querySelector('.category-btn.active');
-        if (activeBtn && categorySelect) {
-          const bcat = activeBtn.getAttribute('data-cat') || '';
-          if (bcat) categorySelect.value = bcat === 'all' ? '' : bcat;
         }
       } catch (e) { console.warn('initial category sync failed', e); }
       // initial load
       debouncedSearch();
     });
-
-    // Render simple pagination controls inside #menu-pagination
-    function renderPaginationControls(total, perPage, current) {
-      const container = document.getElementById('menu-pagination');
-      if (!container) return;
-      container.innerHTML = '';
-      const pages = Math.max(1, Math.ceil((total || 0) / perPage));
-      if (pages <= 1) return;
-
-      const wrap = document.createElement('div');
-      wrap.className = 'pagination-controls';
-      // Previous
-      const prev = document.createElement('button');
-      prev.className = 'btn small';
-      prev.textContent = '◀';
-      prev.disabled = current <= 1;
-      prev.onclick = () => { if (current > 1) { currentPage = current - 1; performMenuSearch(); } };
-      wrap.appendChild(prev);
-
-      // Page numbers (simple list)
-      for (let p = 1; p <= pages; p++) {
-        const b = document.createElement('button');
-        b.className = 'btn small';
-        if (p === current) b.classList.add('active');
-        b.textContent = String(p);
-        b.onclick = (() => { const pp = p; return () => { if (pp === current) return; currentPage = pp; performMenuSearch(); }; })();
-        wrap.appendChild(b);
-      }
-
-      // Next
-      const next = document.createElement('button');
-      next.className = 'btn small';
-      next.textContent = '▶';
-      next.disabled = current >= pages;
-      next.onclick = () => { if (current < pages) { currentPage = current + 1; performMenuSearch(); } };
-      wrap.appendChild(next);
-
-      container.appendChild(wrap);
-    }
-
-    // Basic styles for pagination controls (inlined here for simplicity)
-    (function injectPaginationStyles(){
-      try {
-        const css = `
-          .pagination-controls { display:flex; gap:8px; align-items:center; justify-content:center; margin:18px 0; }
-          .pagination-controls .btn { background:#f0f0f0; border:1px solid #e0e0e0; padding:6px 10px; border-radius:6px; cursor:pointer; }
-          .pagination-controls .btn.active { background:#007bff; color:#fff; border-color:#0069d9; }
-          .pagination-controls .btn:disabled { opacity:0.5; cursor:default; }
-        `;
-        const style = document.createElement('style'); style.type = 'text/css'; style.appendChild(document.createTextNode(css)); document.head.appendChild(style);
-      } catch(e){}
-    })();
 
   // Modal quantity controls removed.
 
@@ -4345,8 +3524,9 @@ if (window.__menuInitDone) {
       }
     }
 
-    // Initialize the page
+    // Consolidated single DOMContentLoaded handler for optimal performance
     document.addEventListener('DOMContentLoaded', function() {
+      console.log(`🟡 MAIN INIT #${window.menuLoadCount} - ${new Date().toLocaleTimeString()}`);
       updateCartCountDisplay();
       try { loadMenuData(); } catch(e) { console.warn('loadMenuData failed', e); }
       try { wireFavoriteButtons(); } catch(e) { console.warn('wireFavoriteButtons on DOMContentLoaded failed', e); }
@@ -4356,13 +3536,16 @@ if (window.__menuInitDone) {
   try { console.log('DOMContentLoaded: menu-grid items', document.querySelectorAll('.menu-grid .menu-item-card').length); } catch(e) {}
       try { console.log('DOMContentLoaded: menuData keys', Object.keys(menuData||{}).length); } catch(e) {}
       // If menuData is empty (server injection missing or user edits), fetch full menu as a fallback
+      // DISABLED: to prevent double loading
+      /*
       try {
         if (!menuData || Object.keys(menuData).length === 0) {
-          console.log('[menu-fallback] menuData empty - fetching /api/menu-search fallback');
+          console.log(`🚨 MENU FALLBACK #${window.menuLoadCount} - Fetching /api/menu-search - ${new Date().toLocaleTimeString()}`);
           fetch('/api/menu-search')
             .then(r => r.json())
             .then(data => {
               if (data && data.success && Array.isArray(data.items)) {
+                console.log(`✅ MENU FALLBACK SUCCESS #${window.menuLoadCount} - Loaded ${data.items.length} items - ${new Date().toLocaleTimeString()}`);
                 // Populate cache and render
                 menuData = {};
                 data.items.forEach(it => { try { menuData[it.id] = it; } catch(e){} });
@@ -4370,25 +3553,23 @@ if (window.__menuInitDone) {
                 try { buildMenuDataFromDOM(); } catch(e) {}
                 try { if (typeof attachCardHandlers === 'function') attachCardHandlers(); } catch(e) {}
               } else {
-                console.warn('[menu-fallback] menu-search returned no items or error');
+                console.warn(`❌ MENU FALLBACK FAILED #${window.menuLoadCount} - No items returned - ${new Date().toLocaleTimeString()}`);
               }
             })
             .catch(err => { console.warn('[menu-fallback] fetch failed', err); });
         }
       } catch(e) { console.warn('menuData fallback error', e); }
+      */
       // Fallback: ensure menu-item cards open modal when clicked (defensive)
       try {
         document.querySelectorAll('.menu-item-card').forEach(card => {
           if (card._hasClickFallback) return;
           card._hasClickFallback = true;
           card.addEventListener('click', function(e) {
-            try {
-              const id = card.dataset && card.dataset.id ? card.dataset.id : (card.getAttribute && (card.getAttribute('onclick') || '').match(/openItemModal\((\d+)\)/) || [])[1];
-              if (id) {
-                try { console.log('menu-item click fallback -> navigate to product', id, e.target); } catch(e) {}
-                try { window.location.href = '/product/' + encodeURIComponent(id); } catch(err) { console.warn('navigation failed', err); }
-              }
-            } catch(err) { console.warn('menu-item click fallback failed', err); }
+            const id = card.dataset && card.dataset.id ? card.dataset.id : (card.getAttribute && (card.getAttribute('onclick') || '').match(/openItemModal\((\d+)\)/) || [])[1];
+            if (id) {
+              window.location.href = '/product/' + encodeURIComponent(id);
+            }
           });
         });
       } catch(err) { console.warn('menu-item fallback registration failed', err); }
@@ -4396,24 +3577,14 @@ if (window.__menuInitDone) {
       // Ensure category buttons are wired even if inline handlers were removed
       try {
         document.querySelectorAll('.category-btn').forEach(btn => {
-          if (btn._wiredByFallback) return; btn._wiredByFallback = true;
           btn.addEventListener('click', function(ev) {
-            ev.preventDefault();
-            ev.stopPropagation();
             const cat = this.getAttribute('data-cat') || 'all';
-            console.log('Fallback category button clicked:', cat);
-            
-            // Call showCategory directly - it will handle button state
             if (typeof showCategory === 'function') {
-            showCategory(null, cat);
-            } else if (typeof window.showCategory === 'function') {
-              window.showCategory(null, cat);
-            } else {
-              console.warn('showCategory function not available');
+              showCategory(null, cat);
             }
           });
         });
-      } catch(e) { console.warn('category button fallback wiring failed', e); }
+      } catch(e) { console.warn('category button wiring failed', e); }
     });
 
     // Build menuData from server-rendered DOM cards so client-side filters can work
@@ -4451,51 +3622,17 @@ if (window.__menuInitDone) {
       } catch (e) { console.warn('buildMenuDataFromDOM error', e); }
     }
 
-    // Grid-level pointerup fallback: opens item modal if card click handlers fail
-      try {
-        const gridEl = document.querySelector('.menu-grid');
-        if (gridEl) {
-        // pointerup was passive previously; on some mobile browsers this
-        // can be swallowed or delayed. Add a capture-phase, non-passive
-        // pointerdown listener as a stronger fallback for touch interactions.
-        gridEl.addEventListener('pointerdown', function(e) {
-          try {
-            if (e.target.closest && e.target.closest('a, button, input, select, textarea, form')) return;
-            const card = e.target.closest && e.target.closest('.menu-item-card');
-            if (!card) return;
-            const id = card.dataset && card.dataset.id ? card.dataset.id : (card.getAttribute && (card.getAttribute('onclick') || '').match(/openItemModal\((\d+)\)/) || [])[1];
-            if (id) {
-              // debug
-              try { console.log('grid-level pointerup -> navigate to product', id); } catch(e){}
-              try { window.location.href = '/product/' + encodeURIComponent(id); } catch(err) { console.warn('navigation failed', err); }
-            }
-          } catch(err) { console.warn('grid pointerup fallback error', err); }
-        }, { passive: false, capture: true });
-      }
-    } catch(e) { console.warn('grid pointerup fallback registration failed', e); }
-
-    // Additional fallback: use elementFromPoint on pointerup to ensure we can
-    // detect the topmost .menu-item even when child elements consume events.
+    // Simplified grid click handlers
     try {
-      window.addEventListener('pointerup', function(ev) {
-        try {
-          // only run on short taps/clicks
-          if (!ev || ev.type !== 'pointerup') return;
-          const x = ev.clientX || (ev.touches && ev.touches[0] && ev.touches[0].clientX);
-          const y = ev.clientY || (ev.touches && ev.touches[0] && ev.touches[0].clientY);
-          if (typeof x !== 'number' || typeof y !== 'number') return;
-          const el = document.elementFromPoint(x, y);
-          if (!el) return;
-          const card = el.closest && el.closest('.menu-item-card');
-          if (!card) return;
-          const id = card.dataset && card.dataset.id ? card.dataset.id : (card.getAttribute && (card.getAttribute('onclick') || '').match(/openItemModal\((\d+)\)/) || [])[1];
+      document.querySelectorAll('.menu-item-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+          const id = card.dataset && card.dataset.id ? card.dataset.id : null;
           if (id) {
-            try { console.log('pointerup elementFromPoint -> navigate to product', id); } catch(e){}
-            try { window.location.href = '/product/' + encodeURIComponent(id); } catch(err) { console.warn('navigation failed', err); }
+            window.location.href = '/product/' + encodeURIComponent(id);
           }
-        } catch (e) { /* ignore */ }
-      }, { passive: true, capture: true });
-    } catch (e) { console.warn('elementFromPoint pointerup fallback failed', e); }
+        });
+      });
+    } catch(e) { console.warn('card click handlers failed', e); }
 
 
     // Helper function to create color dropdown for items
@@ -4640,13 +3777,78 @@ if (window.__menuInitDone) {
 
                     <div class="rating-form">
                         <h4>Bahongizni bering:</h4>
-                        <div class="stars-rating">
-                            <span class="rating-star" data-rating="1"><i class="bi bi-star-fill ui-icon ui-icon--accent" aria-hidden="true"></i></span>
-                            <span class="rating-star" data-rating="2"><i class="bi bi-star-fill ui-icon ui-icon--accent" aria-hidden="true"></i></span>
-                            <span class="rating-star" data-rating="3"><i class="bi bi-star-fill ui-icon ui-icon--accent" aria-hidden="true"></i></span>
-                            <span class="rating-star" data-rating="4"><i class="bi bi-star-fill ui-icon ui-icon--accent" aria-hidden="true"></i></span>
-                            <span class="rating-star" data-rating="5"><i class="bi bi-star-fill ui-icon ui-icon--accent" aria-hidden="true"></i></span>
-                        </div>
+                        <span class="MuiRating-root MuiRating-sizeMedium css-1741isb">
+                          {% for i in range(1, 6) %}
+                            {% if loop.index == 1 %}
+                              <span class="MuiRating-decimal css-79elbk">
+                                <label for="rating-{{ loop.index - 0.5 }}" class="css-ykqdxu" style="width: 0%; overflow: hidden; position: absolute;">
+                                  <span class="MuiRating-icon MuiRating-iconEmpty css-1xh6k8t">
+                                    <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1cw4hi4" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarBorderIcon">
+                                      <path d="M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"></path>
+                                    </svg>
+                                  </span>
+                                  <span class="MuiRating-visuallyHidden">{{ loop.index - 0.5 }} Stars</span>
+                                </label>
+                                <input class="MuiRating-visuallyHidden" id="rating-{{ loop.index - 0.5 }}" type="radio" name="rating" value="{{ loop.index - 0.5 }}" data-rating="{{ loop.index - 0.5 }}">
+                                <label for="rating-{{ loop.index }}" class="css-ykqdxu">
+                                  <span class="MuiRating-icon MuiRating-iconEmpty css-1xh6k8t">
+                                    <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1cw4hi4" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarBorderIcon">
+                                      <path d="M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"></path>
+                                    </svg>
+                                  </span>
+                                  <span class="MuiRating-visuallyHidden">{{ loop.index }} Star</span>
+                                </label>
+                                <input class="MuiRating-visuallyHidden" id="rating-{{ loop.index }}" type="radio" name="rating" value="{{ loop.index }}" data-rating="{{ loop.index }}">
+                              </span>
+                            {% elif loop.index < 5 %}
+                              <span class="MuiRating-decimal css-79elbk">
+                                <label for="rating-{{ loop.index - 0.5 }}" class="css-ykqdxu" style="width: 0%; overflow: hidden; position: absolute;">
+                                  <span class="MuiRating-icon MuiRating-iconEmpty css-1xh6k8t">
+                                    <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1cw4hi4" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarBorderIcon">
+                                      <path d="M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"></path>
+                                    </svg>
+                                  </span>
+                                  <span class="MuiRating-visuallyHidden">{{ loop.index - 0.5 }} Stars</span>
+                                </label>
+                                <input class="MuiRating-visuallyHidden" id="rating-{{ loop.index - 0.5 }}" type="radio" name="rating" value="{{ loop.index - 0.5 }}" data-rating="{{ loop.index - 0.5 }}">
+                                <label for="rating-{{ loop.index }}" class="css-ykqdxu">
+                                  <span class="MuiRating-icon MuiRating-iconEmpty css-1xh6k8t">
+                                    <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1cw4hi4" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarBorderIcon">
+                                      <path d="M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"></path>
+                                    </svg>
+                                  </span>
+                                  <span class="MuiRating-visuallyHidden">{{ loop.index }} Stars</span>
+                                </label>
+                                <input class="MuiRating-visuallyHidden" id="rating-{{ loop.index }}" type="radio" name="rating" value="{{ loop.index }}" data-rating="{{ loop.index }}">
+                              </span>
+                            {% else %}
+                              <span class="MuiRating-decimal css-79elbk">
+                                <label for="rating-{{ loop.index - 0.5 }}" class="css-ykqdxu" style="width: 0%; overflow: hidden; position: absolute;">
+                                  <span class="MuiRating-icon MuiRating-iconEmpty css-1xh6k8t">
+                                    <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1cw4hi4" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarBorderIcon">
+                                      <path d="M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"></path>
+                                    </svg>
+                                  </span>
+                                  <span class="MuiRating-visuallyHidden">{{ loop.index - 0.5 }} Stars</span>
+                                </label>
+                                <input class="MuiRating-visuallyHidden" id="rating-{{ loop.index - 0.5 }}" type="radio" name="rating" value="{{ loop.index - 0.5 }}" data-rating="{{ loop.index - 0.5 }}">
+                                <label for="rating-{{ loop.index }}" class="css-ykqdxu">
+                                  <span class="MuiRating-icon MuiRating-iconEmpty css-1xh6k8t">
+                                    <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1cw4hi4" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarBorderIcon">
+                                      <path d="M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"></path>
+                                    </svg>
+                                  </span>
+                                  <span class="MuiRating-visuallyHidden">{{ loop.index }} Stars</span>
+                                </label>
+                                <input class="MuiRating-visuallyHidden" id="rating-{{ loop.index }}" type="radio" name="rating" value="{{ loop.index }}" data-rating="{{ loop.index }}">
+                              </span>
+                            {% endif %}
+                          {% endfor %}
+                          <label class="MuiRating-label MuiRating-pristine css-ykqdxu">
+                            <input class="MuiRating-visuallyHidden" id="rating-empty" type="radio" name="rating" value="">
+                            <span class="MuiRating-visuallyHidden">Empty</span>
+                          </label>
+                        </span>
                         <textarea id="ratingComment" placeholder="Mahsulot haqida fikringizni yozing..." rows="4"></textarea>
                         <button onclick="submitRating()" class="btn-submit-rating" id="submit-rating" style="display: none;">
                             Baho berish
@@ -4662,21 +3864,12 @@ if (window.__menuInitDone) {
 
         // Stars event listeners
         selectedMenuRating = 0;
-        document.querySelectorAll('.rating-star').forEach(star => {
-            star.addEventListener('click', function() {
-                selectedMenuRating = parseInt(this.dataset.rating);
+        document.querySelectorAll('input[name="rating"]').forEach(input => {
+            input.addEventListener('change', function() {
+                selectedMenuRating = parseFloat(this.value);
                 updateRatingStars(selectedMenuRating);
                 document.getElementById('submit-rating').style.display = 'block';
             });
-
-            star.addEventListener('mouseover', function() {
-                const rating = parseInt(this.dataset.rating);
-                highlightRatingStars(rating);
-            });
-        });
-
-        document.querySelector('.rating-form').addEventListener('mouseleave', function() {
-            updateRatingStars(selectedMenuRating);
         });
     }
 
@@ -4691,19 +3884,18 @@ if (window.__menuInitDone) {
     }
 
     function highlightRatingStars(rating) {
-        document.querySelectorAll('.rating-star').forEach((star, index) => {
-            if (index < rating) {
-                star.style.color = '#ffd700';
-                star.style.transform = 'scale(1.2)';
-            } else {
-                star.style.color = '#ddd';
-                star.style.transform = 'scale(1)';
-            }
-        });
+        // For MUI rating, we don't need hover effects as the component handles it
+        // This function is kept for compatibility
     }
 
     function updateRatingStars(rating) {
-        highlightRatingStars(rating);
+        // Check the appropriate radio input
+        const inputs = document.querySelectorAll('input[name="rating"]');
+        inputs.forEach(input => {
+            if (parseFloat(input.value) === rating) {
+                input.checked = true;
+            }
+        });
     }
 
     function submitRating() {
@@ -4718,13 +3910,13 @@ if (window.__menuInitDone) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-CSRF-Token': {{ csrf_token|tojson }}
+        'X-CSRF-Token': (typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : '')
       },
       body: JSON.stringify({
         menu_item_id: currentRatingItemId,
         rating: selectedMenuRating,
         comment: comment,
-        csrf_token: {{ csrf_token|tojson }}
+        csrf_token: (typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : '')
       })
     })
         .then(response => response.json())
@@ -4843,88 +4035,98 @@ if (window.__menuInitDone) {
   const grid = document.querySelector('.menu-grid');
   if (!grid) return;
   const cards = grid.querySelectorAll('.menu-item-card');
-  try { console.log('attachCardHandlers: found', cards.length, 'cards'); } catch(e){}
   cards.forEach(card => {
-          try {
-            if (card._hasPointerHandler) return; // idempotent
-            card._hasPointerHandler = true;
-            // make card keyboard-focusable / accessible
-            if (!card.hasAttribute('role')) card.setAttribute('role', 'button');
-            if (!card.hasAttribute('tabindex')) card.setAttribute('tabindex', '0');
+    if (card._handlerAttached) return;
+    card._handlerAttached = true;
 
-            // Use pointerdown+pointerup tap-detection so swipes/scrolls don't open the modal
-            card.addEventListener('pointerdown', function(e) {
-              try {
-                // Ignore interactive controls
-                if (e.target.closest && e.target.closest('a, button, input, select, textarea, form')) return;
-                // record start coords/time
-                card._ptrDownX = (e.clientX !== undefined) ? e.clientX : (e.touches && e.touches[0] && e.touches[0].clientX) || 0;
-                card._ptrDownY = (e.clientY !== undefined) ? e.clientY : (e.touches && e.touches[0] && e.touches[0].clientY) || 0;
-                card._ptrDownTime = Date.now();
-                card._ptrDown = true;
-              } catch (err) { /* ignore */ }
-            }, { capture: true });
+    // make card keyboard-focusable / accessible
+    if (!card.hasAttribute('role')) card.setAttribute('role', 'button');
+    if (!card.hasAttribute('tabindex')) card.setAttribute('tabindex', '0');
 
-            card.addEventListener('pointerup', function(e) {
-              try {
-                if (!card._ptrDown) return;
-                card._ptrDown = false;
-                // ignore interactive controls
-                if (e.target.closest && e.target.closest('a, button, input, select, textarea, form')) return;
-                const upX = (e.clientX !== undefined) ? e.clientX : (e.changedTouches && e.changedTouches[0] && e.changedTouches[0].clientX) || 0;
-                const upY = (e.clientY !== undefined) ? e.clientY : (e.changedTouches && e.changedTouches[0] && e.changedTouches[0].clientY) || 0;
-                const dx = Math.abs(upX - (card._ptrDownX || 0));
-                const dy = Math.abs(upY - (card._ptrDownY || 0));
-                const dt = Date.now() - (card._ptrDownTime || 0);
-                // treat as tap only when small movement and short duration
-                if (dx <= 10 && dy <= 10 && dt < 600) {
-                  const id = (card.dataset && card.dataset.id) ? card.dataset.id : (card.getAttribute && (card.getAttribute('onclick') || '').match(/openItemModal\((\d+)\)/) || [])[1];
-                  if (id) {
-                    try { console.log('menu-item tap -> navigate to product', id, e.target); } catch(e){}
-                    try { window.location.href = '/product/' + encodeURIComponent(id); } catch (err) { console.warn('navigation error', err); }
-                    try { e.preventDefault(); } catch(e){}
-                  }
-                }
-                }
-              } catch (err) { /* ignore */ }
-            }, { capture: true });
+    // Gallery hover functionality
+    const gallery = card.querySelector('.gallery');
+    const galleryTrack = gallery ? gallery.querySelector('.gallery-track') : null;
+    if (gallery && galleryTrack) {
+      const images = galleryTrack.querySelectorAll('img');
+      if (images.length > 1) {
+        let currentImageIndex = 0;
 
-            // keyboard activation (Enter / Space)
-            card.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                const id = (card.dataset && card.dataset.id) ? card.dataset.id : (card.getAttribute && (card.getAttribute('onclick') || '').match(/openItemModal\((\d+)\)/) || [])[1];
-                if (id) { try { window.location.href = '/product/' + encodeURIComponent(id); } catch (err) { console.warn('navigation error', err); } }
-              }
-            });
-          } catch (e) { console.warn('attachCardHandlers error', e); }
+        gallery.addEventListener('mouseenter', function(e) {
+          // Keep current image visible on hover
         });
+
+        gallery.addEventListener('mouseleave', function(e) {
+          // Reset to first image
+          currentImageIndex = 0;
+          images.forEach((img, index) => {
+            img.style.opacity = index === 0 ? '1' : '0';
+          });
+        });
+
+        gallery.addEventListener('mousemove', function(e) {
+          const rect = gallery.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const width = rect.width;
+
+          // Calculate which image to show based on mouse position
+          const progress = x / width;
+          const imageIndex = Math.floor(progress * images.length);
+
+          // Ensure we don't go beyond the last image
+          const clampedIndex = Math.min(imageIndex, images.length - 1);
+
+          if (clampedIndex !== currentImageIndex) {
+            currentImageIndex = clampedIndex;
+            images.forEach((img, index) => {
+              img.style.opacity = index === clampedIndex ? '1' : '0';
+            });
+          }
+        });
+      }
+    }
+
+    // Simple click handler
+    card.addEventListener('click', function(e) {
+      if (e.target.closest && e.target.closest('a, button, input, select, textarea, form')) return;
+      const id = card.dataset.id || (card.getAttribute('onclick') || '').match(/openItemModal\((\d+)\)/)?.[1];
+      if (id) {
+        window.location.href = '/product/' + encodeURIComponent(id);
+      }
+    });
+
+    // keyboard activation (Enter / Space)
+    card.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        const id = card.dataset.id || (card.getAttribute('onclick') || '').match(/openItemModal\((\d+)\)/)?.[1];
+        if (id) {
+          window.location.href = '/product/' + encodeURIComponent(id);
+        }
+      }
+    });
+  });
       }
 
       // Run once now and whenever menu items are re-rendered dynamically
-    try { attachCardHandlers(); } catch (e) { console.warn('initial attachCardHandlers failed', e); }
+      attachCardHandlers();
 
     // Quantity control helpers for product cards
     function increaseQuantity(btn) {
-      try {
-  const input = btn.parentElement.querySelector('.qty-input') || btn.parentElement.querySelector('.quantity-input');
-        if (!input) return;
-        let val = parseInt(input.value) || 1;
-        const max = parseInt(input.max) || 99;
-        if (val < max) val += 1;
-        input.value = val;
-      } catch (e) { console.warn('increaseQuantity error', e); }
+      const input = btn.parentElement.querySelector('.qty-input') || btn.parentElement.querySelector('.quantity-input');
+      if (!input) return;
+      let val = parseInt(input.value) || 1;
+      const max = parseInt(input.max) || 99;
+      if (val < max) val += 1;
+      input.value = val;
     }
 
     function decreaseQuantity(btn) {
-      try {
-  const input = btn.parentElement.querySelector('.qty-input') || btn.parentElement.querySelector('.quantity-input');
-        if (!input) return;
-        let val = parseInt(input.value) || 1;
-        const min = parseInt(input.min) || 1;
-        if (val > min) val -= 1;
-        input.value = val;
-      } catch (e) { console.warn('decreaseQuantity error', e); }
+      const input = btn.parentElement.querySelector('.qty-input') || btn.parentElement.querySelector('.quantity-input');
+      if (!input) return;
+      let val = parseInt(input.value) || 1;
+      const min = parseInt(input.min) || 1;
+      if (val > min) val -= 1;
+      input.value = val;
     }
 
       const menuGrid = document.querySelector('.menu-grid');
@@ -4937,84 +4139,98 @@ if (window.__menuInitDone) {
         setTimeout(() => { try { buildMenuDataFromDOM(); } catch(e){} }, 250);
         setTimeout(() => { try { buildMenuDataFromDOM(); } catch(e){} }, 1200);
 
-        // Additional click fallback on the grid (capture) to handle edge mobile cases
-        try {
-          menuGrid.addEventListener('click', function(e) {
-            try {
-              if (e.target.closest && e.target.closest('a, button, input, select, textarea, form')) return;
-              const card = e.target.closest && e.target.closest('.menu-item-card');
-              if (!card) return;
-              const id = card.dataset && card.dataset.id ? card.dataset.id : (card.getAttribute && (card.getAttribute('onclick') || '').match(/openItemModal\((\d+)\)/) || [])[1];
-              if (id) {
-                try { console.log('menu-grid click fallback -> navigate to product', id); } catch(e){}
-                try { window.location.href = '/product/' + encodeURIComponent(id); } catch(err) { console.warn('navigation failed', err); }
-              }
-            } catch(err) { console.warn('menuGrid click fallback error', err); }
-          }, { capture: true });
-        } catch (err) { /* ignore */ }
+        // Simple grid click fallback
+        menuGrid.addEventListener('click', function(e) {
+          if (e.target.closest('a, button, input, select, textarea, form')) return;
+          const card = e.target.closest('.menu-item-card');
+          if (!card) return;
+          const id = card.dataset.id || (card.getAttribute('onclick') || '').match(/openItemModal\((\d+)\)/)?.[1];
+          if (id) {
+            window.location.href = '/product/' + encodeURIComponent(id);
+          }
+        }, { capture: true });
       }
 
-      // Capture-phase backup for category buttons: this runs before
-      // bubble-phase handlers and ensures category selection works even
-      // when other scripts stop propagation or modify handlers.
-      try {
-        const catContainer = document.querySelector('.category-buttons');
-        if (catContainer && !catContainer._captureWired) {
-          catContainer._captureWired = true;
-          catContainer.addEventListener('click', function(ev) {
-            try {
-              const btn = ev.target && ev.target.closest ? ev.target.closest('.category-btn') : null;
-              if (!btn) return;
-              // normalize category and trigger the canonical function
-              const cat = btn.getAttribute('data-cat') || 'all';
-              // keep UI in sync
-              try { document.querySelectorAll('.category-btn').forEach(b=>b.classList.remove('active')); } catch(e){}
-              try { btn.classList.add('active'); } catch(e){}
-              // Call the central handler (uses defensive checks internally)
-              try { 
-                console.log('Capture category button clicked:', cat);
-                if (typeof showCategory === 'function') {
-                  showCategory(null, cat);
-                } else if (typeof window.showCategory === 'function') {
-                  window.showCategory(null, cat);
-                } else {
-                  console.warn('showCategory function not available');
-                }
-              } catch(e) { 
-                console.warn('showCategory failed in capture handler', e);
+      // Simple category button wiring
+      const catContainer = document.querySelector('.category-buttons');
+      if (catContainer && !catContainer._captureWired) {
+        catContainer._captureWired = true;
+        catContainer.addEventListener('click', function(ev) {
+          const btn = ev.target.closest('.category-btn');
+          if (!btn) return;
+          const cat = btn.getAttribute('data-cat') || 'all';
+          document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          if (typeof showCategory === 'function') {
+            showCategory(null, cat);
+          } else if (typeof window.showCategory === 'function') {
+            window.showCategory(null, cat);
+          }
+          ev.preventDefault();
+          ev.stopPropagation();
+        }, { capture: true });
+      }
+
+
+      // Initialize Product Swipers
+      function initProductSwipers() {
+        const productSwipers = document.querySelectorAll('.product-swiper');
+        productSwipers.forEach(function(swiperEl) {
+          if (!swiperEl.swiper) {
+            new Swiper(swiperEl, {
+              speed: 1000,
+              loop: true,
+              autoplay: {
+                delay: 5000,
+                disableOnInteraction: false,
+              },
+              pagination: {
+                el: swiperEl.querySelector('.swiper-pagination'),
+                clickable: true,
+              },
+              navigation: {
+                nextEl: swiperEl.querySelector('.swiper-button-next'),
+                prevEl: swiperEl.querySelector('.swiper-button-prev'),
+              },
+              effect: 'fade',
+              fadeEffect: {
+                crossFade: true
               }
-              // Prevent other handlers from interfering further
-              ev.preventDefault();
-              ev.stopPropagation();
-            } catch (e) { /* ignore per-page robustness */ }
-          }, { capture: true });
-        }
-      } catch (e) { console.warn('category buttons capture wiring failed', e); }
-
-      // Wire filter inputs
-      document.addEventListener('DOMContentLoaded', function() {
-        const searchInput = document.getElementById('menuSearchInput');
-        const categorySelect = document.getElementById('filterCategory');
-        const sortSelect = document.getElementById('filterSort');
-        const sizeInput = document.getElementById('filterSize');
-        const colorInput = document.getElementById('filterColor');
-        const clearBtn = document.getElementById('clearFiltersBtn');
-
-        if (searchInput) searchInput.addEventListener('input', function(){ currentPage = 1; debouncedSearch(); });
-        if (categorySelect) categorySelect.addEventListener('change', function(){ currentPage = 1; debouncedSearch(); });
-        if (sortSelect) sortSelect.addEventListener('change', function(){ currentPage = 1; debouncedSearch(); });
-        if (sizeInput) sizeInput.addEventListener('input', function(){ currentPage = 1; debouncedSearch(); });
-        if (colorInput) colorInput.addEventListener('input', function(){ currentPage = 1; debouncedSearch(); });
-        if (clearBtn) clearBtn.addEventListener('click', function(){
-          if (searchInput) searchInput.value = '';
-          if (categorySelect) categorySelect.value = '';
-          if (sortSelect) sortSelect.value = '';
-          if (sizeInput) sizeInput.value = '';
-          if (colorInput) colorInput.value = '';
-          currentPage = 1;
-          debouncedSearch();
+            });
+          }
         });
+      }
+
+      // Initialize swipers on DOMContentLoaded
+      document.addEventListener('DOMContentLoaded', function() {
+        initProductSwipers();
       });
+
+      // Re-initialize swipers when new content is loaded (for infinite scroll, etc.)
+      if (window.MutationObserver) {
+        const observer = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+              // Check if new product cards were added
+              const hasNewSwipers = Array.from(mutation.addedNodes).some(node =>
+                node.nodeType === 1 && (
+                  node.classList && node.classList.contains('product-swiper') ||
+                  node.querySelector && node.querySelector('.product-swiper')
+                )
+              );
+              if (hasNewSwipers) {
+                setTimeout(initProductSwipers, 100);
+              }
+            }
+          });
+        });
+
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true
+        });
+      }
+
     }
   </script>
 

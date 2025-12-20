@@ -28,15 +28,6 @@
     );
     document.body.appendChild(fab);
 
-    // Kichik menyu: AI, Operator, Savol yuborish
-    const menu = create("div", { class: "public-chat-menu" });
-    menu.innerHTML = `
-      <button class="chat-menu-item" data-action="ai">🤖 AI bilan suhbat</button>
-      <button class="chat-menu-item" data-action="operator">👨‍💼 Operator bilan suhbat</button>
-      <button class="chat-menu-item" data-action="question">✉️ Savol yuborish</button>
-    `;
-    document.body.appendChild(menu);
-
     // panel
     const panel = create("div", { class: "public-chat-panel" });
     panel.innerHTML = `
@@ -57,12 +48,10 @@
     const sendBtn = panel.querySelector(".public-chat-input button");
     const closeBtn = panel.querySelector(".close");
     const modeButtons = panel.querySelectorAll(".mode-btn");
-    const menuItems = menu.querySelectorAll(".chat-menu-item");
 
     function openPanelWithMode(m) {
       switchMode(m);
       panel.classList.add("open");
-      menu.classList.remove("open");
       try {
         input.focus();
       } catch (_) {}
@@ -135,48 +124,14 @@
       }
     }
 
-    // FAB bosilganda avval kichik menyuni ko'rsatamiz/berkitamiz
+    // FAB bosilganda to'g'ridan-to'g'ri panelni ochamiz
     fab.addEventListener("click", () => {
-      const isOpen = menu.classList.contains("open");
-      if (isOpen) menu.classList.remove("open");
-      else menu.classList.add("open");
+      panel.classList.add("open");
+      try {
+        input.focus();
+      } catch (_) {}
     });
 
-    // Menyu elementlari: AI / Operator / Savol yuborish
-    menuItems.forEach((btn) => {
-      btn.addEventListener("click", function () {
-        const action = this.getAttribute("data-action");
-        if (action === "ai") {
-          openPanelWithMode("ai");
-        } else if (action === "operator") {
-          openPanelWithMode("operator");
-        } else if (action === "question") {
-          // Savol yuborish: superadmin uchun oddiy forma
-          const q = prompt("Superadminga savolingizni yozing:");
-          if (!q) {
-            menu.classList.remove("open");
-            return;
-          }
-          try {
-            fetch("/api/chat/superadmin-question", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ text: q, source: "web" }),
-            })
-              .then((r) => r.json().catch(() => ({})))
-              .then((j) => {
-                alert((j && j.message) || "Savolingiz yuborildi.");
-              })
-              .catch(() => {
-                alert("Savol yuborishda xatolik yuz berdi.");
-              });
-          } catch (_) {
-            alert("Savol yuborishda xatolik yuz berdi.");
-          }
-          menu.classList.remove("open");
-        }
-      });
-    });
 
     closeBtn.addEventListener("click", () => {
       panel.classList.remove("open");

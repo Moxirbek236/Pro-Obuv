@@ -685,3 +685,11 @@ saind
 2025-11-29 16:03:23 | ACTION | incoming_message | user:tg:1656193663 | salom
 2025-11-29 16:03:25 | ACTION | incoming_message | user:tg:1656193663 | slaom
 2025-11-29 16:03:35 | ACTION | incoming_message | user:tg:1656193663 | спецобувь
+2025-12-18 18:39:20 | ACTION | incoming_message | user:tg:1656193663 | спецодежда
+2025-12-18 18:39:23 | ACTION | incoming_message | user:tg:1656193663 | 🛒 Mahsulotlar
+2025-12-18 18:39:24 | ACTION | incoming_message | user:tg:1656193663 | спецобувь
+2025-12-18 18:39:38 | ACTION | incoming_message | user:tg:1656193663 | sa;p,
+2025-12-18 18:39:51 | ACTION | incoming_message | user:tg:1656193663 | 👨‍💼 Operator bilan suhbat
+2025-12-18 18:39:53 | ACTION | incoming_message | user:tg:1656193663 | s;ap,
+2025-12-18 18:40:34 | ACTION | incoming_message | user:tg:1656193663 | 🤖 AI bilan suhbat
+2025-12-18 18:40:36 | ACTION | incoming_message | user:tg:1656193663 | salom

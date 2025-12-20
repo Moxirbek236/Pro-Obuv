@@ -257,13 +257,13 @@ const MenuClient = (function () {
                 )}" loading="lazy" decoding="async" onerror="this.src='/static/defoult.webp'" />`;
               })
               .join("");
-            return `<div class="item-image"><div class="gallery" data-item-id="${escapeHtml(
+            return `<div class="card-image"><div class="gallery" data-item-id="${escapeHtml(
               item.id || ""
             )}"><div class="gallery-track">${imgs}</div></div></div>`;
           }
         } catch (e) {}
         const altText = item.name_local || item.name || "";
-        return `<div class="item-image"><img src="${escapeHtml(
+        return `<div class="card-image"><img src="${escapeHtml(
           item.image_url || "/static/defoult.webp"
         )}" alt="${escapeHtml(
           altText
@@ -275,11 +275,11 @@ const MenuClient = (function () {
 
       div.innerHTML = `
         ${imageHtml}
-        <div class="item-content">
-          <h3 class="item-name">${escapeHtml(
+        <div class="card-body">
+          <h3 class="card-title">${escapeHtml(
             item.name_local || item.name || ""
           )}</h3>
-          <div class="rating-section"><div class="stars">${renderStars(
+          <div class="card-rating"><div class="stars">${renderStars(
             item.avg_rating || item.rating || 0
           )}</div><span class="rating-text">${
         (item.avg_rating || item.rating || 0).toFixed
@@ -467,6 +467,11 @@ window.addEventListener(
 // Read filter inputs, update MenuClient state and fetch results (or fallback)
 window.performMenuSearch = function () {
   try {
+    // DISABLED: MenuClient replacement of styled cards
+    // Use only client-side filtering to preserve beautiful card styling
+    applyClientSideFilter();
+    return;
+
     const qEl = document.getElementById("menuSearchInput");
     const catEl = document.getElementById("filterCategory");
     const sizeEl = document.getElementById("filterSize");
@@ -564,6 +569,7 @@ function initImageGalleries(root = document) {
     galleries.forEach(function (g) {
       const track = g.querySelector(".gallery-track");
       if (!track) return;
+      
       // Common setup
       g.style.overflow = "hidden";
       track.style.display = "flex";
@@ -582,8 +588,8 @@ function initImageGalleries(root = document) {
         (navigator && navigator.maxTouchPoints && navigator.maxTouchPoints > 0)
       );
 
-      if (isTouchDevice) {
-        // Carousel/snap mode: each image is full-width of container
+      if (isTouchDevice && !g.hasAttribute('data-item-id')) {
+        // Carousel/snap mode: each image is full-width of container (skip for menu items)
         let index = 0;
         try {
           const videos = container.querySelectorAll("video");
@@ -722,18 +728,6 @@ function initImageGalleries(root = document) {
           { passive: true }
         );
 
-        // allow external programmatic set by dataset index
-        g.setSlide = function (i) {
-          try {
-            index = Math.max(0, Math.min(imgs.length - 1, i));
-            const rect = g.getBoundingClientRect();
-            const w = Math.round(
-              rect.width || g.clientWidth || window.innerWidth
-            );
-            track.style.transition = "transform 260ms cubic-bezier(.2,.8,.2,1)";
-            track.style.transform = `translateX(${-index * w}px)`;
-          } catch (e) {}
-        };
       } else {
         // Desktop: hover-follow continuous behavior
         let rect = null;
@@ -746,9 +740,13 @@ function initImageGalleries(root = document) {
               Math.min(1, (clientX - rect.left) / rect.width)
             );
             if (imgs.length <= 1) return;
+            
+            // Snap to nearest image instead of continuous movement
+            const targetIndex = Math.round(rel * (imgs.length - 1));
             const maxShift = track.scrollWidth - rect.width;
-            const shift = Math.round(maxShift * rel);
-            track.style.transform = `translateX(${-shift}px)`;
+            const targetShift = Math.round(maxShift * (targetIndex / (imgs.length - 1)));
+            
+            track.style.transform = `translateX(${-targetShift}px)`;
           } catch (e) {}
         };
         const onLeave = () => {
@@ -802,6 +800,30 @@ function initImageGalleries(root = document) {
           } catch (e) {}
         });
       }
+
+      // Add setSlide method for programmatic control (both touch and desktop modes)
+      g.setSlide = function (i) {
+        try {
+          const idx = Math.max(0, Math.min(imgs.length - 1, i || 0));
+          
+          if (isTouchDevice && !g.hasAttribute('data-item-id')) {
+            // Touch/carousel mode: snap to specific slide
+            const rect = g.getBoundingClientRect();
+            const w = Math.round(rect.width || g.clientWidth || window.innerWidth);
+            track.style.transition = "transform 260ms cubic-bezier(.2,.8,.2,1)";
+            track.style.transform = `translateX(${-idx * w}px)`;
+          } else {
+            // Desktop hover-follow mode: jump to specific position
+            const rect = g.getBoundingClientRect();
+            const maxShift = Math.max(0, track.scrollWidth - rect.width);
+            const targetShift = (imgs.length > 1) ? Math.round(maxShift * (idx / (imgs.length - 1))) : 0;
+            track.style.transition = "transform 260ms cubic-bezier(.2,.8,.2,1)";
+            track.style.transform = `translateX(${-targetShift}px)`;
+          }
+        } catch (e) {
+          console.warn("setSlide failed:", e);
+        }
+      };
     });
   } catch (e) {
     console.warn("initImageGalleries failed", e);

@@ -1,0 +1,166 @@
+
+<style>
+  .hero-slider-section {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    margin-bottom: 30px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  }
+
+  .hero-swiper {
+    width: 100%;
+    height: 400px; /* Default height */
+  }
+
+  .hero-slide {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 80px;
+  }
+
+  .hero-slide::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 100%);
+    z-index: 1;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    color: white;
+    max-width: 600px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  }
+
+  .swiper-slide-active .hero-content {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .hero-title {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  }
+
+  .hero-subtitle {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+    font-weight: 300;
+  }
+
+  .hero-btn {
+    padding: 12px 30px;
+    font-size: 1rem;
+    border-radius: 50px;
+    background: var(--primary-color, #007bff);
+    color: white;
+    border: none;
+    font-weight: 600;
+    text-decoration: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: inline-block;
+  }
+
+  .hero-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,123,255,0.4);
+    color: white;
+  }
+
+  @media (max-width: 768px) {
+    .hero-swiper {
+      height: 300px;
+    }
+    .hero-slide {
+      padding: 0 30px;
+      justify-content: center;
+      text-align: center;
+    }
+    .hero-title {
+      font-size: 2rem;
+    }
+    .hero-subtitle {
+      font-size: 1rem;
+    }
+  }
+</style>
+
+<div class="hero-slider-section" data-aos="fade-in">
+  <!-- Swiper -->
+  <div class="swiper hero-swiper">
+    <div class="swiper-wrapper">
+      <!-- Slide 1 -->
+      <div class="swiper-slide hero-slide" style="background-image: url('{{ url_for('static', filename='images/hero1.png') }}');">
+        <div class="hero-content">
+          <h1 class="hero-title">{{ _('hero.title_1') if _('hero.title_1') != 'hero.title_1' else "Premium Spetsobuv" }}</h1>
+          <p class="hero-subtitle">{{ _('hero.subtitle_1') if _('hero.subtitle_1') != 'hero.subtitle_1' else "Xavfsizlik va qulaylik uyg'unligi" }}</p>
+          <a href="#products-section" class="hero-btn">{{ _('hero.btn_1') if _('hero.btn_1') != 'hero.btn_1' else "Katalogga o'tish" }}</a>
+        </div>
+      </div>
+      <!-- Slide 2 -->
+      <div class="swiper-slide hero-slide" style="background-image: url('{{ url_for('static', filename='images/hero2.png') }}');">
+        <div class="hero-content">
+          <h1 class="hero-title">{{ _('hero.title_2') if _('hero.title_2') != 'hero.title_2' else "Professional Himoya" }}</h1>
+          <p class="hero-subtitle">{{ _('hero.subtitle_2') if _('hero.subtitle_2') != 'hero.subtitle_2' else "Har qanday ish sharoitida ishonchli himoya." }}</p>
+          <a href="{{ url_for('news_page') }}" class="hero-btn">{{ _('hero.btn_2') if _('hero.btn_2') != 'hero.btn_2' else "Yangiliklarni ko'rish" }}</a>
+        </div>
+      </div>
+      <!-- Slide 3 -->
+      <div class="swiper-slide hero-slide" style="background-image: url('{{ url_for('static', filename='images/hero3.png') }}');">
+        <div class="hero-content">
+          <h1 class="hero-title">{{ _('hero.title_3') if _('hero.title_3') != 'hero.title_3' else "Yuqori Sifat" }}</h1>
+          <p class="hero-subtitle">{{ _('hero.subtitle_3') if _('hero.subtitle_3') != 'hero.subtitle_3' else "Xalqaro standartlarga javob beradigan mahsulotlar." }}</p>
+          <a href="{{ url_for('about') }}" class="hero-btn">{{ _('hero.btn_3') if _('hero.btn_3') != 'hero.btn_3' else "Biz haqimizda" }}</a>
+        </div>
+      </div>
+    </div>
+    <!-- Add Pagination -->
+    <div class="swiper-pagination"></div>
+    <!-- Add Navigation -->
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    new Swiper('.hero-swiper', {
+      speed: 1000,
+      loop: true,
+      autoplay: {
+        delay: 5000,
+        disableOnInteraction: false,
+      },
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      effect: 'fade',
+      fadeEffect: {
+        crossFade: true
+      }
+    });
+  });
+</script>

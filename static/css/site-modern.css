@@ -2,68 +2,120 @@
    Lightweight design system: CSS variables, typography, forms, buttons,
    auth card, and footer improvements. Load after legacy CSS to override.
 */
+/* Modern site-wide styles - site-modern.css
+   Lightweight design system: CSS variables, typography, forms, buttons.
+   Default: LIGHT THEME (White/Clean)
+*/
 :root {
   --brand-1: #0ea5e9;
   --brand-2: #06b6d4;
   --accent: #ffb020;
-  /* Footer-specific tokens */
+  
+  /* Ultra Modern Light Theme */
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --card-bg: rgba(255, 255, 255, 0.95);
+  --text-color: #d6d6d6;
+  --muted: #64748b;
+  --border-light: #e2e8f0;
+  
+  --white: #ffffff;
+  
+  /* Glassmorphism Effects */
+  --glass-bg: rgba(255, 255, 255, 0.25);
+  --glass-border: rgba(255, 255, 255, 0.18);
+  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  
+  /* Footer-specific tokens (Light Mode) */
+  --footer-bg: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  --footer-contrast: #ffffff;
+  --footer-text: #334155;
+  --footer-muted: #64748b;
+  --footer-accent: #0284c7;
+  
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --shadow-lg: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+  --shadow-sm: 0 4px 12px rgba(0,0,0,0.05);
+  --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  
+  --max-content-width: 1400px;
+  
+  /* Modern Gradients */
+  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --gradient-accent: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+/* Dark Theme Overrides */
+[data-theme="dark"] {
+  --bg: #0b1116;
+  --surface: #0d1114;
+  --card-bg: #111827;
+  --text-color: #e6eef8;
+  --muted: #9ca3af;
+  --border-light: rgba(255, 255, 255, 0.06);
+  
   --footer-bg: linear-gradient(135deg, #081018 0%, #07121a 100%);
   --footer-contrast: #0b1116;
   --footer-text: #e6eef8;
   --footer-muted: #9ca3af;
   --footer-accent: #ffc107;
-  --bg: #0b1116;
-  --card-bg: #0d161b;
-  --muted: #9ca3af;
-  --surface: #0d1114;
-  --white: #ffffff;
-  --radius-lg: 12px;
-  --radius-md: 8px;
+  
   --shadow-lg: 0 12px 40px rgba(2, 6, 23, 0.6);
-  --max-content-width: 1180px;
-  --text-color: #e6eef8;
 }
-/* Typography */
+
+/* Typography & Base */
 body {
-  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial;
+  font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   color: var(--text-color);
-  background: linear-gradient(180deg, #071018 0%, #0b1116 100%);
+  background: var(--bg);
+  transition: background 0.3s ease, color 0.3s ease;
 }
-h1,
-h2,
-h3,
-h4 {
-  color: var(--white);
+
+h1, h2, h3, h4 {
+  color: var(--text-color);
   font-weight: 700;
+  letter-spacing: -0.02em;
 }
-p,
-small {
+
+p, small {
   color: var(--muted);
 }
+
 .container {
   max-width: var(--max-content-width);
   margin: 0 auto;
-  padding: 0 16px;
+  padding: 0 20px;
 }
+
 /* Buttons */
 .btn-primary,
 .btn-login,
 .btn-register {
   background: linear-gradient(90deg, var(--brand-1), var(--brand-2));
   border: none;
-  color: var(--white);
-  padding: 10px 14px;
+  color: #fff;
+  padding: 10px 18px;
   border-radius: 10px;
-  font-weight: 700;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
+  transition: all 0.2s ease;
 }
+
 .btn-outline-secondary {
-  border-color: rgba(255, 255, 255, 0.06);
-  color: var(--white);
+  border: 1px solid var(--border-light);
+  color: var(--text-color);
+  background: transparent;
 }
+.btn-outline-secondary:hover {
+  background: var(--footer-contrast);
+}
+
 .btn-primary:hover {
-  filter: brightness(0.98);
+  filter: brightness(1.05);
   transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(14, 165, 233, 0.35);
 }
 /* Auth card */
 .auth-page {

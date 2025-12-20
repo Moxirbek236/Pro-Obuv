@@ -206,6 +206,34 @@ app = Flask(__name__)
 
 print("DEBUG: Flask app created")
 
+# If the app is served under a main domain (e.g. safety.uz) we want to
+# allow staff pages to be reachable from the staff subdomain
+# (staff.safety.uz). Many deployments handle subdomains at the webserver
+# level, but to keep things simple we add a lightweight before_request
+# handler that redirects requests coming to the staff subdomain to the
+# existing /staff/... routes. This avoids changing all existing route
+# definitions.
+@app.before_request
+def _staff_subdomain_redirect():
+    try:
+        host = (request.host or '').split(':')[0].lower()
+        # Accept both 'staff.safety.uz' and 'staff.example' (starts with staff.)
+        if host.startswith('staff.'):
+            # If request is already targeting staff-prefixed path, do nothing
+            if request.path.startswith('/staff'):
+                return None
+
+            # Build target path by prefixing '/staff' and preserve query string
+            qs = ('?' + request.query_string.decode('utf-8')) if request.query_string else ''
+            target = f"/staff{request.path}{qs}"
+
+            # Use a 302 redirect so browsers/clients go to the staff route on
+            # the same subdomain (the host remains staff.<domain>).
+            return redirect(target)
+    except Exception:
+        # On any error, don't block the request — let normal handlers run
+        return None
+
 # Performance: enable response compression and long static cache lifetime
 # Flask-Compress is listed in `requirements.txt`; call it if available.
 try:
@@ -7409,7 +7437,8 @@ def menu():
 
         if not cached_menu:
             menu_items_raw = execute_query(
-                """SELECT m.*, COALESCE(AVG(r.rating), 0) as avg_rating, COUNT(r.rating) as rating_count
+                """SELECT m.id, m.name, m.price, m.category, m.description, m.image_url, m.available, m.stock_quantity, m.orders_count, m.rating, m.discount_percentage, m.sizes, m.colors, m.created_at,
+                   COALESCE(AVG(r.rating), 0) as avg_rating, COUNT(r.rating) as rating_count
                    FROM menu_items m
                    LEFT JOIN ratings r ON m.id = r.menu_item_id
                    WHERE m.available = 1
@@ -7417,6 +7446,34 @@ def menu():
                    ORDER BY m.category, m.orders_count DESC, m.name""",
                 fetch_all=True,
             )
+            # Load media for all menu items in one query for performance
+            media_dict = {}
+            try:
+                media_cache_key = f"menu_media:{lang_cache_key}"
+                cached_media = cm.get(media_cache_key) if cm else None
+                if cached_media:
+                    media_dict = cached_media
+                else:
+                    media_raw = execute_query(
+                        "SELECT menu_item_id, id, media_type, media_url, display_order, is_main FROM product_media WHERE menu_item_id IN (SELECT id FROM menu_items WHERE available = 1) ORDER BY menu_item_id, is_main DESC, display_order ASC",
+                        fetch_all=True,
+                    )
+                    if media_raw:
+                        for m in media_raw:
+                            try:
+                                media_item = dict(m)
+                                mid = media_item.get('menu_item_id')
+                                if mid not in media_dict:
+                                    media_dict[mid] = []
+                                media_dict[mid].append(media_item)
+                            except Exception:
+                                continue
+                    if cm:
+                        cm.set(media_cache_key, media_dict, 120)
+            except Exception as media_error:
+                app_logger.warning(f"Media loading error in menu: {str(media_error)}")
+                media_dict = {}
+
             # Convert rows to dictionaries safely
             menu_items = []
             for row in menu_items_raw:
@@ -7462,12 +7519,13 @@ def menu():
                     except Exception:
                         item["description_local"] = item.get("description") or ""
 
+                    # Attach media to item
+                    item["media"] = media_dict.get(item.get("id"), [])
+
                     menu_items.append(item)
                 except Exception as e:
                     app_logger.warning(f"Menu item row processing error: {str(e)}")
                     continue  # Skip problematic row
-
-            # Cache ga saqlash (safe)
             if cm:
                 try:
                     cache_key = f"menu_items_active:{lang_cache_key}"
@@ -7694,6 +7752,9 @@ def product_detail(item_id):
                 fetch_all=True,
             )
             media = [dict(m) for m in media_rows] if media_rows else []
+            # Apply prefer_webp to media URLs for consistency
+            for m in media:
+                m['media_url'] = prefer_webp(m['media_url'])
         except Exception:
             media = []
 
@@ -11269,7 +11330,7 @@ def api_get_product_media(item_id):
 def thumb():
     """Simple thumbnail generator/proxy for internal static images.
 
-    Usage: /thumb?src=/static/uploads/xxx.jpg&w=600&h=400
+    Usage: /thumb?src=/static/uploads/xxx.webp&w=600&h=400
     Only serves images under /static/ and caches resized images to
     `static/thumbs/` using a hash of the source and sizing params.
     """
@@ -12049,8 +12110,8 @@ def api_chat_receive():
         now = get_current_time().isoformat()
         try:
             execute_query(
-                "INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)",
-                (sender, text, "incoming", now),
+                "INSERT INTO chat_messages (chat_id, sender_type, sender_id, text, sender, source, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (0, "user", None, text, sender, "incoming", now),
             )
         except Exception:
             pass
@@ -12061,8 +12122,8 @@ def api_chat_receive():
         # store reply
         try:
             execute_query(
-                "INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)",
-                ("ai", reply, "outgoing", get_current_time().isoformat()),
+                "INSERT INTO chat_messages (chat_id, sender_type, sender_id, text, sender, source, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (0, "ai", None, reply, "ai", "outgoing", get_current_time().isoformat()),
             )
         except Exception:
             pass
@@ -12101,8 +12162,8 @@ def api_chat_send():
 
         try:
             execute_query(
-                "INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)",
-                ("ai", reply, "outgoing", get_current_time().isoformat()),
+                "INSERT INTO chat_messages (chat_id, sender_type, sender_id, text, sender, source, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (0, "ai", None, reply, "ai", "outgoing", get_current_time().isoformat()),
             )
         except Exception:
             pass
@@ -14704,86 +14765,92 @@ def clear_role_sessions():
 @app.route('/news/<int:news_id>')
 def news_detail(news_id):
     """Serve a single news item page. Prefer DB source; fall back to JSON-backed storage."""
+    n = None
     try:
-        # Always read from the JSON authoritative source in data/news.json
-        json_path = os.path.join(os.getcwd(), "data", "news.json")
-        if os.path.exists(json_path):
-            try:
-                with open(json_path, "r", encoding="utf-8", errors="replace") as f:
-                    blob = json.load(f) or {}
-            except Exception:
-                blob = {}
+        # 1. Try Database First (Primary Source)
+        try:
+            row = execute_query("SELECT * FROM news WHERE id = ?", (news_id,), fetch_one=True)
+            if row:
+                n = dict(row)
+                # Ensure is_active is treated as boolean
+                n["is_active"] = bool(n.get("is_active"))
+        except Exception as e:
+            app_logger.error(f"news_detail DB lookup error: {e}")
 
-            items = blob.get("news") if isinstance(blob, dict) else (blob if isinstance(blob, list) else [])
-            for n in items or []:
+        # 2. Fallback to JSON if not found in DB
+        if not n:
+            json_path = os.path.join(os.getcwd(), "data", "news.json")
+            if os.path.exists(json_path):
                 try:
-                    if int(n.get("id", 0)) == int(news_id):
-                        # Normalize fields that templates expect
-                        n.setdefault("title", n.get("headline") or "")
-                        n.setdefault("content", n.get("content") or n.get("description") or "")
-                        n.setdefault("image_url", n.get("image_url") or n.get("image") or "")
-                        n.setdefault("video_url", n.get("video_url") or n.get("video") or "")
-                        try:
-                            vid_src = n.get("video_url") or n.get("video") or n.get("content") or n.get("description") or ""
-                            if not vid_src:
-                                vid_src = find_youtube_url_in_text(n.get("content") or "") or find_youtube_url_in_text(n.get("description") or "") or ""
-                            n["youtube_embed"] = extract_youtube_embed(vid_src)
-                        except Exception:
-                            n["youtube_embed"] = None
-                        if not n.get("is_active") and not session.get("super_admin"):
-                            abort(404)
-                        # Compute localized title/content based on current interface language
-                        preferred_lang = session.get('interface_language') or app.config.get('DEFAULT_LANGUAGE', 'ru') or 'ru'
-                        try:
-                            # Use utils.localized_field which handles title_<lang>, title map objects, and fallbacks
-                            localized_title = utils.localized_field(n, 'title', preferred_lang) or n.get('title') or ''
-                            localized_content = utils.localized_field(n, 'content', preferred_lang) or n.get('content') or n.get('description') or ''
-                            # Ensure we store plain strings (not dicts) so templates render values not keys
-                            if isinstance(localized_title, dict):
-                                localized_title = localized_title.get(preferred_lang) or next(iter(localized_title.values()), '')
-                            if isinstance(localized_content, dict):
-                                localized_content = localized_content.get(preferred_lang) or next(iter(localized_content.values()), '')
-                            n['title'] = localized_title
-                            n['content'] = localized_content
-                        except Exception:
-                            # Fallback: leave existing title/content
-                            pass
-
-                        seo = {
-                            "page_title": f"{n.get('title')} - Yangiliklar - Safety.uz",
-                            "meta_description": (n.get('content') or '')[:160],
-                            "meta_keywords": '',
-                            "canonical_url": url_for('news_detail', news_id=n.get('id'), _external=True),
-                            "og_title": n.get('title'),
-                            "og_description": (n.get('content') or '')[:160],
-                        }
-                        return render_template("news_detail.html", news=n, seo_data=seo)
+                    with open(json_path, "r", encoding="utf-8", errors="replace") as f:
+                        blob = json.load(f) or {}
+                    items = blob.get("news") if isinstance(blob, dict) else (blob if isinstance(blob, list) else [])
+                    for item in items or []:
+                        if int(item.get("id", 0)) == int(news_id):
+                            n = item
+                            break
                 except Exception:
-                    continue
+                    pass
 
-        # If the JSON file exists but the id is not found, return 404
-        abort(404)
-    except Exception as e:
-        # If it's an HTTPException raised by abort(), re-raise so Flask
-        # can handle it properly (returning the intended HTTP status).
-        # NOTE: avoid re-raising inside a try/except that would catch it again.
-        is_http = False
+        # 3. If still not found, 404
+        if not n:
+            abort(404)
+
+        # 4. Access Control (Active check)
+        if not n.get("is_active") and not session.get("super_admin"):
+            abort(404)
+
+        # 5. Normalize Fields (Title, Content, Media)
+        n.setdefault("title", n.get("headline") or "")
+        n.setdefault("content", n.get("content") or n.get("description") or "")
+        n.setdefault("image_url", n.get("image_url") or n.get("image") or "")
+        n.setdefault("video_url", n.get("video_url") or n.get("video") or "")
+
+        # Compute YouTube Embed
         try:
-            is_http = isinstance(e, HTTPException)
+            vid_src = n.get("video_url") or n.get("video") or n.get("content") or n.get("description") or ""
+            if not vid_src:
+                vid_src = find_youtube_url_in_text(n.get("content") or "") or find_youtube_url_in_text(n.get("description") or "") or ""
+            n["youtube_embed"] = extract_youtube_embed(vid_src)
         except Exception:
-            # isinstance may fail in some very unusual fallback environments;
-            # treat as non-HTTPException and continue to return 500 below.
-            is_http = False
+            n["youtube_embed"] = None
 
-        if is_http:
-            # Re-raise the original HTTPException so Flask returns the
-            # intended HTTP status (e.g. 404 for abort(404)).
-            raise
-
+        # 6. Localization
+        preferred_lang = session.get('interface_language') or app.config.get('DEFAULT_LANGUAGE', 'ru') or 'ru'
         try:
-            app_logger.error(f"news_detail error: {e}")
+            # Use utils.localized_field which handles title_<lang>, title map objects, and fallbacks
+            localized_title = utils.localized_field(n, 'title', preferred_lang) or n.get('title') or ''
+            localized_content = utils.localized_field(n, 'content', preferred_lang) or n.get('content') or n.get('description') or ''
+            
+            # Ensure strings
+            if isinstance(localized_title, dict):
+                localized_title = localized_title.get(preferred_lang) or next(iter(localized_title.values()), '')
+            if isinstance(localized_content, dict):
+                localized_content = localized_content.get(preferred_lang) or next(iter(localized_content.values()), '')
+                
+            n['title'] = localized_title
+            n['content'] = localized_content
         except Exception:
             pass
+
+        # 7. SEO Data
+        seo = {
+            "page_title": f"{n.get('title')} - Yangiliklar - Safety.uz",
+            "meta_description": (n.get('content') or '')[:160],
+            "meta_keywords": '',
+            "canonical_url": url_for('news_detail', news_id=n.get('id'), _external=True),
+            "og_title": n.get('title'),
+            "og_description": (n.get('content') or '')[:160],
+        }
+
+        return render_template("news_detail.html", news=n, seo_data=seo)
+
+    except Exception as e:
+        # Re-raise HTTP exceptions (like abort(404))
+        if isinstance(e, HTTPException):
+            raise
+        
+        app_logger.error(f"news_detail error: {e}")
         abort(500)
 
 

@@ -48,93 +48,122 @@
 
 <script>
   (function(){
-    // Template URL to build links to product pages. Replace trailing /0 with actual id.
-    const PRODUCT_URL_TEMPLATE = {{ (url_for('product_detail', item_id=0))|tojson }};
-
-    function buildProductUrl(id){
-      try{
-        // Replace trailing /0 or /0/ with /<id>
-        return PRODUCT_URL_TEMPLATE.replace(/\/0(\/)?$/, '/' + id);
-      }catch(e){
-        return '/product/' + id;
-      }
-    }
-
-    function renderCard(item){
-      const a = document.createElement('a');
-      a.className = 'ribbon-card';
-      a.href = buildProductUrl(item.id || item['id']);
-      a.setAttribute('aria-label', item.name_local || item.name || 'product');
-
-      const img = document.createElement('img');
-      img.src = item.image_url || (item.media && item.media[0] && item.media[0].media_url) || '';
-      img.loading = 'lazy';
-      img.alt = item.name_local || item.name || '';
-      a.appendChild(img);
-
-      const name = document.createElement('div');
-      name.className = 'name';
-      name.textContent = item.name_local || item.name || '';
-      a.appendChild(name);
-
-      const price = document.createElement('div');
-      price.className = 'price';
-      price.textContent = (item.price ? (item.price + ' UZS') : '—');
-      a.appendChild(price);
-
-      return a;
-    }
-
-    async function loadRibbon(category, trackEl){
-      try{
-        const url = '/api/menu-search?category=' + encodeURIComponent(category) + '&limit=12';
-        const res = await fetch(url);
-        if(!res.ok) throw new Error('Network');
-        const data = await res.json();
-        if(!data || !data.items) throw new Error('No data');
-
-        trackEl.innerHTML = '';
-        data.items.forEach(it => {
-          const card = renderCard(it);
-          trackEl.appendChild(card);
-        });
-      }catch(e){
-        try{ trackEl.innerHTML = '<div style="color:#666;padding:8px">Mahsulotlar yuklanmadi.</div>'; }catch(_){}
-        console.warn('ribbon load failed', category, e);
-      }
-    }
-
-    // Initialize both ribbons
     document.addEventListener('DOMContentLoaded', function(){
-      const tracks = document.querySelectorAll('.ribbon-track');
-      tracks.forEach(t => {
-        const cat = t.dataset.category || '';
-        if(cat) loadRibbon(cat, t);
-      });
+      // Read URL template from data attribute
+      const dataEl = document.getElementById('product-page-data');
+      if (!dataEl) return;
+      
+      const PRODUCT_URL_TEMPLATE = dataEl.dataset.urlTemplate || '/product/0';
 
-      // Wire controls
-      document.querySelectorAll('.ribbon-btn').forEach(btn => {
-        btn.addEventListener('click', function(){
-          const target = this.dataset.target;
-          const action = this.dataset.action;
-          const ribbon = document.getElementById(target);
-          if(!ribbon) return;
-          const track = ribbon.querySelector('.ribbon-track');
-          if(!track) return;
-          const amount = Math.round(track.clientWidth * 0.8) || 300;
-          if(action === 'next') track.scrollBy({ left: amount, behavior: 'smooth' });
-          else track.scrollBy({ left: -amount, behavior: 'smooth' });
-        });
-      });
+      function buildProductUrl(id){
+        try{
+          return PRODUCT_URL_TEMPLATE.replace(/\/0(\/)?$/, '/' + id);
+        }catch(e){
+          return '/product/' + id;
+        }
+      }
     });
   })();
 </script>
 {% endblock %}
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/color_select.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/product-page.css') }}">
+<style>
+  /* MUI Rating Styles */
+  @media (min-width: 0px) {
+    .css-1741isb {
+        font-size: 40px;
+    }
+  }
+
+  .css-1741isb {
+    display: inline-flex;
+    position: relative;
+    font-size: 1.5rem;
+    color: rgb(250, 175, 0);
+    cursor: pointer;
+    text-align: left;
+    width: min-content;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .MuiRating-sizeSmall {
+    font-size: 1.25rem;
+  }
+
+  .css-ykqdxu {
+    cursor: inherit;
+    display: inline-flex;
+    position: relative;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .css-1xh6k8t {
+    user-select: none;
+    width: 1em;
+    height: 1em;
+    display: inline-block;
+    fill: currentcolor;
+    flex-shrink: 0;
+    transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    font-size: 1.5rem;
+  }
+
+  .css-79elbk {
+    position: relative;
+    display: inline-block;
+  }
+
+  .css-79elbk .MuiRating-iconFilled {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  .css-79elbk .MuiRating-iconFilled svg {
+    width: 50% !important;
+  }
+
+  .css-79elbk .MuiRating-iconEmpty {
+    width: 100% !important;
+  }
+
+  .MuiRating-visuallyHidden {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+  }
+
+  .css-1cw4hi4 {
+    user-select: none;
+    width: 1em;
+    height: 1em;
+    display: inline-block;
+    fill: currentcolor;
+    flex-shrink: 0;
+    font-size: inherit;
+  }
+
+  .MuiRating-iconFilled {
+    color: rgb(250, 175, 0);
+  }
+
+  .MuiRating-iconEmpty {
+    color: rgba(0, 0, 0, 0.26);
+  }
+</style>
 {% endblock %}
 {% block content %}
-{# Debug banner: visit /product/<id>?debug=1 to show server-rendered localized values on the page for troubleshooting #}
+{# Debug banner #}
 {% if request.args.get('debug') %}
 <div id="debug-localized" style="position:fixed;left:12px;top:12px;z-index:99999;padding:10px;background:rgba(255,255,255,0.95);border:2px solid #222;color:#111;max-width:calc(100% - 40px);font-size:14px;line-height:1.2;">
   <strong>DEBUG:</strong>
@@ -143,312 +172,28 @@
   <div style="margin-top:6px;font-size:12px;color:#666">Remove <code>?debug=1</code> from the URL to hide this box.</div>
 </div>
 {% endif %}
-<style>
-  .product-container {
-    max-width: 1100px;
-    margin: 20px auto;
-    grid-template-columns: 1fr 420px;
-    gap: 28px;
-    align-items: start;
-  }
 
-  /* Media container visibility: desktop gets classic mainMedia UI, mobile uses gallery swipe */
-  .gallery-mobile { display: none; }
-  .media-stage-desktop { display: block; }
+{# Configuration Data Block for JS #}
+<div id="product-page-data"
+     data-url-template="{{ url_for('product_detail', item_id=0) }}"
+     data-default-image="{{ prefer_webp(item.image_url or url_for('static', filename='defoult.webp')) }}"
+     data-is-favorites-user="{{ 'true' if (session.get('user_id') and not session.get('staff_id') and not session.get('courier_id') and not session.get('super_admin')) else 'false' }}"
+     data-favorites-login-message="Iltimos oldin saytdan avtorizatsiyadan o'ting"
+     style="display:none;"></div>
 
-  @media (max-width: 900px) {
-    .gallery-mobile { display: block; }
-    .media-stage-desktop { display: none; }
-  }
+{% set all_media = media if media else [] %}
+{% if all_media|length == 0 and item.image_url %}
+  {% set all_media = [{'media_url': item.image_url, 'media_type':'image'}] %}
+{% endif %}
+<script type="application/json" id="product-media-data">
+  {{ all_media|tojson }}
+</script>
 
-  @media (max-width: 900px) {
-    .product-container {
-      grid-template-columns: 1fr;
-      padding: 0;
-      gap: 0;
-      margin: 0;
-    }
-    .product-media {
-      order: 1;
-      padding: 0;
-      box-shadow: none;
-      border-radius: 0;
-      background: transparent;
-    }
-    .product-details {
-      order: 2;
-      padding: 16px 12px;
-      background: #fff;
-    }
-  }
-
-  .product-media {
-    background: transparent;
-    border-radius: 0;
-    padding: 0;
-    box-shadow: none;
-    position: relative;
-  }
-
-  @media (min-width: 901px) {
-    .product-media {
-      background: #fff;
-      border-radius: 12px;
-      padding: 12px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-    }
-  }
-
-  /* Product sahifasida sevimlilar tugmasi */
-  .favorite-form-product {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    z-index: 10;
-  }
-
-  .btn-favorite-product {
-    background: #ffffffcc;
-    color: #e91e63;
-    border: none;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 20px;
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
-    transition: transform 0.18s ease, background 0.18s ease;
-  }
-
-  .btn-favorite-product:hover,
-  .btn-favorite-product.active {
-    background: #e91e63;
-    color: #fff;
-    transform: scale(1.06);
-  }
-
-  .media-stage {
-    position: relative;
-    background: #f8fafc;
-    border-radius: 8px;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 420px;
-    width: 100%;
-  }
-
-  @media (max-width: 900px) {
-    .media-stage {
-      border-radius: 0;
-      background: #fff;
-      min-height: 55vh;
-      max-height: 65vh;
-    }
-  }
-
-  .media-stage img,
-  .media-stage video {
-    max-width: 100%;
-    max-height: 78vh;
-    display: block;
-    object-fit: contain;
-  }
-
-  .media-btn {
-    position: absolute;
-    background: rgba(0, 0, 0, 0.5);
-    color: white;
-    border: none;
-    width: 44px;
-    height: 44px;
-    border-radius: 8px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 20px;
-  }
-
-  .media-btn.left {
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-  .media-btn.right {
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-  .media-btn.zoom {
-    left: 12px;
-    bottom: 12px;
-    top: auto;
-    transform: none;
-  }
-
-  .thumbnails {
-    margin-top: 12px;
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    padding-bottom: 6px;
-  }
-  .thumb {
-    width: 72px;
-    height: 72px;
-    border-radius: 8px;
-    overflow: hidden;
-    flex: 0 0 auto;
-    cursor: pointer;
-    border: 1px solid #e6e6e6;
-  }
-  .thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  .product-details {
-    padding: 10px 6px;
-  }
-  .product-details h1 {
-    margin: 0 0 8px 0;
-    font-size: 24px;
-  }
-  .product-details p.description {
-    color: #475569;
-    margin: 8px 0 14px;
-  }
-
-  .rating-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 14px;
-  }
-  .stars {
-    color: #ffd166;
-    font-size: 18px;
-  }
-
-  .options-row {
-    display: flex;
-    gap: 12px;
-    align-items: start;
-    margin-bottom: 14px;
-  }
-  .select-wrapper {
-    flex: 1;
-  }
-  .select-wrapper label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 6px;
-  }
-  select.form-select {
-    width: 100%;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #e6e6e6;
-  }
-
-  .quantity-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 10px;
-  }
-  .qty-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    border: none;
-    background: #f1f5f9;
-    cursor: pointer;
-    font-size: 20px;
-  }
-  .qty-input {
-    width: 64px;
-    text-align: center;
-    padding: 8px;
-    border-radius: 8px;
-    border: 1px solid #e6e6e6;
-  }
-
-  .add-cart-btn {
-    background: #21a366;
-    color: white;
-    border: none;
-    padding: 12px 18px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: 700;
-  }
-
-  /* Zoom overlay */
-  .zoom-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.85);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 1200;
-  }
-  .zoom-overlay img {
-    max-width: 95%;
-    max-height: 95%;
-    object-fit: contain;
-    border-radius: 6px;
-  }
-  /* Additional responsive improvements for product media */
-  /* Make the overall container slightly wider on large screens and
-     adapt the right column width at intermediate breakpoints. */
-  .product-container { max-width: 1200px; }
-
-  @media (max-width: 1200px) {
-    .product-container { grid-template-columns: 1fr 360px; gap: 20px; }
-    .media-stage { min-height: 380px; }
-    .thumbnails .thumb { width: 64px; height: 64px; }
-  }
-
-  @media (max-width: 900px) {
-    /* mobile: ensure media fills full width and height */
-    .media-stage { min-height: 55vh; max-height: 65vh; width: 100%; }
-    .media-stage img, .media-stage video { max-height: 65vh; width: 100%; height: auto; }
-    .thumbnails { margin-left: 0; margin-right: 0; padding-left: 8px; padding-right: 8px; }
-    .thumbnails .thumb { width: 64px; height: 64px; }
-    .media-btn { width: 42px; height: 42px; font-size: 20px; }
-    .product-details h1 { font-size: 22px; line-height: 1.3; margin: 0 0 6px 0; }
-    .product-details p.description { font-size: 15px; line-height: 1.5; margin: 6px 0 12px 0; }
-  }
-
-  @media (max-width: 480px) {
-    .product-container { margin: 0; padding: 0; }
-    .product-media { padding: 0; }
-    .product-details { padding: 14px 10px; background: #fff; }
-    .product-details h1 { font-size: 18px; margin: 0 0 4px 0; }
-    .product-details p.description { font-size: 13px; margin: 4px 0 10px 0; }
-    .media-stage { min-height: 50vh; max-height: 60vh; }
-    .media-stage img { max-height: 60vh; width: 100%; }
-    .thumbnails { padding-left: 6px; padding-right: 6px; }
-    .thumbnails .thumb { width: 56px; height: 56px; }
-    .media-btn.left, .media-btn.right { width: 38px; height: 38px; font-size: 18px; left: 6px; right: 6px; }
-    .media-btn.zoom { left: 6px; bottom: 6px; width: 38px; height: 38px; }
-    .add-cart-btn { width: 100%; padding: 12px; font-size: 14px; }
-    .options-row { flex-direction: column; gap: 10px; }
-    .select-wrapper { min-width: 0; width: 100%; }
-    .rating-row { font-size: 13px; }
-    .stars-wrap { font-size: 16px; }
-  }
-</style>
+<script>
+  try {
+     console.log('all_media from template:', JSON.parse(document.getElementById('product-media-data').textContent));
+  } catch(e) {}
+</script>
 
 <div class="product-container">
   <div class="product-media">
@@ -462,26 +207,24 @@
         class="btn-favorite-product{% if is_favorite %} active{% endif %}">❤</button>
     </form>
 
-    {# Desktop: classic main image + thumbnails, visible on larger viewports #}
+    {# Desktop: classic main image + thumbnails #}
     <div class="media-stage-desktop">
       <div class="media-stage" id="mediaStageDesktop">
-        {% set all_media = media if media else [] %}
-        {% if all_media|length == 0 and item.image_url %}
-          {% set all_media = [{'media_url': item.image_url, 'media_type':'image'}] %}
-        {% endif %}
-
         {% set first = all_media[0] if all_media|length > 0 else None %}
         {% if first and first.media_type and first.media_type.startswith('video') %}
           <video id="mainMediaDesktop" src="{{ first.media_url }}" controls muted></video>
         {% else %}
-      <img id="mainMediaDesktop" src="{{ prefer_webp((first.media_url if first else item.image_url) or url_for('static', filename='defoult.webp')) }}" alt="{{ localized_name }}" />
+          <img id="mainMediaDesktop" src="{{ prefer_webp((first.media_url if first else item.image_url) or url_for('static', filename='defoult.webp')) }}" alt="{{ localized_name }}" />
         {% endif %}
 
+        {% if all_media|length > 1 %}
         <button class="media-btn left" id="prevBtnDesktop" title="Oldingi">‹</button>
         <button class="media-btn right" id="nextBtnDesktop" title="Keyingi">›</button>
         <button class="media-btn zoom" id="zoomBtnDesktop" title="Kattalashtirish">🔍</button>
+        {% endif %}
       </div>
 
+      {% if all_media|length > 1 %}
       <div class="thumbnails" id="thumbnailsDesktop">
         {% for m in all_media %}
           <div class="thumb" data-idx="{{ loop.index0 }}">
@@ -489,22 +232,29 @@
           </div>
         {% endfor %}
       </div>
+      {% endif %}
     </div>
 
-    {# Mobile-only: gallery with swipe/snapping initialized by static/main.js #}
+    {# Mobile-only: gallery #}
     <div class="gallery-mobile">
-    <div class="gallery" id="productGallery" data-item-id="{{ item.id }}">
+      <div class="gallery" id="productGallery">
         <div class="gallery-track">
           {% for m in all_media %}
             {% if m.media_type and m.media_type.startswith('video') %}
               <video controls muted preload="metadata" src="{{ m.media_url }}"></video>
             {% else %}
-              <img src="{{ prefer_webp(m.media_url) }}" alt="{{ localized_name }}" loading="lazy" decoding="async" onerror="this.src='{{ prefer_webp(url_for('static', filename='defoult.webp')) }}'" />
+              <img src="{{ prefer_webp(m.media_url) }}" 
+                   alt="{{ localized_name }}" 
+                   loading="lazy" 
+                   decoding="async" 
+                   data-fallback-src="{{ prefer_webp(url_for('static', filename='defoult.webp')) }}"
+                   class="js-img-fallback" />
             {% endif %}
           {% endfor %}
         </div>
       </div>
 
+      {% if all_media|length > 1 %}
       <div class="thumbnails" id="thumbnailsMobile">
         {% for m in all_media %}
           <div class="thumb" data-idx="{{ loop.index0 }}">
@@ -512,36 +262,55 @@
           </div>
         {% endfor %}
       </div>
+      {% endif %}
     </div>
   </div>
 
   <div class="product-details">
-  <h1>{{ localized_name }}</h1>
-  <p class="description">{{ localized_description or '' }}</p>
+    <h1>{{ localized_name }}</h1>
+    <p class="description">{{ localized_description or '' }}</p>
 
     <div class="rating-row">
-      <!-- Fractional star display: two layered elements. .stars-inner width reflects rating/5*100% -->
-      <style>
-        .stars-wrap { display:inline-block; position:relative; font-size:20px; line-height:1; }
-        .stars-bottom, .stars-top { color: #e6e6e6; }
-        .stars-top { color: #ffb648; position:absolute; left:0; top:0; overflow:hidden; white-space:nowrap; }
-        .stars-bottom { white-space:nowrap; }
-        /* clickable rating in comment form */
-        .rating-input-stars { cursor:pointer; display:inline-block; }
-        .rating-input-stars .star{ font-size:26px; color:#e6e6e6; }
-        .rating-input-stars .star.hovered, .rating-input-stars .star.selected{ color:#ffb648; }
-      </style>
-
-      <div class="stars-wrap" aria-hidden="true" title="{{ "%.1f"|format(item.rating|float(0)) }}">
-        <div class="stars-bottom">★★★★★</div>
-        <div class="stars-top" id="starsTop" style="width:{{ ((item.rating|float(0))/5.0)*100 }}%">★★★★★</div>
-      </div>
-      <div class="rating-text" id="ratingText">
-        {{ "%.1f"|format(item.rating|float(0)) }} ({{ item.orders_count or 0 }} buyurtma)
+      <input type="hidden" name="rating" id="ratingInput" value="{{ item.rating|int }}" />
+      <span class="MuiRating-root MuiRating-sizeMedium css-1741isb" title="{{ "%.1f"|format(item.rating|float(0)) }}">
+        {% set rating = item.rating|float(0) %}
+        {% for i in range(1, 6) %}
+          {% if rating >= i %}
+            <span class="MuiRating-icon MuiRating-iconFilled css-1xh6k8t">
+              <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1cw4hi4" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarIcon">
+                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path>
+              </svg>
+            </span>
+          {% elif rating >= i - 0.5 %}
+            <span class="MuiRating-decimal css-79elbk">
+              <span class="MuiRating-icon MuiRating-iconFilled css-1xh6k8t" style="width: 50%; overflow: hidden;">
+                <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1cw4hi4" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarIcon">
+                  <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"></path>
+                </svg>
+              </span>
+              <span class="MuiRating-icon MuiRating-iconEmpty css-1xh6k8t" style="width: 50%; overflow: hidden;">
+                <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1cw4hi4" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarBorderIcon">
+                  <path d="M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"></path>
+                </svg>
+              </span>
+            </span>
+          {% else %}
+            <span class="MuiRating-icon MuiRating-iconEmpty css-1xh6k8t">
+              <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1cw4hi4" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarBorderIcon">
+                <path d="M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"></path>
+              </svg>
+            </span>
+          {% endif %}
+        {% endfor %}
+        <span class="MuiRating-visuallyHidden">{{ "%.1f"|format(rating) }} Stars</span>
+      </span>
+      <div class="rating-text" id="ratingText" style="display:flex;align-items:center;gap:8px">
+        <span id="ratingSelectedText">{{ item.rating|int }}</span>
+        <span style="color:#666;font-size:0.9em">({{ item.orders_count or 0 }} buyurtma)</span>
       </div>
     </div>
 
-    {# Size & color selectors visible to everyone (customers + staff) - improved swatches for colors #}
+    {# Size & color selectors #}
     <div class="options-row" id="productOptionsRow">
       <div class="select-wrapper">
         <label for="sizeSelect">O'lcham</label>
@@ -561,12 +330,12 @@
         {% set _colors = (item.colors or "black,white").split(',') %}
         {% set color_map = {
           'qora':'#000000','oq':'#FFFFFF','yashil':'#008000',"ko'k":'#0000FF','koʻk':'#0000FF',
-          'black':'#000000','white':'#FFFFFF','brown':'#8B4513','gray':'#808080','kulrang':'#808080',
+          'qizil':'#FF0000','sariq':'#FFD700','to\'q sariq':'#FFA500','pushti':'#FFC0CB','binafsha':'#800080',
+          'jigarrang':'#8B4513','bej':'#F5F5DC','kulrang':'#808080','navy':'#000080','xaki':'#F0E68C',
+          'black':'#000000','white':'#FFFFFF','brown':'#8B4513','gray':'#808080',
           'red':'#FF0000','blue':'#0000FF','green':'#008000','yellow':'#FFD700','orange':'#FFA500',
-          'purple':'#800080','pink':'#FFC0CB','beige':'#F5F5DC','navy':'#000080','khaki':'#F0E68C'
+          'purple':'#800080','pink':'#FFC0CB','beige':'#F5F5DC','khaki':'#F0E68C'
         } %}
-
-  {# Translations for common color keys in four languages: uz/ru/en/kz #}
         {% set color_translations = {
           'black': {'uz':'Qora','ru':'Черный','en':'Black','kz':'Қара'},
           'qora': {'uz':'Qora','ru':'Черный','en':'Black','kz':'Қара'},
@@ -589,7 +358,6 @@
           'navy': {'uz':'Navy (To\'q ko\'k)','ru':'Тёмно-синий','en':'Navy','kz':'Түсі қою көк'},
           'khaki': {'uz':'Xaki','ru':'Хаки','en':'Khaki','kz':'Хаки'}
         } %}
-
         {% set interface_lang = (session.get('interface_language') or 'uz') %}
 
         <div class="compact-color-select">
@@ -601,19 +369,14 @@
                 {% set ck = cv|lower %}
                 {% set hexval = color_map.get(ck, cv) %}
                 {% set trans = color_translations.get(ck, None) %}
-                {% if not trans %}
-                  {% set display = cv %}
-                {% else %}
-                  {% set display = trans.get(interface_lang, cv) %}
-                {% endif %}
+                {% set display = trans.get(interface_lang, cv) if trans else cv %}
                 <option value="{{ cv }}" data-hex="{{ hexval }}">{{ display }}</option>
               {% endif %}
             {% endfor %}
           </select>
-          {# small preview swatch that updates with selection #}
           {% set first_color = (_colors[0]|trim) if _colors|length > 0 else '' %}
           {% set first_hex = color_map.get(first_color|lower, first_color) if first_color else 'transparent' %}
-          <span id="selectedColorSwatch" class="color-swatch small" style="background-color: {{ first_hex }};" aria-hidden="true"></span>
+          <span id="selectedColorSwatch" class="color-swatch small" data-bg-color="{{ first_hex }}" aria-hidden="true" style="display: inline-block; width: 30px; height: 30px; border: 1px solid #ccc; border-radius: 3px; margin-left: 10px;"></span>
         </div>
 
         <div class="color-translations" aria-hidden="false">
@@ -624,11 +387,7 @@
               {% if cv %}
                 {% set ck = cv|lower %}
                 {% set trans = color_translations.get(ck, None) %}
-                {% if not trans %}
-                  {% set display = cv %}
-                {% else %}
-                  {% set display = trans.get(interface_lang, cv) %}
-                {% endif %}
+                {% set display = trans.get(interface_lang, cv) if trans else cv %}
                 <li style="margin-top:6px"> <strong>{{ display }}</strong> <span style="color:#666">({{ cv }})</span></li>
               {% endif %}
             {% endfor %}
@@ -637,16 +396,12 @@
       </div>
     </div>
 
-    {# If staff or super_admin is logged in, keep the add-to-cart form for testing/admin use. #}
     {% if is_staff or is_super_admin %}
       <form
         method="POST"
         action="{{ url_for('add_to_cart') }}"
         id="addToCartForm">
         <input type="hidden" name="menu_item_id" value="{{ item.id }}" />
-
-        {# options-row rendered above for all users; staff form keeps quantity + submit below #}
-
         <div class="quantity-row">
           <label style="min-width: 70px; font-weight: 600">Miqdor</label>
           <button type="button" class="qty-btn" id="decQty">−</button>
@@ -660,7 +415,6 @@
             max="99" />
           <button type="button" class="qty-btn" id="incQty">+</button>
         </div>
-
         <div style="margin-top: 16px">
           <button type="submit" class="add-cart-btn">
             🛒 Savatchaga qo'shish
@@ -668,468 +422,155 @@
         </div>
       </form>
     {% else %}
-      {# Regular users: show all marketplace links provided by staff, with a header and improved styling #}
-        {% set mp = marketplaces or {} %}
-        <style>
-          .marketplace-block { margin-top: 18px; }
-          .marketplace-header {
-            display: inline-block;
-            font-weight: 800;
-            padding: 10px 14px;
-            border-radius: 10px;
-            background: linear-gradient(90deg,#ff7a59,#ff4b4b);
-            color: white;
-            margin-bottom: 12px;
-            letter-spacing: 0.4px;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-          }
-          .marketplace-buttons { display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-top:6px; }
-          .marketplace-btn {
-            display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:10px; color:#fff; font-weight:700; text-decoration:none;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.08); transition:transform .12s ease, box-shadow .12s ease;
-          }
-          .marketplace-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 26px rgba(0,0,0,0.14); }
-          .marketplace-btn .mp-icon { font-size:18px; }
-          .mp-olx { background: linear-gradient(90deg,#ff9a3c,#f97316); }
-          .mp-uzum { background: linear-gradient(90deg,#06b6d4,#0891b2); }
-          .mp-yandex { background: linear-gradient(90deg,#ffd54a,#ffcc00); color:#222; }
-          .mp-generic { background: linear-gradient(90deg,#3b82f6,#1e40af); }
-          @media (max-width: 720px) { .marketplace-header { width:100%; text-align:center } .marketplace-buttons { justify-content:center } }
-        </style>
-
-        <div class="marketplace-block">
-          <div class="marketplace-header" aria-hidden="true">Buyurtma berish</div>
-
-          {% if mp and mp|length > 0 %}
-            <div class="marketplace-buttons" role="group" aria-label="Marketplaces">
-              {% for key, url in mp.items() %}
-                {% if url %}
-                  {% set k = (key or '')|lower %}
-                  {% if 'olx' in k %}
-                    <a href="{{ url }}" target="_blank" rel="noopener noreferrer" class="marketplace-btn mp-olx">
-                      <span class="mp-icon">🛍️</span><span>{{ 'OLX' }}</span>
-                    </a>
-                  {% elif 'uzum' in k %}
-                    <a href="{{ url }}" target="_blank" rel="noopener noreferrer" class="marketplace-btn mp-uzum">
-                      <span class="mp-icon">🛍️</span><span>{{ 'Uzum' }}</span>
-                    </a>
-                  {% elif 'yandex' in k or 'yand' in k %}
-                    <a href="{{ url }}" target="_blank" rel="noopener noreferrer" class="marketplace-btn mp-yandex">
-                      <span class="mp-icon">🛍️</span><span>{{ 'Yandex Market' }}</span>
-                    </a>
-                  {% else %}
-                    <a href="{{ url }}" target="_blank" rel="noopener noreferrer" class="marketplace-btn mp-generic">
-                      <span class="mp-icon">🛒</span><span>{{ key|capitalize }}</span>
-                    </a>
-                  {% endif %}
+      {% set mp = marketplaces or {} %}
+      <div class="marketplace-block">
+        <div class="marketplace-header" aria-hidden="true">Buyurtma berish</div>
+        {% if mp and mp|length > 0 %}
+          <div class="marketplace-buttons" role="group" aria-label="Marketplaces">
+            {% for key, url in mp.items() %}
+              {% if url %}
+                {% set k = (key or '')|lower %}
+                {% if 'olx' in k %}
+                  <a href="{{ url }}" target="_blank" rel="noopener noreferrer" class="marketplace-btn mp-olx">
+                    <span class="mp-icon">🛍️</span><span>{{ 'OLX' }}</span>
+                  </a>
+                {% elif 'uzum' in k %}
+                  <a href="{{ url }}" target="_blank" rel="noopener noreferrer" class="marketplace-btn mp-uzum">
+                    <span class="mp-icon">🛍️</span><span>{{ 'Uzum' }}</span>
+                  </a>
+                {% elif 'yandex' in k or 'yand' in k %}
+                  <a href="{{ url }}" target="_blank" rel="noopener noreferrer" class="marketplace-btn mp-yandex">
+                    <span class="mp-icon">🛍️</span><span>{{ 'Yandex Market' }}</span>
+                  </a>
+                {% else %}
+                  <a href="{{ url }}" target="_blank" rel="noopener noreferrer" class="marketplace-btn mp-generic">
+                    <span class="mp-icon">🛒</span><span>{{ key|capitalize }}</span>
+                  </a>
                 {% endif %}
-              {% endfor %}
-            </div>
-          {% else %}
-            <div style="color:#666; margin-top:8px">Mahsulotni xarid qilish uchun bozor linklari mavjud emas.</div>
-          {% endif %}
-        </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% else %}
+          <div style="color:#666; margin-top:8px">Mahsulotni xarid qilish uchun bozor linklari mavjud emas.</div>
+        {% endif %}
+      </div>
     {% endif %}
 
-    <!-- Comments: submission form + list -->
-    <div
-      class="comments-section"
-      style="margin-top: 24px; border-top: 1px solid #eee; padding-top: 18px">
+    <!-- Comments -->
+    <div class="comments-section" style="margin-top: 24px; border-top: 1px solid #eee; padding-top: 18px">
       <h3>Mijozlar sharhlari</h3>
-
       <form method="POST" action="{{ url_for('post_comment', item_id=item.id) }}" id="commentForm" style="margin-top:12px">
+        {% if not session.get('user_id') %}
+        <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 12px; margin-bottom: 12px; color: #856404;">
+          <strong>Diqqat:</strong> Sharh qoldirish va baho berish uchun avval <a href="{{ url_for('login') }}" style="color: #0d6efd;">tizimga kiring</a>.
+        </div>
+        {% endif %}
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
           <label style="min-width:70px;font-weight:600">Rating</label>
           <input type="hidden" name="rating" id="ratingInputBottom" value="5" />
-          <div class="rating-input-stars" id="ratingStarsBottom" aria-label="Select rating for comment">
-            <span class="star" data-value="1">★</span>
-            <span class="star" data-value="2">★</span>
-            <span class="star" data-value="3">★</span>
-            <span class="star" data-value="4">★</span>
-            <span class="star" data-value="5">★</span>
-          </div>
+          <span class="MuiRating-root MuiRating-sizeMedium css-1741isb" {% if not session.get('user_id') %}style="pointer-events: none; opacity: 0.6;"{% endif %}>
+            {% for i in range(1, 6) %}
+              {% if loop.index == 1 %}
+                <span class="MuiRating-decimal css-79elbk">
+                  <label for="rating-bottom-{{ loop.index - 0.5 }}" class="css-ykqdxu" style="width: 0%; overflow: hidden; position: absolute;">
+                    <span class="MuiRating-icon MuiRating-iconEmpty css-1xh6k8t">
+                      <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1cw4hi4" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarBorderIcon">
+                        <path d="M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"></path>
+                      </svg>
+                    </span>
+                    <span class="MuiRating-visuallyHidden">{{ loop.index - 0.5 }} Stars</span>
+                  </label>
+                  <input class="MuiRating-visuallyHidden" id="rating-bottom-{{ loop.index - 0.5 }}" type="radio" name="rating-bottom" value="{{ loop.index - 0.5 }}" data-rating="{{ loop.index - 0.5 }}">
+                  <label for="rating-bottom-{{ loop.index }}" class="css-ykqdxu">
+                    <span class="MuiRating-icon MuiRating-iconEmpty css-1xh6k8t">
+                      <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1cw4hi4" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarBorderIcon">
+                        <path d="M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"></path>
+                      </svg>
+                    </span>
+                    <span class="MuiRating-visuallyHidden">{{ loop.index }} Star</span>
+                  </label>
+                  <input class="MuiRating-visuallyHidden" id="rating-bottom-{{ loop.index }}" type="radio" name="rating-bottom" value="{{ loop.index }}" data-rating="{{ loop.index }}" checked>
+                </span>
+              {% elif loop.index < 5 %}
+                <span class="MuiRating-decimal css-79elbk">
+                  <label for="rating-bottom-{{ loop.index - 0.5 }}" class="css-ykqdxu" style="width: 0%; overflow: hidden; position: absolute;">
+                    <span class="MuiRating-icon MuiRating-iconEmpty css-1xh6k8t">
+                      <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1cw4hi4" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarBorderIcon">
+                        <path d="M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"></path>
+                      </svg>
+                    </span>
+                    <span class="MuiRating-visuallyHidden">{{ loop.index - 0.5 }} Stars</span>
+                  </label>
+                  <input class="MuiRating-visuallyHidden" id="rating-bottom-{{ loop.index - 0.5 }}" type="radio" name="rating-bottom" value="{{ loop.index - 0.5 }}" data-rating="{{ loop.index - 0.5 }}">
+                  <label for="rating-bottom-{{ loop.index }}" class="css-ykqdxu">
+                    <span class="MuiRating-icon MuiRating-iconEmpty css-1xh6k8t">
+                      <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1cw4hi4" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarBorderIcon">
+                        <path d="M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"></path>
+                      </svg>
+                    </span>
+                    <span class="MuiRating-visuallyHidden">{{ loop.index }} Stars</span>
+                  </label>
+                  <input class="MuiRating-visuallyHidden" id="rating-bottom-{{ loop.index }}" type="radio" name="rating-bottom" value="{{ loop.index }}" data-rating="{{ loop.index }}">
+                </span>
+              {% else %}
+                <span class="MuiRating-decimal css-79elbk">
+                  <label for="rating-bottom-{{ loop.index - 0.5 }}" class="css-ykqdxu" style="width: 0%; overflow: hidden; position: absolute;">
+                    <span class="MuiRating-icon MuiRating-iconEmpty css-1xh6k8t">
+                      <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1cw4hi4" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarBorderIcon">
+                        <path d="M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"></path>
+                      </svg>
+                    </span>
+                    <span class="MuiRating-visuallyHidden">{{ loop.index - 0.5 }} Stars</span>
+                  </label>
+                  <input class="MuiRating-visuallyHidden" id="rating-bottom-{{ loop.index - 0.5 }}" type="radio" name="rating-bottom" value="{{ loop.index - 0.5 }}" data-rating="{{ loop.index - 0.5 }}">
+                  <label for="rating-bottom-{{ loop.index }}" class="css-ykqdxu">
+                    <span class="MuiRating-icon MuiRating-iconEmpty css-1xh6k8t">
+                      <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1cw4hi4" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarBorderIcon">
+                        <path d="M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"></path>
+                      </svg>
+                    </span>
+                    <span class="MuiRating-visuallyHidden">{{ loop.index }} Stars</span>
+                  </label>
+                  <input class="MuiRating-visuallyHidden" id="rating-bottom-{{ loop.index }}" type="radio" name="rating-bottom" value="{{ loop.index }}" data-rating="{{ loop.index }}">
+                </span>
+              {% endif %}
+            {% endfor %}
+            <label class="MuiRating-label MuiRating-pristine css-ykqdxu">
+              <input class="MuiRating-visuallyHidden" id="rating-bottom-empty" type="radio" name="rating-bottom" value="">
+              <span class="MuiRating-visuallyHidden">Empty</span>
+            </label>
+          </span>
           <div id="ratingSelectedTextBottom" style="margin-left:8px;color:#444;font-weight:600">5</div>
         </div>
-
         <div style="margin-bottom: 8px">
           <label style="font-weight: 600">Sharhingiz</label>
           <textarea name="comment" rows="3" placeholder="Sharh yozing..." style="width:100%;padding:8px;border-radius:6px;border:1px solid #e6e6e6;"></textarea>
         </div>
-
         <div style="text-align: right">
-          <button type="submit" class="add-cart-btn">Sharh yuborish</button>
+          <button type="submit" class="add-cart-btn" {% if not session.get('user_id') %}disabled title="Avval tizimga kiring"{% endif %}>Sharh yuborish</button>
         </div>
       </form>
-
       <div id="commentsList" class="comments-list" style="margin-top: 18px">
         {% if comments and comments|length > 0 %} {% for c in comments %}
-        <div
-          class="comment-item"
-          style="
-            padding: 10px;
-            border: 1px solid #eee;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            background: #fff;
-          ">
-          <div
-            class="comment-author"
-            style="font-weight: 700; color: #2d3748; margin-bottom: 6px">
-            {{ c.author or c.user_name or 'Anonim' }} — {{ '⭐' * (c.rating|int
-            if c.rating is not none else 0) }}
-          </div>
-          <div class="comment-text" style="color: #475569; margin-bottom: 6px">
-            {{ c.text or c.comment or '' }}
-          </div>
-          <div class="comment-date" style="font-size: 12px; color: #9aa3b2">
-            {{ c.created_at }}
-          </div>
-        </div>
-        {% endfor %} {% else %}
-        <div
-          class="no-comments"
-          style="
-            color: #666;
-            padding: 12px;
-            border: 1px dashed #e6e6e6;
-            border-radius: 8px;
-          ">
-          Hozircha sharhlar yo'q — birinchi bo'lib fikr qoldiring.
-        </div>
-        {% endif %}
-      </div>
-    </div>
-  </div>
-</div>
-<!-- Mobile sticky buy bar (visible on small screens) -->
-<style>
-@media (max-width:900px){
-  .mobile-sticky-bar{ position:fixed; left:12px; right:12px; bottom:12px; background:#0b1220; color:#fff; padding:10px; display:flex; gap:10px; align-items:center; z-index:1400; border-radius:12px; box-shadow:0 12px 30px rgba(2,6,23,0.6); }
-  .mobile-sticky-bar .left{ flex:1; min-width:0; overflow:hidden; }
-  .mobile-sticky-bar .title{ font-weight:800; font-size:15px; white-space:nowrap; text-overflow:ellipsis; overflow:hidden; }
-  .mobile-sticky-bar .price{ color:#ff8a75; font-weight:800; margin-top:4px; font-size:14px; }
-  .mobile-sticky-bar .qty{ display:flex; gap:6px; align-items:center; margin-right:8px; }
-  .mobile-sticky-bar .qty .qty-input{ width:56px; }
-  .mobile-sticky-bar .cta{ background:#ff6b5a; border:none; color:#fff; padding:10px 12px; border-radius:10px; font-weight:800; cursor:pointer; }
-  body{ padding-bottom: 84px; }
-}
-</style>
-
-<div id="mobileStickyBar" class="mobile-sticky-bar" aria-hidden="false" style="display:none;" role="region" aria-label="Buy bar">
-  <div class="left">
-    <div class="title">{{ localized_name }}</div>
-    <div class="price">{{ (item.price if item.price else '—') }} UZS</div>
-  </div>
-  <div class="qty" aria-hidden="false">
-    <button type="button" id="mobileDecQty" class="qty-btn">−</button>
-    <input type="number" id="mobileQtyInput" class="qty-input" value="1" min="1" max="99" />
-    <button type="button" id="mobileIncQty" class="qty-btn">+</button>
-  </div>
-  <button type="button" id="mobileAddToCart" class="cta">Buyurtma berish</button>
-</div>
-
-<!-- Related product ribbons (under comments) -->
-<style>
-  .product-ribbons { max-width:1200px; margin:18px auto 40px; padding:0 12px; }
-  .product-ribbon { margin-top:18px; }
-  .ribbon-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
-  .ribbon-title { font-weight:800; font-size:16px; }
-  .ribbon-track { display:flex; gap:12px; overflow-x:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; padding-bottom:6px; }
-  .ribbon-card { flex:0 0 200px; width:200px; background:#fff; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.06); padding:8px; scroll-snap-align:start; text-decoration:none; color:inherit; }
-  .ribbon-card img { width:100%; height:140px; object-fit:cover; border-radius:6px; display:block; }
-  .ribbon-card .name { font-weight:700; margin-top:8px; font-size:14px; min-height:36px; }
-  .ribbon-card .price { margin-top:6px; color:#0f766e; font-weight:800; display:none; }
-  .ribbon-controls { display:flex; gap:8px; align-items:center; }
-  .ribbon-btn { background:#fff; border:1px solid #e6e6e6; width:36px; height:36px; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; }
-  @media (max-width:720px){ .ribbon-card{flex:0 0 160px;width:160px} .ribbon-card img{height:110px} }
-</style>
-
-<div class="product-ribbons">
-  <div class="product-ribbon" id="ribbon-spetsobuv">
-    <div class="ribbon-header">
-      <div class="ribbon-title">{{ _('footer.cat_specobuv') }} — Tegishli mahsulotlar</div>
-      <div class="ribbon-controls"><button class="ribbon-btn" data-target="ribbon-spetsobuv" data-action="prev">‹</button><button class="ribbon-btn" data-target="ribbon-spetsobuv" data-action="next">›</button></div>
-    </div>
-    <div class="ribbon-track" data-category="specobuv" id="track-spetsobuv" aria-label="Spetsobuv products"></div>
-  </div>
-
-  <div class="product-ribbon" id="ribbon-spetsodejda">
-    <div class="ribbon-header">
-      <div class="ribbon-title">{{ _('footer.cat_specodezhda') }} — Tegishli mahsulotlar</div>
-      <div class="ribbon-controls"><button class="ribbon-btn" data-target="ribbon-spetsodejda" data-action="prev">‹</button><button class="ribbon-btn" data-target="ribbon-spetsodejda" data-action="next">›</button></div>
-    </div>
-    <div class="ribbon-track" data-category="specodezhda" id="track-spetsodejda" aria-label="Spetsodejda products"></div>
-  </div>
-</div>
-
-<!-- Zoom overlay -->
-<div
-  class="zoom-overlay"
-  id="zoomOverlay"
-  onclick="document.getElementById('zoomOverlay').style.display='none'">
-  <img id="zoomImg" src="" alt="zoom" />
-</div>
-
-<script>
-  // Media data from server
-  const mediaData = {{ (media or [])|tojson }};
-  const defaultImage = {{ (prefer_webp(item.image_url or url_for('static', filename='defoult.webp'))) | tojson }};
-  const IS_FAVORITES_USER = {{ (session.get('user_id') and not session.get('staff_id') and not session.get('courier_id') and not session.get('super_admin')) | tojson }};
-  const FAVORITES_LOGIN_MESSAGE = {{ "Iltimos oldin saytdan avtorizatsiyadan o'ting"|tojson }};
-  let currentIndex = 0;
-
-  // Desktop elements
-  const mainDesktop = document.getElementById('mainMediaDesktop');
-  const prevBtnDesktop = document.getElementById('prevBtnDesktop');
-  const nextBtnDesktop = document.getElementById('nextBtnDesktop');
-  const zoomBtnDesktop = document.getElementById('zoomBtnDesktop');
-  const thumbsDesktop = document.getElementById('thumbnailsDesktop');
-
-  // Mobile gallery elements
-  const galleryEl = document.getElementById('productGallery');
-  const thumbsMobile = document.getElementById('thumbnailsMobile');
-
-  // Initialize shared galleries (idempotent)
-  try { if (typeof initImageGalleries === 'function') initImageGalleries(document); } catch (e) {}
-
-  // Desktop: simple mainMedia swapper
-  function updateMainDesktop(index) {
-    currentIndex = (index + (mediaData.length || 1)) % (mediaData.length || 1);
-    const m = (mediaData && mediaData.length) ? mediaData[currentIndex] : { media_url: defaultImage, media_type: 'image' };
-    const existing = document.getElementById('mainMediaDesktop');
-    if (!existing) return;
-    if (m.media_type && m.media_type.startsWith('video')) {
-      const vid = document.createElement('video');
-      vid.id = 'mainMediaDesktop'; vid.src = m.media_url; vid.controls = true; vid.autoplay = false; vid.muted = true;
-      existing.replaceWith(vid);
-    } else {
-      const img = document.createElement('img');
-  img.id = 'mainMediaDesktop'; img.src = m.media_url || defaultImage; img.alt = '{{ localized_name }}';
-      existing.replaceWith(img);
-    }
-    // highlight desktop thumbnails
-    if (thumbsDesktop) Array.from(thumbsDesktop.children).forEach((t, i) => t.style.outline = (i === currentIndex) ? '2px solid #21a366' : '');
-  }
-
-  if (prevBtnDesktop) prevBtnDesktop.addEventListener('click', function (e) { e.stopPropagation(); updateMainDesktop(currentIndex - 1); });
-  if (nextBtnDesktop) nextBtnDesktop.addEventListener('click', function (e) { e.stopPropagation(); updateMainDesktop(currentIndex + 1); });
-  if (thumbsDesktop) {
-    Array.from(thumbsDesktop.querySelectorAll('.thumb')).forEach(function (el) { if (el._wired) return; el._wired = true; el.addEventListener('click', function () { updateMainDesktop(parseInt(this.dataset.idx, 10) || 0); }); });
-  }
-
-  if (zoomBtnDesktop) zoomBtnDesktop.addEventListener('click', function (e) { e.stopPropagation(); const m = (mediaData && mediaData.length) ? mediaData[currentIndex] : { media_url: defaultImage }; document.getElementById('zoomImg').src = m.media_url || defaultImage; document.getElementById('zoomOverlay').style.display = 'flex'; });
-
-  // Mobile: wire thumbnails to setSlide on gallery
-  function setSlideMobile(i) {
-    if (!galleryEl) return;
-    const count = (mediaData && mediaData.length) ? mediaData.length : (galleryEl.querySelectorAll('img,video').length || 1);
-    const idx = Math.max(0, Math.min(count - 1, i || 0));
-    currentIndex = idx;
-    try {
-      if (typeof galleryEl.setSlide === 'function') galleryEl.setSlide(idx);
-    } catch (e) {}
-    // highlight mobile thumbs
-    if (thumbsMobile) Array.from(thumbsMobile.children).forEach((t, ii) => t.style.outline = (ii === idx) ? '2px solid #21a366' : '');
-  }
-
-  if (thumbsMobile) {
-    Array.from(thumbsMobile.querySelectorAll('.thumb')).forEach(function (el) { if (el._wired) return; el._wired = true; el.addEventListener('click', function () { setSlideMobile(parseInt(this.dataset.idx, 10) || 0); }); });
-  }
-
-  // initial states
-  try { updateMainDesktop(0); } catch (e) {}
-  try { setSlideMobile(0); } catch (e) {}
-
-  // quantity controls
-  const dec = document.getElementById('decQty');
-  const inc = document.getElementById('incQty');
-  const qtyInput = document.getElementById('quantityInput');
-  if (dec) dec.addEventListener('click', () => { qtyInput.value = Math.max(1, parseInt(qtyInput.value || 1, 10) - 1); });
-  if (inc) inc.addEventListener('click', () => { qtyInput.value = Math.min(99, parseInt(qtyInput.value || 1, 10) + 1); });
-
-  // Rating stars input widget (unchanged)
-  (function () {
-    function wire(widgetId, inputId, textId) {
-      const starsWrap = document.getElementById(widgetId);
-      const input = document.getElementById(inputId);
-      const text = document.getElementById(textId);
-      if (!starsWrap || !input) return;
-      let selected = parseInt(input.value || 5, 10);
-      function refresh() {
-        Array.from(starsWrap.querySelectorAll('.star')).forEach(s => {
-          const v = parseInt(s.dataset.value, 10) || 0;
-          s.classList.toggle('selected', v <= selected);
-        });
-        if (text) text.textContent = selected;
-        input.value = selected;
-      }
-      starsWrap.addEventListener('click', function (e) { const s = e.target.closest('.star'); if (!s) return; selected = parseInt(s.dataset.value, 10) || selected; refresh(); });
-      starsWrap.addEventListener('mouseover', function (e) { const s = e.target.closest('.star'); if (!s) return; const hover = parseInt(s.dataset.value, 10) || 0; Array.from(starsWrap.querySelectorAll('.star')).forEach(st => st.classList.toggle('hovered', (parseInt(st.dataset.value, 10) || 0) <= hover)); });
-      starsWrap.addEventListener('mouseout', function () { Array.from(starsWrap.querySelectorAll('.star.hovered')).forEach(st => st.classList.remove('hovered')); });
-      refresh();
-    }
-
-    wire('ratingStars', 'ratingInput', 'ratingSelectedText');
-    wire('ratingStarsBottom', 'ratingInputBottom', 'ratingSelectedTextBottom');
-  })();
-
-  // Product color swatches selection wiring
-  (function(){
-    try{
-      const container = document.getElementById('productColorSelect');
-      if(container){
-        const options = Array.from(container.querySelectorAll('.color-option'));
-        options.forEach(opt => {
-          const inp = opt.querySelector('input[type="radio"]');
-          if(!inp) return;
-          // reflect initial state
-          if(inp.checked) opt.classList.add('selected');
-          opt.addEventListener('click', function(e){
-            try{
-              options.forEach(o => { o.classList.remove('selected'); o.setAttribute('aria-checked','false'); });
-              inp.checked = true;
-              opt.classList.add('selected');
-              opt.setAttribute('aria-checked','true');
-            }catch(_){ }
-          });
-          opt.addEventListener('keydown', function(e){ if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); opt.click(); } });
-        });
-      }
-    }catch(e){ console.warn('color swatch wiring failed', e); }
-  })();
-
-  // Compact select swatch wiring
-  (function(){
-    try{
-      const colorSelect = document.getElementById('colorSelect');
-      const swatch = document.getElementById('selectedColorSwatch');
-      if(colorSelect && swatch){
-        function updateSwatch(){
-          const opt = colorSelect.selectedOptions && colorSelect.selectedOptions[0];
-          const hex = opt ? (opt.getAttribute('data-hex') || opt.value) : 'transparent';
-          swatch.style.backgroundColor = hex;
-        }
-        colorSelect.addEventListener('change', updateSwatch);
-        // initialize
-        updateSwatch();
-      }
-    }catch(e){ console.warn('compact color select wiring failed', e); }
-  })();
-
-  // Favorites (sevimlilar) tugmasi – product sahifasida AJAX orqali ishlaydi
-  (function(){
-    try {
-      const form = document.querySelector('.favorite-form-product');
-      const btn = form ? form.querySelector('.btn-favorite-product') : null;
-      if (!form || !btn) return;
-
-      btn.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        if (!IS_FAVORITES_USER) {
-          alert(FAVORITES_LOGIN_MESSAGE);
-          return;
-        }
-
-        const actionUrl = form.getAttribute('action');
-        fetch(actionUrl, {
-          method: 'POST',
-          headers: { 'X-Requested-With': 'XMLHttpRequest' }
-        })
-          .then(r => r.json())
-          .then(data => {
-            if (data && data.success) {
-              btn.classList.add('active');
-              alert(data.message || 'Sevimlilarga saqlandi');
-            } else {
-              alert((data && data.message) || 'Xatolik yuz berdi');
-            }
-          })
-          .catch(err => {
-            console.warn('add-to-favorites(product) error', err);
-            alert('Sevimlilarga saqlashda xatolik yuz berdi');
-          });
-      });
-    } catch (e) {
-      console.warn('product favorites wiring failed', e);
-    }
-  })();
-  })();
-
-  // Mobile sticky bar wiring
-  (function(){
-    function showBarIfNeeded(){
-      try{
-        const bar = document.getElementById('mobileStickyBar');
-        if(!bar) return;
-        if(window.innerWidth <= 900){
-          bar.style.display = 'flex';
-        }else{
-          bar.style.display = 'none';
-        }
-      }catch(e){}
-    }
-
-    // sync qty inputs
-    function syncQtyFromMobile(){
-      const m = document.getElementById('mobileQtyInput');
-      const main = document.getElementById('quantityInput');
-      if(!m) return;
-      if(main) main.value = m.value;
-    }
-
-    document.addEventListener('DOMContentLoaded', function(){
-      showBarIfNeeded();
-      window.addEventListener('resize', showBarIfNeeded);
-
-      const mobileDec = document.getElementById('mobileDecQty');
-      const mobileInc = document.getElementById('mobileIncQty');
-      const mobileInput = document.getElementById('mobileQtyInput');
-      const mobileAdd = document.getElementById('mobileAddToCart');
-      const mainInput = document.getElementById('quantityInput');
-
-      if(mobileDec && mobileInput){
-        mobileDec.addEventListener('click', function(){ mobileInput.value = Math.max(1, parseInt(mobileInput.value||1,10)-1); syncQtyFromMobile(); });
-      }
-      if(mobileInc && mobileInput){
-        mobileInc.addEventListener('click', function(){ mobileInput.value = Math.min(99, parseInt(mobileInput.value||1,10)+1); syncQtyFromMobile(); });
-      }
-      if(mobileInput){
-        mobileInput.addEventListener('change', syncQtyFromMobile);
-      }
-
-      if(mobileAdd){
-        mobileAdd.addEventListener('click', function(){
-          // apply qty to main input if present
-          if(mainInput && mobileInput) mainInput.value = mobileInput.value;
-
-          // prefer click on existing add-to-cart button
-          const mainBtn = document.querySelector('.add-cart-btn');
-          if(mainBtn){
-            mainBtn.click();
-            return;
-          }
-
-          // otherwise open first marketplace link
-          const mp = document.querySelector('.marketplace-buttons a');
-          if(mp){
-            window.open(mp.href, '_blank', 'noopener');
-            return;
-          }
-
-          // fallback: submit staff form if present
-          const form = document.getElementById('addToCartForm');
-          if(form){
-            form.submit();
-          }else{
-            alert('Iltimos, mahsulotni tanlang va Buyurtma berish tugmasini bosing.');
-          }
-        });
-      }
-    });
-  })();
-
-</script>
-
-{% endblock %}
+        <div class="comment-item" style="padding: 10px; border: 1px solid #eee; border-radius: 8px; margin-bottom: 10px; background: #fff;">
+          <div class="comment-author" style="font-weight: 700; color: #2d3748; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+            {{ c.author or c.user_name or 'Anonim' }}
+            <span class="MuiRating-root MuiRating-sizeSmall css-1741isb" style="font-size: 20px;">
+              {% set comment_rating = c.rating|float(0) %}
+              {% for i in range(1, 6) %}
+                {% if comment_rating >= i %}
+                  <span class="MuiRating-icon MuiRating-iconFilled css-1xh6k8t">
+                    <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1cw4hi4" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarIcon">
+                      <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path>
+                    </svg>
+                  </span>
+                {% elif comment_rating >= i - 0.5 %}
+                  <span class="MuiRating-decimal css-79elbk">
+                    <span class="MuiRating-icon MuiRating-iconFilled css-1xh6k8t" style="width: 50%; overflow: hidden;">
+                      <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1cw4hi4" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarIcon">
+                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path>
+                      </svg>
+                    </span>
+                    <span class="MuiRating-icon MuiRating-iconEmpty css-1xh6k8t" style="width: 50%; overflow: hidden;">
+                      <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1cw4hi4" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarBorderIcon">
+                     

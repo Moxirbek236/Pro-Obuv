@@ -124,11 +124,21 @@
     <!-- Responsive overrides for phone & laptop (cleanup) -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive-cleanup.css') }}" />
 
-  <!-- Menu & product card improved styles (load late to override legacy rules) -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/menu-cards.css') }}" />
-
+    <!-- Modern Menu Styles (replaces menu-cards.css) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/menu-modern.css') }}" />
+    
     <!-- Modern site-wide design system (overrides & auth/footer styles) -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/site-modern.css') }}" />
+
+    <!-- Enhanced visual styles for better appeal -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/enhanced_styles.css') }}" />
+    
+    <!-- Universal Theme & Animation Libraries -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/universal-theme.css') }}" />
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <!-- AOS CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
 
     <!-- Global sozlamalar uchun CSS -->
     <style>
@@ -159,7 +169,7 @@
       body.dark-theme .table-striped > tbody > tr:nth-of-type(odd) > td,
       body.dark-theme .table-striped > tbody > tr:nth-of-type(odd) > th {
         background-color: #2d2d2d !important;
-        color: #ffffff !important;toast-container
+        color: #ffffff !important;
       }
 
       body.dark-theme .table-striped > tbody > tr:nth-of-type(even) > td,
@@ -776,17 +786,62 @@
     </script>
     {% endif %} {% endblock %} {% block extra_head %}{% endblock %}
     <script>
-      const CSRF_TOKEN = '{{ csrf_token|default('') }}';
+      const CSRF_TOKEN = "{{ csrf_token|default('') }}";
     </script>
   </head>
   <body
-    class="dark-theme"
-    data-dark-mode="true"
+    class=""
+    data-dark-mode="false"
     data-font-size="{{ session.get('font_size', 'medium') }}"
     data-language="{{ LANG }}">
+    <script type="application/json" id="base-config">
+    {
+      "translations": {{ translations|tojson|safe if translations is defined else '{}' }},
+      "supported_languages": {{ config.get('SUPPORTED_LANGUAGES', ['uz','ru','en','kz']) | tojson | safe }},
+      "session": {
+         "dark_theme": {{ 'true' if session.get('dark_theme') else 'false' }},
+         "font_size": "{{ session.get('font_size', 'medium') }}",
+         "interface_language": "{{ session.get('interface_language', 'uz') }}"
+      },
+      "user": {
+         "is_super_admin": {{ (session.get('super_admin') and True) | tojson }},
+         "staff_id": {{ (session.get('staff_id') or None) | tojson }},
+         "courier_id": {{ (session.get('courier_id') or None) | tojson }},
+         "user_id": {{ (session.get('user_id') or None) | tojson }}
+      },
+      "messages": {
+         "msg_too_long": {{ _('messages.message_too_long')|tojson }},
+         "send_error": {{ _('messages.message_send_error')|tojson }},
+         "unknown_error": {{ _('messages.unknown_error')|tojson }},
+         "error_occurred": {{ _('messages.error_occurred')|tojson }},
+         "news_added": {{ _('messages.news_added')|tojson }},
+         "save_error": {{ _('messages.save_error')|tojson }},
+         "news_enter_email": {{ _('footer.newsletter_enter_email')|tojson if _('footer.newsletter_enter_email') else "Please enter an email"|tojson }},
+         "news_thanks": {{ _('footer.newsletter_thanks')|tojson if _('footer.newsletter_thanks') else "Thanks! Subscribed (offline)"|tojson }},
+         "news_confirm": {{ _('footer.newsletter_confirm')|tojson if _('footer.newsletter_confirm') else "Confirmed"|tojson }},
+         "loading": {{ _('messages.loading')|tojson if _('messages.loading') else "Loading..."|tojson }},
+         "no_messages": {{ _('messages.no_messages')|tojson if _('messages.no_messages') else "No messages"|tojson }},
+         "enter_title_and_body": {{ _('messages.enter_title_and_body')|tojson if _('messages.enter_title_and_body') else "Enter title and body"|tojson }},
+         "enter_id": {{ _('messages.enter_id')|tojson if _('messages.enter_id') else "Enter ID"|tojson }},
+         "notification_sent": {{ _('messages.notification_sent')|tojson if _('messages.notification_sent') else "Sent!"|tojson }},
+         "title_required": {{ _('messages.title_required')|tojson if _('messages.title_required') else "Title required"|tojson }},
+         "file_upload_error": {{ _('messages.file_upload_error')|tojson if _('messages.file_upload_error') else "Upload error"|tojson }},
+         "no_notifications": {{ _('messages.no_notifications')|tojson if _('messages.no_notifications') else "No notifications"|tojson }}
+      },
+      "default_avatar": {{ prefer_webp(url_for('static', filename='images/default-avatar.svg'))|tojson }},
+      "csrf_token": {{ csrf_token|tojson if csrf_token else '""' }}
+    }
+    </script>
     <script>
+      // Load Base Config
+      window.BASE_CONFIG = {};
+      try {
+        const cfgEl = document.getElementById('base-config');
+        if(cfgEl) window.BASE_CONFIG = JSON.parse(cfgEl.textContent);
+      } catch(e) { console.error('Base config parse failed', e); }
+
       // Expose server-side translations for the current language to JS
-      window.TRANSLATIONS = {{ translations|tojson|safe if translations is defined else '{}' }};
+      window.TRANSLATIONS = window.BASE_CONFIG.translations || {};
     </script>
     <script>
       // Language switch helper used by navbar buttons. It saves choice to session via
@@ -804,7 +859,7 @@
             body: JSON.stringify({ language: lang })
           }).catch(function(){});
         } catch (_) {}
-        var supported = {{ config.get('SUPPORTED_LANGUAGES', ['uz','ru','en','kz']) | tojson | safe }};
+        var supported = window.BASE_CONFIG.supported_languages || ['uz','ru','en','kz'];
         var path = window.location.pathname || '/';
         var segs = path.split('/');
         if (segs.length && segs[segs.length-1] === '') segs.pop();
@@ -824,12 +879,22 @@
       };
     </script>
     <!-- Set dark theme as default in JavaScript -->
+    <!-- Theme preference handling -->
     <script>
-      document.documentElement.classList.add("dark-theme");
-      document.body.classList.add("dark-theme");
-      // Store default dark theme preference
+      // Default to light theme if no preference set
       if (!localStorage.getItem("theme_preference")) {
-        localStorage.setItem("theme_preference", "dark");
+        localStorage.setItem("theme_preference", "light");
+      }
+      
+      const theme = localStorage.getItem("theme_preference");
+      if (theme === 'dark') {
+          document.documentElement.classList.add("dark-theme");
+          document.body.classList.add("dark-theme");
+          document.body.setAttribute('data-dark-mode', 'true');
+      } else {
+          document.documentElement.classList.remove("dark-theme");
+          document.body.classList.remove("dark-theme");
+          document.body.setAttribute('data-dark-mode', 'false');
       }
     </script>
     <script>
@@ -3399,9 +3464,10 @@
             // Global sozlamalarni yuklash
             document.addEventListener('DOMContentLoaded', function() {
                 // Session ma'lumotlarini localStorage bilan sinxronlash
-                const sessionDarkMode = {{ 'true' if session.get('dark_theme') else 'false' }};
-                const sessionFontSize = '{{ session.get("font_size", "medium") }}';
-                const sessionLanguage = '{{ session.get("interface_language", "uz") }}';
+                const sess = (window.BASE_CONFIG && window.BASE_CONFIG.session) || {};
+                const sessionDarkMode = sess.dark_theme || false;
+                const sessionFontSize = sess.font_size || 'medium';
+                const sessionLanguage = sess.interface_language || 'uz';
 
                 // console.log('Session sozlamalari:', { sessionDarkMode, sessionFontSize, sessionLanguage });
 
@@ -3648,7 +3714,7 @@
                         body: JSON.stringify({ language: language })
                     }).catch(function(){});
                 } catch (_) {}
-                var supported = {{ config.get('SUPPORTED_LANGUAGES', ['uz','ru','en','kz']) | tojson | safe }};
+                var supported = (window.BASE_CONFIG && window.BASE_CONFIG.supported_languages) || ['uz','ru','en','kz'];
                 var path = window.location.pathname || '/';
                 var segs = path.split('/');
                 if (segs.length && segs[segs.length-1] === '') segs.pop();
@@ -3725,9 +3791,9 @@
               }
             }
           })
-          .catch((error) =>
+          .catch((error) => {
             // console.log("Savatcha sonini olishda xato:", error)
-          );
+          });
       }
 
       document.addEventListener("DOMContentLoaded", initialCartUpdate);
@@ -4194,34 +4260,6 @@
       .msg{ margin-bottom:8px; padding:8px 10px; border-radius:8px; max-width:80%; }
       .msg.ai{ background:#f1f5f9; align-self:flex-start }
       .msg.me{ background:#dcf8c6; align-self:flex-end }
-
-      /* Chat menu (AI / Operator / Savol yuborish) created by static/chat_widget.js */
-      .public-chat-menu {
-        position: fixed;
-        left: 16px;
-        bottom: 90px;
-        background: rgba(15,23,36,0.98);
-        color: #fff;
-        border-radius: 10px;
-        padding: 8px;
-        box-shadow: 0 12px 40px rgba(0,0,0,0.5);
-        display: none;
-        flex-direction: column;
-        gap: 6px;
-        z-index: 1200;
-        min-width: 220px;
-      }
-      .public-chat-menu.open { display: flex; }
-      .chat-menu-item {
-        border: none;
-        background: transparent;
-        color: #fff;
-        text-align: left;
-        padding: 8px 10px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 14px;
-      }
       .chat-menu-item:hover {
         background: rgba(255,255,255,0.08);
       }
@@ -4769,11 +4807,13 @@
         let currentUserId = null;
 
         // Get current user info
+        // Get current user info
         function getCurrentUser() {
-          const IS_SUPER_ADMIN = {{ (session.get('super_admin') and True) | tojson }};
-          const STAFF_ID = {{ (session.get('staff_id') or None) | tojson }};
-          const COURIER_ID = {{ (session.get('courier_id') or None) | tojson }};
-          const USER_ID = {{ (session.get('user_id') or None) | tojson }};
+          const u = (window.BASE_CONFIG && window.BASE_CONFIG.user) || {};
+          const IS_SUPER_ADMIN = u.is_super_admin || false;
+          const STAFF_ID = u.staff_id;
+          const COURIER_ID = u.courier_id;
+          const USER_ID = u.user_id;
 
           if (IS_SUPER_ADMIN) {
             currentUserType = 'super_admin';
@@ -5135,7 +5175,7 @@
 
           // Validate message length
           if (text.length > 1000) {
-            alert({{ _('messages.message_too_long')|tojson }});
+            alert((window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.msg_too_long) || 'Message too long');
             return;
           }
 
@@ -5147,7 +5187,7 @@
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : ''
+              'X-CSRF-Token': window.BASE_CONFIG.csrf_token || ''
             },
             body: JSON.stringify({ text: text })
           })
@@ -5163,12 +5203,14 @@
               textEl.style.height = 'auto';
               loadMessages(activeChatId);
             } else {
-              alert({{ _('messages.message_send_error')|tojson }} + ': ' + (data.message || {{ _('messages.unknown_error')|tojson }}));
+              const unknown = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.unknown_error) || 'Unknown error';
+              const sendErr = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.send_error) || 'Send error';
+              alert(sendErr + ': ' + (data.message || unknown));
             }
           })
           .catch(error => {
             // console.error('Error sending message:', error);
-            alert({{ _('messages.message_send_error')|tojson }});
+            alert((window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.send_error) || 'Send error');
           })
           .finally(() => {
             sendBtn.disabled = false;
@@ -5296,7 +5338,7 @@
                 .then((resp) => {
                   if (resp && resp.success && resp.chat_id) {
                     // open the new chat
-                    {# openChat(resp.chat_id, resp.name || "Chat " + resp.chat_id); #}
+                    // openChat(resp.chat_id, resp.name || "Chat " + resp.chat_id);
                   } else {
                     // fallback: refresh chat list
                     loadChats();
@@ -5312,16 +5354,18 @@
               activeChatId = chatId;
               // ensure panel is visible
               if (panel.style.display !== 'block') togglePanel();
-              messagesEl.innerHTML = '<div class="text-muted">' + {{ _('messages.loading')|tojson }} + '</div>';
+              const msgLoading = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.loading) || 'Loading...';
+              messagesEl.innerHTML = '<div class="text-muted">' + msgLoading + '</div>';
               // notifications are handled via separate FAB, do not inject notify button into chat header
 
               fetch(`/api/chats/${chatId}/messages?limit=200`)
                 .then(safeJson)
                 .then((data) => {
                   messagesEl.innerHTML = "";
-                  if (!data || !data.messages)
-                    return (messagesEl.innerHTML =
-                      '<div class="text-muted">' + {{ _('messages.no_messages')|tojson }} + '</div>');
+                  if (!data || !data.messages) {
+                    const msgNoMsg = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.no_messages) || 'No messages';
+                    return (messagesEl.innerHTML = '<div class="text-muted">' + msgNoMsg + '</div>');
+                  }
                   data.messages.forEach((m) => {
                     const d = document.createElement("div");
                     d.className = "chat-message d-flex gap-2";
@@ -5365,8 +5409,8 @@
                   updateChatUnreadCount();
                 })
                 .catch((e) => {
-                  messagesEl.innerHTML =
-                    '<div class="text-danger">' + {{ _('messages.error_occurred')|tojson }} + '</div>';
+                  const errText = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.error_occurred) || 'Error occurred';
+                  messagesEl.innerHTML = '<div class="text-danger">' + errText + '</div>';
                   // console.log(e);
                 });
             }
@@ -5399,7 +5443,7 @@
                 .then((resp) => {
                   if (resp && resp.success) {
                     textEl.value = "";
-                    {# openChat(activeChatId); #}
+                    // openChat(activeChatId);
                   }
                 })
                 .catch((e) => {
@@ -5469,16 +5513,18 @@
                 }
               });
             // Server will render IS_SUPER_ADMIN true/false
-            const IS_SUPER_ADMIN = {{ (session.get('super_admin') and True) | tojson }};
-            // Current member context for chat (used to align "my" messages)
-            window.CURRENT_MEMBER_ID = {{ (session.get('user_id') or session.get('staff_id') or session.get('courier_id') or None) | tojson }};
-            window.CURRENT_MEMBER_TYPE = {{ ('user' if session.get('user_id') else ('staff' if session.get('staff_id') else ('courier' if session.get('courier_id') else 'anonymous'))) | tojson }};
+            // Derive user context from BASE_CONFIG
+            const _u = (window.BASE_CONFIG && window.BASE_CONFIG.user) || {};
+            const IS_SUPER_ADMIN = _u.is_super_admin || false;
+            window.CURRENT_MEMBER_ID = _u.user_id || _u.staff_id || _u.courier_id || null;
+            window.CURRENT_MEMBER_TYPE = (_u.user_id ? 'user' : (_u.staff_id ? 'staff' : (_u.courier_id ? 'courier' : 'anonymous')));
             if (IS_SUPER_ADMIN && notifySendBtn) {
               // Only attach send handler for superadmin
               notifySendBtn.addEventListener("click", () => {
                 const title = document.getElementById("notifyTitle").value.trim();
                 const body = document.getElementById("notifyBody").value.trim();
-                if (!title || !body) return alert({{ _('messages.enter_title_and_body')|tojson }});
+                const msgEnter = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.enter_title_and_body) || 'Enter title and body';
+                if (!title || !body) return alert(msgEnter);
 
                 const isBroadcast = confirm('Barcha foydalanuvchilarga yuborilsinmi? OK = BARCHA; Cancel = Yagona qabul qiluvchi');
                 let payload = { title, body };
@@ -5488,7 +5534,8 @@
                 } else {
                   const rType = prompt('Qabul qiluvchi turi? (users, staff, couriers)', 'users');
                   const rId = prompt('Qabul qiluvchining id raqami', '');
-                  if (!rId) return alert({{ _('messages.enter_id')|tojson }});
+                  const msgId = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.enter_id) || 'Enter ID';
+                  if (!rId) return alert(msgId);
                   payload.recipient_type = rType || 'users';
                   payload.recipient_id = parseInt(rId, 10);
                 }
@@ -5497,14 +5544,15 @@
                   method: "POST",
                   headers: {
                     "Content-Type": "application/json",
-                    "X-CSRF-Token": typeof CSRF_TOKEN !== "undefined" ? CSRF_TOKEN : "",
+                    "X-CSRF-Token": window.BASE_CONFIG.csrf_token || "",
                   },
                   body: JSON.stringify(payload),
                 })
                   .then(safeJson)
                   .then((r) => {
                     if (r && r.success) {
-                      alert({{ _('messages.notification_sent')|tojson }});
+                      const msgSent = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.notification_sent) || 'Sent!';
+                      alert(msgSent);
                       if (notifyModal) {
                         notifyModal.style.display = "none";
                         const t = document.getElementById('notifyTitle');
@@ -5512,10 +5560,15 @@
                         if (t) t.value = '';
                         if (b) b.value = '';
                       }
-                    } else alert({{ _('messages.message_send_error')|tojson }} + ': ' + (r && r.message ? r.message : {{ _('messages.unknown_error')|tojson }}));
+
+                    } else {
+                       const sendErr = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.send_error) || 'Error';
+                       const unknown = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.unknown_error) || 'Unknown';
+                       alert(sendErr + ': ' + (r && r.message ? r.message : unknown));
+                    }
                   })
                   .catch((e) => {
-                    alert({{ _('messages.message_send_error')|tojson }});
+                    alert((window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.send_error) || 'Error');
                     // console.log(e);
                   });
               });
@@ -5570,7 +5623,8 @@
               if(!profile) return;
               const modal = document.getElementById('memberProfileModal');
               if(!modal) return;
-              document.getElementById('memberProfileAvatar').src = profile.avatar || {{ prefer_webp(url_for('static', filename='images/default-avatar.svg'))|tojson }};
+              const defaultAv = (window.BASE_CONFIG && window.BASE_CONFIG.default_avatar) || '/static/images/default-avatar.svg';
+              document.getElementById('memberProfileAvatar').src = profile.avatar || defaultAv;
               document.getElementById('memberProfileName').textContent = profile.name || profile.username || ('#'+profile.id);
               document.getElementById('memberProfileRole').textContent = (profile.role || '').toString();
               document.getElementById('memberProfileId').textContent = profile.id || '';
@@ -5599,7 +5653,10 @@
                   const preview = document.getElementById('notifyListPreview');
                   if(preview){
                     preview.innerHTML = '';
-                    if(list.length===0) preview.innerHTML = '<div class="text-muted">' + {{ _('messages.no_notifications')|tojson }} + '</div>';
+                    if(list.length===0) {
+                      const msgNoNot = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.no_notifications) || 'No notifications';
+                      preview.innerHTML = '<div class="text-muted">' + msgNoNot + '</div>';
+                    }
                     list.slice(0,10).forEach(n=>{
                       const item = document.createElement('div');
                       item.className = 'mb-2';
@@ -5609,7 +5666,7 @@
                   }
                   if(notifyModal) notifyModal.style.display = 'block';
                   // mark read for this recipient (best-effort)
-                  fetch('/api/notifications/mark-read', { method: 'POST', headers: { 'X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : '' } }).then(()=>updateNotifyCount()).catch(()=>{});
+                  fetch('/api/notifications/mark-read', { method: 'POST', headers: { 'X-CSRF-Token': window.BASE_CONFIG.csrf_token || '' } }).then(()=>updateNotifyCount()).catch(()=>{});
                 }catch(e){
                   // console.log('Failed to load notifications', e);
                   if(notifyModal) notifyModal.style.display = 'block';
@@ -5622,7 +5679,7 @@
             // Close viewer button handler for non-superadmins
             const notifyCloseViewer = document.getElementById('notifyCloseViewer');
             if(notifyCloseViewer) notifyCloseViewer.addEventListener('click', ()=>{ const m = document.getElementById('notifyModal'); if(m) m.style.display='none'; });
-          })();
+
     </script>
     {% endif %}
     <!-- End chat widget for staff/courier/superadmin -->
@@ -5707,7 +5764,10 @@
 
           function saveTickerNews(){
             const title = (document.getElementById('tickerNewsTitle')||{}).value||'';
-            if(!title.trim()){ alert({{ _('messages.title_required')|tojson }}); return; }
+            if(!title.trim()){ 
+              const msgReq = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.title_required) || 'Title required';
+              alert(msgReq); return; 
+            }
             const content = (document.getElementById('tickerNewsContent')||{}).value||'';
             const type = (document.getElementById('tickerNewsType')||{}).value||'news';
             const image_url = (document.getElementById('tickerImageUrl')||{}).value||'';
@@ -5732,16 +5792,20 @@
               body: JSON.stringify(payload)
             }).then(r=>r.json()).then(data=>{
                 if(data && data.success){
-                alert({{ _('messages.news_added')|tojson }});
+                alert((window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.news_added) || 'News added');
                 const bs = bootstrap.Modal.getInstance(document.getElementById('tickerNewsModal'));
                 if(bs) bs.hide();
                 // refresh ticker content
                 const evt = new Event('refreshNewsTicker');
                 window.dispatchEvent(evt);
               } else {
-                alert({{ _('messages.error_occurred')|tojson }} + ': ' + (data && data.message || ''));
+                const errText = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.error_occurred) || 'Error';
+                alert(errText + ': ' + (data && data.message || ''));
               }
-            }).catch(e=>{ console.error(e); alert({{ _('messages.save_error')|tojson }}); });
+            }).catch(e=>{ 
+               console.error(e); 
+               alert((window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.save_error) || 'Save error'); 
+            });
           }
 
           // Upload handler reusing the admin upload endpoint
@@ -5767,9 +5831,14 @@
                     const ytCont = document.getElementById('tickerYoutubePreviewContainer'); if(ytCont) ytCont.style.display = 'none';
                   }
                 } else {
-                  alert({{ _('messages.file_upload_error')|tojson }} + ': ' + (data && data.message || ''));
+                  const msgUpErr = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.file_upload_error) || 'Upload error';
+                  alert(msgUpErr + ': ' + (data && data.message || ''));
                 }
-              }).catch(err=>{ console.error('Upload error', err); alert({{ _('messages.file_upload_error')|tojson }}); });
+              }).catch(err=>{ 
+                console.error('Upload error', err); 
+                const msgUpErr = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.file_upload_error) || 'Upload error';
+                alert(msgUpErr); 
+              });
           }
 
           // YouTube preview binding
@@ -5901,12 +5970,16 @@
             const input = form.querySelector('input[name="email"]');
             const feedback = form.querySelector('.newsletter-feedback');
             const email = (input.value||'').trim();
-            if(!email){ feedback.style.display='block'; feedback.textContent = '{{ _('footer.newsletter_enter_email') if _('footer.newsletter_enter_email') else "Please enter an email" }}'; return false; }
-            // Try optimistic UI: show message and attempt fetch if endpoint exists
-            feedback.style.display='block'; feedback.textContent = '{{ _('footer.newsletter_thanks') if _('footer.newsletter_thanks') else "Thanks! Subscribed (offline)" }}';
+            const msgEnter = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.news_enter_email) || 'Enter email';
+            if(!email){ feedback.style.display='block'; feedback.textContent = msgEnter; return false; }
+            
+            const msgThanks = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.news_thanks) || 'Thanks!';
+            feedback.style.display='block'; feedback.textContent = msgThanks;
+            
             // If /subscribe exists, post to it
             fetch(form.action, { method: 'POST', headers: { 'Content-Type':'application/json' }, body: JSON.stringify({ email: email }) }).then(r=>r.json().catch(()=>({}))).then(j=>{
-              if(j && j.success){ feedback.textContent = (j.message || '{{ _('footer.newsletter_confirm') if _('footer.newsletter_confirm') else "Confirmed" }}'); }
+              const msgConfirm = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.news_confirm) || 'Confirmed';
+              if(j && j.success){ feedback.textContent = (j.message || msgConfirm); }
             }).catch(()=>{});
             input.value='';
           }catch(err){ console.warn('newsletter error', err); }
@@ -5914,5 +5987,26 @@
         }
       </script>
 
+    <!-- Universal Scripts: Swiper, AOS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Initialize AOS
+        AOS.init({
+          duration: 800,
+          easing: 'ease-out-cubic',
+          once: true,
+          offset: 50
+        });
+
+        // Initialize any default swipers
+        const swiper = new Swiper('.default-swiper', {
+          loop: true,
+          pagination: { el: '.swiper-pagination', clickable: true },
+          navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+        });
+      });
+    </script>
     </body>
 </html>

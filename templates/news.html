@@ -34,477 +34,400 @@
   }
 </script>
 {% endblock %} {% block content %}
-  <!-- equalize() removed intentionally to prevent forced heights; endi barcha foydalanuvchilar uchun yagona ko'rinish -->
+
+  <!-- Premium News Page Styles -->
   <style>
-    #news-list {
+    :root {
+      --news-card-bg: #ffffff;
+      --news-card-border: rgba(0, 0, 0, 0.05);
+      --news-text-primary: #1a1a1a;
+      --news-text-secondary: #666666;
+      --news-accent: #06b6d4; /* Cyan/Teal accent */
+      --news-accent-hover: #0891b2;
+      --news-shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+      --news-shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+      --news-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body.dark-theme {
+      --news-card-bg: #1e293b;
+      --news-card-border: rgba(255, 255, 255, 0.05);
+      --news-text-primary: #f8fafc;
+      --news-text-secondary: #94a3b8;
+      --news-shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+      --news-shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+    }
+
+    .news-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+
+    /* Ticker Styles */
+    .news-ticker-wrapper {
+      background: linear-gradient(90deg, #0f172a 0%, #1e293b 100%);
+      padding: 12px 20px;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: var(--news-shadow-sm);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border: 1px solid var(--news-card-border);
+      overflow: hidden;
+    }
+
+    .ticker-label {
+      background: var(--news-accent);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .ticker-content {
+      color: #e2e8f0;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      flex-grow: 1;
+      position: relative;
+    }
+    
+    .ticker-text {
+      display: inline-block;
+      animation: ticker-scroll 30s linear infinite;
+    }
+
+    @keyframes ticker-scroll {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+
+    /* Grid Layout */
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 2rem;
+    }
+
+    /* News Card */
+    .news-card {
+      background: var(--news-card-bg);
+      border: 1px solid var(--news-card-border);
+      border-radius: 16px;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
-      gap: 26px;
-      margin: 0;
-      padding: 0;
+      transition: var(--news-transition);
+      box-shadow: var(--news-shadow-sm);
+      height: 100%;
+      text-decoration: none; /* remove default link underline style if applied to wrapper */
     }
 
-    #news-list .news-item.card {
-      width: 100%;
-      max-width: 1100px;
-      margin: 0 auto;
-      display: flex !important;
-      flex-direction: column !important;
-      align-items: stretch !important;
-      padding: 22px !important;
-      gap: 14px !important;
+    .news-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--news-shadow-md);
+      border-color: rgba(6, 182, 212, 0.3);
+    }
+
+    /* Media Area */
+    .news-media-wrapper {
       position: relative;
-      min-height: 0;
-      border-radius: 12px;
-      background: #fff;
-      box-shadow: 0 8px 22px rgba(10, 10, 10, 0.06);
-      transition: transform 180ms ease, box-shadow 180ms ease;
-      overflow: visible !important;
-      cursor: pointer;
-      outline: none;
-    }
-
-    #news-list .news-item.card:hover,
-    #news-list .news-item.card:focus-visible {
-      transform: translateY(-6px);
-      box-shadow: 0 18px 40px rgba(10, 10, 10, 0.12);
-    }
-
-    #news-list .news-media {
       width: 100%;
-      min-height: 240px;
-      max-height: 640px;
-      border-radius: 10px;
-      overflow: hidden;
+      padding-top: 56.25%; /* 16:9 Aspect Ratio */
       background: #000;
-      position: relative;
-    }
-
-    .youtube-embed-wrapper,
-    .video-wrapper {
-      position: relative;
-      width: 100%;
-      padding-bottom: 56.25%;
-      height: 0;
       overflow: hidden;
-      background: #000;
     }
 
-    .youtube-embed-wrapper iframe,
-    .video-wrapper video {
+    .news-media-content {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      border: 0;
-      display: block;
-    }
-
-    #news-list .news-media img {
-      width: 100%;
-      height: 100%;
       object-fit: cover;
-      display: block;
+      transition: transform 0.5s ease;
     }
 
-    #news-list .news-title {
-      margin: 0;
-      font-size: 22px;
+    .news-card:hover .news-media-content {
+      transform: scale(1.05);
+    }
+
+    /* Card Content */
+    .news-content-wrapper {
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .news-date {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: var(--news-accent);
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    .news-date i {
+      font-size: 0.9rem;
+    }
+
+    .news-title {
+      font-size: 1.25rem;
       font-weight: 800;
-      color: #0b5a6f;
-      line-height: 1.18;
-      white-space: normal !important;
-      overflow: visible !important;
+      line-height: 1.4;
+      margin-bottom: 1rem;
+      color: var(--news-text-primary);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
 
-    #news-list .news-body {
-      margin: 4px 0 12px;
-      color: #333;
+    .news-excerpt {
+      font-size: 0.95rem;
+      color: var(--news-text-secondary);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      flex-grow: 1;
     }
 
-    #news-list .news-card-meta {
-      position: static;
-      margin-top: 8px;
+    .news-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1rem;
+      border-top: 1px solid var(--news-card-border);
+      margin-top: auto;
     }
 
-      @media (max-width: 1024px) {
-        #news-list .news-item.card { max-width: 900px; padding: 18px !important; }
-        #news-list .news-media { height: 420px; max-height: 520px; }
-        #news-list .news-title { font-size: 20px; }
-      }
+    /* Actions */
+    .news-actions {
+      display: flex;
+      gap: 12px;
+    }
 
-      @media (max-width: 768px) {
-        #news-list .news-item.card { max-width: 100%; padding: 14px !important; }
-        #news-list .news-media { height: 260px; max-height: 320px; }
-        #news-list .news-title { font-size: 18px; }
-      }
+    .action-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: 1px solid var(--news-card-border);
+      color: var(--news-text-secondary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
 
-      /* Kichik ekranlar uchun qo'shimcha moslashuvchan (responsive) stillar */
-      @media (max-width: 576px) {
-        #news-list .news-item.card {
-          padding: 12px !important;
-          margin-bottom: 20px;
-        }
-        #news-list .news-title {
-          font-size: 16px;
-        }
-        .news-share-and-meta {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 6px;
-        }
-        .news-item.card .news-card-meta {
-          position: static;
-          margin-top: 4px;
-          background: transparent;
-          padding: 0;
-        }
-      }
-      /* Dark theme adjustments so news cards match site dark look */
-      body.dark-theme #news-list .news-item.card {
-        background: linear-gradient(180deg, #071018 0%, #0b1116 100%);
-        box-shadow: 0 10px 30px rgba(2,6,10,0.6);
-        color: #e6f7fb;
-      }
+    .action-btn:hover {
+      background: var(--news-accent);
+      color: white;
+      border-color: var(--news-accent);
+      transform: scale(1.1);
+    }
 
-      body.dark-theme #news-list .news-title {
-        color: #dff7ff;
-      }
+    .read-more-btn {
+      padding: 8px 16px;
+      background: transparent;
+      color: var(--news-accent);
+      font-weight: 600;
+      font-size: 0.9rem;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+    }
 
-      body.dark-theme #news-list .news-body,
-      body.dark-theme #news-list .news-content {
-        color: rgba(255,255,255,0.85);
-      }
+    .read-more-btn:hover {
+      background: rgba(6, 182, 212, 0.1);
+      color: var(--news-accent-hover);
+    }
+    
+    .read-more-btn::after {
+        content: '→';
+        transition: transform 0.2s;
+    }
+    
+    .read-more-btn:hover::after {
+        transform: translateX(4px);
+    }
 
-      body.dark-theme .news-share-links .share-btn {
-        background: rgba(255,255,255,0.03);
-        border-color: rgba(255,255,255,0.06);
-        color: #cdeff8;
-      }
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: var(--news-card-bg);
+      border-radius: 16px;
+      border: 1px dashed var(--news-card-border);
+    }
 
-      body.dark-theme .news-item.card .news-card-meta {
-        background: rgba(7,10,12,0.6);
-        color: rgba(255,255,255,0.85);
-        backdrop-filter: blur(4px);
+    @media (max-width: 768px) {
+      .news-grid {
+        grid-template-columns: 1fr;
       }
-
-      /* Improve readability of ticker in dark mode */
-      body.dark-theme #news-ticker { background: #071216; }
-      body.dark-theme #ticker-inner { color: rgba(255,255,255,0.9); }
-      /* Share links and meta layout */
-      .news-share-and-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 8px; }
-      .news-share-links { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-      .news-share-links .share-btn { background: #f3f4f6; border: 1px solid #e5e7eb; padding: 6px 8px; border-radius: 6px; font-size: 13px; cursor: pointer; color: #0b5a6f; text-decoration: none; }
-      .news-share-links .share-btn:hover { background: #e6f7fb; }
-      /* Place timestamp bottom-right inside card without overlapping content */
-      .news-item.card .news-card-meta { position: absolute; right: 12px; bottom: 12px; background: rgba(255,255,255,0.85); padding: 4px 8px; border-radius: 6px; }
-      /* Ensure the share and meta container doesn't overlap with absolute timestamp */
-      .news-share-and-meta { margin-bottom: 28px; }
-      /* Floating Add News button for quick access (superadmin only) */
-      .fab-add-news {
-        position: fixed;
-        right: 18px;
-        bottom: 18px;
-        width: 56px;
-        height: 56px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #22d3ee, #0891b2);
-        color: #072026;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 24px;
-        box-shadow: 0 8px 26px rgba(0, 0, 0, 0.3);
-        border: none;
-        cursor: pointer;
-        z-index: 12000;
+      
+      .news-container {
+        padding: 1rem;
       }
-      .fab-add-news:active {
-        transform: scale(0.98);
+      
+      .ticker-label {
+          display: none; 
       }
-      @media (max-width: 480px) {
-        .fab-add-news {
-          width: 48px;
-          height: 48px;
-          font-size: 20px;
-          right: 12px;
-          bottom: 12px;
-        }
-      }
+    }
   </style>
 
-  {# Superadmin public add button and floating FAB removed. Manage news at /super-admin/news #}
-
-  <!-- Simple ticker: recent titles -->
-  <div
-    id="news-ticker"
-    class="mb-3"
-    style="
-      background: #111;
-      color: #fff;
-      padding: 8px;
-      border-radius: 6px;
-      overflow: hidden;
-    ">
-    <div
-      id="ticker-inner"
-      style="
-        white-space: nowrap;
-        display: inline-block;
-        animation: ticker 20s linear infinite;
-        padding: 4px 8px;
-        border-radius: 6px;
-      "></div>
+  <div class="news-container">
+    
+    <!-- Modern Ticker -->
+    <div class="news-ticker-wrapper">
+      <div class="ticker-label">YANGILIKLAR</div>
+      <div class="ticker-content">
+        <div class="ticker-text" id="ticker-text-content">
+           <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
 
     {% if news %}
-    <div id="news-list">
+    <div class="news-grid" id="news-grid">
       {% for item in news %}
-      <article
-        class="news-item card p-3 position-relative"
-        role="link"
-        tabindex="0"
-        aria-label="{{ (item.localized_title or item.title) }}"
-        data-detail-url="{{ url_for('news_detail', news_id=item.id) }}">
-        <!-- Media at top -->
-        <div class="news-media" data-video-url="{{ item.video_url or item.video }}">
-          {% if item.youtube_embed %}
-          <div class="youtube-embed-wrapper">
-            <iframe src="{{ item.youtube_embed }}" allowfullscreen></iframe>
+      <article class="news-card" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 100 }}">
+        <!-- Media Section -->
+        <div class="news-media-wrapper" data-video-url="{{ item.video_url or item.video }}">
+          <a href="{{ url_for('news_detail', news_id=item.id) }}" class="d-block w-100 h-100">
+            {% if item.youtube_embed %}
+               <!-- YouTube Embed -->
+               <iframe src="{{ item.youtube_embed }}" class="news-media-content" style="border:0;" allowfullscreen loading="lazy"></iframe>
+            {% elif item.video or item.video_url %}
+               <!-- Video -->
+               <video class="news-media-content" preload="metadata" controls>
+                   <source src="{{ item.video_url or item.video }}">
+               </video>
+            {% else %}
+               <!-- Image -->
+               <img src="{{ item.image_url or item.image or url_for('static', filename='defoult.webp') }}" 
+                    alt="{{ item.title }}" 
+                    class="news-media-content"
+                    loading="lazy">
+            {% endif %}
+          </a>
+        </div>
+
+        <!-- Content Section -->
+        <div class="news-content-wrapper">
+          <div class="news-date">
+            <i class="bi bi-calendar-event"></i>
+            <span>{{ item.created_at.split('T')[0] if item.created_at else 'Bugun' }}</span>
           </div>
-          {% elif item.video or item.video_url %}
-          <div class="video-wrapper">
-            <video controls>
-              <source src="{{ item.video_url or item.video }}" />
-            </video>
+
+          <a href="{{ url_for('news_detail', news_id=item.id) }}" class="text-decoration-none">
+            <h3 class="news-title">{{ item.localized_title or item.title }}</h3>
+          </a>
+
+          <div class="news-excerpt">
+             {{ (item.localized_content or item.description or item.content or '') | striptags | truncate(120) }}
           </div>
-          {% elif item.image or item.image_url %}
-          <img
-            src="{{ item.image_url or item.image }}"
-            alt="{{ item.title }}"
-            title="{{ item.title }}"
-            loading="lazy"
-            decoding="async" />
-          {% endif %}
-        </div>
 
-        <!-- Title -->
-        <div class="mt-3">
-          <h3 class="news-title">{{ item.localized_title or item.title }}</h3>
-        </div>
-
-        <!-- Description -->
-        <div class="news-body">
-          <p class="news-content">
-            {{ (item.localized_content or item.description or item.content) |
-            safe }}
-          </p>
-        </div>
-
-        <!-- Social links + Timestamp -->
-        <div class="news-share-and-meta">
-          <div class="news-share-links">
+          <div class="news-footer">
             {% set detail_url = url_for('news_detail', news_id=item.id, _external=True) %}
-            <a class="share-btn" href="https://t.me/share/url?url={{ detail_url }}&text={{ (item.localized_title or item.title) | urlencode }}" target="_blank" rel="noopener noreferrer">Telegram</a>
-            <a class="share-btn" href="https://www.facebook.com/sharer/sharer.php?u={{ detail_url }}" target="_blank" rel="noopener noreferrer">Facebook</a>
-            <a class="share-btn" href="https://twitter.com/intent/tweet?text={{ (item.localized_title or item.title) | urlencode }}&url={{ detail_url }}" target="_blank" rel="noopener noreferrer">Twitter</a>
-            <a class="share-btn" href="https://api.whatsapp.com/send?text={{ (item.localized_title or item.title) | urlencode }}%20{{ detail_url }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
-            <button type="button" class="share-btn" onclick="copyNewsLink({{ detail_url|tojson }})">Copy link</button>
-            <button type="button" class="share-btn" onclick="nativeShare({{ (item.localized_title or item.title)|tojson }}, {{ detail_url|tojson }})">Uzatish</button>
-          <div class="news-card-meta">
-            <small class="text-muted news-card-date">{{ item.created_at.split('T')[0] if item.created_at else '' }}</small>
+            <div class="news-actions">
+              <a href="https://t.me/share/url?url={{ detail_url }}" target="_blank" class="action-btn" title="Telegram">
+                <i class="bi bi-telegram"></i>
+              </a>
+              <a href="#" onclick="copyNewsLink('{{ detail_url }}'); return false;" class="action-btn" title="Nusxalash">
+                <i class="bi bi-link-45deg"></i>
+              </a>
+            </div>
+            
+            <a href="{{ url_for('news_detail', news_id=item.id) }}" class="read-more-btn">
+              Batafsil
+            </a>
           </div>
         </div>
       </article>
       {% endfor %}
     </div>
     {% else %}
-    <div class="alert alert-info">Hozircha yangiliklar mavjud emas.</div>
+      <div class="empty-state">
+        <h3 class="text-muted">Hozircha yangiliklar ro'yxati bo'sh</h3>
+        <p class="text-secondary">Yangiliklardan xabardor bo'lish uchun bizni kuzatib boring.</p>
+      </div>
     {% endif %}
   </div>
 
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script>
-      (function(){
-        const news = {{ (news|length if news else 0) }};
-        const items = [];
-    {% for it in news %}
-    items.push({{ (it.localized_title or it.title)|tojson }});
-    {% endfor %}
-        const ticker = document.getElementById('ticker-inner');
-        if(items.length){
-
-            ticker.innerText = items.join('  •  ');
-          } else {
-            ticker.innerText = 'Yangiliklar yo\'q';
-          }
-
-        // Process YouTube URLs in news content
-        processYouTubeUrls();
-      })();
-
-      // Function to convert YouTube URLs in content to iframes
-      function processYouTubeUrls() {
-        const newsContents = document.querySelectorAll('.news-content');
-        newsContents.forEach(content => {
-          let html = content.innerHTML;
-          
-          // Regex patterns for different YouTube URL formats
-          const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=|embed\/|shorts\/)?([A-Za-z0-9_\-]{11})/gi;
-          
-          // Replace YouTube URLs with responsive iframe
-          html = html.replace(youtubeRegex, (match) => {
-            try {
-              const videoId = match.match(/([A-Za-z0-9_\-]{11})/)[0];
-              return `<div style="position:relative;width:100%;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:8px;margin:12px 0;"><iframe src="https://www.youtube.com/embed/${videoId}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;border-radius:8px;" allowfullscreen="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" loading="lazy"></iframe></div>`;
-            } catch(e) {
-              return match;
-            }
-          });
-          
-          content.innerHTML = html;
-        });
-      }
-  </script>
-
-  <script>
-    function copyNewsLink(url) {
-        try {
-          if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(url).then(function(){ alert('Link nusxalandi'); }, function(){ prompt('Ko' + "'" + 'chirish uchun linkni belgilang va nusxa oling:', url); });
-          } else {
-            // Fallback prompt
-            prompt('Linkni nusxalash uchun matnni tanlang va Ctrl+C ni bosing:', url);
-          }
-        } catch (e) {
-          prompt('Linkni nusxalash:', url);
-        }
-      }
-
-      function nativeShare(title, url) {
-        try {
-          if (navigator.share) {
-            navigator.share({ title: title, url: url });
-          } else {
-            // Fallback: copy link to clipboard and notify
-            copyNewsLink(url);
-          }
-        } catch (e) {
-          copyNewsLink(url);
-        }
-      }
-    </script>
-    <script>
-      (function () {
-        const cards = document.querySelectorAll(
-          "#news-list .news-item[data-detail-url]"
-        );
-        cards.forEach(function (card) {
-          const url = card.getAttribute("data-detail-url");
-          if (!url) return;
-
-          const navigate = function () {
-            window.location.href = url;
-          };
-
-          card.addEventListener("click", function (evt) {
-            if (evt.defaultPrevented) return;
-            if (evt.target.closest(".news-share-links")) return;
-            navigate();
-          });
-
-          card.addEventListener("keydown", function (evt) {
-            if (evt.code === "Space" || evt.code === "Enter") {
-              if (
-                evt.target.closest(".news-share-links") ||
-                evt.target.closest(".share-btn")
-              ) {
-                return;
-              }
-              evt.preventDefault();
-              navigate();
-            }
-          });
-        });
-
-        document
-          .querySelectorAll(
-            "#news-list .news-share-links a, #news-list .news-share-links button"
-          )
-          .forEach(function (el) {
-            el.addEventListener("click", function (evt) {
-              evt.stopPropagation();
+    // Initialize AOS Animation
+    document.addEventListener('DOMContentLoaded', function() {
+        if(typeof AOS !== 'undefined') {
+            AOS.init({
+                once: true,
+                offset: 50,
+                duration: 800
             });
-            el.addEventListener("keydown", function (evt) {
-              evt.stopPropagation();
-            });
-          });
-      })();
-    </script>
+        }
+    });
 
-  {# Public add modal and upload helpers removed - superadmin should manage news on the dedicated admin page: /super-admin/news #}
-
-  <script>
-    // Post-process news items: ensure YouTube links become embedded iframes.
-    // Handles three cases:
-    //  - server didn't render any media but data-video-url contains a YouTube link
-    //  - server rendered a <video> element whose <source> points to a YouTube link
-    //  - server rendered nothing and data-video-url is present (fallback)
+    // Ticker Logic
     (function(){
-      try{
-        const items = document.querySelectorAll('#news-list .news-item');
-        const ytRe = /(?:v=|\/embed\/|youtu\.be\/)([A-Za-z0-9_\-]{11})/;
-        items.forEach(function(it){
-          try{
-            const media = it.querySelector('.news-media');
-            if(!media) return;
-
-            // If there's already an iframe, nothing to do
-            if(media.querySelector('iframe')) return;
-
-            // If a <video> element exists, check its source; if it's a YouTube URL, replace it
-            const videoEl = media.querySelector('video');
-            if(videoEl){
-              try{
-                let src = '';
-                const sourceEl = videoEl.querySelector('source');
-                if(sourceEl) src = sourceEl.src || sourceEl.getAttribute('src') || '';
-                if(!src) src = videoEl.currentSrc || videoEl.getAttribute('src') || '';
-                if(src){
-                  const m = String(src).match(ytRe);
-                  if(m && m[1]){
-                    const id = m[1];
-                    const wrap = document.createElement('div');
-                    wrap.className = 'youtube-embed-wrapper';
-                    wrap.innerHTML = '<iframe src="https://www.youtube.com/embed/'+id+'" allowfullscreen></iframe>';
-                    media.innerHTML = '';
-                    media.appendChild(wrap);
-                    return;
-                  }
-                }
-                // If not YouTube, keep the video element as-is
-                return;
-              }catch(e){ /* continue to fallback below */ }
-            }
-
-            // If an <img> exists, prefer leaving it alone
-            if(media.querySelector('img')) return;
-
-            // Fallback: read data-video-url attribute (server may not have rendered media)
-            const vurl = (media.getAttribute('data-video-url')||'').trim();
-            if(!vurl) return;
-
-            const m = String(vurl).match(ytRe);
-            if(m && m[1]){
-              const id = m[1];
-              const wrap = document.createElement('div');
-              wrap.className = 'youtube-embed-wrapper';
-              wrap.innerHTML = '<iframe src="https://www.youtube.com/embed/'+id+'" allowfullscreen></iframe>';
-              media.innerHTML = '';
-              media.appendChild(wrap);
-            }
-          }catch(e){}
-        });
-      }catch(e){ console.warn('news embed postprocess failed', e); }
+      const newsItems = [];
+      {% for it in news %}
+         newsItems.push({{ (it.localized_title or it.title)|tojson }});
+      {% endfor %}
+      
+      const ticker = document.getElementById('ticker-text-content');
+      if(ticker) {
+        if(newsItems.length){
+            // Repeat content to ensure it fills the bar for smooth scrolling
+            const text = newsItems.join('  ✦  ');
+            ticker.innerText = text + '  ✦  ' + text + '  ✦  ' + text; 
+        } else {
+            ticker.innerText = 'Xush kelibsiz! Bizning yangiliklarni kuzatib boring.';
+        }
+      }
     })();
+
+    // Copy Link Function
+    function copyNewsLink(url) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url)
+          .then(() => alert('Havola nusxalandi!'))
+          .catch(err => console.error('Error copying text: ', err));
+      } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = url;
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+          document.execCommand('copy');
+          alert('Havola nusxalandi!');
+        } catch (err) {
+          console.error('Fallback: Oops, unable to copy', err);
+        }
+        document.body.removeChild(textArea);
+      }
+    }
   </script>
-  {% endblock %}
+  
+  <!-- Add AOS CSS if not present broadly -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+{% endblock %}

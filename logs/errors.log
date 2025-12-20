@@ -1933,3 +1933,85 @@ MemoryError
 2025-11-29 21:03:27,283 | ERROR | restaurant_app | get_connection:2319 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
 2025-11-29 21:03:27,784 | ERROR | restaurant_app | get_connection:2319 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
 2025-11-29 21:03:27,785 | ERROR | restaurant_app | execute_query:2773 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-12-16 17:19:04,108 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-12-16 17:19:04,108 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-12-16 17:19:04,133 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-12-16 17:19:04,133 | ERROR | werkzeug | _log:97 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2025-12-16 18:20:27,438 | ERROR | restaurant_app | menu:7630 | Menu endpoint error: Encountered unknown tag 'endblock'.
+2025-12-16 18:20:27,465 | ERROR | restaurant_app | menu:7660 | Menu fallback error: Encountered unknown tag 'endblock'.
+2025-12-16 18:27:51,695 | ERROR | restaurant_app | menu:7630 | Menu endpoint error: Encountered unknown tag 'endblock'.
+2025-12-16 18:27:51,728 | ERROR | restaurant_app | menu:7660 | Menu fallback error: Encountered unknown tag 'endblock'.
+2025-12-16 18:28:34,822 | ERROR | restaurant_app | menu:7630 | Menu endpoint error: Encountered unknown tag 'endblock'.
+2025-12-16 18:28:34,848 | ERROR | restaurant_app | menu:7660 | Menu fallback error: Encountered unknown tag 'endblock'.
+2025-12-16 18:31:28,195 | ERROR | restaurant_app | menu:7630 | Menu endpoint error: Encountered unknown tag 'endblock'.
+2025-12-16 18:31:28,221 | ERROR | restaurant_app | menu:7660 | Menu fallback error: Encountered unknown tag 'endblock'.
+2025-12-16 18:38:11,030 | ERROR | restaurant_app | menu:7630 | Menu endpoint error: Encountered unknown tag 'endblock'.
+2025-12-16 18:38:11,058 | ERROR | restaurant_app | menu:7660 | Menu fallback error: Encountered unknown tag 'endblock'.
+2025-12-16 18:38:19,689 | ERROR | restaurant_app | menu:7630 | Menu endpoint error: Encountered unknown tag 'endblock'.
+2025-12-16 18:38:19,714 | ERROR | restaurant_app | menu:7660 | Menu fallback error: Encountered unknown tag 'endblock'.
+2025-12-16 18:43:29,963 | ERROR | restaurant_app | menu:7630 | Menu endpoint error: Encountered unknown tag 'endblock'.
+2025-12-16 18:43:29,981 | ERROR | restaurant_app | menu:7660 | Menu fallback error: Encountered unknown tag 'endblock'.
+2025-12-16 20:02:50,503 | ERROR | restaurant_app | get_connection:2332 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-12-16 20:02:51,006 | ERROR | restaurant_app | get_connection:2332 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-12-16 20:02:51,508 | ERROR | restaurant_app | get_connection:2332 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-12-16 20:02:51,508 | ERROR | restaurant_app | execute_query:2786 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-12-16 20:02:51,508 | ERROR | restaurant_app | get_connection:2332 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-12-16 20:02:52,015 | ERROR | restaurant_app | get_connection:2332 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-12-16 20:02:52,537 | ERROR | restaurant_app | get_connection:2332 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-12-16 20:02:52,537 | ERROR | restaurant_app | execute_query:2786 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-12-16 20:02:59,408 | ERROR | restaurant_app | get_connection:2332 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-12-16 20:02:59,911 | ERROR | restaurant_app | get_connection:2332 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-12-16 20:03:00,413 | ERROR | restaurant_app | get_connection:2332 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-12-16 20:03:00,413 | ERROR | restaurant_app | execute_query:2786 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-12-16 20:03:00,413 | ERROR | restaurant_app | get_connection:2332 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-12-16 20:03:00,920 | ERROR | restaurant_app | get_connection:2332 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-12-16 20:03:01,423 | ERROR | restaurant_app | get_connection:2332 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-12-16 20:03:01,423 | ERROR | restaurant_app | execute_query:2786 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-12-16 20:05:57,553 | ERROR | restaurant_app | add_to_cart:8578 | Add to cart error: The setup method 'route' can no longer be called on the application. It has already handled its first request, any changes will not be applied consistently.
+Make sure all imports, decorators, functions, etc. needed to set up the application are done before running it.
+2025-12-16 20:15:47,675 | ERROR | restaurant_app | get_connection:2332 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-12-16 20:15:48,178 | ERROR | restaurant_app | get_connection:2332 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-12-16 20:15:48,680 | ERROR | restaurant_app | get_connection:2332 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-12-16 20:15:48,680 | ERROR | restaurant_app | execute_query:2786 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-12-16 20:15:48,683 | ERROR | restaurant_app | get_connection:2332 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-12-16 20:15:49,184 | ERROR | restaurant_app | get_connection:2332 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-12-16 20:15:49,686 | ERROR | restaurant_app | get_connection:2332 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-12-16 20:15:49,686 | ERROR | restaurant_app | execute_query:2786 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-12-17 09:49:48,781 | ERROR | restaurant_app | add_to_cart:8600 | Add to cart error: The setup method 'route' can no longer be called on the application. It has already handled its first request, any changes will not be applied consistently.
+Make sure all imports, decorators, functions, etc. needed to set up the application are done before running it.
+2025-12-17 15:17:08,286 | ERROR | restaurant_app | get_connection:2332 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-12-17 15:17:08,789 | ERROR | restaurant_app | get_connection:2332 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-12-17 15:17:09,292 | ERROR | restaurant_app | get_connection:2332 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-12-17 15:17:09,292 | ERROR | restaurant_app | execute_query:2786 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-12-17 15:17:09,296 | ERROR | restaurant_app | get_connection:2332 | Database pool error: FOREIGN KEY constraint failed
+2025-12-17 15:17:09,797 | ERROR | restaurant_app | get_connection:2332 | Database pool error: FOREIGN KEY constraint failed
+2025-12-17 15:17:10,299 | ERROR | restaurant_app | get_connection:2332 | Database pool error: FOREIGN KEY constraint failed
+2025-12-17 15:17:10,300 | ERROR | restaurant_app | execute_query:2786 | execute_query error after 3 attempts: FOREIGN KEY constraint failed - Query: INSERT INTO chat_messages (chat_id, sender_type, sender_id, text, sender, source, created_at) VALUES...

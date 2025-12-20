@@ -336,3 +336,101 @@ img:hover {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
+
+/* Product ribbons (bottom of product page) */
+.product-ribbons {
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.product-ribbon {
+  background: transparent;
+  border-radius: 8px;
+  padding: 8px 0;
+}
+
+.product-ribbon .ribbon-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 8px;
+  margin-bottom: 8px;
+}
+
+.product-ribbon .ribbon-title {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #1f2937;
+}
+
+.product-ribbon .ribbon-controls {
+  display: flex;
+  gap: 6px;
+}
+
+.ribbon-btn {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.ribbon-btn:hover { background:#f8fafc; }
+
+.ribbon-track {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 8px;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+}
+
+.ribbon-track::-webkit-scrollbar { height: 8px; }
+.ribbon-track::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
+
+.ribbon-track .ribbon-card {
+  flex: 0 0 160px;
+  scroll-snap-align: start;
+  background: #fff;
+  border: 1px solid #e6e6e6;
+  border-radius: 8px;
+  padding: 8px;
+  text-align: center;
+  color: #111827;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.ribbon-card img {
+  display: block;
+  width: 100%;
+  height: 110px;
+  object-fit: contain;
+  margin-bottom: 6px;
+}
+
+.ribbon-card .name {
+  font-size: 0.9rem;
+  line-height: 1.2;
+  height: 2.4rem;
+  overflow: hidden;
+  color: #111827;
+  margin-bottom: 6px;
+}
+
+.ribbon-card .price {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* small-screen adjustments */
+@media (max-width: 480px) {
+  .ribbon-track .ribbon-card { flex: 0 0 140px; }
+}
