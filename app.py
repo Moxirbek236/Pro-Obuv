@@ -216,22 +216,30 @@ print("DEBUG: Flask app created")
 @app.before_request
 def _staff_subdomain_redirect():
     try:
-        host = (request.host or '').split(':')[0].lower()
-        # Accept both 'staff.safety.uz' and 'staff.example' (starts with staff.)
+        # Respect proxy headers if present (some setups forward original host here)
+        forwarded_host = request.headers.get('X-Forwarded-Host')
+        host_header = forwarded_host or request.host or ''
+        host = host_header.split(':')[0].lower()
+
+        app.logger.debug("_staff_subdomain_redirect: host=%s path=%s forwarded_host=%s", host, request.path, forwarded_host)
+
+        # Accept both 'staff.safety.uz' and any host starting with 'staff.'
         if host.startswith('staff.'):
-            # If request is already targeting staff-prefixed path, do nothing
+            # If request already targets staff-prefixed path, let it through
             if request.path.startswith('/staff'):
+                app.logger.debug("_staff_subdomain_redirect: already staff path, skipping redirect")
                 return None
 
             # Build target path by prefixing '/staff' and preserve query string
             qs = ('?' + request.query_string.decode('utf-8')) if request.query_string else ''
             target = f"/staff{request.path}{qs}"
+            app.logger.debug("_staff_subdomain_redirect: redirecting to %s", target)
 
-            # Use a 302 redirect so browsers/clients go to the staff route on
-            # the same subdomain (the host remains staff.<domain>).
+            # 302 redirect to internal /staff path on same host
             return redirect(target)
-    except Exception:
-        # On any error, don't block the request — let normal handlers run
+    except Exception as e:
+        app.logger.exception("_staff_subdomain_redirect error: %s", e)
+        # Don't block request on error; proceed with normal routing
         return None
 
 # Performance: enable response compression and long static cache lifetime
