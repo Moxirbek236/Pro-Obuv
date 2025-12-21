@@ -12,6 +12,9 @@ import traceback
 from pathlib import Path
 import atexit
 import time
+from dotenv import load_dotenv
+load_dotenv()
+
 
 try:
     from telegram import Update, Bot, InputMediaPhoto, ReplyKeyboardMarkup, KeyboardButton
