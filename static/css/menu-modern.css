@@ -171,7 +171,7 @@
         position: fixed;
         /* Keep sidebar below the navbar using the design token */
         top: calc(var(--navbar-height) + 24px);
-        right: calc(50% - (1400px / 2) + 20px); /* align with .menu-container center and offset */
+        left: calc(50% - (1400px / 2) + 20px); /* align with .menu-container center and offset (left side) */
         width: var(--filter-width);
         z-index: 30;
         max-height: calc(100vh - var(--navbar-height) - 48px);
@@ -181,14 +181,14 @@
 
     /* Ensure main grid leaves space for fixed sidebar */
     .menu-grid, .content-area {
-        margin-right: calc(var(--filter-width) + 40px); /* sidebar width + gutter */
+        margin-left: calc(var(--filter-width) + 40px); /* sidebar width + gutter (reserve left space) */
     }
 }
 
 /* Slightly different centering tweak for very wide screens */
 @media (min-width: 1400px) {
     .filter-sidebar {
-        right: calc(50% - 700px + 20px);
+        left: calc(50% - 700px + 20px);
     }
 }
 

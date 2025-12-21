@@ -232,7 +232,7 @@
 2025-10-09 13:39:56 | ACTION | products_default_image_used | user:tg:1656193663 | item:35
 2025-10-09 13:39:56 | ACTION | products_sent_text | user:tg:1656193663 | item:35
 2025-10-09 13:41:52 | ACTION | products_default_image_used | user:tg:1656193663 | item:36
-2025-10-09 13:41:52 | ACTION | products_sent_text | user:tg:1656193663 | item:36
+2025-10-09 13:39:56 | ACTION | products_sent_text | user:tg:1656193663 | item:34
 2025-10-09 13:41:52 | ACTION | products_default_image_used | user:tg:1656193663 | item:37
 2025-10-09 13:41:52 | ACTION | products_sent_text | user:tg:1656193663 | item:37
 2025-10-09 13:41:55 | ACTION | products_sent | user:tg:1656193663 | item:34

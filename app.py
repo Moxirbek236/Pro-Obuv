@@ -216,15 +216,18 @@ print("DEBUG: Flask app created")
 @app.before_request
 def _staff_subdomain_redirect():
     try:
-        # Respect proxy headers if present (some setups forward original host here)
-        forwarded_host = request.headers.get('X-Forwarded-Host')
-        host_header = forwarded_host or request.host or ''
-        host = host_header.split(':')[0].lower()
+        # Determine the incoming host using several common headers that proxies set.
+        # We try these in order: X-Forwarded-Host, X-Original-Host, Host, request.host.
+        forwarded_host = (request.headers.get('X-Forwarded-Host') or '').strip()
+        original_host = (request.headers.get('X-Original-Host') or '').strip()
+        host_header = (request.headers.get('Host') or '').strip() or forwarded_host or original_host or (request.host or '')
+        host = host_header.split(':')[0].lower() if host_header else ''
 
-        app.logger.debug("_staff_subdomain_redirect: host=%s path=%s forwarded_host=%s", host, request.path, forwarded_host)
+        app.logger.debug("_staff_subdomain_redirect: resolved host=%s path=%s headers: X-Forwarded-Host=%s X-Original-Host=%s Host=%s request.host=%s",
+                         host, request.path, forwarded_host, original_host, request.headers.get('Host'), request.host)
 
-        # Accept both 'staff.safety.uz' and any host starting with 'staff.'
-        if host.startswith('staff.'):
+        # Accept hosts that explicitly start with 'staff.' or exact match 'staff'
+        if host and (host.startswith('staff.') or host == 'staff'):
             # If request already targets staff-prefixed path, let it through
             if request.path.startswith('/staff'):
                 app.logger.debug("_staff_subdomain_redirect: already staff path, skipping redirect")
@@ -232,10 +235,12 @@ def _staff_subdomain_redirect():
 
             # Build target path by prefixing '/staff' and preserve query string
             qs = ('?' + request.query_string.decode('utf-8')) if request.query_string else ''
-            target = f"/staff{request.path}{qs}"
+            # Normalize double slashes
+            path = request.path if request.path != '/' else '/'
+            target = f"/staff{path}{qs}"
             app.logger.debug("_staff_subdomain_redirect: redirecting to %s", target)
 
-            # 302 redirect to internal /staff path on same host
+            # Use a 302 internal redirect so webserver/proxy host remains unchanged
             return redirect(target)
     except Exception as e:
         app.logger.exception("_staff_subdomain_redirect error: %s", e)
@@ -267,6 +272,12 @@ except Exception:
 # Expose configured Google client id to templates so client and server use the same value
 try:
     app.jinja_env.globals.update(GOOGLE_CLIENT_ID=os.environ.get('GOOGLE_CLIENT_ID', '129732978754-8tuaicuscmuhjq9n58arm710i7ojshuo.apps.googleusercontent.com'))
+except Exception:
+    pass
+try:
+    # Expose server-configured Google API key to templates (client-side usage only).
+    # Do NOT expose sensitive tokens like Telegram bot tokens to templates.
+    app.jinja_env.globals.update(GOOGLE_API_KEY=os.environ.get('GOOGLE_API_KEY', ''))
 except Exception:
     pass
 

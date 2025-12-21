@@ -326,9 +326,9 @@ def send_operator_reply(client_key: str, text: str, operator_name: str = "Operat
 
 # Prefer environment variable for the Flask app base URL. Allow multiple
 # environment variable names for backwards compatibility and override.
-TELEGRAM_TOKEN = os.environ.get(
-    "TELEGRAM_BOT_TOKEN", "8443912951:AAF-1gKuqQv0b0BQw_KOPCS85gYZk-n10V4"
-)
+# Read Telegram bot token from environment only. Do NOT keep a hardcoded
+# token in source control. If not set, the bot will not start.
+TELEGRAM_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN") or os.environ.get("TELEGRAM_TOKEN")
 
 # Try several env var names (set in hosting) before falling back to sensible
 # defaults. If running locally together with the Flask app, the probe below
