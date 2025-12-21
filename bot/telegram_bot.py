@@ -1195,8 +1195,4 @@ def main():
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.WARNING)
-    
-    logging.getLogger("httpx").setLevel(logging.WARNING)
-    logging.getLogger("telegram").setLevel(logging.WARNING)
-    logging.getLogger("telegram.ext").setLevel(logging.WARNING)
     main()
