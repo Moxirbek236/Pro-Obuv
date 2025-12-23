@@ -43,10 +43,19 @@ function formatPrice(price) {
 }
 
 function renderStars(rating) {
-  const r = Math.max(0, Math.round(Number(rating) || 0));
+  let r = Number(rating) || 0;
+  r = Math.max(0, Math.min(5, r));
+  // round to nearest 0.5 so we can represent halves
+  r = Math.round(r * 2) / 2;
   let s = "";
   for (let i = 1; i <= 5; i++) {
-    s += `<span class=\"star${i <= r ? " filled" : ""}\">⭐</span>`;
+    if (r >= i) {
+      s += '<span class="star filled">★</span>';
+    } else if (r >= i - 0.5) {
+      s += '<span class="star half">★</span>';
+    } else {
+      s += '<span class="star empty">★</span>';
+    }
   }
   return s;
 }
@@ -582,39 +591,72 @@ function initImageGalleries(root = document) {
       const imgs = Array.from(track.querySelectorAll("img"));
       if (!imgs || imgs.length === 0) return;
 
+      // Ensure pan-mode images use relative positioning and flex sizing
+      try {
+        imgs.forEach((img) => {
+          img.style.position = 'relative';
+          img.style.inset = 'auto';
+          img.style.opacity = '1';
+          img.style.flex = '0 0 100%';
+          img.style.width = '100%';
+          img.style.height = '100%';
+          img.style.objectFit = 'contain';
+        });
+      } catch (e) {}
+
+      // If this gallery has multiple images, enable 'pan' mode and add UI (arrows/dots)
+      if (imgs.length > 1) {
+        try {
+          g.dataset.mode = 'pan';
+          // arrows
+          if (!g.querySelector('.gallery-arrow--prev')) {
+            const prev = document.createElement('button');
+            prev.type = 'button';
+            prev.className = 'gallery-arrow gallery-arrow--prev';
+            prev.setAttribute('aria-label','Previous image');
+            prev.innerHTML = '&#x2039;';
+            const next = document.createElement('button');
+            next.type = 'button';
+            next.className = 'gallery-arrow gallery-arrow--next';
+            next.setAttribute('aria-label','Next image');
+            next.innerHTML = '&#x203A;';
+            g.appendChild(prev);
+            g.appendChild(next);
+          }
+
+          // dots
+          if (!g.querySelector('.gallery-dots')) {
+            const dots = document.createElement('div');
+            dots.className = 'gallery-dots';
+            imgs.forEach((im, ii) => {
+              const d = document.createElement('button');
+              d.type = 'button';
+              d.className = 'gallery-dot' + (ii === 0 ? ' active' : '');
+              d.setAttribute('data-idx', String(ii));
+              dots.appendChild(d);
+            });
+            g.appendChild(dots);
+          }
+        } catch (e) {}
+      }
+
       // Detect touch-capable device
       const isTouchDevice = !!(
         "ontouchstart" in window ||
         (navigator && navigator.maxTouchPoints && navigator.maxTouchPoints > 0)
       );
 
-      if (isTouchDevice && !g.hasAttribute('data-item-id')) {
+      // On touch devices enable carousel/snap mode for all galleries (including item cards)
+      if (isTouchDevice) {
         // Carousel/snap mode: each image is full-width of container (skip for menu items)
         let index = 0;
         try {
-          const videos = container.querySelectorAll("video");
+          const videos = track.querySelectorAll("video");
           videos.forEach((v) => {
             try {
-              const videos = container.querySelectorAll("video");
-              videos.forEach((v) => {
-                v.addEventListener("loadedmetadata", () =>
-                  this.equalizeHeights()
-                );
-                v.addEventListener("canplay", () => this.equalizeHeights());
-                if (v.readyState >= 1) {
-                  try {
-                    this.equalizeHeights();
-                  } catch (e) {}
-                }
-              });
+              v.addEventListener("loadedmetadata", () => {});
+              v.addEventListener("canplay", () => {});
             } catch (e) {}
-            v.addEventListener("loadedmetadata", () => this.equalizeHeights());
-            v.addEventListener("canplay", () => this.equalizeHeights());
-            if (v.readyState >= 1) {
-              try {
-                this.equalizeHeights();
-              } catch (e) {}
-            }
           });
         } catch (e) {}
         const resize = () => {
@@ -729,33 +771,107 @@ function initImageGalleries(root = document) {
         );
 
       } else {
-        // Desktop: hover-follow continuous behavior
+        // Desktop: hover-follow continuous pan + arrow/dot controls
         let rect = null;
+        let index = 0;
+
+        function updateMetricsPan() {
+          rect = g.getBoundingClientRect();
+          // size each image to container width for predictable snapping
+          try {
+              const w = Math.round(rect.width || g.clientWidth || window.innerWidth);
+              imgs.forEach((img) => {
+                img.style.flex = `0 0 ${w}px`;
+                img.style.maxWidth = w + 'px';
+                img.style.width = w + 'px';
+                img.style.height = '100%';
+              });
+              // explicitly set track width so scrollWidth calculations are reliable
+              const totalW = imgs.length * w;
+              track.style.width = totalW + 'px';
+              track.style.height = rect.height + 'px';
+              // expose total width for pan math
+              g._pan_total_width = totalW;
+          } catch (e) {}
+        }
+        updateMetricsPan();
+        window.addEventListener('resize', updateMetricsPan);
+
+        function updateActiveDot(i) {
+          try {
+            const dots = g.querySelectorAll('.gallery-dot');
+            if (!dots || !dots.length) return;
+            dots.forEach((d, idx) => d.classList.toggle('active', idx === i));
+          } catch (e) {}
+        }
+
         const onMove = (ev) => {
           try {
-            rect = g.getBoundingClientRect();
+            if (!rect) updateMetricsPan();
             const clientX = ev.clientX;
-            const rel = Math.max(
-              0,
-              Math.min(1, (clientX - rect.left) / rect.width)
-            );
+            const rel = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
             if (imgs.length <= 1) return;
-            
-            // Snap to nearest image instead of continuous movement
-            const targetIndex = Math.round(rel * (imgs.length - 1));
-            const maxShift = track.scrollWidth - rect.width;
-            const targetShift = Math.round(maxShift * (targetIndex / (imgs.length - 1)));
-            
-            track.style.transform = `translateX(${-targetShift}px)`;
+            const totalW = g._pan_total_width || Math.max(0, track.scrollWidth);
+            const maxShift = Math.max(0, totalW - rect.width);
+            const tx = -Math.round(maxShift * rel);
+            track.style.transform = `translateX(${tx}px)`;
+            // mark nearest index visually
+            const approx = Math.round(rel * (imgs.length - 1));
+            if (approx !== index) {
+              index = approx;
+              updateActiveDot(index);
+            }
           } catch (e) {}
         };
+
         const onLeave = () => {
           try {
-            track.style.transform = "";
+            // snap to current index
+            const w = rect ? rect.width : (g.clientWidth || window.innerWidth);
+            track.style.transition = 'transform 320ms cubic-bezier(.2,.8,.2,1)';
+            track.style.transform = `translateX(${-(index * w)}px)`;
+            setTimeout(()=>{ try{ track.style.transition = 'transform 220ms ease'; }catch(e){} }, 360);
           } catch (e) {}
         };
-        g.addEventListener("mousemove", onMove);
-        g.addEventListener("mouseleave", onLeave);
+
+        g.addEventListener('mousemove', onMove);
+        g.addEventListener('mouseleave', onLeave);
+
+        // wire arrows
+        try {
+          const prev = g.querySelector('.gallery-arrow--prev');
+          const next = g.querySelector('.gallery-arrow--next');
+          if (prev) prev.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            index = Math.max(0, index - 1);
+            const w = rect ? rect.width : (g.clientWidth || window.innerWidth);
+            track.style.transition = 'transform 320ms cubic-bezier(.2,.8,.2,1)';
+            track.style.transform = `translateX(${-(index * w)}px)`;
+            updateActiveDot(index);
+          });
+          if (next) next.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            index = Math.min(imgs.length - 1, index + 1);
+            const w = rect ? rect.width : (g.clientWidth || window.innerWidth);
+            track.style.transition = 'transform 320ms cubic-bezier(.2,.8,.2,1)';
+            track.style.transform = `translateX(${-(index * w)}px)`;
+            updateActiveDot(index);
+          });
+
+          // dot clicks
+          const dots = Array.from(g.querySelectorAll('.gallery-dot'));
+          dots.forEach((d) => {
+            d.addEventListener('click', (ev) => {
+              ev.stopPropagation();
+              const idx = parseInt(d.getAttribute('data-idx') || '0', 10) || 0;
+              index = Math.max(0, Math.min(imgs.length - 1, idx));
+              const w = rect ? rect.width : (g.clientWidth || window.innerWidth);
+              track.style.transition = 'transform 320ms cubic-bezier(.2,.8,.2,1)';
+              track.style.transform = `translateX(${-(index * w)}px)`;
+              updateActiveDot(index);
+            });
+          });
+        } catch (e) {}
 
         // keep a minimal touch fallback
         let startX = 0,
@@ -806,7 +922,7 @@ function initImageGalleries(root = document) {
         try {
           const idx = Math.max(0, Math.min(imgs.length - 1, i || 0));
           
-          if (isTouchDevice && !g.hasAttribute('data-item-id')) {
+          if (isTouchDevice) {
             // Touch/carousel mode: snap to specific slide
             const rect = g.getBoundingClientRect();
             const w = Math.round(rect.width || g.clientWidth || window.innerWidth);
@@ -819,6 +935,13 @@ function initImageGalleries(root = document) {
             const targetShift = (imgs.length > 1) ? Math.round(maxShift * (idx / (imgs.length - 1))) : 0;
             track.style.transition = "transform 260ms cubic-bezier(.2,.8,.2,1)";
             track.style.transform = `translateX(${-targetShift}px)`;
+            // update dots if present
+            try {
+              const dots = g.querySelectorAll('.gallery-dot');
+              if (dots && dots.length) {
+                dots.forEach((d, ii) => d.classList.toggle('active', ii === idx));
+              }
+            } catch (e) {}
           }
         } catch (e) {
           console.warn("setSlide failed:", e);
@@ -846,10 +969,35 @@ window.initImageGalleries = initImageGalleries;
 if (typeof window.initMenuClient === "undefined") {
   function initMenuClient() {
     try {
+      // Prevent double-initialization on pages that call this multiple times
+      if (window._menuClientInitDone && !(window.MENU_CLIENT_INIT && window.MENU_CLIENT_INIT.forceFetch)) {
+        return;
+      }
       if (
         window.MenuClient &&
         typeof window.MenuClient.fetchAndRender === "function"
       ) {
+        // If server already rendered menu cards, avoid re-fetching immediately
+        // — this prevents double-rendering where client fetch would clear
+        // server-rendered images and re-insert cards (sometimes causing
+        // transient missing images). Allow forcing a client fetch via
+        // `window.MENU_CLIENT_INIT && window.MENU_CLIENT_INIT.forceFetch`.
+        const hasServerCards = !!document.querySelector(
+          ".menu-grid .menu-item-card"
+        );
+        const forced =
+          window.MENU_CLIENT_INIT && window.MENU_CLIENT_INIT.forceFetch;
+        if (hasServerCards && !forced) {
+          try {
+            // initialize galleries on existing DOM and apply client filters
+            initImageGalleries(document);
+            applyClientSideFilter();
+            enforceMenuCaps();
+            // mark initialized to avoid subsequent double-runs
+            window._menuClientInitDone = true;
+          } catch (e) {}
+          return;
+        }
         // Optionally allow callers to set initial state via window.MENU_CLIENT_INIT
         try {
           if (
@@ -860,6 +1008,8 @@ if (typeof window.initMenuClient === "undefined") {
           }
         } catch (e) {}
         window.MenuClient.fetchAndRender();
+        // mark initialized so subsequent calls don't re-fetch unless forced
+        window._menuClientInitDone = true;
         return;
       }
     } catch (e) {

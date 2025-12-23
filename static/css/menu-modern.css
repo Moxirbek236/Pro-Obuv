@@ -26,10 +26,27 @@
 */
 .main-content {
     display: flex;
-    gap: 25px;
+    gap: clamp(16px, 2.4vw, 32px);
     position: relative;
     align-items: flex-start;
     justify-content: flex-start;
+    width: 100%;
+    max-width: 1400px; /* keeps content readable on very wide screens */
+    margin: 0 auto; /* center within page/container */
+    padding: 8px 12px; /* subtle breathing room */
+    box-sizing: border-box;
+    flex-wrap: nowrap; /* prefer side-by-side on wide screens, stack via media queries */
+}
+
+/* Primary content area that holds the menu grid; flexible and safe for truncation */
+.content-area {
+    width: 100%;
+    /* max-width: 900px; */
+    margin: 0 auto;
+    padding: 0 var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 /* Filter sidebar - right side */
@@ -171,19 +188,67 @@
         position: fixed;
         /* Keep sidebar below the navbar using the design token */
         top: calc(var(--navbar-height) + 24px);
-        left: calc(50% - (1400px / 2) + 20px); /* align with .menu-container center and offset (left side) */
+        /* place sidebar near left edge with 30px padding from viewport */
+        left: 30px;
         width: var(--filter-width);
-        z-index: 30;
+        z-index: 40; /* increase z-index slightly to stay above header chrome when needed */
         max-height: calc(100vh - var(--navbar-height) - 48px);
         box-shadow: 0 24px 48px rgba(0,0,0,0.12);
         transition: transform 0.2s ease, opacity 0.2s ease;
+        will-change: transform, left;
     }
 
-    /* Ensure main grid leaves space for fixed sidebar */
-    .menu-grid, .content-area {
-        margin-left: calc(var(--filter-width) + 40px); /* sidebar width + gutter (reserve left space) */
+    /* Reserve space for the fixed sidebar on the content area (not the inner grid)
+       This keeps the grid responsive and avoids double offsets when nested. */
+    .content-area {
+        width: 100%;
+        /* max-width: 900px; */
+        margin: 0 auto;
+        padding: 0 var(--spacing-lg);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 }
+
+/* Responsive Grid: auto-fit columns so cards fill available space */
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 22px;
+    width: 100%;
+    align-items: start;
+}
+
+@media (max-width: 575px) {
+    .menu-grid { grid-template-columns: 1fr; gap: 16px; }
+}
+
+@media (min-width: 576px) and (max-width: 991px) {
+    .menu-grid { grid-template-columns: repeat(2, 1fr); gap: 18px; }
+}
+
+@media (min-width: 992px) {
+    .menu-grid { grid-template-columns: repeat(3, 1fr); gap: 26px; }
+}
+
+/* Ensure cards stretch to fill the grid cell and maintain consistent card look */
+.menu-item-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.item-content { text-align: left; align-items: stretch; }
+
+.item-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* When filter sidebar overlays on small screens, ensure it becomes visible via .show */
+.filter-sidebar { transform: translateX(0); }
+.filter-sidebar:not(.show) { /* collapsed on mobile */ }
+
+/* Mobile toggle button alignment */
+.mobile-filter-toggle { display: inline-block; margin: 12px 0; }
 
 /* Slightly different centering tweak for very wide screens */
 @media (min-width: 1400px) {
@@ -486,8 +551,13 @@
     }
 
     .content-area {
-        flex: 1;
-        min-width: 0;
+        width: 100%;
+        /* max-width: 900px; */
+        margin: 0 auto;
+        padding: 0 var(--spacing-lg);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
     [data-theme="dark"] .filter-sidebar {
@@ -545,7 +615,8 @@
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 50%, rgba(255, 255, 255, 0.9) 100%);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    max-width: 320px;
+    /* allow grid columns to control width; remove hard max so cards flex to column width */
+    max-width: none;
     width: 100%;
     border-radius: 24px;
     position: relative;
@@ -585,15 +656,16 @@
 }
 
 /* Image Area */
-.menu-item-card .item-image {
+.menu-item-card .item-image,
+.menu-item-card .card-image {
     position: relative;
     width: 100%;
-    /* Fixed aspect ratio container */
-    padding-top: 85%; /* 1:1 Aspect Ratio */
+    /* Fixed aspect ratio container: use 3:4 (width:height = 3:4) to match 1080x1440 uploads */
+    padding-top: 133.333%; /* 3:4 Aspect Ratio */
     height: 0 !important; /* Override strict height */
     overflow: hidden;
     background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
-    display: flex;
+    display: block;
     align-items: center;
     justify-content: center;
     border-radius: 24px 24px 0 0;
@@ -601,6 +673,46 @@
 
     /* Enhanced inner shadow for depth */
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06), inset 0 -1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* Multi-media cards (swagger) use a larger fixed image area to showcase film-strip */
+.menu-item-card.multi-media .item-image,
+.menu-item-card.multi-media .card-image {
+    padding-top: 0 !important;
+    height: 420px !important;
+    min-height: 320px;
+}
+
+/* Ensure images inside multi-media cards cover the area nicely */
+.menu-item-card.multi-media .gallery-track img,
+.menu-item-card.multi-media .item-image img,
+.menu-item-card.multi-media .card-image img {
+    object-fit: cover !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Force images inside multi-media cards to be in-flow (not absolutely positioned)
+   This overrides the default absolute centering used for single-image cards. */
+.menu-item-card.multi-media .item-image img,
+.menu-item-card.multi-media .card-image img {
+    position: relative !important;
+    transform: none !important;
+    top: auto !important;
+    left: auto !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+}
+
+/* Single-image cards should center and preserve aspect without upscaling */
+.menu-item-card:not(.multi-media) .item-image img,
+.menu-item-card:not(.multi-media) .card-image img {
+    object-fit: contain !important;
+    width: auto !important;
+    max-width: 100% !important;
+    height: 100% !important;
 }
 
 .menu-item-card .item-image a {
@@ -627,7 +739,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain; /* show whole image by default */
     transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
@@ -770,7 +882,7 @@
     height: 100%;
     object-fit: cover;
     display: block;
-    opacity: 0;
+    opacity: 1; /* show all slides by default so pan/carousel reveals them */
     transition: opacity 220ms ease, transform 300ms ease;
     will-change: opacity, transform;
 }
@@ -806,6 +918,56 @@ img {
     max-width: 100%;
     height: auto;
 }
+
+/* Modern gallery chrome: arrows, dots and pan mode */
+.gallery[data-mode="pan"] { overflow: hidden; position: relative; }
+.gallery[data-mode="pan"] .gallery-track { display: flex; transition: transform 260ms cubic-bezier(.2,.8,.2,1); will-change: transform; }
+.gallery[data-mode="pan"] .gallery-track img { position: relative; inset: auto; opacity: 1; flex: 0 0 100%; width: 100%; height: 100%; object-fit: contain; }
+.gallery-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; border-radius: 999px; background: rgba(0,0,0,0.45); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 30; opacity: 0; transition: opacity 180ms ease, background 180ms ease; border: none; }
+.gallery-arrow:hover { background: rgba(0,0,0,0.6); }
+.gallery-arrow--prev { left: 10px; }
+.gallery-arrow--next { right: 10px; }
+.menu-item-card:hover .gallery-arrow { opacity: 1; }
+.gallery-dots { position: absolute; left: 50%; transform: translateX(-50%); bottom: 8px; display:flex; gap:6px; z-index:30; }
+.gallery-dot { width:8px; height:8px; border-radius:50%; background: rgba(255,255,255,0.6); transition: transform 120ms ease, background 120ms ease; border: none; }
+.gallery-dot.active { background: var(--menu-accent); transform: scale(1.15); }
+
+/* Center single-image galleries inside the 3:4 container and do not overflow borders.
+   Multi-image galleries set `data-mode="pan"` and use flex sizing; those must not be absolute. */
+.gallery:not([data-mode="pan"]) .gallery-track img,
+.menu-item-card .item-image img,
+.menu-item-card .card-image img {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    object-fit: contain !important;
+    display: block !important;
+}
+
+/* Pan-mode images should remain in-flow as flex items so multiple slides are visible */
+.gallery[data-mode="pan"] .gallery-track img {
+    position: relative !important;
+    transform: none !important;
+    top: auto !important;
+    left: auto !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    display: block !important;
+}
+
+/* Strong fallback: ensure pan-mode images are visible if JS hasn't run or errored */
+.gallery[data-mode="pan"] .gallery-track img {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* subtle shadow and rounded corners for the image area */
+.item-image, .card-image { border-radius: 12px 12px 0 0; box-shadow: inset 0 -6px 20px rgba(2,6,23,0.03); }
 
 /* Card Content */
 .menu-item-card .item-content {
@@ -867,31 +1029,39 @@ img {
 }
 
 .star {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     line-height: 1;
-    transition: all 0.2s ease;
+    transition: transform 180ms ease, color 180ms ease, filter 180ms ease;
+    display: inline-block;
+    width: 1.2em;
+    text-align: center;
+    color: #e5e7eb; /* neutral base for empty stars */
 }
 
 .star.filled {
     color: #fbbf24;
-    filter: drop-shadow(0 1px 2px rgba(251, 191, 36, 0.3));
+    filter: drop-shadow(0 1px 2px rgba(251, 191, 36, 0.28));
+    transform: translateY(-1px);
 }
 
+/* Improved half-star: use background-clip so a single glyph shows left-half gold */
 .star.half {
-    color: #fbbf24;
+    color: #e5e7eb; /* neutral base */
     position: relative;
-    filter: drop-shadow(0 1px 2px rgba(251, 191, 36, 0.3));
+    background: linear-gradient(90deg, #fbbf24 50%, #e5e7eb 50%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
-.star.half::after {
-    content: '☆';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 50%;
-    overflow: hidden;
-    color: #d1d5db;
+/* Empty/star-outline: show only the star outline for fully-empty slots */
+.star.empty {
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(101, 116, 139, 0.6); /* subtle outline */
+    text-shadow: none;
 }
+
+/* make the star glyph crisp on high-DPI */
+.star svg, .star i { vertical-align: middle; }
 
 .rating-text {
     font-size: 0.95rem;
@@ -997,6 +1167,7 @@ img {
     left: 0;
     top: 0;
     overflow: hidden;
+    transition: width 260ms cubic-bezier(.2,.8,.2,1);
 }
 
 .rating-text {
@@ -1067,7 +1238,6 @@ img {
     opacity: 0;
     transform: translateY(20px);
 }
-
 .menu-item-card:nth-child(1) { animation-delay: 0.1s; }
 .menu-item-card:nth-child(2) { animation-delay: 0.2s; }
 .menu-item-card:nth-child(3) { animation-delay: 0.3s; }
@@ -1305,6 +1475,19 @@ img {
     /* card height auto-adjusts based on 1:1 image */
     .card-title {
         font-size: 1rem;
+    }
+}
+
+/* Enforce 3-column layout for typical laptop widths (prevents accidental 2/4 column overrides) */
+@media (min-width: 992px) and (max-width: 1399px) {
+    .menu-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: clamp(20px, 2vw, 28px) !important;
+    }
+
+    /* ensure the content-area margin aligns with the fixed sidebar on these sizes */
+    .content-area {
+        margin-left: calc(var(--filter-width) + 64px) !important;
     }
 }
 
@@ -1743,3 +1926,331 @@ img {
         font-size: 24px;
     }
 }
+
+/* Strong overrides to ensure pan-mode galleries display images side-by-side
+   and are visible regardless of earlier absolute/opacity rules. These
+   selectors are intentionally specific and use !important sparingly to
+   fix cascade issues where other rules made non-pan galleries hide slides. */
+.gallery[data-mode="pan"] .gallery-track,
+.menu-item-card .gallery[data-mode="pan"] .gallery-track {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    width: 100% !important;
+}
+.gallery[data-mode="pan"] .gallery-track img,
+.menu-item-card .gallery[data-mode="pan"] .gallery-track img {
+    position: relative !important;
+    inset: auto !important;
+    opacity: 1 !important;
+    display: block !important;
+    flex: 0 0 100% !important; /* each slide is full container width */
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+}
+
+/* Large screens: align sidebar to center-left (matches centered container) */
+@media (min-width: 1400px) {
+    .filter-sidebar {
+        left: calc(50% - 930px) !important;
+    }
+}
+
+/* -------------------------
+   Universal Product Card
+   Standardized, modern, responsive card styles applied site-wide.
+   Keeps compatibility with existing classes (`multi-media`, `gallery`, `card-image`).
+   ------------------------- */
+:root {
+    --card-radius: 16px;
+    --card-padding: 14px;
+    --card-image-height: 320px;
+    --card-shadow: 0 10px 30px rgba(2,6,23,0.06);
+}
+
+.menu-item-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--menu-card-bg, #ffffff);
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    transition: transform 260ms cubic-bezier(.2,.9,.2,1), box-shadow 260ms ease;
+    box-shadow: var(--card-shadow);
+    min-height: 100%;
+}
+
+.menu-item-card:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(2,6,23,0.08); }
+
+.menu-item-card .card-image,
+.menu-item-card .item-image {
+    width: 100%;
+    height: var(--card-image-height);
+    min-height: 180px;
+    background: linear-gradient(180deg,#f8fafc,#eef2f6);
+    display: block;
+    position: relative;
+}
+
+/* prefer modern aspect-ratio when available */
+.menu-item-card .card-image img,
+.menu-item-card .item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.menu-item-card.multi-media .card-image,
+.menu-item-card.multi-media .item-image {
+    height: 420px; /* larger hero area for multi-image items */
+}
+
+.menu-item-card .item-content,
+.menu-item-card .card-content {
+    padding: var(--card-padding);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+}
+
+.menu-item-card .item-name {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--menu-text-main, #0f172a);
+    line-height: 1.25;
+    margin: 0;
+}
+
+.menu-item-card .item-sub {
+    font-size: 0.9rem;
+    color: var(--menu-text-muted, #64748b);
+}
+
+.menu-item-card .price {
+    font-size: 1.12rem;
+    font-weight: 800;
+    color: var(--brand-1, #2563eb);
+}
+
+.menu-item-card .card-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 6px;
+}
+
+.menu-item-card .btn-add-cart {
+    width: auto;
+    min-width: 44px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-weight: 700;
+}
+
+.menu-item-card .btn-favorite-top {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    z-index: 6;
+}
+
+/* Compact / mobile adjustments */
+@media (max-width: 575px) {
+    :root { --card-image-height: 260px; }
+    .menu-item-card .item-name { font-size: 1rem; }
+    .menu-item-card.multi-media .card-image { height: 300px; }
+}
+
+
+/* ----- Modern ribbon + universal product image styles ----- */
+.ribbon, .gallery.ribbon {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display: block;
+}
+
+.ribbon-track, .gallery-track.ribbon-track {
+    display: flex;
+    gap: 6px;
+    align-items: stretch;
+    height: 100%;
+    will-change: transform;
+}
+
+.ribbon-img {
+    flex: 0 0 auto;
+    width: auto;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px 12px 0 0;
+    transition: transform 300ms cubic-bezier(.2,.8,.2,1), filter 260ms ease;
+    backface-visibility: hidden;
+}
+
+/* Ensure ribbon images are in-flow (not absolute) and have a usable visible size */
+.ribbon-track .ribbon-img,
+.ribbon-track img,
+.ribbon.gallery .gallery-track img,
+.gallery.ribbon .gallery-track img {
+    position: relative !important;
+    inset: auto !important;
+    display: block !important;
+    flex: 0 0 34% !important; /* show ~3 images across on desktop */
+    min-width: 160px !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
+
+@media (max-width: 767px) {
+    .ribbon-track .ribbon-img,
+    .ribbon-track img,
+    .gallery.ribbon .gallery-track img {
+        flex: 0 0 48% !important; /* two per row on small screens */
+        min-width: 120px !important;
+    }
+}
+
+/* ribbon hover emphasis */
+.menu-item-card.multi-media:hover .ribbon-img {
+    transform: scale(1.03);
+    filter: saturate(1.05) brightness(1.02);
+}
+
+/* Lightweight overlay gradient for legibility on images */
+.menu-item-card .image-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0.06) 100%);
+    border-radius: 12px 12px 0 0;
+}
+
+/* skeleton -> hide when loaded */
+.menu-item-card .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)); }
+.menu-item-card img.img-loaded { opacity: 1; transition: opacity 260ms ease; }
+.menu-item-card img.img-error { object-fit: contain; filter: grayscale(50%); }
+
+/* ensure active slide always above ribbon duplicates and visible */
+.gallery .gallery-track img.active,
+.ribbon .ribbon-track .ribbon-img.active {
+    z-index: 5;
+    opacity: 1 !important;
+}
+
+/* Thumb grid overlay: fade and modernize */
+.BKd5K { background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.25)); border-radius: 12px 12px 0 0; padding: 6px; }
+.BKd5K img { border-radius: 8px; box-shadow: 0 6px 18px rgba(2,6,23,0.06); }
+
+/* Strong overrides to prevent random hidden/zero-sized ribbon images:
+   - Force multi-media (ribbon) galleries to keep images in-flow (not absolute)
+   - Ensure visible size via flex-basis and min-width
+   - Keep single-image galleries centered and absolute for consistent framing */
+.menu-item-card.multi-media .gallery-track img,
+.menu-item-card.multi-media .ribbon-track .ribbon-img,
+.menu-item-card.multi-media .ribbon .gallery-track img,
+.menu-item-card.multi-media .gallery.ribbon .gallery-track img {
+    position: relative !important;
+    inset: auto !important;
+    display: block !important;
+    flex: 0 0 34% !important; /* desktop: show ~3 across */
+    min-width: 140px !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    z-index: 3 !important;
+}
+
+/* Make sure duplicated slides used for seamless looping are visible */
+.menu-item-card.multi-media .gallery-track .clone,
+.menu-item-card.multi-media .ribbon-track .clone {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Single-image cards: keep previous centering behavior but ensure consistent z-index */
+.menu-item-card:not(.multi-media) .gallery-track img,
+.menu-item-card:not(.multi-media) .item-image img,
+.menu-item-card:not(.multi-media) .card-image img {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: auto !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    display: block !important;
+    z-index: 2 !important;
+}
+
+/* If JS toggles data-mode late, prefer the multi-media rule above */
+.menu-item-card.multi-media .gallery:not([data-mode="pan"]) .gallery-track img {
+    position: relative !important;
+}
+.BKd5K img { border-radius: 8px; box-shadow: 0 6px 18px rgba(2,6,23,0.06); }
+
+/* Accessibility: focus states for images */
+.gallery-track img:focus, .ribbon-img:focus { outline: 3px solid rgba(59,130,246,0.18); outline-offset: 3px; }
+
+/* Mobile: reduce ribbon height and gaps */
+@media (max-width: 575px) {
+    .menu-item-card.multi-media .item-image,
+    .menu-item-card.multi-media .card-image { height: 320px !important; }
+    .ribbon-track { gap: 4px; }
+}
+
+/* --- Explicit layout fixes to avoid cascade conflicts ---
+   - Force multi-media galleries to remain in-flow (flex) so ribbon/pan works
+   - Keep single-image galleries centered and absolute for consistent framing
+   - Ensure pan-mode tracks are visible if JS toggles data-mode late
+*/
+.menu-item-card.multi-media .gallery-track,
+.menu-item-card.multi-media .ribbon-track,
+.gallery[data-mode="pan"] .gallery-track {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    position: relative !important;
+    width: 100% !important;
+}
+
+.menu-item-card.multi-media .gallery-track img,
+.menu-item-card.multi-media .ribbon-track .ribbon-img,
+.gallery[data-mode="pan"] .gallery-track img {
+    position: relative !important;
+    inset: auto !important;
+    opacity: 1 !important;
+    display: block !important;
+    flex: 0 0 34% !important;
+    min-width: 120px !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
+
+.menu-item-card:not(.multi-media) .gallery-track img,
+.menu-item-card:not(.multi-media) .item-image img,
+.menu-item-card:not(.multi-media) .card-image img {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: auto !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    display: block !important;
+    z-index: 2 !important;
+}
+
+/* Make sure pan-mode images are visible regardless of other rules */
+.gallery[data-mode="pan"] .gallery-track img { opacity: 1 !important; visibility: visible !important; }

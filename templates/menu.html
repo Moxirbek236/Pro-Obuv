@@ -408,104 +408,7 @@
         
         <div class="menu-grid">
           {% for item in men %}
-          <div
-            class="menu-item-card"
-            data-aos="fade-up"
-            data-aos-delay="{{ loop.index0 * 50 }}"
-            data-id="{{ item.id }}"
-            data-category="{{ (item.category or 'product')|lower }}"
-            data-sizes="{{ (item.sizes or '')|lower }}"
-            data-colors="{{ (item.colors or '')|lower }}"
-            data-rating="{{ item.rating or 0 }}"
-            data-orders-count="{{ item.orders_count or 0 }}"
-            data-product-url="{{ url_for('product_detail', item_id=item.id) }}"
-            onclick="event.stopPropagation(); window.location.href=this.dataset.productUrl;">
-            <div class="item-image">
-              <a href="{{ url_for('product_detail', item_id=item.id) }}" onclick="event.stopPropagation();">
-                <div class="image-container">
-                  <div class="image-skeleton"></div>
-                  {% if item.media and item.media|length > 1 %}
-                  <!-- Swiper for multiple images -->
-                  <div class="swiper product-swiper">
-                    <div class="swiper-wrapper">
-                      {% for m in item.media %}
-                        {% set raw_src = (m.media_url if (m.media_url is defined) else (m.image_url if (m.image_url is defined) else (m if m is string else ''))) %}
-                        {% set src = prefer_webp(raw_src or '/static/defoult.webp') %}
-                        <div class="swiper-slide">
-                          <img src="{{ src }}" alt="{{ localized_field(item, 'name') or item.name }}" loading="lazy" decoding="async" class="swiper-lazy" />
-                        </div>
-                      {% endfor %}
-                    </div>
-                    <!-- Navigation arrows -->
-                    <div class="swiper-button-next"></div>
-                    <div class="swiper-button-prev"></div>
-                    <!-- Pagination -->
-                    <div class="swiper-pagination"></div>
-                  </div>
-                  {% else %}
-                  <!-- Single image - no swiper needed -->
-                  <div class="gallery" data-item-id="{{ item.id }}">
-                    <div class="gallery-track">
-                      {% if item.media %}
-                        {% for m in item.media %}
-                          {% set raw_src = (m.media_url if (m.media_url is defined) else (m.image_url if (m.image_url is defined) else (m if m is string else ''))) %}
-                          {% set src = prefer_webp(raw_src or '/static/defoult.webp') %}
-                          <img src="{{ src }}" alt="{{ localized_field(item, 'name') or item.name }}" loading="lazy" decoding="async" class="gallery-lazy{% if loop.first %} active{% endif %}" />
-                        {% endfor %}
-                      {% else %}
-                        <img src="{{ prefer_webp(item.image_url or '/static/defoult.webp') }}" alt="{{ localized_field(item, 'name') or item.name }}" loading="lazy" decoding="async" class="gallery-lazy active" />
-                      {% endif %}
-                    </div>
-                  </div>
-                  {% endif %}
-
-                  <!-- Grid thumbnail gallery (only for multiple images) -->
-                  {% if item.media and item.media|length > 1 %}
-                  <div class="BKd5K" aria-hidden="true" data-active-idx="0" id="gallery_{{ item.id }}">
-                    {% for m in item.media %}
-                      {% set raw_src = (m.media_url if (m.media_url is defined) else (m.image_url if (m.image_url is defined) else (m if m is string else ''))) %}
-                        {% set src = prefer_webp(raw_src or '/static/defoult.webp') %}
-                        <img src="{{ src }}"
-                          alt="{{ localized_field(item, 'name') or item.name }} - {{ loop.index }}"
-                          loading="lazy"
-                          decoding="async"
-                          data-idx="{{ loop.index0 }}"
-                          class="thumb{% if loop.first %} active{% endif %}"
-                          onclick="event.stopPropagation(); changeGalleryImage({{ item.id }}, {{ loop.index0 }});"
-                          onerror="this.src='/static/defoult.webp'" />
-                    {% endfor %}
-                  </div>
-                  {% endif %}
-                </div>
-              </a>
-            </div>
-            <div class="item-content">
-              <h3 class="item-name">
-                <a
-                  href="{{ url_for('product_detail', item_id=item.id) }}"
-                  onclick="event.stopPropagation();"
-                  >{{ localized_field(item, 'name') or item.name }}</a
-                >
-              </h3>
-              <div class="rating-section">
-                <div class="stars">
-                  {% set rating = item.rating or 0 %}
-                  {% for i in range(1, 6) %}
-                    {% if rating >= i %}
-                      <span class="star filled">⭐</span>
-                    {% elif rating >= i - 0.5 %}
-                      <span class="star half">⭐</span>
-                    {% else %}
-                      <span class="star">☆</span>
-                    {% endif %}
-                  {% endfor %}
-                </div>
-                <span class="rating-text">{{ "%.1f"|format(rating) }} ({{ item.orders_count or 0 }})</span>
-              </div>
-              
-              <!-- item-footer (price/add-to-cart) removed intentionally -->
-            </div>
-          </div>
+            {% include 'components/card_yandex.html' %}
           {% endfor %}
         </div>
         
@@ -517,21 +420,24 @@
           "csrf_token": {{ csrf_token|tojson }},
           "items": {
             {% for item in men %}
-            "{{ item.id }}": {{ {
-                "id": item.id,
-                "name": item.name,
-                "description": item.description or 'Mahsulot tavsifi',
-                "image_url": item.image_url or '/static/defoult.webp',
-                "rating": item.rating or 0,
-                "orders_count": item.orders_count or 0,
-                "sizes": item.sizes or '',
-                "colors": item.colors or '',
-                "category": (item.category or 'product')|lower
-            } | tojson }}{% if not loop.last %},{% endif %}
+            "{{ item.id }}": {
+                "id": {{ item.id }},
+                "name": {{ (item.name or '')|tojson }},
+                "description": {{ (item.description or 'Mahsulot tavsifi')|tojson }},
+                "image_url": {{ (item.image_url or '/static/defoult.webp')|tojson }},
+                "primary_image": {{ (item.primary_image if item.primary_image is defined and item.primary_image else (item.image_url if item.image_url is defined and item.image_url else '/static/defoult.webp'))|tojson }},
+                "rating": {{ (item.rating or 0) }},
+                "orders_count": {{ (item.orders_count or 0) }},
+                "sizes": {{ (item.sizes or '')|tojson }},
+                "colors": {{ (item.colors or '')|tojson }},
+                "category": {{ ((item.category or 'product')|lower)|tojson }}
+            }{% if not loop.last %},{% endif %}
             {% endfor %}
           }
         }
         </script>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/menu-gallery.css') }}" />
+        <script src="{{ url_for('static', filename='js/yandex-cards.js') }}" defer></script>
       </div>
     </div>
   </div>
@@ -1086,7 +992,7 @@
 
 
 
-<style>
+<!-- <style disabled>
     justify-content: center;
   }
 
@@ -1259,6 +1165,11 @@
     position: relative;
   }
 
+  /* Larger image area for items with multiple media (swagger/multi-image) */
+  .menu-item-card.multi-media .card-image {
+    height: 420px; /* taller for multi-image cards */
+  }
+
   .image-container {
     width: 100%;
     height: 100%;
@@ -1341,6 +1252,80 @@
   .menu-item-card .gallery .gallery-track img:first-child,
   .menu-item .gallery .gallery-track img:first-child {
     opacity: 1;
+  }
+  /* Ensure images explicitly marked as active are visible (fix single-image cards) */
+  .menu-item-card .gallery .gallery-track img.active,
+  .menu-item .gallery .gallery-track img.gallery-lazy.active {
+    opacity: 1 !important;
+  }
+
+  /* Single-image galleries should behave like a static image (not absolute layers) */
+  .gallery.single-image {
+    position: relative !important;
+  }
+  .gallery.single-image .gallery-track img {
+    position: static !important;
+    opacity: 1 !important;
+    width: auto !important;
+    height: 100% !important;
+    object-fit: contain !important;
+  }
+
+  /* Ribbon (film-strip) styles */
+  .ribbon {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  .ribbon:active { cursor: grabbing; }
+
+  .ribbon-track {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    transition: transform 0.12s linear;
+    will-change: transform;
+  }
+
+  /* Make each ribbon image fill the card width so images are large and consistent
+     on multi-image cards. On single-image cards this still works and keeps
+     aspect ratio due to object-fit: contain. */
+  .ribbon-img {
+    flex: 0 0 100%;
+    min-width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    -webkit-touch-callout: none;
+  }
+
+  /* Hide any native scrollbars if present */
+  .ribbon-track::-webkit-scrollbar { display: none; }
+
+  /* For cards WITHOUT multiple media (non-swagger), keep the image at natural size
+     and prevent upscaling while keeping it centered inside the allocated area. */
+  .menu-item-card:not(.multi-media) .card-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* ensure image won't escape rounded borders */
+  }
+
+  .menu-item-card:not(.multi-media) .ribbon-img {
+    /* Do not force full-width on single-image cards; preserve intrinsic size
+       but constrain within the card area. */
+    flex: 0 0 auto !important;
+    min-width: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
   }
 
   .comment-item {
@@ -2321,48 +2306,183 @@ if (window.__menuInitDone) {
         }
       });
     });
+    // If some gallery images are already loaded (from cache), hide skeletons
+    try {
+      galleryImages.forEach(img => {
+        if (img.complete) {
+          if (typeof window.hideSkeleton === 'function') window.hideSkeleton(img);
+        }
+        // Mark gallery containers that have only one image so CSS can treat them statically
+        try {
+          const g = img.closest('.gallery');
+          if (g) {
+            const imgs = g.querySelectorAll('img');
+            if (imgs && imgs.length === 1) g.classList.add('single-image');
+          }
+        } catch (e) {}
+      });
+    } catch (e) {
+      /* ignore */
+    }
   })();
 
-  // Add hover gallery functionality
-  (function setupHoverGallery() {
-    // Disable on mobile devices
-    if (window.innerWidth < 768) return;
-
-    const galleries = document.querySelectorAll('.gallery');
-    galleries.forEach(gallery => {
-      const track = gallery.querySelector('.gallery-track');
+  // Ribbon-based image interaction (desktop hover + mobile touch fallback)
+  (function setupRibbonInteractions() {
+    const ribbons = document.querySelectorAll('.ribbon');
+    ribbons.forEach(ribbon => {
+      const track = ribbon.querySelector('.ribbon-track');
       if (!track) return;
-      const images = track.querySelectorAll('img');
-      if (images.length <= 1) return;
 
-      gallery.addEventListener('mousemove', function(e) {
-        const rect = gallery.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const width = rect.width;
-        const index = Math.floor((x / width) * images.length);
-        const clampedIndex = Math.max(0, Math.min(images.length - 1, index));
+      // Convert NodeList to array for easier handling
+      let items = Array.from(track.querySelectorAll('img'));
+      if (!items.length) return;
 
-        images.forEach((img, i) => {
-          img.style.opacity = i === clampedIndex ? '1' : '0';
-        });
+      // If only one image - keep static, ensure it's visible and hide skeleton
+      if (items.length === 1) {
+        const img = items[0];
+        img.style.position = 'static';
+        img.style.opacity = '1';
+        try { if (typeof window.hideSkeleton === 'function') window.hideSkeleton(img); } catch(e){}
+        ribbon.classList.add('single-image');
+        return;
+      }
 
-        // Update thumbnails if exist
-        const thumbnails = gallery.parentElement.querySelectorAll('.BKd5K img');
-        thumbnails.forEach((thumb, i) => {
-          thumb.setAttribute('data-active', i === clampedIndex ? 'true' : 'false');
-        });
-      });
+      // Build seamless loop by duplicating the image set
+      const originalHTML = track.innerHTML;
+      // Duplicate once (we'll loop by wrapping position)
+      track.innerHTML = originalHTML + originalHTML;
+      items = Array.from(track.querySelectorAll('img'));
 
-      gallery.addEventListener('mouseleave', function() {
-        // Reset to first image
-        images.forEach((img, i) => {
-          img.style.opacity = i === 0 ? '1' : '0';
+      // Styling helpers
+      track.style.willChange = 'transform';
+      track.style.display = 'flex';
+      track.style.flexWrap = 'nowrap';
+
+      // State for animation
+      let setWidth = 0; // width of single image set (px)
+      let pos = 0; // current position in px (0..setWidth)
+      let velocity = 0; // px per ms
+      let targetVelocity = 0;
+      const MAX_SPEED = 0.45; // px per ms, tweak for feel
+      let lastTime = null;
+      let rafId = null;
+      let isPointerOver = false;
+      let isDragging = false;
+      let dragStartX = 0;
+      let dragStartPos = 0;
+
+      function recalcWidth() {
+        // measure first half (original set)
+        let w = 0;
+        const children = Array.from(track.children).slice(0, items.length/2);
+        children.forEach(ch => { w += ch.getBoundingClientRect().width; });
+        setWidth = Math.max(1, Math.round(w));
+      }
+
+      // Ensure sizes measured after images load
+      function ensureReady() {
+        const imgs = track.querySelectorAll('img');
+        const promises = Array.from(imgs).map(img => {
+          if (img.complete) return Promise.resolve();
+          return new Promise(resolve => { img.addEventListener('load', resolve); img.addEventListener('error', resolve); });
         });
-        const thumbnails = gallery.parentElement.querySelectorAll('.BKd5K img');
-        thumbnails.forEach((thumb, i) => {
-          thumb.setAttribute('data-active', i === 0 ? 'true' : 'false');
-        });
-      });
+        return Promise.all(promises).then(() => { recalcWidth(); });
+      }
+
+      // animation loop
+      function animate(ts) {
+        if (!lastTime) lastTime = ts;
+        const dt = Math.min(40, ts - lastTime); // cap dt to avoid jumps after tab inactive
+        lastTime = ts;
+
+        // Smoothly approach target velocity (inertia)
+        velocity += (targetVelocity - velocity) * 0.12;
+
+        pos += velocity * dt;
+
+        // When user is NOT interacting, gently snap back to the staff-set main image (pos = 0)
+        // This ensures the primary image (first image) is visible when not hovering.
+        if (!isPointerOver && !isDragging) {
+          // Pull position toward 0 with a small easing factor for smooth snap
+          pos += (0 - pos) * 0.06; // ease back to 0
+          // Also damp velocity so residual motion decays faster
+          velocity *= 0.92;
+        }
+
+        // Wrap pos to keep it within [0, setWidth)
+        if (setWidth > 0) {
+          pos = (pos % setWidth + setWidth) % setWidth;
+        }
+
+        // Apply transform (negative so positive pos moves left)
+        track.style.transform = `translate3d(${-pos}px,0,0)`;
+
+        rafId = requestAnimationFrame(animate);
+      }
+
+      // Convert pointer X to a target velocity (-MAX_SPEED..MAX_SPEED)
+      function updateTargetVelocity(clientX) {
+        const rect = ribbon.getBoundingClientRect();
+        const relative = (clientX - rect.left) / rect.width; // 0..1
+        const centered = (relative - 0.5) * 2; // -1..1
+        targetVelocity = centered * MAX_SPEED;
+      }
+
+      // Pointer handlers (desktop hover)
+      ribbon.addEventListener('mouseenter', function(e) {
+        isPointerOver = true;
+        updateTargetVelocity(e.clientX);
+        if (!rafId) { lastTime = null; rafId = requestAnimationFrame(animate); }
+      }, { passive: true });
+
+      ribbon.addEventListener('mousemove', function(e) {
+        if (isDragging) return; // dragging takes precedence
+        updateTargetVelocity(e.clientX);
+      }, { passive: true });
+
+      ribbon.addEventListener('mouseleave', function() {
+        isPointerOver = false;
+        // gently slow to stop
+        targetVelocity = 0;
+      }, { passive: true });
+
+      // Touch / drag fallback for mobile
+      ribbon.addEventListener('touchstart', function(e) {
+        isDragging = true;
+        if (e.touches && e.touches[0]) dragStartX = e.touches[0].clientX;
+        dragStartPos = pos;
+        targetVelocity = 0;
+        if (!rafId) { lastTime = null; rafId = requestAnimationFrame(animate); }
+      }, { passive: true });
+
+      ribbon.addEventListener('touchmove', function(e) {
+        if (!isDragging) return;
+        if (e.touches && e.touches[0]) {
+          const dx = e.touches[0].clientX - dragStartX;
+          // move opposite to finger to create natural dragging feel
+          pos = (dragStartPos - dx) % setWidth;
+          if (pos < 0) pos += setWidth;
+          // apply immediate transform so it feels snappy
+          track.style.transform = `translate3d(${-pos}px,0,0)`;
+        }
+      }, { passive: true });
+
+      ribbon.addEventListener('touchend', function() {
+        isDragging = false;
+        // leave inertia off (let mouse interactions control afterward)
+      }, { passive: true });
+
+      // Initialize: wait for images to load and start animation (idle)
+      ensureReady().then(() => {
+        // start with transform reset
+        pos = 0;
+        track.style.transform = `translate3d(0,0,0)`;
+        // start RAF so the ribbon is ready to animate on hover
+        if (!rafId) rafId = requestAnimationFrame(animate);
+      }).catch(() => { if (!rafId) rafId = requestAnimationFrame(animate); });
+
+      // Accessibility: allow keyboard focus to pause motion
+      ribbon.addEventListener('focusin', () => { targetVelocity = 0; }, true);
     });
   })();
 
@@ -2706,7 +2826,9 @@ if (window.__menuInitDone) {
       let visible = true;
       try {
         const itemCat = slugifyCategory(card.dataset.category || 'product');
-        if (category && normCategory !== 'all' && itemCat !== normCategory) {
+        // Allow partial/substring matches so categories with slightly different
+        // formatting still match the selected category (robust to missing slugs).
+        if (category && normCategory !== 'all' && !itemCat.includes(normCategory)) {
           visible = false;
         }
         if (visible && q) {
@@ -2869,13 +2991,7 @@ if (window.__menuInitDone) {
     // Ensure filters are wired now and also on DOMContentLoaded (idempotent)
     try { wireFilters(); } catch (e) {}
 
-
-
-        }
-      } catch (e) { console.warn('initial category sync failed', e); }
-      // initial load
-      debouncedSearch();
-    });
+    // Initial load is triggered via window.load earlier; nothing more to do here.
 
   // Modal quantity controls removed.
 
@@ -4234,5 +4350,6 @@ if (window.__menuInitDone) {
     }
   </script>
 
+    <script src="{{ url_for('static', filename='js/menu-images.js') }}"></script>
 
 {% endblock %}

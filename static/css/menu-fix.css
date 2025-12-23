@@ -1,0 +1,94 @@
+/* Overrides to restore dense responsive product grid, card sizing, and sidebar behavior */
+:root {
+  --menu-max-width: 1280px;
+}
+
+/* Make the main container use a two-column layout on wide screens */
+.menu-container {
+  max-width: var(--menu-max-width);
+  margin: 32px auto;
+  padding: 20px;
+  /* keep layout flexible; .menu-layout controls sidebar + content */
+}
+
+/* Ensure the filter sidebar sits to the left on wide screens and is sticky */
+.filter-sidebar {
+  order: 0 !important;
+  position: sticky !important;
+  top: calc(var(--navbar-height, 84px) + 18px) !important;
+  align-self: start !important;
+  width: var(--filter-width) !important;
+  max-width: var(--filter-width) !important;
+}
+
+/* The content area that contains the grid */
+.menu-content {
+  min-width: 0;
+}
+
+/* Strong grid definition so cards form multiple columns on desktop */
+.menu-grid {
+  display: grid !important;
+  /* Responsive grid: let cards reflow based on available width */
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
+  gap: 18px !important;
+  width: 100%;
+}
+
+/* Prevent cards from becoming very tall placeholders */
+.menu-item-card {
+  min-height: 0 !important;
+}
+
+.menu-item-card .item-content { padding: 12px 14px; }
+
+/* Image area keep aspect ratio so card heights are uniform */
+.menu-item-card .item-image { aspect-ratio: 4 / 3; height: auto; }
+
+/* Tighter card meta spacing */
+.menu-item-card .item-name { font-size: 14px; margin-bottom: 6px; }
+.menu-item-card .card-price { font-size: 14px; }
+
+/* Reduce vertical spacing for dense lists */
+.menu-grid .menu-item-card + .menu-item-card { margin-top: 0; }
+
+/* Constrain hero/carousel to avoid large push-down */
+.hero-section, .hero-carousel { max-height: 420px; overflow: hidden; }
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .menu-grid { grid-template-columns: repeat(3, 1fr) !important; }
+  .menu-container { grid-template-columns: 260px 1fr; }
+}
+@media (max-width: 900px) {
+  .menu-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .menu-container { grid-template-columns: 1fr; }
+  .filter-sidebar { position: static !important; order: -1 !important; width: 100% !important; max-width: none !important; }
+}
+@media (max-width: 480px) {
+  .menu-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
+  .menu-item-card .item-content { padding: 10px; }
+}
+
+/* Small visual polish for footer spacing when many items present */
+.menu-container { padding-bottom: 48px; }
+
+/* End overrides */
+
+/* Ensure image containers always reserve space and images are visible
+   This overrides conflicting rules in menu-modern.css that sometimes
+   set image containers via padding-top/height:0 which hides media. */
+.menu-item-card .item-image {
+  min-height: 160px !important;
+  aspect-ratio: 4 / 3 !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+.menu-item-card .item-image img {
+  position: relative !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  opacity: 1 !important;
+}
+

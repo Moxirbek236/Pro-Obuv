@@ -2857,3 +2857,243 @@ Make sure all imports, decorators, functions, etc. needed to set up the applicat
 2025-12-20 15:50:46,358 | WARNING | restaurant_app | not_found_error:1747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
 2025-12-20 15:53:06,783 | WARNING | restaurant_app | not_found_error:1747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
 2025-12-20 20:56:06,645 | WARNING | restaurant_app | not_found_error:1747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 16:53:44,848 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 16:59:05,327 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 17:00:59,020 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 17:01:15,537 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 17:03:23,658 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 17:05:52,965 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=39: Unexpected end of template. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-12-21 17:05:56,827 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=39: Unexpected end of template. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-12-21 17:06:10,854 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=39: Unexpected end of template. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-12-21 17:08:01,921 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 17:09:54,814 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 17:10:01,670 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 17:10:36,577 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 17:12:20,059 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 17:15:16,627 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=39: Unexpected end of template. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-12-21 20:53:19,216 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 20:53:48,584 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 21:27:02,297 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 21:29:17,233 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 21:32:34,580 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 21:33:13,604 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 21:38:37,470 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 21:38:51,774 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 21:39:01,376 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 21:41:39,288 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 21:47:01,221 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 21:47:12,159 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 21:50:19,780 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 21:50:30,550 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 21:52:13,807 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 21:53:26,461 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 21:54:27,099 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 21:54:40,719 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 22:01:57,347 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 22:03:31,736 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=40: Unexpected end of template. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-12-21 22:04:26,498 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 22:06:52,611 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 22:08:06,662 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 22:08:39,875 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=38: Unexpected end of template. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-12-21 22:09:14,113 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 22:11:04,504 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 22:11:16,644 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 22:11:36,988 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 22:17:15,304 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=39: Unexpected end of template. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-12-21 22:17:19,266 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=39: Unexpected end of template. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-12-21 22:17:26,879 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 22:17:34,793 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=39: Unexpected end of template. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-12-21 22:17:35,084 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 22:21:58,478 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 22:22:07,410 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=39: Unexpected end of template. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-12-21 22:22:07,605 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 22:24:35,520 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 22:27:07,558 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 22:28:05,687 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=39: Unexpected end of template. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-12-21 22:28:06,641 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 22:28:45,964 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 22:33:02,109 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 22:33:33,114 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 22:37:32,266 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 22:39:09,332 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=39: Unexpected end of template. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-12-21 22:39:28,697 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 22:41:16,086 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-21 22:41:30,173 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=40: Unexpected end of template. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-12-21 22:41:30,978 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 08:03:24,089 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=41: Unexpected end of template. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-12-22 08:03:50,914 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 08:15:09,756 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 08:15:30,460 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=39: Unexpected end of template. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-12-22 08:19:52,033 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=39: Unexpected end of template. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-12-22 08:20:26,305 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 08:30:38,371 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 08:30:48,799 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 08:31:38,065 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 08:36:54,521 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 08:36:54,579 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 08:37:19,660 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 08:38:14,933 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 09:05:18,903 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/apidocs
+2025-12-22 09:07:39,267 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/apidocs
+2025-12-22 09:10:43,405 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/apidocs
+2025-12-22 09:10:56,778 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/swagger-login
+2025-12-22 09:11:08,412 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/swagger-login
+2025-12-22 09:11:26,267 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/swagger-login
+2025-12-22 09:11:27,708 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/swagger-login
+2025-12-22 09:11:32,755 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/apidocs
+2025-12-22 09:11:34,621 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/swagger-login
+2025-12-22 09:12:13,854 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/apidocs
+2025-12-22 09:12:57,858 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/apidocs
+2025-12-22 09:18:12,906 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/api/docs
+2025-12-22 09:18:15,342 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/swagger
+2025-12-22 09:18:17,251 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/apidocs/
+2025-12-22 09:18:20,046 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/apidocs
+2025-12-22 09:18:22,973 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/_routes
+2025-12-22 09:18:36,207 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/apidocs
+2025-12-22 09:18:37,269 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/api/docs
+2025-12-22 09:18:38,254 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/swagger
+2025-12-22 09:18:39,432 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/apidocs/
+2025-12-22 09:18:40,618 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/apidocs
+2025-12-22 09:18:41,751 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/_routes
+2025-12-22 09:20:19,136 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/__debug_routes
+2025-12-22 09:20:30,711 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 09:21:51,626 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=41: Unexpected end of template. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-12-22 09:21:54,573 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=42: Unexpected end of template. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-12-22 09:22:03,425 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=41: Unexpected end of template. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-12-22 09:22:57,130 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 09:31:04,622 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 09:31:18,303 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 09:35:26,002 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 09:35:29,404 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=41: Unexpected end of template. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-12-22 09:35:29,527 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 09:35:32,920 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=41: Unexpected end of template. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-12-22 09:35:35,741 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 09:35:41,104 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 09:40:52,860 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 09:51:10,143 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=41: Unexpected end of template. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-12-22 09:51:15,106 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=41: Unexpected end of template. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-12-22 09:51:20,296 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=41: Unexpected end of template. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-12-22 10:07:54,278 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=42: Unexpected end of template. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-12-22 10:07:58,778 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=42: Unexpected end of template. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-12-22 13:34:39,925 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=42: Unexpected end of template. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-12-22 13:35:31,234 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 13:37:08,782 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 13:37:23,186 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 13:38:06,571 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=42: block 'content' defined twice
+2025-12-22 13:38:06,752 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 13:38:25,135 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 13:38:30,910 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=41: block 'content' defined twice
+2025-12-22 13:38:31,178 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 13:40:14,144 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 13:41:04,915 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 13:41:12,460 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 13:41:27,361 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 14:04:41,087 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 17:52:51,903 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 17:59:02,930 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 18:03:33,894 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 18:05:21,122 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 18:23:18,280 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 18:26:49,201 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 18:35:36,207 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 18:38:21,030 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 18:54:55,901 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 19:00:21,164 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 19:01:12,864 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 19:02:38,171 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 19:03:55,707 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 19:07:40,638 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 19:07:49,092 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=39: Unexpected end of template. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-12-22 19:09:32,461 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=51: Unexpected end of template. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-12-22 19:21:47,258 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=39: Encountered unknown tag 'endblock'. You probably made a nesting mistake. Jinja is expecting this tag, but currently looking for 'endfor' or 'else'. The innermost block that needs to be closed is 'for'.
+2025-12-22 19:21:50,924 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=39: Encountered unknown tag 'endblock'. You probably made a nesting mistake. Jinja is expecting this tag, but currently looking for 'endfor' or 'else'. The innermost block that needs to be closed is 'for'.
+2025-12-22 19:45:06,892 | ERROR | restaurant_app | product_detail:7928 | product_detail error for id=39: unexpected '<'
+2025-12-22 19:59:39,231 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 21:17:30,943 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 21:20:54,122 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 21:21:13,411 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 21:24:19,960 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 21:24:37,123 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 21:25:15,893 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 21:26:02,921 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 21:26:59,814 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 21:27:51,094 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 21:32:38,834 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 21:37:16,401 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 21:43:04,369 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 21:58:17,802 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 22:18:23,293 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 22:29:55,746 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-22 22:30:07,701 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 09:13:16,463 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 09:25:15,549 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 09:25:29,218 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 09:43:07,105 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 09:58:25,349 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 09:59:48,419 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 10:00:00,422 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 10:00:06,667 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 10:00:57,308 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 10:02:30,550 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/apidocs
+2025-12-23 10:02:35,458 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/apidoc
+2025-12-23 10:02:41,919 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/apidocs
+2025-12-23 10:02:47,443 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/apidocs/
+2025-12-23 10:03:51,613 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/apidocs/
+2025-12-23 10:07:29,487 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/swagger
+2025-12-23 10:07:32,893 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/swagger-ui
+2025-12-23 10:07:42,273 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/api/
+2025-12-23 10:07:59,351 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/api/menu
+2025-12-23 10:08:05,964 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/api/menu/
+2025-12-23 10:08:09,000 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/api/
+2025-12-23 10:08:30,723 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/api//api/cart-count
+2025-12-23 10:08:34,218 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/api/api/cart-count
+2025-12-23 10:08:47,991 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/docs
+2025-12-23 10:08:50,072 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/swagger-ui
+2025-12-23 10:08:51,864 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/openapi.json
+2025-12-23 10:08:53,914 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/swagger
+2025-12-23 10:12:01,286 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/swagger
+2025-12-23 10:12:19,205 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/swagger
+2025-12-23 10:12:26,222 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/swagger
+2025-12-23 10:12:27,112 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/swagger
+2025-12-23 10:12:27,369 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/swagger
+2025-12-23 10:12:27,635 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/swagger
+2025-12-23 10:12:27,885 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/swagger
+2025-12-23 13:23:54,765 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 13:24:24,586 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 13:31:09,402 | ERROR | restaurant_app | menu:7707 | Menu endpoint error: Encountered unknown tag 'break'. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-12-23 13:31:09,420 | ERROR | restaurant_app | menu:7737 | Menu fallback error: Encountered unknown tag 'break'. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-12-23 13:34:53,451 | ERROR | restaurant_app | menu:7707 | Menu endpoint error: unexpected '}', expected ')'
+2025-12-23 13:34:53,470 | ERROR | restaurant_app | menu:7737 | Menu fallback error: unexpected '}', expected ')'
+2025-12-23 13:47:53,468 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 13:51:02,442 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 13:51:29,617 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 13:55:02,958 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 14:08:01,048 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 14:10:46,846 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 14:14:46,281 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 14:27:09,371 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 14:28:29,580 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 14:42:48,744 | ERROR | restaurant_app | menu:7739 | Menu endpoint error: Encountered unknown tag 'endfor'. You probably made a nesting mistake. Jinja is expecting this tag, but currently looking for 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-12-23 14:42:48,762 | ERROR | restaurant_app | menu:7769 | Menu fallback error: Encountered unknown tag 'endfor'. You probably made a nesting mistake. Jinja is expecting this tag, but currently looking for 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2025-12-23 14:52:16,163 | ERROR | restaurant_app | menu:7739 | Menu endpoint error: 'globals' is undefined
+2025-12-23 14:52:16,185 | ERROR | restaurant_app | menu:7769 | Menu fallback error: 'globals' is undefined
+2025-12-23 14:53:11,052 | WARNING | restaurant_app | rate_limit_error:1877 | Rate limit exceeded: 127.0.0.1
+2025-12-23 15:00:18,815 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 15:02:35,406 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 15:02:47,313 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 15:05:46,279 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 15:08:56,710 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 15:09:33,677 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 15:12:32,060 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 15:16:30,122 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 15:17:07,073 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 15:17:22,300 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 15:17:28,043 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 15:17:40,945 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 15:18:10,673 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 15:20:01,662 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 15:27:45,109 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 15:34:32,222 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 15:37:25,577 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 15:40:56,467 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-23 15:43:45,002 | WARNING | restaurant_app | not_found_error:1794 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json

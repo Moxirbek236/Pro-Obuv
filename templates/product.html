@@ -1,576 +1,270 @@
 {% extends 'base.html' %}
 {% set localized_name = localized_field(item, 'name') or item.name %}
 {% set localized_description = localized_field(item, 'description') or item.description or "Sifatli spetsobuv va ish kiyimlari" %}
-{% block title %}{{ localized_name }} — Pro Obuv | {{ _('nav.home') }}{% endblock %}
+
+{% block title %}{{ localized_name }} — Pro Obuv{% endblock %}
+
 {% block seo_meta %}
-<meta name="description" content="{{ localized_name }} — {{ _('meta_product_suffix') }} {{ (localized_description[:150] if localized_description else '') }}" />
-<meta name="keywords" content="{{ localized_name }}, Pro Obuv, {{ _('footer.cat_specobuv') }}, {{ item.category if item.category else 'spetsobuv' }}, buyurtma, yetkazib berish" />
+<meta name="description" content="{{ localized_name }} — {{ _('meta_product_suffix') }}" />
 <meta property="og:title" content="{{ localized_name }} — Pro Obuv" />
-<meta property="og:description" content="{{ localized_name }} — {{ _('meta_product_suffix') }} {{ (localized_description[:150] if localized_description else '') }}" />
+<meta property="og:description" content="{{ localized_description[:150] }}" />
 <meta property="og:type" content="product" />
 <meta property="og:url" content="{{ canonical_url() }}" />
-  <meta property="og:image" content="{{ prefer_webp(item.image_url if item.image_url else url_for('static', filename='defoult.webp')) }}" />
-<meta property="product:price:amount" content="{{ item.price if item.price else '0' }}" />
-<meta property="product:price:currency" content="UZS" />
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="{{ item.name }} — Pro Obuv" />
-<meta name="twitter:description" content="{{ item.name }} — Sifatli spetsobuv va ish kiyimlari" />
-  <meta name="twitter:image" content="{{ prefer_webp(item.image_url if item.image_url else url_for('static', filename='defoult.webp')) }}" />
+<meta property="og:image" content="{{ prefer_webp(item.image_url if item.image_url else url_for('static', filename='defoult.webp')) }}" />
 <link rel="canonical" href="{{ canonical_url() }}" />
 <script type="application/ld+json">
-{%- set _img = prefer_webp(item.image_url if item.image_url else url_for('static', filename='defoult.webp')) -%}
-{%- if _img and (_img.startswith('http://') or _img.startswith('https://')) -%}
-  {%- set abs_image = _img -%}
-{%- else -%}
-  {%- set abs_image = (request.url_root.rstrip('/') + (_img if _img.startswith('/') else ('/' + _img))) -%}
-{%- endif -%}
-{%- set abs_url = canonical_url() -%}
-{%- set price_val = (item.price|float(0)) -%}
-{%- set availability = 'https://schema.org/InStock' if (item.available or item.get('available') if item is mapping else (item.available if item is not none else True)) else 'https://schema.org/OutOfStock' -%}
 {{ {
   "@context": "https://schema.org",
   "@type": "Product",
   "name": (localized_name or ""),
-  "description": (localized_description or "Sifatli spetsobuv va ish kiyimlari"),
-  "image": abs_image,
-  "url": abs_url,
-  "brand": {"@type": "Brand", "name": "Pro Obuv"},
-  "offers": {
-    "@type": "Offer",
-    "price": price_val,
-    "priceCurrency": "UZS",
-    "availability": availability,
-    "seller": {"@type": "Store", "name": "Pro Obuv"}
-  },
-  "category": (item.category or "Spetsobuv va Ish Kiyimlari")
+  "description": (localized_description or ""),
+  "image": (prefer_webp(item.image_url if item.image_url else url_for('static', filename='defoult.webp'))),
+  "url": canonical_url(),
+  "brand": {"@type": "Brand", "name": "Pro Obuv"}
 } | tojson }}
 </script>
-
-<script>
-  (function(){
-    document.addEventListener('DOMContentLoaded', function(){
-      // Read URL template from data attribute
-      const dataEl = document.getElementById('product-page-data');
-      if (!dataEl) return;
-      
-      const PRODUCT_URL_TEMPLATE = dataEl.dataset.urlTemplate || '/product/0';
-
-      function buildProductUrl(id){
-        try{
-          return PRODUCT_URL_TEMPLATE.replace(/\/0(\/)?$/, '/' + id);
-        }catch(e){
-          return '/product/' + id;
-        }
-      }
-    });
-  })();
-</script>
 {% endblock %}
+
 {% block head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/color_select.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/product-page.css') }}">
 <style>
-  /* MUI Rating Styles */
-  @media (min-width: 0px) {
-    .css-1741isb {
-        font-size: 40px;
-    }
-  }
-
-  .css-1741isb {
-    display: inline-flex;
-    position: relative;
-    font-size: 1.5rem;
-    color: rgb(250, 175, 0);
-    cursor: pointer;
-    text-align: left;
-    width: min-content;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .MuiRating-sizeSmall {
-    font-size: 1.25rem;
-  }
-
-  .css-ykqdxu {
-    cursor: inherit;
-    display: inline-flex;
-    position: relative;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .css-1xh6k8t {
-    user-select: none;
-    width: 1em;
-    height: 1em;
-    display: inline-block;
-    fill: currentcolor;
-    flex-shrink: 0;
-    transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-    font-size: 1.5rem;
-  }
-
-  .css-79elbk {
-    position: relative;
-    display: inline-block;
-  }
-
-  .css-79elbk .MuiRating-iconFilled {
-    position: absolute !important;
-    left: 0 !important;
-    top: 0 !important;
-    width: 100% !important;
-    overflow: hidden !important;
-  }
-
-  .css-79elbk .MuiRating-iconFilled svg {
-    width: 50% !important;
-  }
-
-  .css-79elbk .MuiRating-iconEmpty {
-    width: 100% !important;
-  }
-
-  .MuiRating-visuallyHidden {
-    border: 0;
-    clip: rect(0 0 0 0);
-    height: 1px;
-    margin: -1px;
-    overflow: hidden;
-    padding: 0;
-    position: absolute;
-    white-space: nowrap;
-    width: 1px;
-  }
-
-  .css-1cw4hi4 {
-    user-select: none;
-    width: 1em;
-    height: 1em;
-    display: inline-block;
-    fill: currentcolor;
-    flex-shrink: 0;
-    font-size: inherit;
-  }
-
-  .MuiRating-iconFilled {
-    color: rgb(250, 175, 0);
-  }
-
-  .MuiRating-iconEmpty {
-    color: rgba(0, 0, 0, 0.26);
-  }
+  .item-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .product-media img { max-width: 100%; display: block; }
+  .thumbnails { display:flex; gap:8px; margin-top:10px; }
+  .thumbnails .thumb { cursor:pointer; border-radius:6px; overflow:hidden; width:64px; height:64px; flex:0 0 64px; }
+  .thumbnails .thumb img { width:100%; height:100%; object-fit:cover; }
+  /* ensure thumbnails receive pointer events (prevent accidental overlays from blocking clicks) */
+  .thumbnails, .thumbnails .thumb, .thumbnails .thumb img { pointer-events: auto; }
+  .comment-meta { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:6px; }
+  .comment-stars { color: #ffd166; font-size:16px; }
+  .comment-date { color:#6b7280; font-size:12px; }
 </style>
 {% endblock %}
-{% block content %}
-{# Debug banner #}
-{% if request.args.get('debug') %}
-<div id="debug-localized" style="position:fixed;left:12px;top:12px;z-index:99999;padding:10px;background:rgba(255,255,255,0.95);border:2px solid #222;color:#111;max-width:calc(100% - 40px);font-size:14px;line-height:1.2;">
-  <strong>DEBUG:</strong>
-  <div><strong>localized_name:</strong> {{ localized_name|e }}</div>
-  <div><strong>localized_description:</strong> {{ localized_description[:200]|e }}{% if localized_description|length > 200 %}…{% endif %}</div>
-  <div style="margin-top:6px;font-size:12px;color:#666">Remove <code>?debug=1</code> from the URL to hide this box.</div>
-</div>
-{% endif %}
 
-{# Configuration Data Block for JS #}
-<div id="product-page-data"
-     data-url-template="{{ url_for('product_detail', item_id=0) }}"
-     data-default-image="{{ prefer_webp(item.image_url or url_for('static', filename='defoult.webp')) }}"
-     data-is-favorites-user="{{ 'true' if (session.get('user_id') and not session.get('staff_id') and not session.get('courier_id') and not session.get('super_admin')) else 'false' }}"
-     data-favorites-login-message="Iltimos oldin saytdan avtorizatsiyadan o'ting"
-     style="display:none;"></div>
+{% block content %}
+<div id="product-page-data" data-url-template="{{ url_for('product_detail', item_id=0) }}" data-default-image="{{ prefer_webp(item.image_url or url_for('static', filename='defoult.webp')) }}" style="display:none"></div>
 
 {% set all_media = media if media else [] %}
 {% if all_media|length == 0 and item.image_url %}
   {% set all_media = [{'media_url': item.image_url, 'media_type':'image'}] %}
 {% endif %}
-<script type="application/json" id="product-media-data">
-  {{ all_media|tojson }}
-</script>
-
-<script>
-  try {
-     console.log('all_media from template:', JSON.parse(document.getElementById('product-media-data').textContent));
-  } catch(e) {}
-</script>
 
 <div class="product-container">
   <div class="product-media">
-    <form
-      method="post"
-      action="{{ url_for('add_to_favorites', menu_item_id=item.id) }}"
-      class="favorite-form-product"
-      onclick="event.stopPropagation()">
-      <button
-        type="submit"
-        class="btn-favorite-product{% if is_favorite %} active{% endif %}">❤</button>
-    </form>
+    <div class="media-stage" id="mediaStageDesktop">
+      {% set first = all_media[0] if all_media|length > 0 else None %}
+      {% if first and (first.media_type and first.media_type.startswith('video')) %}
+        <video id="mainMediaDesktop" src="{{ first.media_url }}" controls muted></video>
+      {% else %}
+        <img id="mainMediaDesktop" src="{{ prefer_webp((first.media_url if first else item.image_url) or url_for('static', filename='defoult.webp')) }}" alt="{{ localized_name }}">
+      {% endif %}
+    </div>
 
-    {# Desktop: classic main image + thumbnails #}
-    <div class="media-stage-desktop">
-      <div class="media-stage" id="mediaStageDesktop">
-        {% set first = all_media[0] if all_media|length > 0 else None %}
-        {% if first and first.media_type and first.media_type.startswith('video') %}
-          <video id="mainMediaDesktop" src="{{ first.media_url }}" controls muted></video>
-        {% else %}
-          <img id="mainMediaDesktop" src="{{ prefer_webp((first.media_url if first else item.image_url) or url_for('static', filename='defoult.webp')) }}" alt="{{ localized_name }}" />
-        {% endif %}
-
-        {% if all_media|length > 1 %}
-        <button class="media-btn left" id="prevBtnDesktop" title="Oldingi">‹</button>
-        <button class="media-btn right" id="nextBtnDesktop" title="Keyingi">›</button>
-        <button class="media-btn zoom" id="zoomBtnDesktop" title="Kattalashtirish">🔍</button>
-        {% endif %}
-      </div>
-
-      {% if all_media|length > 1 %}
+    {% if all_media|length > 1 %}
       <div class="thumbnails" id="thumbnailsDesktop">
         {% for m in all_media %}
+          {% set thumb_src = prefer_webp(m.media_url) %}
           <div class="thumb" data-idx="{{ loop.index0 }}">
-            <img src="{{ prefer_webp(m.media_url) }}" alt="thumb" />
+            <img src="{{ thumb_src }}" alt="thumb {{ loop.index }}"
+                 onmouseenter="(function(){ try{ const main=document.getElementById('mainMediaDesktop'); if(main){ if((main.tagName||'').toLowerCase()==='img'){ main.src='{{ thumb_src }}'; main.style.transform='scale(1.05)'; } else { try{ main.pause(); }catch(e){} main.src='{{ thumb_src }}'; try{ main.load(); }catch(e){} } } }catch(e){} })()"
+                 onmouseleave="(function(){ try{ const main=document.getElementById('mainMediaDesktop'); if(main){ main.style.transform=''; } }catch(e){} })()"
+            >
           </div>
         {% endfor %}
       </div>
-      {% endif %}
-    </div>
-
-    {# Mobile-only: gallery #}
-    <div class="gallery-mobile">
-      <div class="gallery" id="productGallery">
-        <div class="gallery-track">
-          {% for m in all_media %}
-            {% if m.media_type and m.media_type.startswith('video') %}
-              <video controls muted preload="metadata" src="{{ m.media_url }}"></video>
-            {% else %}
-              <img src="{{ prefer_webp(m.media_url) }}" 
-                   alt="{{ localized_name }}" 
-                   loading="lazy" 
-                   decoding="async" 
-                   data-fallback-src="{{ prefer_webp(url_for('static', filename='defoult.webp')) }}"
-                   class="js-img-fallback" />
-            {% endif %}
-          {% endfor %}
-        </div>
-      </div>
-
-      {% if all_media|length > 1 %}
-      <div class="thumbnails" id="thumbnailsMobile">
-        {% for m in all_media %}
-          <div class="thumb" data-idx="{{ loop.index0 }}">
-            <img src="{{ prefer_webp(m.media_url) }}" alt="thumb" />
-          </div>
-        {% endfor %}
-      </div>
-      {% endif %}
-    </div>
+    {% endif %}
   </div>
 
   <div class="product-details">
-    <h1>{{ localized_name }}</h1>
-    <p class="description">{{ localized_description or '' }}</p>
+    <h1 class="item-name">{{ localized_name }}</h1>
+    <p class="description">{{ localized_description }}</p>
 
     <div class="rating-row">
-      <input type="hidden" name="rating" id="ratingInput" value="{{ item.rating|int }}" />
-      <span class="MuiRating-root MuiRating-sizeMedium css-1741isb" title="{{ "%.1f"|format(item.rating|float(0)) }}">
-        {% set rating = item.rating|float(0) %}
-        {% for i in range(1, 6) %}
+      {% set rating = item.rating|float(0) %}
+      <div class="stars">
+        {% for i in range(1,6) %}
           {% if rating >= i %}
-            <span class="MuiRating-icon MuiRating-iconFilled css-1xh6k8t">
-              <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1cw4hi4" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarIcon">
-                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path>
-              </svg>
-            </span>
+            <span class="star">★</span>
           {% elif rating >= i - 0.5 %}
-            <span class="MuiRating-decimal css-79elbk">
-              <span class="MuiRating-icon MuiRating-iconFilled css-1xh6k8t" style="width: 50%; overflow: hidden;">
-                <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1cw4hi4" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarIcon">
-                  <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"></path>
-                </svg>
-              </span>
-              <span class="MuiRating-icon MuiRating-iconEmpty css-1xh6k8t" style="width: 50%; overflow: hidden;">
-                <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1cw4hi4" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarBorderIcon">
-                  <path d="M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"></path>
-                </svg>
-              </span>
-            </span>
+            <span class="star half">★</span>
           {% else %}
-            <span class="MuiRating-icon MuiRating-iconEmpty css-1xh6k8t">
-              <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1cw4hi4" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarBorderIcon">
-                <path d="M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"></path>
-              </svg>
-            </span>
+            <span class="star empty">☆</span>
           {% endif %}
         {% endfor %}
-        <span class="MuiRating-visuallyHidden">{{ "%.1f"|format(rating) }} Stars</span>
-      </span>
-      <div class="rating-text" id="ratingText" style="display:flex;align-items:center;gap:8px">
-        <span id="ratingSelectedText">{{ item.rating|int }}</span>
-        <span style="color:#666;font-size:0.9em">({{ item.orders_count or 0 }} buyurtma)</span>
       </div>
+      <div class="rating-text">{{ "%.1f"|format(rating) }} ({{ item.orders_count or 0 }})</div>
     </div>
 
-    {# Size & color selectors #}
-    <div class="options-row" id="productOptionsRow">
+    <div class="options-row">
       <div class="select-wrapper">
         <label for="sizeSelect">O'lcham</label>
-        <select id="sizeSelect" name="size" class="form-select">
+        <select id="sizeSelect" name="size">
           <option value="">— O'lcham tanlang —</option>
           {% set _sizes = (item.sizes or '39,40,41,42,43').split(',') %}
-          {% for s in _sizes %}
-            {% if s|trim %}
-              <option value="{{ s|trim }}">{{ s|trim }}</option>
-            {% endif %}
-          {% endfor %}
+          {% for s in _sizes %}{% if s|trim %}<option value="{{ s|trim }}">{{ s|trim }}</option>{% endif %}{% endfor %}
         </select>
       </div>
 
-      <div class="select-wrapper colors-wrapper" style="flex: 0 0 auto; min-width: 220px;">
+      <div class="select-wrapper">
         <label for="colorSelect">Rang</label>
-        {% set _colors = (item.colors or "black,white").split(',') %}
-        {% set color_map = {
-          'qora':'#000000','oq':'#FFFFFF','yashil':'#008000',"ko'k":'#0000FF','koʻk':'#0000FF',
-          'qizil':'#FF0000','sariq':'#FFD700','to\'q sariq':'#FFA500','pushti':'#FFC0CB','binafsha':'#800080',
-          'jigarrang':'#8B4513','bej':'#F5F5DC','kulrang':'#808080','navy':'#000080','xaki':'#F0E68C',
-          'black':'#000000','white':'#FFFFFF','brown':'#8B4513','gray':'#808080',
-          'red':'#FF0000','blue':'#0000FF','green':'#008000','yellow':'#FFD700','orange':'#FFA500',
-          'purple':'#800080','pink':'#FFC0CB','beige':'#F5F5DC','khaki':'#F0E68C'
-        } %}
-        {% set color_translations = {
-          'black': {'uz':'Qora','ru':'Черный','en':'Black','kz':'Қара'},
-          'qora': {'uz':'Qora','ru':'Черный','en':'Black','kz':'Қара'},
-          'white': {'uz':'Oq','ru':'Белый','en':'White','kz':'Ақ'},
-          'oq': {'uz':'Oq','ru':'Белый','en':'White','kz':'Ақ'},
-          'red': {'uz':'Qizil','ru':'Красный','en':'Red','kz':'Қызыл'},
-          'blue': {'uz':'Ko\'k','ru':'Синий','en':'Blue','kz':'Көк'},
-          'ko\'k': {'uz':'Ko\'k','ru':'Синий','en':'Blue','kz':'Көк'},
-          'koʻk': {'uz':'Koʻk','ru':'Синий','en':'Blue','kz':'Көк'},
-          'green': {'uz':'Yashil','ru':'Зелёный','en':'Green','kz':'Жасыл'},
-          'yashil': {'uz':'Yashil','ru':'Зелёный','en':'Green','kz':'Жасыл'},
-          'yellow': {'uz':'Sariq','ru':'Жёлтый','en':'Yellow','kz':'Сары'},
-          'orange': {'uz':'To\'q Sariq','ru':'Оранжевый','en':'Orange','kz':'Қызғылт сары'},
-          'pink': {'uz':'Pushti','ru':'Розовый','en':'Pink','kz':'Күлгін'},
-          'purple': {'uz':'Binafsha','ru':'Фиолетовый','en':'Purple','kz':'Күлгін'},
-          'brown': {'uz':'Jigarrang','ru':'Коричневый','en':'Brown','kz':'Қоңыр'},
-          'beige': {'uz':'Bej','ru':'Бежевый','en':'Beige','kz':'Беж'},
-          'gray': {'uz':'Kulrang','ru':'Серый','en':'Gray','kz':'Күрең'},
-          'kulrang': {'uz':'Kulrang','ru':'Серый','en':'Gray','kz':'Күрең'},
-          'navy': {'uz':'Navy (To\'q ko\'k)','ru':'Тёмно-синий','en':'Navy','kz':'Түсі қою көк'},
-          'khaki': {'uz':'Xaki','ru':'Хаки','en':'Khaki','kz':'Хаки'}
-        } %}
-        {% set interface_lang = (session.get('interface_language') or 'uz') %}
-
-        <div class="compact-color-select">
-          <select id="colorSelect" name="color" class="form-select">
-            <option value="">— Rang tanlang —</option>
-            {% for c in _colors %}
-              {% set cv = c|trim %}
-              {% if cv %}
-                {% set ck = cv|lower %}
-                {% set hexval = color_map.get(ck, cv) %}
-                {% set trans = color_translations.get(ck, None) %}
-                {% set display = trans.get(interface_lang, cv) if trans else cv %}
-                <option value="{{ cv }}" data-hex="{{ hexval }}">{{ display }}</option>
-              {% endif %}
-            {% endfor %}
-          </select>
-          {% set first_color = (_colors[0]|trim) if _colors|length > 0 else '' %}
-          {% set first_hex = color_map.get(first_color|lower, first_color) if first_color else 'transparent' %}
-          <span id="selectedColorSwatch" class="color-swatch small" data-bg-color="{{ first_hex }}" aria-hidden="true" style="display: inline-block; width: 30px; height: 30px; border: 1px solid #ccc; border-radius: 3px; margin-left: 10px;"></span>
-        </div>
-
-        <div class="color-translations" aria-hidden="false">
-          <small style="font-weight:700">Ranglar ({{ interface_lang }}):</small>
-          <ul>
-            {% for c in _colors %}
-              {% set cv = c|trim %}
-              {% if cv %}
-                {% set ck = cv|lower %}
-                {% set trans = color_translations.get(ck, None) %}
-                {% set display = trans.get(interface_lang, cv) if trans else cv %}
-                <li style="margin-top:6px"> <strong>{{ display }}</strong> <span style="color:#666">({{ cv }})</span></li>
-              {% endif %}
-            {% endfor %}
-          </ul>
-        </div>
+        <select id="colorSelect" name="color">
+          <option value="">— Rang tanlang —</option>
+          {% set _colors = (item.colors or 'black,white').split(',') %}
+          {% for c in _colors %}{% if c|trim %}<option value="{{ c|trim }}">{{ c|trim }}</option>{% endif %}{% endfor %}
+        </select>
       </div>
     </div>
 
-    {% if is_staff or is_super_admin %}
-      <form
-        method="POST"
-        action="{{ url_for('add_to_cart') }}"
-        id="addToCartForm">
-        <input type="hidden" name="menu_item_id" value="{{ item.id }}" />
-        <div class="quantity-row">
-          <label style="min-width: 70px; font-weight: 600">Miqdor</label>
-          <button type="button" class="qty-btn" id="decQty">−</button>
-          <input
-            type="number"
-            name="quantity"
-            id="quantityInput"
-            class="qty-input"
-            value="1"
-            min="1"
-            max="99" />
-          <button type="button" class="qty-btn" id="incQty">+</button>
-        </div>
-        <div style="margin-top: 16px">
-          <button type="submit" class="add-cart-btn">
-            🛒 Savatchaga qo'shish
-          </button>
-        </div>
-      </form>
-    {% else %}
-      {% set mp = marketplaces or {} %}
-      <div class="marketplace-block">
-        <div class="marketplace-header" aria-hidden="true">Buyurtma berish</div>
-        {% if mp and mp|length > 0 %}
-          <div class="marketplace-buttons" role="group" aria-label="Marketplaces">
-            {% for key, url in mp.items() %}
-              {% if url %}
-                {% set k = (key or '')|lower %}
-                {% if 'olx' in k %}
-                  <a href="{{ url }}" target="_blank" rel="noopener noreferrer" class="marketplace-btn mp-olx">
-                    <span class="mp-icon">🛍️</span><span>{{ 'OLX' }}</span>
-                  </a>
-                {% elif 'uzum' in k %}
-                  <a href="{{ url }}" target="_blank" rel="noopener noreferrer" class="marketplace-btn mp-uzum">
-                    <span class="mp-icon">🛍️</span><span>{{ 'Uzum' }}</span>
-                  </a>
-                {% elif 'yandex' in k or 'yand' in k %}
-                  <a href="{{ url }}" target="_blank" rel="noopener noreferrer" class="marketplace-btn mp-yandex">
-                    <span class="mp-icon">🛍️</span><span>{{ 'Yandex Market' }}</span>
-                  </a>
-                {% else %}
-                  <a href="{{ url }}" target="_blank" rel="noopener noreferrer" class="marketplace-btn mp-generic">
-                    <span class="mp-icon">🛒</span><span>{{ key|capitalize }}</span>
-                  </a>
-                {% endif %}
-              {% endif %}
-            {% endfor %}
-          </div>
+    <!-- Comments -->
+    <div class="comments-section" style="margin-top:18px;">
+      <h3>Mijozlar sharhlari</h3>
+      <form method="POST" action="{{ url_for('post_comment', item_id=item.id) }}">
+        {% if not session.get('user_id') %}
+          <div style="background:#fff3cd;padding:10px;border-radius:6px;margin-bottom:8px;">Iltimos tizimga kiring.</div>
         {% else %}
-          <div style="color:#666; margin-top:8px">Mahsulotni xarid qilish uchun bozor linklari mavjud emas.</div>
+          <!-- Clickable rating input -->
+          <div style="margin-bottom:8px;">
+            <label style="display:block;font-weight:700;margin-bottom:6px;">Sizning bahongiz</label>
+            <div class="rating-input-stars" id="ratingInputStars" aria-hidden="false">
+              <span class="star" data-value="1">★</span>
+              <span class="star" data-value="2">★</span>
+              <span class="star" data-value="3">★</span>
+              <span class="star" data-value="4">★</span>
+              <span class="star" data-value="5">★</span>
+            </div>
+            <input type="hidden" name="rating" id="ratingInput" value="0">
+          </div>
+
+          <textarea name="comment" rows="3" style="width:100%;padding:8px;border-radius:6px;border:1px solid #e6e6e6;"></textarea>
+          <div style="text-align:right;margin-top:8px;"><button type="submit" class="add-cart-btn">Sharh yuborish</button></div>
+        {% endif %}
+      </form>
+
+      <div id="commentsList" style="margin-top:12px;">
+        {% if comments and comments|length > 0 %}
+          {% for c in comments %}
+            <div class="comment-item" style="padding:10px;border:1px solid #eee;border-radius:8px;margin-bottom:8px;">
+              <div class="comment-meta">
+                <div class="comment-author" style="font-weight:700">{{ c.author or c.user_name or 'Anonim' }}</div>
+                <div style="margin-left:auto;display:flex;align-items:center;gap:10px;">
+                  <div class="comment-stars" aria-hidden="true">
+                    {% set cr = (c.rating or c.rate or 0) | float(0) %}
+                    {% for i in range(1,6) %}
+                      {% if cr >= i %}
+                        <span>★</span>
+                      {% else %}
+                        <span style="color:#e6e6e6">☆</span>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                  <div class="comment-date">{{ (c.created_at or '')[:19].replace('T',' ') if (c.created_at) else '' }}</div>
+                </div>
+              </div>
+              <div style="color:#333">{{ c.comment or c.text }}</div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div style="color:#666">Sharhlar mavjud emas.</div>
         {% endif %}
       </div>
-    {% endif %}
+    </div>
 
-    <!-- Comments -->
-    <div class="comments-section" style="margin-top: 24px; border-top: 1px solid #eee; padding-top: 18px">
-      <h3>Mijozlar sharhlari</h3>
-      <form method="POST" action="{{ url_for('post_comment', item_id=item.id) }}" id="commentForm" style="margin-top:12px">
-        {% if not session.get('user_id') %}
-        <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 12px; margin-bottom: 12px; color: #856404;">
-          <strong>Diqqat:</strong> Sharh qoldirish va baho berish uchun avval <a href="{{ url_for('login') }}" style="color: #0d6efd;">tizimga kiring</a>.
-        </div>
-        {% endif %}
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-          <label style="min-width:70px;font-weight:600">Rating</label>
-          <input type="hidden" name="rating" id="ratingInputBottom" value="5" />
-          <span class="MuiRating-root MuiRating-sizeMedium css-1741isb" {% if not session.get('user_id') %}style="pointer-events: none; opacity: 0.6;"{% endif %}>
-            {% for i in range(1, 6) %}
-              {% if loop.index == 1 %}
-                <span class="MuiRating-decimal css-79elbk">
-                  <label for="rating-bottom-{{ loop.index - 0.5 }}" class="css-ykqdxu" style="width: 0%; overflow: hidden; position: absolute;">
-                    <span class="MuiRating-icon MuiRating-iconEmpty css-1xh6k8t">
-                      <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1cw4hi4" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarBorderIcon">
-                        <path d="M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"></path>
-                      </svg>
-                    </span>
-                    <span class="MuiRating-visuallyHidden">{{ loop.index - 0.5 }} Stars</span>
-                  </label>
-                  <input class="MuiRating-visuallyHidden" id="rating-bottom-{{ loop.index - 0.5 }}" type="radio" name="rating-bottom" value="{{ loop.index - 0.5 }}" data-rating="{{ loop.index - 0.5 }}">
-                  <label for="rating-bottom-{{ loop.index }}" class="css-ykqdxu">
-                    <span class="MuiRating-icon MuiRating-iconEmpty css-1xh6k8t">
-                      <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1cw4hi4" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarBorderIcon">
-                        <path d="M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"></path>
-                      </svg>
-                    </span>
-                    <span class="MuiRating-visuallyHidden">{{ loop.index }} Star</span>
-                  </label>
-                  <input class="MuiRating-visuallyHidden" id="rating-bottom-{{ loop.index }}" type="radio" name="rating-bottom" value="{{ loop.index }}" data-rating="{{ loop.index }}" checked>
-                </span>
-              {% elif loop.index < 5 %}
-                <span class="MuiRating-decimal css-79elbk">
-                  <label for="rating-bottom-{{ loop.index - 0.5 }}" class="css-ykqdxu" style="width: 0%; overflow: hidden; position: absolute;">
-                    <span class="MuiRating-icon MuiRating-iconEmpty css-1xh6k8t">
-                      <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1cw4hi4" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarBorderIcon">
-                        <path d="M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"></path>
-                      </svg>
-                    </span>
-                    <span class="MuiRating-visuallyHidden">{{ loop.index - 0.5 }} Stars</span>
-                  </label>
-                  <input class="MuiRating-visuallyHidden" id="rating-bottom-{{ loop.index - 0.5 }}" type="radio" name="rating-bottom" value="{{ loop.index - 0.5 }}" data-rating="{{ loop.index - 0.5 }}">
-                  <label for="rating-bottom-{{ loop.index }}" class="css-ykqdxu">
-                    <span class="MuiRating-icon MuiRating-iconEmpty css-1xh6k8t">
-                      <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1cw4hi4" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarBorderIcon">
-                        <path d="M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"></path>
-                      </svg>
-                    </span>
-                    <span class="MuiRating-visuallyHidden">{{ loop.index }} Stars</span>
-                  </label>
-                  <input class="MuiRating-visuallyHidden" id="rating-bottom-{{ loop.index }}" type="radio" name="rating-bottom" value="{{ loop.index }}" data-rating="{{ loop.index }}">
-                </span>
-              {% else %}
-                <span class="MuiRating-decimal css-79elbk">
-                  <label for="rating-bottom-{{ loop.index - 0.5 }}" class="css-ykqdxu" style="width: 0%; overflow: hidden; position: absolute;">
-                    <span class="MuiRating-icon MuiRating-iconEmpty css-1xh6k8t">
-                      <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1cw4hi4" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarBorderIcon">
-                        <path d="M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"></path>
-                      </svg>
-                    </span>
-                    <span class="MuiRating-visuallyHidden">{{ loop.index - 0.5 }} Stars</span>
-                  </label>
-                  <input class="MuiRating-visuallyHidden" id="rating-bottom-{{ loop.index - 0.5 }}" type="radio" name="rating-bottom" value="{{ loop.index - 0.5 }}" data-rating="{{ loop.index - 0.5 }}">
-                  <label for="rating-bottom-{{ loop.index }}" class="css-ykqdxu">
-                    <span class="MuiRating-icon MuiRating-iconEmpty css-1xh6k8t">
-                      <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1cw4hi4" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarBorderIcon">
-                        <path d="M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"></path>
-                      </svg>
-                    </span>
-                    <span class="MuiRating-visuallyHidden">{{ loop.index }} Stars</span>
-                  </label>
-                  <input class="MuiRating-visuallyHidden" id="rating-bottom-{{ loop.index }}" type="radio" name="rating-bottom" value="{{ loop.index }}" data-rating="{{ loop.index }}">
-                </span>
-              {% endif %}
-            {% endfor %}
-            <label class="MuiRating-label MuiRating-pristine css-ykqdxu">
-              <input class="MuiRating-visuallyHidden" id="rating-bottom-empty" type="radio" name="rating-bottom" value="">
-              <span class="MuiRating-visuallyHidden">Empty</span>
-            </label>
-          </span>
-          <div id="ratingSelectedTextBottom" style="margin-left:8px;color:#444;font-weight:600">5</div>
-        </div>
-        <div style="margin-bottom: 8px">
-          <label style="font-weight: 600">Sharhingiz</label>
-          <textarea name="comment" rows="3" placeholder="Sharh yozing..." style="width:100%;padding:8px;border-radius:6px;border:1px solid #e6e6e6;"></textarea>
-        </div>
-        <div style="text-align: right">
-          <button type="submit" class="add-cart-btn" {% if not session.get('user_id') %}disabled title="Avval tizimga kiring"{% endif %}>Sharh yuborish</button>
-        </div>
-      </form>
-      <div id="commentsList" class="comments-list" style="margin-top: 18px">
-        {% if comments and comments|length > 0 %} {% for c in comments %}
-        <div class="comment-item" style="padding: 10px; border: 1px solid #eee; border-radius: 8px; margin-bottom: 10px; background: #fff;">
-          <div class="comment-author" style="font-weight: 700; color: #2d3748; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
-            {{ c.author or c.user_name or 'Anonim' }}
-            <span class="MuiRating-root MuiRating-sizeSmall css-1741isb" style="font-size: 20px;">
-              {% set comment_rating = c.rating|float(0) %}
-              {% for i in range(1, 6) %}
-                {% if comment_rating >= i %}
-                  <span class="MuiRating-icon MuiRating-iconFilled css-1xh6k8t">
-                    <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1cw4hi4" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarIcon">
-                      <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path>
-                    </svg>
-                  </span>
-                {% elif comment_rating >= i - 0.5 %}
-                  <span class="MuiRating-decimal css-79elbk">
-                    <span class="MuiRating-icon MuiRating-iconFilled css-1xh6k8t" style="width: 50%; overflow: hidden;">
-                      <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1cw4hi4" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarIcon">
-                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path>
-                      </svg>
-                    </span>
-                    <span class="MuiRating-icon MuiRating-iconEmpty css-1xh6k8t" style="width: 50%; overflow: hidden;">
-                      <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1cw4hi4" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarBorderIcon">
-                     
+  </div>
+</div>
+
+<script>
+  (function(){
+    try{
+      const thumbs = document.querySelectorAll('#thumbnailsDesktop .thumb');
+      if(thumbs && thumbs.length>0){
+        // mark first thumb active by default
+        thumbs[0].classList.add('active');
+      }
+      document.querySelectorAll('#thumbnailsDesktop .thumb').forEach(function(t){
+        // attach to thumb container
+        t.addEventListener('click', function(e){
+          try {
+            e.stopPropagation();
+            const thumbImg = this.querySelector('img');
+            if (!thumbImg) return;
+            const src = thumbImg.getAttribute('src') || thumbImg.src;
+            const mediaStage = document.getElementById('mediaStageDesktop');
+            if (!mediaStage) return;
+            const main = document.getElementById('mainMediaDesktop');
+            if (main) {
+              const tag = (main.tagName || '').toLowerCase();
+              if (tag === 'img') {
+                main.src = src;
+                if (typeof window.hideSkeleton === 'function') window.hideSkeleton(main);
+              } else if (tag === 'video') {
+                try {
+                  main.pause();
+                } catch (e) {}
+                main.src = src;
+                try { main.load(); } catch(e){}
+              }
+            } else {
+              // fallback: replace inner HTML with an img
+              mediaStage.innerHTML = '<img id="mainMediaDesktop" src="'+src+'" alt="'+(document.title||'')+'">';
+            }
+            // update active thumb
+            try{
+              document.querySelectorAll('#thumbnailsDesktop .thumb').forEach(function(x){ x.classList.remove('active'); });
+              this.classList.add('active');
+            }catch(_){}
+          } catch (e) { console.warn('thumb click error', e); }
+        });
+        // also attach to inner img as a fallback
+        try{
+          const img = t.querySelector('img');
+          if(img){
+            img.style.pointerEvents = 'auto';
+            img.addEventListener('click', function(e){
+              e.stopPropagation();
+              t.click();
+            });
+          }
+        }catch(_){}
+      });
+    }catch(e){console.warn(e)}
+  })();
+</script>
+
+<script>
+  // Rating stars behavior for comment form
+  (function(){
+    try{
+      const starsWrap = document.getElementById('ratingInputStars');
+      const ratingInput = document.getElementById('ratingInput');
+      if (starsWrap && ratingInput) {
+        const stars = Array.from(starsWrap.querySelectorAll('.star'));
+        function setVisual(val){
+          stars.forEach(s => {
+            const v = parseInt(s.getAttribute('data-value') || '0', 10);
+            if (v <= val) {
+              s.classList.add('selected');
+            } else {
+              s.classList.remove('selected');
+            }
+          });
+        }
+        stars.forEach(s => {
+          s.addEventListener('mouseenter', function(){
+            const v = parseInt(this.getAttribute('data-value')||'0',10);
+            setVisual(v);
+          });
+          s.addEventListener('mouseleave', function(){
+            setVisual(parseInt(ratingInput.value||'0',10));
+          });
+          s.addEventListener('click', function(){
+            const v = parseInt(this.getAttribute('data-value')||'0',10);
+            ratingInput.value = v;
+            setVisual(v);
+          });
+        });
+      }
+    }catch(e){console.warn('rating init failed', e)}
+  })();
+</script>
+
+{% endblock %}

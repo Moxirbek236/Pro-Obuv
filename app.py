@@ -7541,6 +7541,38 @@ def menu():
                     # Attach media to item
                     item["media"] = media_dict.get(item.get("id"), [])
 
+                    # Normalize and compute a single `primary_image` server-side
+                    try:
+                        primary_raw = None
+                        medias = item.get('media') or []
+                        # prefer entries marked as is_main
+                        main_candidates = [m for m in medias if isinstance(m, dict) and m.get('is_main')]
+                        if main_candidates:
+                            m0 = main_candidates[0]
+                            primary_raw = m0.get('media_url') or m0.get('image_url') or None
+                        else:
+                            # fallback to first media entry if present
+                            if medias:
+                                first = medias[0]
+                                if isinstance(first, dict):
+                                    primary_raw = first.get('media_url') or first.get('image_url') or None
+                                else:
+                                    primary_raw = first
+
+                        # fallback to item.image_url or default static image
+                        if not primary_raw:
+                            primary_raw = item.get('image_url') or '/static/defoult.webp'
+
+                        # Use prefer_webp when available to produce optimized URL
+                        try:
+                            primary_pref = prefer_webp(primary_raw)
+                        except Exception:
+                            primary_pref = primary_raw
+
+                        item['primary_image'] = primary_pref
+                    except Exception:
+                        item['primary_image'] = item.get('image_url') or '/static/defoult.webp'
+
                     menu_items.append(item)
                 except Exception as e:
                     app_logger.warning(f"Menu item row processing error: {str(e)}")
@@ -22193,3 +22225,34 @@ else:
             app_logger.warning("Failed to start telegram bot via import-time fallback")
         except Exception:
             pass
+
+
+# Swagger endpoints are gated behind ENABLE_SWAGGER environment variable.
+# Set ENABLE_SWAGGER=1 in the environment to enable /swagger and /openapi.json.
+if os.environ.get('ENABLE_SWAGGER', '0') == '1':
+    @app.route('/swagger')
+    def swagger_ui():
+        try:
+            openapi_url = url_for('openapi_spec')
+            return render_template('swagger_ui.html', openapi_url=openapi_url)
+        except Exception:
+            return "Swagger UI not available", 500
+
+
+    @app.route('/openapi.json')
+    def openapi_spec():
+        try:
+            # Prefer a static file if present (allows a full spec to be dropped into static/)
+            static_path = os.path.join(app.root_path, 'static', 'openapi.json')
+            if os.path.exists(static_path):
+                return send_from_directory(os.path.join(app.root_path, 'static'), 'openapi.json', mimetype='application/json')
+
+            # Otherwise return a minimal placeholder OpenAPI document so Swagger UI can load.
+            spec = {
+                'openapi': '3.0.1',
+                'info': {'title': 'Safety.uz API (auto)', 'version': '0.1'},
+                'paths': {}
+            }
+            return jsonify(spec)
+        except Exception:
+            return jsonify({'openapi': '3.0.1', 'info': {'title': 'error', 'version': '0.0'}, 'paths': {}})

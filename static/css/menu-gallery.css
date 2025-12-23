@@ -1,0 +1,230 @@
+:root{--gallery-dot-bg:rgba(255,255,255,0.6);--gallery-dot-active:rgba(255,255,255,0.95)}
+.card-gallery{width:100%}
+.w7Bf7{width:100%;height:100%;object-fit:contain;object-position:center;display:block}
+._1hTHv{position:relative;width:100%;}
+._1hTHv._1MOwX{overflow:hidden}
+._1WFe9{position:absolute;left:0;top:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center}
+/* Thumbnail / swagger styles */
+.yandex-thumbs{display:flex;gap:6px;margin:8px 10px 0;justify-content:center}
+.thumb-btn{border:1px solid transparent;padding:2px;background:transparent;border-radius:6px;display:inline-flex}
+.thumb-btn:focus{outline:2px solid rgba(59,130,246,0.18)}
+.thumb-btn.active{border-color:rgba(59,130,246,0.18);background:rgba(59,130,246,0.03)}
+.thumb-img{width:40px;height:40px;object-fit:cover;border-radius:6px;display:block}
+
+/* Make sure the main image never overflows its wrapper */
+.menu-item-card ._1hTHv{overflow:hidden}
+.menu-item-card .main-image{max-width:100%;max-height:100%;box-sizing:border-box}
+/* Ensure main-image is always visible (fix single-image cards hidden by other rules) */
+.menu-item-card img.main-image{opacity:1 !important;visibility:visible !important;display:block !important}
+/* Ensure image container centers its image and prevents absolute-position hacks from breaking layout */
+.menu-item-card .item-image, .menu-item-card .card-image { display:flex !important; align-items:center !important; justify-content:center !important; position:relative !important; overflow:hidden !important; }
+.menu-item-card img.main-image, .menu-item-card img.w7Bf7 { position:static !important; top:auto !important; left:auto !important; transform:none !important; margin:0 auto !important; width:auto !important; height:100% !important; max-width:100% !important; object-fit:contain !important; }
+.gallery-viewport{width:100%;aspect-ratio:1/1;overflow:hidden;position:relative;background:linear-gradient(180deg,#ffffff,#f7f9fc);border-top-left-radius:12px;border-top-right-radius:12px;padding:0;margin:0}
+.gallery-track{display:flex;align-items:center;height:100%;transform:translateX(0);will-change:transform}
+.gallery-item{width:100%;height:100%;object-fit:cover;object-position:center;display:block;flex:0 0 auto;user-select:none;-webkit-user-drag:none;pointer-events:none}
+.gallery-indicators{position:absolute;left:50%;transform:translateX(-50%);bottom:10px;display:flex;gap:6px;z-index:10}
+.gallery-dot{width:8px;height:8px;border-radius:50%;background:var(--gallery-dot-bg);border:none;padding:0;transition:transform .18s ease,background .18s ease;box-shadow:0 1px 3px rgba(0,0,0,0.12)}
+.gallery-dot.active{background:var(--gallery-dot-active);transform:scale(1.15)}
+.menu-item-card:hover{transform:translateY(-6px);box-shadow:0 12px 30px rgba(0,0,0,0.18)}
+.menu-item-card:hover .gallery-item{transform:scale(1.03);transition:transform .35s ease}
+/* accessibility */
+.card-gallery:focus{outline:2px solid rgba(59,130,246,0.16);outline-offset:3px}
+.gallery-indicators{pointer-events:auto}
+.gallery-dot{cursor:pointer}
+@media (max-width:575px){.gallery-dot{display:none}}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+	.gallery-track { transition: none !important; }
+	.gallery-item, .menu-item-card { transition: none !important; }
+}
+
+/* Strong overrides to ensure visibility and correct sizing despite legacy rules. */
+.card-gallery .gallery-viewport { min-height: 220px; aspect-ratio: 1/1; }
+.card-gallery .gallery-track img.gallery-item {
+	position: relative !important;
+	top: auto !important;
+	left: auto !important;
+	transform: none !important;
+	width: 100% !important;
+	height: 100% !important;
+	max-width: 100% !important;
+	object-fit: cover !important;
+	object-position: center !important;
+	display: block !important;
+	opacity: 1 !important;
+	visibility: visible !important;
+	z-index: 2 !important;
+}
+
+/* Ensure the viewport reserves space and hides overflow cleanly */
+.card-gallery .gallery-viewport { overflow: hidden !important; }
+
+/* --- Card visual redesign: Yandex Market-like styling --- */
+.menu-item-card {
+	border-radius: 14px;
+	overflow: hidden;
+	background: #fff;
+	box-shadow: 0 6px 18px rgba(15,23,42,0.06);
+	transition: transform 220ms cubic-bezier(.2,.9,.3,1), box-shadow 220ms ease;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+}
+.menu-item-card:focus-within, .menu-item-card:hover {
+	transform: translateY(-6px);
+	box-shadow: 0 18px 40px rgba(15,23,42,0.12);
+}
+
+/* Make image area dominant and consistent */
+.menu-item-card .gallery-viewport,
+.menu-item-card .item-image,
+.menu-item-card .card-image { aspect-ratio: 1/1; min-height: 220px; height: auto; width: 100%; }
+
+/* Content layout: left-aligned on desktop, centered on narrow screens */
+.menu-item-card .item-content { padding: 16px 18px 20px; display:flex; flex-direction:column; gap:8px; align-items:center; text-align:center; }
+@media (min-width: 992px) {
+	.menu-item-card .item-content { align-items:flex-start; text-align:left; padding:18px; }
+}
+
+.menu-item-card .item-name { font-size: 1rem; font-weight: 700; color: #111827; margin:0; line-height:1.2; }
+.menu-item-card .item-name a { color: inherit; text-decoration: none; }
+
+.menu-item-card .card-rating { align-self: stretch; }
+.menu-item-card .rating-text { font-size:0.85rem; color:#6b7280; }
+
+/* Price area — keep existing classes but ensure they align left/right nicely */
+.menu-item-card .price-section, .menu-item-card .item-footer { width:100%; display:flex; justify-content:space-between; align-items:center; gap:8px; }
+.menu-item-card .item-price, .menu-item-card .discount-price { font-size:1.15rem; font-weight:800; color:#0f766e; }
+.menu-item-card .original-price { color:#9ca3af; font-size:0.9rem; }
+
+/* Actions row: keep compact */
+.menu-item-card .add-to-cart-section, .menu-item-card .quantity-cart-controls { justify-content:flex-start; }
+
+/* Indicators: small and unobtrusive */
+.gallery-indicators { bottom: 8px; }
+.gallery-dot { width:7px; height:7px; }
+
+/* Reduce empty space above image; ensure image sits flush */
+.menu-item-card .card-image { margin-bottom:0; }
+
+/* COPILOT FORCED LAYOUT FIXES: make image container square and images dominant */
+.menu-item-card {
+	display: flex !important;
+	flex-direction: column !important;
+	align-items: stretch !important;
+	background: #ffffff !important;
+	border-radius: 12px !important;
+	box-shadow: 0 8px 24px rgba(15,23,42,0.08) !important;
+}
+
+/* Force the image container to be a square and remove extra spacing */
+.menu-item-card .gallery-viewport,
+.menu-item-card .item-image,
+.menu-item-card .card-image {
+	width: 100% !important;
+	aspect-ratio: 1 / 1 !important;
+	padding: 0 !important;
+	margin: 0 !important;
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	overflow: hidden !important;
+	min-height: 220px !important; /* ensures visual dominance */
+}
+
+/* Force images to fill the container and be centered without distortion */
+.menu-item-card img.gallery-item,
+.menu-item-card .item-image img,
+.menu-item-card .card-image img {
+	width: 100% !important;
+	height: 100% !important;
+	max-width: 100% !important;
+	max-height: 100% !important;
+	object-fit: contain !important;
+	object-position: center center !important;
+	display: block !important;
+}
+
+/* Highest-specificity safety net: override legacy absolute/translate rules */
+.menu-item-card .gallery-viewport .gallery-track img.gallery-item,
+.menu-item-card .item-image img,
+.menu-item-card .card-image img {
+	position: static !important;
+	top: auto !important;
+	left: auto !important;
+	transform: none !important;
+	width: 100% !important;
+	height: 100% !important;
+	object-fit: cover !important;
+	object-position: center !important;
+	display: block !important;
+	opacity: 1 !important;
+	visibility: visible !important;
+}
+
+/* Remove unnecessary padding above images and keep content compact */
+.menu-item-card .card-image { margin-top: 0 !important; padding-top: 0 !important; }
+.menu-item-card .item-content { padding: 12px 14px !important; }
+
+/* Make image area visually dominant: keep min-height and compact content */
+.menu-item-card .gallery-viewport { flex: 0 0 auto !important; }
+.menu-item-card .item-content { flex: 1 1 auto !important; }
+
+/* Force a consistent image area so content below always starts at same position */
+:root { --card-image-height: 320px; }
+.menu-item-card .item-image, .menu-item-card .card-image, .menu-item-card .gallery-viewport { 
+	height: var(--card-image-height) !important; 
+	min-height: var(--card-image-height) !important; 
+	flex: 0 0 var(--card-image-height) !important; 
+}
+
+/* Ensure inner image is centered and scaled uniformly */
+.menu-item-card img.main-image, .menu-item-card img.w7Bf7, .menu-item-card .card-image img {
+	width: auto !important;
+	height: 100% !important;
+	max-width: 100% !important;
+	object-fit: contain !important;
+	object-position: center center !important;
+	margin: 0 auto !important;
+	display: block !important;
+}
+
+/* New: explicit content wrapper to keep textual content aligned across cards */
+.menu-item-card .card-image-wrap { 
+	width: 100% !important;
+	height: var(--card-image-height) !important;
+	min-height: var(--card-image-height) !important;
+	flex: 0 0 var(--card-image-height) !important;
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	overflow: hidden !important;
+}
+
+.menu-item-card .card-content {
+	padding: 12px 14px !important;
+	display: flex !important;
+	flex-direction: column !important;
+	gap: 8px !important;
+	text-align: left !important;
+	flex: 1 0 auto !important;
+}
+
+/* Keep the heading and rating spacing stable */
+.menu-item-card .card-content h3, .menu-item-card .card-content .item-name { margin: 0 !important; }
+
+/* Keep indicators small and unobtrusive */
+.menu-item-card .gallery-indicators { bottom: 8px !important; }
+
+
+
+/* keep pointer-events none on images so clicks fall through to anchors */
+.card-gallery .gallery-track img.gallery-item { pointer-events: none; }
+
+/* Force single-column menu grid on small screens */
+@media (max-width: 575px) {
+	.menu-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
+	.menu-item-card { max-width: 100% !important; }
+	:root { --card-image-height: 260px; }
+}
