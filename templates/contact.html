@@ -1,515 +1,294 @@
-{% extends "base.html" %} {% block title %}{{ get_text("Aloqa - Pro Obuv") or
-'Aloqa - Pro Obuv' }}{% endblock %} {% block seo_meta %}
-<meta
-  name="description"
-  content="Biz bilan bog'laning — Savollar, takliflar va mijozlarni qo'llab-quvvatlash. Pro Obuv — spetsobuv, spetsodejda, oyoq kiyim va ish kiyimlari." />
-<meta
-  name="keywords"
-  content="pro obuv, aloqa, bog'lanish, spetsobuv, spetsodejda, oyoq kiyim, ish kiyimlari" />
+{% extends "base.html" %}
+
+{% block title %}{{ get_text("Aloqa - Pro Obuv") or 'Aloqa - Pro Obuv' }}{% endblock %}
+
+{% block seo_meta %}
+<meta name="description" content="Biz bilan bog'laning — Savollar, takliflar va mijozlarni qo'llab-quvvatlash. Pro Obuv — spetsobuv, spetsodejda, oyoq kiyim va ish kiyimlari." />
+<meta name="keywords" content="pro obuv, aloqa, bog'lanish, spetsobuv, spetsodejda, oyoq kiyim, ish kiyimlari" />
 <link rel="canonical" href="{{ canonical_url() }}" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Aloqa — Pro Obuv" />
-<meta
-  property="og:description"
-  content="Savollar va takliflar — Pro Obuv bilan bog'laning." />
+<meta property="og:description" content="Savollar va takliflar — Pro Obuv bilan bog'laning." />
 <meta property="og:url" content="{{ request.url }}" />
-<meta
-  property="og:image"
-  content="{{ prefer_webp(url_for('static', filename='defoult.webp')) }}" />
+<meta property="og:image" content="{{ prefer_webp(url_for('static', filename='defoult.webp')) }}" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Aloqa — Pro Obuv" />
-<meta
-  name="twitter:description"
-  content="Savollar va takliflar uchun Pro Obuv bilan bog'laning" />
-<meta
-  name="twitter:image"
-  content="{{ prefer_webp(url_for('static', filename='defoult.webp')) }}" />
+<meta name="twitter:description" content="Savollar va takliflar uchun Pro Obuv bilan bog'laning" />
+<meta name="twitter:image" content="{{ prefer_webp(url_for('static', filename='defoult.webp')) }}" />
 <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "ContactPage",
-    "name": "Aloqa — Pro Obuv",
-    "url": "{{ request.url }}"
-  }
+{
+  "@context": "https://schema.org",
+  "@type": "ContactPage",
+  "name": "Aloqa — Pro Obuv",
+  "url": "{{ request.url }}"
+}
 </script>
-{% endblock %} {% block content %}
-<div class="contact-page-container">
-  <div class="contact-hero-section">
-    <h1 class="contact-hero-title animate-fade-in">
-      {{ get_text("Biz bilan bog'lanish") }}
-    </h1>
-    <p class="contact-hero-subtitle animate-fade-in">
-      {{ get_text("Sizning savollaringiz va takliflaringiz biz uchun muhim") }}
-    </p>
-  </div>
+{% endblock %}
 
-  <div class="card contact-card animate-slide-left">
-    <div class="row">
-      <div class="col-md-6">
-        <h4 data-translate="send_question">{{ get_text("Savol yuborish") }}</h4>
-        <form method="post">
-          <div class="mb-3">
-            <label class="form-label">{{ get_text("Ismingiz:") }}</label>
-            <input type="text" class="form-control" name="name" required />
-          </div>
-          <div class="mb-3">
-            <label class="form-label"
-              >{{ get_text("Email (ixtiyoriy):") }}</label
-            >
-            <input type="email" class="form-control" name="email" />
-          </div>
-          <div class="mb-3">
-            <label class="form-label"
-              >{{ get_text("Telefon (ixtiyoriy):") }}</label
-            >
-            <input type="text" class="form-control" name="phone" />
-          </div>
-          <div class="mb-3">
-            <label class="form-label">{{ get_text("Mavzu:") }}</label>
-            <input type="text" class="form-control" name="subject" required />
-          </div>
-          <div class="mb-3">
-            <label class="form-label">{{ get_text("Xabar:") }}</label>
-            <textarea
-              class="form-control"
-              name="message"
-              rows="4"
-              required></textarea>
-          </div>
-          <button type="submit" class="btn big">
-            {{ get_text("Yuborish") }}
-          </button>
-        </form>
-      </div>
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/contact-modern.css') }}">
+{% endblock %}
 
-      <div class="col-md-6">
-        <h4>{{ get_text("Aloqa ma'lumotlari") }}</h4>
-        <div class="contact-info">
-          <div class="contact-item">
-            <p><strong> {{ get_text("Ism") }}:</strong> Avaz</p>
-          </div>
-          <div class="contact-item">
-            <p>
-              <strong> {{ get_text("Telefon") }}:</strong>
-              <a
-                href="tel:{{ get_text('footer.phone_href') }}"
-                class="contact-link"
-                >{{ get_text('footer.phone_display') }}</a
-              >
-            </p>
-          </div>
-          <div class="contact-item">
-            <p>
-              <strong>
-                {{ get_text("Email (ixtiyoriy):") | replace('(ixtiyoriy):','')
-                }}:</strong
-              >
-              <a href="mailto:premiumsafety@mail.ru" class="contact-link"
-                >premiumsafety@mail.ru</a
-              >
-            </p>
-          </div>
-          <div class="contact-item">
-            <p>
-              <strong> Admin Telegram:</strong>
-              <a
-                href="https://t.me/proobuvLLC"
-                target="_blank"
-                class="contact-link"
-                >@proobuvLLC</a
-              >
-            </p>
-          </div>
-          <div class="contact-item">
-            <p>
-              <strong> Telegram:</strong>
-              <a
-                href="https://t.me/specobuv"
-                target="_blank"
-                class="contact-link"
-                >https://t.me/specobuv</a
-              >
-            </p>
-          </div>
-
-          <div class="contact-item d-flex align-items-start">
-            <a
-              href="https://maps.app.goo.gl/tQU6Axzj4JvLoGML8"
-              target="_blank"
-              class="contact-link ms-2"
-              title="Open in Google Maps"
-              style="margin-bottom: 0"
-              ><strong style="color: var(--text-secondary)">
-                {{ get_text("Manzil:") }}</strong
-              >
-              {{ get_text("Toshkent, Sergeli tumani, Yuqori Darxon mahalla
-              fuqarolar yigʻini") or 'Toshkent, Sergeli tumani, Yuqori Darxon
-              mahalla fuqarolar yigʻini' }}</a
-            >
-          </div>
-          <div class="contact-item">
-            <p>
-              <strong>{{ get_text("Ish vaqti:") }}</strong> {{
-              get_text("Dushanba - Juma: 9:00 - 18:00, Shanba va Yakshanba:
-              Dam") or 'Dushanba - Juma: 9:00 - 18:00, Shanba va Yakshanba: Dam'
-              }}
-            </p>
-          </div>
-
-          <!-- Social Media Links -->
-          <div class="social-media-section mt-4">
-            <h5 class="mb-3">
-              {{ get_text("Ijtimoiy tarmoqlarda bizni kuzatib boring:") }}
-            </h5>
-            <div class="d-flex flex-wrap gap-3">
-              <a
-                href="https://www.facebook.com/aklashoes/?ref=pl_edit_xav_ig_profile_page_web#"
-                target="_blank"
-                class="social-btn facebook">
-                <img
-                  src="{{ prefer_webp(url_for('static', filename='icons/facebook.svg')) }}"
-                  alt="Facebook"
-                  width="20"
-                  height="20"
-                  style="margin-right: 8px" />
-                Facebook
-              </a>
-              <a
-                href="https://www.instagram.com/proguarduz/"
-                target="_blank"
-                class="social-btn instagram">
-                <img
-                  src="{{ prefer_webp(url_for('static', filename='icons/instagram.svg')) }}"
-                  alt="Instagram"
-                  width="20"
-                  height="20"
-                  style="margin-right: 8px" />
-                Instagram
-              </a>
-              <a
-                href="https://t.me/specobuv"
-                target="_blank"
-                class="social-btn telegram">
-                <img
-                  src="{{ prefer_webp(url_for('static', filename='icons/telegram.jpg')) }}"
-                  alt="Telegram"
-                  width="20"
-                  height="20"
-                  style="margin-right: 8px" />
-                Telegram
-              </a>
-              <a
-                href="https://www.threads.com/@proguarduz?xmt=AQF0Luvd5UXAmD_U3B5JI01ho5dNPZudQGYe4WbnAc934pc"
-                target="_blank"
-                class="social-btn threads">
-                <img
-                  src="{{ prefer_webp(url_for('static', filename='icons/threads.svg')) }}"
-                  alt="Threads"
-                  width="20"
-                  height="20"
-                  style="margin-right: 8px" />
-                Threads
-              </a>
-              <a
-                href="https://uzum.uz/uz/shop/pro-obuv"
-                target="_blank"
-                class="social-btn uzum">
-                <img
-                  src="{{ prefer_webp(url_for('static', filename='icons/uzum.webp')) }}"
-                  alt="Uzum Market"
-                  width="20"
-                  height="20"
-                  style="margin-right: 8px" />
-                Uzum Market
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Embedded Google Maps iframe -->
-        <div class="row mt-4">
-          <div class="col-12">
-            <div
-              class="map-embed"
-              style="
-                border-radius: 12px;
-                overflow: hidden;
-                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-                width: 100%;
-                max-width: 100%;
-              ">
-              <!-- Use Google Maps embed with place link fallback to the provided shortlink -->
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3871.507884418295!2d69.2034331!3d41.2365664!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38ae61003e24fa7b%3A0x582c809e62c1776c!2sPro-Obuv!5e1!3m2!1suz!2s!4v1759051640636!5m2!1suz!2s"
-                width="100%"
-                height="500"
-                style="border: 0; width: 100%; height: 500px"
-                allowfullscreen=""
-                loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade"></iframe>
-            </div>
-          </div>
-        </div>
-      </div>
+{% block content %}
+<!-- Modern Contact Page -->
+<div class="modern-contact-page">
+  
+  <!-- Hero Section -->
+  <section class="contact-hero">
+    <div class="hero-content">
+      <h1 class="hero-title" data-aos="fade-down">
+        <i class="bi bi-chat-dots-fill"></i>
+        Biz Bilan Bog'laning
+      </h1>
+      <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="100">
+        Sizning fikr-mulohazalaringiz biz uchun muhim
+      </p>
     </div>
-  </div>
+    <div class="hero-decoration">
+      <div class="decoration-circle circle-1"></div>
+      <div class="decoration-circle circle-2"></div>
+      <div class="decoration-circle circle-3"></div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <section class="contact-content">
+    <div class="container-modern">
+      
+      <div class="contact-grid">
+        
+        <!-- Contact Form Card -->
+        <div class="contact-card form-card" data-aos="fade-right">
+          <div class="card-header">
+            <div class="card-icon">
+              <i class="bi bi-envelope-fill"></i>
+            </div>
+            <h2 class="card-title">Xabar Yuborish</h2>
+            <p class="card-subtitle">To'ldirib, bizga yuboring</p>
+          </div>
+          
+          <form method="post" class="modern-form">
+            <div class="form-group">
+              <label for="name" class="form-label">
+                <i class="bi bi-person"></i>
+                Ismingiz
+              </label>
+              <input 
+                type="text" 
+                id="name" 
+                name="name" 
+                class="form-input" 
+                placeholder="Ismingizni kiriting"
+                required
+              />
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="email" class="form-label">
+                  <i class="bi bi-envelope"></i>
+                  Email (ixtiyoriy)
+                </label>
+                <input 
+                  type="email" 
+                  id="email" 
+                  name="email" 
+                  class="form-input" 
+                  placeholder="email@example.com"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="phone" class="form-label">
+                  <i class="bi bi-phone"></i>
+                  Telefon (ixtiyoriy)
+                </label>
+                <input 
+                  type="tel" 
+                  id="phone" 
+                  name="phone" 
+                  class="form-input" 
+                  placeholder="+998 90 123 45 67"
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="subject" class="form-label">
+                <i class="bi bi-tag"></i>
+                Mavzu
+              </label>
+              <input 
+                type="text" 
+                id="subject" 
+                name="subject" 
+                class="form-input" 
+                placeholder="Xabar mavzusi"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="message" class="form-label">
+                <i class="bi bi-chat-text"></i>
+                Xabar
+              </label>
+              <textarea 
+                id="message" 
+                name="message" 
+                class="form-textarea" 
+                rows="5" 
+                placeholder="Xabaringizni yozing..."
+                required
+              ></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit">
+              <i class="bi bi-send-fill"></i>
+              <span>Yuborish</span>
+              <div class="btn-shine"></div>
+            </button>
+          </form>
+        </div>
+
+        <!-- Contact Info Card -->
+        <div class="contact-card info-card" data-aos="fade-left">
+          <div class="card-header">
+            <div class="card-icon">
+              <i class="bi bi-info-circle-fill"></i>
+            </div>
+            <h2 class="card-title">Aloqa Ma'lumotlari</h2>
+            <p class="card-subtitle">Bizning manzilimiz</p>
+          </div>
+
+          <div class="info-list">
+            <!-- Contact Person -->
+            <div class="info-item">
+              <div class="info-icon">
+                <i class="bi bi-person-badge"></i>
+              </div>
+              <div class="info-content">
+                <span class="info-label">Mas'ul shaxs</span>
+                <span class="info-value">Avaz</span>
+              </div>
+            </div>
+
+            <!-- Phone -->
+            <div class="info-item">
+              <div class="info-icon">
+                <i class="bi bi-telephone-fill"></i>
+              </div>
+              <div class="info-content">
+                <span class="info-label">Telefon</span>
+                <a href="tel:{{ get_text('footer.phone_href') }}" class="info-value info-link">
+                  {{ get_text('footer.phone_display') }}
+                </a>
+              </div>
+            </div>
+
+            <!-- Email -->
+            <div class="info-item">
+              <div class="info-icon">
+                <i class="bi bi-envelope-fill"></i>
+              </div>
+              <div class="info-content">
+                <span class="info-label">Email</span>
+                <a href="mailto:premiumsafety@mail.ru" class="info-value info-link">
+                  premiumsafety@mail.ru
+                </a>
+              </div>
+            </div>
+
+            <!-- Telegram -->
+            <div class="info-item">
+              <div class="info-icon">
+                <i class="bi bi-telegram"></i>
+              </div>
+              <div class="info-content">
+                <span class="info-label">Telegram</span>
+                <a href="https://t.me/proobuvLLC" target="_blank" class="info-value info-link">
+                  @proobuvLLC
+                </a>
+              </div>
+            </div>
+
+            <!-- Address -->
+            <div class="info-item">
+              <div class="info-icon">
+                <i class="bi bi-geo-alt-fill"></i>
+              </div>
+              <div class="info-content">
+                <span class="info-label">Manzil</span>
+                <a href="https://maps.app.goo.gl/tQU6Axzj4JvLoGML8" target="_blank" class="info-value info-link">
+                  Toshkent, Sergeli tumani, Yuqori Darxon mahalla
+                </a>
+              </div>
+            </div>
+
+            <!-- Working Hours -->
+            <div class="info-item">
+              <div class="info-icon">
+                <i class="bi bi-clock-fill"></i>
+              </div>
+              <div class="info-content">
+                <span class="info-label">Ish vaqti</span>
+                <span class="info-value">Dushanba - Juma: 9:00 - 18:00</span>
+                <span class="info-value-small">Shanba va Yakshanba: Dam olish</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Social Media -->
+          <div class="social-section">
+            <h3 class="social-title">Ijtimoiy Tarmoqlar</h3>
+            <div class="social-links">
+              <a href="https://www.facebook.com/aklashoes/?ref=pl_edit_xav_ig_profile_page_web#" target="_blank" class="social-link facebook" title="Facebook">
+                <i class="bi bi-facebook"></i>
+              </a>
+              <a href="https://www.instagram.com/proguarduz/" target="_blank" class="social-link instagram" title="Instagram">
+                <i class="bi bi-instagram"></i>
+              </a>
+              <a href="https://t.me/specobuv" target="_blank" class="social-link telegram" title="Telegram">
+                <i class="bi bi-telegram"></i>
+              </a>
+              <a href="https://www.threads.com/@proguarduz?xmt=AQF0Luvd5UXAmD_U3B5JI01ho5dNPZudQGYe4WbnAc934pc" target="_blank" class="social-link threads" title="Threads">
+                <i class="bi bi-threads"></i>
+              </a>
+              <a href="https://uzum.uz/uz/shop/pro-obuv" target="_blank" class="social-link uzum" title="Uzum Market">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Map Section -->
+      <div class="map-section" data-aos="fade-up">
+        <div class="map-header">
+          <h2 class="map-title">
+            <i class="bi bi-map"></i>
+            Bizning Joylashuvimiz
+          </h2>
+          <p class="map-subtitle">Xaritada topishingiz mumkin</p>
+        </div>
+        <div class="map-container">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3871.507884418295!2d69.2034331!3d41.2365664!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38ae61003e24fa7b%3A0x582c809e62c1776c!2sPro-Obuv!5e1!3m2!1suz!2s!4v1759051640636!5m2!1suz!2s"
+            width="100%"
+            height="450"
+            style="border:0;"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+          ></iframe>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
 </div>
-<!-- End contact-page-container -->
-
-<style>
-  /* ================================
-   CONTACT PAGE STYLES
-   ================================ */
-
-  /* Hero Section */
-  .contact-page-container {
-    min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 0;
-    margin: -24px -15px 0;
-  }
-
-  .contact-hero-section {
-    text-align: center;
-    padding: 80px 20px 60px;
-    background: linear-gradient(
-      135deg,
-      rgba(102, 126, 234, 0.9) 0%,
-      rgba(118, 75, 162, 0.9) 100%
-    );
-    position: relative;
-    overflow: hidden;
-  }
-
-  .contact-hero-section::before {
-    content: "";
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(
-      circle,
-      rgba(255, 255, 255, 0.1) 0%,
-      transparent 70%
-    );
-    animation: float 6s ease-in-out infinite;
-  }
-
-  .contact-hero-title {
-    font-size: 3.5rem;
-    font-weight: 800;
-    color: white;
-    margin-bottom: 20px;
-    text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    animation-delay: 0.2s;
-  }
-
-  .contact-hero-subtitle {
-    font-size: 1.3rem;
-    color: rgba(255, 255, 255, 0.9);
-    margin-bottom: 0;
-    font-weight: 300;
-    animation-delay: 0.4s;
-  }
-
-  .contact-card {
-    margin: -40px 20px 40px;
-    z-index: 10;
-    position: relative;
-    border-radius: 25px;
-    animation-delay: 0.6s;
-  }
-
-  @keyframes float {
-    0%,
-    100% {
-      transform: translateY(0px) rotate(0deg);
-    }
-    33% {
-      transform: translateY(-30px) rotate(120deg);
-    }
-    66% {
-      transform: translateY(-20px) rotate(240deg);
-    }
-  }
-  .contact-info {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    padding: 30px;
-    border-radius: 15px;
-    margin-top: 20px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    border: 1px solid #dee2e6;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .contact-info::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #667eea, #764ba2);
-  }
-
-  .contact-item {
-    margin-bottom: 15px;
-    padding: 10px;
-    background: rgba(255, 255, 255, 0.7);
-    border-radius: 8px;
-    transition: all 0.3s ease;
-  }
-
-  .contact-item:hover {
-    background: rgba(255, 255, 255, 0.9);
-    transform: translateX(5px);
-  }
-
-  .contact-info p {
-    margin-bottom: 5px;
-    font-size: 1rem;
-  }
-
-  .contact-link {
-    color: #007bff;
-    text-decoration: none;
-    font-weight: 500;
-    transition: all 0.3s ease;
-  }
-
-  .contact-link:hover {
-    color: #0056b3;
-    text-decoration: underline;
-    transform: scale(1.05);
-  }
-
-  /* ================================
-   SOCIAL MEDIA SECTION
-   ================================ */
-  .social-media-section {
-    border-top: 2px solid #dee2e6;
-    padding-top: 20px;
-  }
-
-  .social-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 20px;
-    text-decoration: none;
-    border-radius: 25px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    font-size: 0.95rem;
-  }
-
-  .social-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-    text-decoration: none;
-  }
-
-  .social-btn.facebook {
-    background: linear-gradient(135deg, #1877f2 0%, #0d47a1 100%);
-    color: white;
-  }
-
-  .social-btn.facebook:hover {
-    color: white;
-    background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%);
-  }
-
-  .social-btn.instagram {
-    background: linear-gradient(135deg, #e4405f 0%, #833ab4 50%, #fccc63 100%);
-    color: white;
-  }
-
-  .social-btn.instagram:hover {
-    color: white;
-    background: linear-gradient(135deg, #833ab4 0%, #e4405f 50%, #fccc63 100%);
-  }
-
-  .social-btn.telegram {
-    background: linear-gradient(135deg, #0088cc 0%, #005bb5 100%);
-    color: white;
-  }
-
-  .social-btn.telegram:hover {
-    color: white;
-    background: linear-gradient(135deg, #005bb5 0%, #004494 100%);
-  }
-
-  .social-btn.threads {
-    background: linear-gradient(135deg, #000000 0%, #333333 100%);
-    color: white;
-  }
-
-  .social-btn.threads:hover {
-    color: white;
-    background: linear-gradient(135deg, #333333 0%, #555555 100%);
-  }
-
-  .social-btn.uzum {
-    background: linear-gradient(135deg, #7c4dff 0%, #651fff 100%);
-    color: white;
-  }
-
-  .social-btn.uzum:hover {
-    color: white;
-    background: linear-gradient(135deg, #651fff 0%, #3d5afe 100%);
-  }
-
-  /* ================================
-   ENHANCED FORM STYLING
-   ================================ */
-  .form-control {
-    border-radius: 10px;
-    border: 2px solid #e9ecef;
-    padding: 12px 15px;
-    transition: all 0.3s ease;
-  }
-
-  .form-control:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-    transform: translateY(-2px);
-  }
-
-  .btn.big {
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-    color: white;
-    border: none;
-    padding: 12px 30px;
-    border-radius: 25px;
-    font-weight: 600;
-    font-size: 1.1rem;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
-  }
-
-  .btn.big:hover {
-    background: linear-gradient(135deg, #20c997 0%, #17a2b8 100%);
-    color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
-  }
-
-  @media (max-width: 768px) {
-    .contact-info {
-      padding: 20px;
-    }
-
-    .social-btn {
-      padding: 10px 15px;
-      font-size: 0.9rem;
-    }
-
-    .d-flex.flex-wrap.gap-3 {
-      justify-content: center;
-    }
-  }
-</style>
 {% endblock %}

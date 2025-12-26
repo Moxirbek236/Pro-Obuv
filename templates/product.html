@@ -27,6 +27,7 @@
 
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/product-page.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/related-products-section.css') }}">
 <style>
   .item-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .product-media img { max-width: 100%; display: block; }
@@ -51,26 +52,46 @@
 
 <div class="product-container">
   <div class="product-media">
-    <div class="media-stage" id="mediaStageDesktop">
-      {% set first = all_media[0] if all_media|length > 0 else None %}
-      {% if first and (first.media_type and first.media_type.startswith('video')) %}
-        <video id="mainMediaDesktop" src="{{ first.media_url }}" controls muted></video>
-      {% else %}
-        <img id="mainMediaDesktop" src="{{ prefer_webp((first.media_url if first else item.image_url) or url_for('static', filename='defoult.webp')) }}" alt="{{ localized_name }}">
-      {% endif %}
-    </div>
-
-    {% if all_media|length > 1 %}
-      <div class="thumbnails" id="thumbnailsDesktop">
+    <!-- Main Gallery Swiper -->
+    <div class="swiper productMainSwiper" id="productMainSwiper">
+      <div class="swiper-wrapper">
         {% for m in all_media %}
-          {% set thumb_src = prefer_webp(m.media_url) %}
-          <div class="thumb" data-idx="{{ loop.index0 }}">
-            <img src="{{ thumb_src }}" alt="thumb {{ loop.index }}"
-                 onmouseenter="(function(){ try{ const main=document.getElementById('mainMediaDesktop'); if(main){ if((main.tagName||'').toLowerCase()==='img'){ main.src='{{ thumb_src }}'; main.style.transform='scale(1.05)'; } else { try{ main.pause(); }catch(e){} main.src='{{ thumb_src }}'; try{ main.load(); }catch(e){} } } }catch(e){} })()"
-                 onmouseleave="(function(){ try{ const main=document.getElementById('mainMediaDesktop'); if(main){ main.style.transform=''; } }catch(e){} })()"
-            >
+          <div class="swiper-slide">
+            <div class="swiper-zoom-container">
+              {% if m.media_type and m.media_type.startswith('video') %}
+                <video src="{{ m.media_url }}" controls muted></video>
+              {% else %}
+                <img src="{{ prefer_webp(m.media_url or url_for('static', filename='defoult.webp')) }}" alt="{{ localized_name }}">
+              {% endif %}
+            </div>
           </div>
         {% endfor %}
+      </div>
+      <!-- Navigation buttons -->
+      <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev"></div>
+      
+      <!-- Favorites Button -->
+      <form class="favorite-form-product" onsubmit="event.preventDefault(); toggleFavorite({{ item.id }}, this.querySelector('.btn-favorite-product'));">
+        <button type="submit" class="btn-favorite-product {% if is_favorite %}active{% endif %}" title="Sevimlilarga qo'shish">
+          <i class="bi bi-heart{% if is_favorite %}-fill{% endif %}"></i>
+        </button>
+      </form>
+    </div>
+
+    <!-- Thumbnails Swiper -->
+    {% if all_media|length > 1 %}
+      <div class="swiper productThumbsSwiper" id="productThumbsSwiper">
+        <div class="swiper-wrapper">
+          {% for m in all_media %}
+            <div class="swiper-slide">
+              <img src="{{ prefer_webp(m.media_url or url_for('static', filename='defoult.webp')) }}" alt="thumb {{ loop.index }}">
+              {% if m.media_type and m.media_type.startswith('video') %}
+                <div class="video-thumb-icon"><i class="bi bi-play-fill"></i></div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
       </div>
     {% endif %}
   </div>
@@ -79,27 +100,70 @@
     <h1 class="item-name">{{ localized_name }}</h1>
     <p class="description">{{ localized_description }}</p>
 
-    <div class="rating-row">
-      {% set rating = item.rating|float(0) %}
-      <div class="stars">
-        {% for i in range(1,6) %}
-          {% if rating >= i %}
-            <span class="star">★</span>
-          {% elif rating >= i - 0.5 %}
-            <span class="star half">★</span>
-          {% else %}
-            <span class="star empty">☆</span>
-          {% endif %}
+    <!-- Rating Summary Block (Google Play Style) -->
+    {% set rating = item.rating|float(0) %}
+    {% set total_reviews = comments|length %}
+    {% set star_counts = {5:0, 4:0, 3:0, 2:0, 1:0} %}
+    {% for c in comments %}
+      {% set r_val = (c.rating or 0)|int %}
+      {% if r_val in [1,2,3,4,5] %}
+        {% set _void = star_counts.update({r_val: star_counts[r_val] + 1}) %}
+      {% endif %}
+    {% endfor %}
+
+    <div class="rating-summary-container" aria-label="Rating summary">
+      <div class="rating-avg-block">
+        <div class="rating-avg-number" aria-hidden="true">{{ "%.1f"|format(rating) }}</div>
+        <div class="rating-avg-stars" aria-label="{{ rating }} out of 5 stars">
+          {% for i in range(1,6) %}
+            <i class="bi bi-star{{ '-fill filled' if rating >= i else '-half filled' if rating >= i - 0.5 else '' }}"></i>
+          {% endfor %}
+        </div>
+        <div class="rating-total-count">{{ total_reviews }} sharhlar</div>
+      </div>
+      
+      <div class="rating-bars-block">
+        {% for star_val in [5, 4, 3, 2, 1] %}
+          {% set count = star_counts[star_val] %}
+          {% set percent = (count / total_reviews * 100) if total_reviews > 0 else 0 %}
+          <div class="rating-bar-row">
+            <div class="rating-bar-label">{{ star_val }}</div>
+            <div class="rating-progress-bg">
+              <div class="rating-progress-fill" style="width:{{ percent|round }}%; --target-width: {{ percent|round }}%;"></div>
+            </div>
+          </div>
         {% endfor %}
       </div>
-      <div class="rating-text">{{ "%.1f"|format(rating) }} ({{ item.orders_count or 0 }})</div>
     </div>
 
-    <div class="options-row">
+    {% if marketplaces %}
+      <div class="marketplace-block">
+        <span class="marketplace-header">{{ _('Order from:') if _('Order from:') else 'Buyurtma berish:' }}</span>
+        <div class="marketplace-buttons">
+          {% if marketplaces.uzum %}
+            <a href="{{ marketplaces.uzum }}" target="_blank" class="marketplace-btn mp-uzum">
+              <i class="bi bi-shop mp-icon"></i> Uzum Market
+            </a>
+          {% endif %}
+          {% if marketplaces.olx %}
+            <a href="{{ marketplaces.olx }}" target="_blank" class="marketplace-btn mp-olx">
+              <i class="bi bi-cart mp-icon"></i> OLX
+            </a>
+          {% endif %}
+          {% if marketplaces.yandex %}
+            <a href="{{ marketplaces.yandex }}" target="_blank" class="marketplace-btn mp-yandex">
+              <i class="bi bi-truck mp-icon"></i> Yandex Market
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+
+    <div class="options-row" style="display:flex; gap:16px; margin-top:24px;">
       <div class="select-wrapper">
         <label for="sizeSelect">O'lcham</label>
         <select id="sizeSelect" name="size">
-          <option value="">— O'lcham tanlang —</option>
+          <option value="">— Tanlang —</option>
           {% set _sizes = (item.sizes or '39,40,41,42,43').split(',') %}
           {% for s in _sizes %}{% if s|trim %}<option value="{{ s|trim }}">{{ s|trim }}</option>{% endif %}{% endfor %}
         </select>
@@ -108,7 +172,7 @@
       <div class="select-wrapper">
         <label for="colorSelect">Rang</label>
         <select id="colorSelect" name="color">
-          <option value="">— Rang tanlang —</option>
+          <option value="">— Tanlang —</option>
           {% set _colors = (item.colors or 'black,white').split(',') %}
           {% for c in _colors %}{% if c|trim %}<option value="{{ c|trim }}">{{ c|trim }}</option>{% endif %}{% endfor %}
         </select>
@@ -116,118 +180,133 @@
     </div>
 
     <!-- Comments -->
-    <div class="comments-section" style="margin-top:18px;">
-      <h3>Mijozlar sharhlari</h3>
-      <form method="POST" action="{{ url_for('post_comment', item_id=item.id) }}">
-        {% if not session.get('user_id') %}
-          <div style="background:#fff3cd;padding:10px;border-radius:6px;margin-bottom:8px;">Iltimos tizimga kiring.</div>
-        {% else %}
-          <!-- Clickable rating input -->
-          <div style="margin-bottom:8px;">
-            <label style="display:block;font-weight:700;margin-bottom:6px;">Sizning bahongiz</label>
-            <div class="rating-input-stars" id="ratingInputStars" aria-hidden="false">
-              <span class="star" data-value="1">★</span>
-              <span class="star" data-value="2">★</span>
-              <span class="star" data-value="3">★</span>
-              <span class="star" data-value="4">★</span>
-              <span class="star" data-value="5">★</span>
+    <div class="comments-section" style="margin-top:32px; border-top:1px solid #f1f5f9; padding-top:24px;">
+      <h3 style="font-weight:800; color:#0f172a; margin-bottom:20px;">Mijozlar sharhlari</h3>
+      
+      <div class="comment-form-card" style="background:#f8fafc; padding:20px; border-radius:16px; margin-bottom:24px;">
+        <form method="POST" action="{{ url_for('post_comment', item_id=item.id) }}">
+          {% if not session.get('user_id') %}
+            <div style="background:#fff; border:1px solid #e2e8f0; padding:16px; border-radius:12px; text-align:center;">
+              <p style="margin:0; font-weight:600; color:#64748b;">Sharh qoldirish uchun tizimga kiring.</p>
             </div>
-            <input type="hidden" name="rating" id="ratingInput" value="0">
-          </div>
-
-          <textarea name="comment" rows="3" style="width:100%;padding:8px;border-radius:6px;border:1px solid #e6e6e6;"></textarea>
-          <div style="text-align:right;margin-top:8px;"><button type="submit" class="add-cart-btn">Sharh yuborish</button></div>
-        {% endif %}
-      </form>
-
-      <div id="commentsList" style="margin-top:12px;">
-        {% if comments and comments|length > 0 %}
-          {% for c in comments %}
-            <div class="comment-item" style="padding:10px;border:1px solid #eee;border-radius:8px;margin-bottom:8px;">
-              <div class="comment-meta">
-                <div class="comment-author" style="font-weight:700">{{ c.author or c.user_name or 'Anonim' }}</div>
-                <div style="margin-left:auto;display:flex;align-items:center;gap:10px;">
-                  <div class="comment-stars" aria-hidden="true">
-                    {% set cr = (c.rating or c.rate or 0) | float(0) %}
-                    {% for i in range(1,6) %}
-                      {% if cr >= i %}
-                        <span>★</span>
-                      {% else %}
-                        <span style="color:#e6e6e6">☆</span>
-                      {% endif %}
-                    {% endfor %}
-                  </div>
-                  <div class="comment-date">{{ (c.created_at or '')[:19].replace('T',' ') if (c.created_at) else '' }}</div>
-                </div>
+          {% else %}
+            <div style="margin-bottom:16px;">
+              <label style="display:block; font-size:0.85rem; font-weight:800; color:#1e293b; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">Sizning bahongiz</label>
+              <div class="rating-input-stars" id="ratingInputStars">
+                {% for i in range(1,6) %}
+                  <span class="star" data-value="{{ i }}"><i class="bi bi-star-fill"></i></span>
+                {% endfor %}
               </div>
-              <div style="color:#333">{{ c.comment or c.text }}</div>
+              <input type="hidden" name="rating" id="ratingInput" value="0">
             </div>
-          {% endfor %}
-        {% else %}
-          <div style="color:#666">Sharhlar mavjud emas.</div>
-        {% endif %}
+
+            <div style="margin-bottom:16px;">
+              <label style="display:block; font-size:0.85rem; font-weight:800; color:#1e293b; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">Sharhingiz</label>
+              <textarea name="comment" rows="3" placeholder="Mahsulot haqida fikringizni yozing..." style="width:100%; padding:14px; border-radius:12px; border:2px solid #e2e8f0; font-family:inherit; resize:vertical; transition:border-color 0.2s;"></textarea>
+            </div>
+            
+            <div style="text-align:right;">
+              <button type="submit" class="add-cart-btn" style="width:auto; padding:12px 32px;">Yuborish</button>
+            </div>
+          {% endif %}
+        </form>
+      </div>
+
+      <div class="reviews-wrapper">
+        <div id="commentsList" class="reviews-scroll-container">
+          {% if comments and comments|length > 0 %}
+            {% set sorted_comments = comments|sort(attribute='rating', reverse=True) %}
+            {% for c in sorted_comments %}
+              <div class="comment-item-card">
+                <div class="comment-header">
+                  <div class="comment-author-info">
+                    <span class="author-name">{{ c.author or c.user_name or 'Mijoz' }}</span>
+                    <div class="rating-stars-mini">
+                      {% set cr = (c.rating or 0) | float %}
+                      {% for i in range(1,6) %}
+                        <i class="bi bi-star{{ '-fill' if cr >= i else '-half' if cr >= i - 0.5 else '' }}"></i>
+                      {% endfor %}
+                    </div>
+                  </div>
+                  <span class="comment-date-tag">{{ (c.created_at or '')[:10] }}</span>
+                </div>
+                <div class="comment-body-text">{{ c.comment or c.text }}</div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="no-comments-msg">
+              <i class="bi bi-chat-dots"></i>
+              <p>Hozircha sharhlar yo'q. Birinchilardan bo'lib fikr qoldiring!</p>
+            </div>
+          {% endif %}
+        </div>
       </div>
     </div>
 
   </div>
 </div>
 
+<!-- Related Products Section - Moved to bottom -->
+{% if related_products %}
+  <div class="related-products-section">
+    <div class="related-products-container">
+      <h3 class="related-products-title">O'xshash mahsulotlar</h3>
+      <div class="related-products-grid">
+        {% for rp in related_products %}
+          <a href="{{ url_for('product_detail', item_id=rp.id) }}" class="related-product-card" title="{{ rp.localized_name }}">
+            <div class="related-img-wrap">
+              <img src="{{ rp.image_url }}" alt="{{ rp.localized_name }}" loading="lazy">
+            </div>
+            <div class="related-info">
+              <span class="related-name">{{ rp.localized_name }}</span>
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% endif %}
+
 <script>
-  (function(){
-    try{
-      const thumbs = document.querySelectorAll('#thumbnailsDesktop .thumb');
-      if(thumbs && thumbs.length>0){
-        // mark first thumb active by default
-        thumbs[0].classList.add('active');
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Thumbs Swiper
+    const thumbsSwiper = new Swiper("#productThumbsSwiper", {
+      spaceBetween: 10,
+      slidesPerView: 4,
+      freeMode: true,
+      watchSlidesProgress: true,
+      breakpoints: {
+        320: { slidesPerView: 4, spaceBetween: 8 },
+        640: { slidesPerView: 5, spaceBetween: 10 },
+        1024: { slidesPerView: 6, spaceBetween: 12 }
       }
-      document.querySelectorAll('#thumbnailsDesktop .thumb').forEach(function(t){
-        // attach to thumb container
-        t.addEventListener('click', function(e){
-          try {
-            e.stopPropagation();
-            const thumbImg = this.querySelector('img');
-            if (!thumbImg) return;
-            const src = thumbImg.getAttribute('src') || thumbImg.src;
-            const mediaStage = document.getElementById('mediaStageDesktop');
-            if (!mediaStage) return;
-            const main = document.getElementById('mainMediaDesktop');
-            if (main) {
-              const tag = (main.tagName || '').toLowerCase();
-              if (tag === 'img') {
-                main.src = src;
-                if (typeof window.hideSkeleton === 'function') window.hideSkeleton(main);
-              } else if (tag === 'video') {
-                try {
-                  main.pause();
-                } catch (e) {}
-                main.src = src;
-                try { main.load(); } catch(e){}
-              }
-            } else {
-              // fallback: replace inner HTML with an img
-              mediaStage.innerHTML = '<img id="mainMediaDesktop" src="'+src+'" alt="'+(document.title||'')+'">';
-            }
-            // update active thumb
-            try{
-              document.querySelectorAll('#thumbnailsDesktop .thumb').forEach(function(x){ x.classList.remove('active'); });
-              this.classList.add('active');
-            }catch(_){}
-          } catch (e) { console.warn('thumb click error', e); }
-        });
-        // also attach to inner img as a fallback
-        try{
-          const img = t.querySelector('img');
-          if(img){
-            img.style.pointerEvents = 'auto';
-            img.addEventListener('click', function(e){
-              e.stopPropagation();
-              t.click();
-            });
-          }
-        }catch(_){}
-      });
-    }catch(e){console.warn(e)}
-  })();
+    });
+
+    // Initialize Main Swiper
+    const mainSwiper = new Swiper("#productMainSwiper", {
+      spaceBetween: 15,
+      grabCursor: true,
+      keyboard: { enabled: true },
+      zoom: { maxRatio: 3, toggle: true },
+      navigation: {
+        nextEl: ".swiper-button-next",
+        prevEl: ".swiper-button-prev",
+      },
+      thumbs: {
+        swiper: thumbsSwiper,
+      },
+      // Universal interaction settings
+      touchEventsTarget: 'container',
+      touchRatio: 1,
+      simulateTouch: true,
+      shortSwipes: true,
+      longSwipes: true,
+      followFinger: true,
+      preventClicks: true,
+      preventClicksPropagation: true,
+      touchAngle: 45
+    });
+  });
 </script>
 
 <script>

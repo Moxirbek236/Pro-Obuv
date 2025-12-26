@@ -1,139 +1,93 @@
 /* UNIVERSAL MODERN MENU STYLES
-   Extends universal-theme.css
+   - High-performance grid layout
+   - Sticky filter sidebar with overflow protection
+   - Premium glassmorphism product cards
 */
 
 :root {
-    /* More specific menu vars inheriting from universal theme */
-    --menu-card-bg: var(--card-bg);
-    --menu-border-color: var(--border-light);
-    --menu-shadow: var(--shadow-sm);
-    --menu-shadow-hover: var(--shadow-lg);
-    --menu-text-main: var(--text-color);
-    --menu-text-muted: var(--muted);
-    --menu-accent: var(--brand-1);
-    --menu-accent-hover: var(--brand-2);
-    --menu-bg-body: var(--bg);
-    /* Navbar height used to offset sticky elements so they don't enter the navbar */
-    --navbar-height: 84px; /* override as needed per layout */
-    /* Sidebar width token - adjust once to affect layout consistently */
-    --filter-width: 320px;
+    --menu-accent: var(--brand-1, #3b82f6);
+    --menu-accent-hover: var(--brand-2, #2563eb);
+    --navbar-height: 84px;
+    --sidebar-width: 300px;
+    --card-radius: 20px;
+    --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    --card-shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.12);
 }
 
-/*
-   MAIN CONTENT LAYOUT:
-   - Desktop/Tablet: Menu grid (left) + Filter sidebar (right) side by side
-   - Mobile: Menu grid (top) + Filter sidebar (bottom, hidden by default)
-*/
+/* 1. LAYOUT & GRID */
+.menu-container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: calc(var(--navbar-height) + 40px) 24px 60px;
+}
+
 .main-content {
     display: flex;
-    gap: clamp(16px, 2.4vw, 32px);
+    gap: 32px;
     position: relative;
+    /* align-items: flex-start is CRITICAL for sticky sidebar */
     align-items: flex-start;
-    justify-content: flex-start;
-    width: 100%;
-    max-width: 1400px; /* keeps content readable on very wide screens */
-    margin: 0 auto; /* center within page/container */
-    padding: 8px 12px; /* subtle breathing room */
-    box-sizing: border-box;
-    flex-wrap: nowrap; /* prefer side-by-side on wide screens, stack via media queries */
 }
 
-/* Primary content area that holds the menu grid; flexible and safe for truncation */
 .content-area {
-    width: 100%;
-    /* max-width: 900px; */
-    margin: 0 auto;
-    padding: 0 var(--spacing-lg);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    flex: 1;
+    min-width: 0;
 }
 
-/* Filter sidebar - right side */
+/* Responsive Grid */
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+    width: 100%;
+}
+
+/* 2. FILTER SIDEBAR (Desktop Sticky) */
 .filter-sidebar {
-    /* Mobile / default: static in flow. Desktop fixed at media query below. */
-    position: static;
-    width: var(--filter-width);
+    width: var(--sidebar-width);
     flex-shrink: 0;
+    position: sticky;
+    top: calc(var(--navbar-height) + 24px);
     height: fit-content;
-    max-height: calc(100vh - 140px);
+    max-height: calc(100vh - var(--navbar-height) - 60px);
     overflow-y: auto;
-    order: 2; /* Ensure filter comes after menu grid */
-    background:
-        linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 20px;
-    padding: 24px;
-    box-shadow:
-        0 20px 40px -12px rgba(0, 0, 0, 0.12),
-        0 0 0 1px rgba(255, 255, 255, 0.05),
-        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--card-radius);
+    padding: 24px;
+    box-shadow: var(--card-shadow);
     z-index: 10;
+    transition: all 0.3s ease;
+    align-self: flex-start; /* Ensures it stays trapped at the top of the container */
 }
 
-/* Menu container - main wrapper */
-.menu-container {
-    max-width: 1400px;
-    /* Use padding-top tied to navbar height so sticky children never slide under the navbar */
-    margin: 40px auto 40px;
-    padding: calc(var(--navbar-height) + 20px) 20px 20px;
-}
-
+/* Sidebar Scrollbar */
 .filter-sidebar::-webkit-scrollbar {
     width: 6px;
 }
-
 .filter-sidebar::-webkit-scrollbar-track {
     background: transparent;
 }
-
 .filter-sidebar::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 3px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
 }
 
-.filter-sidebar::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.3);
-}
-
-/* Dark mode glass effect for sidebar */
 [data-theme="dark"] .filter-sidebar {
-    background:
-        linear-gradient(135deg, rgba(30, 30, 30, 0.98) 0%, rgba(20, 20, 20, 0.95) 100%);
+    background: rgba(15, 23, 42, 0.8);
     border-color: rgba(255, 255, 255, 0.08);
-    box-shadow:
-        0 25px 50px -12px rgba(0, 0, 0, 0.4),
-        0 0 0 1px rgba(255, 255, 255, 0.05),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-}
-
-[data-theme="dark"] .filter-sidebar::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
-}
-
-[data-theme="dark"] .filter-sidebar::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
 .filter-title {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 800;
-    margin-bottom: 28px;
-    color: var(--menu-text-main);
-    padding-bottom: 20px;
-        /* Decorative underline handled by ::after; keep background for gradient text only */
-        background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+    color: var(--text-color);
     position: relative;
+    padding-bottom: 12px;
 }
 
 .filter-title::after {
@@ -141,519 +95,381 @@
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 60px;
+    width: 40px;
     height: 3px;
-    background: linear-gradient(90deg, var(--brand-1), var(--brand-2));
+    background: var(--menu-accent);
     border-radius: 2px;
 }
 
 .filter-section {
-    margin-bottom: 32px;
-    padding: 24px;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(248, 250, 252, 0.4) 100%);
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow:
-        0 8px 32px rgba(0, 0, 0, 0.08),
-        inset 0 1px 0 rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    transition: all 0.3s ease;
-}
-
-.filter-section:hover {
-    transform: translateY(-2px);
-    box-shadow:
-        0 12px 40px rgba(0, 0, 0, 0.12),
-        inset 0 1px 0 rgba(255, 255, 255, 0.7);
-}
-
-[data-theme="dark"] .filter-section {
-    background: linear-gradient(135deg, rgba(30, 30, 30, 0.6) 0%, rgba(15, 23, 42, 0.4) 100%);
-    border-color: rgba(255, 255, 255, 0.08);
-    box-shadow:
-        0 8px 32px rgba(0, 0, 0, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-}
-
-[data-theme="dark"] .filter-section:hover {
-    box-shadow:
-        0 12px 40px rgba(0, 0, 0, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.15);
-}
-
-/* Desktop: fix sidebar to the left of centered container at larger sizes */
-@media (min-width: 992px) {
-    .filter-sidebar {
-        position: fixed;
-        /* Keep sidebar below the navbar using the design token */
-        top: calc(var(--navbar-height) + 24px);
-        /* place sidebar near left edge with 30px padding from viewport */
-        left: 30px;
-        width: var(--filter-width);
-        z-index: 40; /* increase z-index slightly to stay above header chrome when needed */
-        max-height: calc(100vh - var(--navbar-height) - 48px);
-        box-shadow: 0 24px 48px rgba(0,0,0,0.12);
-        transition: transform 0.2s ease, opacity 0.2s ease;
-        will-change: transform, left;
-    }
-
-    /* Reserve space for the fixed sidebar on the content area (not the inner grid)
-       This keeps the grid responsive and avoids double offsets when nested. */
-    .content-area {
-        width: 100%;
-        /* max-width: 900px; */
-        margin: 0 auto;
-        padding: 0 var(--spacing-lg);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-}
-
-/* Responsive Grid: auto-fit columns so cards fill available space */
-.menu-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 22px;
-    width: 100%;
-    align-items: start;
-}
-
-@media (max-width: 575px) {
-    .menu-grid { grid-template-columns: 1fr; gap: 16px; }
-}
-
-@media (min-width: 576px) and (max-width: 991px) {
-    .menu-grid { grid-template-columns: repeat(2, 1fr); gap: 18px; }
-}
-
-@media (min-width: 992px) {
-    .menu-grid { grid-template-columns: repeat(3, 1fr); gap: 26px; }
-}
-
-/* Ensure cards stretch to fill the grid cell and maintain consistent card look */
-.menu-item-card {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-.item-content { text-align: left; align-items: stretch; }
-
-.item-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-/* When filter sidebar overlays on small screens, ensure it becomes visible via .show */
-.filter-sidebar { transform: translateX(0); }
-.filter-sidebar:not(.show) { /* collapsed on mobile */ }
-
-/* Mobile toggle button alignment */
-.mobile-filter-toggle { display: inline-block; margin: 12px 0; }
-
-/* Slightly different centering tweak for very wide screens */
-@media (min-width: 1400px) {
-    .filter-sidebar {
-        left: calc(50% - 700px + 20px);
-    }
+    margin-bottom: 24px;
 }
 
 .filter-section label {
     display: block;
+    font-size: 0.85rem;
     font-weight: 700;
-    margin-bottom: 10px;
-    color: var(--menu-text-main);
-    font-size: 0.95rem;
     text-transform: uppercase;
-    letter-spacing: 0.8px;
-    opacity: 0.9;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+    color: var(--muted);
 }
 
 .filter-input, .filter-select {
     width: 100%;
-    padding: 14px 18px;
-    border-radius: var(--radius-lg);
-    border: 2px solid rgba(0, 0, 0, 0.08);
-    background: rgba(255, 255, 255, 0.8);
-    color: var(--menu-text-main);
-    font-size: 0.95rem;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow:
-        0 1px 3px rgba(0, 0, 0, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(10px);
-}
-
-[data-theme="dark"] .filter-input, [data-theme="dark"] .filter-select {
-    background: rgba(30, 30, 30, 0.8);
-    border-color: rgba(255, 255, 255, 0.1);
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.9);
     color: var(--text-color);
-    box-shadow:
-        0 1px 3px rgba(0, 0, 0, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
 }
 
 .filter-input:focus, .filter-select:focus {
-    border-color: var(--brand-1);
+    border-color: var(--menu-accent);
     outline: none;
-    box-shadow:
-        0 0 0 3px rgba(59, 130, 246, 0.1),
-        0 4px 12px rgba(0, 0, 0, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.8);
-    transform: translateY(-1px);
-    background: rgba(255, 255, 255, 0.95);
-}
-
-[data-theme="dark"] .filter-input:focus, [data-theme="dark"] .filter-select:focus {
-    background: rgba(30, 30, 30, 0.95);
-    box-shadow:
-        0 0 0 3px rgba(59, 130, 246, 0.2),
-        0 4px 12px rgba(0, 0, 0, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-}
-
-.filter-input:hover, .filter-select:hover {
-    border-color: var(--brand-1);
-    box-shadow:
-        0 2px 8px rgba(0, 0, 0, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.7);
-    transform: translateY(-0.5px);
-}
-
-/* Clear Filters Button */
-.clear-btn {
-    width: 100%;
-    padding: 14px 20px;
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    color: white;
-    border: none;
-    border-radius: var(--radius-lg);
-    font-size: 0.95rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow:
-        0 4px 12px rgba(239, 68, 68, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    position: relative;
-    overflow: hidden;
-}
-
-.clear-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s;
-}
-
-.clear-btn:hover::before {
-    left: 100%;
-}
-
-.clear-btn:hover {
-    background: linear-gradient(135deg, #dc2626, #b91c1c);
-    transform: translateY(-2px);
-    box-shadow:
-        0 8px 20px rgba(239, 68, 68, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
-}
-
-.filter-group label {
-    margin-bottom: 10px;
-    color: var(--menu-text-main);
-    font-size: 0.95rem;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    opacity: 0.9;
-}
-
-.filter-input, .filter-select {
-    width: 100%;
-    padding: 14px 18px;
-    border-radius: var(--radius-lg);
-    border: 2px solid rgba(0, 0, 0, 0.08);
-    background: rgba(255, 255, 255, 0.8);
-    color: var(--menu-text-main);
-    font-size: 0.95rem;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow:
-        0 1px 3px rgba(0, 0, 0, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(10px);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 [data-theme="dark"] .filter-input, [data-theme="dark"] .filter-select {
-    background: rgba(30, 30, 30, 0.8);
+    background: rgba(30, 41, 59, 0.8);
     border-color: rgba(255, 255, 255, 0.1);
-    color: var(--text-color);
-    box-shadow:
-        0 1px 3px rgba(0, 0, 0, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-.filter-input:focus, .filter-select:focus {
-    border-color: var(--brand-1);
-    outline: none;
-    box-shadow:
-        0 0 0 3px rgba(59, 130, 246, 0.1),
-        0 4px 12px rgba(0, 0, 0, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.8);
-    transform: translateY(-1px);
-    background: rgba(255, 255, 255, 0.95);
-}
-
-[data-theme="dark"] .filter-input:focus, [data-theme="dark"] .filter-select:focus {
-    background: rgba(30, 30, 30, 0.95);
-    box-shadow:
-        0 0 0 3px rgba(59, 130, 246, 0.2),
-        0 4px 12px rgba(0, 0, 0, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-}
-
-.filter-input:hover, .filter-select:hover {
-    border-color: var(--brand-1);
-    box-shadow:
-        0 2px 8px rgba(0, 0, 0, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.7);
-    transform: translateY(-0.5px);
-}
-
-/* Clear Filters Button */
 .clear-btn {
     width: 100%;
-    padding: 14px 20px;
-    background: linear-gradient(135deg, #ef4444, #dc2626);
+    padding: 12px;
+    background: #ef4444;
     color: white;
     border: none;
-    border-radius: var(--radius-lg);
-    font-size: 0.95rem;
+    border-radius: 12px;
     font-weight: 700;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow:
-        0 4px 12px rgba(239, 68, 68, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transition: all 0.2s ease;
     text-transform: uppercase;
-    letter-spacing: 0.8px;
-    position: relative;
-    overflow: hidden;
-}
-
-.clear-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s;
-}
-
-.clear-btn:hover::before {
-    left: 100%;
+    font-size: 0.85rem;
 }
 
 .clear-btn:hover {
-    background: linear-gradient(135deg, #dc2626, #b91c1c);
-    transform: translateY(-2px);
-    box-shadow:
-        0 8px 20px rgba(239, 68, 68, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    background: #dc2626;
+    transform: translateY(-1px);
 }
 
-.clear-btn:active {
-    transform: translateY(0);
-    box-shadow:
-        0 2px 8px rgba(239, 68, 68, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-}
-
-/* 3. PRODUCT GRID - Modern Responsive Grid */
-.menu-grid {
-    display: grid;
-    /* Default: 3 columns for desktop */
-    grid-template-columns: repeat(3, 1fr);
-    gap: 28px;
-    padding: 0;
-    width: 100%;
-    /* Improved grid layout */
-    grid-auto-rows: minmax(400px, auto);
-    align-items: start;
-}
-
-/* Large screens (TV): 4 columns */
-@media (min-width: 1400px) {
-    .menu-grid {
-        gap: 32px;
-        grid-template-columns: repeat(4, 1fr);
-    }
-}
-
-/* Desktop medium: 3 columns */
-@media (min-width: 1200px) and (max-width: 1399px) {
-    .menu-grid {
-        gap: 26px;
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-/* Tablet: 2 columns */
-@media (max-width: 991px) {
-    .menu-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 22px;
-        grid-auto-rows: minmax(350px, auto);
-    }
-
-    .main-content {
-        gap: 20px;
-    }
-
-    .filter-sidebar {
-        width: 280px;
-    }
-}
-
-/* Commented out additional conflicting rules for filter-sidebar */
-/*
-@media (min-width: 992px) {
-    .main-content {
-        display: flex;
-        gap: 40px;
-        align-items: flex-start;
-    }
-
-    .filter-sidebar {
-        position: sticky;
-        top: 20px;
-        width: 320px;
-        flex-shrink: 0;
-        height: fit-content;
-        max-height: calc(100vh - 100px);
-        overflow-y: auto;
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 100%);
-        border: 1px solid rgba(0, 0, 0, 0.06);
-        border-radius: 20px;
-        padding: 32px;
-        box-shadow:
-            0 25px 50px -12px rgba(0, 0, 0, 0.15),
-            0 0 0 1px rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(24px);
-        -webkit-backdrop-filter: blur(24px);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index: 10;
-    }
-
-    .content-area {
-        width: 100%;
-        /* max-width: 900px; */
-        margin: 0 auto;
-        padding: 0 var(--spacing-lg);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    [data-theme="dark"] .filter-sidebar {
-        background: linear-gradient(135deg, rgba(30, 30, 30, 0.98) 0%, rgba(20, 20, 20, 0.95) 100%);
-        border-color: rgba(255, 255, 255, 0.08);
-        box-shadow:
-            0 25px 50px -12px rgba(0, 0, 0, 0.4),
-            0 0 0 1px rgba(255, 255, 255, 0.05);
-    }
-}
-*/
-
-/* Mobile: 1 column */
-@media (max-width: 767px) {
-    .menu-grid {
-        grid-template-columns: 1fr;
-        gap: 18px;
-        grid-auto-rows: minmax(320px, auto);
-    }
-
-    .menu-container {
-        padding: 0 15px;
-        margin: 20px auto;
-    }
-
-    .main-content {
-        gap: 15px;
-        flex-direction: column;
-    }
-
-    .filter-sidebar {
-        width: 100%;
-        position: static;
-        order: 3; /* Move filter to bottom on mobile */
-        margin-bottom: 20px;
-        padding: 20px;
-        border-radius: 16px;
-        display: none; /* Hidden by default on mobile */
-        right: auto; /* Reset fixed positioning */
-        top: auto;
-    }
-
-    .filter-sidebar.show {
-        display: block;
-    }
-
-    .content-area {
-        order: 1; /* Menu grid comes first on mobile */
-        width: 100%;
-    }
-}
-
-/* 4. MODERN PRODUCT CATALOG CARD DESIGN */
+/* 3. PREMIUM PRODUCT CARD */
 .menu-item-card {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 50%, rgba(255, 255, 255, 0.9) 100%);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    /* allow grid columns to control width; remove hard max so cards flex to column width */
-    max-width: none;
-    width: 100%;
-    border-radius: 24px;
-    position: relative;
-
-    /* Premium glassmorphism shadow */
-    box-shadow:
-        0 8px 32px rgba(0, 0, 0, 0.1),
-        0 2px 8px rgba(0, 0, 0, 0.06),
-        inset 0 1px 0 rgba(255, 255, 255, 0.9),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.05);
-
+    background: var(--card-bg, #ffffff);
+    border-radius: var(--card-radius);
     overflow: hidden;
-
-    /* Advanced hover animation */
-    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: var(--card-shadow);
     cursor: pointer;
-
-    /* Subtle border with gradient */
-    border: 1px solid rgba(255, 255, 255, 0.3);
-
-    /* Generous padding */
-    padding: 0;
-
-    /* Modern transform origin */
-    transform-origin: center;
 }
 
 .menu-item-card:hover {
-    transform: translateY(-12px) scale(1.02);
-    box-shadow:
-        0 25px 50px -12px rgba(0, 0, 0, 0.15),
-        0 8px 16px -8px rgba(0, 0, 0, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.95),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.03);
-    border-color: rgba(59, 130, 246, 0.2);
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.99) 0%, rgba(255, 255, 255, 0.97) 50%, rgba(255, 255, 255, 0.95) 100%);
+    transform: translateY(-8px);
+    box-shadow: var(--card-shadow-hover);
+    border-color: var(--menu-accent);
 }
+
+/* Card Image Area */
+.card-image-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: #f8fafc;
+    overflow: hidden;
+}
+
+.card-image-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.6s ease;
+}
+
+.menu-item-card:hover .card-image-wrap img {
+    transform: scale(1.08);
+}
+
+/* Image Thumbnails (Hover Switch) */
+.card-thumbs {
+    position: absolute;
+    bottom: 12px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 12px;
+    z-index: 5;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+}
+
+.menu-item-card:hover .card-thumbs {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.thumb-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 2px solid #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.thumb-img:hover {
+    border-color: var(--menu-accent);
+    transform: scale(1.1);
+}
+
+/* Best Seller Badge */
+.card-badge {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(8px);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--menu-accent);
+    z-index: 2;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Card Content */
+.card-content {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: #fff;
+}
+
+.card-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin: 0;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.8rem;
+}
+
+.card-rating {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+.card-rating .stars {
+    color: #ffb400;
+    letter-spacing: 1px;
+}
+
+/* Favorites Button on Card */
+.btn-favorite-top {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    color: #64748b;
+    z-index: 10;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.btn-favorite-top:hover {
+    transform: scale(1.1);
+    color: #ef4444;
+}
+
+.btn-favorite-top.active {
+    color: #ef4444;
+}
+
+/* 4. CATEGORY TABS */
+.category-buttons-wrapper {
+    margin-bottom: 32px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+.category-buttons-wrapper::-webkit-scrollbar { display: none; }
+
+.category-buttons {
+    display: flex;
+    gap: 12px;
+    padding: 4px;
+}
+
+.category-btn {
+    padding: 10px 24px;
+    border-radius: 14px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: #fff;
+    color: var(--muted);
+    font-weight: 600;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.category-btn:hover {
+    border-color: var(--menu-accent);
+    color: var(--menu-accent);
+    background: rgba(59, 130, 246, 0.05);
+}
+
+.category-btn.active {
+    background: var(--menu-accent);
+    color: #fff;
+    border-color: var(--menu-accent);
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.25);
+}
+
+/* 5. SIDEBAR UPDATES (News) */
+.sidebar-updates-section label {
+    font-size: 0.9rem;
+    margin-bottom: 16px;
+}
+
+.sidebar-updates-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.sidebar-update-item {
+    display: flex;
+    gap: 12px;
+    padding: 10px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.5);
+    transition: all 0.2s ease;
+    align-items: center;
+}
+
+.sidebar-update-item:hover {
+    background: #fff;
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.update-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--menu-accent);
+    flex-shrink: 0;
+}
+
+.update-content {
+    font-size: 0.8rem;
+    line-height: 1.4;
+    color: var(--text-color);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.view-all-updates {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--menu-accent);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.view-all-updates:hover { text-decoration: underline; }
+
+/* 6. MOBILE & TABLET ADAPTATION */
+@media (max-width: 1024px) {
+    .menu-container {
+        padding: calc(var(--navbar-height) + 24px) 16px 40px;
+    }
+    .main-content {
+        flex-direction: column;
+        gap: 24px;
+    }
+    .filter-sidebar {
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: -100%;
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+        z-index: 2000;
+        transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .filter-sidebar.show {
+        left: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .menu-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 16px;
+    }
+    .card-content { padding: 16px; }
+}
+
+@media (max-width: 480px) {
+    .menu-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 7. ANIMATIONS */
+@keyframes fadeInSlideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.menu-item-card {
+    animation: fadeInSlideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+/* Delay for stagger effect */
+.menu-item-card:nth-child(1) { animation-delay: 0.05s; }
+.menu-item-card:nth-child(2) { animation-delay: 0.1s; }
+.menu-item-card:nth-child(3) { animation-delay: 0.15s; }
+.menu-item-card:nth-child(4) { animation-delay: 0.2s; }
 
 /* Image Area */
 .menu-item-card .item-image,
@@ -713,6 +529,102 @@
     width: auto !important;
     max-width: 100% !important;
     height: 100% !important;
+}
+
+/* Sidebar Updates Section */
+.sidebar-updates-section {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-updates-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  margin-top: 1rem;
+}
+
+.sidebar-updates-container::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar-updates-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+
+.sidebar-update-item {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.75rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.sidebar-update-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(66, 153, 225, 0.3);
+  transform: translateX(4px);
+}
+
+.update-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4299e1;
+  flex-shrink: 0;
+  margin-top: 0.35rem;
+  box-shadow: 0 0 10px rgba(66, 153, 225, 0.5);
+}
+
+.sidebar-update-item.loading .update-dot {
+  animation: pulse 1.5s infinite;
+  background: #cbd5e0;
+}
+
+.update-content {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.9);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.view-all-updates {
+  display: inline-block;
+  font-size: 0.8rem;
+  color: #4299e1;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.view-all-updates:hover {
+  color: #63b3ed;
+  text-decoration: underline;
+  transform: translateX(3px);
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.95); opacity: 0.5; }
+  50% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.5; }
+}
+
+@media (max-width: 991px) {
+  .sidebar-updates-section {
+    margin-top: 1.5rem;
+  }
 }
 
 .menu-item-card .item-image a {
@@ -1050,6 +962,7 @@ img {
     position: relative;
     background: linear-gradient(90deg, #fbbf24 50%, #e5e7eb 50%);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -1398,31 +1311,29 @@ img {
     }
 
     .filter-sidebar {
-        position: static;
-        left: auto;
-        right: auto;
-        top: auto;
-        height: auto;
-        max-height: none;
-        width: 100%;
-        transition: none;
-        /* Ensure navbar stays above the filter on mobile */
-        z-index: auto;
-        border-radius: 16px;
-        border-right: none;
-        box-shadow: none;
-        background-clip: border-box;
-        overflow-y: visible;
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 85%;
+        max-width: 320px;
+        height: 100vh;
+        max-height: 100vh;
+        z-index: 9999;
+        border-radius: 20px 0 0 20px;
+        background: var(--glass-bg);
+        backdrop-filter: blur(25px);
+        box-shadow: -10px 0 30px rgba(0,0,0,0.2);
+        padding: 80px 24px 40px;
+        overflow-y: auto;
+        transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        display: block; /* always block but hidden via position */
     }
-
-    /* [data-theme="dark"] .filter-sidebar {
-        border-right-color: rgba(255, 255, 255, 0.1);
-        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.4);
-    } */
 
     .filter-sidebar.show {
-        display: block;
+        right: 0;
     }
+
+
 
     .mobile-filter-toggle {
         display: flex;
@@ -1541,7 +1452,7 @@ img {
 
     .filter-sidebar {
         position: sticky;
-        top: 20px;
+        top: 100px;
         width: 320px;
         flex-shrink: 0;
         height: fit-content;
@@ -1576,7 +1487,7 @@ img {
 */
 
 /* Product Swiper Styles - Updated to match hero swiper */
-.product-swiper {
+.product-card-swiper {
     width: 100%;
     height: 100%;
     position: relative;
@@ -1584,11 +1495,11 @@ img {
     border-radius: 20px 20px 0 0;
 }
 
-.product-swiper .swiper-wrapper {
+.product-card-swiper .swiper-wrapper {
     height: 100%;
 }
 
-.product-swiper .swiper-slide {
+.product-card-swiper .swiper-slide {
     height: 100%;
     display: flex;
     align-items: center;
@@ -1597,7 +1508,7 @@ img {
     position: relative;
 }
 
-.product-swiper .swiper-slide img {
+.product-card-swiper .swiper-slide img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -1605,17 +1516,17 @@ img {
     transition: opacity 0.3s ease;
 }
 
-.product-swiper .swiper-slide-active img {
+.product-card-swiper .swiper-slide-active img {
     opacity: 1;
 }
 
-.product-swiper .swiper-slide:not(.swiper-slide-active) img {
+.product-card-swiper .swiper-slide:not(.swiper-slide-active) img {
     opacity: 0.8;
 }
 
 /* Swiper Navigation - Hero style */
-.product-swiper .swiper-button-next,
-.product-swiper .swiper-button-prev {
+.product-card-swiper .swiper-button-next,
+.product-card-swiper .swiper-button-prev {
     width: 40px;
     height: 40px;
     margin-top: -20px;
@@ -1630,35 +1541,35 @@ img {
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.product-swiper:hover .swiper-button-next,
-.product-swiper:hover .swiper-button-prev {
+.product-card-swiper:hover .swiper-button-next,
+.product-card-swiper:hover .swiper-button-prev {
     opacity: 1;
     visibility: visible;
 }
 
-.product-swiper .swiper-button-next::after,
-.product-swiper .swiper-button-prev::after {
+.product-card-swiper .swiper-button-next::after,
+.product-card-swiper .swiper-button-prev::after {
     font-size: 16px;
     font-weight: bold;
     color: #374151;
 }
 
-.product-swiper .swiper-button-next:hover,
-.product-swiper .swiper-button-prev:hover {
+.product-card-swiper .swiper-button-next:hover,
+.product-card-swiper .swiper-button-prev:hover {
     background: rgba(255, 255, 255, 1);
     transform: scale(1.1);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 /* Swiper Pagination - Hero style */
-.product-swiper .swiper-pagination {
+.product-card-swiper .swiper-pagination {
     bottom: 15px !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
     width: auto !important;
 }
 
-.product-swiper .swiper-pagination-bullet {
+.product-card-swiper .swiper-pagination-bullet {
     width: 10px;
     height: 10px;
     background: rgba(255, 255, 255, 0.6);
@@ -1669,588 +1580,122 @@ img {
     cursor: pointer;
 }
 
-.product-swiper .swiper-pagination-bullet-active {
+.product-card-swiper .swiper-pagination-bullet-active {
     background: #ffffff;
     transform: scale(1.2);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 /* Dark theme swiper styles */
-[data-theme="dark"] .product-swiper .swiper-button-next,
-[data-theme="dark"] .product-swiper .swiper-button-prev {
+[data-theme="dark"] .product-card-swiper .swiper-button-next,
+[data-theme="dark"] .product-card-swiper .swiper-button-prev {
     background: rgba(30, 30, 30, 0.9);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     border-color: rgba(255, 255, 255, 0.1);
 }
 
-[data-theme="dark"] .product-swiper .swiper-button-next::after,
-[data-theme="dark"] .product-swiper .swiper-button-prev::after {
+[data-theme="dark"] .product-card-swiper .swiper-button-next::after,
+[data-theme="dark"] .product-card-swiper .swiper-button-prev::after {
     color: #f9fafb;
 }
 
-[data-theme="dark"] .product-swiper .swiper-button-next:hover,
-[data-theme="dark"] .product-swiper .swiper-button-prev:hover {
+[data-theme="dark"] .product-card-swiper .swiper-button-next:hover,
+[data-theme="dark"] .product-card-swiper .swiper-button-prev:hover {
     background: rgba(30, 30, 30, 1);
     border-color: rgba(255, 255, 255, 0.2);
 }
 
-[data-theme="dark"] .product-swiper .swiper-pagination-bullet {
+[data-theme="dark"] .product-card-swiper .swiper-pagination-bullet {
     background: rgba(255, 255, 255, 0.4);
 }
 
-[data-theme="dark"] .product-swiper .swiper-pagination-bullet-active {
+[data-theme="dark"] .product-card-swiper .swiper-pagination-bullet-active {
     background: #ffffff;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
-/* Rating Modal */
-.rating-modal {
-    background: rgba(0, 0, 0, 0.8);
+/* 8. DARK MODE REFINEMENTS */
+[data-theme="dark"] body {
+    background-color: #0f172a;
+}
+
+[data-theme="dark"] .menu-item-card {
+    background: #1e293b;
+}
+
+[data-theme="dark"] .card-content {
+    background: #1e293b;
+}
+
+[data-theme="dark"] .card-title {
+    color: #f1f5f9;
+}
+
+[data-theme="dark"] .card-image-wrap {
+    background: #0f172a;
+}
+
+[data-theme="dark"] .btn-favorite-top,
+[data-theme="dark"] .card-badge {
+    background: rgba(30, 41, 59, 0.9);
+    color: #f1f5f9;
+}
+
+[data-theme="dark"] .category-btn {
+    background: #1e293b;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .sidebar-update-item {
+    background: rgba(30, 41, 59, 0.5);
+}
+
+[data-theme="dark"] .sidebar-update-item:hover {
+    background: #1e293b;
+}
+
+/* 9. MOBILE CLOSE BUTTON */
+.mobile-close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
     display: none;
     align-items: center;
     justify-content: center;
-    z-index: 2000;
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    backdrop-filter: blur(4px);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-.rating-modal.show {
-    display: flex;
-    opacity: 1;
-}
-
-.rating-modal-content {
-    background: var(--glass-bg);
-    border-radius: var(--radius-lg);
-    width: 90%;
-    max-width: 500px;
-    box-shadow: var(--glass-shadow);
-    position: relative;
-    overflow: hidden;
-    transform: scale(0.9);
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    backdrop-filter: blur(20px);
-    border: 1px solid var(--glass-border);
-}
-.rating-modal.show .rating-modal-content {
-    transform: scale(1);
-}
-
-.rating-modal-header {
-    padding: 20px;
-    border-bottom: 1px solid var(--glass-border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: transparent;
-}
-.rating-modal-header h3 {
-    margin: 0;
-    color: var(--menu-text-main);
-    font-size: 1.25rem;
-    font-weight: 700;
-}
-.rating-modal-body {
-    padding: 24px;
-    text-align: center;
-}
-
-.rating-item-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 24px;
-    border-bottom: 1px solid var(--glass-border);
-    padding-bottom: 20px;
-}
-.rating-item-image {
-    width: 80px;
-    height: 80px;
-    border-radius: 12px;
-    object-fit: cover;
-    box-shadow: var(--box-shadow);
-}
-.rating-item-name {
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: var(--menu-text-main);
-}
-
-.stars-rating {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin-bottom: 24px;
-}
-.rating-star {
-    font-size: 32px;
-    color: var(--menu-border-color);
-    cursor: pointer;
-    transition: var(--transition-fast);
-}
-.rating-star:hover, .rating-star.active {
-    color: #ffd700;
-    transform: scale(1.15);
-}
-
-.rating-form textarea {
-    width: 100%;
-    padding: 14px;
-    border: 2px solid var(--glass-border);
-    border-radius: var(--radius-lg);
-    font-size: 1rem;
-    resize: vertical;
-    background: var(--surface);
-    color: var(--text-color);
-    min-height: 100px;
-    margin-bottom: 16px;
-    transition: border-color 0.2s;
-}
-.rating-form textarea:focus {
-    border-color: var(--menu-accent);
-    outline: none;
-}
-
-.btn-submit-rating {
-    width: 100%;
-    padding: 14px;
-    background: var(--gradient-primary);
-    color: white;
+    background: rgba(0, 0, 0, 0.05);
     border: none;
-    border-radius: var(--radius-lg);
-    font-weight: 700;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: var(--transition-fast);
-    box-shadow: var(--shadow-sm);
-}
-.btn-submit-rating:hover {
-    background: var(--gradient-secondary);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-}
-
-/* Comments Section in Modal (if needed) */
-.comments-section {
-    margin-top: 24px;
-    text-align: left;
-}
-.comments-list {
-    max-height: 250px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-.comment-item {
-    background: var(--glass-bg);
-    padding: 12px 16px;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(10px);
-}
-.comment-author {
-    font-weight: 700;
-    color: var(--menu-text-main);
-    font-size: 0.9rem;
-    margin-bottom: 4px;
-    display: flex;
-    justify-content: space-between;
-}
-.comment-text {
-    color: var(--menu-text-muted);
-    font-size: 0.95rem;
-    line-height: 1.5;
-}
-
-/* Floating Cart Icon */
-.floating-cart-icon {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    width: 64px;
-    height: 64px;
-    background: var(--glass-bg);
     border-radius: 50%;
-    box-shadow: var(--glass-shadow);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1040;
+    font-size: 24px;
+    color: var(--text-color);
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    border: 2px solid var(--brand-1);
-    backdrop-filter: blur(20px);
-}
-.floating-cart-icon:hover {
-    transform: scale(1.1) rotate(5deg);
-    box-shadow: var(--shadow-xl);
-}
-.floating-cart-icon i {
-    font-size: 28px;
-    color: var(--brand-1);
-}
-.cart-badge-floating {
-    position: absolute;
-    top: -2px;
-    right: -2px;
-    background: var(--danger-color);
-    color: white;
-    border-radius: 50%;
-    width: 26px;
-    height: 26px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    font-weight: 800;
-    border: 3px solid var(--glass-bg);
-    transform: scale(0);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.cart-badge-floating.show {
-    transform: scale(1);
+    z-index: 2010;
 }
 
-@media (max-width: 768px) {
-    .floating-cart-icon {
-        width: 56px;
-        height: 56px;
-        bottom: 80px;
-        right: 20px;
-    }
-    .floating-cart-icon i {
-        font-size: 24px;
+@media (max-width: 1024px) {
+    .mobile-close-btn {
+        display: flex;
     }
 }
 
-/* Strong overrides to ensure pan-mode galleries display images side-by-side
-   and are visible regardless of earlier absolute/opacity rules. These
-   selectors are intentionally specific and use !important sparingly to
-   fix cascade issues where other rules made non-pan galleries hide slides. */
-.gallery[data-mode="pan"] .gallery-track,
-.menu-item-card .gallery[data-mode="pan"] .gallery-track {
-    display: flex !important;
-    flex-wrap: nowrap !important;
-    width: 100% !important;
-}
-.gallery[data-mode="pan"] .gallery-track img,
-.menu-item-card .gallery[data-mode="pan"] .gallery-track img {
-    position: relative !important;
-    inset: auto !important;
-    opacity: 1 !important;
-    display: block !important;
-    flex: 0 0 100% !important; /* each slide is full container width */
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: contain !important;
+/* Breadcrumb Navigation */
+.breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin-bottom: 24px;
 }
 
-/* Large screens: align sidebar to center-left (matches centered container) */
-@media (min-width: 1400px) {
-    .filter-sidebar {
-        left: calc(50% - 930px) !important;
-    }
-}
-
-/* -------------------------
-   Universal Product Card
-   Standardized, modern, responsive card styles applied site-wide.
-   Keeps compatibility with existing classes (`multi-media`, `gallery`, `card-image`).
-   ------------------------- */
-:root {
-    --card-radius: 16px;
-    --card-padding: 14px;
-    --card-image-height: 320px;
-    --card-shadow: 0 10px 30px rgba(2,6,23,0.06);
-}
-
-.menu-item-card {
-    display: flex;
-    flex-direction: column;
-    background: var(--menu-card-bg, #ffffff);
-    border-radius: var(--card-radius);
-    overflow: hidden;
-    transition: transform 260ms cubic-bezier(.2,.9,.2,1), box-shadow 260ms ease;
-    box-shadow: var(--card-shadow);
-    min-height: 100%;
-}
-
-.menu-item-card:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(2,6,23,0.08); }
-
-.menu-item-card .card-image,
-.menu-item-card .item-image {
-    width: 100%;
-    height: var(--card-image-height);
-    min-height: 180px;
-    background: linear-gradient(180deg,#f8fafc,#eef2f6);
-    display: block;
-    position: relative;
-}
-
-/* prefer modern aspect-ratio when available */
-.menu-item-card .card-image img,
-.menu-item-card .item-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-.menu-item-card.multi-media .card-image,
-.menu-item-card.multi-media .item-image {
-    height: 420px; /* larger hero area for multi-image items */
-}
-
-.menu-item-card .item-content,
-.menu-item-card .card-content {
-    padding: var(--card-padding);
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    align-items: stretch;
-}
-
-.menu-item-card .item-name {
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: var(--menu-text-main, #0f172a);
-    line-height: 1.25;
-    margin: 0;
-}
-
-.menu-item-card .item-sub {
+.breadcrumb-item a {
+    color: var(--muted);
+    text-decoration: none;
     font-size: 0.9rem;
-    color: var(--menu-text-muted, #64748b);
 }
 
-.menu-item-card .price {
-    font-size: 1.12rem;
-    font-weight: 800;
-    color: var(--brand-1, #2563eb);
+.breadcrumb-item.active {
+    color: var(--menu-accent);
+    font-weight: 600;
 }
 
-.menu-item-card .card-actions {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    justify-content: space-between;
-    padding-top: 6px;
-}
-
-.menu-item-card .btn-add-cart {
-    width: auto;
-    min-width: 44px;
-    padding: 10px 14px;
-    border-radius: 12px;
-    font-weight: 700;
-}
-
-.menu-item-card .btn-favorite-top {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 999px;
-    z-index: 6;
-}
-
-/* Compact / mobile adjustments */
-@media (max-width: 575px) {
-    :root { --card-image-height: 260px; }
-    .menu-item-card .item-name { font-size: 1rem; }
-    .menu-item-card.multi-media .card-image { height: 300px; }
-}
-
-
-/* ----- Modern ribbon + universal product image styles ----- */
-.ribbon, .gallery.ribbon {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    display: block;
-}
-
-.ribbon-track, .gallery-track.ribbon-track {
-    display: flex;
-    gap: 6px;
-    align-items: stretch;
-    height: 100%;
-    will-change: transform;
-}
-
-.ribbon-img {
-    flex: 0 0 auto;
-    width: auto;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 12px 12px 0 0;
-    transition: transform 300ms cubic-bezier(.2,.8,.2,1), filter 260ms ease;
-    backface-visibility: hidden;
-}
-
-/* Ensure ribbon images are in-flow (not absolute) and have a usable visible size */
-.ribbon-track .ribbon-img,
-.ribbon-track img,
-.ribbon.gallery .gallery-track img,
-.gallery.ribbon .gallery-track img {
-    position: relative !important;
-    inset: auto !important;
-    display: block !important;
-    flex: 0 0 34% !important; /* show ~3 images across on desktop */
-    min-width: 160px !important;
-    height: 100% !important;
-    object-fit: cover !important;
-}
-
-@media (max-width: 767px) {
-    .ribbon-track .ribbon-img,
-    .ribbon-track img,
-    .gallery.ribbon .gallery-track img {
-        flex: 0 0 48% !important; /* two per row on small screens */
-        min-width: 120px !important;
-    }
-}
-
-/* ribbon hover emphasis */
-.menu-item-card.multi-media:hover .ribbon-img {
-    transform: scale(1.03);
-    filter: saturate(1.05) brightness(1.02);
-}
-
-/* Lightweight overlay gradient for legibility on images */
-.menu-item-card .image-overlay {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: linear-gradient(180deg, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0.06) 100%);
-    border-radius: 12px 12px 0 0;
-}
-
-/* skeleton -> hide when loaded */
-.menu-item-card .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)); }
-.menu-item-card img.img-loaded { opacity: 1; transition: opacity 260ms ease; }
-.menu-item-card img.img-error { object-fit: contain; filter: grayscale(50%); }
-
-/* ensure active slide always above ribbon duplicates and visible */
-.gallery .gallery-track img.active,
-.ribbon .ribbon-track .ribbon-img.active {
-    z-index: 5;
-    opacity: 1 !important;
-}
-
-/* Thumb grid overlay: fade and modernize */
-.BKd5K { background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.25)); border-radius: 12px 12px 0 0; padding: 6px; }
-.BKd5K img { border-radius: 8px; box-shadow: 0 6px 18px rgba(2,6,23,0.06); }
-
-/* Strong overrides to prevent random hidden/zero-sized ribbon images:
-   - Force multi-media (ribbon) galleries to keep images in-flow (not absolute)
-   - Ensure visible size via flex-basis and min-width
-   - Keep single-image galleries centered and absolute for consistent framing */
-.menu-item-card.multi-media .gallery-track img,
-.menu-item-card.multi-media .ribbon-track .ribbon-img,
-.menu-item-card.multi-media .ribbon .gallery-track img,
-.menu-item-card.multi-media .gallery.ribbon .gallery-track img {
-    position: relative !important;
-    inset: auto !important;
-    display: block !important;
-    flex: 0 0 34% !important; /* desktop: show ~3 across */
-    min-width: 140px !important;
-    height: 100% !important;
-    object-fit: cover !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    z-index: 3 !important;
-}
-
-/* Make sure duplicated slides used for seamless looping are visible */
-.menu-item-card.multi-media .gallery-track .clone,
-.menu-item-card.multi-media .ribbon-track .clone {
-    opacity: 1 !important;
-    visibility: visible !important;
-}
-
-/* Single-image cards: keep previous centering behavior but ensure consistent z-index */
-.menu-item-card:not(.multi-media) .gallery-track img,
-.menu-item-card:not(.multi-media) .item-image img,
-.menu-item-card:not(.multi-media) .card-image img {
-    position: absolute !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    width: auto !important;
-    max-width: 100% !important;
-    height: 100% !important;
-    object-fit: contain !important;
-    display: block !important;
-    z-index: 2 !important;
-}
-
-/* If JS toggles data-mode late, prefer the multi-media rule above */
-.menu-item-card.multi-media .gallery:not([data-mode="pan"]) .gallery-track img {
-    position: relative !important;
-}
-.BKd5K img { border-radius: 8px; box-shadow: 0 6px 18px rgba(2,6,23,0.06); }
-
-/* Accessibility: focus states for images */
-.gallery-track img:focus, .ribbon-img:focus { outline: 3px solid rgba(59,130,246,0.18); outline-offset: 3px; }
-
-/* Mobile: reduce ribbon height and gaps */
-@media (max-width: 575px) {
-    .menu-item-card.multi-media .item-image,
-    .menu-item-card.multi-media .card-image { height: 320px !important; }
-    .ribbon-track { gap: 4px; }
-}
-
-/* --- Explicit layout fixes to avoid cascade conflicts ---
-   - Force multi-media galleries to remain in-flow (flex) so ribbon/pan works
-   - Keep single-image galleries centered and absolute for consistent framing
-   - Ensure pan-mode tracks are visible if JS toggles data-mode late
-*/
-.menu-item-card.multi-media .gallery-track,
-.menu-item-card.multi-media .ribbon-track,
-.gallery[data-mode="pan"] .gallery-track {
-    display: flex !important;
-    flex-wrap: nowrap !important;
-    position: relative !important;
-    width: 100% !important;
-}
-
-.menu-item-card.multi-media .gallery-track img,
-.menu-item-card.multi-media .ribbon-track .ribbon-img,
-.gallery[data-mode="pan"] .gallery-track img {
-    position: relative !important;
-    inset: auto !important;
-    opacity: 1 !important;
-    display: block !important;
-    flex: 0 0 34% !important;
-    min-width: 120px !important;
-    height: 100% !important;
-    object-fit: cover !important;
-}
-
-.menu-item-card:not(.multi-media) .gallery-track img,
-.menu-item-card:not(.multi-media) .item-image img,
-.menu-item-card:not(.multi-media) .card-image img {
-    position: absolute !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    width: auto !important;
-    max-width: 100% !important;
-    height: 100% !important;
-    object-fit: contain !important;
-    display: block !important;
-    z-index: 2 !important;
-}
-
-/* Make sure pan-mode images are visible regardless of other rules */
-.gallery[data-mode="pan"] .gallery-track img { opacity: 1 !important; visibility: visible !important; }
+/* END OF MENU STYLES */

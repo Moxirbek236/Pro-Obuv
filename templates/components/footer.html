@@ -1,0 +1,102 @@
+<!-- Global Footer Component -->
+<footer class="site-footer" role="contentinfo" aria-label="{{ _('footer.site_footer') if _('footer.site_footer') else 'Site footer' }}">
+  {% include 'components/news_ticker.html' %}
+
+  <div class="container">
+    <div class="footer-grid">
+      <!-- Brand & Description -->
+      <div class="footer-col footer-brand" data-aos="fade-up" data-aos-delay="100">
+        <h6 class="brand-title">{{ _('nav.brand') }}</h6>
+        <p class="brand-desc">{{ _('footer.company_desc') }}</p>
+        
+        <div class="social-row">
+          {% set socials = [
+            ('youtube', 'https://www.youtube.com/@proobuv-safety', 'icons/youtube.webp', 'YouTube'),
+            ('instagram', 'https://www.instagram.com/proguarduz/', 'icons/instagram.webp', 'Instagram'),
+            ('facebook', 'https://www.facebook.com/aklashoes/', 'icons/facebook.webp', 'Facebook'),
+            ('telegram', 'https://t.me/specobuv', 'icons/telegram.jpg', 'Telegram'),
+            ('phone', 'tel:' ~ (superadmin_settings.get('phone')|replace(' ', '') if superadmin_settings and superadmin_settings.get('phone') else get_text('footer.phone_href')), 'icons/phone.webp', _('footer.phone_display')),
+            ('email', 'mailto:premiumsafety@mail.ru', 'icons/gmail.webp', 'Email'),
+            ('maps', 'https://maps.app.goo.gl/Ezg462SRmBYLxfUY6', 'icons/maps.webp', _('footer.address')),
+            ('threads', 'https://www.threads.net/', 'icons/threads.webp', 'Threads'),
+            ('olx', 'https://www.olx.uz/', 'icons/olx.png', 'OLX'),
+            ('uzum', 'https://uzum.uz/uz/shop/pro-obuv', 'icons/uzum.webp', 'Uzum Market'),
+            ('yandex', 'https://market.yandex.ru/', 'icons/yandex.webp', 'Yandex Market')
+          ] %}
+          
+          {% for id, url, icon, label in socials %}
+          <a href="{{ url }}" target="_blank" class="social-icon-btn {{ id }}" aria-label="{{ label }}" title="{{ label }}">
+            <img src="{{ prefer_webp(url_for('static', filename=icon)) }}" alt="{{ label }}" width="20" height="20" loading="lazy">
+          </a>
+          {% endfor %}
+        </div>
+
+        <div class="newsletter-box mt-5">
+            <h5>{{ _('footer.newsletter_title') or 'Obuna bo\'ling' }}</h5>
+            <p class="small opacity-50">{{ _('footer.newsletter_subtitle') or 'Eng so\'nggi yangiliklar va chegirmalarni birinchilardan bo\'lib biling.' }}</p>
+            <form class="newsletter-form" onsubmit="return handleNewsletter(event)">
+                <div class="input-group">
+                  <input type="email" class="form-control" name="email" placeholder="{{ _('footer.newsletter_placeholder') }}" required>
+                  <button type="submit" class="btn btn-primary">{{ _('footer.subscribe') }}</button>
+                </div>
+                <div class="newsletter-feedback mt-2" style="display:none"></div>
+            </form>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="footer-col" data-aos="fade-up" data-aos-delay="200">
+        <h6>{{ _('nav.quick_links') }}</h6>
+        <ul>
+          <li><a href="{{ url_for('index') }}">{{ _('nav.home') }}</a></li>
+          <li><a href="{{ url_for('menu') }}">{{ _('nav.menu') }}</a></li>
+          <li><a href="{{ url_for('about') }}">{{ _('nav.about') }}</a></li>
+          <li><a href="{{ url_for('contact') }}">{{ _('nav.contact') }}</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact Info -->
+      <div class="footer-col" data-aos="fade-up" data-aos-delay="300">
+        <h6>{{ _('footer.contact_info') }}</h6>
+        <ul class="contact-list">
+          <li>
+            {% if superadmin_settings and superadmin_settings.get('phone') %}
+            <a href="tel:{{ superadmin_settings.get('phone')|replace(' ', '') }}"><i class="bi bi-telephone me-2 text-accent"></i>{{ superadmin_settings.get('phone') }}</a>
+            {% else %}
+            <a href="tel:{{ get_text('footer.phone_href') }}"><i class="bi bi-telephone me-2 text-accent"></i>{{ get_text('footer.phone_display') }}</a>
+            {% endif %}
+          </li>
+          <li><a href="mailto:premiumsafety@mail.ru"><i class="bi bi-envelope me-2 text-accent"></i>premiumsafety@mail.ru</a></li>
+          <li><a href="https://maps.app.goo.gl/Ezg462SRmBYLxfUY6"><i class="bi bi-geo-alt me-2 text-accent"></i>{{ _('footer.address') }}</a></li>
+          <li class="mt-4">
+            <div class="hours-box p-3 rounded" style="background: var(--footer-surface)">
+                <strong class="text-bright d-block mb-1"><i class="bi bi-clock me-2"></i>{{ _('footer.hours') }}</strong>
+                <div class="opacity-50 small">{{ _('footer.hours_working') }}</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Services -->
+      <div class="footer-col" data-aos="fade-up" data-aos-delay="400">
+        <h6>{{ _('footer.services') }}</h6>
+        <ul>
+          <li><a href="{{ url_for('contact') }}#delivery">{{ _('footer.delivery') }}</a></li>
+          <li><a href="{{ url_for('about') }}#return-policy">{{ _('footer.return_policy') }}</a></li>
+          <li><a href="{{ url_for('contact') }}#payment">{{ _('footer.payment_methods') }}</a></li>
+          <li><a href="{{ url_for('kafolatlar') }}">{{ _('nav.warranty') }}</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="footer-bottom">
+      <div class="copyright">{{ _('footer.copyright')|safe }}</div>
+      <div class="footer-legal-links">
+        <a href="{{ url_for('static', filename='oferta.pdf') }}" target="_blank">{{ _('footer.privacy') }}</a>
+        <a href="{{ url_for('static', filename='oferta.pdf') }}" target="_blank">{{ _('footer.terms') }}</a>
+        <a href="{{ url_for('static', filename='oferta.pdf') }}" target="_blank">{{ _('footer.cookies') }}</a>
+      </div>
+    </div>
+  </div>
+</footer>

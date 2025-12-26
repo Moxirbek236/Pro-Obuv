@@ -198,9 +198,6 @@ a:focus {
 }
 
 /* Dark theme enhancements */
-.dark-theme {
-  /* Enhanced dark scrollbar */
-}
 
 .dark-theme ::-webkit-scrollbar-track {
   background: #2d3748;
@@ -433,4 +430,164 @@ img:hover {
 /* small-screen adjustments */
 @media (max-width: 480px) {
   .ribbon-track .ribbon-card { flex: 0 0 140px; }
+}
+
+/* ========================================
+   CHAT & MEDIA MODAL ENHANCEMENTS
+   ======================================== */
+
+/* Chat FAB + panel styles */
+.public-chat-fab {
+  position: fixed;
+  left: 16px;
+  bottom: 20px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg,#00a8ff 0%,#006bb3 100%);
+  color: white;
+  font-size: 22px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  z-index: 1200;
+  cursor: pointer;
+}
+
+.public-chat-panel {
+  position: fixed;
+  left: 16px;
+  bottom: 90px;
+  width: 320px;
+  max-width: calc(100% - 40px);
+  height: 420px;
+  background: #0d161b;
+  color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 1200;
+}
+
+.public-chat-panel.open { display: flex; }
+
+.public-chat-header { padding: 10px 12px; background: linear-gradient(90deg,#0b2b3a,#083a4e); font-weight:600; display:flex; align-items:center; justify-content:space-between }
+.public-chat-body { flex:1; padding:10px; overflow:auto; background: linear-gradient(180deg,#071018 0%, #0b1116 100%); }
+.public-chat-input { padding:8px; display:flex; gap:8px; background:transparent; border-top:1px solid rgba(255,255,255,0.03) }
+.public-chat-input input { flex:1; padding:8px 10px; border-radius:8px; border:1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02); color:#fff }
+.public-chat-input button { background:#00a8ff; color:#fff; border:none; padding:6px 10px; border-radius:8px }
+.public-chat-panel .messages .msg { margin-bottom:8px; padding:8px 10px; border-radius:8px; max-width:86%; }
+.public-chat-panel .messages .msg.ai { background: rgba(255,255,255,0.04); align-self:flex-start }
+.public-chat-panel .messages .msg.me { background: linear-gradient(90deg,#0a7a9a,#006bb3); align-self:flex-end; color:#fff }
+
+/* Media Modal styles */
+.media-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.media-modal-content {
+  background: #ffffff;
+  border-radius: 15px;
+  max-width: 90vw;
+  max-height: 90vh;
+  width: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  position: relative;
+}
+
+.media-modal-header {
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.media-modal-header h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.media-modal-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.media-modal-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.media-modal-body {
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  background: #000000;
+}
+
+.modal-media-image {
+  max-width: 100%;
+  max-height: 80vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 0;
+}
+
+.modal-media-video {
+  max-width: 100%;
+  max-height: 80vh;
+  width: auto;
+  height: auto;
+  border-radius: 0;
+}
+
+body.dark-theme .media-modal-content {
+  background: #1a1a1a;
+  color: #ffffff;
+  border: 1px solid #3d3d3d;
+}
+
+body.dark-theme .media-modal-header {
+  background: linear-gradient(135deg, #2d2d2d 0%, #404040 100%);
+  border-bottom: 1px solid #3d3d3d;
+}
+
+@media (max-width: 768px) {
+  .media-modal-content {
+    max-width: 95vw;
+    max-height: 95vh;
+  }
+  .media-modal-header { padding: 15px; }
+  .media-modal-header h3 { font-size: 1.1rem; }
+  .modal-media-image, .modal-media-video { max-height: 70vh; }
 }

@@ -1,78 +1,187 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Swagger UI - Safety.uz</title>
-    <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist/swagger-ui.css" />
+    <title>Safety.uz API Documentation</title>
+    
+    <!-- Modern Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Swagger UI CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui.css" />
+    
     <style>
-      html,body { height:100%; margin:0; }
-      #swagger-ui { height:100vh; box-sizing:border-box; }
-      /* Slight visual tweaks to integrate with site chrome */
-      .swagger-ui .topbar { background: #0b3b5a; }
-      .swagger-ui .topbar a { color: #fff; }
-      .swagger-ui .info { max-width: 980px; }
+      :root {
+        --primary-color: #007bff;
+        --primary-dark: #0056b3;
+        --bg-color: #f8f9fa;
+        --header-bg: #fff;
+        --sidebar-width: 280px;
+      }
+      
+      * { box-sizing: border-box; }
+      
+      body {
+        margin: 0;
+        background: var(--bg-color);
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        color: #333;
+      }
+
+      /* Top Bar Branding */
+      .brand-bar {
+        background: #fff;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 12px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      }
+      .brand-logo {
+        font-weight: 700;
+        font-size: 18px;
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+      }
+      .brand-logo span { color: #1e293b; }
+      
+      /* Info Box for Credentials */
+      .creds-box {
+        background: #e0f2fe;
+        border: 1px solid #bae6fd;
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-size: 13px;
+        color: #0369a1;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .creds-box code {
+        background: rgba(255,255,255,0.6);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: 'JetBrains Mono', monospace;
+        font-weight: 600;
+      }
+      
+      /* Swagger UI Overrides */
+      .swagger-ui .topbar { display: none; } /* Hide default ugly topbar */
+      
+      .swagger-ui .info { margin: 20px 0; }
+      .swagger-ui .info .title { font-family: 'Inter', sans-serif; color: #1e293b; }
+      .swagger-ui .info a { color: var(--primary-color); text-decoration: none; }
+      
+      .swagger-ui .scheme-container { background: transparent; box-shadow: none; padding: 0; margin-bottom: 20px; }
+      
+      .swagger-ui .btn.authorize {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+        border-radius: 6px;
+        font-weight: 600;
+      }
+      .swagger-ui .btn.authorize svg { fill: var(--primary-color); }
+      
+      .swagger-ui .opblock {
+        border-radius: 8px;
+        border: 1px solid #eaecf0;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        margin-bottom: 16px;
+        background: white;
+      }
+      .swagger-ui .opblock .opblock-summary { border-bottom: 1px solid transparent; }
+      .swagger-ui .opblock.is-open .opblock-summary { border-bottom: 1px solid #eaecf0; }
+      
+      /* Method colors adjustment used by safety.uz theme */
+      .swagger-ui .opblock.opblock-get { border-color: #dbeafe; background: #eff6ff; }
+      .swagger-ui .opblock.opblock-get .opblock-summary { border-color: #dbeafe; }
+      .swagger-ui .opblock.opblock-get .opblock-summary-method { background: #3b82f6; }
+      
+      .swagger-ui .opblock.opblock-post { border-color: #dcfce7; background: #f0fdf4; }
+      .swagger-ui .opblock.opblock-post .opblock-summary { border-color: #dcfce7; }
+      .swagger-ui .opblock.opblock-post .opblock-summary-method { background: #22c55e; }
+      
+      .swagger-ui .wrapper { max-width: 1200px; padding: 0 20px; }
+      
+      @media (max-width: 768px) {
+         .brand-bar { 
+           flex-direction: column; 
+           gap: 12px; 
+           align-items: center; 
+           text-align: center;
+           padding: 16px;
+         }
+         .brand-logo { font-size: 20px; }
+         .creds-box { 
+           width: 100%; 
+           flex-direction: column; 
+           gap: 8px;
+           padding: 12px;
+         }
+         .swagger-ui .wrapper { padding: 0 10px; }
+         .swagger-ui .info { margin: 15px 0; }
+         .swagger-ui .info .title { font-size: 1.5rem; text-align: center; }
+         .swagger-ui .opblock .opblock-summary-method { min-width: 60px; text-align: center; }
+         .swagger-ui .opblock .opblock-summary-path { font-size: 14px; word-break: break-all; }
+      }
     </style>
   </head>
   <body>
-    <div style="max-width:980px;margin:16px auto;padding:12px;">
-      <div style="display:flex;gap:12px;align-items:center;justify-content:space-between;">
-        <div style="font-size:14px;color:#0b3b5a;">
-          <strong>Swagger UI (demo)</strong>
-          <div style="font-size:13px;color:#334155;margin-top:6px;">Use the Authorize button (top-right) to add credentials for testing.</div>
-        </div>
-        <details style="font-size:13px;background:#f1f5f9;padding:8px;border-radius:8px;border:1px solid rgba(11,59,90,0.06);">
-          <summary style="cursor:pointer">Demo credentials / API key</summary>
-          <div style="margin-top:8px;line-height:1.45">
-            <div><strong>API Key (header X-API-Key):</strong> <code>TEST_API_KEY_12345</code></div>
-            <div style="margin-top:6px"><strong>Basic auth (demo user):</strong> <code>demo / DemoPass123</code></div>
-            <div style="margin-top:8px;color:#475569;font-size:12px">These are examples for local testing only — create real secrets on the server for production.</div>
-          </div>
-        </details>
+    
+    <div class="brand-bar">
+      <a href="/" class="brand-logo">
+        Safety.uz <span>API Reference</span>
+      </a>
+      <div class="creds-box">
+        <span><strong>API Key:</strong> <code>TEST_API_KEY_12345</code></span>
+        <span><strong>Demo User:</strong> <code>demo / DemoPass123</code></span>
       </div>
     </div>
+
     <div id="swagger-ui"></div>
-    <script src="https://unpkg.com/swagger-ui-dist/swagger-ui-bundle.js"></script>
+    
+    <script src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-bundle.js"></script>
+    <script src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-standalone-preset.js"></script>
+    
     <script>
       window.onload = function () {
-        try {
-          const ui = SwaggerUIBundle({
-            url: "{{ openapi_url }}",
-            dom_id: '#swagger-ui',
-            presets: [SwaggerUIBundle.presets.apis],
-            layout: 'BaseLayout',
-            deepLinking: true,
-            docExpansion: 'none',
-            defaultModelsExpandDepth: -1,
-            operationsSorter: 'alpha',
-            showExtensions: false,
-            showCommonExtensions: false,
-            validatorUrl: null,
-            tryItOutEnabled: false,
-            persistAuthorization: true
-          });
-          window.ui = ui;
-          /* Pre-authorize demo credentials for testing (only works if your OpenAPI defines matching securitySchemes):
-             - An apiKey scheme named "ApiKeyAuth" (in: header, name: X-API-Key)
-             - A basic auth scheme named "basicAuth"
-             If your OpenAPI uses different names, change the keys below accordingly. */
-          try {
-            // preauthorize API key (security scheme name must match your OpenAPI)
-            if (ui && ui.preauthorizeApiKey) {
-              ui.preauthorizeApiKey('ApiKeyAuth', 'TEST_API_KEY_12345');
-            }
-
-            // preauthorize Basic auth via the authActions (scheme name 'basicAuth')
-            if (ui && ui.authActions && ui.authActions.authorize) {
-              ui.authActions.authorize({ basicAuth: { username: 'demo', password: 'DemoPass123' } });
-            }
-          } catch (e) {
-            console.warn('Pre-authorization helper did not run:', e);
+        const ui = SwaggerUIBundle({
+          url: "{{ openapi_url }}",
+          dom_id: '#swagger-ui',
+          deepLinking: true,
+          presets: [
+            SwaggerUIBundle.presets.apis,
+            SwaggerUIStandalonePreset
+          ],
+          plugins: [
+            SwaggerUIBundle.plugins.DownloadUrl
+          ],
+          layout: "BaseLayout",
+          docExpansion: 'list',
+          defaultModelsExpandDepth: -1,
+          validatorUrl: null,
+          persistAuthorization: true,
+          displayRequestDuration: true,
+          filter: true, // Enable search filtering
+          
+          onComplete: () => {
+             // Optional: Automated pre-auth for simpler dev experience
+             try {
+               ui.preauthorizeApiKey("ApiKeyAuth", "TEST_API_KEY_12345");
+             } catch(e){}
           }
-        } catch (e) {
-          console.error('Swagger UI init failed', e);
-          document.getElementById('swagger-ui').innerText = 'Swagger UI failed to initialize.';
-        }
+        });
+        window.ui = ui;
       };
     </script>
   </body>

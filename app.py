@@ -7947,14 +7947,39 @@ def product_detail(item_id):
         except Exception:
             is_favorite = False
 
+        # Prepare localized fields
+        from utils import localized_field
+        item["localized_name"] = localized_field(item, "name") or item.get("name")
+        item["localized_desc"] = localized_field(item, "description") or item.get("description")
+
+        # Load related products (lazy fetch)
+        related_products = []
+        try:
+            category = item.get("category")
+            if category:
+                related_rows = execute_query(
+                    "SELECT id, name, price, image_url, category, rating, orders_count FROM menu_items WHERE category = ? AND id != ? AND available = 1 LIMIT 12",
+                    (category, item_id),
+                    fetch_all=True,
+                )
+                related_products = [dict(r) for r in related_rows] if related_rows else []
+                # Localize related products
+                for rp in related_products:
+                    rp["localized_name"] = localized_field(rp, "name") or rp.get("name")
+                    rp["image_url"] = prefer_webp(rp.get("image_url") or url_for('static', filename='defoult.webp'))
+        except Exception as e:
+            app_logger.warning(f"Failed to load related products: {e}")
+
         return render_template(
             "product.html",
             item=item,
-            media=media,
+            all_media=media,
             comments=comments,
             marketplaces=marketplaces,
             current_page="product",
             is_favorite=is_favorite,
+            localized_name=item["localized_name"],
+            related_products=related_products
         )
     except Exception as e:
         app_logger.error(f"product_detail error for id={item_id}: {str(e)}")
@@ -10273,6 +10298,9 @@ def view_receipt(ticket_no):
         app_logger.error(f"Receipt view error: {str(e)}")
         flash("Chekni yuklashda xatolik yuz berdi.", "error")
         return redirect(url_for("menu"))
+
+
+
 
 
 @app.route("/contact", methods=["GET", "POST"])
