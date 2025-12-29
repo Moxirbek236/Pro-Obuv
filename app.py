@@ -22,6 +22,8 @@ from functools import wraps
 from concurrent.futures import ThreadPoolExecutor
 import utils
 from collections import defaultdict
+from cloudinary_helpers import register_cloudinary_helpers, get_cloudinary_url
+from services.cloudinary_service import cloudinary_service
 
 # Explicit import for SMS helper used in threaded SMS sending paths.
 try:
@@ -71,6 +73,10 @@ try:
     from werkzeug.middleware.proxy_fix import ProxyFix
 except Exception:
     ProxyFix = None
+
+# Module-level logger placeholder to satisfy static analysis tools (real logger
+# initialized later by `setup_logging()`).
+app_logger = None
 
 # Third-party and stdlib imports that are optional at runtime but referenced
 # throughout the file. Import defensively so static analysis (Pylance)
@@ -192,7 +198,94 @@ try:
     REDIS_AVAILABLE = True
 except Exception:
     redis = None
-    REDIS_AVAILABLE = False
+    import re
+
+# --- Swagger UI integration and token management (module-level) ---
+try:
+    import yaml
+except Exception:
+    yaml = None
+
+# Paths for swagger spec and tokens
+SWAGGER_SPEC_PATH = os.path.join(os.path.dirname(__file__), 'swagger.yaml')
+SWAGGER_TOKENS_FILE = os.path.join(os.path.dirname(__file__), 'swagger_tokens.json')
+
+def _flask_rule_exists(path, method):
+    try:
+        for rule in app.url_map.iter_rules():
+            if rule.rule == path and method in rule.methods:
+                return True
+    except Exception:
+        # app may not exist yet in some import-time checks
+        pass
+    return False
+
+def _swagger_path_to_flask(path):
+    return re.sub(r'\{([^}]+)\}', r'<\1>', path)
+
+def create_missing_stubs():
+    if yaml is None:
+        return
+    try:
+        with open(SWAGGER_SPEC_PATH, 'r', encoding='utf-8') as fh:
+            spec = yaml.safe_load(fh)
+    except Exception:
+        return
+    paths = spec.get('paths', {}) if isinstance(spec, dict) else {}
+    for p, methods in paths.items():
+        flask_path = _swagger_path_to_flask(p)
+        for m, details in (methods.items() if isinstance(methods, dict) else []):
+            method = m.upper()
+            if method == 'PARAMS':
+                continue
+            if _flask_rule_exists(flask_path, method):
+                continue
+            def _make_stub(method_name, path=p):
+                def stub(**kwargs):
+                    return jsonify({'success': False, 'error': 'not_implemented', 'method': method_name, 'path': path}), 501
+                return stub
+            endpoint_name = f'swagger_stub_{method}_{flask_path}'.replace('/', '_').replace('<', '').replace('>', '')
+            try:
+                app.add_url_rule(flask_path, endpoint_name, _make_stub(method), methods=[method])
+            except Exception:
+                pass
+
+def _load_tokens():
+    try:
+        with open(SWAGGER_TOKENS_FILE, 'r', encoding='utf-8') as f:
+            data = json.load(f) or []
+            if isinstance(data, dict):
+                return [data]
+            return data
+    except Exception:
+        return []
+
+def _save_tokens(tokens):
+    try:
+        with open(SWAGGER_TOKENS_FILE, 'w', encoding='utf-8') as f:
+            json.dump(tokens, f, indent=2, ensure_ascii=False)
+    except Exception:
+        pass
+
+def require_api_key(f):
+    @wraps(f)
+    def wrapped(*args, **kwargs):
+        auth = request.headers.get('Authorization', '')
+        key = None
+        if isinstance(auth, str) and auth.lower().startswith('bearer '):
+            key = auth.split(None, 1)[1].strip()
+        if not key:
+            key = request.headers.get('X-API-Key')
+        if not key:
+            return jsonify({'success': False, 'error': 'api_key_required'}), 401
+
+        tokens = _load_tokens()
+        for t in tokens:
+            if t.get('active') and t.get('api_key') == key:
+                return f(*args, **kwargs)
+        return jsonify({'success': False, 'error': 'invalid_api_key'}), 401
+    return wrapped
+
 
 # Bring logging handlers into top-level imports so setup_logging() can use them
 try:
@@ -205,6 +298,60 @@ except Exception:
 app = Flask(__name__)
 
 print("DEBUG: Flask app created")
+
+# Register Swagger routes and create stubs now that `app` exists
+try:
+    # Serve raw YAML spec
+    @app.route('/swagger.yaml')
+    def swagger_spec():
+        try:
+            return send_from_directory(os.path.dirname(SWAGGER_SPEC_PATH), os.path.basename(SWAGGER_SPEC_PATH), mimetype='application/x-yaml')
+        except Exception:
+            return jsonify({'success': False, 'error': 'spec_not_found'}), 404
+
+    @app.route('/swagger-login', methods=['GET', 'POST'])
+    def swagger_login():
+        error = None
+        if request.method == 'POST':
+            user = (request.form.get('username') or '').strip()
+            pw = (request.form.get('password') or '')
+            env_user = os.environ.get('SWAGGER_USER')
+            env_pass = os.environ.get('SWAGGER_PASS')
+            if not env_user or not env_pass:
+                error = 'Swagger credentials are not configured on the server.'
+            elif user == env_user and pw == env_pass:
+                session['swagger_authed'] = True
+                return redirect(url_for('swagger_ui'))
+            else:
+                error = 'Invalid credentials'
+        return render_template('swagger_login.html', error=error)
+
+    @app.route('/docs')
+    def swagger_ui():
+        if not session.get('swagger_authed'):
+            return redirect(url_for('swagger_login'))
+        return render_template('swagger_ui.html', openapi_url=url_for('swagger_spec'))
+
+    @app.route('/api/swagger/generate_key', methods=['POST'])
+    def generate_swagger_key():
+        if not session.get('swagger_authed'):
+            return jsonify({'success': False, 'error': 'login_required'}), 401
+        username = (request.json or {}).get('username') or request.form.get('username') or 'swagger_user'
+        token = secrets.token_hex(32)
+        entry = {'username': username, 'api_key': token, 'created_at': datetime.utcnow().isoformat() + 'Z', 'active': True}
+        tokens = _load_tokens()
+        tokens.append(entry)
+        _save_tokens(tokens)
+        return jsonify({'success': True, 'api_key': token})
+
+    # Create stubs for documented-but-missing endpoints
+    try:
+        create_missing_stubs()
+    except Exception:
+        pass
+except Exception:
+    # If anything fails during swagger registration, don't break app startup
+    app_logger and app_logger.exception('Swagger registration failed')
 
 # If the app is served under a main domain (e.g. safety.uz) we want to
 # allow staff pages to be reachable from the staff subdomain
@@ -582,6 +729,7 @@ class Config:
     # Admin credentials
     SUPER_ADMIN_USERNAME = os.environ.get("SUPER_ADMIN_USERNAME", "masteradmin")
     SUPER_ADMIN_PASSWORD = os.environ.get("SUPER_ADMIN_PASSWORD", "sjtmsimram10")
+    SUPER_ADMIN_PHONE = os.environ.get("SUPER_ADMIN_PHONE", "+998 97 719 57 70")
 
 
 # Apply configuration
@@ -670,6 +818,43 @@ try:
         return path_or_url
 
     app.jinja_env.globals.update(prefer_webp=prefer_webp)
+    
+    # Cloudinary Integration
+    try:
+        register_cloudinary_helpers(app)
+        app_logger.info("Cloudinary helpers registered")
+    except Exception as e:
+        app_logger.error(f"Cloudinary registration failed: {str(e)}")
+
+    # Cloudinary Static Fallback - Override the default static view to catch missing files
+    _orig_static = app.view_functions.get('static')
+    if _orig_static:
+        def cloudinary_static_fallback(filename):
+            try:
+                # Try local static file first
+                resp = _orig_static(filename=filename)
+                if hasattr(resp, 'status_code') and resp.status_code == 404:
+                    # File not found locally, try Cloudinary
+                    c_url = get_cloudinary_url(f"/static/{filename}")
+                    if c_url and "res.cloudinary.com" in c_url:
+                        app_logger.info(f"Static Fallback: Redirecting {filename} to Cloudinary")
+                        return redirect(c_url)
+                return resp
+            except Exception:
+                # Any error (like 404 abort), try Cloudinary
+                c_url = get_cloudinary_url(f"/static/{filename}")
+                if c_url and "res.cloudinary.com" in c_url:
+                    return redirect(c_url)
+                raise
+        
+        app.view_functions['static'] = cloudinary_static_fallback
+        app_logger.info("Cloudinary static fallback view registered")
+
+    # Global 404 Handler for non-static routes
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return render_template('404.html'), 404
+
     
     # Helper: return a default static image (prefer webp) when a requested
     # image is missing. Used by thumbnail fallback paths.
@@ -1539,6 +1724,21 @@ def inject_navbar_context():
         except Exception:
             pass
         return {}
+
+
+@app.context_processor
+def inject_global_settings():
+    """Inject global settings into all templates."""
+    phone = Config.SUPER_ADMIN_PHONE
+    try:
+        # Try to load from advanced settings first
+        if os.path.exists('data/advanced_settings.json'):
+            with open('data/advanced_settings.json', 'r', encoding='utf-8') as f:
+                settings = json.load(f)
+                phone = settings.get('super_admin_phone', phone)
+    except Exception:
+        pass
+    return {'super_admin_phone': phone}
 
 
 @app.context_processor
@@ -7958,7 +8158,7 @@ def product_detail(item_id):
             category = item.get("category")
             if category:
                 related_rows = execute_query(
-                    "SELECT id, name, price, image_url, category, rating, orders_count FROM menu_items WHERE category = ? AND id != ? AND available = 1 LIMIT 12",
+                    "SELECT id, name, price, image_url, category, rating, orders_count FROM menu_items WHERE category = ? AND id != ? AND available = 1 ORDER BY COALESCE(rating,0) DESC, COALESCE(orders_count,0) DESC LIMIT 12",
                     (category, item_id),
                     fetch_all=True,
                 )
@@ -7979,7 +8179,9 @@ def product_detail(item_id):
             current_page="product",
             is_favorite=is_favorite,
             localized_name=item["localized_name"],
-            related_products=related_products
+            related_products=related_products,
+            superadmin_settings=load_superadmin_settings() or {},
+            slide_count=(len(media) if media is not None else 0)
         )
     except Exception as e:
         app_logger.error(f"product_detail error for id={item_id}: {str(e)}")
@@ -8294,7 +8496,7 @@ def api_menu_search():
                             try:
                                 url = m.get("media_url")
                                 if url:
-                                    m["media_url"] = prefer_webp(url)
+                                    m["media_url"] = get_cloudinary_url(url)
                             except Exception:
                                 continue
                     except Exception:
@@ -8306,7 +8508,7 @@ def api_menu_search():
                 # Ensure the primary image_url also prefers WebP when available
                 try:
                     if isinstance(item, dict) and item.get("image_url"):
-                        item["image_url"] = prefer_webp(item["image_url"])
+                        item["image_url"] = get_cloudinary_url(item["image_url"])
                 except Exception:
                     pass
 
@@ -9270,17 +9472,18 @@ def update_profile():
             if ext in app.config.get(
                 "ALLOWED_EXTENSIONS", {"png", "jpg", "jpeg", "webp"}
             ):
-                unique_name = f"avatar_{uuid.uuid4().hex}.{ext}"
-                save_path = os.path.join(
-                    app.config.get("UPLOAD_FOLDER", "static/uploads"), unique_name
-                )
                 try:
-                    avatar_file.save(save_path)
-                    avatar_path = "/" + save_path.replace("\\", "/")
-                    update_fields.append("avatar = ?")
-                    params.append(avatar_path)
+                    # Upload to Cloudinary instead of local storage
+                    upload_res = cloudinary_service.upload_image(avatar_file.stream, folder="avatars")
+                    if upload_res:
+                        avatar_url = upload_res.get('secure_url')
+                        update_fields.append("avatar = ?")
+                        params.append(avatar_url)
+                        avatar_path = avatar_url
+                    else:
+                        raise Exception("Cloudinary upload failed")
                 except Exception as e:
-                    app_logger.warning(f"Avatar save failed: {str(e)}")
+                    app_logger.warning(f"Avatar Cloudinary upload failed: {str(e)}")
 
         params.append(user_id)
 
@@ -11012,9 +11215,6 @@ def admin_add_menu_item():
             uploaded_media = []
             main_image_set = False
 
-            upload_dir = os.path.join(app.root_path, "static", "uploads", "products")
-            os.makedirs(upload_dir, exist_ok=True)
-
             for idx, file in enumerate(media_files):
                 if file and file.filename:
                     try:
@@ -11039,12 +11239,18 @@ def admin_add_menu_item():
                         else:
                             continue  # Noma'lum fayl turini o'tkazib yuboramiz
 
-                        # Unique fayl nomi yaratish
-                        unique_filename = f"{menu_item_id}_{uuid.uuid4().hex}.{ext}"
-                        save_path = os.path.join(upload_dir, unique_filename)
-
-                        file.save(save_path)
-                        media_url = f"/static/uploads/products/{unique_filename}"
+                        # Upload to Cloudinary
+                        folder = "products" if media_type == "image" else "videos"
+                        upload_res = cloudinary_service.upload_image(
+                            file.stream, 
+                            folder=folder, 
+                            resource_type="image" if media_type == "image" else "video"
+                        )
+                        
+                        if not upload_res:
+                            continue
+                            
+                        media_url = upload_res.get('secure_url')
 
                         # Birinchi rasmni asosiy qilish
                         is_main = not main_image_set and media_type == "image"
@@ -11307,12 +11513,18 @@ def admin_edit_menu_item(item_id):
                         else:
                             continue
 
-                        # Unique fayl nomi yaratish
-                        unique_filename = f"{item_id}_{uuid.uuid4().hex}.{ext}"
-                        save_path = os.path.join(upload_dir, unique_filename)
-
-                        file.save(save_path)
-                        media_url = f"/static/uploads/products/{unique_filename}"
+                        # Upload to Cloudinary
+                        folder = "products" if media_type == "image" else "videos"
+                        upload_res = cloudinary_service.upload_image(
+                            file.stream, 
+                            folder=folder, 
+                            resource_type="image" if media_type == "image" else "video"
+                        )
+                        
+                        if not upload_res:
+                            continue
+                            
+                        media_url = upload_res.get('secure_url')
 
                         # Agar hech qanday asosiy rasm yo'q bo'lsa va bu birinchi rasm bo'lsa
                         is_main = False
@@ -13875,7 +14087,26 @@ def auth_google():
         except Exception as e:
             app_logger.exception('Failed to create/find user for google login')
 
-        return jsonify({'success': True})
+        # compute a safe `next` redirect if provided by client or referer
+        try:
+            nxt = None
+            j = request.get_json(silent=True) or {}
+            if j and j.get('next'):
+                nxt = j.get('next')
+            if not nxt and request.args.get('next'):
+                nxt = request.args.get('next')
+            if not nxt and request.referrer:
+                from urllib.parse import urlparse
+                parsed = urlparse(request.referrer)
+                host = request.host.split(':')[0]
+                if (not parsed.netloc) or (parsed.netloc and parsed.netloc.split(':')[0] == host):
+                    nxt = parsed.path + ('?' + parsed.query if parsed.query else '')
+            if not nxt or not isinstance(nxt, str) or not nxt.startswith('/'):
+                nxt = None
+        except Exception:
+            nxt = None
+
+        return jsonify({'success': True, 'next': nxt})
     except Exception as e:
         app_logger.exception('auth_google error')
         return jsonify({'success': False, 'error': 'internal_error'}), 500
@@ -13883,6 +14114,24 @@ def auth_google():
 
 @app.route("/login_page", methods=["GET", "POST"])
 def login_page():
+    # On GET: remember referring page so we can redirect back after login.
+    if request.method == "GET":
+        try:
+            # Prefer explicit `next` query param when present
+            nxt = request.args.get('next')
+            if not nxt and request.referrer:
+                from urllib.parse import urlparse
+                ref = request.referrer
+                parsed = urlparse(ref)
+                # Accept only same-origin or path-only refs
+                host = request.host.split(':')[0]
+                if (not parsed.netloc) or (parsed.netloc and parsed.netloc.split(':')[0] == host):
+                    nxt = parsed.path + ('?' + parsed.query if parsed.query else '')
+            if nxt and isinstance(nxt, str) and nxt.startswith('/'):
+                session['pre_login_next'] = nxt
+        except Exception:
+            pass
+
     if request.method == "POST":
         email = request.form.get("email", "").strip()
         password = request.form.get("password", "")
@@ -13938,7 +14187,26 @@ def login_page():
                     flash(
                         f"Xush kelibsiz, {user_dict.get('first_name','')}!", "success"
                     )
-                    return redirect(url_for("index"))
+                    # Determine post-login redirect target: form `next`, session saved pre_login_next, or default index
+                    try:
+                        candidate = request.form.get('next') or request.args.get('next') or session.pop('pre_login_next', None)
+                        from urllib.parse import urlparse
+                        if candidate:
+                            p = urlparse(candidate)
+                            # only allow same-origin or path-only redirects
+                            if p.netloc and p.netloc.split(':')[0] != request.host.split(':')[0]:
+                                candidate = None
+                            else:
+                                # rebuild path+query
+                                candidate = p.path + ('?' + p.query if p.query else '')
+                        next_url = candidate if candidate else url_for('index')
+                    except Exception:
+                        next_url = url_for('index')
+
+                    # If AJAX login (X-Requested-With), return JSON for client-side handling
+                    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                        return jsonify({'success': True, 'next': next_url, 'role': session.get('role'), 'user': {'id': session.get('user_id')}})
+                    return redirect(next_url)
                 else:
                     flash("Noto'g'ri email yoki parol.", "error")
                     app_logger.warning(f"Failed login attempt for email: {email}")
@@ -15062,6 +15330,9 @@ def super_admin_advanced_settings():
             os.makedirs(os.path.dirname(json_path), exist_ok=True)
 
             # Load existing settings if present, otherwise start with defaults
+
+        
+            
             settings = {}
             if os.path.exists(json_path):
                 try:
@@ -15105,7 +15376,8 @@ def super_admin_advanced_settings():
                 'security_level': request.form.get('security_level', settings.get('security_level', 'medium')),
                 'image_quality': _int('image_quality', settings.get('image_quality', 85)),
                 'max_image_size': _float('max_image_size', settings.get('max_image_size', 5)),
-                'allowed_image_types': request.form.get('allowed_image_types', settings.get('allowed_image_types', 'jpg,jpeg,png,webp'))
+                'allowed_image_types': request.form.get('allowed_image_types', settings.get('allowed_image_types', 'jpg,jpeg,png,webp')),
+                'super_admin_phone': request.form.get('super_admin_phone', settings.get('super_admin_phone', Config.SUPER_ADMIN_PHONE))
             })
 
             # Save settings back to disk (atomic write)
@@ -15308,19 +15580,14 @@ def super_admin_profile_update():
 
         # handle avatar upload
         if avatar_file and avatar_file.filename:
-            fname = secure_filename(avatar_file.filename)
-            ext = os.path.splitext(fname)[1].lower()
-            if ext.replace(".", "") in app.config.get(
-                "ALLOWED_EXTENSIONS", {"png", "jpg", "jpeg", "webp"}
-            ):
-                unique = f"superadmin_{uuid.uuid4().hex}{ext}"
-                save_path = os.path.join(
-                    app.config.get("UPLOAD_FOLDER", "static/uploads"), unique
-                )
-                avatar_file.save(save_path)
-                settings["avatar"] = "/" + os.path.join(
-                    app.config.get("UPLOAD_FOLDER", "static/uploads"), unique
-                ).replace("\\", "/")
+            try:
+                upload_res = cloudinary_service.upload_image(avatar_file.stream, folder="super_admin")
+                if upload_res:
+                    settings["avatar"] = upload_res.get('secure_url')
+                else:
+                    raise Exception("Cloudinary upload failed")
+            except Exception as e:
+                app_logger.warning(f"Super admin avatar Cloudinary upload failed: {str(e)}")
 
         ok = save_superadmin_settings(settings)
         if ok:
@@ -15388,6 +15655,10 @@ def super_admin_get_menu():
             "SELECT * FROM menu_items ORDER BY category, name", fetch_all=True
         )
         menu = [dict(row) for row in menu_raw] if menu_raw else []
+        if menu:
+            for item in menu:
+                if item.get("image_url"):
+                    item["image_url"] = get_cloudinary_url(item["image_url"])
         return jsonify(menu)
     except Exception as e:
         app_logger.error(f"Super admin get menu error: {str(e)}")
@@ -15504,26 +15775,16 @@ def super_admin_add_menu_item():
 
         # If images were uploaded, save them similarly to the staff flow so the new item has media
         if menu_item_id:
-            upload_dir = os.path.join(app.root_path, "static", "uploads", "products")
-            os.makedirs(upload_dir, exist_ok=True)
             now_iso = now
-            from werkzeug.utils import secure_filename
-            import uuid
-
             for idx, file in enumerate(media_files_check):
                 if file and getattr(file, "filename", ""):
                     try:
-                        ext = (
-                            file.filename.rsplit(".", 1)[1].lower()
-                            if "." in file.filename
-                            else ""
-                        )
-                        if ext not in image_extensions:
+                        # Upload to Cloudinary
+                        upload_res = cloudinary_service.upload_image(file.stream, folder="products")
+                        if not upload_res:
                             continue
-                        unique_filename = f"{menu_item_id}_{uuid.uuid4().hex}.{ext}"
-                        save_path = os.path.join(upload_dir, unique_filename)
-                        file.save(save_path)
-                        media_url = f"/static/uploads/products/{unique_filename}"
+                            
+                        media_url = upload_res.get('secure_url')
                         is_main = idx == 0
                         if is_main:
                             execute_query(
@@ -20431,7 +20692,23 @@ def api_news():
                 )
             except Exception:
                 item["youtube_embed"] = None
+            # Cloudinary optimization
+            try:
+                if item.get("image_url"):
+                    item["image_url"] = get_cloudinary_url(item["image_url"])
+                if item.get("video_url") and not item.get("video_url").startswith("http"):
+                    item["video_url"] = get_cloudinary_url(item["video_url"])
+            except Exception:
+                pass
+
             news_items.append(item)
+        # Honor an optional limit query parameter for clients that only need a subset (e.g., footer ticker)
+        try:
+            limit = int(request.args.get('limit')) if request.args.get('limit') else None
+        except Exception:
+            limit = None
+        if limit and isinstance(limit, int) and limit > 0:
+            news_items = news_items[:limit]
         return jsonify({"success": True, "news": news_items or []})
     except Exception as e:
         app_logger.error(f"API news error: {str(e)}")
@@ -21917,7 +22194,7 @@ def api_superadmin_question():
 
 
 # Flask app runner
-if __name__ == "__main__":
+def main():
     # Allow overriding host/port via environment; default to standard dev port 5000
     host = os.environ.get("FLASK_HOST", "0.0.0.0")
     port = int(os.environ.get("FLASK_PORT") or os.environ.get("PORT", 5000))
@@ -22284,3 +22561,59 @@ if os.environ.get('ENABLE_SWAGGER', '0') == '1':
             return jsonify(spec)
         except Exception:
             return jsonify({'openapi': '3.0.1', 'info': {'title': 'error', 'version': '0.0'}, 'paths': {}})
+
+
+
+@app.route('/api/auth/status')
+def api_auth_status():
+    """Returns current authentication status and user info."""
+    if 'user_id' in session:
+        return jsonify({
+            'logged_in': True,
+            'user': {
+                'name': session.get('user_name'),
+                'avatar': get_cloudinary_url(session.get('user_avatar') or 'images/default-avatar.svg'),
+                'role': session.get('role', 'user')
+            }
+        })
+    return jsonify({'logged_in': False})
+
+@app.route('/super-admin/clear-database', methods=['POST'])
+@role_required('super_admin')
+def super_admin_clear_database():
+    """Clear transactional data from database but keep structure."""
+    try:
+        # Tables to clear (transactional data only)
+        tables = [
+            'orders', 'order_items', 'cart', 'cart_items', 
+            'favorites', 'ratings', 'notifications', 'logs',
+            'chats', 'chat_members', 'messages', 'chat_messages',
+            'operator_chats', 'operator_chat_messages', 'users' 
+        ]
+        
+        with get_db_pool().get_connection() as conn:
+            # 1. Clear simple tables
+            for table in tables:
+                try:
+                    conn.execute(f"DELETE FROM {table}")
+                except Exception:
+                    pass # Table might not exist
+            
+            # 2. Clear users table explicitly if not covered above
+            try:
+                conn.execute("DELETE FROM sqlite_sequence WHERE name='users'")
+            except Exception:
+                pass
+
+            # 3. Vacuum to reclaim space
+            try:
+                conn.execute("VACUUM")
+            except Exception:
+                pass
+
+        return jsonify({'success': True, 'message': 'Database cleared successfully'})
+    except Exception as e:
+        app_logger.error(f"Database clear error: {str(e)}")
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+if __name__ == '__main__': main()

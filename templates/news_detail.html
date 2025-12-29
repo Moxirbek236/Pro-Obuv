@@ -26,7 +26,7 @@
 {% if news.image_url %}
 <meta
   property="og:image"
-  content="{{ request.url_root[:-1] }}{{ news.image_url }}" />
+  content="{{ news.image_url | cloudinary_url }}" />
 {% endif %}
 <meta name="twitter:card" content="summary_large_image" />
 <meta
@@ -38,7 +38,7 @@
 {% if news.image_url %}
 <meta
   name="twitter:image"
-  content="{{ request.url_root[:-1] }}{{ news.image_url }}" />
+  content="{{ news.image_url | cloudinary_url }}" />
 {% endif %}
 
 <!-- Article Schema -->
@@ -57,14 +57,14 @@
       "name": "Pro Obuv",
       "logo": {
         "@type": "ImageObject",
-  "url": "{{ request.url_root[:-1] }}{{ prefer_webp(url_for('static', filename='defoult.webp')) }}"
+  "url": "{{ 'defoult.webp' | cloudinary_url }}"
       }
     },
     "datePublished": "{{ news.created_at }}",
     "dateModified": "{{ news.updated_at or news.created_at }}",
     "url": "{{ seo_data.canonical_url }}"
     {% if news.image_url %},
-    "image": "{{ request.url_root[:-1] }}{{ news.image_url }}"{% endif %}
+    "image": "{{ news.image_url | cloudinary_url }}"{% endif %}
   }
 </script>
 {% endblock %} {% block content %}
@@ -107,7 +107,7 @@
         <div class="news-media-container">
           {% if news.image_url %}
           <img
-            src="{{ news.image_url }}"
+            src="{{ (news.image_url or 'defoult.webp') | cloudinary_url }}"
             alt="{{ news.title }}"
             class="news-detail-image" />
           {% elif news.youtube_embed %}
@@ -470,9 +470,10 @@
 
       // API historically returned either `items` or `news` depending on endpoint/version.
       const list = (data && data.items) ? data.items : (data && data.news ? data.news : null);
+      const currentNewsId = Number("{{ news.id }}");
       if (data && Array.isArray(list)) {
         const relatedNews = list
-          .filter(item => item && (item.id || item.id === 0) && item.id !== {{ news.id }} && (item.is_active === undefined ? true : item.is_active))
+          .filter(item => item && (item.id || item.id === 0) && item.id !== currentNewsId && (item.is_active === undefined ? true : item.is_active))
           .slice(0, 6); // Show up to 6 related news
 
         renderRelatedNews(relatedNews);

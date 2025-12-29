@@ -2234,14 +2234,15 @@ if (window.__menuInitDone) {
         try {
           const response = await fetch('/api/news?active=1&limit=4');
           const data = await response.json();
+          const news = data.news || data; // handle both array and object responses
 
-          if (!data || data.length === 0) {
+          if (!news || !Array.isArray(news) || news.length === 0) {
             container.innerHTML = '<div class="sidebar-update-item"><div class="update-content">{{ _("menu.no_news") if _("menu.no_news") else "Yaqinda yangiliklar yo\'q" }}</div></div>';
             return;
           }
 
           container.innerHTML = '';
-          data.forEach(item => {
+          news.forEach(item => {
             const updateItem = document.createElement('div');
             updateItem.className = 'sidebar-update-item';
             updateItem.innerHTML = `

@@ -43,6 +43,11 @@
                         <option value="ERROR" {% if settings.log_level == 'ERROR' %}selected{% endif %}>ERROR</option>
                     </select>
                 </div>
+                <div class="form-group mb-3">
+                    <label>Buyurtma berish uchun telefon raqami (SuperAdmin)</label>
+                    <input type="text" class="form-control" name="super_admin_phone" value="{{ settings.super_admin_phone|default('+998901234567') }}">
+                    <small class="text-muted">Bu raqam barcha mahsulot sahifalarida buyurtma berish tugmasi sifatida chiqadi.</small>
+                </div>
             </div>
         </div>
 

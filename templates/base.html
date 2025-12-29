@@ -83,11 +83,11 @@
   </script>
   {% endblock %}
     <!-- Favicons -->
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='favicons/apple-touch-icon.webp') }}" />
-    <link rel="icon" type="image/webp" sizes="32x32" href="{{ url_for('static', filename='favicons/favicon-32x32.webp') }}" />
-    <link rel="icon" type="image/webp" sizes="16x16" href="{{ url_for('static', filename='favicons/favicon-16x16.webp') }}" />
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicons/favicon.ico') }}" />
-    <link rel="manifest" href="{{ url_for('static', filename='favicons/site.webmanifest') }}" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ 'favicons/apple-touch-icon.webp' | cloudinary_url }}" />
+    <link rel="icon" type="image/webp" sizes="32x32" href="{{ 'favicons/favicon-32x32.webp' | cloudinary_url }}" />
+    <link rel="icon" type="image/webp" sizes="16x16" href="{{ 'favicons/favicon-16x16.webp' | cloudinary_url }}" />
+    <link rel="shortcut icon" href="{{ 'favicons/favicon.ico' | cloudinary_url }}" />
+    <link rel="manifest" href="{{ 'favicons/site.webmanifest' | cloudinary_url }}" />
     <meta name="theme-color" content="#4299e1" />
     <meta name="msapplication-TileColor" content="#4299e1" />
     <!-- Fallbacks for servers that don't serve static/favicons yet (keeps compatibility) -->
@@ -98,6 +98,7 @@
       })();
     </script>
     <meta name="theme-color" content="#ffffff" />
+    <script src="{{ url_for('static', filename='js/loop-protection.js') }}"></script>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
       rel="stylesheet" />
@@ -834,7 +835,7 @@
          "file_upload_error": {{ _('messages.file_upload_error')|tojson if _('messages.file_upload_error') else "Upload error"|tojson }},
          "no_notifications": {{ _('messages.no_notifications')|tojson if _('messages.no_notifications') else "No notifications"|tojson }}
       },
-      "default_avatar": {{ prefer_webp(url_for('static', filename='images/default-avatar.svg'))|tojson }},
+      "default_avatar": {{ 'images/default-avatar.svg' | cloudinary_url | tojson }},
       "csrf_token": {{ csrf_token|tojson if csrf_token else '""' }}
     }
     </script>
@@ -904,59 +905,7 @@
       }
     </script>
     <script>
-      // Prevent accidental full-page reload loops on public menu page.
-      // Some admin/monitor templates call location.reload() periodically;
-      // ensure those reloads are disabled for the public /menu route.
-      try {
-        window.ALLOW_PAGE_RELOAD = true;
-        if (window.location && window.location.pathname && window.location.pathname.startsWith('/menu')) {
-          window.ALLOW_PAGE_RELOAD = false;
-          console.debug('Page reloads disabled on /menu to prevent continuous loading');
-        }
-      } catch (e) {
-        // ignore
-      }
-    </script>
-    <script>
-      // Defensive: explicitly disable any legacy "menu rotation" helpers.
-      // Some older templates injected a rotating menu or multiple menu instances
-      // via setInterval or by calling startMenuRotation(). We prefer a single
-      // static menu; provide no-op shims so stray calls are harmless.
-      try {
-        if (window.location && window.location.pathname && window.location.pathname.startsWith('/menu')) {
-          window.startMenuRotation = function() { console.debug('startMenuRotation blocked on /menu'); };
-          window.stopMenuRotation = function() { /* noop */ };
-          window.rotateMenu = function() { /* noop */ };
-          // Also ensure location.reload is neutralized (respecting ALLOW_PAGE_RELOAD above)
-          const origReload = window.location && window.location.reload && window.location.reload.bind(window.location);
-          window.location.reload = function() {
-            if (typeof window.ALLOW_PAGE_RELOAD !== 'undefined' && window.ALLOW_PAGE_RELOAD === false) {
-              console.debug('Blocked location.reload() on /menu');
-              return;
-            }
-            if (origReload) return origReload();
-          };
-        }
-      } catch (e) { /* ignore */ }
-    </script>
-    <script>
-      // Override location.reload to respect ALLOW_PAGE_RELOAD flag.
-      try {
-        (function () {
-          var origReload = window.location && window.location.reload && window.location.reload.bind(window.location);
-          window.location.reload = function () {
-            try {
-              if (typeof window.ALLOW_PAGE_RELOAD !== 'undefined' && window.ALLOW_PAGE_RELOAD === false) {
-                console.debug('Blocked location.reload() because ALLOW_PAGE_RELOAD is false');
-                return;
-              }
-            } catch (e) {}
-            if (origReload) return origReload();
-          };
-        })();
-      } catch (e) {
-        // ignore
-      }
+      // Loop protection is now handled by /static/js/loop-protection.js
     </script>
     <!-- Navigation Bar - SECURE ROLE CHECKING -->
     {% if show_nav %}
@@ -1047,24 +996,24 @@
                 role="button"
                 data-bs-toggle="dropdown">
                 <img
-                  src="{{ prefer_webp(session.get('user_avatar', url_for('static', filename='images/default-avatar.svg'))) }}"
+                  src="{{ (session.get('user_avatar') or 'images/default-avatar.svg') | cloudinary_url }}"
                   alt="avatar"
                   class="rounded-circle"
                   width="32"
                   height="32"
                   style="object-fit: cover; margin-right: 8px"
-                  onerror="this.onerror=null;this.src='/static/images/default-avatar.svg';" />
+                  onerror="handleAvatarError(this)" />
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li class="px-3 py-2 d-flex align-items-center">
                   <img
-                    src="{{ prefer_webp(session.get('user_avatar', url_for('static', filename='images/default-avatar.svg'))) }}"
+                    src="{{ (session.get('user_avatar') or 'images/default-avatar.svg') | cloudinary_url }}"
                     alt="avatar"
                     class="rounded-circle me-2"
                     width="48"
                     height="48"
                     style="object-fit: cover"
-                    onerror="this.onerror=null;this.src='/static/images/default-avatar.svg';" />
+                    onerror="handleAvatarError(this)" />
                   <div>
                     <div class="fw-bold">
                       {{ session.get('user_name', 'Foydalanuvchi') }}
@@ -1184,24 +1133,24 @@
                 role="button"
                 data-bs-toggle="dropdown">
                 <img
-                  src="{{ prefer_webp(session.get('staff_avatar', session.get('user_avatar', url_for('static', filename='images/default-avatar.svg')))) }}"
+                  src="{{ (session.get('staff_avatar') or session.get('user_avatar') or 'images/default-avatar.svg') | cloudinary_url }}"
                   alt="avatar"
                   class="rounded-circle"
                   width="32"
                   height="32"
                   style="object-fit: cover; margin-right: 8px"
-                  onerror="this.onerror=null;this.src='/static/images/default-avatar.svg';" />
+                  onerror="handleAvatarError(this)" />
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li class="px-3 py-2 d-flex align-items-center">
                   <img
-                    src="{{ prefer_webp(session.get('staff_avatar', session.get('user_avatar', url_for('static', filename='images/default-avatar.svg')))) }}"
+                    src="{{ (session.get('staff_avatar') or session.get('user_avatar') or 'images/default-avatar.svg') | cloudinary_url }}"
                     alt="avatar"
                     class="rounded-circle me-2"
                     width="48"
                     height="48"
                     style="object-fit: cover"
-                    onerror="this.onerror=null;this.src='/static/images/default-avatar.svg';" />
+                    onerror="handleAvatarError(this)" />
                   <div>
                     <div class="fw-bold">
                       {{ session.get('staff_name', 'Xodim') }}
@@ -1334,24 +1283,24 @@
                 role="button"
                 data-bs-toggle="dropdown">
                 <img
-                  src="{{ prefer_webp(session.get('courier_avatar', session.get('user_avatar', url_for('static', filename='images/default-avatar.svg')))) }}"
+                  src="{{ (session.get('courier_avatar') or session.get('user_avatar') or 'images/default-avatar.svg') | cloudinary_url }}"
                   alt="avatar"
                   class="rounded-circle"
                   width="32"
                   height="32"
                   style="object-fit: cover; margin-right: 8px"
-                  onerror="this.onerror=null;this.src='/static/images/default-avatar.svg';" />
+                  onerror="handleAvatarError(this)" />
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li class="px-3 py-2 d-flex align-items-center">
                   <img
-                    src="{{ prefer_webp(session.get('courier_avatar', session.get('user_avatar', url_for('static', filename='images/default-avatar.svg')))) }}"
+                    src="{{ (session.get('courier_avatar') or session.get('user_avatar') or 'images/default-avatar.svg') | cloudinary_url }}"
                     alt="avatar"
                     class="rounded-circle me-2"
                     width="48"
                     height="48"
                     style="object-fit: cover"
-                    onerror="this.onerror=null;this.src='/static/images/default-avatar.svg';" />
+                    onerror="handleAvatarError(this)" />
                   <div>
                     <div class="fw-bold">
                       {{ session.get('courier_name', 'Kuryer') }}
@@ -1441,13 +1390,13 @@
           <ul class="navbar-nav">
             <li class="nav-item d-flex align-items-center">
               <img
-                src="{{ prefer_webp(user_profile.avatar or session.get('user_avatar', url_for('static', filename='images/default-avatar.svg'))) }}"
+                src="{{ (user_profile.avatar if user_profile else session.get('user_avatar') or 'images/default-avatar.svg') | cloudinary_url }}"
                 alt="avatar"
                 class="rounded-circle"
                 width="32"
                 height="32"
                 style="object-fit: cover; margin-right: 8px"
-                onerror="this.onerror=null;this.src='/static/images/default-avatar.svg';" />
+                onerror="handleAvatarError(this)" />
                 <span class="navbar-text text-white me-3">{{ user_profile.name or session.get('user_name', _('nav.profile')) }}</span>
               <button
                 type="button"
@@ -1476,24 +1425,24 @@
                 role="button"
                 data-bs-toggle="dropdown">
                   <img
-                    src="{{ prefer_webp(user_profile.avatar or session.get('user_avatar', url_for('static', filename='images/default-avatar.svg'))) }}"
+                    src="{{ (user_profile.avatar if user_profile else session.get('user_avatar') or 'images/default-avatar.svg') | cloudinary_url }}"
                     alt="avatar"
                     class="rounded-circle"
                     width="32"
                     height="32"
                     style="object-fit: cover; margin-right: 8px"
-                    onerror="this.onerror=null;this.src='/static/images/default-avatar.svg';" />
+                    onerror="handleAvatarError(this)" />
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li class="px-3 py-2 d-flex align-items-center">
                   <img
-                    src="{{ prefer_webp(session.get('user_avatar', url_for('static', filename='images/default-avatar.svg'))) }}"
+                    src="{{ (session.get('user_avatar') or 'images/default-avatar.svg') | cloudinary_url }}"
                     alt="avatar"
                     class="rounded-circle me-2"
                     width="48"
                     height="48"
                     style="object-fit: cover"
-                    onerror="this.onerror=null;this.src='/static/images/default-avatar.svg';" />
+                    onerror="handleAvatarError(this)" />
                   <div>
                     <div class="fw-bold">
                       {{ user_profile.name or session.get('user_name', 'Foydalanuvchi') }}
@@ -1512,13 +1461,15 @@
                   <a
                     class="dropdown-item"
                     href="{{ url_for('profile_settings') }}"
-                    >{{ _('nav.profile_settings') }}</a>
+                    >{{ _('nav.profile_settings') }}</a
+                  >
                 </li>
                 <li>
                   <a
                     class="dropdown-item"
                     href="{{ url_for('general_settings') }}"
-                    >{{ _('settings.title') }}</a>
+                    >{{ _('settings.title') }}</a
+                  >
                 </li>
                 <li><hr class="dropdown-divider" /></li>
                 <li>
@@ -1588,11 +1539,13 @@
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('login_page') }}"
-                >{{ _('nav.login') }}</a>
+                >{{ _('nav.login') }}</a
+              >
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('register') }}"
-                >{{ _('nav.register') }}</a>
+                >{{ _('nav.register') }}</a
+              >
             </li>
             <li class="nav-item d-flex align-items-center">
               <button
@@ -1644,6 +1597,53 @@
     <!-- Enhanced Footer & Global Styles -->
 
     <script>
+    // Global Auth Sync Logic
+    window.DEFAULT_AVATAR = "{{ 'images/default-avatar.svg' | cloudinary_url }}";
+    function handleAvatarError(img) {
+      if (img.src !== window.DEFAULT_AVATAR) {
+        img.src = window.DEFAULT_AVATAR;
+        img.onerror = null;
+      }
+    }
+
+    (function() {
+
+        // Check auth status on page load (essential for cached pages/back button)
+        // Requirement: distinguish network errors vs real unauth states (401/403)
+        fetch('/api/auth/status', {
+            headers: {'Cache-Control': 'no-cache'}
+        })
+        .then(res => {
+            if (res.status === 401 || res.status === 403) {
+                 console.warn("User explicitly unauthenticated (401/403).");
+                 // We could redirect to login here, but user asked for NO reloads/redirects on fetch error.
+                 // So we just log and mark as unauthed.
+                 return { logged_in: false };
+            }
+            if (!res.ok) throw new Error('Network error or server down');
+            return res.json();
+        })
+        .then(data => {
+            if (!data) return;
+            const isGuestNavbar = document.getElementById('langDropdownGuest'); 
+            const isUserNavbar = document.querySelector('a[href*="/logout"]'); 
+
+            // Requirement: disable_auto_reload: true
+            if (data.logged_in && isGuestNavbar) {
+                console.warn('Auth mismatch: UI is guest, but user is logged in. (Auto-reload blocked)');
+                if (window.showToast) window.showToast('Tizimga kirganingiz aniqlandi. Iltimos, sahifani qo\'lda yangilang.', 'info');
+            }
+            else if (!data.logged_in && isUserNavbar && !isGuestNavbar) {
+                 console.warn('Auth mismatch: UI is logged in, but user is guest. (Auto-reload blocked)');
+                 if (window.showToast) window.showToast('Sessiya muddati tugagan bo\'lishi mumkin.', 'warning');
+            }
+        })
+        .catch(err => {
+            console.warn("Auth check failed (network/offline):", err);
+            // DO NOT RELOAD on network failure to avoid infinite loop
+        });
+    })();
+
       window.DISABLE_AUTO_UPDATES = true;
       (function () {
         const original =
@@ -2301,6 +2301,21 @@
     <!-- News ticker is now fully managed from static/main.js (NewsTicker class).
          Extra initialization here was causing duplicate requests to data/news.json,
          so it has been removed. -->
+
+    <!-- Footer News Ticker Markup (single shared instance) -->
+    <div class="news-ticker site-news-ticker" aria-hidden="false" role="region" aria-label="News ticker" style="background:#0f172a;color:#fff;padding:8px 0;">
+      <div class="container" style="max-width:1100px;margin:0 auto;padding:0 12px;">
+        <div class="swiper" id="news-ticker-swiper">
+          <div class="swiper-wrapper" id="news-ticker-content">
+            <!-- Slides injected by static/js/news-ticker.js -->
+            <div class="swiper-slide news-item">Loading news...</div>
+          </div>
+          <div class="swiper-button-prev" aria-label="Previous news"></div>
+          <div class="swiper-button-next" aria-label="Next news"></div>
+          <div class="swiper-pagination"></div>
+        </div>
+      </div>
+    </div>
 
     <!-- Enhanced Telegram-style Chat Widget - Only for Staff, Courier, SuperAdmin -->
     {% if is_staff or is_courier or is_super_admin %}
@@ -3009,7 +3024,7 @@
       <div style="display: flex; gap: 8px; align-items: center">
         <img
           id="memberProfileAvatar"
-          src="{{ prefer_webp(url_for('static', filename='images/default-avatar.svg')) }}"
+          src="{{ 'images/default-avatar.svg' | cloudinary_url }}"
           alt="avatar"
           style="
             width: 56px;
@@ -3120,6 +3135,30 @@
 
         function safeJson(res) {
           return res.json().catch(() => ({}));
+        }
+
+        function escapeHtml(s) {
+            return (s || "").replace(/[&<>"']/g, function (c) {
+                return {
+                    "&": "&amp;",
+                    "<": "&lt;",
+                    ">": "&gt;",
+                    '"': "&quot;",
+                    "'": "&#39;",
+                }[c];
+            });
+        }
+
+        function updateChatUnreadCount(){
+          const badge = document.getElementById('chat-unread-count');
+          if(!badge) return;
+          fetch('/api/chat-unread-count').then(safeJson).then((r)=>{
+              try{
+                const unread = (r && r.unread) || 0;
+                if(unread>0){ badge.style.display='inline-block'; badge.textContent = unread>99? '99+': String(unread); }
+                else badge.style.display='none';
+              }catch(e){ }
+          }).catch(()=>{});
         }
 
         function loadChats() {
@@ -3490,6 +3529,8 @@
         getCurrentUser();
         loadChats();
         loadPrivateChats();
+        updateChatUnreadCount();
+        setInterval(updateChatUnreadCount, 10000);
 
         // Auto-refresh messages every 5 seconds when panel is open
         setInterval(() => {
@@ -3506,434 +3547,196 @@
             if (modal) modal.style.display = "block";
           })
         );
-      })();
-    </script>
 
-    <script>
-          // Load chats function
-          function loadChats() {
-            const IS_USER = (window.CURRENT_MEMBER_TYPE === 'user');
-            fetch("/api/chats")
-                .then(safeJson)
-                .then((data) => {
-                  listEl.innerHTML = "";
-                  if (!data || !Array.isArray(data.chats)) return;
+        const memberProfileClose = document.getElementById('memberProfileClose');
+        if(memberProfileClose) memberProfileClose.addEventListener('click', ()=>{ const m = document.getElementById('memberProfileModal'); if(m) m.style.display='none'; });
 
-                  let chats = data.chats;
-                  if (IS_USER) {
-                    const forbiddenNames = new Set(['All Team','Staffs','Couriers']);
-                    chats = chats.filter(m => !(m.is_group === 1 || m.is_group === true || forbiddenNames.has((m.name||'').trim())));
-                  }
+        // Update on load and every 20s
+        updateNotifyCount();
+        setInterval(updateNotifyCount, 20000);
 
-                  const colorPalette = ['#16a34a','#0ea5e9','#f97316','#7c3aed','#ef4444','#06b6d4','#f59e0b'];
-                  const nameColorMap = {};
-                  function pickColorFor(idOrName){
-                    const key = String(idOrName || '').trim();
-                    if(!key) return '#6b7280';
-                    if(nameColorMap[key]) return nameColorMap[key];
-                    let h=0; for(let i=0;i<key.length;i++){ h = (h<<5)-h + key.charCodeAt(i); h |= 0 }
-                    const idx = Math.abs(h) % colorPalette.length;
-                    nameColorMap[key] = colorPalette[idx];
-                    return nameColorMap[key];
-                  }
+        // Server will render IS_SUPER_ADMIN true/false
+        // Derive user context from BASE_CONFIG
+        const _u = (window.BASE_CONFIG && window.BASE_CONFIG.user) || {};
+        const IS_SUPER_ADMIN = _u.is_super_admin || false;
+        window.CURRENT_MEMBER_ID = _u.user_id || _u.staff_id || _u.courier_id || null;
+        window.CURRENT_MEMBER_TYPE = (_u.user_id ? 'user' : (_u.staff_id ? 'staff' : (_u.courier_id ? 'courier' : 'anonymous')));
 
-                  data.chats.forEach((m) => {
-                    const div = document.createElement('div');
-                    div.className = 'chat-item d-flex align-items-center';
-                    div.style.gap = '8px';
-                    div.title = m.name || m.display_name || 'Chat';
+        // Notify modal handlers
+        const notifyModal = document.getElementById("notifyModal");
+        const notifyCancelBtn = document.getElementById("notifyCancelBtn");
+        const notifySendBtn = document.getElementById("notifySendBtn");
 
-                    const av = document.createElement('div');
-                    av.className = 'chat-avatar';
-                    av.style.background = pickColorFor(m.id || m.name || m.display_name);
-                    if(m.avatar){ const img = document.createElement('img'); img.src = m.avatar; img.style.width='36px'; img.style.height='36px'; img.style.borderRadius='50%'; img.style.objectFit='cover'; av.appendChild(img); }
-                    // attach member metadata when available for profile popup
-                    if(m.member_type && m.member_id){ av.dataset.memberType = m.member_type; av.dataset.memberId = m.member_id; }
-                    // click avatar to view profile
-                    av.addEventListener('click', (ev)=>{ ev.stopPropagation(); if(av.dataset.memberType && av.dataset.memberId) fetchMemberProfile(av.dataset.memberType, av.dataset.memberId); });
+        if (notifyCancelBtn)
+          notifyCancelBtn.addEventListener("click", () => {
+            if (notifyModal) {
+              notifyModal.style.display = "none";
+              // clear inputs
+              const t = document.getElementById('notifyTitle');
+              const b = document.getElementById('notifyBody');
+              if (t) t.value = '';
+              if (b) b.value = '';
+            }
+          });
 
-                    const meta = document.createElement('div');
-                    meta.style.flex = '1';
-                    meta.innerHTML = `<div style="font-weight:600">${escapeHtml(m.name || m.display_name || 'Chat')}</div><div style="font-size:12px;color:#666">${escapeHtml(m.preview || '')}</div>`;
+        if (IS_SUPER_ADMIN && notifySendBtn) {
+          // Only attach send handler for superadmin
+          notifySendBtn.addEventListener("click", () => {
+            const title = document.getElementById("notifyTitle").value.trim();
+            const body = document.getElementById("notifyBody").value.trim();
+            const msgEnter = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.enter_title_and_body) || 'Enter title and body';
+            if (!title || !body) return alert(msgEnter);
 
-                    div.appendChild(av);
-                    div.appendChild(meta);
-
-                    div.dataset.chatId = m.id;
-                    div.addEventListener('click', ()=>{
-                      openChat(m.id, m.name || m.display_name || 'Chat');
-                    });
-
-                    listEl.appendChild(div);
-                  });
-                })
-                .catch((e) => {
-                  // console.log("Load chats error", e);
-                });
+            const isBroadcast = confirm('Barcha foydalanuvchilarga yuborilsinmi? OK = BARCHA; Cancel = Yagona qabul qiluvchi');
+            let payload = { title, body };
+            if (isBroadcast) {
+              const group = prompt('Qaysi guruh? (all, users, staff, couriers)', 'all') || 'all';
+              payload.recipient_type = group;
+            } else {
+              const rType = prompt('Qabul qiluvchi turi? (users, staff, couriers)', 'users');
+              const rId = prompt('Qabul qiluvchining id raqami', '');
+              const msgId = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.enter_id) || 'Enter ID';
+              if (!rId) return alert(msgId);
+              payload.recipient_type = rType || 'users';
+              payload.recipient_id = parseInt(rId, 10);
             }
 
-            function createOrOpenPrivateChat(member) {
-              // call POST /api/chats to create private chat with selected member
-              const payload = {
-                member_type: member.member_type,
-                member_id: member.member_id,
-              };
-              fetch("/api/chats", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  "X-CSRF-Token":
-                    typeof CSRF_TOKEN !== "undefined" ? CSRF_TOKEN : "",
-                },
-                body: JSON.stringify(payload),
-              })
-                .then(safeJson)
-                .then((resp) => {
-                  if (resp && resp.success && resp.chat_id) {
-                    // open the new chat
-                    // openChat(resp.chat_id, resp.name || "Chat " + resp.chat_id);
-                  } else {
-                    // fallback: refresh chat list
-                    loadChats();
+            fetch("/super-admin/send-notification", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-Token": window.BASE_CONFIG.csrf_token || "",
+              },
+              body: JSON.stringify(payload),
+            })
+              .then(safeJson)
+              .then((r) => {
+                if (r && r.success) {
+                  const msgSent = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.notification_sent) || 'Sent!';
+                  alert(msgSent);
+                  if (notifyModal) {
+                    notifyModal.style.display = "none";
+                    const t = document.getElementById('notifyTitle');
+                    const b = document.getElementById('notifyBody');
+                    if (t) t.value = '';
+                    if (b) b.value = '';
                   }
-                })
-                .catch((e) => {
-                  // console.log("Create private chat error", e);
-                  loadChats();
-                });
-            }
 
-            function openChat(chatId, name) {
-              activeChatId = chatId;
-              // ensure panel is visible
-              if (panel.style.display !== 'block') togglePanel();
-              const msgLoading = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.loading) || 'Loading...';
-              messagesEl.innerHTML = '<div class="text-muted">' + msgLoading + '</div>';
-              // notifications are handled via separate FAB, do not inject notify button into chat header
-
-              fetch(`/api/chats/${chatId}/messages?limit=200`)
-                .then(safeJson)
-                .then((data) => {
-                  messagesEl.innerHTML = "";
-                  if (!data || !data.messages) {
-                    const msgNoMsg = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.no_messages) || 'No messages';
-                    return (messagesEl.innerHTML = '<div class="text-muted">' + msgNoMsg + '</div>');
-                  }
-                  data.messages.forEach((m) => {
-                    const d = document.createElement("div");
-                    d.className = "chat-message d-flex gap-2";
-
-                    const avatar = document.createElement("div");
-                    avatar.className = "chat-avatar";
-                    if (m.sender_avatar) {
-                      const img = document.createElement("img");
-                      img.src = m.sender_avatar;
-                      img.style.width = "36px";
-                      img.style.height = "36px";
-                      img.style.borderRadius = "50%";
-                      img.style.objectFit = "cover";
-                      avatar.appendChild(img);
-                    }
-                    // Attach sender metadata for profile click if available
-                    if(m.sender_type && m.sender_id){ avatar.dataset.memberType = m.sender_type; avatar.dataset.memberId = m.sender_id; }
-                    avatar.addEventListener('click', (ev)=>{ ev.stopPropagation(); if(avatar.dataset.memberType && avatar.dataset.memberId) fetchMemberProfile(avatar.dataset.memberType, avatar.dataset.memberId); });
-
-                    const content = document.createElement("div");
-                    const header = document.createElement("div");
-                    header.style.fontSize = "12px";
-                    header.style.color = "#666";
-                    header.textContent = `${m.sender_name || m.sender_type || "N/A"} ${m.created_at || ""}`;
-
-                    const bodyDiv = document.createElement("div");
-                    bodyDiv.innerHTML = escapeHtml(m.text);
-                    bodyDiv.style.background = "#f1f3f5";
-                    bodyDiv.style.padding = "8px 10px";
-                    bodyDiv.style.borderRadius = "8px";
-
-                    content.appendChild(header);
-                    content.appendChild(bodyDiv);
-
-                    d.appendChild(avatar);
-                    d.appendChild(content);
-                    messagesEl.appendChild(d);
-                  });
-                  messagesEl.scrollTop = messagesEl.scrollHeight;
-                  // After opening, clear unread count badge by refreshing unread count
-                  updateChatUnreadCount();
-                })
-                .catch((e) => {
-                  const errText = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.error_occurred) || 'Error occurred';
-                  messagesEl.innerHTML = '<div class="text-danger">' + errText + '</div>';
-                  // console.log(e);
-                });
-            }
-
-            function escapeHtml(s) {
-              return (s || "").replace(/[&<>"']/g, function (c) {
-                return {
-                  "&": "&amp;",
-                  "<": "&lt;",
-                  ">": "&gt;",
-                  '"': "&quot;",
-                  "'": "&#39;",
-                }[c];
-              });
-            }
-
-            sendBtn.addEventListener("click", () => {
-              const text = textEl.value.trim();
-              if (!text || !activeChatId) return;
-              fetch(`/api/chats/${activeChatId}/messages`, {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  "X-CSRF-Token":
-                    typeof CSRF_TOKEN !== "undefined" ? CSRF_TOKEN : "",
-                },
-                body: JSON.stringify({ text }),
-              })
-                .then(safeJson)
-                .then((resp) => {
-                  if (resp && resp.success) {
-                    textEl.value = "";
-                    // openChat(activeChatId);
-                  }
-                })
-                .catch((e) => {
-                  // console.log("Send chat error", e);
-                });
-            });
-
-            // Poll for new messages every 7s when panel open
-            setInterval(() => {
-              if (panel.style.display === "block" && activeChatId) {
-                // reload messages for active chat and render Telegram-like bubbles
-                fetch(`/api/chats/${activeChatId}/messages?limit=200`)
-                  .then(safeJson)
-                  .then((d) => {
-                    if (d && d.messages) {
-                      messagesEl.innerHTML = '';
-                      d.messages.forEach((m) => {
-                        const wrapper = document.createElement('div');
-                        wrapper.style.display = 'flex';
-                        wrapper.style.marginBottom = '8px';
-                        const isMe = window.CURRENT_MEMBER_ID && String(m.sender_id) === String(window.CURRENT_MEMBER_ID);
-                        wrapper.style.justifyContent = isMe ? 'flex-end' : 'flex-start';
-
-                        const bubble = document.createElement('div');
-                        bubble.className = 'tg-bubble ' + (isMe ? 'tg-bubble-right' : 'tg-bubble-left');
-                        bubble.innerHTML = `<div style="font-size:12px;color:#6b7280;margin-bottom:4px">${escapeHtml(m.sender_name||m.sender_type||'')}</div><div>${escapeHtml(m.text||'')}</div><div style="font-size:10px;color:#9ca3af;margin-top:6px;text-align:${isMe?'right':'left'}">${escapeHtml(m.created_at||'')}</div>`;
-                        wrapper.appendChild(bubble);
-                        messagesEl.appendChild(wrapper);
-                      });
-                      messagesEl.scrollTop = messagesEl.scrollHeight;
-                    }
-                  })
-                  .catch(() => {});
-              }
-            }, 7000);
-
-            // Chat unread badge updater
-            function updateChatUnreadCount(){
-              fetch('/api/chat-unread-count').then(safeJson).then((r)=>{
-                try{
-                  const unread = (r && r.unread) || 0;
-                  const badge = document.getElementById('chat-unread-count');
-                  if(!badge) return;
-                  if(unread>0){ badge.style.display='inline-block'; badge.textContent = unread>99? '99+': String(unread); }
-                  else badge.style.display='none';
-                }catch(e){ }
-              }).catch(()=>{});
-            }
-
-            // Update unread count on load and every 10s
-            updateChatUnreadCount();
-            setInterval(updateChatUnreadCount, 10000);
-
-            // Notify modal handlers
-            const notifyModal = document.getElementById("notifyModal");
-            const notifyCancelBtn = document.getElementById("notifyCancelBtn");
-            const notifySendBtn = document.getElementById("notifySendBtn");
-            if (notifyCancelBtn)
-              notifyCancelBtn.addEventListener("click", () => {
-                if (notifyModal) {
-                  notifyModal.style.display = "none";
-                  // clear inputs
-                  const t = document.getElementById('notifyTitle');
-                  const b = document.getElementById('notifyBody');
-                  if (t) t.value = '';
-                  if (b) b.value = '';
-                }
-              });
-            // Server will render IS_SUPER_ADMIN true/false
-            // Derive user context from BASE_CONFIG
-            const _u = (window.BASE_CONFIG && window.BASE_CONFIG.user) || {};
-            const IS_SUPER_ADMIN = _u.is_super_admin || false;
-            window.CURRENT_MEMBER_ID = _u.user_id || _u.staff_id || _u.courier_id || null;
-            window.CURRENT_MEMBER_TYPE = (_u.user_id ? 'user' : (_u.staff_id ? 'staff' : (_u.courier_id ? 'courier' : 'anonymous')));
-            if (IS_SUPER_ADMIN && notifySendBtn) {
-              // Only attach send handler for superadmin
-              notifySendBtn.addEventListener("click", () => {
-                const title = document.getElementById("notifyTitle").value.trim();
-                const body = document.getElementById("notifyBody").value.trim();
-                const msgEnter = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.enter_title_and_body) || 'Enter title and body';
-                if (!title || !body) return alert(msgEnter);
-
-                const isBroadcast = confirm('Barcha foydalanuvchilarga yuborilsinmi? OK = BARCHA; Cancel = Yagona qabul qiluvchi');
-                let payload = { title, body };
-                if (isBroadcast) {
-                  const group = prompt('Qaysi guruh? (all, users, staff, couriers)', 'all') || 'all';
-                  payload.recipient_type = group;
                 } else {
-                  const rType = prompt('Qabul qiluvchi turi? (users, staff, couriers)', 'users');
-                  const rId = prompt('Qabul qiluvchining id raqami', '');
-                  const msgId = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.enter_id) || 'Enter ID';
-                  if (!rId) return alert(msgId);
-                  payload.recipient_type = rType || 'users';
-                  payload.recipient_id = parseInt(rId, 10);
+                   const sendErr = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.send_error) || 'Error';
+                   const unknown = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.unknown_error) || 'Unknown';
+                   alert(sendErr + ': ' + (r && r.message ? r.message : unknown));
                 }
-
-                fetch("/super-admin/send-notification", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-Token": window.BASE_CONFIG.csrf_token || "",
-                  },
-                  body: JSON.stringify(payload),
-                })
-                  .then(safeJson)
-                  .then((r) => {
-                    if (r && r.success) {
-                      const msgSent = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.notification_sent) || 'Sent!';
-                      alert(msgSent);
-                      if (notifyModal) {
-                        notifyModal.style.display = "none";
-                        const t = document.getElementById('notifyTitle');
-                        const b = document.getElementById('notifyBody');
-                        if (t) t.value = '';
-                        if (b) b.value = '';
-                      }
-
-                    } else {
-                       const sendErr = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.send_error) || 'Error';
-                       const unknown = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.unknown_error) || 'Unknown';
-                       alert(sendErr + ': ' + (r && r.message ? r.message : unknown));
-                    }
-                  })
-                  .catch((e) => {
-                    alert((window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.send_error) || 'Error');
-                    // console.log(e);
-                  });
+              })
+              .catch((e) => {
+                alert((window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.send_error) || 'Error');
+                // console.log(e);
               });
-            }
+          });
+        }
 
-      // Notification count updater
-            function updateNotifyCount() {
-              fetch("/api/notifications")
-                .then(safeJson)
-                .then((r) => {
-                  try {
-                    const notes = (r && r.notifications) || [];
-                    // count unread (read_flag === 0) if present
-                    let unread = 0;
-                    notes.forEach((n) => {
-                      if (
-                        n.read_flag === 0 ||
-                        n.read_flag === "0" ||
-                        n.read_flag === null
-                      )
-                        unread++;
-                    });
-                    const badges = document.querySelectorAll("#notify-count");
-                    badges.forEach((b) => {
-                      if (unread > 0) {
-                        b.style.display = "inline-block";
-                        b.textContent = unread > 99 ? "99+" : String(unread);
-                      } else {
-                        b.style.display = "none";
-                      }
-                    });
-                  } catch (e) {
-                    // console.log("notify count parse error", e);
-                  }
-                })
-                .catch((e) => {
-                  // console.log("Notify count fetch error", e);
-                });
-            }
-
-            // Fetch and show member profile in popup modal
-            function fetchMemberProfile(memberType, memberId){
-              fetch(`/api/member/${memberType}/${memberId}`)
-                .then(safeJson)
-                .then((r)=>{ if(r && r.success && r.profile) showMemberProfile(r.profile); })
-                .catch((e)=>{
-                  // console.log('Member profile fetch error', e);
-                });
-            }
-
-            function showMemberProfile(profile){
-              if(!profile) return;
-              const modal = document.getElementById('memberProfileModal');
-              if(!modal) return;
-              const defaultAv = (window.BASE_CONFIG && window.BASE_CONFIG.default_avatar) || '/static/images/default-avatar.svg';
-              document.getElementById('memberProfileAvatar').src = profile.avatar || defaultAv;
-              document.getElementById('memberProfileName').textContent = profile.name || profile.username || ('#'+profile.id);
-              document.getElementById('memberProfileRole').textContent = (profile.role || '').toString();
-              document.getElementById('memberProfileId').textContent = profile.id || '';
-              document.getElementById('memberProfileUsername').textContent = profile.username || '';
-              document.getElementById('memberProfilePhone').textContent = profile.phone || '';
-              document.getElementById('memberProfileBirth').textContent = profile.birth_date || '';
-              modal.style.display = 'block';
-            }
-
-            const memberProfileClose = document.getElementById('memberProfileClose');
-            if(memberProfileClose) memberProfileClose.addEventListener('click', ()=>{ const m = document.getElementById('memberProfileModal'); if(m) m.style.display='none'; });
-
-            // Update on load and every 20s
-            updateNotifyCount();
-            setInterval(updateNotifyCount, 20000);
-
-            // When opening the notify modal, mark visible notifications as read
-            const notifyButtons = document.querySelectorAll('.nav-notify');
-            notifyButtons.forEach((b) => b.addEventListener('click', async ()=>{
-              if(!IS_SUPER_ADMIN){
-                // non-super-admin: fetch latest notifications and show read-only viewer
-                try{
-                  const res = await fetch('/api/notifications');
-                  const data = await res.json().catch(()=>({}));
-                  const list = (data && data.notifications) || [];
-                  const preview = document.getElementById('notifyListPreview');
-                  if(preview){
-                    preview.innerHTML = '';
-                    if(list.length===0) {
-                      const msgNoNot = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.no_notifications) || 'No notifications';
-                      preview.innerHTML = '<div class="text-muted">' + msgNoNot + '</div>';
-                    }
-                    list.slice(0,10).forEach(n=>{
-                      const item = document.createElement('div');
-                      item.className = 'mb-2';
-                      item.innerHTML = `<div style="font-weight:600">${escapeHtml(n.title || '')}</div><div style="font-size:12px;color:#666">${escapeHtml(n.body || '')}</div><hr/>`;
-                      preview.appendChild(item);
-                    });
-                  }
-                  if(notifyModal) notifyModal.style.display = 'block';
-                  // mark read for this recipient (best-effort)
-                  fetch('/api/notifications/mark-read', { method: 'POST', headers: { 'X-CSRF-Token': window.BASE_CONFIG.csrf_token || '' } }).then(()=>updateNotifyCount()).catch(()=>{});
-                }catch(e){
-                  // console.log('Failed to load notifications', e);
-                  if(notifyModal) notifyModal.style.display = 'block';
+        // When opening the notify modal, mark visible notifications as read
+        const notifyButtons = document.querySelectorAll('.nav-notify');
+        notifyButtons.forEach((b) => b.addEventListener('click', async ()=>{
+          if(!IS_SUPER_ADMIN){
+            // non-super-admin: fetch latest notifications and show read-only viewer
+            try{
+              const res = await fetch('/api/notifications');
+              const data = await res.json().catch(()=>({}));
+              const list = (data && data.notifications) || [];
+              const preview = document.getElementById('notifyListPreview');
+              if(preview){
+                preview.innerHTML = '';
+                if(list.length===0) {
+                  const msgNoNot = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.no_notifications) || 'No notifications';
+                  preview.innerHTML = '<div class="text-muted">' + msgNoNot + '</div>';
                 }
-                return;
+                list.slice(0,10).forEach(n=>{
+                  const item = document.createElement('div');
+                  item.className = 'mb-2';
+                  item.innerHTML = `<div style="font-weight:600">${escapeHtml(n.title || '')}</div><div style="font-size:12px;color:#666">${escapeHtml(n.body || '')}</div><hr/>`;
+                  preview.appendChild(item);
+                });
               }
-              // super admin opens composer modal
               if(notifyModal) notifyModal.style.display = 'block';
-            }));
-            // Close viewer button handler for non-superadmins
-            const notifyCloseViewer = document.getElementById('notifyCloseViewer');
-            if(notifyCloseViewer) notifyCloseViewer.addEventListener('click', ()=>{ const m = document.getElementById('notifyModal'); if(m) m.style.display='none'; });
+              // mark read for this recipient (best-effort)
+              fetch('/api/notifications/mark-read', { method: 'POST', headers: { 'X-CSRF-Token': window.BASE_CONFIG.csrf_token || '' } }).then(()=>updateNotifyCount()).catch(()=>{});
+            }catch(e){
+              // console.log('Failed to load notifications', e);
+              if(notifyModal) notifyModal.style.display = 'block';
+            }
+            return;
+          }
+          // super admin opens composer modal
+          if(notifyModal) notifyModal.style.display = 'block';
+        }));
+        // Close viewer button handler for non-superadmins
+        const notifyCloseViewer = document.getElementById('notifyCloseViewer');
+        if(notifyCloseViewer) notifyCloseViewer.addEventListener('click', ()=>{ const m = document.getElementById('notifyModal'); if(m) m.style.display='none'; });
 
+      })();
+
+      // Global utility functions
+      function updateNotifyCount() {
+        if (typeof safeJson === 'undefined') return;
+        fetch("/api/notifications")
+          .then(safeJson)
+          .then((r) => {
+            try {
+              const notes = (r && r.notifications) || [];
+              let unread = 0;
+              notes.forEach((n) => {
+                if (n.read_flag === 0 || n.read_flag === "0" || n.read_flag === null) unread++;
+              });
+              const badges = document.querySelectorAll("#notify-count");
+              badges.forEach((b) => {
+                if (unread > 0) {
+                  b.style.display = "inline-block";
+                  b.textContent = unread > 99 ? "99+" : String(unread);
+                } else {
+                  b.style.display = "none";
+                }
+              });
+            } catch (e) {}
+          })
+          .catch((e) => {});
+      }
+
+      function fetchMemberProfile(memberType, memberId) {
+        if (typeof safeJson === 'undefined') return;
+        fetch(`/api/member/${memberType}/${memberId}`)
+          .then(safeJson)
+          .then((r) => { if (r && r.success && r.profile) showMemberProfile(r.profile); })
+          .catch((e) => {});
+      }
+
+      function showMemberProfile(profile) {
+        if (!profile) return;
+        const modal = document.getElementById('memberProfileModal');
+        if (!modal) return;
+        const defaultAv = (window.BASE_CONFIG && window.BASE_CONFIG.default_avatar) || '/static/images/default-avatar.svg';
+        document.getElementById('memberProfileAvatar').src = profile.avatar || defaultAv;
+        document.getElementById('memberProfileName').textContent = profile.name || profile.username || ('#' + profile.id);
+        document.getElementById('memberProfileRole').textContent = (profile.role || '').toString();
+        document.getElementById('memberProfileId').textContent = profile.id || '';
+        document.getElementById('memberProfileUsername').textContent = profile.username || '';
+        document.getElementById('memberProfilePhone').textContent = profile.phone || '';
+        document.getElementById('memberProfileBirth').textContent = profile.birth_date || '';
+        modal.style.display = 'block';
+      }
+
+      const memberProfileClose = document.getElementById('memberProfileClose');
+      if (memberProfileClose) memberProfileClose.addEventListener('click', () => {
+        const m = document.getElementById('memberProfileModal');
+        if (m) m.style.display = 'none';
+      });
+
+      // Initial update
+      document.addEventListener('DOMContentLoaded', () => {
+         if (typeof updateNotifyCount === 'function') updateNotifyCount();
+      });
     </script>
+
     {% endif %}
     <!-- End chat widget for staff/courier/superadmin -->
 

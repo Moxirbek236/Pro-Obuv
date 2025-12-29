@@ -26,7 +26,7 @@
           
           {% for id, url, icon, label in socials %}
           <a href="{{ url }}" target="_blank" class="social-icon-btn {{ id }}" aria-label="{{ label }}" title="{{ label }}">
-            <img src="{{ prefer_webp(url_for('static', filename=icon)) }}" alt="{{ label }}" width="20" height="20" loading="lazy">
+            <img src="{{ icon | cloudinary_url }}" alt="{{ label }}" width="20" height="20" loading="lazy" onerror="this.src='{{ url_for('static', filename=icon) }}'; this.onerror=null;">
           </a>
           {% endfor %}
         </div>

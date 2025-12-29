@@ -72,6 +72,9 @@
             <button class="action-btn primary" onclick="backupDatabase()">
                  Database Backup
             </button>
+            <button class="action-btn danger" onclick="clearDatabase()" style="background-color: #dc3545;">
+                 Database Tozalash
+            </button>
             <button class="action-btn warning" onclick="restartService()">
                  Servisni Qayta Ishga Tushirish
             </button>
@@ -167,6 +170,25 @@ function backupDatabase() {
             }
         })
         .catch(() => showErrorMessage('Backup yaratishda xatolik'));
+    }
+}
+
+function clearDatabase() {
+    if (confirm('Diqqat! Barcha buyurtmalar, xabarlar va loglar tozalanadi. Jadval strukturasi va super admin saqlanib qoladi. Davom etasizmi?')) {
+        if (confirm('Jarayonni qaytarib bo\'lmaydi! Ishonchingiz komilmi?')) {
+            showWarningMessage('Tozalash jarayoni boshlandi...');
+            fetch('/super-admin/clear-database', {method: 'POST'})
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showSuccessMessage(data.message);
+                    setTimeout(() => location.reload(), 2000);
+                } else {
+                    showErrorMessage(data.message || 'Xatolik yuz berdi');
+                }
+            })
+            .catch(() => showErrorMessage('Tarmoq xatoligi'));
+        }
     }
 }
 
@@ -327,9 +349,12 @@ document.addEventListener('DOMContentLoaded', function() {
     loadEnvironmentInfo();
 
     // Auto refresh every 30 seconds
+    // Auto refresh every 30 seconds, but pause if hidden or offline
     setInterval(() => {
-        loadSystemStats();
-        loadSystemLogs();
+        if (!document.hidden && navigator.onLine) {
+            loadSystemStats();
+            loadSystemLogs();
+        }
     }, 30000);
 });
 </script>

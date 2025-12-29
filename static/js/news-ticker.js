@@ -3,10 +3,17 @@
  * Handles fetching, displaying, and cycling through news items with universal touch/mouse support.
  */
 
-class NewsTicker {
+if (typeof NewsTicker === 'undefined') {
+ class NewsTicker {
     constructor() {
         this.container = document.getElementById('newsTickerContent');
-        this.swiperEl = document.getElementById('newsTickerSwiper');
+        // Locate primary DOM nodes with fallbacks for older templates
+        this.container = document.getElementById('news-ticker-content') || document.getElementById('newsTickerContent') || (document.querySelector('.news-ticker .swiper-wrapper')) || null;
+        this.swiperEl = document.getElementById('news-ticker-swiper') || document.getElementById('newsTickerSwiper') || (this.container ? this.container.closest('.news-ticker') : null);
+        // If we found a swiper container but not the inner wrapper, prefer querying the wrapper
+        if (this.swiperEl && !this.container) {
+            this.container = this.swiperEl.querySelector('.swiper-wrapper') || this.container;
+        }
         this.swiper = null;
         this.items = [];
 
@@ -28,8 +35,20 @@ class NewsTicker {
 
     async fetchNews() {
         try {
-            const response = await fetch('/api/news?active=1&limit=5');
-            const data = await response.json();
+            // Request ticker-only items so server can filter by `show_in_ticker` flag
+            const response = await fetch('/api/news?ticker=1&limit=5');
+            if (!response.ok) {
+                console.warn('news-ticker: /api/news responded with', response.status);
+                this.items = [];
+                return;
+            }
+            let data = null;
+            try {
+                data = await response.json();
+            } catch (e) {
+                console.error('news-ticker: failed to parse JSON response', e);
+            }
+            console.debug('news-ticker: fetched', response.status, data);
             if (data && data.success) {
                 this.items = data.news || [];
             }
@@ -40,6 +59,11 @@ class NewsTicker {
     }
 
     render() {
+        if (!this.container) {
+            console.warn('news-ticker: container not found, aborting render');
+            return;
+        }
+
         this.container.innerHTML = this.items.map((item) => {
             const title = item.title_local || item.title || '';
             const imageUrl = item.image_url || '/static/defoult.webp';
@@ -66,14 +90,19 @@ class NewsTicker {
     }
 
     initSwiper() {
+        if (!this.swiperEl) {
+            console.warn('news-ticker: swiper element not found, skipping swiper init');
+            return;
+        }
+
         if (this.items.length <= 1) {
             // Disable navigation if only one item
-            const nav = this.swiperEl.querySelectorAll('.news-nav-btn');
+            const nav = this.swiperEl ? this.swiperEl.querySelectorAll('.news-nav-btn') : [];
             nav.forEach(n => n.style.display = 'none');
             return;
         }
 
-        this.swiper = new Swiper('#newsTickerSwiper', {
+        this.swiper = new Swiper('#news-ticker-swiper', {
             loop: true,
             grabCursor: true,
             speed: 800,
@@ -108,8 +137,46 @@ class NewsTicker {
             }
         });
     }
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    window.newsTicker = new NewsTicker();
+    // If the NewsTicker class is defined in this scope, instantiate it.
+    function tryInitTicker(){
+        if (typeof NewsTicker === 'undefined' || typeof NewsTicker !== 'function') return;
+        if (!window.Swiper) {
+            // wait for Swiper lib to arrive
+            console.debug('news-ticker: waiting for Swiper');
+            return false;
+        }
+        try {
+            console.debug('news-ticker: initializing NewsTicker');
+            window.newsTicker = new NewsTicker();
+            return true;
+        } catch (e) {
+            console.error('Failed to initialize NewsTicker:', e);
+            return false;
+        }
+    }
+
+    // Try immediately, otherwise poll until Swiper ready (5s)
+    if (!tryInitTicker()) {
+        const start = Date.now();
+        const poll = setInterval(() => {
+            if (tryInitTicker() || Date.now() - start > 5000) {
+                clearInterval(poll);
+            }
+        }, 200);
+    }
+    // Retry once after a short delay if initialization failed (some scripts may error early)
+    setTimeout(() => {
+        if (!window.newsTicker && typeof NewsTicker === 'function') {
+            try {
+                console.debug('news-ticker: retry init after delay');
+                window.newsTicker = new NewsTicker();
+            } catch (e) {
+                console.error('news-ticker: retry failed', e);
+            }
+        }
+    }, 600);
 });

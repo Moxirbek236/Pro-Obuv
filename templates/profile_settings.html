@@ -360,7 +360,7 @@ block head %}
           <label class="form-label">Profil rasmi</label>
           <div class="d-flex align-items-center gap-3">
             <img
-              src="{{ prefer_webp(session.get('user_avatar', url_for('static', filename='images/default-avatar.svg'))) }}"
+               src="{{ (session.get('user_avatar') or 'images/default-avatar.svg') | cloudinary_url }}"
               alt="avatar"
               width="64"
               height="64"

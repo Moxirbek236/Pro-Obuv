@@ -1,9 +1,6 @@
 {# Premium product card for Menu page #}
-{% set main_img = item.primary_image if item.primary_image else item.image_url if item.image_url else 'defoult.webp' %}
-{% if not (main_img.startswith('http') or main_img.startswith('/')) %}
-  {% set main_img = url_for('static', filename=main_img) %}
-{% endif %}
-{% set main_img = prefer_webp(main_img) %}
+{% set main_img_path = item.primary_image if item.primary_image else item.image_url if item.image_url else 'defoult.webp' %}
+{% set main_img = main_img_path | cloudinary_url %}
 
 {% set cat_val = (item.category_slug if item.category_slug is defined and item.category_slug else (item.category if item.category is defined and item.category else '')) %}
 {% set sizes_val = (item.sizes if item.sizes is defined and item.sizes else (item.size if item.size is defined and item.size else '')) %}
@@ -45,24 +42,21 @@
                     alt="{{ localized_name }}"
                     loading="lazy"
                     decoding="async"
+                    onerror="this.src='{{ 'defoult.webp' | cloudinary_url }}'"
                 />
             </div>
             
             <!-- Additional Media Slides -->
             {% set medias = item.media or [] %}
             {% for m in medias %}
-                {% set thumb = m.media_url if m is mapping and m.media_url else m.image_url if m is mapping and m.image_url else m %}
-                {% if thumb and thumb != main_img %}
-                    {% if not (thumb.startswith('http') or thumb.startswith('/')) %}
-                        {% set thumb = url_for('static', filename=thumb) %}
-                    {% endif %}
-                    {% set thumb = prefer_webp(thumb) %}
+                {% set thumb_path = m.media_url if m is mapping and m.media_url else m.image_url if m is mapping and m.image_url else m %}
+                {% if thumb_path and thumb_path != main_img_path %}
                     <div class="swiper-slide">
                         <img
-                            src="{{ thumb }}"
-                            src="{{ thumb }}"
+                            src="{{ thumb_path | cloudinary_url }}"
                             alt="{{ localized_name }} view {{ loop.index }}"
                             loading="lazy"
+                            onerror="this.src='{{ 'defoult.webp' | cloudinary_url }}'"
                         />
                     </div>
                 {% endif %}

@@ -17,9 +17,9 @@
     <div class="favorite-card">
       <div class="fav-media">
         <img
-          src="{{ item.image_url or '/static/images/default.webp' }}"
+          src="{{ (item.image_url or 'images/default.webp') | cloudinary_url }}"
           alt="{{ item.name }}"
-          onerror="this.src='/static/images/default.webp'" />
+          onerror="this.src='{{ 'images/default.webp' | cloudinary_url }}'" />
       </div>
       <div class="fav-body">
         <h4 class="fav-title">{{ item.name }}</h4>

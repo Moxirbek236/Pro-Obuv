@@ -1,3 +1,4 @@
+// @ts-nocheck
 // main.js — trimmed, single copy, safe fallbacks
 // Purpose: minimal global behaviors required by templates:
 // - openItemModal fallback (navigates to /product/<id> when modal absent)
@@ -93,6 +94,120 @@ function showNotification(message, type = "info") {
     } catch (e) {}
   }
 }
+
+// --- AuthStore: reactive, persisted auth state with subscribers
+const AuthStore = (function () {
+  let state = { logged: false, role: null, user: null };
+  const subs = [];
+  function notify() {
+    subs.forEach((s) => {
+      try {
+        s(state);
+      } catch (e) {}
+    });
+  }
+  function set(newState) {
+    state = Object.assign({}, state, newState || {});
+    try {
+      localStorage.setItem("auth", JSON.stringify(state));
+    } catch (e) {}
+    notify();
+  }
+  function init() {
+    try {
+      const raw = localStorage.getItem("auth");
+      if (raw) state = Object.assign({}, state, JSON.parse(raw));
+    } catch (e) {}
+    // Try to sync with server-side session state
+    try {
+      fetch("/api/auth/status", { credentials: "same-origin" })
+        .then((r) => {
+          if (!r.ok) return null;
+          return r.json();
+        })
+        .then((d) => {
+          if (d && d.logged_in) set({ logged: true, role: d.user && d.user.role ? d.user.role : d.role || null, user: d.user || d.user });
+          else set({ logged: false, role: null, user: null });
+        })
+        .catch(() => {});
+    } catch (e) {}
+    // storage event from other windows/tabs
+    window.addEventListener("storage", (e) => {
+      if (e.key === "auth") {
+        try {
+          state = JSON.parse(e.newValue || "null") || { logged: false };
+        } catch (e) {}
+        notify();
+      }
+    });
+    notify();
+    return state;
+  }
+  function subscribe(fn) {
+    if (typeof fn !== "function") return function () {};
+    subs.push(fn);
+    try {
+      fn(state);
+    } catch (e) {}
+    return function () {
+      const idx = subs.indexOf(fn);
+      if (idx >= 0) subs.splice(idx, 1);
+    };
+  }
+  return { init, set, subscribe, getState: () => state };
+})();
+
+window.AuthStore = AuthStore;
+
+// Update navbar DOM based on auth state (shows/hides login/register and ensures profile link)
+function updateNavbarByAuth(s) {
+  try {
+    const loginLink = document.querySelector('a.nav-link[href*="/login_page"]');
+    const registerLink = document.querySelector('a.nav-link[href*="/register"]');
+    if (s && s.logged) {
+      if (loginLink) loginLink.style.display = "none";
+      if (registerLink) registerLink.style.display = "none";
+      // ensure profile link exists in the primary nav area
+      let profileLink = document.querySelector('a.nav-link[href*="/profile"]');
+      if (!profileLink) {
+        profileLink = document.createElement("a");
+        profileLink.className = "nav-link";
+        profileLink.href = "/profile";
+        profileLink.textContent = "Profil";
+        const li = document.createElement("li");
+        li.className = "nav-item";
+        li.appendChild(profileLink);
+        const nav = document.querySelector(".navbar-nav");
+        if (nav) nav.appendChild(li);
+      }
+    } else {
+      if (loginLink) loginLink.style.display = "";
+      if (registerLink) registerLink.style.display = "";
+      const p = document.querySelector('a.nav-link[href*="/profile"]');
+      if (p) {
+        const li = p.closest("li");
+        if (li) li.remove();
+      }
+    }
+  } catch (e) {}
+}
+
+// Subscribe on load and initialize
+document.addEventListener("DOMContentLoaded", function () {
+  try {
+    AuthStore.subscribe(updateNavbarByAuth);
+    AuthStore.init();
+  } catch (e) {}
+
+  // Track pre-login page so we can redirect back after authentication
+  try {
+    document.querySelectorAll('a.nav-link[href*="/login_page"]').forEach(function(a){
+      a.addEventListener('click', function(e){
+        try{ sessionStorage.setItem('preLogin', window.location.pathname + (window.location.search||'')); }catch(_){}
+      });
+    });
+  } catch (e) {}
+});
 
 // --- Cart Manager ---
 class CartManager {
@@ -1018,502 +1133,9 @@ if (typeof window.initMenuClient === "undefined") {
   }
   window.initMenuClient = initMenuClient;
 }
-
-// --- News Ticker ---
-class NewsTicker {
-  constructor() {
-    this.currentIndex = 0;
-    this.newsItems = [];
-    this.autoSlideInterval = null;
-    this.init();
-  }
-
-  async init() {
-    try {
-      await this.loadNews();
-      this.setupEventListeners();
-      // Recalculate heights on resize for responsive layouts
-      window.addEventListener("resize", () => {
-        try {
-          this.equalizeHeights();
-        } catch (e) {}
-      });
-      this.startAutoSlide();
-    } catch (e) {
-      console.warn("News ticker init failed:", e);
-    }
-  }
-
-  equalizeHeights() {
-    const container = document.getElementById("newsTickerContent");
-    if (!container) return;
-    const items = Array.from(container.querySelectorAll(".news-item"));
-    if (!items || items.length === 0) return;
-
-    // Reset heights first so we measure natural heights
-    items.forEach((it) => {
-      it.style.height = "auto";
-    });
-
-    // On small screens we prefer natural stacking - don't enforce equal height
-    const narrow =
-      window.matchMedia && window.matchMedia("(max-width: 640px)").matches;
-    if (narrow) return;
-
-    let maxH = 0;
-    items.forEach((it) => {
-      try {
-        const h = it.getBoundingClientRect().height;
-        if (h > maxH) maxH = h;
-      } catch (e) {}
-    });
-
-    if (maxH > 0) {
-      items.forEach((it) => {
-        try {
-          it.style.height = Math.ceil(maxH) + "px";
-        } catch (e) {}
-      });
-    }
-  }
-  async loadNews() {
-    try {
-      // Determine preferred language from page (session-injected) or <html lang>
-      const preferredLang =
-        (document.body &&
-          document.body.dataset &&
-          document.body.dataset.language) ||
-        document.documentElement.lang ||
-        "ru";
-
-      // Load news from the API (DB-backed). Use same-origin credentials
-      // so admin-authenticated content can be included when needed.
-      const res = await fetch(`/api/news?active=true&lang=${preferredLang}`, {
-        cache: "no-cache",
-        credentials: "same-origin",
-      });
-      if (!res || !res.ok) {
-        throw new Error("Failed to load /api/news");
-      }
-      const blob = await res.json().catch(() => null);
-      if (!blob || !blob.success) {
-        throw new Error("Invalid /api/news payload");
-      }
-
-      let items = Array.isArray(blob.news) ? blob.news : [];
-
-      if (!items || !items.length) {
-        this.showNoNews();
-        return;
-      }
-
-      const lang = String(preferredLang || "ru").toLowerCase();
-      const supported = ["uz", "ru", "en", "kz"];
-      const langKey = supported.indexOf(lang) !== -1 ? lang : "ru";
-
-      // Helper to pick localized field from news.json structure
-      const pickLocalized = (obj, base) => {
-        if (!obj || !base) return "";
-        const direct = obj[`${base}_${langKey}`];
-        if (direct) return String(direct);
-        return (
-          obj[`${base}_uz`] ||
-          obj[`${base}_ru`] ||
-          obj[`${base}_en`] ||
-          obj[`${base}_kz`] ||
-          obj[base] ||
-          ""
-        );
-      };
-
-      // Keep only active items and sort by display_order then created_at
-      items = items
-        .filter((it) => it && (it.is_active === undefined || it.is_active))
-        .sort((a, b) => {
-          const odA =
-            a && a.display_order != null ? Number(a.display_order) : 9999;
-          const odB =
-            b && b.display_order != null ? Number(b.display_order) : 9999;
-          if (odA !== odB) return odA - odB;
-          const ca = (a && a.created_at) || "";
-          const cb = (b && b.created_at) || "";
-          if (ca < cb) return -1;
-          if (ca > cb) return 1;
-          return 0;
-        });
-
-      this.newsItems = items.map((it) => {
-        const title = pickLocalized(it, "title");
-        const content = pickLocalized(it, "content");
-        // Ensure arrays exist even if API omitted them
-        it.images = Array.isArray(it.images)
-          ? it.images
-          : it.images_json
-          ? JSON.parse(it.images_json || "[]")
-          : it.image_url
-          ? [it.image_url]
-          : [];
-        it.videos = Array.isArray(it.videos)
-          ? it.videos
-          : it.videos_json
-          ? JSON.parse(it.videos_json || "[]")
-          : it.video_url
-          ? [it.video_url]
-          : [];
-        it.youtube_embeds = Array.isArray(it.youtube_embeds)
-          ? it.youtube_embeds
-          : it.youtube_embed
-          ? [it.youtube_embed]
-          : (it.videos || []).map((v) => {
-              const m =
-                v &&
-                v.match(/(?:v=|\/embed\/|youtu\.be\/)([A-Za-z0-9_\-]{11})/);
-              return m ? "https://www.youtube.com/embed/" + m[1] : null;
-            });
-        return {
-          ...it,
-          title,
-          content,
-          localized_title: title,
-          localized_content: content,
-        };
-      });
-
-      if (!this.newsItems.length) {
-        this.showNoNews();
-        return;
-      }
-
-      this.currentIndex = 0;
-      this.updateDisplay();
-    } catch (e) {
-      console.warn("News loading failed from news.json:", e);
-      this.showNoNews();
-    }
-  }
-
-  updateDisplay() {
-    const container = document.getElementById("newsTickerContent");
-    const indicators = document.getElementById("newsIndicators");
-    if (!container) return;
-    if (!this.newsItems || this.newsItems.length === 0) {
-      this.showNoNews();
-      return;
-    }
-    // Render all visible items horizontally so native scrolling + nav works
-    container.innerHTML = "";
-    this.newsItems.forEach((it, idx) => {
-      const itemWrap = document.createElement("div");
-      itemWrap.className = "news-item";
-      itemWrap.setAttribute("data-news-id", it.id || "");
-      itemWrap.style.display = "inline-block";
-      itemWrap.style.verticalAlign = "top";
-      // Keep a compact card width for desktop ticker; responsive CSS will
-      // allow full-width stacking on narrow screens.
-      itemWrap.style.width = "280px";
-      itemWrap.style.marginRight = "12px";
-
-      // Build media HTML: support multiple youtube embeds, videos and images.
-      let mediaHtml = "";
-      try {
-        const mediaMainId = `news-media-main-${idx}`;
-        const thumbsId = `news-media-thumbs-${idx}`;
-        // Determine primary media (prefer youtube embed, then video, then image)
-        let primaryHtml = "";
-        if (
-          it.youtube_embeds &&
-          it.youtube_embeds.length &&
-          it.youtube_embeds[0]
-        ) {
-          primaryHtml = `<iframe src="${escapeHtml(
-            it.youtube_embeds[0]
-          )}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-        } else if (it.videos && it.videos.length && it.videos[0]) {
-          primaryHtml = `<video controls muted playsinline src="${escapeHtml(
-            it.videos[0]
-          )}"></video>`;
-        } else if (it.images && it.images.length && it.images[0]) {
-          primaryHtml = `<img src="${escapeHtml(
-            it.images[0]
-          )}" alt="${escapeHtml(it.title || "")}">`;
-        }
-
-        // Build thumbnails (images + video thumbnails + youtube thumbnails)
-        const thumbs = [];
-        (it.images || []).forEach((src) => {
-          if (src) thumbs.push({ type: "image", src: src });
-        });
-        (it.videos || []).forEach((src) => {
-          if (src) thumbs.push({ type: "video", src: src });
-        });
-        (it.youtube_embeds || []).forEach((src, ii) => {
-          if (src) {
-            // derive youtube thumbnail from embed id
-            const m = String(src).match(/embed\/([A-Za-z0-9_\-]{11})/);
-            const thumb = m
-              ? `https://img.youtube.com/vi/${m[1]}/mqdefault.jpg`
-              : null;
-            if (thumb) thumbs.push({ type: "youtube", src: src, thumb: thumb });
-          }
-        });
-
-        const thumbsHtml = thumbs.length
-          ? `<div id="${thumbsId}" class="news-media-thumbs">${thumbs
-              .map(
-                (t, ti) =>
-                  `<button data-index="${ti}" class="thumb-btn" data-type="${
-                    t.type
-                  }" data-src="${escapeHtml(t.src)}" ${
-                    t.thumb ? `data-thumb="${escapeHtml(t.thumb)}"` : ""
-                  }><img src="${escapeHtml(t.thumb || t.src)}"/></button>`
-              )
-              .join("")}</div>`
-          : "";
-
-        mediaHtml = `<div class="news-media"><div id="${mediaMainId}" class="news-media-main">${primaryHtml}</div>${thumbsHtml}</div>`;
-      } catch (e) {
-        mediaHtml = "";
-      }
-      // Prefer localized fields populated by data/news.json or /api/news?lang=...
-      const titleText =
-        it.localized_title ||
-        it.title ||
-        it.title_uz ||
-        it.title_ru ||
-        it.title_en ||
-        it.title_kz ||
-        "";
-      const excerptRaw =
-        (
-          it.localized_content ||
-          it.content ||
-          it.description ||
-          it.content_uz ||
-          it.content_ru ||
-          it.content_en ||
-          it.content_kz ||
-          ""
-        ).trim() || "";
-      const excerpt = escapeHtml(
-        excerptRaw.substring(0, 120) + (excerptRaw.length > 120 ? "..." : "")
-      );
-
-      itemWrap.innerHTML = `
-        ${mediaHtml}
-        <div class="news-body">
-          <h4 class="news-title">${escapeHtml(titleText || "")}</h4>
-          <p class="news-excerpt">${excerpt}</p>
-        </div>
-      `;
-
-      itemWrap.addEventListener("click", (e) => {
-        try {
-          const id = encodeURIComponent(String(it.id || ""));
-          window.location.href = "/news/" + id;
-        } catch (e) {}
-      });
-      // Attach thumbnail behavior if any
-      try {
-        // defer to next tick so DOM exists
-        setTimeout(() => {
-          const main = itemWrap.querySelector(".news-media-main");
-          const thumbs = itemWrap.querySelectorAll(".thumb-btn");
-          if (!main || !thumbs || thumbs.length === 0) return;
-          thumbs.forEach((btn) => {
-            btn.addEventListener("click", (ev) => {
-              ev.stopPropagation();
-              const type = btn.getAttribute("data-type");
-              const src = btn.getAttribute("data-src");
-              if (!src) return;
-              try {
-                if (type === "image") {
-                  main.innerHTML = `<img src="${escapeHtml(
-                    src
-                  )}" alt="${escapeHtml(it.title || "")}">`;
-                } else if (type === "video") {
-                  main.innerHTML = `<video controls muted playsinline src="${escapeHtml(
-                    src
-                  )}"></video>`;
-                } else if (type === "youtube") {
-                  main.innerHTML = `<iframe src="${escapeHtml(
-                    src
-                  )}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-                }
-                // adjust heights after swapping
-                try {
-                  window.newsTicker && window.newsTicker.equalizeHeights();
-                } catch (e) {}
-              } catch (e) {}
-            });
-          });
-        }, 1);
-      } catch (e) {}
-      container.appendChild(itemWrap);
-    });
-
-    // Ensure container is horizontally scrollable
-    container.style.whiteSpace = "nowrap";
-    container.style.overflowX = "auto";
-    container.style.display = "block";
-
-    // Equalize card heights so ticker visuals are consistent.
-    try {
-      // Wait a tick to allow layout and then equalize.
-      setTimeout(() => {
-        this.equalizeHeights();
-
-        // Re-run when images/iframes finish loading so heights correct after media load
-        try {
-          const imgs = container.querySelectorAll("img");
-          imgs.forEach((im) =>
-            im.addEventListener("load", () => this.equalizeHeights())
-          );
-        } catch (e) {}
-        try {
-          const iframes = container.querySelectorAll("iframe");
-          iframes.forEach((f) =>
-            f.addEventListener("load", () => this.equalizeHeights())
-          );
-        } catch (e) {}
-      }, 10);
-    } catch (e) {
-      console.warn("Equalize heights failed:", e);
-    }
-
-    // Update indicators
-    if (indicators) {
-      indicators.innerHTML = "";
-      for (let i = 0; i < this.newsItems.length; i++) {
-        const dot = document.createElement("span");
-        dot.className =
-          "news-indicator" + (i === this.currentIndex ? " active" : "");
-        dot.onclick = () => this.goToSlide(i);
-        indicators.appendChild(dot);
-      }
-    }
-
-    // Scroll to the currentIndex so auto-slide feels like a carousel
-    try {
-      const items = container.querySelectorAll(".news-item");
-      if (items && items.length && items[this.currentIndex]) {
-        // Use container.scrollTo to explicitly scroll only the ticker container
-        // This avoids letting scrollIntoView try to scroll the whole page vertically
-        try {
-          const el = items[this.currentIndex];
-          const elLeft = el.offsetLeft || 0;
-          const elCenter = elLeft + (el.clientWidth || 0) / 2;
-          const targetLeft = Math.max(
-            0,
-            Math.round(elCenter - (container.clientWidth || 0) / 2)
-          );
-          try {
-            container.scrollTo({ left: targetLeft, behavior: "smooth" });
-          } catch (e) {
-            // Some older environments may not support options object
-            container.scrollLeft = targetLeft;
-          }
-        } catch (e) {
-          // last-resort fallback: try scrollIntoView but request nearest block
-          try {
-            items[this.currentIndex].scrollIntoView({
-              behavior: "smooth",
-              inline: "center",
-              block: "nearest",
-            });
-          } catch (e) {}
-        }
-      }
-    } catch (e) {
-      // ignore scrolling errors
-    }
-  }
-
-  showNoNews() {
-    const content = document.getElementById("newsTickerContent");
-    if (content) {
-      content.innerHTML = `
-        <div class="news-item">
-          <div class="news-icon">News</div>
-          <div class="news-text">
-            <div class="news-title">Yangiliklar yo'q</div>
-            <div class="news-content">Hozircha yangiliklar mavjud emas</div>
-          </div>
-        </div>
-      `;
-    }
-  }
-
-  setupEventListeners() {
-    // Listen for refresh events
-    window.addEventListener("refreshNewsTicker", () => {
-      this.loadNews();
-    });
-  }
-
-  startAutoSlide() {
-    if (!autoUpdatesAllowed()) return;
-    if (this.newsItems.length <= 1) return;
-    this.autoSlideInterval = setInterval(() => {
-      this.nextSlide();
-    }, 5000); // 5 seconds
-  }
-
-  stopAutoSlide() {
-    if (this.autoSlideInterval) {
-      clearInterval(this.autoSlideInterval);
-      this.autoSlideInterval = null;
-    }
-  }
-
-  nextSlide() {
-    if (this.newsItems.length <= 1) return;
-    this.currentIndex = (this.currentIndex + 1) % this.newsItems.length;
-    this.updateDisplay();
-  }
-
-  prevSlide() {
-    if (this.newsItems.length <= 1) return;
-    this.currentIndex =
-      this.currentIndex === 0
-        ? this.newsItems.length - 1
-        : this.currentIndex - 1;
-    this.updateDisplay();
-  }
-
-  goToSlide(index) {
-    if (index >= 0 && index < this.newsItems.length) {
-      this.currentIndex = index;
-      this.updateDisplay();
-    }
-  }
-}
-
-// Global functions for onclick handlers
-window.nextNews = function () {
-  if (window.newsTicker) window.newsTicker.nextSlide();
-};
-
-window.prevNews = function () {
-  if (window.newsTicker) window.newsTicker.prevSlide();
-};
-
-// initialize when appropriate
-document.addEventListener("DOMContentLoaded", function () {
-  try {
-    initMenuClient();
-  } catch (e) {}
   try {
     if (window.cartManager) window.cartManager.updateCartCount();
   } catch (e) {}
-  try {
-    // Initialize news ticker if the component exists
-    if (document.getElementById("newsTicker")) {
-      window.newsTicker = new NewsTicker();
-    }
-  } catch (e) {
-    console.warn("News ticker initialization failed:", e);
-  }
-});
 
 // export
 window.showNotification = showNotification;

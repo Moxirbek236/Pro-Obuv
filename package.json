@@ -23,7 +23,10 @@
   },
   "homepage": "https://github.com/Moxirbek236/Pro-Obuv#readme",
   "dependencies": {
-    "express": "^5.1.0",
-    "http-proxy": "^1.18.1"
+    "express": "^5.2.1",
+    "http-proxy": "^1.18.1",
+    "swagger-ui-express": "^4.6.3",
+    "yamljs": "^0.3.0",
+    "cors": "^2.8.5"
   }
 }

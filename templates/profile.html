@@ -226,10 +226,10 @@ not initialize the map. #} {% if not config.get('YANDEX_MAPS_API') %}
     <div class="profile-header">
       <div class="profile-avatar">
         {% if user and user.avatar %}
-        <img src="{{ prefer_webp(user.avatar) }}" alt="Profil rasmi" />
+        <img src="{{ user.avatar | cloudinary_url }}" alt="Profil rasmi" onerror="handleProfileAvatarError(this)"/>
         {% else %}
         <img
-          src="{{ prefer_webp(url_for('static', filename='images/default-avatar.svg')) }}"
+          src="{{ 'images/default-avatar.svg' | cloudinary_url }}"
           alt="Profil rasmi" />
         {% endif %}
       </div>
@@ -579,7 +579,10 @@ not initialize the map. #} {% if not config.get('YANDEX_MAPS_API') %}
             <div>
               <button
                 class="btn btn-sm btn-danger"
-                onclick="terminateSession('{{ s.session_id }}', {{ 'true' if s.session_id == session.session_id else 'false' }})">
+                data-sid="{{ s.session_id }}"
+                data-is-current="{{ 'true' if s.session_id == session.session_id else 'false' }}"
+                onclick="terminateSession(this.dataset.sid, this.dataset.isCurrent === 'true')">
+
                 {% if s.session_id == session.session_id %} {{
                 get_text("Tugatish va chiqish")|default("Tugatish va chiqish")
                 }} {% else %} {{ get_text("Tugatish")|default("Tugatish") }} {%
@@ -736,6 +739,12 @@ not initialize the map. #} {% if not config.get('YANDEX_MAPS_API') %}
     } catch (e) {
       alert("Tarmoqqa ulanish xatosi");
     }
+  }
+
+  const DEFAULT_AVATAR_URL = "{{ 'images/default-avatar.svg' | cloudinary_url }}";
+  function handleProfileAvatarError(img) {
+     img.src = DEFAULT_AVATAR_URL;
+     img.onerror = null;
   }
 </script>
 {% endblock %}

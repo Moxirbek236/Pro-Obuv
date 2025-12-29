@@ -19,7 +19,7 @@
     <div class="auth-card">
       <div class="brand">
         <img
-          src="{{ prefer_webp(url_for('static', filename='favicons/favicon-32x32.png')) }}"
+          src="{{ 'favicons/favicon-32x32.png' | cloudinary_url }}"
           alt="logo"
           onerror="this.style.display='none'" />
         <div>
@@ -42,6 +42,7 @@
       {% endfor %} {% endif %} {% endwith %}
 
       <form method="POST">
+        <input type="hidden" name="next" id="nextInput" value="{{ request.args.get('next','') }}" />
         <div class="mb-3">
           <label for="email" class="form-label"> Email</label>
           <input
@@ -127,6 +128,53 @@
         document.head.appendChild(s);
       })();
     </script>
-    </script>
+      </script>
+
+      <script>
+        // Intercept traditional form POST and perform AJAX login so we can update navbar immediately
+        (function(){
+          try {
+            const form = document.querySelector('form');
+            if (!form) return;
+            form.addEventListener('submit', function(e){
+              // If user/agent wants full-page submit, allow when holding meta/ctrl — but default use AJAX
+              if (e.metaKey || e.ctrlKey) return;
+              e.preventDefault();
+              const fd = new FormData(form);
+              const body = new URLSearchParams();
+              for (const pair of fd.entries()) { body.append(pair[0], pair[1]); }
+              // prefer to send X-Requested-With header so server returns JSON with `next`
+              const headers = { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' };
+              // ensure next input populated from sessionStorage if available
+              try { if (!document.getElementById('nextInput').value && sessionStorage.getItem('preLogin')) document.getElementById('nextInput').value = sessionStorage.getItem('preLogin'); } catch(e){}
+
+              fetch(form.action || window.location.pathname, {
+                method: form.method || 'POST',
+                credentials: 'same-origin',
+                headers: headers,
+                body: body.toString()
+              }).then(r=>{
+                // If server redirects after form submit, some frameworks respond with 302 -> fetch follows; treat 200/204 as JSON or HTML
+                return r.json().catch(()=>({ redirected: r.redirected, ok: r.ok }));
+              }).then(data=>{
+                // Expecting server to return { success:true, next: '/...' } on AJAX login; if not, fallback to full navigation
+                if (data && data.success) {
+                  // persist auth state and notify other tabs
+                  try { localStorage.setItem('auth', JSON.stringify({ logged: true, role: data.role || null, user: data.user || null })); } catch(e) {}
+                  try { if (window.AuthStore && typeof window.AuthStore.set === 'function') window.AuthStore.set({ logged: true, role: data.role || null, user: data.user || null }); } catch(e) {}
+                  window.location = data.next || '/';
+                } else {
+                  // if server didn't return structured JSON, reload to let server render the flash messages
+                  window.location = data && data.next ? data.next : window.location.href;
+                }
+              }).catch(err=>{
+                console.error('Login AJAX failed', err);
+                // fallback to full submit so server can render error
+                form.submit();
+              });
+            });
+          } catch (e) { console.warn('Login interceptor init failed', e); }
+        })();
+      </script>
   </body>
 </html>

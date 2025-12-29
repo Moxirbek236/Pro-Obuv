@@ -2093,3 +2093,12 @@ Traceback (most recent call last):
     raise MethodNotAllowed(valid_methods=list(e.have_match_for)) from None
 werkzeug.exceptions.MethodNotAllowed: 405 Method Not Allowed: The method is not allowed for the requested URL.
 
+2025-12-28 16:28:01,324 | ERROR | restaurant_app | menu:7777 | Menu endpoint error: name 'os' is not defined
+2025-12-28 16:28:01,341 | ERROR | restaurant_app | menu:7807 | Menu fallback error: name 'os' is not defined
+2025-12-28 18:19:05,936 | ERROR | restaurant_app | menu:7793 | Menu endpoint error: type object 'Config' has no attribute 'SUPER_ADMIN_PHONE'
+2025-12-28 18:19:05,943 | ERROR | restaurant_app | menu:7823 | Menu fallback error: type object 'Config' has no attribute 'SUPER_ADMIN_PHONE'
+2025-12-28 18:24:08,764 | ERROR | restaurant_app | menu:7793 | Menu endpoint error: type object 'Config' has no attribute 'SUPER_ADMIN_PHONE'
+2025-12-28 18:24:08,766 | ERROR | restaurant_app | menu:7823 | Menu fallback error: type object 'Config' has no attribute 'SUPER_ADMIN_PHONE'
+2025-12-28 18:24:17,887 | ERROR | restaurant_app | product_detail:8039 | product_detail error for id=41: type object 'Config' has no attribute 'SUPER_ADMIN_PHONE'
+2025-12-29 12:26:01,974 | ERROR | restaurant_app | product_detail:8045 | product_detail error for id=38: 'slide_count' is undefined
+2025-12-29 12:26:08,455 | ERROR | restaurant_app | product_detail:8045 | product_detail error for id=39: 'slide_count' is undefined

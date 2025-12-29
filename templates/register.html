@@ -19,7 +19,7 @@
     <div class="auth-card">
       <div class="brand">
         <img
-          src="{{ url_for('static', filename='icons/logo-compact.webp') }}"
+          src="{{ 'icons/logo-compact.webp' | cloudinary_url }}"
           alt="logo"
           onerror="this.style.display='none'" />
         <div>

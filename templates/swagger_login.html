@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Swagger Login</title>
+    <style>
+      body { font-family: Arial, sans-serif; background:#f4f6f8; display:flex; align-items:center; justify-content:center; height:100vh; margin:0 }
+      .card { background:white; padding:24px; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.08); width:360px }
+      .card h2 { margin:0 0 12px }
+      .field { margin-bottom:12px }
+      label { display:block; margin-bottom:6px; font-size:13px }
+      input[type="text"], input[type="password"] { width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px }
+      button { background:#0b69ff; color:white; padding:10px 14px; border:none; border-radius:6px; cursor:pointer }
+      .error { color:#b91c1c; margin-bottom:12px }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>Swagger UI Login</h2>
+      {% if error %}
+      <div class="error">{{ error }}</div>
+      {% endif %}
+      <form method="post" action="{{ url_for('swagger_login') }}">
+        <div class="field">
+          <label for="username">Username</label>
+          <input id="username" name="username" type="text" autocomplete="username" required>
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" required>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <button type="submit">Log in</button>
+          <a href="/" style="color:#6b7280; font-size:13px">Home</a>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

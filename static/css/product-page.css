@@ -8,9 +8,9 @@
   flex-direction: column;
   width: 100%;
   max-width: 100%;
-  margin: 0;
+  margin: 0 auto;
   padding: 0;
-  gap: 0;
+  gap: 0.75rem;
 }
 
 .product-media {
@@ -50,9 +50,9 @@
     display: grid;
     grid-template-columns: 1fr 420px;
     gap: 2rem;
-    max-width: 1200px;
-    margin: 2.5rem auto;
-    padding: 0 1.25rem;
+    max-width: 1100px;
+    margin: 2rem auto;
+    padding: 0 1rem;
     align-items: start;
   }
 
@@ -474,11 +474,84 @@ select#sizeSelect:focus, select#colorSelect:focus {
   max-width: 100%;
 }
 
-/* Staggered load animation */
-.rating-summary-container.loaded .rating-progress-fill {
-  /* Placeholder for potential JS-driven triggers */
+/* Superadmin phone CTA */
+.superadmin-phone-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: linear-gradient(90deg,#0d6efd,#21a366);
+  color: #fff;
+  border-radius: 10px;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 6px 18px rgba(13,110,253,0.12);
 }
+.superadmin-phone-link .phone-icon { opacity: 0.95; }
+.superadmin-phone-link .sa-text { display:inline-block; }
+.superadmin-phone-link .sa-number { display:block; font-weight:600; font-size:0.9rem; opacity:0.95; }
+.superadmin-phone-link:hover { transform: translateY(-2px); }
+.superadmin-phone-link:active { transform: translateY(0); }
 
+/* Image enlarge button */
+.image-enlarge-btn {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  z-index: 40;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  border: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.image-enlarge-btn i { font-size: 18px; }
+
+/* Modal fullscreen enlarged swiper */
+.product-media-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+.product-media-modal.open { display: flex; }
+.product-media-modal .modal-inner { width: 100%; max-width: 1200px; height: 88vh; position: relative; }
+.product-media-modal .modal-close { position: absolute; right: 12px; top: 12px; z-index: 2100; background: rgba(255,255,255,0.06); color:#fff; border-radius:8px; width:40px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+.product-media-modal .modal-close i { font-size:20px; }
+.product-media-modal .modal-inner .swiper-slide img, .product-media-modal .modal-inner .swiper-slide video { max-height: 86vh; object-fit: contain; }
+
+/* alias for template markup: image-enlarge-modal */
+.image-enlarge-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+.image-enlarge-modal.open { display: flex; }
+.image-enlarge-modal .image-enlarge-content { width: 100%; max-width: 1200px; height: 88vh; position: relative; }
+.image-enlarge-modal .image-enlarge-close { position: absolute; right: 12px; top: 12px; z-index: 2100; background: rgba(255,255,255,0.06); color:#fff; border-radius:8px; width:40px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+.image-enlarge-modal .image-enlarge-close i { font-size:20px; }
+.image-enlarge-modal .image-enlarge-swiper .swiper-slide img, .image-enlarge-modal .image-enlarge-swiper .swiper-slide video { max-height: 86vh; object-fit: contain; }
+
+/* Thumbnails */
+.productThumbsSwiper { margin-top: 10px; }
+.productThumbsSwiper .thumb-slide img { width: 64px; height:64px; object-fit:cover; border-radius:6px; cursor:pointer; }
+
+/* make sure main image area is positioned for enlarge button */
+.productMainSwiper { position: relative; }
+
+/* Staggered load animation */
 /* Fallback if no JS to add .loaded */
 .rating-progress-fill {
     animation: bar-swagger 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
@@ -545,6 +618,7 @@ select#sizeSelect:focus, select#colorSelect:focus {
 .mp-uzum { background: linear-gradient(90deg,#06b6d4,#0891b2); }
 .mp-yandex { background: linear-gradient(90deg,#ffd54a,#ffcc00); color:#222; }
 .mp-generic { background: linear-gradient(90deg,#3b82f6,#1e40af); }
+.mp-phone { background: linear-gradient(90deg,#10b981,#059669); }
 @media (max-width: 720px) { .marketplace-header { width:100%; text-align:center } .marketplace-buttons { justify-content:center } }
 
 /* Mobile Sticky Bar */

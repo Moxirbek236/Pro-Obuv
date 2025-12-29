@@ -91,3 +91,4 @@ class Config:
     # Admin credentials
     SUPER_ADMIN_USERNAME = os.environ.get("SUPER_ADMIN_USERNAME", "masteradmin")
     SUPER_ADMIN_PASSWORD = os.environ.get("SUPER_ADMIN_PASSWORD", "sjtmsimram10")
+    SUPER_ADMIN_PHONE = os.environ.get("SUPER_ADMIN_PHONE", "+998901234567")

@@ -5,8 +5,8 @@
       <i class="bi bi-newspaper"></i> <span>{{ _('ticker.title') if _('ticker.title') else 'YANGILIKLAR' }}</span>
     </div>
 
-    <div class="news-ticker swiper" id="newsTickerSwiper">
-      <div class="swiper-wrapper" id="newsTickerContent">
+    <div class="news-ticker swiper" id="news-ticker-swiper">
+      <div class="swiper-wrapper" id="news-ticker-content">
         <!-- Slides will be injected here -->
         <div class="swiper-slide news-item loading">
           <div class="news-image-wrapper">
@@ -38,4 +38,4 @@
   </div>
 </div>
 
-<script src="{{ url_for('static', filename='js/news-ticker.js') }}"></script>
+  {# News ticker script is included globally in base.html; avoid duplicate includes here #}
