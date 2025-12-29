@@ -3928,3 +3928,41 @@ werkzeug.exceptions.MethodNotAllowed: 405 Method Not Allowed: The method is not 
 2025-12-29 13:51:36,988 | WARNING | restaurant_app | not_found_error:1994 | 404 Error: http://localhost:5000/static/images/hero1.png
 2025-12-29 13:51:36,991 | WARNING | restaurant_app | not_found_error:1994 | 404 Error: http://localhost:5000/static/images/hero3.png
 2025-12-29 13:51:36,991 | WARNING | restaurant_app | not_found_error:1994 | 404 Error: http://localhost:5000/static/images/hero3.png
+2025-12-29 15:05:23,137 | WARNING | restaurant_app | not_found_error:2017 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 15:07:45,693 | WARNING | restaurant_app | not_found_error:2017 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 15:07:57,271 | WARNING | restaurant_app | not_found_error:2017 | 404 Error: http://localhost:5000/api/users
+2025-12-29 15:08:07,292 | WARNING | restaurant_app | not_found_error:2017 | 404 Error: http://localhost:5000/api/users?page=1&per_page=1
+2025-12-29 15:09:06,299 | WARNING | restaurant_app | not_found_error:2017 | 404 Error: http://localhost:5000/api/auth/login
+2025-12-29 15:09:39,843 | WARNING | restaurant_app | not_found_error:2017 | 404 Error: http://localhost:5000/api/auth/register
+2025-12-29 15:09:58,451 | WARNING | restaurant_app | not_found_error:2017 | 404 Error: http://localhost:5000/api/auth/logout
+2025-12-29 15:10:17,007 | WARNING | restaurant_app | not_found_error:2017 | 404 Error: http://localhost:5000/api/users/me
+2025-12-29 15:10:23,270 | WARNING | restaurant_app | not_found_error:2017 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 15:10:56,262 | WARNING | restaurant_app | not_found_error:2017 | 404 Error: http://localhost:5000/api/users/me
+2025-12-29 15:11:16,765 | WARNING | restaurant_app | not_found_error:2017 | 404 Error: http://localhost:5000/api/users
+2025-12-29 15:11:42,162 | WARNING | restaurant_app | not_found_error:2017 | 404 Error: http://localhost:5000/api/users/2
+2025-12-29 15:12:12,356 | WARNING | restaurant_app | not_found_error:2017 | 404 Error: http://localhost:5000/api/users/2
+2025-12-29 15:12:26,419 | WARNING | restaurant_app | not_found_error:2017 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 15:12:51,188 | WARNING | restaurant_app | not_found_error:2017 | 404 Error: http://localhost:5000/api/products?q=q&category=speceobuv&page=1
+2025-12-29 15:13:31,628 | WARNING | restaurant_app | not_found_error:2017 | 404 Error: http://localhost:5000/api/products
+2025-12-29 15:13:54,311 | WARNING | restaurant_app | not_found_error:2017 | 404 Error: http://localhost:5000/api/products/34
+2025-12-29 15:14:06,626 | WARNING | restaurant_app | not_found_error:2017 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 15:14:22,753 | WARNING | restaurant_app | not_found_error:2017 | 404 Error: http://localhost:5000/api/categories
+2025-12-29 15:16:32,186 | WARNING | restaurant_app | not_found_error:2115 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 15:18:41,420 | WARNING | restaurant_app | not_found_error:2115 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 15:20:13,993 | WARNING | restaurant_app | not_found_error:2115 | 404 Error: http://localhost:5000/api/super-admin/get-system-stats
+2025-12-29 15:20:28,860 | WARNING | restaurant_app | not_found_error:2115 | 404 Error: http://localhost:5000/api/cart
+2025-12-29 15:21:53,360 | WARNING | restaurant_app | not_found_error:2115 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 15:21:55,547 | WARNING | restaurant_app | not_found_error:2115 | 404 Error: http://localhost:5000/static/images/hero1.png
+2025-12-29 15:21:55,568 | WARNING | restaurant_app | not_found_error:2115 | 404 Error: http://localhost:5000/static/images/hero2.png
+2025-12-29 15:21:55,584 | WARNING | restaurant_app | not_found_error:2115 | 404 Error: http://localhost:5000/static/images/hero3.png
+2025-12-29 15:22:09,621 | WARNING | restaurant_app | not_found_error:2115 | 404 Error: http://localhost:5000/static/images/hero1.png
+2025-12-29 15:22:09,645 | WARNING | restaurant_app | not_found_error:2115 | 404 Error: http://localhost:5000/static/images/hero2.png
+2025-12-29 15:22:09,829 | WARNING | restaurant_app | not_found_error:2115 | 404 Error: http://localhost:5000/static/images/hero3.png
+2025-12-29 15:22:26,281 | WARNING | restaurant_app | _send_email:14453 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 5b1f17b1804b1-47be27b0d5asm589905885e9.13 - gsmtp')
+2025-12-29 15:22:26,282 | WARNING | restaurant_app | forgot:14511 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-12-29 15:22:33,177 | WARNING | restaurant_app | not_found_error:2115 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 15:30:38,586 | WARNING | restaurant_app | _send_email:14537 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 5b1f17b1804b1-47d193d4e91sm518109255e9.13 - gsmtp')
+2025-12-29 15:30:38,587 | WARNING | restaurant_app | forgot:14593 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-12-29 15:31:16,914 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 15:41:04,074 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 15:41:06,653 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json

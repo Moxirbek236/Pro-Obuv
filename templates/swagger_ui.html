@@ -150,38 +150,50 @@
 
     <div id="swagger-ui"></div>
     
+    <script src="https://unpkg.com/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
     <script src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-bundle.js"></script>
     <script src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-standalone-preset.js"></script>
-    
+
     <script>
-      window.onload = function () {
-        const ui = SwaggerUIBundle({
-          url: "{{ openapi_url }}",
-          dom_id: '#swagger-ui',
-          deepLinking: true,
-          presets: [
-            SwaggerUIBundle.presets.apis,
-            SwaggerUIStandalonePreset
-          ],
-          plugins: [
-            SwaggerUIBundle.plugins.DownloadUrl
-          ],
-          layout: "BaseLayout",
-          docExpansion: 'list',
-          defaultModelsExpandDepth: -1,
-          validatorUrl: null,
-          persistAuthorization: true,
-          displayRequestDuration: true,
-          filter: true, // Enable search filtering
-          
-          onComplete: () => {
-             // Optional: Automated pre-auth for simpler dev experience
-             try {
-               ui.preauthorizeApiKey("ApiKeyAuth", "TEST_API_KEY_12345");
-             } catch(e){}
-          }
-        });
-        window.ui = ui;
+      // Load the YAML spec, rewrite servers to use the current origin (avoids CORS to external host),
+      // and initialize Swagger UI with the modified spec.
+      window.onload = async function () {
+        try {
+          const res = await fetch("{{ openapi_url }}");
+          const text = await res.text();
+          const spec = jsyaml.load(text);
+          // Force server to current origin so UI issues same-origin requests to this instance.
+          spec.servers = [{ url: window.location.origin }];
+
+          const ui = SwaggerUIBundle({
+            spec: spec,
+            dom_id: '#swagger-ui',
+            deepLinking: true,
+            presets: [
+              SwaggerUIBundle.presets.apis,
+              SwaggerUIStandalonePreset
+            ],
+            plugins: [
+              SwaggerUIBundle.plugins.DownloadUrl
+            ],
+            layout: "BaseLayout",
+            docExpansion: 'list',
+            defaultModelsExpandDepth: -1,
+            validatorUrl: null,
+            persistAuthorization: true,
+            displayRequestDuration: true,
+            filter: true,
+            requestInterceptor: (req) => {
+              // Keep credentials when the UI is served from this host
+              req.credentials = 'include';
+              return req;
+            }
+          });
+          window.ui = ui;
+        } catch (e) {
+          console.error('Failed to load swagger spec:', e);
+          document.getElementById('swagger-ui').innerText = 'Failed to load API specification.';
+        }
       };
     </script>
   </body>

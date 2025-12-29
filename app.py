@@ -376,6 +376,188 @@ except Exception:
     # If anything fails during swagger registration, don't break app startup
     app_logger and app_logger.exception('Swagger registration failed')
 
+# Quick compatibility stubs for commonly-requested doc endpoints
+try:
+    if not _flask_rule_exists('/api/users', 'GET'):
+        def _stub_api_users():
+            return jsonify({'success': False, 'error': 'not_implemented'}), 501
+
+        try:
+            app.add_url_rule('/api/users', 'stub_api_users', _stub_api_users, methods=['GET'])
+        except Exception:
+            pass
+except Exception:
+    pass
+
+# Minimal auth/user stubs to avoid 404s from Swagger UI while endpoints are implemented
+try:
+    if not _flask_rule_exists('/api/auth/login', 'POST'):
+        def _stub_auth_login():
+            return jsonify({'success': False, 'error': 'not_implemented'}), 501
+        try:
+            app.add_url_rule('/api/auth/login', 'stub_auth_login', _stub_auth_login, methods=['POST', 'OPTIONS'])
+        except Exception:
+            pass
+
+    if not _flask_rule_exists('/api/auth/register', 'POST'):
+        def _stub_auth_register():
+            return jsonify({'success': False, 'error': 'not_implemented'}), 501
+        try:
+            app.add_url_rule('/api/auth/register', 'stub_auth_register', _stub_auth_register, methods=['POST', 'OPTIONS'])
+        except Exception:
+            pass
+
+    if not _flask_rule_exists('/api/auth/logout', 'POST'):
+        def _stub_auth_logout():
+            return jsonify({'success': False, 'error': 'not_implemented'}), 501
+        try:
+            app.add_url_rule('/api/auth/logout', 'stub_auth_logout', _stub_auth_logout, methods=['POST', 'OPTIONS'])
+        except Exception:
+            pass
+
+    if not _flask_rule_exists('/api/auth/status', 'GET'):
+        def _stub_auth_status():
+            return jsonify({'success': True, 'authenticated': False}), 200
+        try:
+            app.add_url_rule('/api/auth/status', 'stub_auth_status', _stub_auth_status, methods=['GET', 'OPTIONS'])
+        except Exception:
+            pass
+except Exception:
+    pass
+
+# Additional user endpoint stubs (list, create, get/update/delete, me)
+try:
+    if not _flask_rule_exists('/api/users', 'GET'):
+        def _users_list():
+            # Simple in-memory sample response to satisfy the frontend and Swagger UI.
+            # Supports pagination via `page` and `per_page` query params.
+            try:
+                if request.method == 'POST':
+                    # Echo back created user (minimal behavior for stub)
+                    payload = (request.json or {}) if request.data else (request.form or {})
+                    user = {'id': 9999, 'username': payload.get('username') or payload.get('email') or 'new_user'}
+                    return jsonify({'success': True, 'user': user}), 201
+
+                # GET: list with pagination
+                page = int(request.args.get('page', 1) or 1)
+                per_page = int(request.args.get('per_page', 10) or 10)
+            except Exception:
+                page, per_page = 1, 10
+
+            # Example static dataset (keeps responses stable)
+            sample_users = [
+                {'id': 1, 'username': 'alice'},
+                {'id': 2, 'username': 'bob'},
+                {'id': 3, 'username': 'carol'},
+                {'id': 4, 'username': 'dave'},
+            ]
+            total = len(sample_users)
+            start = (page - 1) * per_page
+            data = sample_users[start:start + per_page]
+            return jsonify({'success': True, 'data': data, 'page': page, 'per_page': per_page, 'total': total}), 200
+
+        try:
+            app.add_url_rule('/api/users', 'users_list', _users_list, methods=['GET', 'POST', 'OPTIONS'])
+        except Exception:
+            pass
+
+    if not _flask_rule_exists('/api/users/me', 'GET'):
+        def _stub_users_me():
+            # Return a not-authenticated default; frontend expects a consistent shape
+            user = None
+            # If there's a session-based user, expose minimal info (compatibility)
+            try:
+                if session.get('user'):
+                    u = session.get('user')
+                    user = {'id': u.get('id'), 'username': u.get('username')}
+            except Exception:
+                user = None
+            return jsonify({'success': True, 'user': user}), 200
+        try:
+            app.add_url_rule('/api/users/me', 'stub_users_me', _stub_users_me, methods=['GET', 'OPTIONS'])
+        except Exception:
+            pass
+
+    # Generic id-based user endpoints
+    if not _flask_rule_exists('/api/users/<int:user_id>', 'GET'):
+        def _stub_user_item(user_id):
+            # Return a simple user object for GET; accept PUT/DELETE but respond with not-implemented.
+            if request.method == 'GET':
+                # Use sample mapping
+                sample_map = {1: {'id': 1, 'username': 'alice'}, 2: {'id': 2, 'username': 'bob'}}
+                user = sample_map.get(user_id)
+                if user:
+                    return jsonify({'success': True, 'user': user}), 200
+                return jsonify({'success': False, 'error': 'not_found'}), 404
+            # For non-GET, indicate not implemented to avoid accidental modifications
+            return jsonify({'success': False, 'error': 'not_implemented'}), 501
+        try:
+            app.add_url_rule('/api/users/<int:user_id>', 'stub_user_item', _stub_user_item, methods=['GET', 'PUT', 'DELETE', 'OPTIONS'])
+        except Exception:
+            pass
+except Exception:
+    pass
+
+# Temporary stubs for product endpoints to prevent frontend 404s
+try:
+    if not _flask_rule_exists('/api/categories', 'GET'):
+        def _categories_list():
+            try:
+                page = int(request.args.get('page', 1) or 1)
+                per_page = int(request.args.get('per_page', 10) or 10)
+            except Exception:
+                page, per_page = 1, 10
+
+            sample_categories = [
+                {'id': 1, 'name': 'Drinks'},
+                {'id': 2, 'name': 'Food'},
+                {'id': 3, 'name': 'Desserts'},
+            ]
+            total = len(sample_categories)
+            start = (page - 1) * per_page
+            data = sample_categories[start:start + per_page]
+            return jsonify({'success': True, 'data': data, 'page': page, 'per_page': per_page, 'total': total}), 200
+
+        try:
+            app.add_url_rule('/api/categories', 'categories_list', _categories_list, methods=['GET', 'OPTIONS'])
+        except Exception:
+            pass
+
+    if not _flask_rule_exists('/api/categories/<int:cat_id>', 'GET'):
+        def _category_item(cat_id):
+            sample_map = {1: {'id': 1, 'name': 'Drinks'}, 2: {'id': 2, 'name': 'Food'}, 3: {'id': 3, 'name': 'Desserts'}}
+            c = sample_map.get(cat_id)
+            if c:
+                return jsonify({'success': True, 'category': c}), 200
+            return jsonify({'success': False, 'error': 'not_found'}), 404
+
+        try:
+            app.add_url_rule('/api/categories/<int:cat_id>', 'category_item', _category_item, methods=['GET', 'OPTIONS'])
+        except Exception:
+            pass
+except Exception:
+    pass
+
+# Temporary stubs for product endpoints to prevent frontend 404s
+try:
+    if not _flask_rule_exists('/api/products', 'GET'):
+        def _stub_products():
+            return jsonify({'success': False, 'error': 'not_implemented'}), 501
+        try:
+            app.add_url_rule('/api/products', 'stub_products', _stub_products, methods=['GET', 'POST', 'OPTIONS'])
+        except Exception:
+            pass
+
+    if not _flask_rule_exists('/api/products/<int:product_id>', 'GET'):
+        def _stub_product_item(product_id):
+            return jsonify({'success': False, 'error': 'not_implemented', 'id': product_id}), 501
+        try:
+            app.add_url_rule('/api/products/<int:product_id>', 'stub_product_item', _stub_product_item, methods=['GET', 'PUT', 'DELETE', 'OPTIONS'])
+        except Exception:
+            pass
+except Exception:
+    pass
+
 # If the app is served under a main domain (e.g. safety.uz) we want to
 # allow staff pages to be reachable from the staff subdomain
 # (staff.safety.uz). Many deployments handle subdomains at the webserver
@@ -14407,10 +14589,22 @@ def forgot():
                             ok = False
 
                     if not ok:
+                        # Sending failed. By default clear the temporary forgot session keys and show an error.
+                        app_logger.warning(f'Failed to send forgot email to {email}')
+
+                        # Development/testing fallback: if app is in debug or explicit env flag is set,
+                        # keep the generated code in session and allow the user to continue by showing
+                        # the code in a non-production flash message. This helps local testing when
+                        # SMTP credentials are missing or invalid.
+                        dev_fallback = os.environ.get('FORGOT_FALLBACK_SHOW_CODE') or app.config.get('DEBUG') or os.environ.get('FLASK_ENV') == 'development'
+                        if dev_fallback:
+                            app_logger.info(f"Forgot email send failed but dev fallback enabled; showing code to user for {email}")
+                            flash(f"Kod yuborilmadi elektron pochtaga, lekin test maqsadida kod: {code}", 'info')
+                            return redirect(url_for('forgot_verify'))
+
                         # Clear the temporary forgot session keys so user doesn't see verification page for a code we couldn't deliver
                         for k in ('forgot_code', 'forgot_user_id', 'forgot_expires', 'forgot_method'):
                             session.pop(k, None)
-                        app_logger.warning(f'Failed to send forgot email to {email}')
                         flash("Kod yuborilmadi. Iltimos keyinroq urinib ko'proq tekshiring yoki administrator bilan bog'laning.", 'error')
                         return redirect(url_for('forgot'))
 

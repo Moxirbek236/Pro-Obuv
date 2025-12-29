@@ -8728,3 +8728,69 @@ NoneType: None
 2025-12-18 18:23:35 | ERROR | None
 NoneType: None
 
+2025-12-29 10:05:05 | ERROR | None
+NoneType: None
+
+2025-12-29 10:05:06 | ERROR | None
+NoneType: None
+
+2025-12-29 10:05:10 | ERROR | None
+NoneType: None
+
+2025-12-29 10:05:11 | ERROR | None
+NoneType: None
+
+2025-12-29 10:05:15 | ERROR | None
+NoneType: None
+
+2025-12-29 10:05:17 | ERROR | None
+NoneType: None
+
+2025-12-29 10:05:21 | ERROR | None
+NoneType: None
+
+2025-12-29 10:05:23 | ERROR | None
+NoneType: None
+
+2025-12-29 10:05:29 | ERROR | None
+NoneType: None
+
+2025-12-29 10:05:30 | ERROR | None
+NoneType: None
+
+2025-12-29 10:05:39 | ERROR | None
+NoneType: None
+
+2025-12-29 10:05:43 | ERROR | None
+NoneType: None
+
+2025-12-29 10:05:54 | ERROR | None
+NoneType: None
+
+2025-12-29 10:06:00 | ERROR | None
+NoneType: None
+
+2025-12-29 10:06:12 | ERROR | None
+NoneType: None
+
+2025-12-29 10:06:23 | ERROR | None
+NoneType: None
+
+2025-12-29 10:06:30 | ERROR | None
+NoneType: None
+
+2025-12-29 10:06:34 | ERROR | None
+NoneType: None
+
+2025-12-29 10:06:53 | ERROR | None
+NoneType: None
+
+2025-12-29 10:07:00 | ERROR | None
+NoneType: None
+
+2025-12-29 10:07:05 | ERROR | None
+NoneType: None
+
+2025-12-29 10:07:28 | ERROR | None
+NoneType: None
+
