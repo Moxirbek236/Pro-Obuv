@@ -25,6 +25,20 @@ from collections import defaultdict
 from cloudinary_helpers import register_cloudinary_helpers, get_cloudinary_url
 from services.cloudinary_service import cloudinary_service
 
+# Load environment variables from .env (if present) so server-start will pick up
+# SMTP, SWAGGER and other runtime configuration without manual shell export.
+try:
+    from dotenv import load_dotenv
+    # load .env from repository root if present
+    _env_path = os.path.join(os.path.dirname(__file__), '.env')
+    load_dotenv(_env_path)
+except Exception:
+    try:
+        # best-effort: if python-dotenv isn't installed, continue silently
+        pass
+    except Exception:
+        pass
+
 # Explicit import for SMS helper used in threaded SMS sending paths.
 try:
     import sms_helper
@@ -315,8 +329,17 @@ try:
         if request.method == 'POST':
             user = (request.form.get('username') or '').strip()
             pw = (request.form.get('password') or '')
+            # Prefer explicit env vars, but fall back to superadmin creds (or Config defaults)
             env_user = os.environ.get('SWAGGER_USER')
             env_pass = os.environ.get('SWAGGER_PASS')
+            if not env_user or not env_pass:
+                try:
+                    creds = get_superadmin_creds()
+                    env_user = env_user or creds.get('username')
+                    env_pass = env_pass or creds.get('password')
+                except Exception:
+                    pass
+
             if not env_user or not env_pass:
                 error = 'Swagger credentials are not configured on the server.'
             elif user == env_user and pw == env_pass:
