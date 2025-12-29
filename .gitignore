@@ -108,3 +108,6 @@ dist/
 # Git LFS (agar ishlatilsa)
 # ==========================
 .gitattributes
+
+logs/
+*.log
