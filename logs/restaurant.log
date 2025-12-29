@@ -3966,3 +3966,14 @@ werkzeug.exceptions.MethodNotAllowed: 405 Method Not Allowed: The method is not 
 2025-12-29 15:31:16,914 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
 2025-12-29 15:41:04,074 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
 2025-12-29 15:41:06,653 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 16:02:35,354 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 16:02:40,920 | WARNING | restaurant_app | _send_email:14537 | Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 5b1f17b1804b1-47d193d4e91sm519377535e9.13 - gsmtp')
+2025-12-29 16:02:40,921 | WARNING | restaurant_app | forgot:14593 | Failed to send forgot email to moxirbekmoxirbek29@gmail.com
+2025-12-29 16:02:41,530 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 16:56:06,865 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 16:56:13,316 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 16:56:29,122 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 16:56:39,309 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 16:56:47,897 | WARNING | restaurant_app | login_page:14417 | Failed login attempt for email: moxirbekmoxirbek29@gmail.com
+2025-12-29 16:56:48,615 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 16:56:55,916 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
