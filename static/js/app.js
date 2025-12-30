@@ -93,11 +93,11 @@ function showMessage(text, type) {
   try {
     type = type || "info"; // info, success, danger, warning
     var container = document.querySelector("main.container") || document.body;
-    var alert = document.createElement("div");
-    alert.className = "alert alert-" + type + " alert-dismissible fade show";
-    alert.role = "alert";
-    alert.style.zIndex = 9999;
-    alert.innerText = text;
+    var alertEl = document.createElement("div");
+    alertEl.className = "alert alert-" + type + " alert-dismissible fade show";
+    alertEl.role = "alert";
+    alertEl.style.zIndex = 9999;
+    alertEl.innerText = text;
 
     var btn = document.createElement("button");
     btn.type = "button";
@@ -108,15 +108,17 @@ function showMessage(text, type) {
 
     // insert at top of container
     if (container.firstChild)
-      container.insertBefore(alert, container.firstChild);
-    else container.appendChild(alert);
+      container.insertBefore(alertEl, container.firstChild);
+    else container.appendChild(alertEl);
 
     // auto-remove after 4s
     setTimeout(function () {
       try {
-        alert.classList.remove("show");
-        alert.classList.add("hide");
-        alert.remove();
+        if (alertEl && alertEl.classList) {
+          alertEl.classList.remove("show");
+          alertEl.classList.add("hide");
+        }
+        if (alertEl && alertEl.remove) alertEl.remove();
       } catch (e) {}
     }, 4000);
   } catch (e) {

@@ -1551,7 +1551,7 @@ if (window.__menuInitDone) {
       console.log(`🟡 MAIN INIT #${window.menuLoadCount} - ${new Date().toLocaleTimeString()}`);
       updateCartCountDisplay();
       try { loadMenuData(); } catch(e) { console.warn('loadMenuData failed', e); }
-      try { wireFavoriteButtons(); } catch(e) { console.warn('wireFavoriteButtons on DOMContentLoaded failed', e); }
+      try { if (typeof wireFavoriteButtons === 'function') { wireFavoriteButtons(); } } catch(e) { console.warn('wireFavoriteButtons on DOMContentLoaded failed', e); }
       // If server rendered items exist, ensure menuData is populated from DOM
       try { buildMenuDataFromDOM(); } catch(e) { console.warn('buildMenuDataFromDOM failed', e); }
       // Instrumentation: helpful debug logs to capture whether handlers attach
@@ -2025,8 +2025,30 @@ if (window.__menuInitDone) {
           if (typeof toggleFavorite === 'function') {
             toggleFavorite(itemId, favBtn);
           } else {
-            // Fallback to legacy wireFavoriteButtons logic if toggleFavorite not global
-            console.warn('toggleFavorite not found, usage fallback needed');
+            // Fallback: attempt the same POST as the primary implementation so UI still works
+            try {
+              const icon = favBtn.querySelector('i');
+              if (!icon) return;
+              const isAdded = icon.classList.contains('bi-heart-fill');
+              const url = isAdded ? `/remove-from-favorites/${itemId}` : `/add-to-favorites/${itemId}`;
+              favBtn.disabled = true;
+              fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': (typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : (document.querySelector('meta[name="csrf-token"]')?.content || '')) } })
+                .then(r => r.json().catch(()=>({})))
+                .then(data => {
+                  favBtn.disabled = false;
+                  if (data && (data.success || (data.message && data.message.includes('allaqachon')))) {
+                    icon.classList.remove(isAdded ? 'bi-heart-fill' : 'bi-heart');
+                    icon.classList.add(isAdded ? 'bi-heart' : 'bi-heart-fill');
+                    favBtn.classList.toggle('active', !isAdded);
+                    if (typeof showToast === 'function') showToast(data.message || 'Muvaffaqiyatli!', 'success');
+                  } else {
+                    if (typeof showToast === 'function') showToast(data.message || 'Xatolik yuz berdi','error');
+                  }
+                })
+                .catch(err => { favBtn.disabled = false; console.error('Favorite toggle fallback error', err); if (typeof showToast === 'function') showToast('Xatolik yuz berdi','error'); });
+            } catch (e) {
+              console.warn('toggleFavorite fallback failed', e);
+            }
           }
           return;
         }

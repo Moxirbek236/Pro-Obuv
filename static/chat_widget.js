@@ -79,6 +79,7 @@
       try {
         const res = await fetch("/api/operator-chat/user/history", {
           method: "GET",
+          credentials: 'same-origin',
           headers: { Accept: "application/json" },
         });
         const j = await res.json().catch(() => ({}));
@@ -155,6 +156,7 @@
           const payload = { text: t, sender_name: window.USER_NAME || "Guest" };
           const res = await fetch("/api/chat/send", {
             method: "POST",
+            credentials: 'same-origin',
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
           });
@@ -181,6 +183,7 @@
           };
           const res = await fetch("/api/operator-chat/user/send", {
             method: "POST",
+            credentials: 'same-origin',
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
           });

@@ -108,7 +108,7 @@
   <div class="swiper hero-swiper">
     <div class="swiper-wrapper">
       <!-- Slide 1 -->
-      <div class="swiper-slide hero-slide" style="background-image: url('{{ url_for('static', filename='images/hero1.png') }}');">
+      <div class="swiper-slide hero-slide" style="background-image: url('{{ 'static-images/hero1.png' | cloudinary_url }}');">
         <div class="hero-content">
           <h1 class="hero-title">{{ _('hero.title_1') if _('hero.title_1') != 'hero.title_1' else "Premium Spetsobuv" }}</h1>
           <p class="hero-subtitle">{{ _('hero.subtitle_1') if _('hero.subtitle_1') != 'hero.subtitle_1' else "Xavfsizlik va qulaylik uyg'unligi" }}</p>
@@ -116,7 +116,7 @@
         </div>
       </div>
       <!-- Slide 2 -->
-      <div class="swiper-slide hero-slide" style="background-image: url('{{ url_for('static', filename='images/hero2.png') }}');">
+      <div class="swiper-slide hero-slide" style="background-image: url('{{ 'static-images/hero2.png' | cloudinary_url }}');">
         <div class="hero-content">
           <h1 class="hero-title">{{ _('hero.title_2') if _('hero.title_2') != 'hero.title_2' else "Professional Himoya" }}</h1>
           <p class="hero-subtitle">{{ _('hero.subtitle_2') if _('hero.subtitle_2') != 'hero.subtitle_2' else "Har qanday ish sharoitida ishonchli himoya." }}</p>
@@ -124,7 +124,7 @@
         </div>
       </div>
       <!-- Slide 3 -->
-      <div class="swiper-slide hero-slide" style="background-image: url('{{ url_for('static', filename='images/hero3.png') }}');">
+      <div class="swiper-slide hero-slide" style="background-image: url('{{ 'static-images/hero3.png' | cloudinary_url }}');">
         <div class="hero-content">
           <h1 class="hero-title">{{ _('hero.title_3') if _('hero.title_3') != 'hero.title_3' else "Yuqori Sifat" }}</h1>
           <p class="hero-subtitle">{{ _('hero.subtitle_3') if _('hero.subtitle_3') != 'hero.subtitle_3' else "Xalqaro standartlarga javob beradigan mahsulotlar." }}</p>

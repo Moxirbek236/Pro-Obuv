@@ -3977,3 +3977,290 @@ werkzeug.exceptions.MethodNotAllowed: 405 Method Not Allowed: The method is not 
 2025-12-29 16:56:47,897 | WARNING | restaurant_app | login_page:14417 | Failed login attempt for email: moxirbekmoxirbek29@gmail.com
 2025-12-29 16:56:48,615 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
 2025-12-29 16:56:55,916 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 16:57:40,524 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/images/hero2.png
+2025-12-29 16:57:40,988 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/images/hero1.png
+2025-12-29 16:57:41,993 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/images/hero3.png
+2025-12-29 16:57:56,405 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 16:59:11,053 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/orders
+2025-12-29 18:39:50,048 | WARNING | restaurant_app | super_admin_login:15490 | Super admin login failed for username: masteradmin
+2025-12-29 18:52:07,854 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/images/hero1.png
+2025-12-29 18:52:07,871 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/images/hero2.png
+2025-12-29 18:52:09,283 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/images/hero3.png
+2025-12-29 18:52:16,030 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/user-sessions
+2025-12-29 18:52:49,066 | WARNING | urllib3.connectionpool | _put_conn:323 | Connection pool is full, discarding connection: api.cloudinary.com. Connection pool size: 1
+2025-12-29 18:52:49,669 | WARNING | urllib3.connectionpool | _put_conn:323 | Connection pool is full, discarding connection: api.cloudinary.com. Connection pool size: 1
+2025-12-29 18:52:50,480 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 18:53:08,394 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/images/hero1.png
+2025-12-29 18:53:08,443 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/images/hero2.png
+2025-12-29 18:53:08,786 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 18:53:09,438 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/images/hero3.png
+2025-12-29 18:53:10,849 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 18:53:12,084 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/images/hero1.png
+2025-12-29 18:53:12,257 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/images/hero2.png
+2025-12-29 18:53:12,622 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/images/hero3.png
+2025-12-29 18:53:16,981 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 18:54:13,770 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 18:54:14,096 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/images/hero1.png
+2025-12-29 18:54:14,123 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/images/hero2.png
+2025-12-29 18:54:14,815 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/images/hero3.png
+2025-12-29 18:54:17,080 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 18:54:21,245 | WARNING | restaurant_app | login_page:14442 | Failed login attempt for email: moxirbekmoxirbek29@gmail.com
+2025-12-29 18:54:21,908 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 18:54:28,296 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 18:55:48,384 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 18:55:54,659 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 18:56:07,087 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 18:56:14,395 | WARNING | restaurant_app | login_page:14442 | Failed login attempt for email: moxirbekmoxirbek29@gmail.com
+2025-12-29 18:56:15,068 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 18:56:24,967 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 18:58:20,416 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 18:58:25,412 | WARNING | restaurant_app | login_page:14442 | Failed login attempt for email: moxirbekmoxirbek29@gmail.com
+2025-12-29 18:58:26,100 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 18:58:37,563 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 18:58:38,549 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/images/hero1.png
+2025-12-29 18:58:38,555 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/images/hero2.png
+2025-12-29 18:58:38,571 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/images/hero3.png
+2025-12-29 18:58:46,085 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/images/hero2.png
+2025-12-29 18:58:46,991 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/images/hero1.png
+2025-12-29 18:58:46,991 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/images/hero3.png
+2025-12-29 18:58:47,003 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 18:58:53,145 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 18:59:03,642 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/images/hero1.png
+2025-12-29 18:59:04,241 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/images/hero2.png
+2025-12-29 18:59:04,251 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/images/hero3.png
+2025-12-29 18:59:04,259 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:06:27,766 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:12:22,937 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:15:21,372 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:15:47,944 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:16:10,663 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:16:17,058 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:26:28,434 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:28:08,825 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:28:17,703 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:28:22,935 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:28:30,096 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:28:35,080 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:28:39,444 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:28:46,651 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:28:58,295 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:29:10,171 | ERROR | restaurant_app | auth_google:14293 | Failed to create/find user for google login
+Traceback (most recent call last):
+  File "D:\Safety.uz\app.py", line 14285, in auth_google
+    now = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+          ^^^^^^^^^^^^^^^
+AttributeError: module 'datetime' has no attribute 'utcnow'
+2025-12-29 21:29:10,559 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:29:15,351 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:29:20,220 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:29:30,147 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:29:38,029 | ERROR | restaurant_app | auth_google:14293 | Failed to create/find user for google login
+Traceback (most recent call last):
+  File "D:\Safety.uz\app.py", line 14285, in auth_google
+    now = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+          ^^^^^^^^^^^^^^^
+AttributeError: module 'datetime' has no attribute 'utcnow'
+2025-12-29 21:29:38,421 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:29:45,848 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:31:11,515 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:31:24,688 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:31:30,348 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:31:51,715 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:31:55,716 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:32:02,264 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:32:06,142 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:32:11,080 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:32:14,995 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:32:18,798 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:32:23,391 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:32:24,989 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:32:33,924 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:32:35,877 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:32:40,038 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:32:45,722 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:33:34,541 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:33:44,191 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:33:52,657 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:34:01,045 | ERROR | restaurant_app | execute_query:3227 | Database operational error: table users has no column named name
+2025-12-29 21:34:01,045 | ERROR | restaurant_app | auth_google:14293 | Failed to create/find user for google login
+Traceback (most recent call last):
+  File "D:\Safety.uz\app.py", line 14286, in auth_google
+    execute_query('INSERT INTO users (email, name, created_at) VALUES (?, ?, ?)', (email, name, now))
+  File "D:\Safety.uz\app.py", line 3228, in execute_query
+    raise e
+  File "D:\Safety.uz\app.py", line 3138, in execute_query
+    cur.execute(query, params)
+sqlite3.OperationalError: table users has no column named name
+2025-12-29 21:34:01,438 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:34:10,174 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:34:15,116 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:34:17,126 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:34:26,544 | ERROR | restaurant_app | execute_query:3227 | Database operational error: table users has no column named name
+2025-12-29 21:34:26,544 | ERROR | restaurant_app | auth_google:14293 | Failed to create/find user for google login
+Traceback (most recent call last):
+  File "D:\Safety.uz\app.py", line 14286, in auth_google
+    execute_query('INSERT INTO users (email, name, created_at) VALUES (?, ?, ?)', (email, name, now))
+  File "D:\Safety.uz\app.py", line 3228, in execute_query
+    raise e
+  File "D:\Safety.uz\app.py", line 3138, in execute_query
+    cur.execute(query, params)
+sqlite3.OperationalError: table users has no column named name
+2025-12-29 21:34:26,947 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:34:28,968 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:34:33,633 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:36:29,799 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:36:39,727 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:38:17,307 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:39:25,322 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:39:45,412 | ERROR | restaurant_app | get_connection:2784 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-12-29 21:39:45,413 | WARNING | restaurant_app | execute_query:3232 | Query execution failed, retrying (attempt 1): NOT NULL constraint failed: chat_messages.chat_id
+2025-12-29 21:39:45,913 | ERROR | restaurant_app | get_connection:2784 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-12-29 21:39:45,915 | WARNING | restaurant_app | execute_query:3232 | Query execution failed, retrying (attempt 2): NOT NULL constraint failed: chat_messages.chat_id
+2025-12-29 21:39:46,415 | ERROR | restaurant_app | get_connection:2784 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-12-29 21:39:46,416 | ERROR | restaurant_app | execute_query:3238 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-12-29 21:39:46,432 | ERROR | restaurant_app | get_connection:2784 | Database pool error: FOREIGN KEY constraint failed
+2025-12-29 21:39:46,433 | WARNING | restaurant_app | execute_query:3232 | Query execution failed, retrying (attempt 1): FOREIGN KEY constraint failed
+2025-12-29 21:39:46,934 | ERROR | restaurant_app | get_connection:2784 | Database pool error: FOREIGN KEY constraint failed
+2025-12-29 21:39:46,934 | WARNING | restaurant_app | execute_query:3232 | Query execution failed, retrying (attempt 2): FOREIGN KEY constraint failed
+2025-12-29 21:39:47,436 | ERROR | restaurant_app | get_connection:2784 | Database pool error: FOREIGN KEY constraint failed
+2025-12-29 21:39:47,437 | ERROR | restaurant_app | execute_query:3238 | execute_query error after 3 attempts: FOREIGN KEY constraint failed - Query: INSERT INTO chat_messages (chat_id, sender_type, sender_id, text, sender, source, created_at) VALUES...
+2025-12-29 21:40:00,382 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:40:04,177 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:40:05,165 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/icons/logo-compact.webp
+2025-12-29 21:40:11,078 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:40:17,739 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:40:44,712 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:41:02,706 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 21:41:32,859 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 22:36:28,205 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 22:36:56,335 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 22:37:10,010 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 22:37:15,687 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 22:37:47,148 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 22:37:47,160 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/user-sessions
+2025-12-29 22:38:29,672 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 22:39:38,308 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 22:41:45,877 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 22:41:52,512 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 22:41:57,960 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 22:42:04,404 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 22:44:21,880 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 22:45:47,475 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 22:45:52,701 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 22:46:15,794 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 22:46:21,326 | WARNING | restaurant_app | super_admin_login:15606 | Super admin login failed for username: masteradmin
+2025-12-29 22:46:22,385 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 22:47:07,128 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 22:47:13,816 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 22:47:40,002 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/favicons/favicon.ico
+2025-12-29 22:49:29,832 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 22:49:36,316 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 22:49:52,050 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 22:50:06,586 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 22:50:18,953 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/icons/facebook.webp
+2025-12-29 22:50:18,955 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/icons/uzum.webp
+2025-12-29 22:50:18,982 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/icons/phone.webp
+2025-12-29 22:50:18,983 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/icons/yandex.webp
+2025-12-29 22:50:18,989 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/icons/telegram.jpg
+2025-12-29 22:50:19,205 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/icons/youtube.webp
+2025-12-29 22:50:19,293 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/icons/gmail.webp
+2025-12-29 22:50:19,303 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/icons/maps.webp
+2025-12-29 22:50:19,317 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/icons/instagram.webp
+2025-12-29 22:50:19,328 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/icons/threads.webp
+2025-12-29 22:50:19,534 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/static/icons/olx.png
+2025-12-29 23:26:55,774 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 23:27:56,418 | WARNING | restaurant_app | super_admin_login:15604 | Super admin login failed for username: masteradmin
+2025-12-29 23:28:15,437 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 23:28:18,004 | WARNING | restaurant_app | super_admin_login:15604 | Super admin login failed for username: masteradmin
+2025-12-29 23:28:18,085 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 23:44:29,511 | WARNING | restaurant_app | super_admin_login:15604 | Super admin login failed for username: masteradmin
+2025-12-29 23:44:38,624 | WARNING | restaurant_app | super_admin_login:15604 | Super admin login failed for username: masteradmin
+2025-12-29 23:46:18,309 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 23:46:18,309 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 23:49:21,805 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 23:49:21,805 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 23:54:21,579 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 23:54:21,579 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 23:55:17,964 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 23:55:17,964 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 23:55:27,212 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 23:55:27,212 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 23:58:08,843 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 23:59:22,836 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-29 23:59:22,836 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-30 00:25:56,339 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/users/<id>
+2025-12-30 00:25:56,339 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/users/<id>
+2025-12-30 00:25:58,485 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/users/<id>
+2025-12-30 00:25:58,485 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/users/<id>
+2025-12-30 00:26:04,877 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/products/<id>
+2025-12-30 00:26:04,877 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/products/<id>
+2025-12-30 00:26:07,047 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/products/<id>
+2025-12-30 00:26:07,047 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/products/<id>
+2025-12-30 00:26:09,168 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/products/<id>
+2025-12-30 00:26:09,168 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/products/<id>
+2025-12-30 00:26:13,404 | ERROR | restaurant_app | handle_exception:2315 | Unhandled exception: 405 Method Not Allowed: The method is not allowed for the requested URL. - URL: http://localhost:5000/api/categories
+2025-12-30 00:26:13,404 | ERROR | restaurant_app | handle_exception:2315 | Unhandled exception: 405 Method Not Allowed: The method is not allowed for the requested URL. - URL: http://localhost:5000/api/categories
+2025-12-30 00:26:13,458 | ERROR | restaurant_app | handle_exception:2317 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 841, in dispatch_request
+    self.raise_routing_exception(req)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 450, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\routing\map.py", line 619, in match
+    raise MethodNotAllowed(valid_methods=list(e.have_match_for)) from None
+werkzeug.exceptions.MethodNotAllowed: 405 Method Not Allowed: The method is not allowed for the requested URL.
+
+2025-12-30 00:26:13,458 | ERROR | restaurant_app | handle_exception:2317 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 841, in dispatch_request
+    self.raise_routing_exception(req)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 450, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\routing\map.py", line 619, in match
+    raise MethodNotAllowed(valid_methods=list(e.have_match_for)) from None
+werkzeug.exceptions.MethodNotAllowed: 405 Method Not Allowed: The method is not allowed for the requested URL.
+
+2025-12-30 00:26:15,592 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/categories/<id>
+2025-12-30 00:26:15,592 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/categories/<id>
+2025-12-30 00:26:17,718 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/categories/<id>
+2025-12-30 00:26:17,718 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/categories/<id>
+2025-12-30 00:26:19,830 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/orders
+2025-12-30 00:26:19,830 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/orders
+2025-12-30 00:26:21,943 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/orders
+2025-12-30 00:26:21,943 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/orders
+2025-12-30 00:26:24,074 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/orders/<id>
+2025-12-30 00:26:24,074 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/orders/<id>
+2025-12-30 00:26:26,220 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/cart
+2025-12-30 00:26:26,220 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/cart
+2025-12-30 00:26:28,358 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/cart
+2025-12-30 00:26:28,358 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/cart
+2025-12-30 00:26:30,468 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/cart
+2025-12-30 00:26:30,468 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/cart
+2025-12-30 00:26:32,597 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/ratings
+2025-12-30 00:26:32,597 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/ratings
+2025-12-30 00:26:34,762 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/ratings/product/<productId>
+2025-12-30 00:26:34,762 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/ratings/product/<productId>
+2025-12-30 00:26:36,869 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/super-admin/get-system-stats
+2025-12-30 00:26:36,869 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/super-admin/get-system-stats
+2025-12-30 00:26:39,019 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/super-admin/get-system-logs
+2025-12-30 00:26:39,019 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/super-admin/get-system-logs
+2025-12-30 00:26:41,144 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/super-admin/get-environment-info
+2025-12-30 00:26:41,144 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/super-admin/get-environment-info
+2025-12-30 00:26:47,615 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/news/<id>
+2025-12-30 00:26:47,615 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/news/<id>
+2025-12-30 19:58:40,828 | WARNING | restaurant_app | not_found_error:2463 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-30 19:59:30,985 | WARNING | restaurant_app | not_found_error:2463 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json

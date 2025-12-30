@@ -194,8 +194,7 @@ Admin{% endblock %} {% block additional_css %}
               type="file"
               class="form-control"
               id="newsImageFile"
-              accept="image/*"
-              onchange="uploadMediaFile('image')" />
+              accept="image/*" />
             <div class="mt-2">
               <img
                 id="imagePreview"
@@ -222,8 +221,7 @@ Admin{% endblock %} {% block additional_css %}
               id="newsImagesFiles"
               class="form-control"
               accept="image/*"
-              multiple
-              onchange="uploadMultipleMediaFiles('image')" />
+              multiple />
             <input type="hidden" id="newsImagesJson" name="images_json" />
             <div
               id="additionalImagesPreview"
@@ -241,8 +239,7 @@ Admin{% endblock %} {% block additional_css %}
               type="file"
               class="form-control"
               id="newsVideoFile"
-              accept="video/*"
-              onchange="uploadMediaFile('video')" />
+              accept="video/*" />
             <div class="mt-2">
               <video
                 id="videoPreview"
@@ -271,8 +268,7 @@ Admin{% endblock %} {% block additional_css %}
               id="newsVideosFiles"
               class="form-control"
               accept="video/*"
-              multiple
-              onchange="uploadMultipleMediaFiles('video')" />
+              multiple />
             <input type="hidden" id="newsVideosJson" name="videos_json" />
             <div
               id="additionalVideosPreview"
@@ -331,8 +327,13 @@ Admin{% endblock %} {% block additional_css %}
 </div>
 {% endblock %} {% block scripts %}
 <script>
-  // CSRF token for AJAX requests
-  const CSRF_TOKEN = '{{ csrf_token }}';
+  // CSRF token for AJAX requests — define safely to avoid redeclaration
+  if (typeof window.CSRF_TOKEN === 'undefined') {
+    try { window.CSRF_TOKEN = {{ csrf_token|tojson }}; } catch(e) { window.CSRF_TOKEN = ''; }
+  }
+  if (typeof CSRF_TOKEN === 'undefined') {
+    CSRF_TOKEN = window.CSRF_TOKEN;
+  }
 </script>
 <script>
   // Minimal helper: showNotification (copied from admin script)
@@ -577,6 +578,17 @@ Admin{% endblock %} {% block additional_css %}
           }
         }).catch(e=>{ console.error(e); showNotification('Yangilik ma\'lumotlarini yuklashda xatolik','error'); });
     }
+    // Attach file input listeners (avoid inline onchange so functions exist)
+    try {
+      const imgFile = document.getElementById('newsImageFile');
+      if (imgFile) imgFile.addEventListener('change', function(){ if (window.uploadMediaFile) window.uploadMediaFile('image'); });
+      const imgFiles = document.getElementById('newsImagesFiles');
+      if (imgFiles) imgFiles.addEventListener('change', function(){ if (window.uploadMultipleMediaFiles) window.uploadMultipleMediaFiles('image'); });
+      const vidFile = document.getElementById('newsVideoFile');
+      if (vidFile) vidFile.addEventListener('change', function(){ if (window.uploadMediaFile) window.uploadMediaFile('video'); });
+      const vidFiles = document.getElementById('newsVideosFiles');
+      if (vidFiles) vidFiles.addEventListener('change', function(){ if (window.uploadMultipleMediaFiles) window.uploadMultipleMediaFiles('video'); });
+    } catch (e) {}
   });
 </script>
 {% endblock %}

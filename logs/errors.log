@@ -2102,3 +2102,79 @@ werkzeug.exceptions.MethodNotAllowed: 405 Method Not Allowed: The method is not 
 2025-12-28 18:24:17,887 | ERROR | restaurant_app | product_detail:8039 | product_detail error for id=41: type object 'Config' has no attribute 'SUPER_ADMIN_PHONE'
 2025-12-29 12:26:01,974 | ERROR | restaurant_app | product_detail:8045 | product_detail error for id=38: 'slide_count' is undefined
 2025-12-29 12:26:08,455 | ERROR | restaurant_app | product_detail:8045 | product_detail error for id=39: 'slide_count' is undefined
+2025-12-29 21:29:10,171 | ERROR | restaurant_app | auth_google:14293 | Failed to create/find user for google login
+Traceback (most recent call last):
+  File "D:\Safety.uz\app.py", line 14285, in auth_google
+    now = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+          ^^^^^^^^^^^^^^^
+AttributeError: module 'datetime' has no attribute 'utcnow'
+2025-12-29 21:29:38,029 | ERROR | restaurant_app | auth_google:14293 | Failed to create/find user for google login
+Traceback (most recent call last):
+  File "D:\Safety.uz\app.py", line 14285, in auth_google
+    now = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+          ^^^^^^^^^^^^^^^
+AttributeError: module 'datetime' has no attribute 'utcnow'
+2025-12-29 21:34:01,045 | ERROR | restaurant_app | execute_query:3227 | Database operational error: table users has no column named name
+2025-12-29 21:34:01,045 | ERROR | restaurant_app | auth_google:14293 | Failed to create/find user for google login
+Traceback (most recent call last):
+  File "D:\Safety.uz\app.py", line 14286, in auth_google
+    execute_query('INSERT INTO users (email, name, created_at) VALUES (?, ?, ?)', (email, name, now))
+  File "D:\Safety.uz\app.py", line 3228, in execute_query
+    raise e
+  File "D:\Safety.uz\app.py", line 3138, in execute_query
+    cur.execute(query, params)
+sqlite3.OperationalError: table users has no column named name
+2025-12-29 21:34:26,544 | ERROR | restaurant_app | execute_query:3227 | Database operational error: table users has no column named name
+2025-12-29 21:34:26,544 | ERROR | restaurant_app | auth_google:14293 | Failed to create/find user for google login
+Traceback (most recent call last):
+  File "D:\Safety.uz\app.py", line 14286, in auth_google
+    execute_query('INSERT INTO users (email, name, created_at) VALUES (?, ?, ?)', (email, name, now))
+  File "D:\Safety.uz\app.py", line 3228, in execute_query
+    raise e
+  File "D:\Safety.uz\app.py", line 3138, in execute_query
+    cur.execute(query, params)
+sqlite3.OperationalError: table users has no column named name
+2025-12-29 21:39:45,412 | ERROR | restaurant_app | get_connection:2784 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-12-29 21:39:45,913 | ERROR | restaurant_app | get_connection:2784 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-12-29 21:39:46,415 | ERROR | restaurant_app | get_connection:2784 | Database pool error: NOT NULL constraint failed: chat_messages.chat_id
+2025-12-29 21:39:46,416 | ERROR | restaurant_app | execute_query:3238 | execute_query error after 3 attempts: NOT NULL constraint failed: chat_messages.chat_id - Query: INSERT INTO chat_messages (sender, text, source, created_at) VALUES (?, ?, ?, ?)...
+2025-12-29 21:39:46,432 | ERROR | restaurant_app | get_connection:2784 | Database pool error: FOREIGN KEY constraint failed
+2025-12-29 21:39:46,934 | ERROR | restaurant_app | get_connection:2784 | Database pool error: FOREIGN KEY constraint failed
+2025-12-29 21:39:47,436 | ERROR | restaurant_app | get_connection:2784 | Database pool error: FOREIGN KEY constraint failed
+2025-12-29 21:39:47,437 | ERROR | restaurant_app | execute_query:3238 | execute_query error after 3 attempts: FOREIGN KEY constraint failed - Query: INSERT INTO chat_messages (chat_id, sender_type, sender_id, text, sender, source, created_at) VALUES...
+2025-12-30 00:26:13,404 | ERROR | restaurant_app | handle_exception:2315 | Unhandled exception: 405 Method Not Allowed: The method is not allowed for the requested URL. - URL: http://localhost:5000/api/categories
+2025-12-30 00:26:13,404 | ERROR | restaurant_app | handle_exception:2315 | Unhandled exception: 405 Method Not Allowed: The method is not allowed for the requested URL. - URL: http://localhost:5000/api/categories
+2025-12-30 00:26:13,458 | ERROR | restaurant_app | handle_exception:2317 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 841, in dispatch_request
+    self.raise_routing_exception(req)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 450, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\routing\map.py", line 619, in match
+    raise MethodNotAllowed(valid_methods=list(e.have_match_for)) from None
+werkzeug.exceptions.MethodNotAllowed: 405 Method Not Allowed: The method is not allowed for the requested URL.
+
+2025-12-30 00:26:13,458 | ERROR | restaurant_app | handle_exception:2317 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 841, in dispatch_request
+    self.raise_routing_exception(req)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 450, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\routing\map.py", line 619, in match
+    raise MethodNotAllowed(valid_methods=list(e.have_match_for)) from None
+werkzeug.exceptions.MethodNotAllowed: 405 Method Not Allowed: The method is not allowed for the requested URL.
+

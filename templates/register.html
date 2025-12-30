@@ -17,11 +17,11 @@
   </head>
   <body class="auth-page">
     <div class="auth-card">
-      <div class="brand">
+        <div class="brand">
         <img
           src="{{ 'icons/logo-compact.webp' | cloudinary_url }}"
           alt="logo"
-          onerror="this.style.display='none'" />
+          onerror="this.onerror=null; this.src='{{ 'favicons/favicon-32x32.png' | cloudinary_url }}'" />
         <div>
           <h2 class="mb-0">{{ _('nav.register') }}</h2>
           <small class="text-muted-weak"
@@ -122,6 +122,7 @@
             class="form-control"
             id="password"
             name="password"
+            autocomplete="new-password"
             required />
         </div>
 
@@ -134,6 +135,7 @@
             class="form-control"
             id="confirm_password"
             name="confirm_password"
+            autocomplete="new-password"
             required />
         </div>
 
@@ -141,6 +143,14 @@
           Ro'yxatdan o'tish
         </button>
       </form>
+
+      <div class="text-center mt-3">
+        <div id="g_id_signin"></div>
+      </div>
+
+      <div class="text-center mt-2">
+        <small class="text-muted">Yoki Google orqali ro'yxatdan o'ting</small>
+      </div>
 
       <div class="text-center mt-3">
         <p>
@@ -156,6 +166,42 @@
     <!-- Yandex Maps script loaded globally in base.html -->
     <!-- Fallback: if Yandex isn't available, load Leaflet (OpenStreetMap) so users can pick an address -->
     <script>
+      // Google Sign-In for registration: similar to login flow
+      function handleRegisterCredentialResponse(response) {
+        if (!response || !response.credential) return;
+        fetch('/auth/google', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ credential: response.credential })
+        }).then(r => r.json()).then(data => {
+          if (data && data.success) {
+            // Redirect to profile or provided next
+            window.location = data.next || '/profile';
+          } else {
+            alert('Google registratsiya xatosi: ' + (data && data.error || '')); 
+          }
+        }).catch(e => { console.error(e); alert('Google auth error'); });
+      }
+
+      function initGoogleSignInRegister() {
+        try {
+          if (!window.google || !google.accounts || !google.accounts.id) return;
+          const CLIENT_ID = '{{ GOOGLE_CLIENT_ID }}';
+          google.accounts.id.initialize({ client_id: CLIENT_ID, callback: handleRegisterCredentialResponse });
+          google.accounts.id.renderButton(document.getElementById('g_id_signin'), { theme: 'outline', size: 'large' });
+        } catch (e) { console.warn('GSI init failed', e); }
+      }
+
+      (function loadGsiForRegister(){
+        var s = document.createElement('script');
+        s.src = 'https://accounts.google.com/gsi/client';
+        s.async = true; s.defer = true;
+        s.onload = function(){ initGoogleSignInRegister(); };
+        s.onerror = function(){ console.warn('Failed to load Google Identity Services script'); };
+        document.head.appendChild(s);
+      })();
+
       let registerMap;
       let registerMarker;
 
@@ -299,7 +345,7 @@
 
           // Create map
           registerMap = L.map("register-map").setView(tashkent, 12);
-          L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.webp", {
+          L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
             maxZoom: 19,
             attribution: "&copy; OpenStreetMap contributors",
           }).addTo(registerMap);
@@ -350,9 +396,8 @@
         document.getElementById("address_longitude").value = coords[1];
 
         // Reverse geocode via Nominatim (OpenStreetMap)
-        fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${coords[0]}&lon=${coords[1]}`
-        )
+        // Use server-side proxy for reverse geocoding to avoid CORS issues with Nominatim
+        fetch(`/api/reverse_geocode?format=jsonv2&lat=${coords[0]}&lon=${coords[1]}`)
           .then((r) => r.json())
           .then((data) => {
             const display =
@@ -365,9 +410,7 @@
           .catch(() => {
             const addrEl = document.getElementById("address");
             if (addrEl)
-              addrEl.value = `Lat: ${coords[0].toFixed(
-                6
-              )}, Lng: ${coords[1].toFixed(6)}`;
+              addrEl.value = `Lat: ${coords[0].toFixed(6)}, Lng: ${coords[1].toFixed(6)}`;
           });
       }
     </script>

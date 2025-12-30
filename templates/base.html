@@ -793,7 +793,13 @@
     </script>
     {% endif %} {% endblock %} {% block extra_head %}{% endblock %}
     <script>
-      const CSRF_TOKEN = "{{ csrf_token|default('') }}";
+      // Define CSRF_TOKEN safely to avoid redeclaration errors across templates
+      if (typeof window.CSRF_TOKEN === 'undefined') {
+        try { window.CSRF_TOKEN = {{ csrf_token|tojson }}; } catch(e) { window.CSRF_TOKEN = ''; }
+      }
+      if (typeof CSRF_TOKEN === 'undefined') {
+        CSRF_TOKEN = window.CSRF_TOKEN;
+      }
     </script>
   </head>
   <body
@@ -801,6 +807,20 @@
     data-dark-mode="false"
     data-font-size="{{ session.get('font_size', 'medium') }}"
     data-language="{{ LANG }}">
+    <script>
+      // Ensure avatar fallback exists early so inline onerror handlers won't throw
+      window.DEFAULT_AVATAR = "{{ 'images/default-avatar.svg' | cloudinary_url }}";
+      if (typeof window.handleAvatarError !== 'function') {
+        window.handleAvatarError = function(img){
+          try {
+            if (img && img.src !== window.DEFAULT_AVATAR) {
+              img.src = window.DEFAULT_AVATAR;
+              img.onerror = null;
+            }
+          } catch(e){}
+        };
+      }
+    </script>
     <script type="application/json" id="base-config">
     {
       "translations": {{ translations|tojson|safe if translations is defined else '{}' }},
@@ -3714,7 +3734,7 @@
         if (!profile) return;
         const modal = document.getElementById('memberProfileModal');
         if (!modal) return;
-        const defaultAv = (window.BASE_CONFIG && window.BASE_CONFIG.default_avatar) || '/static/images/default-avatar.svg';
+        const defaultAv = (window.BASE_CONFIG && window.BASE_CONFIG.default_avatar) || '{{ "static-images/default-avatar.svg" | cloudinary_url }}';
         document.getElementById('memberProfileAvatar').src = profile.avatar || defaultAv;
         document.getElementById('memberProfileName').textContent = profile.name || profile.username || ('#' + profile.id);
         document.getElementById('memberProfileRole').textContent = (profile.role || '').toString();

@@ -389,11 +389,235 @@ try:
 except Exception:
     pass
 
+# Full implementations for orders, cart and ratings to match swagger.yaml
+@app.route('/api/cart', methods=['GET', 'POST', 'DELETE'])
+def api_cart():
+    try:
+        uid = session.get('user_id')
+        sid = session.get('session_id') or get_session_id()
+
+        if request.method == 'GET':
+            if uid:
+                rows = execute_query('SELECT id, menu_item_id, quantity, created_at FROM cart_items WHERE user_id = ? ORDER BY id', (uid,), fetch_all=True) or []
+            else:
+                rows = execute_query('SELECT id, menu_item_id, quantity, created_at FROM cart_items WHERE session_id = ? ORDER BY id', (sid,), fetch_all=True) or []
+            return jsonify({'success': True, 'cart': [dict(r) for r in rows]}), 200
+
+        if request.method == 'POST':
+            data = request.get_json(silent=True) or request.form or {}
+            product_id = int(data.get('product_id') or data.get('menu_item_id') or 0)
+            quantity = int(data.get('quantity') or 1)
+            if not product_id or quantity < 1:
+                return jsonify({'success': False, 'error': 'invalid_payload'}), 400
+
+            # Upsert cart item for user or session
+            if uid:
+                existing = execute_query('SELECT id, quantity FROM cart_items WHERE user_id = ? AND menu_item_id = ?', (uid, product_id), fetch_one=True)
+                if existing:
+                    new_q = int(existing[1]) + quantity
+                    execute_query('UPDATE cart_items SET quantity = ? WHERE id = ?', (new_q, existing[0]))
+                    return jsonify({'success': True, 'item_id': existing[0], 'quantity': new_q}), 200
+                else:
+                    now = _now_iso()
+                    rowid = execute_query('INSERT INTO cart_items (user_id, session_id, menu_item_id, quantity, created_at) VALUES (?,?,?,?,?)', (uid, sid, product_id, quantity, now))
+                    return jsonify({'success': True, 'item_id': rowid, 'quantity': quantity}), 201
+            else:
+                existing = execute_query('SELECT id, quantity FROM cart_items WHERE session_id = ? AND menu_item_id = ?', (sid, product_id), fetch_one=True)
+                if existing:
+                    new_q = int(existing[1]) + quantity
+                    execute_query('UPDATE cart_items SET quantity = ? WHERE id = ?', (new_q, existing[0]))
+                    return jsonify({'success': True, 'item_id': existing[0], 'quantity': new_q}), 200
+                now = _now_iso()
+                rowid = execute_query('INSERT INTO cart_items (user_id, session_id, menu_item_id, quantity, created_at) VALUES (?,?,?,?,?)', (None, sid, product_id, quantity, now))
+                return jsonify({'success': True, 'item_id': rowid, 'quantity': quantity}), 201
+
+        # DELETE expects JSON { itemId: <id> } or form
+        if request.method == 'DELETE':
+            data = request.get_json(silent=True) or request.form or {}
+            item_id = int(data.get('itemId') or data.get('item_id') or 0)
+            if not item_id:
+                return jsonify({'success': False, 'error': 'missing_item_id'}), 400
+            # Ensure ownership
+            if uid:
+                execute_query('DELETE FROM cart_items WHERE id = ? AND user_id = ?', (item_id, uid))
+            else:
+                execute_query('DELETE FROM cart_items WHERE id = ? AND session_id = ?', (item_id, sid))
+            return jsonify({'success': True}), 200
+
+    except Exception as e:
+        app_logger.exception(f"api_cart error: {e}")
+        return jsonify({'success': False, 'error': 'server_error'}), 500
+
+
+@app.route('/api/orders', methods=['GET', 'POST'])
+def api_orders():
+    try:
+        uid = session.get('user_id')
+        is_admin = bool(session.get('super_admin') or session.get('staff_id'))
+
+        if request.method == 'GET':
+            if is_admin:
+                rows = execute_query('SELECT id, user_id, customer_name, ticket_no, total, status, created_at FROM orders ORDER BY id DESC', fetch_all=True) or []
+            else:
+                if not uid:
+                    return jsonify({'success': False, 'error': 'auth_required'}), 401
+                rows = execute_query('SELECT id, user_id, customer_name, ticket_no, total, status, created_at FROM orders WHERE user_id = ? ORDER BY id DESC', (uid,), fetch_all=True) or []
+            return jsonify({'success': True, 'orders': [dict(r) for r in rows]}), 200
+
+        if request.method == 'POST':
+            data = request.get_json(silent=True) or {}
+            items = data.get('items') or []
+            if not items or not isinstance(items, list):
+                return jsonify({'success': False, 'error': 'invalid_items'}), 400
+
+            conn = get_db()
+            cur = conn.cursor()
+            now = _now_iso()
+
+            # Get ticket counter
+            try:
+                cur.execute("SELECT value FROM counters WHERE name = 'ticket'")
+                r = cur.fetchone()
+                if not r:
+                    cur.execute("INSERT INTO counters (name, value) VALUES ('ticket', 10001)")
+                    ticket = 10000
+                else:
+                    ticket = int(r[0])
+                # increment
+                cur.execute("UPDATE counters SET value = value + 1 WHERE name = 'ticket'")
+            except Exception:
+                ticket = random.randint(10000, 99999)
+
+            # Compute total by reading menu_items prices
+            total = 0.0
+            order_items = []
+            for it in items:
+                pid = int(it.get('product_id') or it.get('menu_item_id') or 0)
+                qty = int(it.get('quantity') or 1)
+                if pid <= 0 or qty <= 0:
+                    continue
+                row = execute_query('SELECT price, name FROM menu_items WHERE id = ?', (pid,), fetch_one=True)
+                price = float(row[0]) if row else 0.0
+                name = row.get('name') if hasattr(row, 'get') else (row[1] if row and len(row) > 1 else '')
+                total += price * qty
+                order_items.append({'menu_item_id': pid, 'quantity': qty, 'price': price, 'name': name})
+
+            # Create order
+            customer_name = data.get('customer_name') or session.get('user_name') or 'Guest'
+            ticket_no = ticket
+            cur.execute('INSERT INTO orders (user_id, customer_name, ticket_no, order_type, status, delivery_address, delivery_distance, delivery_price, created_at, eta_time) VALUES (?,?,?,?,?,?,?,?,?,?)', (uid, customer_name, ticket_no, data.get('order_type','delivery'), 'pending', data.get('delivery_address',''), float(data.get('delivery_distance') or 0.0), float(data.get('delivery_price') or 0.0), now, data.get('eta_time') or now))
+            order_id = cur.lastrowid
+
+            # Insert order details
+            for oi in order_items:
+                cur.execute('INSERT INTO order_details (order_id, menu_item_id, quantity, price) VALUES (?,?,?,?)', (order_id, oi['menu_item_id'], oi['quantity'], oi['price']))
+
+            conn.commit()
+            return jsonify({'success': True, 'order_id': order_id, 'ticket_no': ticket_no, 'total': total}), 201
+
+    except Exception as e:
+        app_logger.exception(f"api_orders error: {e}")
+        return jsonify({'success': False, 'error': 'server_error'}), 500
+
+
+@app.route('/api/orders/<int:order_id>', methods=['GET'])
+def api_order_get(order_id):
+    try:
+        uid = session.get('user_id')
+        is_admin = bool(session.get('super_admin') or session.get('staff_id'))
+        order = execute_query('SELECT * FROM orders WHERE id = ?', (order_id,), fetch_one=True)
+        if not order:
+            return jsonify({'success': False, 'error': 'not_found'}), 404
+        order = dict(order)
+        if not is_admin and order.get('user_id') != uid:
+            return jsonify({'success': False, 'error': 'forbidden'}), 403
+        details = execute_query('SELECT menu_item_id, quantity, price FROM order_details WHERE order_id = ?', (order_id,), fetch_all=True) or []
+        order['items'] = [dict(d) for d in details]
+        return jsonify({'success': True, 'order': order}), 200
+    except Exception as e:
+        app_logger.exception(f"api_order_get error: {e}")
+        return jsonify({'success': False, 'error': 'server_error'}), 500
+
+
+@app.route('/api/ratings', methods=['POST'])
+def api_ratings_submit():
+    try:
+        if not session.get('user_id'):
+            return jsonify({'success': False, 'error': 'auth_required'}), 401
+        data = request.get_json(silent=True) or {}
+        product_id = int(data.get('product_id') or data.get('menu_item_id') or 0)
+        rating = int(data.get('rating') or 0)
+        comment = data.get('comment') or ''
+        if product_id <= 0 or rating < 1 or rating > 5:
+            return jsonify({'success': False, 'error': 'invalid_payload'}), 400
+        now = _now_iso()
+        user_id = session.get('user_id')
+        try:
+            rid = execute_query('INSERT INTO ratings (user_id, menu_item_id, rating, comment, created_at) VALUES (?,?,?,?,?)', (user_id, product_id, rating, comment, now))
+        except Exception:
+            # uniqueness or DB error: try update
+            execute_query('UPDATE ratings SET rating = ?, comment = ?, created_at = ? WHERE user_id = ? AND menu_item_id = ?', (rating, comment, now, user_id, product_id))
+            rid = None
+        return jsonify({'success': True, 'rating_id': rid}), 201
+    except Exception as e:
+        app_logger.exception(f"api_ratings_submit error: {e}")
+        return jsonify({'success': False, 'error': 'server_error'}), 500
+
+
+@app.route('/api/ratings/product/<int:product_id>', methods=['GET'])
+def api_ratings_for_product(product_id):
+    try:
+        rows = execute_query('SELECT id, user_id, menu_item_id as product_id, rating, comment, created_at FROM ratings WHERE menu_item_id = ? ORDER BY created_at DESC', (product_id,), fetch_all=True) or []
+        return jsonify([dict(r) for r in rows]), 200
+    except Exception as e:
+        app_logger.exception(f"api_ratings_for_product error: {e}")
+        return jsonify({'success': False, 'error': 'server_error'}), 500
+
 # Minimal auth/user stubs to avoid 404s from Swagger UI while endpoints are implemented
 try:
     if not _flask_rule_exists('/api/auth/login', 'POST'):
         def _stub_auth_login():
-            return jsonify({'success': False, 'error': 'not_implemented'}), 501
+            # Minimal login implementation for Swagger/testing (no DB)
+            try:
+                payload = request.get_json(silent=True) or request.form or {}
+                username = (payload.get('email') or payload.get('username') or '').strip()
+                password = (payload.get('password') or '')
+
+                # Check super-admin credentials first
+                try:
+                    creds = get_superadmin_creds()
+                except Exception:
+                    creds = {}
+
+                if username and password and creds and username == creds.get('username') and password == creds.get('password'):
+                    display = ' '.join([creds.get('first_name',''), creds.get('last_name','')]).strip() or 'Super Admin'
+                    secure_session_login('super_admin', {
+                        'admin_name': display,
+                        'first_name': creds.get('first_name',''),
+                        'last_name': creds.get('last_name',''),
+                        'phone': creds.get('phone',''),
+                        'avatar': creds.get('avatar')
+                    })
+                    return jsonify({'success': True, 'next': url_for('super_admin_dashboard')}), 200
+
+                # Lightweight demo user support
+                if username and password and username.endswith('@demo') and password == 'demo':
+                    # create a minimal session for demo user
+                    uid = 10000
+                    secure_session_login('user', {
+                        'user_id': uid,
+                        'first_name': 'Demo',
+                        'last_name': 'User',
+                        'email': username,
+                        'avatar': ''
+                    })
+                    return jsonify({'success': True, 'next': url_for('index')}), 200
+
+                return jsonify({'success': False, 'error': 'invalid_credentials'}), 401
+            except Exception as e:
+                app_logger.exception(f"Auth login error (stub): {e}")
+                return jsonify({'success': False, 'error': 'server_error'}), 500
+
         try:
             app.add_url_rule('/api/auth/login', 'stub_auth_login', _stub_auth_login, methods=['POST', 'OPTIONS'])
         except Exception:
@@ -401,7 +625,25 @@ try:
 
     if not _flask_rule_exists('/api/auth/register', 'POST'):
         def _stub_auth_register():
-            return jsonify({'success': False, 'error': 'not_implemented'}), 501
+            # Minimal register implementation for Swagger/testing (no DB persistence)
+            try:
+                payload = request.get_json(silent=True) or request.form or {}
+                email = (payload.get('email') or payload.get('username') or '').strip()
+                password = (payload.get('password') or '')
+                if not email or not password:
+                    return jsonify({'success': False, 'error': 'missing_fields'}), 400
+
+                # Generate a fake user id
+                import random
+                user_id = random.randint(10000, 99999)
+
+                # Auto-login the new user session (lightweight)
+                secure_session_login('user', {'user_id': user_id, 'first_name': '', 'last_name': '', 'email': email})
+                return jsonify({'success': True, 'user_id': user_id}), 201
+            except Exception as e:
+                app_logger.exception(f"Auth register error (stub): {e}")
+                return jsonify({'success': False, 'error': 'server_error'}), 500
+
         try:
             app.add_url_rule('/api/auth/register', 'stub_auth_register', _stub_auth_register, methods=['POST', 'OPTIONS'])
         except Exception:
@@ -409,7 +651,15 @@ try:
 
     if not _flask_rule_exists('/api/auth/logout', 'POST'):
         def _stub_auth_logout():
-            return jsonify({'success': False, 'error': 'not_implemented'}), 501
+            try:
+                # Clear role/session keys while preserving other guest data
+                clear_role_sessions()
+                session.pop('session_id', None)
+                return jsonify({'success': True}), 200
+            except Exception as e:
+                app_logger.exception(f"Auth logout error (stub): {e}")
+                return jsonify({'success': False, 'error': 'server_error'}), 500
+
         try:
             app.add_url_rule('/api/auth/logout', 'stub_auth_logout', _stub_auth_logout, methods=['POST', 'OPTIONS'])
         except Exception:
@@ -417,7 +667,21 @@ try:
 
     if not _flask_rule_exists('/api/auth/status', 'GET'):
         def _stub_auth_status():
-            return jsonify({'success': True, 'authenticated': False}), 200
+            try:
+                is_logged_in = bool(session.get('user_id') or session.get('staff_id') or session.get('courier_id') or session.get('super_admin'))
+                user_obj = None
+                if session.get('super_admin'):
+                    user_obj = {'id': None, 'email': None, 'first_name': session.get('super_admin_first_name') or '', 'last_name': session.get('super_admin_last_name') or '', 'role': 'super_admin'}
+                elif session.get('user_id'):
+                    user_obj = {'id': session.get('user_id'), 'email': session.get('user_email') or '', 'first_name': session.get('user_first_name',''), 'last_name': session.get('user_last_name',''), 'role': 'user'}
+                elif session.get('staff_id'):
+                    user_obj = {'id': session.get('staff_id'), 'email': '', 'first_name': session.get('staff_name',''), 'last_name': '', 'role': 'staff'}
+
+                return jsonify({'success': True, 'logged_in': is_logged_in, 'user': user_obj}), 200
+            except Exception as e:
+                app_logger.exception(f"Auth status error (stub): {e}")
+                return jsonify({'success': False, 'error': 'server_error'}), 500
+
         try:
             app.add_url_rule('/api/auth/status', 'stub_auth_status', _stub_auth_status, methods=['GET', 'OPTIONS'])
         except Exception:
@@ -2893,6 +3157,47 @@ def record_session_entry(session_id, user_id=None, ip=None, user_agent=None):
                 "INSERT INTO sessions (session_id, user_id, ip, user_agent, created_at, last_seen) VALUES (?,?,?,?,?,?)",
                 (session_id, user_id, ip, user_agent, now, now),
             )
+
+        conn.commit()
+        try:
+            conn.close()
+        except Exception:
+            pass
+    except Exception as e:
+        app_logger.exception(f"record_session_entry failed: {e}")
+        try:
+            conn.close()
+        except Exception:
+            pass
+
+@app.route('/api/user-sessions', methods=['GET'])
+def api_user_sessions():
+    """Return active sessions for current user (for profile settings page)."""
+    try:
+        uid = session.get('user_id')
+        sid = session.get('session_id')
+        conn = get_db()
+        cur = conn.cursor()
+        # If user is authenticated, show their sessions; otherwise show current session only
+        if uid:
+            rows = execute_query('SELECT session_id, ip, user_agent, created_at, last_seen, user_id FROM sessions WHERE user_id = ? ORDER BY last_seen DESC', (uid,), fetch_all=True) or []
+        else:
+            rows = execute_query('SELECT session_id, ip, user_agent, created_at, last_seen, user_id FROM sessions WHERE session_id = ?', (sid,), fetch_all=True) or []
+
+        sessions = []
+        for r in rows:
+            rec = dict(r) if not isinstance(r, dict) else r
+            sessions.append({
+                'session_id': rec.get('session_id'),
+                'ip': rec.get('ip'),
+                'user_agent': rec.get('user_agent'),
+                'created_at': rec.get('created_at'),
+                'last_seen': rec.get('last_seen'),
+            })
+        return jsonify({'success': True, 'sessions': sessions})
+    except Exception as e:
+        app_logger.exception('api_user_sessions failed')
+        return jsonify({'success': False, 'message': 'failed to load sessions'}), 500
         conn.commit()
         conn.close()
     except Exception as e:
@@ -11694,91 +11999,86 @@ def admin_edit_menu_item(item_id):
         except Exception:
             pass
 
-            for idx, file in enumerate(media_files):
-                if file and file.filename:
-                    try:
-                        from werkzeug.utils import secure_filename
-                        import uuid
+        for idx, file in enumerate(media_files):
+            if file and file.filename:
+                try:
+                    from werkzeug.utils import secure_filename
+                    import uuid
 
-                        # Fayl kengaytmasini aniqlash
-                        ext = (
-                            file.filename.rsplit(".", 1)[1].lower()
-                            if "." in file.filename
-                            else ""
-                        )
+                    # Fayl kengaytmasini aniqlash
+                    ext = file.filename.rsplit('.', 1)[1].lower() if '.' in file.filename else ''
 
-                        # Media turini aniqlash
-                        image_extensions = {"png", "jpg", "jpeg", "gif", "webp"}
-                        video_extensions = {"mp4", "avi", "mov", "wmv", "flv", "webm"}
+                    # Media turini aniqlash
+                    image_extensions = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+                    video_extensions = {'mp4', 'avi', 'mov', 'wmv', 'flv', 'webm'}
 
-                        if ext in image_extensions:
-                            media_type = "image"
-                        elif ext in video_extensions:
-                            media_type = "video"
-                        else:
-                            continue
-
-                        # Upload to Cloudinary
-                        folder = "products" if media_type == "image" else "videos"
-                        upload_res = cloudinary_service.upload_image(
-                            file.stream, 
-                            folder=folder, 
-                            resource_type="image" if media_type == "image" else "video"
-                        )
-                        
-                        if not upload_res:
-                            continue
-                            
-                        media_url = upload_res.get('secure_url')
-
-                        # Agar hech qanday asosiy rasm yo'q bo'lsa va bu birinchi rasm bo'lsa
-                        is_main = False
-                        if media_type == "image":
-                            main_image_exists = execute_query(
-                                "SELECT COUNT(*) FROM product_media WHERE menu_item_id = ? AND is_main = 1 AND media_type = 'image'",
-                                (item_id,),
-                                fetch_one=True,
-                            )
-                            if not main_image_exists[0]:
-                                is_main = True
-                                # Menu items jadvalidagi image_url ni yangilash
-                                execute_query(
-                                    "UPDATE menu_items SET image_url = ? WHERE id = ?",
-                                    (media_url, item_id),
-                                )
-
-                        # Product media jadvaliga qo'shish
-                        execute_query(
-                            """
-                            INSERT INTO product_media (menu_item_id, media_type, media_url, display_order, is_main, created_at, updated_at)
-                            VALUES (?, ?, ?, ?, ?, ?, ?)
-                            """,
-                            (
-                                item_id,
-                                media_type,
-                                media_url,
-                                next_order + idx,
-                                1 if is_main else 0,
-                                now,
-                                now,
-                            ),
-                        )
-
-                        uploaded_media.append({"type": media_type, "url": media_url})
-
-                    except Exception as media_error:
-                        app_logger.warning(
-                            f"Media yuklashda xatolik: {str(media_error)}"
-                        )
+                    if ext in image_extensions:
+                        media_type = 'image'
+                    elif ext in video_extensions:
+                        media_type = 'video'
+                    else:
                         continue
 
-            if uploaded_media:
-                flash(
-                    f"Mahsulot yangilandi va {len(uploaded_media)} ta yangi media fayl qo'shildi!",
-                    "success",
-                )
-            else:
-                flash("Mahsulot yangilandi!", "success")
+                    # Upload to Cloudinary
+                    folder = 'products' if media_type == 'image' else 'videos'
+                    upload_res = cloudinary_service.upload_image(
+                        file.stream,
+                        folder=folder,
+                        resource_type='image' if media_type == 'image' else 'video'
+                    )
+
+                    if not upload_res:
+                        continue
+
+                    media_url = upload_res.get('secure_url')
+
+                    # Agar hech qanday asosiy rasm yo'q bo'lsa va bu birinchi rasm bo'lsa
+                    is_main = False
+                    if media_type == 'image':
+                        main_image_exists = execute_query(
+                            "SELECT COUNT(*) FROM product_media WHERE menu_item_id = ? AND is_main = 1 AND media_type = 'image'",
+                            (item_id,),
+                            fetch_one=True,
+                        )
+                        count_val = 0
+                        try:
+                            count_val = main_image_exists[0] if isinstance(main_image_exists, (list, tuple)) else (main_image_exists.get('COUNT(*)') if hasattr(main_image_exists, 'get') else (main_image_exists[0] if main_image_exists else 0))
+                        except Exception:
+                            try:
+                                count_val = int(main_image_exists)
+                            except Exception:
+                                count_val = 0
+                        if not count_val:
+                            is_main = True
+                            execute_query("UPDATE menu_items SET image_url = ? WHERE id = ?", (media_url, item_id))
+
+                    # Product media jadvaliga qo'shish
+                    execute_query(
+                        """
+                        INSERT INTO product_media (menu_item_id, media_type, media_url, display_order, is_main, created_at, updated_at)
+                        VALUES (?, ?, ?, ?, ?, ?, ?)
+                        """,
+                        (
+                            item_id,
+                            media_type,
+                            media_url,
+                            next_order + idx,
+                            1 if is_main else 0,
+                            now,
+                            now,
+                        ),
+                    )
+
+                    uploaded_media.append({'type': media_type, 'url': media_url})
+
+                except Exception as media_error:
+                    app_logger.warning(f"Media yuklashda xatolik: {str(media_error)}")
+                    continue
+
+        if uploaded_media:
+            flash(f"Mahsulot yangilandi va {len(uploaded_media)} ta yangi media fayl qo'shildi!", "success")
+        else:
+            flash("Mahsulot yangilandi!", "success")
         # After editing, invalidate cache and update JSON
         try:
             invalidate_menu_cache()
@@ -12595,11 +12895,37 @@ def api_chat_receive():
         if not text:
             return jsonify({"success": False, "message": "text required"}), 400
 
-        # Persist to a lightweight chat_messages table (create if missing)
+        # Ensure chat_messages table exists with full schema (avoid creating a minimal incompatible table)
         try:
             execute_query(
-                "CREATE TABLE IF NOT EXISTS chat_messages (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, text TEXT, source TEXT, created_at TEXT)"
+                """
+                CREATE TABLE IF NOT EXISTS chat_messages (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    chat_id INTEGER NOT NULL,
+                    sender_type TEXT NOT NULL,
+                    sender_id INTEGER,
+                    text TEXT NOT NULL,
+                    created_at TEXT NOT NULL,
+                    FOREIGN KEY (chat_id) REFERENCES chats(id)
+                )
+                """
             )
+            # Ensure backward-compatible columns exist
+            try:
+                cols = execute_query('PRAGMA table_info(chat_messages)', fetch_all=True) or []
+                existing = [c[1] if isinstance(c, tuple) else c.get('name') for c in cols]
+            except Exception:
+                existing = []
+            if 'sender' not in existing:
+                try:
+                    execute_query("ALTER TABLE chat_messages ADD COLUMN sender TEXT")
+                except Exception:
+                    pass
+            if 'source' not in existing:
+                try:
+                    execute_query("ALTER TABLE chat_messages ADD COLUMN source TEXT")
+                except Exception:
+                    pass
         except Exception:
             pass
 
@@ -14281,14 +14607,38 @@ def auth_google():
                 session['user_id'] = user.get('id')
                 session['user_email'] = email
             else:
-                # Insert a new user record (lightweight)
-                now = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
-                execute_query('INSERT INTO users (email, name, created_at) VALUES (?, ?, ?)', (email, name, now))
+                # Insert a new user record using existing schema (first_name, last_name...)
+                now = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+                # Split display name into first / last
+                first = ''
+                last = ''
+                try:
+                    parts = (name or '').strip().split()
+                    if parts:
+                        first = parts[0]
+                        last = ' '.join(parts[1:]) if len(parts) > 1 else ''
+                except Exception:
+                    first = name or ''
+                    last = ''
+
+                # password_hash is NOT NULL in schema; use empty string for oauth-created accounts
+                try:
+                    execute_query('INSERT INTO users (first_name, last_name, email, phone, password_hash, created_at) VALUES (?, ?, ?, ?, ?, ?)',
+                                  (first, last, email, '', '', now))
+                except Exception:
+                    # fallback to minimal insert by email if schema differs
+                    try:
+                        execute_query('INSERT INTO users (email, created_at) VALUES (?, ?)', (email, now))
+                    except Exception:
+                        app_logger.exception('Failed to insert google-created user')
+
                 # reload user id
                 new_u = execute_query('SELECT * FROM users WHERE email = ?', (email,), fetch_one=True)
                 if new_u:
                     session['user_id'] = dict(new_u).get('id')
                     session['user_email'] = email
+                    # store a display name to session
+                    session['user_name'] = (first + (' ' + last if last else '')).strip() or email
         except Exception as e:
             app_logger.exception('Failed to create/find user for google login')
 
@@ -14392,19 +14742,44 @@ def login_page():
                     flash(
                         f"Xush kelibsiz, {user_dict.get('first_name','')}!", "success"
                     )
-                    # Determine post-login redirect target: form `next`, session saved pre_login_next, or default index
+
+                    # Explicitly mark this authenticated principal as a regular "user"
+                    # (other elevated roles are handled by their own login flows).
                     try:
-                        candidate = request.form.get('next') or request.args.get('next') or session.pop('pre_login_next', None)
+                        session['role'] = session.get('role') or 'user'
+                    except Exception:
+                        session['role'] = 'user'
+
+                    # Determine role-aware default redirect targets
+                    try:
                         from urllib.parse import urlparse
+
+                        role = session.get('role', 'user')
+                        try:
+                            if role == 'user':
+                                default_next = 'https://safety.uz'
+                            elif role == 'admin':
+                                default_next = url_for('super_admin_dashboard')
+                            elif role == 'staff':
+                                default_next = url_for('staff_dashboard')
+                            elif role == 'courier':
+                                default_next = url_for('courier_dashboard')
+                            else:
+                                default_next = url_for('index')
+                        except Exception:
+                            default_next = url_for('index')
+
+                        # Candidate `next` from form / query / preserved pre_login_next
+                        candidate = request.form.get('next') or request.args.get('next') or session.pop('pre_login_next', None)
                         if candidate:
                             p = urlparse(candidate)
                             # only allow same-origin or path-only redirects
                             if p.netloc and p.netloc.split(':')[0] != request.host.split(':')[0]:
                                 candidate = None
                             else:
-                                # rebuild path+query
                                 candidate = p.path + ('?' + p.query if p.query else '')
-                        next_url = candidate if candidate else url_for('index')
+
+                        next_url = candidate if candidate else default_next
                     except Exception:
                         next_url = url_for('index')
 
@@ -15471,16 +15846,19 @@ def super_admin_login():
                 # Load avatar from persistent settings
                 persistent_avatar = prefer_webp(creds.get("avatar") or url_for('static', filename='images/default-avatar.svg'))
 
-                set_role_session(
+                # Use secure_session_login to ensure session_id, CSRF and persistent flags are set
+                secure_session_login(
                     "super_admin",
-                    name=display_name,
-                    first_name=creds.get("first_name", ""),
-                    last_name=creds.get("last_name", ""),
-                    phone=creds.get("phone", ""),
-                    avatar=persistent_avatar,
+                    {
+                        "admin_name": display_name,
+                        "first_name": creds.get("first_name", ""),
+                        "last_name": creds.get("last_name", ""),
+                        "phone": creds.get("phone", ""),
+                        "avatar": persistent_avatar,
+                    },
                 )
 
-                # Ensure user_avatar is also set for template consistency
+                # Also set user_avatar for template compatibility
                 session["user_avatar"] = persistent_avatar
 
                 app_logger.info(f"Super admin kirdi: {username}")
@@ -20930,6 +21308,29 @@ def api_news():
     except Exception as e:
         app_logger.error(f"API news error: {str(e)}")
         return jsonify({"success": False, "message": "Failed to load news"}), 500
+
+
+@app.route('/api/reverse_geocode', methods=['GET'])
+def api_reverse_geocode():
+    """Proxy reverse geocode requests to Nominatim to avoid browser CORS and provide a proper User-Agent."""
+    lat = request.args.get('lat') or request.args.get('latitude')
+    lon = request.args.get('lon') or request.args.get('longitude')
+    fmt = request.args.get('format', 'jsonv2')
+    if not lat or not lon:
+        return jsonify({'success': False, 'message': 'missing lat/lon'}), 400
+    try:
+        params = {'format': fmt, 'lat': lat, 'lon': lon}
+        headers = {
+            'User-Agent': os.environ.get('NOMINATIM_USER_AGENT', 'Safety.uz/1.0 (contact@safety.uz)')
+        }
+        resp = requests.get('https://nominatim.openstreetmap.org/reverse', params=params, headers=headers, timeout=6)
+        if not resp.ok:
+            app_logger.warning('Nominatim responded with status %s', resp.status_code)
+            return jsonify({'success': False, 'message': 'provider_error', 'status': resp.status_code}), 502
+        return jsonify(resp.json())
+    except Exception as e:
+        app_logger.exception('Reverse geocode failed')
+        return jsonify({'success': False, 'message': 'reverse geocode failed'}), 500
 
 
 @app.route("/api/news", methods=["POST"])

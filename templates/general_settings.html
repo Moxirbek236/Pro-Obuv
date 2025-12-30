@@ -539,37 +539,38 @@ config.get('DEFAULT_LANGUAGE', 'uz'))) %}
     // Persist chosen language server-side (for logged-in users), then
     // navigate to the same page with the language path segment replaced so
     // URL and session stay synchronized.
-    (async function(){
-      try {
-        await fetch("/api/change-language", {
-          method: "POST",
-          credentials: 'same-origin',
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-Token": typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : ''
-          },
-          body: JSON.stringify({ language: language }),
-        }).catch(function(){});
-      } catch(e) {}
+    try {
+      (async function(){
+        try {
+          await fetch("/api/change-language", {
+            method: "POST",
+            credentials: 'same-origin',
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRF-Token": typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : ''
+            },
+            body: JSON.stringify({ language: language }),
+          }).catch(function(){});
+        } catch(e) {}
 
-      // Build new path similar to global changeLanguage helper
-      var supported = ["uz", "ru", "en", "kz"];
-      var path = window.location.pathname || "/";
-      var search = window.location.search || "";
-      var segs = path.split("/");
-      if (segs.length > 1 && supported.indexOf(segs[1]) !== -1) {
-        segs[1] = language;
-      } else {
-        segs.splice(1, 0, language);
-      }
-      var newPath = segs.join("/");
-      if (!newPath.startsWith("/")) newPath = "/" + newPath;
-      newPath = newPath.replace(/\/\/+/g, "/");
-      if (path === "/" || path === "") {
-        newPath = "/" + language + "/menu";
-      }
-      window.location.href = newPath + search;
-    })();
+        // Build new path similar to global changeLanguage helper
+        var supported = ["uz", "ru", "en", "kz"];
+        var path = window.location.pathname || "/";
+        var search = window.location.search || "";
+        var segs = path.split("/");
+        if (segs.length > 1 && supported.indexOf(segs[1]) !== -1) {
+          segs[1] = language;
+        } else {
+          segs.splice(1, 0, language);
+        }
+        var newPath = segs.join("/");
+        if (!newPath.startsWith("/")) newPath = "/" + newPath;
+        newPath = newPath.replace(/\/\/+/g, "/");
+        if (path === "/" || path === "") {
+          newPath = "/" + language + "/menu";
+        }
+        window.location.href = newPath + search;
+      })();
     } catch (e) {
       try {
         window.location.reload();

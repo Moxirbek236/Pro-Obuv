@@ -50,6 +50,7 @@
             class="form-control"
             id="email"
             name="email"
+            autocomplete="email"
             required />
         </div>
 
@@ -60,6 +61,7 @@
             class="form-control"
             id="password"
             name="password"
+            autocomplete="current-password"
             required />
         </div>
 
@@ -86,6 +88,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
       // Initialize Google Sign-In when the GSI client script has loaded
       function handleCredentialResponse(response) {
@@ -94,7 +97,8 @@
           method: 'POST',
           credentials: 'same-origin',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id_token: response.credential })
+          // server expects key 'credential'
+          body: JSON.stringify({ credential: response.credential })
         }).then(r => r.json()).then(data => {
           if (data && data.success) {
             window.location = data.next || '/';
@@ -128,7 +132,6 @@
         document.head.appendChild(s);
       })();
     </script>
-      </script>
 
       <script>
         // Intercept traditional form POST and perform AJAX login so we can update navbar immediately
@@ -154,22 +157,32 @@
                 headers: headers,
                 body: body.toString()
               }).then(r=>{
-                // If server redirects after form submit, some frameworks respond with 302 -> fetch follows; treat 200/204 as JSON or HTML
-                return r.json().catch(()=>({ redirected: r.redirected, ok: r.ok }));
+                // Try to parse JSON; if parse fails, capture final URL/status so we can navigate.
+                return r.text().then(text => {
+                  try {
+                    return JSON.parse(text);
+                  } catch (e) {
+                    return { __raw: text, redirected: r.redirected, ok: r.ok, url: r.url, status: r.status };
+                  }
+                });
               }).then(data=>{
-                // Expecting server to return { success:true, next: '/...' } on AJAX login; if not, fallback to full navigation
                 if (data && data.success) {
-                  // persist auth state and notify other tabs
                   try { localStorage.setItem('auth', JSON.stringify({ logged: true, role: data.role || null, user: data.user || null })); } catch(e) {}
                   try { if (window.AuthStore && typeof window.AuthStore.set === 'function') window.AuthStore.set({ logged: true, role: data.role || null, user: data.user || null }); } catch(e) {}
                   window.location = data.next || '/';
-                } else {
-                  // if server didn't return structured JSON, reload to let server render the flash messages
-                  window.location = data && data.next ? data.next : window.location.href;
+                  return;
                 }
+
+                // If server returned a non-JSON redirect final page, navigate to that URL if available
+                if (data && data.url) {
+                  window.location = data.url;
+                  return;
+                }
+
+                // Fallback: reload current page to allow server-rendered flash messages
+                window.location.reload();
               }).catch(err=>{
                 console.error('Login AJAX failed', err);
-                // fallback to full submit so server can render error
                 form.submit();
               });
             });

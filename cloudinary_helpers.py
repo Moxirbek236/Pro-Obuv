@@ -43,8 +43,10 @@ def get_cloudinary_url(path, **kwargs):
     elif clean_path.startswith('icons/'):
         public_id = clean_path # keep folder
     else:
-        # Default prefix for other static assets
-        if not any(clean_path.startswith(p) for p in ['products/', 'avatars/', 'news/', 'favicons/', 'icons/']):
+        # Default prefix for other static assets. Treat `static-images/` as
+        # a known Cloudinary folder so we don't prepend `static-root/`.
+        known_prefixes = ['products/', 'avatars/', 'news/', 'favicons/', 'icons/', 'static-images/']
+        if not any(clean_path.startswith(p) for p in known_prefixes):
             public_id = f"static-root/{clean_path}"
         else:
             public_id = clean_path
