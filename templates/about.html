@@ -35,257 +35,241 @@ block seo_meta %}
 {% endblock %} {% block content %}
 <div class="faq-page-container">
   <div class="faq-hero-section">
-    <h1 class="faq-hero-title animate-fade-in">Ko'p so'raladigan savollar</h1>
-    <p class="faq-hero-subtitle animate-fade-in">
-      Sizni qiziqtirgan savollarning javoblarini toping
-    </p>
+    <div class="container relative z-10">
+      <h1 class="faq-hero-title animate-fade-in">{{ get_text('faq.title') if get_text('faq.title') != 'faq.title' else "Ko'p so'raladigan savollar" }}</h1>
+      <p class="faq-hero-subtitle animate-fade-in delay-100">
+        {{ get_text('faq.subtitle') if get_text('faq.subtitle') != 'faq.subtitle' else "Sizni qiziqtirgan barcha savollarga javoblar" }}
+      </p>
+    </div>
   </div>
 
-  <div class="card faq-card">
-    <div class="faq-section">
-      <div class="faq-item">
-        <h4>Buyurtma qanday beriladi?</h4>
-        <p>
-          Saytdan ro'yxatdan o'tib, mahsulotlarni ko'rib chiqing va kerakli oyoq
-          kiyimni savatchangizga qo'shing. Keyin buyurtma bering.
-        </p>
-      </div>
+  <div class="container relative z-20" style="margin-top: -60px;">
+    <div class="card faq-card shadow-lg border-0">
+      <div class="card-body p-4 p-md-5">
+        <div class="faq-grid">
+          
+          <!-- Buying Guide -->
+          <div class="faq-item" data-aos="fade-up" data-aos-delay="100">
+            <div class="faq-icon">
+              <i class="bi bi-cart-check"></i>
+            </div>
+            <div class="faq-content">
+              <h4>Buyurtma qanday beriladi?</h4>
+              <p>Saytdan ro'yxatdan o'tib, mahsulotlarni tanlang va savatchaga qo'shing. "Buyurtma berish" tugmasini bosib, kerakli ma'lumotlarni to'ldiring.</p>
+            </div>
+          </div>
 
-      <div class="faq-item">
-        <h4>Yetkazib berish xizmati bormi?</h4>
-        <p>
-          Ha, bizda yetkazib berish xizmati mavjud. Buyurtma berishda yetkazib
-          berish manzilini ko'rsatishingiz mumkin.
-        </p>
-      </div>
+          <!-- Shipping -->
+          <div class="faq-item" data-aos="fade-up" data-aos-delay="200">
+            <div class="faq-icon">
+              <i class="bi bi-truck"></i>
+            </div>
+            <div class="faq-content">
+              <h4>Yetkazib berish xizmati bormi?</h4>
+              <p>Ha, O'zbekiston bo'ylab yetkazib berish xizmati mavjud. Toshkent shahri ichida 24 soat ichida, viloyatlarga esa 2-3 kun ichida yetkaziladi.</p>
+            </div>
+          </div>
 
-      <div class="faq-item">
-        <h4>To'lov usullari qanday?</h4>
-        <p>
-          Naqd pul, plastik karta, Click, Payme va bank o'tkazmasi usullari
-          mavjud.
-        </p>
-      </div>
+          <!-- Payment -->
+          <div class="faq-item" data-aos="fade-up" data-aos-delay="300">
+            <div class="faq-icon">
+              <i class="bi bi-credit-card"></i>
+            </div>
+            <div class="faq-content">
+              <h4>To'lov usullari qanday?</h4>
+              <p>Siz Click, Payme, Uzum Bank orqali onlayn to'lashingiz yoki kuryerga naqd pul / terminal orqali to'lov qilishingiz mumkin. Korporativ mijozlar uchun bank o'tkazmasi mavjud.</p>
+            </div>
+          </div>
 
-      <div class="faq-item">
-        <h4>O'lcham jadvali bormi?</h4>
-        <p>
-          Ha, har bir mahsulot sahifasida o'lcham jadvali mavjud. Shuningdek,
-          do'konimizga kelib o'lchamingizni aniqlay olasiz.
-        </p>
-      </div>
+          <!-- Sizing -->
+          <div class="faq-item" data-aos="fade-up" data-aos-delay="400">
+            <div class="faq-icon">
+              <i class="bi bi-ruler-combined"></i>
+            </div>
+            <div class="faq-content">
+              <h4>O'lchamni qanday tanlayman?</h4>
+              <p>Har bir mahsulot sahifasida aniq o'lchamlar jadvali keltirilgan. Agar ikkilansangiz, biz bilan bog'laning, mutaxassislarimiz yordam beradi.</p>
+            </div>
+          </div>
 
-      <div class="faq-item">
-        <h4>⏰ Ish vaqti qanaqa?</h4>
-        <p>Dushanba-Juma: 9:00-18:00, Shanba va Yakshanba: Dam</p>
-      </div>
+          <!-- Working Hours -->
+          <div class="faq-item" data-aos="fade-up" data-aos-delay="500">
+            <div class="faq-icon">
+              <i class="bi bi-clock-history"></i>
+            </div>
+            <div class="faq-content">
+              <h4>Ish vaqti qanaqa?</h4>
+              <p>Bizning do'konimiz har kuni 09:00 dan 18:00 gacha ishlaydi. Onlayn buyurtmalar esa 24/7 qabul qilinadi.</p>
+            </div>
+          </div>
 
-      <div class="faq-item">
-        <h4>Qanday bog'lanishim mumkin?</h4>
-        <p>
-          Telefon: +998 97 719 57 70<br />
-          Email: premiumsafety@mail.ru<br />
-          Telegram: @specobuv
-        </p>
-      </div>
-    </div>
+          <!-- Contact -->
+          <div class="faq-item" data-aos="fade-up" data-aos-delay="600">
+            <div class="faq-icon">
+              <i class="bi bi-headset"></i>
+            </div>
+            <div class="faq-content">
+              <h4>Bog'lanish ma'lumotlari</h4>
+              <p>
+                {% set ph = site_settings.site_phone if site_settings.site_phone else '+998 99 145 96 86' %}
+                {% set tg_user = site_settings.site_telegram_username if site_settings.site_telegram_username else '@Rakhimberdiyev_1970' %}
+                {% set tg_link = site_settings.site_telegram if site_settings.site_telegram else 'https://t.me/Rakhimberdiyev_1970' %}
+                
+                <strong>Tel:</strong> <a href="tel:{{ ph|replace(' ', '') }}">{{ ph }}</a><br>
+                <strong>Telegram:</strong> <a href="{{ tg_link }}" target="_blank">{{ tg_user }}</a>
+              </p>
+            </div>
+          </div>
 
-    <div class="mt-4">
-      <h4>Boshqa savolingiz bormi?</h4>
-      <p>Agar yuqoridagi javoblar sizni qoniqtirmasa, bizga savol yuboring:</p>
-      <a href="{{ url_for('contact') }}" class="btn big"> Savol yuborish</a>
+        </div>
+
+        <div class="contact-cta text-center mt-5 pt-4 border-top">
+          <h4 class="mb-3">Boshqa savolingiz bormi?</h4>
+          <p class="text-muted mb-4">Bizning jamoamiz sizga yordam berishga tayyor</p>
+          <a href="{{ url_for('contact') }}" class="btn btn-primary btn-lg rounded-pill px-5 shadow-sm">
+            <i class="bi bi-chat-dots me-2"></i> Biz bilan bog'lanish
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 </div>
-<!-- End faq-page-container -->
 
 <style>
-  /* ================================
-   ABOUT/FAQ PAGE STYLES
-   ================================ */
+  /* Modern FAQ Styles */
+  :root {
+      --faq-primary: #0f172a;
+      --faq-accent: #0ea5e9;
+      --faq-bg-light: #f8fafc;
+  }
 
-  /* Hero Section */
   .faq-page-container {
+    background-color: #f1f5f9;
     min-height: 100vh;
-    background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
-    padding: 0;
-    margin: -24px -15px 0;
+    padding-bottom: 60px;
   }
 
   .faq-hero-section {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    padding: 100px 0 120px;
     text-align: center;
-    padding: 80px 20px 60px;
-    background: linear-gradient(
-      135deg,
-      rgba(76, 175, 80, 0.9) 0%,
-      rgba(69, 160, 73, 0.9) 100%
-    );
+    color: white;
     position: relative;
     overflow: hidden;
   }
-
+  
   .faq-hero-section::before {
-    content: "";
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(
-      circle,
-      rgba(255, 255, 255, 0.1) 0%,
-      transparent 70%
-    );
-    animation: rotate 20s linear infinite;
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(circle at 20% 50%, rgba(14, 165, 233, 0.15), transparent 50%),
+                  radial-gradient(circle at 80% 50%, rgba(99, 102, 241, 0.15), transparent 50%);
   }
 
   .faq-hero-title {
-    font-size: 3.5rem;
+    font-size: clamp(2rem, 5vw, 3.5rem);
     font-weight: 800;
-    color: white;
-    margin-bottom: 20px;
-    text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    animation-delay: 0.2s;
+    margin-bottom: 1rem;
+    background: linear-gradient(to right, #fff, #94a3b8);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   .faq-hero-subtitle {
-    font-size: 1.3rem;
-    color: rgba(255, 255, 255, 0.9);
-    margin-bottom: 0;
+    font-size: 1.25rem;
+    color: #cbd5e1;
     font-weight: 300;
-    animation-delay: 0.4s;
   }
 
   .faq-card {
-    margin: -40px 20px 40px;
-    z-index: 10;
-    position: relative;
-    border-radius: 25px;
-    animation-delay: 0.6s;
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(10px);
-  }
-
-  @keyframes rotate {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-  .faq-section {
-    margin: 20px 0;
-    animation: fadeInUp 0.6s ease-out;
-  }
-
-  .faq-item {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    padding: 25px;
-    border-radius: 15px;
-    margin-bottom: 20px;
-    border-left: 5px solid #4caf50;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
     overflow: hidden;
   }
 
-  .faq-item::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background: linear-gradient(90deg, #4caf50, #8bc34a);
+  .faq-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .faq-item {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
   }
 
   .faq-item:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.15);
-    border-left-color: #8bc34a;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    border-color: var(--faq-accent);
   }
 
-  .faq-item h4 {
-    color: #2d3748;
-    margin-bottom: 15px;
-    font-weight: 600;
-    font-size: 1.2rem;
+  .faq-icon {
+    flex-shrink: 0;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #e0f2fe, #f0f9ff);
+    color: var(--faq-accent);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
   }
 
-  .faq-item p {
-    margin: 0;
-    color: #4a5568;
-    line-height: 1.6;
-    font-size: 1rem;
+  .faq-item:hover .faq-icon {
+      background: var(--faq-accent);
+      color: white;
   }
 
-  /* Enhanced button styling */
-  .btn.big {
-    background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
-    color: white;
-    border: none;
-    padding: 15px 30px;
-    border-radius: 25px;
-    font-weight: 600;
+  .faq-content h4 {
     font-size: 1.1rem;
-    text-decoration: none;
-    display: inline-block;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+    font-weight: 700;
+    color: var(--faq-primary);
+    margin-bottom: 0.5rem;
   }
 
-  .btn.big:hover {
-    background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
-    color: white;
-    text-decoration: none;
+  .faq-content p {
+    font-size: 0.95rem;
+    color: #64748b;
+    line-height: 1.6;
+    margin: 0;
+  }
+  
+  .contact-cta h4 {
+      color: var(--faq-primary);
+      font-weight: 700;
   }
 
   /* Animations */
+  .animate-fade-in { animation: fadeInUp 0.8s ease-out forwards; opacity: 0; transform: translateY(20px); }
+  .delay-100 { animation-delay: 0.1s; }
+  
   @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .faq-item:nth-child(1) {
-    animation: fadeInUp 0.6s ease-out 0.1s both;
-  }
-  .faq-item:nth-child(2) {
-    animation: fadeInUp 0.6s ease-out 0.2s both;
-  }
-  .faq-item:nth-child(3) {
-    animation: fadeInUp 0.6s ease-out 0.3s both;
-  }
-  .faq-item:nth-child(4) {
-    animation: fadeInUp 0.6s ease-out 0.4s both;
-  }
-  .faq-item:nth-child(5) {
-    animation: fadeInUp 0.6s ease-out 0.5s both;
+    to { opacity: 1; transform: translateY(0); }
   }
 
   /* Mobile responsiveness */
   @media (max-width: 768px) {
-    .faq-item {
-      padding: 20px;
-      margin-bottom: 15px;
+    .faq-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .faq-hero-section {
+      padding: 60px 0 80px;
     }
 
-    .faq-item h4 {
-      font-size: 1.1rem;
-    }
-
-    .btn.big {
-      padding: 12px 25px;
-      font-size: 1rem;
+    .faq-card {
+      margin-left: 10px;
+      margin-right: 10px;
+      border-radius: 16px;
     }
   }
 </style>

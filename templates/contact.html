@@ -180,8 +180,9 @@
               </div>
               <div class="info-content">
                 <span class="info-label">Telefon</span>
-                <a href="tel:{{ get_text('footer.phone_href') }}" class="info-value info-link">
-                  {{ get_text('footer.phone_display') }}
+                {% set ph = site_settings.site_phone if site_settings.site_phone else get_text('footer.phone_display') %}
+                <a href="tel:{{ ph|replace(' ', '') }}" class="info-value info-link">
+                  {{ ph }}
                 </a>
               </div>
             </div>
@@ -193,8 +194,9 @@
               </div>
               <div class="info-content">
                 <span class="info-label">Email</span>
-                <a href="mailto:premiumsafety@mail.ru" class="info-value info-link">
-                  premiumsafety@mail.ru
+                {% set em = site_settings.site_email if site_settings.site_email else 'premiumsafety@mail.ru' %}
+                <a href="mailto:{{ em }}" class="info-value info-link">
+                  {{ em }}
                 </a>
               </div>
             </div>
@@ -206,8 +208,10 @@
               </div>
               <div class="info-content">
                 <span class="info-label">Telegram</span>
-                <a href="https://t.me/proobuvLLC" target="_blank" class="info-value info-link">
-                  @proobuvLLC
+                 {% set tg_user = site_settings.site_telegram_username if site_settings.site_telegram_username else '@proobuvLLC' %}
+                 {% set tg_link = site_settings.site_telegram if site_settings.site_telegram else 'https://t.me/proobuvLLC' %}
+                <a href="{{ tg_link }}" target="_blank" class="info-value info-link">
+                  {{ tg_user }}
                 </a>
               </div>
             </div>
@@ -219,8 +223,9 @@
               </div>
               <div class="info-content">
                 <span class="info-label">Manzil</span>
+                {% set addr = site_settings.site_address if site_settings.site_address else 'Toshkent, Sergeli tumani, Yuqori Darxon mahalla' %}
                 <a href="https://maps.app.goo.gl/tQU6Axzj4JvLoGML8" target="_blank" class="info-value info-link">
-                  Toshkent, Sergeli tumani, Yuqori Darxon mahalla
+                  {{ addr }}
                 </a>
               </div>
             </div>
@@ -242,23 +247,21 @@
           <div class="social-section">
             <h3 class="social-title">Ijtimoiy Tarmoqlar</h3>
             <div class="social-links">
-              <a href="https://www.facebook.com/aklashoes/?ref=pl_edit_xav_ig_profile_page_web#" target="_blank" class="social-link facebook" title="Facebook">
-                <i class="bi bi-facebook"></i>
-              </a>
-              <a href="https://www.instagram.com/proguarduz/" target="_blank" class="social-link instagram" title="Instagram">
-                <i class="bi bi-instagram"></i>
-              </a>
-              <a href="https://t.me/specobuv" target="_blank" class="social-link telegram" title="Telegram">
-                <i class="bi bi-telegram"></i>
-              </a>
-              <a href="https://www.threads.com/@proguarduz?xmt=AQF0Luvd5UXAmD_U3B5JI01ho5dNPZudQGYe4WbnAc934pc" target="_blank" class="social-link threads" title="Threads">
-                <i class="bi bi-threads"></i>
-              </a>
-              <a href="https://uzum.uz/uz/shop/pro-obuv" target="_blank" class="social-link uzum" title="Uzum Market">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
-                </svg>
-              </a>
+               {% if social_links %}
+                  {% for link in social_links %}
+                  <a href="{{ link.url }}" target="_blank" class="social-link {{ link.platform|lower }}" title="{{ link.platform }}">
+                    {% if 'bi-' in link.icon %}
+                        <i class="{{ link.icon }}"></i>
+                    {% else %}
+                        <i class="bi bi-link-45deg"></i>
+                    {% endif %}
+                  </a>
+                  {% endfor %}
+               {% else %}
+                  <a href="https://t.me/proobuvLLC" target="_blank" class="social-link telegram" title="Telegram">
+                    <i class="bi bi-telegram"></i>
+                  </a>
+               {% endif %}
             </div>
           </div>
         </div>

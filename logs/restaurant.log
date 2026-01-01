@@ -4264,3 +4264,196 @@ werkzeug.exceptions.MethodNotAllowed: 405 Method Not Allowed: The method is not 
 2025-12-30 00:26:47,615 | WARNING | restaurant_app | not_found_error:2199 | 404 Error: http://localhost:5000/api/news/<id>
 2025-12-30 19:58:40,828 | WARNING | restaurant_app | not_found_error:2463 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
 2025-12-30 19:59:30,985 | WARNING | restaurant_app | not_found_error:2463 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-30 21:58:17,777 | WARNING | restaurant_app | not_found_error:2496 | 404 Error: http://localhost:5000/api/users/<id>
+2025-12-30 21:58:19,880 | WARNING | restaurant_app | not_found_error:2496 | 404 Error: http://localhost:5000/api/users/<id>
+2025-12-30 21:58:26,213 | WARNING | restaurant_app | not_found_error:2496 | 404 Error: http://localhost:5000/api/products/<id>
+2025-12-30 21:58:28,342 | WARNING | restaurant_app | not_found_error:2496 | 404 Error: http://localhost:5000/api/products/<id>
+2025-12-30 21:58:30,450 | WARNING | restaurant_app | not_found_error:2496 | 404 Error: http://localhost:5000/api/products/<id>
+2025-12-30 21:58:34,714 | ERROR | restaurant_app | handle_exception:2612 | Unhandled exception: 405 Method Not Allowed: The method is not allowed for the requested URL. - URL: http://localhost:5000/api/categories
+2025-12-30 21:58:34,720 | ERROR | restaurant_app | handle_exception:2614 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 841, in dispatch_request
+    self.raise_routing_exception(req)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 450, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\routing\map.py", line 619, in match
+    raise MethodNotAllowed(valid_methods=list(e.have_match_for)) from None
+werkzeug.exceptions.MethodNotAllowed: 405 Method Not Allowed: The method is not allowed for the requested URL.
+
+2025-12-30 21:58:36,841 | WARNING | restaurant_app | not_found_error:2496 | 404 Error: http://localhost:5000/api/categories/<id>
+2025-12-30 21:58:38,965 | WARNING | restaurant_app | not_found_error:2496 | 404 Error: http://localhost:5000/api/categories/<id>
+2025-12-30 21:58:45,276 | WARNING | restaurant_app | not_found_error:2496 | 404 Error: http://localhost:5000/api/orders/<id>
+2025-12-30 21:58:55,854 | WARNING | restaurant_app | not_found_error:2496 | 404 Error: http://localhost:5000/api/ratings/product/<productId>
+2025-12-30 21:58:57,980 | WARNING | restaurant_app | not_found_error:2496 | 404 Error: http://localhost:5000/api/super-admin/get-system-stats
+2025-12-30 21:59:00,095 | WARNING | restaurant_app | not_found_error:2496 | 404 Error: http://localhost:5000/api/super-admin/get-system-logs
+2025-12-30 21:59:02,222 | WARNING | restaurant_app | not_found_error:2496 | 404 Error: http://localhost:5000/api/super-admin/get-environment-info
+2025-12-30 21:59:08,634 | WARNING | restaurant_app | not_found_error:2496 | 404 Error: http://localhost:5000/api/news/<id>
+2025-12-30 22:38:53,198 | WARNING | restaurant_app | not_found_error:2626 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-30 22:39:04,861 | WARNING | restaurant_app | not_found_error:2626 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-30 22:39:45,954 | WARNING | restaurant_app | not_found_error:2626 | 404 Error: http://localhost:5000/api/users/me
+2025-12-30 22:41:45,483 | ERROR | restaurant_app | execute_query:3695 | Database operational error: no such table: categories
+2025-12-30 22:42:02,065 | WARNING | restaurant_app | not_found_error:2626 | 404 Error: http://localhost:5000/api/super-admin/get-system-stats
+2025-12-30 22:52:38,983 | WARNING | restaurant_app | not_found_error:2664 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-30 22:53:01,497 | WARNING | restaurant_app | _categories_list:826 | Categories table missing or read failed — returning sample categories
+2025-12-30 22:53:11,062 | ERROR | restaurant_app | execute_query:3733 | Database operational error: no such column: username
+2025-12-30 22:53:11,062 | WARNING | restaurant_app | _db_users_list:742 | Users list DB read failed: no such column: username
+2025-12-30 22:53:19,808 | ERROR | restaurant_app | execute_query:3733 | Database operational error: no such column: username
+2025-12-30 22:53:19,808 | WARNING | restaurant_app | _db_users_list:742 | Users list DB read failed: no such column: username
+2025-12-30 22:56:23,544 | WARNING | restaurant_app | _categories_list:826 | Categories table missing or read failed — returning sample categories
+2025-12-30 22:57:00,655 | ERROR | restaurant_app | execute_query:3733 | Database operational error: no such column: username
+2025-12-30 22:57:00,656 | WARNING | restaurant_app | _db_users_list:742 | Users list DB read failed: no such column: username
+2025-12-30 22:57:09,272 | ERROR | restaurant_app | execute_query:3733 | Database operational error: no such column: username
+2025-12-30 22:57:09,273 | WARNING | restaurant_app | _db_users_list:742 | Users list DB read failed: no such column: username
+2025-12-30 22:57:37,931 | WARNING | restaurant_app | not_found_error:2664 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-30 22:57:43,436 | WARNING | restaurant_app | not_found_error:2664 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-30 22:57:50,590 | WARNING | restaurant_app | not_found_error:2664 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-30 22:57:53,256 | WARNING | restaurant_app | not_found_error:2664 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-30 22:58:00,654 | WARNING | restaurant_app | not_found_error:2664 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-30 22:58:03,448 | WARNING | restaurant_app | not_found_error:2664 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-30 22:58:09,798 | WARNING | restaurant_app | not_found_error:2664 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-30 22:58:12,385 | WARNING | restaurant_app | not_found_error:2664 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-30 22:58:13,810 | WARNING | restaurant_app | not_found_error:2664 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-30 22:58:15,808 | WARNING | restaurant_app | not_found_error:2664 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-30 22:58:20,952 | WARNING | restaurant_app | not_found_error:2664 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-30 22:59:00,455 | WARNING | restaurant_app | not_found_error:2664 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-30 22:59:04,290 | WARNING | restaurant_app | not_found_error:2664 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-30 22:59:08,529 | WARNING | restaurant_app | super_admin_login:16077 | Super admin login failed for username: masteradmin
+2025-12-30 22:59:09,570 | WARNING | restaurant_app | not_found_error:2664 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-30 23:02:31,594 | WARNING | restaurant_app | super_admin_login:16080 | Super admin login failed for username: masteradmin
+2025-12-30 23:02:31,803 | WARNING | restaurant_app | not_found_error:2667 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-30 23:02:40,855 | WARNING | restaurant_app | super_admin_login:16080 | Super admin login failed for username: masteradmin
+2025-12-30 23:02:41,939 | WARNING | restaurant_app | not_found_error:2667 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-30 23:05:55,847 | WARNING | restaurant_app | super_admin_login:16080 | Super admin login failed for username: USER
+2025-12-30 23:07:38,880 | WARNING | restaurant_app | _categories_list:829 | Categories table missing or read failed — returning sample categories
+2025-12-30 23:13:18,988 | ERROR | restaurant_app | handle_exception:2783 | Unhandled exception: 405 Method Not Allowed: The method is not allowed for the requested URL. - URL: http://localhost:5000/api/auth/login
+2025-12-30 23:13:19,034 | ERROR | restaurant_app | handle_exception:2785 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 841, in dispatch_request
+    self.raise_routing_exception(req)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 450, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\routing\map.py", line 619, in match
+    raise MethodNotAllowed(valid_methods=list(e.have_match_for)) from None
+werkzeug.exceptions.MethodNotAllowed: 405 Method Not Allowed: The method is not allowed for the requested URL.
+
+2025-12-31 11:36:29,518 | WARNING | restaurant_app | not_found_error:2667 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-31 11:49:17,932 | WARNING | restaurant_app | not_found_error:2667 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-31 11:54:01,676 | WARNING | restaurant_app | not_found_error:2667 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-31 11:58:10,558 | WARNING | restaurant_app | not_found_error:2667 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-31 11:59:07,689 | WARNING | restaurant_app | not_found_error:2667 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-31 11:59:25,172 | WARNING | restaurant_app | not_found_error:2667 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-31 11:59:38,450 | WARNING | restaurant_app | not_found_error:2667 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-31 12:00:45,760 | WARNING | restaurant_app | not_found_error:2667 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-31 12:00:49,102 | WARNING | restaurant_app | not_found_error:2667 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-31 12:00:59,962 | WARNING | restaurant_app | not_found_error:2667 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-31 12:04:15,528 | WARNING | restaurant_app | not_found_error:2667 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-31 12:04:21,587 | WARNING | restaurant_app | not_found_error:2667 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-31 12:04:40,240 | WARNING | restaurant_app | not_found_error:2667 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-31 12:13:05,461 | WARNING | restaurant_app | not_found_error:2667 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-31 12:13:46,991 | WARNING | restaurant_app | not_found_error:2667 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-31 12:14:06,256 | WARNING | restaurant_app | not_found_error:2667 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-31 12:14:08,798 | WARNING | restaurant_app | not_found_error:2667 | 404 Error: http://localhost:5000/static/favicons/favicon.ico
+2025-12-31 12:14:11,257 | WARNING | restaurant_app | not_found_error:2667 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-31 12:14:31,221 | WARNING | restaurant_app | not_found_error:2667 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-31 12:14:42,349 | WARNING | restaurant_app | not_found_error:2667 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-31 12:14:45,411 | WARNING | restaurant_app | not_found_error:2667 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-31 12:14:50,861 | WARNING | restaurant_app | not_found_error:2667 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-31 12:15:08,787 | WARNING | restaurant_app | not_found_error:2667 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-31 12:17:43,362 | WARNING | restaurant_app | not_found_error:2667 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-31 12:31:46,165 | WARNING | restaurant_app | not_found_error:2691 | 404 Error: http://localhost:5000/static/icons/settings.svg
+2025-12-31 12:31:49,386 | WARNING | restaurant_app | not_found_error:2691 | 404 Error: http://localhost:5000/static/icons/settings.svg
+2025-12-31 12:32:17,833 | WARNING | restaurant_app | not_found_error:2691 | 404 Error: http://localhost:5000/static/icons/settings.svg
+2025-12-31 12:32:37,868 | WARNING | restaurant_app | not_found_error:2691 | 404 Error: http://localhost:5000/super-admin/settings
+2025-12-31 12:37:31,946 | WARNING | restaurant_app | not_found_error:2691 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-31 12:41:49,460 | WARNING | restaurant_app | not_found_error:2691 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-31 12:43:15,729 | WARNING | restaurant_app | not_found_error:2691 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-31 12:46:28,805 | ERROR | restaurant_app | super_admin_settings:21600 | Settings view error: 'str' object is not callable
+2025-12-31 12:46:29,006 | WARNING | restaurant_app | not_found_error:2691 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-31 12:46:30,696 | WARNING | restaurant_app | not_found_error:2691 | 404 Error: http://localhost:5000/static/icons/settings.svg
+2025-12-31 12:46:32,910 | ERROR | restaurant_app | super_admin_settings:21600 | Settings view error: 'str' object is not callable
+2025-12-31 12:46:33,186 | WARNING | restaurant_app | not_found_error:2691 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-31 12:46:34,851 | WARNING | restaurant_app | not_found_error:2691 | 404 Error: http://localhost:5000/static/icons/settings.svg
+2025-12-31 13:12:43,577 | WARNING | restaurant_app | not_found_error:2691 | 404 Error: http://localhost:5000/static/icons/settings.svg
+2025-12-31 13:12:43,618 | WARNING | restaurant_app | not_found_error:2691 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-31 13:12:48,548 | WARNING | restaurant_app | not_found_error:2691 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-31 13:13:38,328 | WARNING | restaurant_app | not_found_error:2691 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2025-12-31 19:40:50,138 | WARNING | restaurant_app | not_found_error:2708 | 404 Error: http://localhost:5000/static/icons/settings.svg
+2025-12-31 19:41:06,696 | WARNING | restaurant_app | not_found_error:2708 | 404 Error: http://localhost:5000/static/icons/settings.svg
+2025-12-31 19:41:38,229 | ERROR | restaurant_app | wrapper:2591 | CSRF DEBUG: Received='None', Session='9D9C5qGT-KIeWyBm0B-MewbBNK6mnpiqcPubFccoBlI', Method='POST', Path='/api/news', Cookies={'g_state': '{"i_l":0,"i_ll":1767165282712,"i_b":"Ifs97MpupQgttC1vTFpTSisYOAs0WycJf8Nunmq9Wpk","i_e":{"enable_itp_optimization":0}}', 'session': '.eJw1jkFPwkAQhf-K2TNLQdtqORbUEIIaY-LBkM10d7ZsbLfQ2YUo4b87VTnN5HvvzbyTULYB2iKJ2cdJXAUegqLWSCRGAkzr_PiIje5aFJvzZiTUDvsWPHq2hj7iv0l5YMdMrOfPi_tXjmrqrQrdJ3qmxaKYZ_vHN7la4vtX2U5KucZjVT6t8tbv3F6_xOpB665slhx1PmBvQaNqwNcR6uFw_GaFuJbrvHKGCZgbM03vjDQ5gkwhz2QFvNliUhS2mqbZ9e2QidxY_Za8NKYj1PUAY9iiudBIAzpAgJ6vJxQgOJ24lv9TYtBCbIL808d0qMX5B9-ha1A.aVU2EA.hHd0PQYqRgRBxS7wCnMMIjfB_Ss'}
+2025-12-31 19:41:38,232 | WARNING | restaurant_app | wrapper:2592 | CSRF token mismatch or missing
+2026-01-01 02:35:25,566 | WARNING | restaurant_app | not_found_error:2718 | 404 Error: http://localhost:5000/static/icons/settings.svg
+2026-01-01 02:35:41,901 | ERROR | restaurant_app | wrapper:343 | CSRF DEBUG: Received='None', Session='e3NEarIdND8JhUzyIivKXDUyKqWilo2LSOK8N0jQRG0', Method='POST', Path='/api/news', Cookies={'g_state': '{"i_l":0,"i_ll":1767165282712,"i_b":"Ifs97MpupQgttC1vTFpTSisYOAs0WycJf8Nunmq9Wpk","i_e":{"enable_itp_optimization":0}}', 'session': '.eJw1jttOwkAQhl_F7DWlB8haubXEYLVEDMHEkM10d9qutlvdQwkQ3t2tytUk33-Y_0xY1YJp0JDF-5ncWH-IcZyjMWRCQHRSTQ_Y8r5Dsr_sJ4R9oe5AofJWqx3-m5gC71iQ5_t1ttz4KDe6Yrb_ROUpzool6JUosvSx2Z6OKznkb9n2mH_vZNsnT6_rPC2ij5fNQ-SjUlnUFXBkLajaQT0Wu5NXjJ8le8Wk8CSl_I7ykgZAZ2kwL2kclChoEFVJcjunaRxHdMw4v5j9jrwuNgeo6xE626C4UmdGNIAF7dtDY8FKHsrO_zehwApca4M_fWqGmlx-AIhkakE.aVWXKA.rOJe8hKSeb7jdGL0IlJgUWG9Ad8'}
+2026-01-01 02:35:41,919 | WARNING | restaurant_app | wrapper:344 | CSRF token mismatch or missing
+2026-01-01 13:44:45,451 | WARNING | restaurant_app | not_found_error:2718 | 404 Error: http://localhost:5000/static/favicons/favicon.ico
+2026-01-01 13:45:11,798 | WARNING | restaurant_app | not_found_error:2718 | 404 Error: http://localhost:5000/static/icons/settings.svg
+2026-01-01 13:45:24,215 | ERROR | restaurant_app | wrapper:343 | CSRF DEBUG: Received='None', Session='OhZI3ftPw3SROoAqObbQQ6wJ63uvkcaZyhhidL9FcDM', Method='POST', Path='/api/news', Cookies={'g_state': '{"i_l":0,"i_ll":1767165282712,"i_b":"Ifs97MpupQgttC1vTFpTSisYOAs0WycJf8Nunmq9Wpk","i_e":{"enable_itp_optimization":0}}', 'session': '.eJw1jkFPg0AQhf-K2XMpCLVIb8ZqorHB1ltNsxmWWdgUFmV2Idr0vzuozRwm-d57M-8kpG6AaiSxej-JK8dLkFcKicRMQNkaOx-xUV2L4nA-zIT8wL4Fi5atrvf4b5IW2LESm_t8_bDjqKJeS9cd0TLN6_1Tot3rmLzt8u7uMy-K7XY5Pi8TPxwV7L_q2pQv2aNabzhqrMNeg0LZgK08VNNh_80KcS3TWWlKJlGcAfIEKo6TYBGpIshiHQdJdA2LNE3x5jaZMp4by9-Sl8Y0QlVN0Lsaywv1NKEBHPR8PSQHzqjQtPyfwhI1-MYFf_qchkqcfwAJ32sY.aVY0Gg.0MsnolRFZADm19qkLqVvs_kzZkk'}
+2026-01-01 13:45:24,226 | WARNING | restaurant_app | wrapper:344 | CSRF token mismatch or missing
+2026-01-01 13:46:12,881 | ERROR | restaurant_app | wrapper:343 | CSRF DEBUG: Received='None', Session='OhZI3ftPw3SROoAqObbQQ6wJ63uvkcaZyhhidL9FcDM', Method='POST', Path='/api/news', Cookies={'g_state': '{"i_l":0,"i_ll":1767165282712,"i_b":"Ifs97MpupQgttC1vTFpTSisYOAs0WycJf8Nunmq9Wpk","i_e":{"enable_itp_optimization":0}}', 'session': '.eJw1jkFPg0AQhf-K2XMpCLVIb8ZqorHB1ltNsxmWWdgUFmV2Idr0vzuozRwm-d57M-8kpG6AaiSxej-JK8dLkFcKicRMQNkaOx-xUV2L4nA-zIT8wL4Fi5atrvf4b5IW2LESm_t8_bDjqKJeS9cd0TLN6_1Tot3rmLzt8u7uMy-K7XY5Pi8TPxwV7L_q2pQv2aNabzhqrMNeg0LZgK08VNNh_80KcS3TWWlKJlGcAfIEKo6TYBGpIshiHQdJdA2LNE3x5jaZMp4by9-Sl8Y0QlVN0Lsaywv1NKEBHPR8PSQHzqjQtPyfwhI1-MYFf_qchkqcfwAJ32sY.aVY0Uw.vrz-7-S_Ye1hXgKbil2AaGNiW1w'}
+2026-01-01 13:46:12,885 | WARNING | restaurant_app | wrapper:344 | CSRF token mismatch or missing
+2026-01-01 13:50:22,169 | ERROR | restaurant_app | wrapper:343 | CSRF DEBUG: Received='None', Session='OhZI3ftPw3SROoAqObbQQ6wJ63uvkcaZyhhidL9FcDM', Method='POST', Path='/api/news', Cookies={'g_state': '{"i_l":0,"i_ll":1767165282712,"i_b":"Ifs97MpupQgttC1vTFpTSisYOAs0WycJf8Nunmq9Wpk","i_e":{"enable_itp_optimization":0}}', 'session': '.eJw1jkFPg0AQhf-K2XMpCLVIb8ZqorHB1ltNsxmWWdgUFmV2Idr0vzuozRwm-d57M-8kpG6AaiSxej-JK8dLkFcKicRMQNkaOx-xUV2L4nA-zIT8wL4Fi5atrvf4b5IW2LESm_t8_bDjqKJeS9cd0TLN6_1Tot3rmLzt8u7uMy-K7XY5Pi8TPxwV7L_q2pQv2aNabzhqrMNeg0LZgK08VNNh_80KcS3TWWlKJlGcAfIEKo6TYBGpIshiHQdJdA2LNE3x5jaZMp4by9-Sl8Y0QlVN0Lsaywv1NKEBHPR8PSQHzqjQtPyfwhI1-MYFf_qchkqcfwAJ32sY.aVY1QQ.4-mWh9P5ciNGD_5-Tmh3N5h1464'}
+2026-01-01 13:50:22,196 | WARNING | restaurant_app | wrapper:344 | CSRF token mismatch or missing
+2026-01-01 13:52:54,302 | ERROR | restaurant_app | wrapper:343 | CSRF DEBUG: Received='None', Session='OhZI3ftPw3SROoAqObbQQ6wJ63uvkcaZyhhidL9FcDM', Method='POST', Path='/api/news', Cookies={'g_state': '{"i_l":0,"i_ll":1767165282712,"i_b":"Ifs97MpupQgttC1vTFpTSisYOAs0WycJf8Nunmq9Wpk","i_e":{"enable_itp_optimization":0}}', 'session': '.eJw1jkFPg0AQhf-K2XMpCLVIb8ZqorHB1ltNsxmWWdgUFmV2Idr0vzuozRwm-d57M-8kpG6AaiSxej-JK8dLkFcKicRMQNkaOx-xUV2L4nA-zIT8wL4Fi5atrvf4b5IW2LESm_t8_bDjqKJeS9cd0TLN6_1Tot3rmLzt8u7uMy-K7XY5Pi8TPxwV7L_q2pQv2aNabzhqrMNeg0LZgK08VNNh_80KcS3TWWlKJlGcAfIEKo6TYBGpIshiHQdJdA2LNE3x5jaZMp4by9-Sl8Y0QlVN0Lsaywv1NKEBHPR8PSQHzqjQtPyfwhI1-MYFf_qchkqcfwAJ32sY.aVY13A._hNpc_gBv706FRMuQbnC44d4JJM'}
+2026-01-01 13:52:54,314 | WARNING | restaurant_app | wrapper:344 | CSRF token mismatch or missing
+2026-01-01 13:53:04,518 | WARNING | restaurant_app | not_found_error:2718 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 13:57:49,115 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 13:58:07,768 | ERROR | restaurant_app | wrapper:371 | CSRF DEBUG: Received='None', Session='OhZI3ftPw3SROoAqObbQQ6wJ63uvkcaZyhhidL9FcDM', Method='POST', Path='/api/news', Cookies={'g_state': '{"i_l":0,"i_ll":1767165282712,"i_b":"Ifs97MpupQgttC1vTFpTSisYOAs0WycJf8Nunmq9Wpk","i_e":{"enable_itp_optimization":0}}', 'session': '.eJw1jkFPg0AQhf-K2XMpCLVIb8ZqorHB1ltNsxmWWdgUFmV2Idr0vzuozRwm-d57M-8kpG6AaiSxej-JK8dLkFcKicRMQNkaOx-xUV2L4nA-zIT8wL4Fi5atrvf4b5IW2LESm_t8_bDjqKJeS9cd0TLN6_1Tot3rmLzt8u7uMy-K7XY5Pi8TPxwV7L_q2pQv2aNabzhqrMNeg0LZgK08VNNh_80KcS3TWWlKJlGcAfIEKo6TYBGpIshiHQdJdA2LNE3x5jaZMp4by9-Sl8Y0QlVN0Lsaywv1NKEBHPR8PSQHzqjQtPyfwhI1-MYFf_qchkqcfwAJ32sY.aVY3EA.pdI_Dj047WDNqnA1td01-YiWqfg'}
+2026-01-01 13:58:07,770 | WARNING | restaurant_app | wrapper:372 | CSRF token mismatch or missing
+2026-01-01 15:12:55,412 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 15:13:46,042 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/static/icons/settings.svg
+2026-01-01 15:13:48,288 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/static/icons/settings.svg
+2026-01-01 15:14:07,970 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/static/icons/settings.svg
+2026-01-01 15:16:01,474 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/static/icons/settings.svg
+2026-01-01 15:16:01,474 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/static/icons/settings.svg
+2026-01-01 15:17:01,092 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 15:17:01,092 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 15:17:08,873 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 15:17:08,873 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 15:18:03,844 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 15:18:03,844 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 15:48:54,736 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 15:48:54,736 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 15:50:33,918 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/news/5
+2026-01-01 15:50:33,918 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/news/5
+2026-01-01 15:50:38,527 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/news/5
+2026-01-01 15:50:38,527 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/news/5
+2026-01-01 15:50:47,380 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/static/icons/settings.svg
+2026-01-01 15:50:47,380 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/static/icons/settings.svg
+2026-01-01 15:51:08,321 | ERROR | restaurant_app | wrapper:371 | CSRF DEBUG: Received='None', Session='OhZI3ftPw3SROoAqObbQQ6wJ63uvkcaZyhhidL9FcDM', Method='POST', Path='/admin/upload-news-media', Cookies={'g_state': '{"i_l":0,"i_ll":1767165282712,"i_b":"Ifs97MpupQgttC1vTFpTSisYOAs0WycJf8Nunmq9Wpk","i_e":{"enable_itp_optimization":0}}', 'session': '.eJw1jkFPg0AQhf-K2XMpCLVIb8ZqorHB1ltNsxmWWdgUFmV2Idr0vzuozRwm-d57M-8kpG6AaiSxej-JK8dLkFcKicRMQNkaOx-xUV2L4nA-zIT8wL4Fi5atrvf4b5IW2LESm_t8_bDjqKJeS9cd0TLN6_1Tot3rmLzt8u7uMy-K7XY5Pi8TPxwV7L_q2pQv2aNabzhqrMNeg0LZgK08VNNh_80KcS3TWWlKJlGcAfIEKo6TYBGpIshiHQdJdA2LNE3x5jaZMp4by9-Sl8Y0QlVN0Lsaywv1NKEBHPR8PSQHzqjQtPyfwhI1-MYFf_qchkqcfwAJ32sY.aVZRkw.rZNCiQL8_djsEYO4nqG6uMGOcEs'}
+2026-01-01 15:51:08,321 | ERROR | restaurant_app | wrapper:371 | CSRF DEBUG: Received='None', Session='OhZI3ftPw3SROoAqObbQQ6wJ63uvkcaZyhhidL9FcDM', Method='POST', Path='/admin/upload-news-media', Cookies={'g_state': '{"i_l":0,"i_ll":1767165282712,"i_b":"Ifs97MpupQgttC1vTFpTSisYOAs0WycJf8Nunmq9Wpk","i_e":{"enable_itp_optimization":0}}', 'session': '.eJw1jkFPg0AQhf-K2XMpCLVIb8ZqorHB1ltNsxmWWdgUFmV2Idr0vzuozRwm-d57M-8kpG6AaiSxej-JK8dLkFcKicRMQNkaOx-xUV2L4nA-zIT8wL4Fi5atrvf4b5IW2LESm_t8_bDjqKJeS9cd0TLN6_1Tot3rmLzt8u7uMy-K7XY5Pi8TPxwV7L_q2pQv2aNabzhqrMNeg0LZgK08VNNh_80KcS3TWWlKJlGcAfIEKo6TYBGpIshiHQdJdA2LNE3x5jaZMp4by9-Sl8Y0QlVN0Lsaywv1NKEBHPR8PSQHzqjQtPyfwhI1-MYFf_qchkqcfwAJ32sY.aVZRkw.rZNCiQL8_djsEYO4nqG6uMGOcEs'}
+2026-01-01 15:51:08,330 | WARNING | restaurant_app | wrapper:372 | CSRF token mismatch or missing
+2026-01-01 15:51:08,330 | WARNING | restaurant_app | wrapper:372 | CSRF token mismatch or missing
+2026-01-01 15:51:08,657 | ERROR | restaurant_app | wrapper:371 | CSRF DEBUG: Received='None', Session='OhZI3ftPw3SROoAqObbQQ6wJ63uvkcaZyhhidL9FcDM', Method='POST', Path='/admin/upload-news-media', Cookies={'g_state': '{"i_l":0,"i_ll":1767165282712,"i_b":"Ifs97MpupQgttC1vTFpTSisYOAs0WycJf8Nunmq9Wpk","i_e":{"enable_itp_optimization":0}}', 'session': '.eJw1jlFPgzAUhf-K6TNsE-YmvBmnicYFN99mluauXKAZFO1tIXPZf_cyJX1ocnrO1-8sZFEDVUgi_TyLG8eXIK8UEolAQN5oM-mxVm2DYn8Jxgpa21ouECpvtTtNFNlCatNBrXMu7gMhv9A2YNDwwFmP_zRpgFGpWD9mq6ctI65L1x7RcJpVu5e4cO99_LHN2ofv7HDYbBb96yL23VHB7lRVOn9LntVqzVNtHNoCFMoaTOmhHMD-5-pFpFsjWSYVsygB5BOqKIrD-UwdwiQqojCe3cJ8uVzi3X08bDwby6vkaEw9lOUQeldhPqaehqgDB5bpU3LgtJrqhv-naY4F-NqFf-8T6kpx-QXqb3l-.aVZRnA.mwhdNCO-4Vy9zvcuiV7lRDbp7TE'}
+2026-01-01 15:51:08,657 | ERROR | restaurant_app | wrapper:371 | CSRF DEBUG: Received='None', Session='OhZI3ftPw3SROoAqObbQQ6wJ63uvkcaZyhhidL9FcDM', Method='POST', Path='/admin/upload-news-media', Cookies={'g_state': '{"i_l":0,"i_ll":1767165282712,"i_b":"Ifs97MpupQgttC1vTFpTSisYOAs0WycJf8Nunmq9Wpk","i_e":{"enable_itp_optimization":0}}', 'session': '.eJw1jlFPgzAUhf-K6TNsE-YmvBmnicYFN99mluauXKAZFO1tIXPZf_cyJX1ocnrO1-8sZFEDVUgi_TyLG8eXIK8UEolAQN5oM-mxVm2DYn8Jxgpa21ouECpvtTtNFNlCatNBrXMu7gMhv9A2YNDwwFmP_zRpgFGpWD9mq6ctI65L1x7RcJpVu5e4cO99_LHN2ofv7HDYbBb96yL23VHB7lRVOn9LntVqzVNtHNoCFMoaTOmhHMD-5-pFpFsjWSYVsygB5BOqKIrD-UwdwiQqojCe3cJ8uVzi3X08bDwby6vkaEw9lOUQeldhPqaehqgDB5bpU3LgtJrqhv-naY4F-NqFf-8T6kpx-QXqb3l-.aVZRnA.mwhdNCO-4Vy9zvcuiV7lRDbp7TE'}
+2026-01-01 15:51:08,659 | WARNING | restaurant_app | wrapper:372 | CSRF token mismatch or missing
+2026-01-01 15:51:08,659 | WARNING | restaurant_app | wrapper:372 | CSRF token mismatch or missing
+2026-01-01 15:51:09,026 | ERROR | restaurant_app | wrapper:371 | CSRF DEBUG: Received='None', Session='OhZI3ftPw3SROoAqObbQQ6wJ63uvkcaZyhhidL9FcDM', Method='POST', Path='/admin/upload-news-media', Cookies={'g_state': '{"i_l":0,"i_ll":1767165282712,"i_b":"Ifs97MpupQgttC1vTFpTSisYOAs0WycJf8Nunmq9Wpk","i_e":{"enable_itp_optimization":0}}', 'session': '.eJyVjt9OgzAUxl_F9HowhDmEO-M00bjg5t3M0hzKAZpB0Z4WMpe9u2WOBzC9aPKd78_vxHjZANVILP08sRvjPkZWCCRiMwZFK5U_YCO6Ftn-PJssqHWnnYFQWC3N0RekSy5VD40s_mPczxj_Qt2CQuUCRlu8znIFbjNl68ds9bR1FZek6Q6onJrVu5eoNO9D9LHNuofvLM83m-XwuoxsfxCwO9a1LN6SZ7Fau6hUBnUJAnkDqrJQjcX258JFJDvFHUzKgjABdM8TYRh5i0DkXhKWoRcFt7CI4xjv7qMxYx0xv0BOxDRAVY2iNTUWk2pplHowoF37nAwYKeaydfs0L7AE2xjv7-5TX7HzLxmRh-Q.aVZRnA.5lVvlzb1LroCz3KH-Rb8gXzCxg8'}
+2026-01-01 15:51:09,026 | ERROR | restaurant_app | wrapper:371 | CSRF DEBUG: Received='None', Session='OhZI3ftPw3SROoAqObbQQ6wJ63uvkcaZyhhidL9FcDM', Method='POST', Path='/admin/upload-news-media', Cookies={'g_state': '{"i_l":0,"i_ll":1767165282712,"i_b":"Ifs97MpupQgttC1vTFpTSisYOAs0WycJf8Nunmq9Wpk","i_e":{"enable_itp_optimization":0}}', 'session': '.eJyVjt9OgzAUxl_F9HowhDmEO-M00bjg5t3M0hzKAZpB0Z4WMpe9u2WOBzC9aPKd78_vxHjZANVILP08sRvjPkZWCCRiMwZFK5U_YCO6Ftn-PJssqHWnnYFQWC3N0RekSy5VD40s_mPczxj_Qt2CQuUCRlu8znIFbjNl68ds9bR1FZek6Q6onJrVu5eoNO9D9LHNuofvLM83m-XwuoxsfxCwO9a1LN6SZ7Fau6hUBnUJAnkDqrJQjcX258JFJDvFHUzKgjABdM8TYRh5i0DkXhKWoRcFt7CI4xjv7qMxYx0xv0BOxDRAVY2iNTUWk2pplHowoF37nAwYKeaydfs0L7AE2xjv7-5TX7HzLxmRh-Q.aVZRnA.5lVvlzb1LroCz3KH-Rb8gXzCxg8'}
+2026-01-01 15:51:09,028 | WARNING | restaurant_app | wrapper:372 | CSRF token mismatch or missing
+2026-01-01 15:51:09,028 | WARNING | restaurant_app | wrapper:372 | CSRF token mismatch or missing
+2026-01-01 15:51:09,630 | ERROR | restaurant_app | wrapper:371 | CSRF DEBUG: Received='None', Session='OhZI3ftPw3SROoAqObbQQ6wJ63uvkcaZyhhidL9FcDM', Method='POST', Path='/admin/upload-news-media', Cookies={'g_state': '{"i_l":0,"i_ll":1767165282712,"i_b":"Ifs97MpupQgttC1vTFpTSisYOAs0WycJf8Nunmq9Wpk","i_e":{"enable_itp_optimization":0}}', 'session': '.eJy1jtFOg0AQRX_F7HOhCLUIb8ZqorHB1reaZjMsA2wKi-7sQmrTf3ep5RPMPExy594758R42QDVSCz9PLEb4xYjKwQSsRmDopXKH7ARXYtsf55NFtS6085AKKyW5ugL0iWXqodGFv9i3M8Y_0LdgkLlAkZbvPJxBQ4uZevHbPW0dRWXpOkOqJya1buXqDTvQ_SxzbqH7yzPN5vl8LqMbH8QsDvWtSzekmexWruoVAZ1CQJ5A6qyUI3F9ufCRSQ7xR1MyoIwAXTjiTCMvEUgci8Jy9CLgltYxHGMd_fRmLGOmF8gJ2IaoKpG0Zoai0m1NEo9GNCufU4GjBRz2br_NC-wBNsY7-_uU1-x8y-XGJZK.aVZRnQ.gFg5Fe6JJVzuWAmFQ3PmQfy3gNc'}
+2026-01-01 15:51:09,630 | ERROR | restaurant_app | wrapper:371 | CSRF DEBUG: Received='None', Session='OhZI3ftPw3SROoAqObbQQ6wJ63uvkcaZyhhidL9FcDM', Method='POST', Path='/admin/upload-news-media', Cookies={'g_state': '{"i_l":0,"i_ll":1767165282712,"i_b":"Ifs97MpupQgttC1vTFpTSisYOAs0WycJf8Nunmq9Wpk","i_e":{"enable_itp_optimization":0}}', 'session': '.eJy1jtFOg0AQRX_F7HOhCLUIb8ZqorHB1reaZjMsA2wKi-7sQmrTf3ep5RPMPExy594758R42QDVSCz9PLEb4xYjKwQSsRmDopXKH7ARXYtsf55NFtS6085AKKyW5ugL0iWXqodGFv9i3M8Y_0LdgkLlAkZbvPJxBQ4uZevHbPW0dRWXpOkOqJya1buXqDTvQ_SxzbqH7yzPN5vl8LqMbH8QsDvWtSzekmexWruoVAZ1CQJ5A6qyUI3F9ufCRSQ7xR1MyoIwAXTjiTCMvEUgci8Jy9CLgltYxHGMd_fRmLGOmF8gJ2IaoKpG0Zoai0m1NEo9GNCufU4GjBRz2br_NC-wBNsY7-_uU1-x8y-XGJZK.aVZRnQ.gFg5Fe6JJVzuWAmFQ3PmQfy3gNc'}
+2026-01-01 15:51:09,632 | WARNING | restaurant_app | wrapper:372 | CSRF token mismatch or missing
+2026-01-01 15:51:09,632 | WARNING | restaurant_app | wrapper:372 | CSRF token mismatch or missing
+2026-01-01 15:51:09,968 | ERROR | restaurant_app | wrapper:371 | CSRF DEBUG: Received='None', Session='OhZI3ftPw3SROoAqObbQQ6wJ63uvkcaZyhhidL9FcDM', Method='POST', Path='/admin/upload-news-media', Cookies={'g_state': '{"i_l":0,"i_ll":1767165282712,"i_b":"Ifs97MpupQgttC1vTFpTSisYOAs0WycJf8Nunmq9Wpk","i_e":{"enable_itp_optimization":0}}', 'session': '.eJzFj1FPgzAUhf-K6fNgCHMIb8ZponHBzbeZpbmUCzSDor0tZC7775Y5foO5Dzc5Pef0uyfGywaoRmLp54ndGLcYWSGQiM0YFK1U_oCN6Fpk-_NssqDWnXYGQmG1NEdfkC65VD00svhf437G-BfqFhQqFzDa4vUQrsBdkbL1Y7Z62rqKS9J0B1ROzerdS1Sa9yH62Gbdw3eW55vNcnhdRrY_CNgd61oWb8mzWK1dVCqDugSBvAFVWajGYvtz4SKSneIOJmVBmAC68UQYRt4iELmXhGXoRcEtLOI4xrv7aMxYR8wvkBMxDVBVo2hNjcWkWhqlHgxo1z4nA0aKuWzd_zQvsATbGO_v3ae-YudfYyKksA.aVZRnQ.wubK5Zvx3sbBrf0uBsxjYSwpO8Q'}
+2026-01-01 15:51:09,968 | ERROR | restaurant_app | wrapper:371 | CSRF DEBUG: Received='None', Session='OhZI3ftPw3SROoAqObbQQ6wJ63uvkcaZyhhidL9FcDM', Method='POST', Path='/admin/upload-news-media', Cookies={'g_state': '{"i_l":0,"i_ll":1767165282712,"i_b":"Ifs97MpupQgttC1vTFpTSisYOAs0WycJf8Nunmq9Wpk","i_e":{"enable_itp_optimization":0}}', 'session': '.eJzFj1FPgzAUhf-K6fNgCHMIb8ZponHBzbeZpbmUCzSDor0tZC7775Y5foO5Dzc5Pef0uyfGywaoRmLp54ndGLcYWSGQiM0YFK1U_oCN6Fpk-_NssqDWnXYGQmG1NEdfkC65VD00svhf437G-BfqFhQqFzDa4vUQrsBdkbL1Y7Z62rqKS9J0B1ROzerdS1Sa9yH62Gbdw3eW55vNcnhdRrY_CNgd61oWb8mzWK1dVCqDugSBvAFVWajGYvtz4SKSneIOJmVBmAC68UQYRt4iELmXhGXoRcEtLOI4xrv7aMxYR8wvkBMxDVBVo2hNjcWkWhqlHgxo1z4nA0aKuWzd_zQvsATbGO_v3ae-YudfYyKksA.aVZRnQ.wubK5Zvx3sbBrf0uBsxjYSwpO8Q'}
+2026-01-01 15:51:09,970 | WARNING | restaurant_app | wrapper:372 | CSRF token mismatch or missing
+2026-01-01 15:51:09,970 | WARNING | restaurant_app | wrapper:372 | CSRF token mismatch or missing
+2026-01-01 15:51:10,549 | ERROR | restaurant_app | wrapper:371 | CSRF DEBUG: Received='None', Session='OhZI3ftPw3SROoAqObbQQ6wJ63uvkcaZyhhidL9FcDM', Method='POST', Path='/admin/upload-news-media', Cookies={'g_state': '{"i_l":0,"i_ll":1767165282712,"i_b":"Ifs97MpupQgttC1vTFpTSisYOAs0WycJf8Nunmq9Wpk","i_e":{"enable_itp_optimization":0}}', 'session': '.eJzVj1FPgzAUhf-K6fNgCHMIb8ZponHBzbeZpbmUCzSDor0tZC7775Y5foS5Dzc5Pef0uyfGywaoRmLp54ndGLcYWSGQiM0YFK1U_oCN6Fpk-_NssqDWnXYGQmG1NEdfkC65VD00svgnxv2M8S_ULShULmC0xevFXIE7N2Xrx2z1tHUVl6TpDqicmtW7l6g070P0sc26h-8szzeb5fC6jGx_ELA71rUs3pJnsVq7qFQGdQkCeQOqslCNxfbnwkUkO8UdTMqCMAF044kwjLxFIHIvCcvQi4JbWMRxjHf30ZixjphfICdiGqCqRtGaGotJtTRKPRjQrn1OBowUc9m6_2leYAm2Md7fu099xc6_faCzFg.aVZRng.nkmPpUfnuw6tG0GkrBZ7ALiBUOA'}
+2026-01-01 15:51:10,549 | ERROR | restaurant_app | wrapper:371 | CSRF DEBUG: Received='None', Session='OhZI3ftPw3SROoAqObbQQ6wJ63uvkcaZyhhidL9FcDM', Method='POST', Path='/admin/upload-news-media', Cookies={'g_state': '{"i_l":0,"i_ll":1767165282712,"i_b":"Ifs97MpupQgttC1vTFpTSisYOAs0WycJf8Nunmq9Wpk","i_e":{"enable_itp_optimization":0}}', 'session': '.eJzVj1FPgzAUhf-K6fNgCHMIb8ZponHBzbeZpbmUCzSDor0tZC7775Y5foS5Dzc5Pef0uyfGywaoRmLp54ndGLcYWSGQiM0YFK1U_oCN6Fpk-_NssqDWnXYGQmG1NEdfkC65VD00svgnxv2M8S_ULShULmC0xevFXIE7N2Xrx2z1tHUVl6TpDqicmtW7l6g070P0sc26h-8szzeb5fC6jGx_ELA71rUs3pJnsVq7qFQGdQkCeQOqslCNxfbnwkUkO8UdTMqCMAF044kwjLxFIHIvCcvQi4JbWMRxjHf30ZixjphfICdiGqCqRtGaGotJtTRKPRjQrn1OBowUc9m6_2leYAm2Md7fu099xc6_faCzFg.aVZRng.nkmPpUfnuw6tG0GkrBZ7ALiBUOA'}
+2026-01-01 15:51:10,552 | WARNING | restaurant_app | wrapper:372 | CSRF token mismatch or missing
+2026-01-01 15:51:10,552 | WARNING | restaurant_app | wrapper:372 | CSRF token mismatch or missing
+2026-01-01 15:51:54,400 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json

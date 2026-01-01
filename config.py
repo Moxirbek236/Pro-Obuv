@@ -32,7 +32,7 @@ class Config:
 
     # Security configuration
     SECRET_KEY = os.environ.get("SECRET_KEY", secrets_module.token_urlsafe(32))
-    SESSION_COOKIE_SECURE = IS_PRODUCTION
+    SESSION_COOKIE_SECURE = os.environ.get("SESSION_COOKIE_SECURE", "false").lower() == "true"
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = "Lax"
     PERMANENT_SESSION_LIFETIME = 7200

@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+
+{% block title %}Super Admin - Sozlamalar{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2><i class="bi bi-gear-fill me-2"></i>Sayt Sozlamalari</h2>
+                <a href="{{ url_for('super_admin_dashboard') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-1"></i> Dashboardga qaytish
+                </a>
+            </div>
+            <p class="text-muted">Saytning umumiy aloqa ma'lumotlari va ijtimoiy tarmoqlarini boshqarish.</p>
+        </div>
+    </div>
+
+    <!-- Aloqa Ma'lumotlari -->
+    <div class="card shadow-sm mb-5">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0 text-primary">Aloqa Ma'lumotlari</h5>
+        </div>
+        <div class="card-body">
+            <form action="{{ url_for('super_admin_settings_update') }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <input type="hidden" name="type" value="contact">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Telefon Raqam</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                            <input type="text" class="form-control" name="site_phone" value="{{ site_settings.site_phone }}" placeholder="+998 90 123 45 67">
+                        </div>
+                        <div class="form-text">Asosiy aloqa telefoni (Header, Footer va Aloqa sahifasida ko'rinadi).</div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label class="form-label">Email Manzil</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                            <input type="email" class="form-control" name="site_email" value="{{ site_settings.site_email }}" placeholder="info@example.com">
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Telegram Profil (Username)</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-telegram"></i></span>
+                            <input type="text" class="form-control" name="site_telegram_username" value="{{ site_settings.site_telegram_username }}" placeholder="@username">
+                        </div>
+                        <div class="form-text">Masalan: @proobuvLLC</div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Telegram Kanal/Guruh Linki</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-link-45deg"></i></span>
+                            <input type="text" class="form-control" name="site_telegram" value="{{ site_settings.site_telegram }}" placeholder="https://t.me/...">
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Manzil</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                            <input type="text" class="form-control" name="site_address" value="{{ site_settings.site_address }}" placeholder="Toshkent sh...">
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 text-end">
+                    <button type="submit" class="btn btn-primary px-4"><i class="bi bi-save me-1"></i> Saqlash</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Ijtimoiy Tarmoqlar -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 text-primary">Ijtimoiy Tarmoqlar</h5>
+            <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addSocialModal">
+                <i class="bi bi-plus-lg me-1"></i> Yangi qo'shish
+            </button>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th width="50"><i class="bi bi-arrow-down-up"></i></th>
+                            <th>Platforma</th>
+                            <th>Havola (URL)</th>
+                            <th>Icon</th>
+                            <th>Holati</th>
+                            <th class="text-end">Amallar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if all_social_links %}
+                            {% for link in all_social_links %}
+                            <tr>
+                                <td>{{ link.sort_order }}</td>
+                                <td>
+                                    <i class="{{ link.icon }} me-2 text-primary"></i>
+                                    <strong>{{ link.platform }}</strong>
+                                </td>
+                                <td><a href="{{ link.url }}" target="_blank" class="text-decoration-none small text-truncate d-inline-block" style="max-width: 250px;">{{ link.url }}</a></td>
+                                <td><code>{{ link.icon }}</code></td>
+                                <td>
+                                    {% if link.active %}
+                                        <span class="badge bg-success-subtle text-success">Faol</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary-subtle text-secondary">Nofaol</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="text-end">
+                                        <form action="{{ url_for('super_admin_settings_social_delete') }}" method="POST" class="d-inline" onsubmit="return confirm('O\'chirishni tasdiqlaysizmi?')">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                            <input type="hidden" name="link_id" value="{{ link.id }}">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center py-4 text-muted">Hozircha ijtimoiy tarmoqlar qo'shilmagan</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="mt-2 text-muted small">
+                <i class="bi bi-info-circle me-1"></i> Ijtimoiy tarmoqlar saytning footer qismida avtomatik chiqadi.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Social Modal -->
+<div class="modal fade" id="addSocialModal" tabindex="-1" aria-labelledby="addSocialModalLabel">
+    <div class="modal-dialog">
+        <form action="{{ url_for('super_admin_settings_social_add') }}" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addSocialModalLabel">Yangi Ijtimoiy Tarmoq</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Platforma Nomi</label>
+                        <input type="text" class="form-control" name="platform" placeholder="Instagram, YouTube..." required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Havola (URL)</label>
+                        <input type="url" class="form-control" name="url" placeholder="https://..." required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Bootstrap Icon Class</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-emoji-smile"></i></span>
+                            <input type="text" class="form-control" name="icon" placeholder="bi bi-instagram" required>
+                        </div>
+                        <div class="form-text">Bootstrap Icons klassini kiriting (masalan: bi bi-facebook)</div>
+                    </div>
+                    <div class="row">
+                         <div class="col-6 mb-3">
+                            <label class="form-label">Tartib raqami</label>
+                            <input type="number" class="form-control" name="sort_order" value="10">
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label class="form-label">Holati</label>
+                            <select class="form-select" name="active">
+                                <option value="1" selected>Faol</option>
+                                <option value="0">Nofaol</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+                    <button type="submit" class="btn btn-primary">Qo'shish</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

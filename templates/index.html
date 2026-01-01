@@ -19,6 +19,7 @@
       property="og:description"
       content="Pro Obuv — O'zbekistondagi eng yaxshi spetsobuv va ish kiyimlari do'koni. Xavfsizlik poyabzallari, ish kiyimlari, himoya vositalari." />
     <meta name="yandex-verification" content="dad000c350eb0a7e" />
+    <meta name="csrf-token" content="{{ csrf_token if csrf_token else '' }}">
     <meta property="og:type" content="website" />
     <meta property="og:url" content="{{ canonical_url() }}" />
     <meta
@@ -72,9 +73,10 @@
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
       rel="stylesheet" />
-    <link
-      rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}" />
+    <!-- Swiper & News Ticker CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/news-ticker.css') }}" />
     <style>
       body {
         background: linear-gradient(
@@ -692,9 +694,9 @@
         </div>
       </div>
     </div>
-
     <!-- Yangiliklar Tasmasi -->
     {% include 'components/news_ticker.html' %}
+
 
     <!-- Contact Section -->
     <div class="container mt-5" id="contact">
@@ -800,5 +802,8 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Swiper & News Ticker JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/news-ticker.js') }}"></script>
   </body>
 </html>

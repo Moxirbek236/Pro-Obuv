@@ -10,25 +10,20 @@
         <p class="brand-desc">{{ _('footer.company_desc') }}</p>
         
         <div class="social-row">
-          {% set socials = [
-            ('youtube', 'https://www.youtube.com/@proobuv-safety', 'icons/youtube.webp', 'YouTube'),
-            ('instagram', 'https://www.instagram.com/proguarduz/', 'icons/instagram.webp', 'Instagram'),
-            ('facebook', 'https://www.facebook.com/aklashoes/', 'icons/facebook.webp', 'Facebook'),
-            ('telegram', 'https://t.me/specobuv', 'icons/telegram.jpg', 'Telegram'),
-            ('phone', 'tel:' ~ (superadmin_settings.get('phone')|replace(' ', '') if superadmin_settings and superadmin_settings.get('phone') else get_text('footer.phone_href')), 'icons/phone.webp', _('footer.phone_display')),
-            ('email', 'mailto:premiumsafety@mail.ru', 'icons/gmail.webp', 'Email'),
-            ('maps', 'https://maps.app.goo.gl/Ezg462SRmBYLxfUY6', 'icons/maps.webp', _('footer.address')),
-            ('threads', 'https://www.threads.net/', 'icons/threads.webp', 'Threads'),
-            ('olx', 'https://www.olx.uz/', 'icons/olx.png', 'OLX'),
-            ('uzum', 'https://uzum.uz/uz/shop/pro-obuv', 'icons/uzum.webp', 'Uzum Market'),
-            ('yandex', 'https://market.yandex.ru/', 'icons/yandex.webp', 'Yandex Market')
-          ] %}
-          
-          {% for id, url, icon, label in socials %}
-          <a href="{{ url }}" target="_blank" class="social-icon-btn {{ id }}" aria-label="{{ label }}" title="{{ label }}">
-            <img src="{{ icon | cloudinary_url }}" alt="{{ label }}" width="20" height="20" loading="lazy" onerror="this.src='{{ url_for('static', filename=icon) }}'; this.onerror=null;">
-          </a>
-          {% endfor %}
+          {% if social_links %}
+            {% for link in social_links %}
+            <a href="{{ link.url }}" target="_blank" class="social-icon-btn {{ link.platform|lower }}" aria-label="{{ link.platform }}" title="{{ link.platform }}">
+                 {% if 'bi-' in link.icon %}
+                    <i class="{{ link.icon }}"></i>
+                 {% else %}
+                    <img src="{{ link.icon | cloudinary_url }}" alt="{{ link.platform }}" width="20" height="20" loading="lazy">
+                 {% endif %}
+            </a>
+            {% endfor %}
+          {% else %}
+             <!-- Fallback if social links not yet configured -->
+             <a href="https://t.me/proobuvLLC" class="social-icon-btn telegram"><i class="bi bi-telegram"></i></a>
+          {% endif %}
         </div>
 
         <div class="newsletter-box mt-5">
@@ -60,14 +55,18 @@
         <h6>{{ _('footer.contact_info') }}</h6>
         <ul class="contact-list">
           <li>
-            {% if superadmin_settings and superadmin_settings.get('phone') %}
-            <a href="tel:{{ superadmin_settings.get('phone')|replace(' ', '') }}"><i class="bi bi-telephone me-2 text-accent"></i>{{ superadmin_settings.get('phone') }}</a>
-            {% else %}
-            <a href="tel:{{ get_text('footer.phone_href') }}"><i class="bi bi-telephone me-2 text-accent"></i>{{ get_text('footer.phone_display') }}</a>
-            {% endif %}
+            {% set ph = site_settings.site_phone if site_settings.site_phone else get_text('footer.phone_display') %}
+            {% set ph_href = ph|replace(' ', '') %}
+            <a href="tel:{{ ph_href }}"><i class="bi bi-telephone me-2 text-accent"></i>{{ ph }}</a>
           </li>
-          <li><a href="mailto:premiumsafety@mail.ru"><i class="bi bi-envelope me-2 text-accent"></i>premiumsafety@mail.ru</a></li>
-          <li><a href="https://maps.app.goo.gl/Ezg462SRmBYLxfUY6"><i class="bi bi-geo-alt me-2 text-accent"></i>{{ _('footer.address') }}</a></li>
+          <li>
+            {% set em = site_settings.site_email if site_settings.site_email else 'premiumsafety@mail.ru' %}
+            <a href="mailto:{{ em }}"><i class="bi bi-envelope me-2 text-accent"></i>{{ em }}</a>
+          </li>
+          <li>
+            {% set addr = site_settings.site_address if site_settings.site_address else get_text('footer.address') %}
+            <a href="https://maps.app.goo.gl/Ezg462SRmBYLxfUY6" target="_blank"><i class="bi bi-geo-alt me-2 text-accent"></i>{{ addr }}</a>
+          </li>
           <li class="mt-4">
             <div class="hours-box p-3 rounded" style="background: var(--footer-surface)">
                 <strong class="text-bright d-block mb-1"><i class="bi bi-clock me-2"></i>{{ _('footer.hours') }}</strong>

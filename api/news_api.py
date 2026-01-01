@@ -8,6 +8,8 @@ from datetime import datetime
 from werkzeug.utils import secure_filename
 from flask import Blueprint, request, jsonify, current_app, session
 import uuid
+from services.cloudinary_service import cloudinary_service
+from cloudinary_helpers import get_cloudinary_url
 
 news_api = Blueprint("news_api", __name__)
 
@@ -21,9 +23,7 @@ SOCIAL_FOOTER = (
 DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
 NEWS_FILE = os.path.join(DATA_DIR, "news.json")
 
-MEDIA_DIR = os.path.join(
-    os.path.dirname(os.path.dirname(__file__)), "static", "media", "news"
-)
+# MEDIA_DIR is no longer used for local storage (migrated to Cloudinary)
 ALLOWED_IMAGE_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
 ALLOWED_VIDEO_EXTENSIONS = {"mp4", "webm", "mov"}
 MAX_IMAGE_SIZE = 5 * 1024 * 1024  # 5MB
@@ -93,6 +93,16 @@ def load_news_data():
                         except Exception:
                             embeds.append(None)
                     n['youtube_embeds'] = embeds
+
+                    # Optimize Cloudinary URLs
+                    if n.get('images'):
+                        n['images'] = [get_cloudinary_url(img) for img in n['images'] if img]
+                    if n.get('image_url'):
+                        n['image_url'] = get_cloudinary_url(n['image_url'])
+                    if n.get('videos'):
+                         n['videos'] = [get_cloudinary_url(vid, resource_type="video") for vid in n['videos'] if vid]
+                    if n.get('video_url'):
+                         n['video_url'] = get_cloudinary_url(n['video_url'], resource_type="video")
                 except Exception:
                     n.setdefault('images', [])
                     n.setdefault('videos', [])
@@ -602,33 +612,42 @@ def upload_media():
                 400,
             )
 
-        # Xavfsiz fayl nomi yaratish
-        news_type = request.form.get("news_type", "news")
-        news_id = request.form.get("news_id", "new")
-        filename = generate_filename(file.filename, news_type, news_id)
+        # Cloudinary upload logic
+        try:
+            folder = "news/images" if is_image else "news/videos"
+            resource_type = "image" if is_image else "video"
+            
+            # Use a thread pool for asynchronous-style handling if needed, 
+            # but here we need the URL for the response. 
+            # Streaming directly from file.stream to Cloudinary.
+            upload_result = cloudinary_service.upload_image(
+                file.stream,
+                folder=folder,
+                resource_type=resource_type
+            )
+            
+            if not upload_result:
+                return jsonify({"success": False, "message": "Cloudinary upload failed"}), 500
+                
+            url_path = upload_result.get("secure_url")
+            public_id = upload_result.get("public_id")
+            # For backward compatibility with clients expecting a filename
+            res_filename = secure_filename(file.filename)
 
-        # Fayl turini aniqlash va saqlash yo'lini belgilash
-        if is_image:
-            upload_path = os.path.join(MEDIA_DIR, "images", filename)
-            url_path = f"/static/media/news/images/{filename}"
-        else:
-            upload_path = os.path.join(MEDIA_DIR, "videos", filename)
-            url_path = f"/static/media/news/videos/{filename}"
-
-        # Faylni saqlash
-        ensure_directories()
-        file.save(upload_path)
-
-        return jsonify(
-            {
-                "success": True,
-                "message": "Fayl muvaffaqiyatli yuklandi",
-                "filename": filename,
-                "file_url": url_path,
-                "file_size": file_size,
-                "file_type": "image" if is_image else "video",
-            }
-        )
+            return jsonify(
+                {
+                    "success": True,
+                    "message": "Fayl muvaffaqiyatli yuklandi",
+                    "filename": res_filename,
+                    "file_url": url_path,
+                    "public_id": public_id,
+                    "file_size": file_size,
+                    "file_type": "image" if is_image else "video",
+                }
+            )
+        except Exception as upload_err:
+            current_app.logger.error(f"Cloudinary upload error: {str(upload_err)}")
+            return jsonify({"success": False, "message": f"Cloudinary upload error: {str(upload_err)}"}), 500
 
     except Exception as e:
         # Detailed logging for easier debugging: include stack trace and context

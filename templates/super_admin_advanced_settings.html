@@ -15,7 +15,7 @@
     {% endwith %}
 
     <form method="POST" action="{{ url_for('super_admin_advanced_settings') }}" class="settings-form">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
         <!-- System Settings -->
         <div class="card mb-4">

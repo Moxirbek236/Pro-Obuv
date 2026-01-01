@@ -3,141 +3,163 @@
  * Handles fetching, displaying, and cycling through news items with universal touch/mouse support.
  */
 
-if (typeof NewsTicker === 'undefined') {
- class NewsTicker {
-    constructor() {
-        this.container = document.getElementById('newsTickerContent');
-        // Locate primary DOM nodes with fallbacks for older templates
-        this.container = document.getElementById('news-ticker-content') || document.getElementById('newsTickerContent') || (document.querySelector('.news-ticker .swiper-wrapper')) || null;
-        this.swiperEl = document.getElementById('news-ticker-swiper') || document.getElementById('newsTickerSwiper') || (this.container ? this.container.closest('.news-ticker') : null);
-        // If we found a swiper container but not the inner wrapper, prefer querying the wrapper
-        if (this.swiperEl && !this.container) {
-            this.container = this.swiperEl.querySelector('.swiper-wrapper') || this.container;
+if (typeof window.NewsTicker === 'undefined') {
+    window.NewsTicker = class NewsTicker {
+        constructor() {
+            this.container = document.getElementById('newsTickerContent');
+            // Locate primary DOM nodes with fallbacks for older templates
+            this.container = document.getElementById('news-ticker-content') || document.getElementById('newsTickerContent') || (document.querySelector('.news-ticker .swiper-wrapper')) || null;
+            this.swiperEl = document.getElementById('news-ticker-swiper') || document.getElementById('newsTickerSwiper') || (this.container ? this.container.closest('.news-ticker') : null);
+            // If we found a swiper container but not the inner wrapper, prefer querying the wrapper
+            if (this.swiperEl && !this.container) {
+                this.container = this.swiperEl.querySelector('.swiper-wrapper') || this.container;
+            }
+            this.swiper = null;
+            this.items = [];
+
+            this.init();
         }
-        this.swiper = null;
-        this.items = [];
 
-        this.init();
-    }
+        async init() {
+            if (!this.swiperEl) return;
 
-    async init() {
-        if (!this.swiperEl) return;
-
-        await this.fetchNews();
-        
-        if (this.items.length > 0) {
-            this.render();
-            this.initSwiper();
-        } else {
-            this.container.innerHTML = '<div class="swiper-slide news-item">Hozircha yangiliklar yo\'q</div>';
+            await this.fetchNews();
+            
+            if (this.items.length > 0) {
+                this.render();
+                this.initSwiper();
+            } else {
+                this.container.innerHTML = '<div class="swiper-slide news-item">Hozircha yangiliklar yo\'q</div>';
+            }
         }
-    }
 
-    async fetchNews() {
-        try {
-            // Request ticker-only items so server can filter by `show_in_ticker` flag
-            const response = await fetch('/api/news?ticker=1&limit=5');
-            if (!response.ok) {
-                console.warn('news-ticker: /api/news responded with', response.status);
+        async fetchNews() {
+            try {
+                // Request ticker-only items so server can filter by `show_in_ticker` flag
+                // MODIFIED: Removed ticker=1 to show all latest news if ticker specific news are missing
+                const response = await fetch('/api/news?limit=5');
+                if (!response.ok) {
+                    console.warn('news-ticker: /api/news responded with', response.status);
+                    this.items = [];
+                    return;
+                }
+                let data = null;
+                try {
+                    data = await response.json();
+                } catch (e) {
+                    console.error('news-ticker: failed to parse JSON response', e);
+                }
+                console.debug('news-ticker: fetched', response.status, data);
+                if (data && data.success) {
+                    this.items = data.news || [];
+                }
+            } catch (error) {
+                console.error('Failed to fetch news:', error);
                 this.items = [];
+            }
+        }
+
+        render() {
+            if (!this.container) {
+                console.warn('news-ticker: container not found, aborting render');
                 return;
             }
-            let data = null;
-            try {
-                data = await response.json();
-            } catch (e) {
-                console.error('news-ticker: failed to parse JSON response', e);
+
+            this.container.innerHTML = this.items.map((item) => {
+                const title = item.title_local || item.title || '';
+                const imageUrl = item.image_url || '/static/defoult.webp';
+                
+                return `
+                    <div class="swiper-slide">
+                        <a href="/news/${item.id}" 
+                           class="news-item" 
+                           aria-label="${title}" 
+                           role="article">
+                            <div class="news-image-wrapper">
+                                <img src="${imageUrl}" alt="" onerror="this.src='/static/defoult.webp'">
+                            </div>
+                            <div class="news-text-content">
+                                <span class="news-title">${title}</span>
+                            </div>
+                            <div class="news-link-hint">
+                                <i class="bi bi-arrow-right-short"></i>
+                            </div>
+                        </a>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        initSwiper() {
+            if (!this.swiperEl) {
+                console.warn('news-ticker: swiper element not found, skipping swiper init');
+                return;
             }
-            console.debug('news-ticker: fetched', response.status, data);
-            if (data && data.success) {
-                this.items = data.news || [];
+
+            if (this.items.length <= 1) {
+                // Disable navigation if only one item
+                const nav = this.swiperEl ? this.swiperEl.querySelectorAll('.news-nav-btn') : [];
+                nav.forEach(n => n.style.display = 'none');
+                return;
             }
-        } catch (error) {
-            console.error('Failed to fetch news:', error);
-            this.items = [];
+
+            // Determine loop compatibility
+            const maxSlidesPerView = 4; // Max configured in breakpoints
+            const enableLoop = this.items.length >= maxSlidesPerView;
+
+            this.swiper = new Swiper('#news-ticker-swiper', {
+                loop: enableLoop,
+                grabCursor: true,
+                speed: 800,
+                autoplay: {
+                    delay: 5000,
+                    disableOnInteraction: false,
+                    pauseOnMouseEnter: true
+                },
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+                // Universal interaction settings
+                touchEventsTarget: 'container',
+                touchRatio: 1,
+                touchAngle: 45,
+                simulateTouch: true,
+                shortSwipes: true,
+                longSwipes: true,
+                followFinger: true,
+                preventClicks: true,
+                preventClicksPropagation: true,
+                
+                breakpoints: {
+                    // Mobile: 1 item
+                    320: { 
+                        slidesPerView: 1,
+                        spaceBetween: 10
+                    },
+                    // Tablet: 2 items
+                    640: { 
+                        slidesPerView: 2,
+                        spaceBetween: 15
+                    },
+                    // Desktop: 3 items
+                    1024: { 
+                        slidesPerView: 3,
+                        spaceBetween: 20
+                    },
+                    // Wide: 4 items
+                    1400: {
+                        slidesPerView: 4,
+                        spaceBetween: 25
+                    }
+                }
+            });
         }
-    }
-
-    render() {
-        if (!this.container) {
-            console.warn('news-ticker: container not found, aborting render');
-            return;
-        }
-
-        this.container.innerHTML = this.items.map((item) => {
-            const title = item.title_local || item.title || '';
-            const imageUrl = item.image_url || '/static/defoult.webp';
-            
-            return `
-                <div class="swiper-slide">
-                    <a href="/news/${item.id}" 
-                       class="news-item" 
-                       aria-label="${title}" 
-                       role="article">
-                        <div class="news-image-wrapper">
-                            <img src="${imageUrl}" alt="" onerror="this.src='/static/defoult.webp'">
-                        </div>
-                        <div class="news-text-content">
-                            <span class="news-title">${title}</span>
-                        </div>
-                        <div class="news-link-hint">
-                            <i class="bi bi-arrow-right-short"></i>
-                        </div>
-                    </a>
-                </div>
-            `;
-        }).join('');
-    }
-
-    initSwiper() {
-        if (!this.swiperEl) {
-            console.warn('news-ticker: swiper element not found, skipping swiper init');
-            return;
-        }
-
-        if (this.items.length <= 1) {
-            // Disable navigation if only one item
-            const nav = this.swiperEl ? this.swiperEl.querySelectorAll('.news-nav-btn') : [];
-            nav.forEach(n => n.style.display = 'none');
-            return;
-        }
-
-        this.swiper = new Swiper('#news-ticker-swiper', {
-            loop: true,
-            grabCursor: true,
-            speed: 800,
-            autoplay: {
-                delay: 5000,
-                disableOnInteraction: false,
-                pauseOnMouseEnter: true
-            },
-            pagination: {
-                el: '.swiper-pagination',
-                clickable: true,
-            },
-            navigation: {
-                nextEl: '.swiper-button-next',
-                prevEl: '.swiper-button-prev',
-            },
-            // Universal interaction settings
-            touchEventsTarget: 'container',
-            touchRatio: 1,
-            touchAngle: 45,
-            simulateTouch: true,
-            shortSwipes: true,
-            longSwipes: true,
-            followFinger: true,
-            preventClicks: true,
-            preventClicksPropagation: true,
-            
-            breakpoints: {
-                // Adaptive settings if needed
-                320: { spaceBetween: 10 },
-                1024: { spaceBetween: 20 }
-            }
-        });
-    }
-    }
+    };
 }
 
 document.addEventListener('DOMContentLoaded', () => {

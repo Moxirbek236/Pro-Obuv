@@ -259,7 +259,16 @@ def get_text(key, lang=None):
             pass
         # Fallback: return top-level key if exists (or None)
         val = _translations.get(lang, {}).get(key, None)
-        return val
+        if val is not None:
+             return val
+             
+        # Agar joriy tilda topilmasa, default tilini tekshiramiz
+        val = _translations.get(Config.DEFAULT_LANGUAGE, {}).get(key, None)
+        if val is not None:
+            return val
+            
+        # Agar default tilda ham topilmasa, kalitni o'zini qaytarish
+        return key
     except KeyError:
         # Agar tarjima topilmasa, default tildagi matnni qaytarish
         try:

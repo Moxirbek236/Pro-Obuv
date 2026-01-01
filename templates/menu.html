@@ -752,15 +752,12 @@ if (window.__menuInitDone) {
     }
 
     // Normalize category strings to simple slugs for comparison
+    // Normalize category strings to simple slugs for comparison
     function slugifyCategory(cat) {
       if (!cat) return 'all';
-      // Preserve unicode letters and numbers, replace other characters with '-'
-      try {
-        return cat.toString().trim().toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '-').replace(/(^-|-$)/g, '') || 'all';
-      } catch (e) {
-        // Fallback for older browsers: basic ASCII slug
-        return cat.toString().trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'all';
-      }
+      // RELAXED SLUGIFY: Just lowercase and trim to match Jinja's |lower output better.
+      // We don't want to strip non-latin chars aggressively if the HTML attribute contains them.
+      return cat.toString().trim().toLowerCase(); 
     }
 
   // Simplified search: use only client-side filtering over server-rendered cards.
@@ -798,15 +795,20 @@ if (window.__menuInitDone) {
       
       try {
         // 1. Category Filter
+        // Use loose matching: check if item category *includes* the filter category or vice versa
+        // This handles cases like 'specobuv' vs 'spetsobuv' if they share a root, or just exact match after simple normalization.
         const itemCat = slugifyCategory(card.dataset.category || 'product');
-        if (category && normCategory !== 'all' && itemCat !== normCategory) {
-          isVisible = false;
+        if (category && normCategory !== 'all' && normCategory !== '') {
+            if (itemCat !== normCategory && !itemCat.includes(normCategory) && !normCategory.includes(itemCat)) {
+                 isVisible = false;
+            }
         }
 
-        // 2. Search Filter (Search in title and category)
+        // 2. Search Filter (Search in title, category, and description if available)
         if (isVisible && q) {
           const title = (card.querySelector('.card-title')?.innerText || '').toLowerCase();
           const categoryText = (card.dataset.category || '').toLowerCase();
+          // Relaxed search
           if (!title.includes(q) && !categoryText.includes(q)) {
             isVisible = false;
           }
@@ -815,16 +817,16 @@ if (window.__menuInitDone) {
         // 3. Size Filter
         if (isVisible && size) {
           const itemSizes = (card.dataset.sizes || '').toLowerCase();
-          // Match whole size or comma-separated
-          const sizeList = itemSizes.split(',').map(s => s.trim());
-          if (!sizeList.some(s => s === size || s.includes(size))) {
-            isVisible = false;
+          // specific check: if user types "42", match "42" in "40,41,42"
+          if (!itemSizes.includes(size)) {
+             isVisible = false;
           }
         }
 
         // 4. Color Filter
         if (isVisible && color) {
           const itemColors = (card.dataset.colors || '').toLowerCase();
+          // exact match or substring match? loose substring is better for users
           if (!itemColors.includes(color)) {
             isVisible = false;
           }
@@ -913,7 +915,9 @@ if (window.__menuInitDone) {
         const clearBtn = document.getElementById('clearFiltersBtn');
 
         if (searchInput && !searchInput._menuWired) {
+          // Use 'input' for realtime, but duplicate with 'keyup' to be sure
           searchInput.addEventListener('input', function() { debouncedSearch(); });
+          searchInput.addEventListener('keyup', function() { debouncedSearch(); });
           searchInput._menuWired = true;
         }
 

@@ -186,6 +186,13 @@
             requestInterceptor: (req) => {
               // Keep credentials when the UI is served from this host
               req.credentials = 'include';
+              
+              // Automatically inject CSRF token from the server-side template variable
+              const csrfToken = "{{ csrf_token }}";
+              if (csrfToken && csrfToken !== "None") {
+                req.headers['X-CSRF-Token'] = csrfToken;
+              }
+              
               return req;
             }
           });

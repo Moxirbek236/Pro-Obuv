@@ -98,6 +98,7 @@
       })();
     </script>
     <meta name="theme-color" content="#ffffff" />
+    <meta name="csrf-token" content="{{ csrf_token if csrf_token else '' }}">
     <script src="{{ url_for('static', filename='js/loop-protection.js') }}"></script>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
@@ -2323,19 +2324,7 @@
          so it has been removed. -->
 
     <!-- Footer News Ticker Markup (single shared instance) -->
-    <div class="news-ticker site-news-ticker" aria-hidden="false" role="region" aria-label="News ticker" style="background:#0f172a;color:#fff;padding:8px 0;">
-      <div class="container" style="max-width:1100px;margin:0 auto;padding:0 12px;">
-        <div class="swiper" id="news-ticker-swiper">
-          <div class="swiper-wrapper" id="news-ticker-content">
-            <!-- Slides injected by static/js/news-ticker.js -->
-            <div class="swiper-slide news-item">Loading news...</div>
-          </div>
-          <div class="swiper-button-prev" aria-label="Previous news"></div>
-          <div class="swiper-button-next" aria-label="Next news"></div>
-          <div class="swiper-pagination"></div>
-        </div>
-      </div>
-    </div>
+
 
     <!-- Enhanced Telegram-style Chat Widget - Only for Staff, Courier, SuperAdmin -->
     {% if is_staff or is_courier or is_super_admin %}

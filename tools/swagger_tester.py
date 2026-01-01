@@ -71,6 +71,27 @@ def main():
     paths = spec.get('paths', {}) if isinstance(spec, dict) else {}
 
     results = []
+    # Create a requests.Session to preserve cookies for auth-aware tests
+    sess = requests.Session()
+    authed = False
+
+    # Try a quick login/register to obtain cookies for protected endpoints
+    # Prefer login, fall back to register if login returns 401.
+    auth_login_url = args.base.rstrip('/') + '/api/auth/login'
+    auth_register_url = args.base.rstrip('/') + '/api/auth/register'
+    try:
+        r = sess.post(auth_login_url, json={'email': 'demo@demo', 'password': 'demo'}, timeout=args.timeout)
+        if r.status_code == 200:
+            authed = True
+            print('[+] Authenticated with /api/auth/login')
+        else:
+            # Try register
+            r2 = sess.post(auth_register_url, json={'email': 'new@demo', 'password': 'demo'}, timeout=args.timeout)
+            if r2.status_code in (200, 201):
+                authed = True
+                print('[+] Registered and authenticated via /api/auth/register')
+    except Exception:
+        pass
     for p, methods in paths.items():
         for m, details in (methods.items() if isinstance(methods, dict) else []):
             method = m.upper()
@@ -102,20 +123,35 @@ def main():
             try:
                 resp = None
                 if method == 'GET':
-                    resp = requests.get(url, headers=headers, timeout=args.timeout)
+                    if authed:
+                        resp = sess.get(url, headers=headers, timeout=args.timeout)
+                    else:
+                        resp = requests.get(url, headers=headers, timeout=args.timeout)
                 elif method in ('POST', 'PUT', 'DELETE'):
                     headers['Content-Type'] = 'application/json'
                     body = payload or {}
                     if method == 'POST':
-                        resp = requests.post(url, headers=headers, json=body, timeout=args.timeout)
+                        if authed:
+                            resp = sess.post(url, headers=headers, json=body, timeout=args.timeout)
+                        else:
+                            resp = requests.post(url, headers=headers, json=body, timeout=args.timeout)
                     elif method == 'PUT':
-                        resp = requests.put(url, headers=headers, json=body, timeout=args.timeout)
+                        if authed:
+                            resp = sess.put(url, headers=headers, json=body, timeout=args.timeout)
+                        else:
+                            resp = requests.put(url, headers=headers, json=body, timeout=args.timeout)
                     else:
                         # DELETE with body is less common; try without body first
                         try:
-                            resp = requests.delete(url, headers=headers, timeout=args.timeout)
+                            if authed:
+                                resp = sess.delete(url, headers=headers, timeout=args.timeout)
+                            else:
+                                resp = requests.delete(url, headers=headers, timeout=args.timeout)
                         except Exception:
-                            resp = requests.delete(url, headers=headers, json=body, timeout=args.timeout)
+                            if authed:
+                                resp = sess.delete(url, headers=headers, json=body, timeout=args.timeout)
+                            else:
+                                resp = requests.delete(url, headers=headers, json=body, timeout=args.timeout)
                 else:
                     # unsupported method for tester
                     results.append({'path': p, 'method': method, 'error': 'unsupported_method'})

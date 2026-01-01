@@ -12,6 +12,8 @@ Admin{% endblock %} {% block additional_css %}
     margin: 0 auto;
   }
 </style>
+{% endblock %} {% block extra_head %}
+<meta name="csrf-token" content="{{ csrf_token }}">
 {% endblock %} {% block content %}
 <div class="form-page">
   <div class="container">
@@ -325,15 +327,46 @@ Admin{% endblock %} {% block additional_css %}
     </div>
   </div>
 </div>
+
+<!-- Hidden data for JavaScript -->
+<div id="news-form-config"
+     data-csrf-token="{{ csrf_token if csrf_token is defined else '' }}"
+     data-edit-id="{{ edit_id if edit_id is defined else '' }}"
+     data-server-edit='{{ edit_news|tojson if edit_news is defined else "null" }}'>
+</div>
 {% endblock %} {% block scripts %}
 <script>
-  // CSRF token for AJAX requests — define safely to avoid redeclaration
-  if (typeof window.CSRF_TOKEN === 'undefined') {
-    try { window.CSRF_TOKEN = {{ csrf_token|tojson }}; } catch(e) { window.CSRF_TOKEN = ''; }
-  }
-  if (typeof CSRF_TOKEN === 'undefined') {
-    CSRF_TOKEN = window.CSRF_TOKEN;
-  }
+  (function() {
+    // Try multiple sources for CSRF token, in order of reliability
+    const metaTag = document.querySelector('meta[name="csrf-token"]');
+    const tokenFromMeta = metaTag ? metaTag.getAttribute('content') : '';
+    
+    const config = document.getElementById('news-form-config');
+    const tokenFromConfig = config ? config.getAttribute('data-csrf-token') : '';
+    
+    const tokenFromBase = (window.BASE_CONFIG && window.BASE_CONFIG.csrf_token) || '';
+    
+    // Use the first non-empty token we find
+    window.CSRF_TOKEN = tokenFromMeta || tokenFromConfig || tokenFromBase || '';
+    window.EDIT_ID = config ? config.getAttribute('data-edit-id') : null;
+    
+    // Debug: log the token source
+    if (window.CSRF_TOKEN) {
+      const source = tokenFromMeta ? 'meta-tag' : (tokenFromConfig ? 'news-form-config' : 'BASE_CONFIG');
+      console.log('CSRF Token initialized from:', source);
+      console.log('Token value:', window.CSRF_TOKEN);
+    } else {
+      console.error('WARNING: CSRF Token is empty! This will cause POST requests to fail.');
+      console.error('Checked sources: meta-tag, news-form-config, BASE_CONFIG - all empty');
+    }
+    
+    try {
+      window.SERVER_EDIT = config ? JSON.parse(config.getAttribute('data-server-edit')) : null;
+    } catch(e) {
+      window.SERVER_EDIT = null;
+    }
+  })();
+  var CSRF_TOKEN = window.CSRF_TOKEN;
 </script>
 <script>
   // Minimal helper: showNotification (copied from admin script)
@@ -401,6 +434,30 @@ Admin{% endblock %} {% block additional_css %}
     saveBtn.innerHTML = '<i class="spinner-border spinner-border-sm me-2"></i>Saqlanmoqda...';
     saveBtn.disabled = true;
 
+    // Get CSRF token at submission time from all possible sources
+    const metaTag = document.querySelector('meta[name="csrf-token"]');
+    const tokenFromMeta = metaTag ? metaTag.getAttribute('content') : '';
+    const tokenFromWindow = window.CSRF_TOKEN || '';
+    const tokenFromVar = (typeof CSRF_TOKEN !== 'undefined') ? CSRF_TOKEN : '';
+    const tokenFromBase = (window.BASE_CONFIG && window.BASE_CONFIG.csrf_token) || '';
+    
+    const csrfToken = tokenFromMeta || tokenFromWindow || tokenFromVar || tokenFromBase || '';
+    
+    console.log('=== CSRF Token Debug ===');
+    console.log('From meta tag:', tokenFromMeta ? tokenFromMeta.substring(0, 10) + '...' : 'EMPTY');
+    console.log('From window.CSRF_TOKEN:', tokenFromWindow ? tokenFromWindow.substring(0, 10) + '...' : 'EMPTY');
+    console.log('From CSRF_TOKEN var:', tokenFromVar ? tokenFromVar.substring(0, 10) + '...' : 'EMPTY');
+    console.log('From BASE_CONFIG:', tokenFromBase ? tokenFromBase.substring(0, 10) + '...' : 'EMPTY');
+    console.log('Final token:', csrfToken ? csrfToken.substring(0, 10) + '...' : 'EMPTY!!!');
+    
+    if (!csrfToken) {
+      console.error('CRITICAL: No CSRF token available from any source!');
+      showNotification('Xatolik: CSRF token topilmadi. Sahifani yangilang.', 'error');
+      saveBtn.innerHTML = originalText;
+      saveBtn.disabled = false;
+      return;
+    }
+
     const newsId = document.getElementById('newsId').value;
     const isEdit = !!newsId;
     const url = isEdit ? `/api/news/${newsId}` : '/api/news';
@@ -439,7 +496,7 @@ Admin{% endblock %} {% block additional_css %}
     } catch(e){}
 
     const formData = {
-      csrf_token: CSRF_TOKEN,
+      csrf_token: csrfToken,
       title: document.getElementById('newsTitle').value.trim(),
       content: document.getElementById('newsContent').value.trim(),
       title_uz: document.getElementById('newsTitle_uz').value.trim(),
@@ -460,15 +517,18 @@ Admin{% endblock %} {% block additional_css %}
     };
 
     if (!formData.title) { showNotification('Sarlavha kiritilishi shart','error'); saveBtn.innerHTML = originalText; saveBtn.disabled=false; return; }
+    
+    console.log('CSRF Token being sent:', csrfToken);
+    console.log('Form data:', formData);
 
     try {
-      const resp = await fetch(url, { method, credentials: 'same-origin', headers: { 'Content-Type':'application/json','X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : '' }, body: JSON.stringify(formData) });
+      const resp = await fetch(url, { method, credentials: 'same-origin', headers: { 'Content-Type':'application/json','X-CSRF-Token': csrfToken }, body: JSON.stringify(formData) });
       const data = await resp.json();
       if (data.success) {
-        showNotification(isEdit ? 'Yangilik yangilandi' : 'Yangilik qo'shildi','success');
+        showNotification(isEdit ? "Yangilik yangilandi" : "Yangilik qo'shildi", "success");
         window.location.href = '{{ url_for("admin_news_manager") }}';
       } else {
-        showNotification('Xatolik: ' + (data.message || 'Noma\'lum'),'error');
+        showNotification("Xatolik: " + (data.message || "Noma'lum"), "error");
       }
     } catch (e) { console.error(e); showNotification('Saqlashda xatolik yuz berdi','error'); }
     finally { saveBtn.innerHTML = originalText; saveBtn.disabled=false; }
@@ -484,7 +544,8 @@ Admin{% endblock %} {% block additional_css %}
     const loadingDiv = document.createElement('div'); loadingDiv.className='text-center'; loadingDiv.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"></div> Yuklanmoqda...';
     preview.parentNode.insertBefore(loadingDiv, preview);
     const fd = new FormData(); fd.append('file', file);
-    fetch('/admin/upload-news-media',{ method:'POST', credentials: 'same-origin', headers: { 'X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : '' }, body: fd })
+    const csrfToken = window.CSRF_TOKEN || CSRF_TOKEN || '';
+    fetch('/admin/upload-news-media',{ method:'POST', credentials: 'same-origin', headers: { 'X-CSRF-Token': csrfToken }, body: fd })
       .then(r=>r.json()).then(data=>{ loadingDiv.remove(); if (data.success) { hiddenInput.value = data.file_url; preview.src = data.file_url; preview.style.display='block'; removeBtn.style.display='inline-block'; showNotification(data.message,'success'); } else { showNotification(data.message,'error'); } })
       .catch(e=>{ loadingDiv.remove(); console.error(e); showNotification('Fayl yuklashda xatolik','error'); });
   }
@@ -492,10 +553,10 @@ Admin{% endblock %} {% block additional_css %}
 
   // On page load, attach save handler and populate fields if server provided edit data
   document.addEventListener('DOMContentLoaded', function() {
-    const editId = {{ edit_id|tojson }};
-    const serverEdit = {{ edit_news|tojson if edit_news is defined else 'null' }};
-    // Debug: show whether server provided the edit object (open DevTools Console)
-    try { console.log('serverEdit (from server):', serverEdit); } catch(e) {}
+    const editId = window.EDIT_ID;
+    const serverEdit = window.SERVER_EDIT;
+    // Debug: show whether server provided the edit object
+    console.log('serverEdit:', serverEdit);
     document.getElementById('saveNewsBtnPage').addEventListener('click', function() {
       console.log('Save button clicked');
       saveNewsPage();
@@ -546,7 +607,8 @@ Admin{% endblock %} {% block additional_css %}
     } else if (editId) {
       // Fallback: client-side fetch when server didn't provide the item (should be rare)
       document.getElementById('pageTitle').textContent = 'Yangilikni tahrirlash';
-      fetch('/api/news/' + editId, { method: 'GET', credentials: 'same-origin', headers: { 'X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : '' } })
+      const csrfToken = window.CSRF_TOKEN || CSRF_TOKEN || '';
+      fetch('/api/news/' + editId, { method: 'GET', credentials: 'same-origin', headers: { 'X-CSRF-Token': csrfToken } })
         .then(r => r.json())
         .then(data => {
           if (data && data.success && data.news) {

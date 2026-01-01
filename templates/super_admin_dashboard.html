@@ -59,15 +59,14 @@
     </a>
 
     <!-- Advanced Settings Block -->
+    <!-- CMS Settings Block -->
     <a
-      href="{{ url_for('super_admin_advanced_settings') }}"
-      target="_blank"
-      rel="noopener"
+      href="{{ url_for('super_admin_settings') }}"
       class="dashboard-card">
-      <div class="dashboard-icon"></div>
-      <div class="dashboard-title">Kengaytirilgan Sozlamalar</div>
+      <div class="dashboard-icon" style="background-image: url('{{ url_for('static', filename='icons/settings.svg') }}');"></div>
+      <div class="dashboard-title">CMS Sozlamalar</div>
       <div class="dashboard-description">
-        Tizim, frontend, va backend sozlamalarni konfiguratsiya qilish
+        Sayt aloqa ma'lumotlari va ijtimoiy tarmoqlarni boshqarish
       </div>
     </a>
   </div>

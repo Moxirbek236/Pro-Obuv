@@ -239,8 +239,7 @@ not initialize the map. #} {% if not config.get('YANDEX_MAPS_API') %}
         session.get('user_name') }} {% else %} Foydalanuvchi {% endif %}
       </div>
       <div class="profile-role">
-        {% if session.get('super_admin') %} Super Admin {% elif
-        session.get('staff_id') %} Xodim {% elif session.get('courier_id') %}
+        {% if session.get('staff_id') %} Xodim {% elif session.get('courier_id') %}
         Kuryer {% else %} Mijoz {% endif %}
       </div>
     </div>
@@ -309,7 +308,7 @@ not initialize the map. #} {% if not config.get('YANDEX_MAPS_API') %}
               class="form-control"
               id="first_name"
               name="first_name"
-              value="{{ (user.first_name if user else session.get('user_name', '').split()[0] if session.get('user_name') else '')|default('') }}"
+              value="{{ user.first_name if user and user.first_name else '' }}"
               required />
           </div>
           <div class="col-md-6 mb-3">
@@ -321,7 +320,7 @@ not initialize the map. #} {% if not config.get('YANDEX_MAPS_API') %}
               class="form-control"
               id="last_name"
               name="last_name"
-              value="{{ (user.last_name if user else session.get('user_name', '').split()[1] if session.get('user_name') and session.get('user_name').split()|length > 1 else '')|default('') }}" />
+              value="{{ user.last_name if user and user.last_name else '' }}" />
           </div>
         </div>
         <div class="row">
@@ -334,7 +333,7 @@ not initialize the map. #} {% if not config.get('YANDEX_MAPS_API') %}
               class="form-control"
               id="email"
               name="email"
-              value="{{ (user.email if user else session.get('user_email', ''))|default('') }}"
+              value="{{ user.email if user and user.email else '' }}"
               required />
           </div>
           <div class="col-md-6 mb-3">
@@ -346,7 +345,7 @@ not initialize the map. #} {% if not config.get('YANDEX_MAPS_API') %}
               class="form-control"
               id="phone"
               name="phone"
-              value="{{ (user.phone if user else session.get('user_phone', ''))|default('') }}"
+              value="{{ user.phone if user and user.phone else '' }}"
               placeholder="+998901234567" />
           </div>
         </div>
@@ -357,7 +356,7 @@ not initialize the map. #} {% if not config.get('YANDEX_MAPS_API') %}
             class="form-control"
             id="card_number"
             name="card_number"
-            value="{{ (user.card_number if user else session.get('user_card_number', ''))|default('') }}"
+            value="{{ user.card_number if user and user.card_number else '' }}"
             placeholder="XXXX-XXXX-XXXX-XXXX" />
         </div>
         <button type="submit" class="btn btn-update">
@@ -379,7 +378,7 @@ not initialize the map. #} {% if not config.get('YANDEX_MAPS_API') %}
             class="form-control"
             id="address"
             name="address"
-            value="{{ (user.address if user else session.get('user_address', ''))|default('') }}"
+            value="{{ user.address if user and user.address else '' }}"
             placeholder="Manzilni xaritadan tanlang"
             readonly />
         </div>
