@@ -2,6 +2,11 @@
 {% set localized_name = localized_field(item, 'name') or item.name %}
 {% set localized_description = localized_field(item, 'description') or item.description or "Sifatli spetsobuv va ish kiyimlari" %}
 
+{% set all_media = all_media if all_media else [] %}
+{% if not all_media and item.image_url %}
+  {% set all_media = [{'media_url': item.image_url, 'media_type':'image'}] %}
+{% endif %}
+
 {% block title %}{{ localized_name }} — Pro Obuv{% endblock %}
 
 {% block seo_meta %}
@@ -75,56 +80,48 @@
 {% block content %}
 <div id="product-page-data" data-url-template="{{ url_for('product_detail', item_id=0) }}" data-default-image="{{ prefer_webp(item.image_url or url_for('static', filename='defoult.webp')) }}" style="display:none"></div>
 
-{% set all_media = media if media else [] %}
-{% if all_media|length == 0 and item.image_url %}
-  {% set all_media = [{'media_url': item.image_url, 'media_type':'image'}] %}
-{% endif %}
-
 <div class="product-container">
+
   <div class="product-media">
+    {# Debug indicator for media count #}
+    <div style="font-size: 10px; color: #ccc; margin-bottom: 5px;">Media count: {{ all_media|length }}</div>
     {# Swiper main gallery #}
-    <div class="swiper productMainSwiper" id="productMainSwiper">
+    <div class="swiper productMainSwiper universal-swiper" id="productMainSwiper">
       <div class="swiper-wrapper">
         {% for m in all_media %}
           <div class="swiper-slide">
-            {% if m.media_type and m.media_type.startswith('video') %}
-              <video controls muted preload="metadata" class="product-media-video">
-                <source src="{{ m.media_url }}" type="video/mp4">
-              </video>
-            {% else %}
-              <img src="{{ prefer_webp(m.media_url) }}" alt="{{ localized_name }}" class="product-main-image" />
-            {% endif %}
+            <div class="swiper-zoom-container">
+              {% if m.media_type and m.media_type.startswith('video') %}
+                <video controls muted preload="metadata" class="product-media-video">
+                  <source src="{{ m.media_url }}" type="video/mp4">
+                </video>
+              {% else %}
+                <img src="{{ prefer_webp(m.media_url) }}" alt="{{ localized_name }}" class="product-main-image" loading="lazy" />
+              {% endif %}
+            </div>
           </div>
         {% endfor %}
       </div>
-      <button class="swiper-button-prev"></button>
-      <button class="swiper-button-next"></button>
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+      <div class="swiper-pagination"></div>
       <button class="image-enlarge-btn" aria-label="Enlarge images">
         <i class="bi bi-arrows-fullscreen"></i>
       </button>
     </div>
 
     {% if all_media|length > 1 %}
-      <div class="swiper productThumbsSwiper" id="productThumbsSwiper">
+      <div class="swiper productThumbsSwiper universal-thumbs" id="productThumbsSwiper" style="margin-top: 10px;">
         <div class="swiper-wrapper">
           {% for m in all_media %}
             <div class="swiper-slide thumb-slide">
-              <img src="{{ prefer_webp(m.media_url) }}" alt="thumb {{ loop.index }}" />
+              <img src="{{ prefer_webp(m.media_url) }}" alt="thumb {{ loop.index }}" loading="lazy" />
+              {% if m.media_type and m.media_type.startswith('video') %}
+                <div class="video-thumb-icon"><i class="bi bi-play-fill"></i></div>
+              {% endif %}
             </div>
           {% endfor %}
         </div>
-      </div>
-    {% endif %}
-    
-
-    {% if slide_count > 1 %}
-      <div class="thumbnails" id="thumbnailsDesktop">
-        {% for m in all_media %}
-          {% set thumb_src = prefer_webp(m.media_url) %}
-          <div class="thumb" data-idx="{{ loop.index0 }}">
-            <img src="{{ thumb_src }}" alt="thumb {{ loop.index }}">
-          </div>
-        {% endfor %}
       </div>
     {% endif %}
   </div>
@@ -196,7 +193,7 @@
           <div class="rating-bar-row">
             <div class="rating-bar-label">{{ star_val }}</div>
             <div class="rating-progress-bg">
-                <div class="rating-progress-fill" style="--target-width: {{ percent }}%; width: {{ percent }}%;"></div>
+                <div class="rating-progress-fill" style="width: {{ percent }}%"></div>
               </div>
           </div>
         {% endfor %}
@@ -280,63 +277,6 @@
   </div>
 </div>
 
-<script>
-  (function(){
-    try{
-      const thumbs = document.querySelectorAll('#thumbnailsDesktop .thumb');
-      if(thumbs && thumbs.length>0){
-        // mark first thumb active by default
-        thumbs[0].classList.add('active');
-      }
-      document.querySelectorAll('#thumbnailsDesktop .thumb').forEach(function(t){
-        // attach to thumb container
-        t.addEventListener('click', function(e){
-          try {
-            e.stopPropagation();
-            const thumbImg = this.querySelector('img');
-            if (!thumbImg) return;
-            const src = thumbImg.getAttribute('src') || thumbImg.src;
-            const mediaStage = document.getElementById('mediaStageDesktop');
-            if (!mediaStage) return;
-            const main = document.getElementById('mainMediaDesktop');
-            if (main) {
-              const tag = (main.tagName || '').toLowerCase();
-              if (tag === 'img') {
-                main.src = src;
-                if (typeof window.hideSkeleton === 'function') window.hideSkeleton(main);
-              } else if (tag === 'video') {
-                try {
-                  main.pause();
-                } catch (e) {}
-                main.src = src;
-                try { main.load(); } catch(e){}
-              }
-            } else {
-              // fallback: replace inner HTML with an img
-              mediaStage.innerHTML = '<img id="mainMediaDesktop" src="'+src+'" alt="'+(document.title||'')+'">';
-            }
-            // update active thumb
-            try{
-              document.querySelectorAll('#thumbnailsDesktop .thumb').forEach(function(x){ x.classList.remove('active'); });
-              this.classList.add('active');
-            }catch(_){}
-          } catch (e) { console.warn('thumb click error', e); }
-        });
-        // also attach to inner img as a fallback
-        try{
-          const img = t.querySelector('img');
-          if(img){
-            img.style.pointerEvents = 'auto';
-            img.addEventListener('click', function(e){
-              e.stopPropagation();
-              t.click();
-            });
-          }
-        }catch(_){}
-      });
-    }catch(e){console.warn(e)}
-  })();
-</script>
 
 <script>
   // Rating stars behavior for comment form
@@ -432,12 +372,20 @@
 
         var mainSwiper = new Swiper('#productMainSwiper', {
           spaceBetween: 10,
+          zoom: true,
+          keyboard: { enabled: true },
           navigation: {
             nextEl: '#productMainSwiper .swiper-button-next',
             prevEl: '#productMainSwiper .swiper-button-prev'
           },
+          pagination: {
+            el: '#productMainSwiper .swiper-pagination',
+            clickable: true,
+            dynamicBullets: true
+          },
           thumbs: thumbsSwiper ? { swiper: thumbsSwiper } : undefined,
           on: {
+            init: function() { console.log('Swiper initialized. Slides count:', this.slides.length); },
             slideChange: function(){
               try{ if (window._imageEnlargeSwiper) window._imageEnlargeSwiper.slideTo(this.activeIndex); }catch(e){}
             }

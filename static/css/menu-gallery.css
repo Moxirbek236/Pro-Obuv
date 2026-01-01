@@ -225,6 +225,11 @@
 /* Force single-column menu grid on small screens */
 @media (max-width: 575px) {
 	.menu-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
-	.menu-item-card { max-width: 100% !important; }
+	.menu-item-card { 
+		max-width: 100% !important; 
+		opacity: 1 !important; 
+		visibility: visible !important;
+		animation: none !important; /* Disable potential blocking animations on mobile */
+	}
 	:root { --card-image-height: 260px; }
 }

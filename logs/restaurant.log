@@ -4457,3 +4457,45 @@ werkzeug.exceptions.MethodNotAllowed: 405 Method Not Allowed: The method is not 
 2026-01-01 15:51:10,552 | WARNING | restaurant_app | wrapper:372 | CSRF token mismatch or missing
 2026-01-01 15:51:10,552 | WARNING | restaurant_app | wrapper:372 | CSRF token mismatch or missing
 2026-01-01 15:51:54,400 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 15:51:54,400 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:17:11,460 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:17:11,460 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:17:21,982 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:17:21,982 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:17:35,176 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:17:35,176 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:24:43,084 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:24:43,084 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:27:30,745 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:27:30,745 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:28:03,576 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:28:03,576 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:28:10,425 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:28:10,425 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:28:18,194 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:28:18,194 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:36:11,455 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:36:11,455 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:38:17,444 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:38:17,444 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:38:34,990 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:38:34,990 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:39:46,871 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/static/favicons/favicon.ico
+2026-01-01 17:39:46,871 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/static/favicons/favicon.ico
+2026-01-01 17:41:51,550 | WARNING | restaurant_app | login_page:15053 | Failed login attempt for email: moxirbekmoxirbek29@gmail.com
+2026-01-01 17:41:51,550 | WARNING | restaurant_app | login_page:15053 | Failed login attempt for email: moxirbekmoxirbek29@gmail.com
+2026-01-01 17:48:37,160 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:48:37,160 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:48:47,167 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:48:47,167 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:49:12,454 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:49:12,454 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:49:22,247 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:49:22,247 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:49:31,801 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:49:31,801 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:50:23,151 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:50:23,151 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:50:37,474 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:50:37,474 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-01 17:50:47,609 | WARNING | restaurant_app | not_found_error:2747 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json

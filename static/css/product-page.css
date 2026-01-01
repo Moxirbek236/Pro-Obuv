@@ -164,8 +164,8 @@
 
 .productThumbsSwiper .swiper-slide-thumb-active {
   opacity: 1;
-  border-color: #21a366;
-  box-shadow: 0 0 0 2px rgba(33, 163, 102, 0.2);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
 }
 
 .productThumbsSwiper .swiper-slide img {
@@ -185,33 +185,31 @@
   text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
-/* Swiper Navigation Customization */
 .productMainSwiper .swiper-button-next,
 .productMainSwiper .swiper-button-prev {
   width: 40px;
   height: 40px;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(4px);
+  background: var(--bg-card);
+  backdrop-filter: blur(10px);
   border-radius: 50%;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  transition: all 0.2s;
-  color: #21a366;
-  display: none; /* Hidden on mobile */
+  box-shadow: var(--box-shadow);
+  transition: all var(--transition-base);
+  color: var(--primary-color);
+  display: flex;
+  border: 1px solid var(--border-color);
 }
 
 .productMainSwiper .swiper-button-next::after,
 .productMainSwiper .swiper-button-prev::after {
   font-size: 16px;
-  font-weight: 800;
+  font-weight: 700;
 }
 
-/* Show on tablet+ */
 @media (min-width: 769px) {
   .productMainSwiper .swiper-button-next,
   .productMainSwiper .swiper-button-prev {
-    display: flex;
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
   }
   
   .productMainSwiper .swiper-button-next::after,
@@ -221,9 +219,10 @@
   
   .productMainSwiper .swiper-button-next:hover,
   .productMainSwiper .swiper-button-prev:hover {
-    background: #fff;
+    background: var(--bg-card);
     transform: scale(1.1);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+    box-shadow: var(--box-shadow-hover);
+    color: var(--primary-hover);
   }
 }
 
@@ -308,9 +307,9 @@ select#sizeSelect, select#colorSelect {
 
 select#sizeSelect:focus, select#colorSelect:focus {
   outline: none;
-  border-color: #0f172a;
-  background-color: #fff;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+  border-color: var(--primary-color);
+  background-color: var(--bg-card);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 /* Comments Section Style */
@@ -338,9 +337,9 @@ select#sizeSelect:focus, select#colorSelect:focus {
 }
 
 .add-cart-btn:hover {
-  background-color: #1e293b;
+  background-color: var(--primary-hover);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.3);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 
 .add-cart-btn:active {
