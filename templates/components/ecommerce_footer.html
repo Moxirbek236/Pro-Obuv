@@ -1,0 +1,577 @@
+<!-- Premium E-Commerce Footer -->
+<footer class="luxury-footer">
+  
+  <!-- Why Choose Us Section -->
+  <div class="why-choose-section">
+    <div class="ecommerce-container">
+      <h2 class="why-choose-title">Nima uchun bizni tanlaysiz?</h2>
+      
+      <div class="features-grid">
+        <!-- Feature 1 -->
+        <div class="feature-card" data-aos="fade-up" data-aos-delay="0">
+          <div class="feature-icon">
+            <i class="bi bi-shield-check"></i>
+          </div>
+          <h3 class="feature-title">Yuqori Sifat</h3>
+          <p class="feature-description">
+            Barcha mahsulotlarimiz xalqaro standartlarga mos keladi va sertifikatlangan
+          </p>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+          <div class="feature-icon">
+            <i class="bi bi-award"></i>
+          </div>
+          <h3 class="feature-title">Premium Materiallar</h3>
+          <p class="feature-description">
+            Faqat eng yaxshi va ishonchli materiallardan foydalaniladi
+          </p>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+          <div class="feature-icon">
+            <i class="bi bi-truck"></i>
+          </div>
+          <h3 class="feature-title">Bepul Yetkazib Berish</h3>
+          <p class="feature-description">
+            O'zbekiston bo'ylab tez va bepul yetkazib berish xizmati
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Footer -->
+  <div class="footer-main">
+    <div class="ecommerce-container">
+      
+      <!-- Footer Brand -->
+      <div class="footer-brand-section">
+        <div class="footer-logo">
+          <div class="footer-logo-icon">
+            <i class="bi bi-shield-check"></i>
+          </div>
+          <span class="footer-logo-text">SAFETY.UZ</span>
+        </div>
+      </div>
+
+      <!-- Footer Content Grid -->
+      <div class="footer-content-grid">
+        
+        <!-- Shop Column -->
+        <div class="footer-column">
+          <h4 class="footer-column-title">Do'kon</h4>
+          <ul class="footer-links">
+            <li><a href="{{ url_for('menu') }}">Mahsulotlar</a></li>
+            <li><a href="{{ url_for('menu') }}?category=safety-footwear">Xavfsizlik Oyoq Kiyimlari</a></li>
+            <li><a href="{{ url_for('menu') }}?category=protective-clothing">Maxsus Kiyimlar</a></li>
+            <li><a href="{{ url_for('about') }}">Biz haqimizda</a></li>
+            <li><a href="{{ url_for('contact') }}">Aloqa</a></li>
+          </ul>
+        </div>
+
+        <!-- Customer Service Column -->
+        <div class="footer-column">
+          <h4 class="footer-column-title">Mijozlar Xizmati</h4>
+          <ul class="footer-links">
+            <li><a href="#">FAQ</a></li>
+            <li><a href="#">Yetkazib Berish va Qaytarish</a></li>
+            <li><a href="#">O'lcham Jadvali</a></li>
+            <li><a href="#">Buyurtmani Kuzatish</a></li>
+          </ul>
+        </div>
+
+        <!-- Newsletter Column -->
+        <div class="footer-column">
+          <h4 class="footer-column-title">Yangiliklar</h4>
+          <p class="newsletter-text">
+            So'nggi yangiliklar va maxsus takliflardan xabardor bo'ling
+          </p>
+          <form class="newsletter-form" onsubmit="return handleNewsletterSubmit(event)">
+            <div class="newsletter-input-wrapper">
+              <input 
+                type="email" 
+                name="email"
+                class="newsletter-input" 
+                placeholder="Email manzilingiz"
+                required
+              />
+              <button type="submit" class="newsletter-btn">
+                Obuna
+              </button>
+            </div>
+          </form>
+
+          <!-- Contact Info -->
+          <div class="footer-contact-info">
+            <div class="contact-info-item">
+              <i class="bi bi-telephone"></i>
+              <a href="tel:{{ site_settings.site_phone if site_settings.site_phone else '+998991459686' }}">
+                {{ site_settings.site_phone if site_settings.site_phone else '+998 99 145 96 86' }}
+              </a>
+            </div>
+            <div class="contact-info-item">
+              <i class="bi bi-envelope"></i>
+              <a href="mailto:{{ site_settings.site_email if site_settings.site_email else 'premiumsafety@mail.ru' }}">
+                {{ site_settings.site_email if site_settings.site_email else 'premiumsafety@mail.ru' }}
+              </a>
+            </div>
+            <div class="contact-info-item">
+              <i class="bi bi-geo-alt"></i>
+              <span>{{ site_settings.site_address if site_settings.site_address else 'Toshkent, Sergeli tumani' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Column -->
+        <div class="footer-column">
+          <h4 class="footer-column-title">Aloqa</h4>
+          <p class="newsletter-text">
+            So'nggi yangiliklar va takliflar uchun obuna bo'ling
+          </p>
+          <form class="newsletter-form" onsubmit="return handleNewsletterSubmit(event)">
+            <div class="newsletter-input-wrapper">
+              <input 
+                type="email" 
+                name="email"
+                class="newsletter-input" 
+                placeholder="Email manzilingiz"
+                required
+              />
+              <button type="submit" class="newsletter-btn">
+                Obuna
+              </button>
+            </div>
+          </form>
+
+          <!-- Social Links -->
+          <div class="footer-social-section">
+            <h5 class="social-title">Bizni Kuzatib Boring</h5>
+            <div class="footer-social-links">
+              {% if global_socials %}
+                {% for link in global_socials %}
+                  <a href="{{ link.url }}" target="_blank" class="social-link" title="{{ link.platform_name }}">
+                    {% if link.icon_url %}
+                      <img src="{{ link.icon_url }}" alt="{{ link.platform_name }}" style="width: 24px; height: 24px; object-fit: contain;">
+                    {% else %}
+                      <i class="bi bi-link-45deg"></i>
+                    {% endif %}
+                  </a>
+                {% endfor %}
+              {% else %}
+                <a href="https://www.facebook.com" target="_blank" class="social-link" title="Facebook">
+                  <i class="bi bi-facebook"></i>
+                </a>
+                <a href="https://www.instagram.com" target="_blank" class="social-link" title="Instagram">
+                  <i class="bi bi-instagram"></i>
+                </a>
+                <a href="https://www.tiktok.com" target="_blank" class="social-link" title="TikTok">
+                  <i class="bi bi-tiktok"></i>
+                </a>
+                <a href="https://t.me/proobuvLLC" target="_blank" class="social-link" title="Telegram">
+                  <i class="bi bi-telegram"></i>
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Bottom -->
+  <div class="footer-bottom">
+    <div class="ecommerce-container">
+      <div class="footer-bottom-content">
+        
+        <!-- Copyright -->
+        <div class="footer-copyright">
+          © {{ now.year if now else '2026' }} Safety.uz. Barcha huquqlar himoyalangan.
+          <div class="footer-links-inline">
+            <a href="#">Maxfiylik Siyosati</a>
+            <a href="#">Foydalanish Shartlari</a>
+          </div>
+        </div>
+
+        <!-- Payment Methods -->
+        <div class="footer-payment-methods">
+          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='32' viewBox='0 0 50 32'%3E%3Crect width='50' height='32' rx='4' fill='%231A1F71'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='12' font-weight='bold'%3EVISA%3C/text%3E%3C/svg%3E" alt="Visa" class="payment-icon">
+          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='32' viewBox='0 0 50 32'%3E%3Crect width='50' height='32' rx='4' fill='%23EB001B'/%3E%3Ccircle cx='20' cy='16' r='10' fill='%23EB001B'/%3E%3Ccircle cx='30' cy='16' r='10' fill='%23F79E1B'/%3E%3C/svg%3E" alt="Mastercard" class="payment-icon">
+          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='32' viewBox='0 0 50 32'%3E%3Crect width='50' height='32' rx='4' fill='%23003087'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='10' font-weight='bold'%3EPayPal%3C/text%3E%3C/svg%3E" alt="PayPal" class="payment-icon">
+          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='32' viewBox='0 0 50 32'%3E%3Crect width='50' height='32' rx='4' fill='%234299e1'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='11' font-weight='bold'%3EClick%3C/text%3E%3C/svg%3E" alt="Click" class="payment-icon">
+          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='32' viewBox='0 0 50 32'%3E%3Crect width='50' height='32' rx='4' fill='%2310b981'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='10' font-weight='bold'%3EPayme%3C/text%3E%3C/svg%3E" alt="Payme" class="payment-icon">
+          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='32' viewBox='0 0 50 32'%3E%3Crect width='50' height='32' rx='4' fill='%236366f1'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='9' font-weight='bold'%3EStripe%3C/text%3E%3C/svg%3E" alt="Stripe" class="payment-icon">
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</footer>
+
+<style>
+/* Premium Footer Styles */
+.luxury-footer {
+  margin-top: 5rem;
+}
+
+/* Why Choose Us Section */
+.why-choose-section {
+  background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+  padding: 4rem 0;
+  border-top: 1px solid var(--luxury-border);
+}
+
+body.dark-theme .why-choose-section {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+}
+
+.why-choose-title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--luxury-text);
+  margin-bottom: 3rem;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.feature-card {
+  text-align: center;
+  padding: 2rem;
+  background: var(--luxury-white);
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+.feature-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1.5rem;
+  background: linear-gradient(135deg, var(--luxury-gold), var(--luxury-gold-dark));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  color: var(--luxury-black);
+}
+
+.feature-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--luxury-text);
+  margin-bottom: 0.75rem;
+}
+
+.feature-description {
+  color: var(--luxury-text);
+  opacity: 0.8;
+  line-height: 1.6;
+}
+
+/* Main Footer */
+.footer-main {
+  background: var(--luxury-black);
+  color: rgba(255, 255, 255, 0.8);
+  padding: 4rem 0 2rem;
+}
+
+.footer-brand-section {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.footer-logo-icon {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, var(--luxury-gold), var(--luxury-gold-dark));
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: var(--luxury-black);
+}
+
+.footer-logo-text {
+  font-size: 2rem;
+  font-weight: 800;
+  color: white;
+  letter-spacing: 2px;
+}
+
+.footer-content-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 3rem;
+}
+
+.footer-column-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin-bottom: 0.75rem;
+}
+
+.footer-links a {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.footer-links a:hover {
+  color: var(--luxury-gold);
+  padding-left: 0.5rem;
+}
+
+/* Newsletter */
+.newsletter-text {
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.newsletter-form {
+  margin-bottom: 2rem;
+}
+
+.newsletter-input-wrapper {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.newsletter-input {
+  flex: 1;
+  padding: 0.875rem 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  font-size: 0.9375rem;
+  transition: all 0.3s ease;
+}
+
+.newsletter-input:focus {
+  outline: none;
+  border-color: var(--luxury-gold);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.newsletter-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.newsletter-btn {
+  padding: 0.875rem 1.75rem;
+  background: var(--luxury-gold);
+  color: var(--luxury-black);
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.newsletter-btn:hover {
+  background: var(--luxury-gold-dark);
+  transform: translateY(-2px);
+}
+
+/* Contact Info */
+.footer-contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.contact-info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.contact-info-item i {
+  color: var(--luxury-gold);
+  font-size: 1.125rem;
+}
+
+.contact-info-item a {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.contact-info-item a:hover {
+  color: var(--luxury-gold);
+}
+
+/* Social Links */
+.footer-social-section {
+  margin-top: 2rem;
+}
+
+.social-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 1rem;
+}
+
+.footer-social-links {
+  display: flex;
+  gap: 1rem;
+}
+
+.social-link {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.2);
+  color: var(--luxury-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-size: 1.125rem;
+  transition: all 0.3s ease;
+}
+
+.social-link:hover {
+  background: var(--luxury-gold);
+  color: var(--luxury-black);
+  transform: translateY(-3px);
+}
+
+/* Footer Bottom */
+.footer-bottom {
+  background: #0a0a0a;
+  padding: 1.5rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-bottom-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.footer-copyright {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.875rem;
+}
+
+.footer-links-inline {
+  display: inline-flex;
+  gap: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.footer-links-inline a {
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer-links-inline a:hover {
+  color: var(--luxury-gold);
+}
+
+.footer-payment-methods {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.payment-icon {
+  height: 32px;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.payment-icon:hover {
+  opacity: 1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-content-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .footer-bottom-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .newsletter-input-wrapper {
+    flex-direction: column;
+  }
+
+  .newsletter-btn {
+    width: 100%;
+  }
+}
+</style>
+
+<script>
+function handleNewsletterSubmit(event) {
+  event.preventDefault();
+  const form = event.target;
+  const email = form.querySelector('input[name="email"]').value;
+  
+  // Add your newsletter subscription logic here
+  console.log('Newsletter subscription:', email);
+  
+  // Show success message
+  alert('Rahmat! Siz muvaffaqiyatli obuna bo\'ldingiz.');
+  form.reset();
+  
+  return false;
+}
+</script>

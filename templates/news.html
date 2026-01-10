@@ -1,442 +1,204 @@
-{% extends "base.html" %} {% block title %}Yangiliklar - Pro Obuv{% endblock %}
+{% extends "base.html" %}
+{% block title %}Yangiliklar - Pro Obuv{% endblock %}
+
 {% block seo_meta %}
-<meta
-  name="description"
-  content="Pro Obuv yangiliklari, aksiyalar va yangilanishlar. Spetsobuv, spetsodejda va ish kiyimlari bo'yicha so'nggi yangiliklar." />
-<meta
-  name="keywords"
-  content="pro obuv, yangiliklar, aksiya, obuv, spetsobuv, spetsodejda, safety, oyoq kiyim, etik, tufli" />
+<meta name="description" content="Pro Obuv yangiliklari - Xavfsizlik oyoq kiyimlari va maxsus kiyimlar bo'yicha so'nggi yangiliklar, aksiyalar va takliflar." />
+<meta name="keywords" content="pro obuv, yangiliklar, aksiya, safety shoes news, xavfsizlik kiyimlari yangiliklari" />
 <link rel="canonical" href="{{ canonical_url() }}" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Yangiliklar - Pro Obuv" />
-<meta
-  property="og:description"
-  content="Pro Obuv yangiliklari: spetsobuv va ish kiyimlari yangiliklari" />
+<meta property="og:description" content="So'nggi yangiliklar va aksiyalar" />
 <meta property="og:url" content="{{ request.url }}" />
-<meta
-  property="og:image"
-  content="{{ 'defoult.webp' | cloudinary_url }}" />
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="Yangiliklar - Pro Obuv" />
-<meta
-  name="twitter:description"
-  content="Spetsobuv va ish kiyimlari bo'yicha yangiliklar" />
-<meta
-  name="twitter:image"
-  content="{{ 'defoult.webp' | cloudinary_url }}" />
-<script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    "name": "Yangiliklar — Pro Obuv",
-    "description": "Pro Obuv yangiliklari va aksiyalari",
-    "url": "{{ request.url }}"
-  }
-</script>
-{% endblock %} {% block content %}
+{% endblock %}
 
-  <!-- Premium News Page Styles -->
-  <style>
-    :root {
-      --news-card-bg: #ffffff;
-      --news-card-border: rgba(0, 0, 0, 0.05);
-      --news-text-primary: #1a1a1a;
-      --news-text-secondary: #666666;
-      --news-accent: #06b6d4; /* Cyan/Teal accent */
-      --news-accent-hover: #0891b2;
-      --news-shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-      --news-shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
-      --news-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
+{% block content %}
+<div class="container py-5">
+  
+  <!-- Hero Section -->
+  <div class="industrial-card p-5 text-center mb-5 position-relative overflow-hidden animate-fade-in-up">
+    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: var(--hazard-pattern); opacity: 0.1; pointer-events: none;"></div>
+    <div class="position-relative z-1">
+      <h1 class="display-4 fw-bold text-uppercase mb-3" style="font-family: var(--font-heading); color: var(--accent-primary);">
+        <i class="bi bi-newspaper me-2"></i> Yangiliklar va Aksiyalar
+      </h1>
+      <p class="lead text-secondary mb-0">
+        So'nggi yangiliklar, maxsus takliflar va kompaniya hayotidagi muhim voqealar
+      </p>
+    </div>
+  </div>
 
-    body.dark-theme {
-      --news-card-bg: #1e293b;
-      --news-card-border: rgba(255, 255, 255, 0.05);
-      --news-text-primary: #f8fafc;
-      --news-text-secondary: #94a3b8;
-      --news-shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-      --news-shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
-    }
-
-    .news-container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 2rem 1rem;
-    }
-
-    /* Ticker Styles */
-    .news-ticker-wrapper {
-      background: linear-gradient(90deg, #0f172a 0%, #1e293b 100%);
-      padding: 12px 20px;
-      border-radius: 12px;
-      margin-bottom: 2rem;
-      box-shadow: var(--news-shadow-sm);
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      border: 1px solid var(--news-card-border);
-      overflow: hidden;
-    }
-
-    .ticker-label {
-      background: var(--news-accent);
-      color: white;
-      padding: 4px 12px;
-      border-radius: 6px;
-      font-weight: 700;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    .ticker-content {
-      color: #e2e8f0;
-      font-weight: 500;
-      white-space: nowrap;
-      overflow: hidden;
-      flex-grow: 1;
-      position: relative;
-    }
-    
-    .ticker-text {
-      display: inline-block;
-      animation: ticker-scroll 30s linear infinite;
-    }
-
-    @keyframes ticker-scroll {
-      0% { transform: translateX(100%); }
-      100% { transform: translateX(-100%); }
-    }
-
-    /* Grid Layout */
-    .news-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-      gap: 2rem;
-    }
-
-    /* News Card */
-    .news-card {
-      background: var(--news-card-bg);
-      border: 1px solid var(--news-card-border);
-      border-radius: 16px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      transition: var(--news-transition);
-      box-shadow: var(--news-shadow-sm);
-      height: 100%;
-      text-decoration: none; /* remove default link underline style if applied to wrapper */
-    }
-
-    .news-card:hover {
-      transform: translateY(-8px);
-      box-shadow: var(--news-shadow-md);
-      border-color: rgba(6, 182, 212, 0.3);
-    }
-
-    /* Media Area */
-    .news-media-wrapper {
-      position: relative;
-      width: 100%;
-      padding-top: 56.25%; /* 16:9 Aspect Ratio */
-      background: #000;
-      overflow: hidden;
-    }
-
-    .news-media-content {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.5s ease;
-    }
-
-    .news-card:hover .news-media-content {
-      transform: scale(1.05);
-    }
-
-    /* Card Content */
-    .news-content-wrapper {
-      padding: 1.5rem;
-      display: flex;
-      flex-direction: column;
-      flex-grow: 1;
-    }
-
-    .news-date {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.85rem;
-      color: var(--news-accent);
-      font-weight: 600;
-      margin-bottom: 0.75rem;
-    }
-
-    .news-date i {
-      font-size: 0.9rem;
-    }
-
-    .news-title {
-      font-size: 1.25rem;
-      font-weight: 800;
-      line-height: 1.4;
-      margin-bottom: 1rem;
-      color: var(--news-text-primary);
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .news-excerpt {
-      font-size: 0.95rem;
-      color: var(--news-text-secondary);
-      line-height: 1.6;
-      margin-bottom: 1.5rem;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      flex-grow: 1;
-    }
-
-    .news-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-top: 1rem;
-      border-top: 1px solid var(--news-card-border);
-      margin-top: auto;
-    }
-
-    /* Actions */
-    .news-actions {
-      display: flex;
-      gap: 12px;
-    }
-
-    .action-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: transparent;
-      border: 1px solid var(--news-card-border);
-      color: var(--news-text-secondary);
-      cursor: pointer;
-      transition: all 0.2s ease;
-      text-decoration: none;
-    }
-
-    .action-btn:hover {
-      background: var(--news-accent);
-      color: white;
-      border-color: var(--news-accent);
-      transform: scale(1.1);
-    }
-
-    .read-more-btn {
-      padding: 8px 16px;
-      background: transparent;
-      color: var(--news-accent);
-      font-weight: 600;
-      font-size: 0.9rem;
-      border-radius: 8px;
-      transition: all 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      text-decoration: none;
-    }
-
-    .read-more-btn:hover {
-      background: rgba(6, 182, 212, 0.1);
-      color: var(--news-accent-hover);
-    }
-    
-    .read-more-btn::after {
-        content: '→';
-        transition: transform 0.2s;
-    }
-    
-    .read-more-btn:hover::after {
-        transform: translateX(4px);
-    }
-
-    /* Empty State */
-    .empty-state {
-      text-align: center;
-      padding: 4rem 2rem;
-      background: var(--news-card-bg);
-      border-radius: 16px;
-      border: 1px dashed var(--news-card-border);
-    }
-
-    @media (max-width: 768px) {
-      .news-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .news-container {
-        padding: 1rem;
-      }
-      
-      .ticker-label {
-          display: none; 
-      }
-    }
-  </style>
-
-  <div class="news-container">
-    
-    <!-- Modern Ticker -->
-    <div class="news-ticker-wrapper">
-      <div class="ticker-label">YANGILIKLAR</div>
-      <div class="ticker-content">
-        <div class="ticker-text" id="ticker-text-content">
-           <!-- Populated by JS -->
-        </div>
+  <!-- News Ticker -->
+  <div class="industrial-card mb-5 p-3 d-flex align-items-center gap-3 animate-fade-in-up" style="animation-delay: 0.1s; background: linear-gradient(90deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 100%);">
+    <div class="badge bg-warning text-dark fw-bold text-uppercase px-3 py-2" style="flex-shrink: 0;">
+      <i class="bi bi-megaphone-fill me-1"></i> Yangiliklar
+    </div>
+    <div class="flex-grow-1 overflow-hidden position-relative">
+      <div id="ticker-text-content" class="text-light fw-bold" style="white-space: nowrap; animation: ticker-scroll 30s linear infinite;">
+        <!-- Populated by JS -->
       </div>
     </div>
+  </div>
 
-    {% if news %}
-    <div class="news-grid" id="news-grid">
-      {% for item in news %}
-      <article class="news-card" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 100 }}">
-        <!-- Media Section -->
-        <div class="news-media-wrapper" data-video-url="{{ item.video_url or item.video }}">
-          <a href="{{ url_for('news_detail', news_id=item.id) }}" class="d-block w-100 h-100">
-            {% if item.youtube_embed %}
-               <!-- YouTube Embed -->
-               <iframe src="{{ item.youtube_embed }}" class="news-media-content" style="border:0;" allowfullscreen loading="lazy"></iframe>
-            {% elif item.video or item.video_url %}
-               <!-- Video -->
-               <video class="news-media-content" preload="metadata" controls>
-                   <source src="{{ item.video_url or item.video }}">
-               </video>
-            {% else %}
-               <!-- Image -->
-               <img src="{{ (item.image_url or item.image or 'defoult.webp') | cloudinary_url }}" 
-                    alt="{{ item.title }}" 
-                    class="news-media-content"
-                    loading="lazy">
-            {% endif %}
-          </a>
+  <!-- News Grid -->
+  {% if news %}
+  <div class="row g-4">
+    {% for item in news %}
+    <div class="col-md-6 col-lg-4 animate-fade-in-up" style="animation-delay: {{ 0.2 + (loop.index0 * 0.1) }}s;">
+      <article class="industrial-card h-100 d-flex flex-column overflow-hidden custom-hover-effect">
+        <!-- Media -->
+        <div class="position-relative ratio ratio-16x9 bg-dark">
+          {% if item.youtube_embed %}
+            <iframe src="{{ item.youtube_embed }}" class="w-100 h-100 border-0" allowfullscreen loading="lazy"></iframe>
+          {% elif item.video or item.video_url %}
+            <video class="w-100 h-100 object-fit-cover" controls preload="metadata">
+              <source src="{{ item.video_url or item.video }}">
+            </video>
+          {% else %}
+            <img src="{{ (item.image_url or item.image or 'defoult.webp') | cloudinary_url }}" 
+                 alt="{{ item.title }}" 
+                 class="w-100 h-100 object-fit-cover transition-transform">
+          {% endif %}
+          
+          <div class="position-absolute top-0 end-0 m-3 badge bg-black bg-opacity-75 border border-secondary text-accent backdrop-blur">
+            <i class="bi bi-calendar-event me-1"></i> {{ item.created_at.split('T')[0] if item.created_at else 'Bugun' }}
+          </div>
         </div>
 
-        <!-- Content Section -->
-        <div class="news-content-wrapper">
-          <div class="news-date">
-            <i class="bi bi-calendar-event"></i>
-            <span>{{ item.created_at.split('T')[0] if item.created_at else 'Bugun' }}</span>
+        <!-- Content -->
+        <div class="p-4 d-flex flex-column flex-grow-1">
+          <div class="mb-2 text-secondary small text-uppercase fw-bold">
+            <i class="bi bi-tag-fill me-1 text-accent"></i> Yangilik
           </div>
-
-          <a href="{{ url_for('news_detail', news_id=item.id) }}" class="text-decoration-none">
-            <h3 class="news-title">{{ item.localized_title or item.title }}</h3>
-          </a>
-
-          <div class="news-excerpt">
-             {{ (item.localized_content or item.description or item.content or '') | striptags | truncate(120) }}
-          </div>
-
-          <div class="news-footer">
-            {% set detail_url = url_for('news_detail', news_id=item.id, _external=True) %}
-            <div class="news-actions">
-              <a href="https://t.me/share/url?url={{ detail_url }}" target="_blank" class="action-btn" title="Telegram">
-                <i class="bi bi-telegram"></i>
-              </a>
-              <a href="#" onclick="copyNewsLink('{{ detail_url }}'); return false;" class="action-btn" title="Nusxalash">
-                <i class="bi bi-link-45deg"></i>
-              </a>
-            </div>
-            
-            <a href="{{ url_for('news_detail', news_id=item.id) }}" class="read-more-btn">
-              Batafsil
+          
+          <h3 class="h5 mb-3 fw-bold font-heading">
+            <a href="{{ url_for('news_detail', news_id=item.id) }}" class="text-reset text-decoration-none stretched-link-header">
+              {{ item.localized_title or item.title }}
             </a>
+          </h3>
+          
+          <p class="text-secondary small mb-4 flex-grow-1 line-clamp-3">
+            {{ (item.localized_content or item.description or item.content or '') | striptags | truncate(150) }}
+          </p>
+          
+          <div class="d-flex justify-content-between align-items-center mt-auto pt-3 border-top border-secondary border-opacity-25">
+             <a href="{{ url_for('news_detail', news_id=item.id) }}" class="btn-primary-industrial btn-sm py-2 px-3">
+               Batafsil <i class="bi bi-arrow-right ms-1"></i>
+             </a>
+             
+             <div class="d-flex gap-2">
+               {% set detail_url = url_for('news_detail', news_id=item.id, _external=True) %}
+               <a href="https://t.me/share/url?url={{ detail_url }}" target="_blank" class="btn btn-outline-secondary btn-sm" title="Telegramda ulashish">
+                 <i class="bi bi-telegram"></i>
+               </a>
+               <button onclick="copyNewsLink('{{ detail_url }}')" class="btn btn-outline-secondary btn-sm" title="Nusxalash">
+                 <i class="bi bi-link-45deg"></i>
+               </button>
+             </div>
           </div>
         </div>
       </article>
-      {% endfor %}
     </div>
-    {% else %}
-      <div class="empty-state">
-        <h3 class="text-muted">Hozircha yangiliklar ro'yxati bo'sh</h3>
-        <p class="text-secondary">Yangiliklardan xabardor bo'lish uchun bizni kuzatib boring.</p>
-      </div>
-    {% endif %}
+    {% endfor %}
   </div>
+  {% else %}
+  <!-- Empty State -->
+  <div class="industrial-card p-5 text-center my-5 animate-fade-in-up">
+    <div class="mb-4 text-secondary opacity-50 display-1">
+      <i class="bi bi-newspaper"></i>
+    </div>
+    <h3 class="h4 text-light mb-3">Hozircha yangiliklar ro'yxati bo'sh</h3>
+    <p class="text-secondary mb-4">Yangiliklardan xabardor bo'lish uchun bizni kuzatib boring</p>
+    <a href="{{ url_for('menu') }}" class="btn-primary-industrial">
+      <i class="bi bi-shop me-2"></i> Mahsulotlarni ko'rish
+    </a>
+  </div>
+  {% endif %}
 
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-  <script id="news-data" type="application/json">
-    [
-      {% for it in news %}
-        {{ (it.localized_title or it.title)|tojson }}{{ "," if not loop.last }}
-      {% endfor %}
-    ]
-  </script>
+</div>
 
-  <script>
-    // Initialize AOS Animation
-    document.addEventListener('DOMContentLoaded', function() {
-        if(typeof AOS !== 'undefined') {
-            AOS.init({
-                once: true,
-                offset: 50,
-                duration: 800
-            });
+<!-- Scripts -->
+<script id="news-data" type="application/json">
+  [
+    {% for it in news %}
+      {{ (it.localized_title or it.title)|tojson }}{{ "," if not loop.last }}
+    {% endfor %}
+  ]
+</script>
+
+<script>
+  // Ticker Logic
+  (function(){
+    try {
+      const rawNews = JSON.parse(document.getElementById('news-data').textContent);
+      const ticker = document.getElementById('ticker-text-content');
+      if(ticker) {
+        if(rawNews.length){
+          const text = rawNews.join('  ✦  ');
+          ticker.textContent = text + '  ✦  ' + text + '  ✦  ' + text; 
+        } else {
+          ticker.textContent = 'Xush kelibsiz! Bizning yangiliklarni kuzatib boring.';
         }
-    });
-
-    // Ticker Logic
-    (function(){
-      try {
-        const rawNews = JSON.parse(document.getElementById('news-data').textContent);
-        const ticker = document.getElementById('ticker-text-content');
-        if(ticker) {
-            if(rawNews.length){
-                const text = rawNews.join('  ✦  ');
-                ticker.innerText = text + '  ✦  ' + text + '  ✦  ' + text; 
-            } else {
-                ticker.innerText = 'Xush kelibsiz! Bizning yangiliklarni kuzatib boring.';
-            }
-        }
-      } catch(e) {
-          console.error("News ticker error:", e);
       }
-    })();
-
-    // Copy Link Function
-    function copyNewsLink(url) {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(url)
-          .then(() => alert('Havola nusxalandi!'))
-          .catch(err => console.error('Error copying text: ', err));
-      } else {
-        const textArea = document.createElement("textarea");
-        textArea.value = url;
-        document.body.appendChild(textArea);
-        textArea.select();
-        try {
-          document.execCommand('copy');
-          alert('Havola nusxalandi!');
-        } catch (err) {
-          console.error('Fallback: Oops, unable to copy', err);
-        }
-        document.body.removeChild(textArea);
-      }
+    } catch(e) {
+      console.error("News ticker error:", e);
     }
-  </script>
+  })();
+
+  // Copy Link Function
+  function copyNewsLink(url) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url)
+        .then(() => alert('Havola nusxalandi!'))
+        .catch(err => console.error('Error copying text: ', err));
+    } else {
+      const textArea = document.createElement("textarea");
+      textArea.value = url;
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        alert('Havola nusxalandi!');
+      } catch (err) {
+        console.error('Fallback: Oops, unable to copy', err);
+      }
+      document.body.removeChild(textArea);
+    }
+  }
+</script>
+
+<style>
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
   
-  <!-- Add AOS CSS if not present broadly -->
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  .animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+    opacity: 0;
+  }
+  
+  @keyframes ticker-scroll {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .custom-hover-effect:hover img.transition-transform {
+    transform: scale(1.05);
+  }
+  
+  .transition-transform {
+    transition: transform 0.5s ease;
+  }
+  
+  .backdrop-blur {
+    backdrop-filter: blur(4px);
+  }
+</style>
 {% endblock %}

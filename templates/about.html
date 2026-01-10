@@ -1,276 +1,227 @@
-{% extends "base.html" %} {% block title %}Savollar - Pro Obuv{% endblock %} {%
-block seo_meta %}
-<meta
-  name="description"
-  content="Savollar va yordam: Pro Obuv — spetsobuv, spetsodejda, ish kiyimlari va oyoq kiyimlari haqida tezkor javoblar." />
-<meta
-  name="keywords"
-  content="pro obuv, savollar, FAQ, spetsobuv, spetsodejda, ish kiyimlari, oyoq kiyim" />
+{% extends "base.html" %}
+{% block title %}{{ get_text("Biz haqimizda - Pro Obuv") or 'Biz haqimizda - Pro Obuv' }}{% endblock %}
+
+{% block seo_meta %}
+<meta name="description" content="Pro Obuv - Xavfsizlik oyoq kiyimlari va maxsus kiyimlar bo'yicha professional yetkazib beruvchi. Sifatli mahsulotlar va ishonchli xizmat." />
+<meta name="keywords" content="pro obuv, xavfsizlik oyoq kiyim, maxsus kiyim, safety shoes, protective clothing, ish kiyimlari" />
 <link rel="canonical" href="{{ canonical_url() }}" />
 <meta property="og:type" content="website" />
-<meta property="og:title" content="Savollar - Pro Obuv" />
-<meta
-  property="og:description"
-  content="Pro Obuv — ko'p so'raladigan savollar va tezkor javoblar" />
+<meta property="og:title" content="Biz haqimizda - Pro Obuv" />
+<meta property="og:description" content="Professional xavfsizlik oyoq kiyimlari va maxsus kiyimlar yetkazib beruvchisi" />
 <meta property="og:url" content="{{ request.url }}" />
-<meta
-  property="og:image"
-  content="{{ prefer_webp(url_for('static', filename='defoult.webp')) }}" />
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="Savollar - Pro Obuv" />
-<meta
-  name="twitter:description"
-  content="Pro Obuv — ko'p so'raladigan savollar" />
-<meta
-  name="twitter:image"
-  content="{{ prefer_webp(url_for('static', filename='defoult.webp')) }}" />
-<script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "name": "Savollar — Pro Obuv",
-    "url": "{{ request.url }}"
-  }
-</script>
-{% endblock %} {% block content %}
-<div class="faq-page-container">
-  <div class="faq-hero-section">
-    <div class="container relative z-10">
-      <h1 class="faq-hero-title animate-fade-in">{{ get_text('faq.title') if get_text('faq.title') != 'faq.title' else "Ko'p so'raladigan savollar" }}</h1>
-      <p class="faq-hero-subtitle animate-fade-in delay-100">
-        {{ get_text('faq.subtitle') if get_text('faq.subtitle') != 'faq.subtitle' else "Sizni qiziqtirgan barcha savollarga javoblar" }}
+<meta property="og:image" content="{{ url_for('static', filename='defoult.webp') }}" />
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  
+  <!-- Hero Section -->
+  <div class="industrial-card p-5 text-center mb-5 position-relative overflow-hidden animate-fade-in-up">
+    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: var(--hazard-pattern); opacity: 0.1; pointer-events: none;"></div>
+    <div class="position-relative z-1">
+      <h1 class="display-4 fw-bold text-uppercase mb-3" style="font-family: var(--font-heading); color: var(--accent-primary);">
+        <i class="bi bi-shield-check me-2"></i> Biz Haqimizda
+      </h1>
+      <p class="lead text-secondary mb-0">
+        Sizning xavfsizligingiz — bizning eng oliy maqsadimiz. Professional himoya vositalari bo'yicha ishonchli hamkor.
       </p>
     </div>
   </div>
 
-  <div class="container relative z-20" style="margin-top: -60px;">
-    <div class="card faq-card shadow-lg border-0">
-      <div class="card-body p-4 p-md-5">
-        <div class="faq-grid">
-          
-          <!-- Buying Guide -->
-          <div class="faq-item" data-aos="fade-up" data-aos-delay="100">
-            <div class="faq-icon">
-              <i class="bi bi-cart-check"></i>
-            </div>
-            <div class="faq-content">
-              <h4>Buyurtma qanday beriladi?</h4>
-              <p>Saytdan ro'yxatdan o'tib, mahsulotlarni tanlang va savatchaga qo'shing. "Buyurtma berish" tugmasini bosib, kerakli ma'lumotlarni to'ldiring.</p>
-            </div>
-          </div>
-
-          <!-- Shipping -->
-          <div class="faq-item" data-aos="fade-up" data-aos-delay="200">
-            <div class="faq-icon">
-              <i class="bi bi-truck"></i>
-            </div>
-            <div class="faq-content">
-              <h4>Yetkazib berish xizmati bormi?</h4>
-              <p>Ha, O'zbekiston bo'ylab yetkazib berish xizmati mavjud. Toshkent shahri ichida 24 soat ichida, viloyatlarga esa 2-3 kun ichida yetkaziladi.</p>
-            </div>
-          </div>
-
-          <!-- Payment -->
-          <div class="faq-item" data-aos="fade-up" data-aos-delay="300">
-            <div class="faq-icon">
-              <i class="bi bi-credit-card"></i>
-            </div>
-            <div class="faq-content">
-              <h4>To'lov usullari qanday?</h4>
-              <p>Siz Click, Payme, Uzum Bank orqali onlayn to'lashingiz yoki kuryerga naqd pul / terminal orqali to'lov qilishingiz mumkin. Korporativ mijozlar uchun bank o'tkazmasi mavjud.</p>
-            </div>
-          </div>
-
-          <!-- Sizing -->
-          <div class="faq-item" data-aos="fade-up" data-aos-delay="400">
-            <div class="faq-icon">
-              <i class="bi bi-ruler-combined"></i>
-            </div>
-            <div class="faq-content">
-              <h4>O'lchamni qanday tanlayman?</h4>
-              <p>Har bir mahsulot sahifasida aniq o'lchamlar jadvali keltirilgan. Agar ikkilansangiz, biz bilan bog'laning, mutaxassislarimiz yordam beradi.</p>
-            </div>
-          </div>
-
-          <!-- Working Hours -->
-          <div class="faq-item" data-aos="fade-up" data-aos-delay="500">
-            <div class="faq-icon">
-              <i class="bi bi-clock-history"></i>
-            </div>
-            <div class="faq-content">
-              <h4>Ish vaqti qanaqa?</h4>
-              <p>Bizning do'konimiz har kuni 09:00 dan 18:00 gacha ishlaydi. Onlayn buyurtmalar esa 24/7 qabul qilinadi.</p>
-            </div>
-          </div>
-
-          <!-- Contact -->
-          <div class="faq-item" data-aos="fade-up" data-aos-delay="600">
-            <div class="faq-icon">
-              <i class="bi bi-headset"></i>
-            </div>
-            <div class="faq-content">
-              <h4>Bog'lanish ma'lumotlari</h4>
-              <p>
-                {% set ph = site_settings.site_phone if site_settings.site_phone else '+998 99 145 96 86' %}
-                {% set tg_user = site_settings.site_telegram_username if site_settings.site_telegram_username else '@Rakhimberdiyev_1970' %}
-                {% set tg_link = site_settings.site_telegram if site_settings.site_telegram else 'https://t.me/Rakhimberdiyev_1970' %}
-                
-                <strong>Tel:</strong> <a href="tel:{{ ph|replace(' ', '') }}">{{ ph }}</a><br>
-                <strong>Telegram:</strong> <a href="{{ tg_link }}" target="_blank">{{ tg_user }}</a>
-              </p>
-            </div>
-          </div>
-
+  <!-- About Text -->
+  <div class="industrial-card p-4 p-md-5 mb-5 animate-fade-in-up" style="animation-delay: 0.1s;">
+    <div class="row align-items-center">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+             <h2 class="h3 fw-bold text-uppercase mb-4 font-heading border-start border-4 border-accent ps-3">
+                 Kompaniya haqida
+             </h2>
+             <p class="lead text-light mb-4">
+                 <strong>Pro Obuv</strong> - O'zbekistonda xavfsizlik oyoq kiyimlari va maxsus himoya kiyimlari sohasida yetakchi kompaniyalardan biri.
+             </p>
+             <p class="text-secondary">
+                 Bizning mahsulotlarimiz eng og'ir sharoitlarda ham sizni himoya qilishga mo'ljallangan. 
+                 Qurilish, ishlab chiqarish, neft-gaz, kimyo va energetika sohalari uchun maxsus sertifikatlangan, 
+                 xalqaro standartlarga javob beradigan himoya vositalarini taqdim etamiz.
+             </p>
+             <div class="d-flex gap-3 mt-4">
+                 <div class="text-center">
+                     <h3 class="display-6 fw-bold text-accent mb-0">10+</h3>
+                     <span class="small text-uppercase text-secondary">Yil tajriba</span>
+                 </div>
+                 <div class="vr bg-secondary opacity-25 mx-3"></div>
+                 <div class="text-center">
+                     <h3 class="display-6 fw-bold text-accent mb-0">5000+</h3>
+                     <span class="small text-uppercase text-secondary">Mamnun mijozlar</span>
+                 </div>
+                 <div class="vr bg-secondary opacity-25 mx-3"></div>
+                 <div class="text-center">
+                     <h3 class="display-6 fw-bold text-accent mb-0">100%</h3>
+                     <span class="small text-uppercase text-secondary">Sifat kafolati</span>
+                 </div>
+             </div>
         </div>
-
-        <div class="contact-cta text-center mt-5 pt-4 border-top">
-          <h4 class="mb-3">Boshqa savolingiz bormi?</h4>
-          <p class="text-muted mb-4">Bizning jamoamiz sizga yordam berishga tayyor</p>
-          <a href="{{ url_for('contact') }}" class="btn btn-primary btn-lg rounded-pill px-5 shadow-sm">
-            <i class="bi bi-chat-dots me-2"></i> Biz bilan bog'lanish
-          </a>
+        <div class="col-lg-6">
+            <div class="position-relative rounded-4 overflow-hidden shadow-lg border border-secondary border-opacity-50">
+                <img src="{{ url_for('static', filename='defoult.webp') }}" alt="Pro Obuv Warehouse" class="img-fluid w-100 object-fit-cover" style="min-height: 350px;">
+                <div class="position-absolute bottom-0 start-0 w-100 p-4 bg-black bg-opacity-75 backdrop-blur">
+                    <p class="mb-0 text-white fst-italic">"Har bir qadamda ishonchli himoya"</p>
+                </div>
+            </div>
         </div>
+    </div>
+  </div>
+
+  <!-- Features Grid -->
+  <h3 class="text-uppercase fw-bold text-center mb-4 text-secondary ls-2">Bizning Afzalliklarimiz</h3>
+  <div class="row g-4 mb-5">
+    <!-- Feature 1 -->
+    <div class="col-md-6 col-lg-4 animate-fade-in-up" style="animation-delay: 0.2s;">
+      <div class="industrial-card h-100 p-4 text-center hover-lift">
+        <div class="d-inline-flex align-items-center justify-content-center rounded-circle border border-success border-opacity-25 mb-3" style="width: 70px; height: 70px; background: rgba(16, 185, 129, 0.1);">
+           <i class="bi bi-award fs-2 text-success"></i>
+        </div>
+        <h4 class="h5 fw-bold text-uppercase mb-3">Yuqori Sifat</h4>
+        <p class="text-secondary small">
+          Barcha mahsulotlarimiz xalqaro ISO standartlariga mos va sertifikatlangan. Faqat tekshirilgan brendlar.
+        </p>
+      </div>
+    </div>
+
+    <!-- Feature 2 -->
+    <div class="col-md-6 col-lg-4 animate-fade-in-up" style="animation-delay: 0.3s;">
+      <div class="industrial-card h-100 p-4 text-center hover-lift">
+        <div class="d-inline-flex align-items-center justify-content-center rounded-circle border border-warning border-opacity-25 mb-3" style="width: 70px; height: 70px; background: rgba(245, 158, 11, 0.1);">
+           <i class="bi bi-truck fs-2 text-warning"></i>
+        </div>
+        <h4 class="h5 fw-bold text-uppercase mb-3">Tez Yetkazib Berish</h4>
+        <p class="text-secondary small">
+          O'zbekiston bo'ylab tezkor logistika. Toshkent shahrida 24 soat ichida yetkazib beramiz.
+        </p>
+      </div>
+    </div>
+
+    <!-- Feature 3 -->
+    <div class="col-md-6 col-lg-4 animate-fade-in-up" style="animation-delay: 0.4s;">
+      <div class="industrial-card h-100 p-4 text-center hover-lift">
+        <div class="d-inline-flex align-items-center justify-content-center rounded-circle border border-info border-opacity-25 mb-3" style="width: 70px; height: 70px; background: rgba(14, 165, 233, 0.1);">
+           <i class="bi bi-headset fs-2 text-info"></i>
+        </div>
+        <h4 class="h5 fw-bold text-uppercase mb-3">Professional Maslahat</h4>
+        <p class="text-secondary small">
+          Bizning mutaxassislarimiz sizning sohangizga mos keladigan eng to'g'ri himoya vositalarini tanlashda yordam beradi.
+        </p>
+      </div>
+    </div>
+
+    <!-- Feature 4 -->
+    <div class="col-md-6 col-lg-4 animate-fade-in-up" style="animation-delay: 0.5s;">
+      <div class="industrial-card h-100 p-4 text-center hover-lift">
+        <div class="d-inline-flex align-items-center justify-content-center rounded-circle border border-danger border-opacity-25 mb-3" style="width: 70px; height: 70px; background: rgba(239, 68, 68, 0.1);">
+           <i class="bi bi-shield-fill-check fs-2 text-danger"></i>
+        </div>
+        <h4 class="h5 fw-bold text-uppercase mb-3">Kafolat</h4>
+        <p class="text-secondary small">
+          Mahsulotlarimizga rasmiy kafolat beramiz. Sifatga 100% javob beramiz yoki pulingizni qaytaramiz.
+        </p>
+      </div>
+    </div>
+
+    <!-- Feature 5 -->
+    <div class="col-md-6 col-lg-4 animate-fade-in-up" style="animation-delay: 0.6s;">
+      <div class="industrial-card h-100 p-4 text-center hover-lift">
+        <div class="d-inline-flex align-items-center justify-content-center rounded-circle border border-primary border-opacity-25 mb-3" style="width: 70px; height: 70px; background: rgba(59, 130, 246, 0.1);">
+           <i class="bi bi-wallet2 fs-2 text-primary"></i>
+        </div>
+        <h4 class="h5 fw-bold text-uppercase mb-3">Qulay To'lov</h4>
+        <p class="text-secondary small">
+          Click, Payme, Uzum, naqd pul, terminal va korporativ o'tkazmalar. Barcha turdagi to'lovlar qabul qilinadi.
+        </p>
+      </div>
+    </div>
+
+    <!-- Feature 6 -->
+    <div class="col-md-6 col-lg-4 animate-fade-in-up" style="animation-delay: 0.7s;">
+      <div class="industrial-card h-100 p-4 text-center hover-lift">
+        <div class="d-inline-flex align-items-center justify-content-center rounded-circle border border-secondary border-opacity-25 mb-3" style="width: 70px; height: 70px; background: rgba(107, 114, 128, 0.1);">
+           <i class="bi bi-people fs-2 text-white"></i>
+        </div>
+        <h4 class="h5 fw-bold text-uppercase mb-3">B2B va Korporativ</h4>
+        <p class="text-secondary small">
+          Korxonalar uchun maxsus takliflar, ulgurji narxlar va shartnoma asosida ishlash imkoniyati.
+        </p>
       </div>
     </div>
   </div>
+
+  <!-- Product Categories Snippet -->
+  <div class="industrial-card p-4 mb-5 animate-fade-in-up" style="animation-delay: 0.8s;">
+    <h3 class="h4 fw-bold text-uppercase mb-4 font-heading border-start border-4 border-warning ps-3">
+        Mahsulot Yo'nalishlari
+    </h3>
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="p-3 bg-dark border border-secondary rounded h-100">
+                <i class="bi bi-boot fs-3 text-warning mb-2 d-block"></i>
+                <h5 class="fw-bold text-light">Xavfsizlik Oyoq Kiyimlari</h5>
+                <p class="small text-secondary mb-0">Botinkalar, etiklar, payabzallar (S1, S2, S3 toifalari)</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="p-3 bg-dark border border-secondary rounded h-100">
+                <i class="bi bi-person-workspace fs-3 text-warning mb-2 d-block"></i>
+                <h5 class="fw-bold text-light">Maxsus Kiyimlar</h5>
+                <p class="small text-secondary mb-0">Kombinezonlar, kostyumlar, jiletlar va kurtkalar</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="p-3 bg-dark border border-secondary rounded h-100">
+                <i class="bi bi-shield-shaded fs-3 text-warning mb-2 d-block"></i>
+                <h5 class="fw-bold text-light">Himoya Vositalari</h5>
+                <p class="small text-secondary mb-0">Dubulg'alar, ko'zoynaklar, qo'lqoplar va respiratorlar</p>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="industrial-card p-5 text-center position-relative overflow-hidden animate-fade-in-up" style="animation-delay: 0.9s;">
+    <div class="position-relative z-1">
+        <h2 class="h3 fw-bold text-uppercase mb-3">Savollaringiz bormi?</h2>
+        <p class="text-secondary mb-4">Bizning mutaxassislarimiz barcha savollaringizga javob berishga tayyor.</p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a href="{{ url_for('contact') }}" class="btn-primary-industrial">
+                <i class="bi bi-envelope me-2"></i> Bog'lanish
+            </a>
+            <a href="{{ url_for('menu') }}" class="btn-outline-industrial">
+                <i class="bi bi-shop me-2"></i> Mahsulotlarni ko'rish
+            </a>
+        </div>
+    </div>
+  </div>
+
 </div>
 
 <style>
-  /* Modern FAQ Styles */
-  :root {
-      --faq-primary: #0f172a;
-      --faq-accent: #0ea5e9;
-      --faq-bg-light: #f8fafc;
-  }
-
-  .faq-page-container {
-    background-color: #f1f5f9;
-    min-height: 100vh;
-    padding-bottom: 60px;
-  }
-
-  .faq-hero-section {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-    padding: 100px 0 120px;
-    text-align: center;
-    color: white;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .faq-hero-section::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: radial-gradient(circle at 20% 50%, rgba(14, 165, 233, 0.15), transparent 50%),
-                  radial-gradient(circle at 80% 50%, rgba(99, 102, 241, 0.15), transparent 50%);
-  }
-
-  .faq-hero-title {
-    font-size: clamp(2rem, 5vw, 3.5rem);
-    font-weight: 800;
-    margin-bottom: 1rem;
-    background: linear-gradient(to right, #fff, #94a3b8);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  .faq-hero-subtitle {
-    font-size: 1.25rem;
-    color: #cbd5e1;
-    font-weight: 300;
-  }
-
-  .faq-card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(20px);
-    border-radius: 24px;
-    overflow: hidden;
-  }
-
-  .faq-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-  }
-
-  .faq-item {
-    display: flex;
-    gap: 1.5rem;
-    padding: 1.5rem;
-    background: #fff;
-    border-radius: 16px;
-    border: 1px solid #e2e8f0;
-    transition: all 0.3s ease;
-  }
-
-  .faq-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-    border-color: var(--faq-accent);
-  }
-
-  .faq-icon {
-    flex-shrink: 0;
-    width: 50px;
-    height: 50px;
-    background: linear-gradient(135deg, #e0f2fe, #f0f9ff);
-    color: var(--faq-accent);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-  }
-
-  .faq-item:hover .faq-icon {
-      background: var(--faq-accent);
-      color: white;
-  }
-
-  .faq-content h4 {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--faq-primary);
-    margin-bottom: 0.5rem;
-  }
-
-  .faq-content p {
-    font-size: 0.95rem;
-    color: #64748b;
-    line-height: 1.6;
-    margin: 0;
-  }
-  
-  .contact-cta h4 {
-      color: var(--faq-primary);
-      font-weight: 700;
-  }
-
-  /* Animations */
-  .animate-fade-in { animation: fadeInUp 0.8s ease-out forwards; opacity: 0; transform: translateY(20px); }
-  .delay-100 { animation-delay: 0.1s; }
-  
   @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
     to { opacity: 1; transform: translateY(0); }
   }
-
-  /* Mobile responsiveness */
-  @media (max-width: 768px) {
-    .faq-grid {
-      grid-template-columns: 1fr;
-    }
-    
-    .faq-hero-section {
-      padding: 60px 0 80px;
-    }
-
-    .faq-card {
-      margin-left: 10px;
-      margin-right: 10px;
-      border-radius: 16px;
-    }
+  
+  .animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+    opacity: 0;
   }
+  
+  .hover-lift {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .hover-lift:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-heavy);
+      border-color: var(--accent-primary);
+  }
+  
+  .ls-2 { letter-spacing: 2px; }
+  .backdrop-blur { backdrop-filter: blur(4px); }
 </style>
 {% endblock %}

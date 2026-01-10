@@ -1,0 +1,717 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- Hide Legacy Storefront Navbar & Footer container from base.html -->
+<style>
+    /* Aggressively hide the default structure */
+    body > nav.navbar, body > .container > nav.navbar, nav.navbar-expand-lg { display: none !important; }
+    #news-ticker { display: none !important; }
+    body > footer, body > .footer, .site-footer { display: none !important; }
+    body { padding-top: 0 !important; background-color: var(--bg-body); }
+    
+/* Dashboard Override for Industrial Premium */
+body.dashboard-body, body.light-theme {
+    background-color: #f0f4f8 !important; /* Slightly more blueish tint */
+    color: #1a1a1a !important;
+}
+
+/* Ensure we have the admin-mode class for base.html overrides */
+body {
+    background-color: #f0f4f8 !important;
+}
+</style>
+<script>document.body.classList.add('admin-mode', 'dashboard-body');</script>
+<style>
+
+.dashboard-layout {
+    display: flex;
+    min-height: 100vh;
+    background: #f4f7fa;
+}
+
+/* Force light theme colors on children */
+.dashboard-layout h1, 
+.dashboard-layout h2, 
+.dashboard-layout h3, 
+.dashboard-layout h4, 
+.dashboard-layout h5, 
+.dashboard-layout h6,
+.dashboard-layout p,
+.dashboard-layout span:not(.badge),
+.dashboard-layout div:not(.badge) {
+    color: #1a1a1a !important;
+}
+
+.dashboard-sidebar {
+    width: 280px;
+    background: #ffffff !important;
+    border-right: 1px solid rgba(0,0,0,0.05);
+    padding: 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 1050;
+    box-shadow: 4px 0 15px rgba(0,0,0,0.02);
+}
+
+.dashboard-main {
+    flex: 1;
+    margin-left: 280px;
+    padding: 0;
+    min-width: 0; /* Fix flex overflow */
+}
+
+.top-header {
+    background: #ffffff !important;
+    border-bottom: 1px solid rgba(0,0,0,0.05) !important;
+    padding: 1.25rem 2rem !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.02) !important;
+}
+
+.top-header h2, .top-header p, .top-header .text-muted {
+    color: #1a1a1a !important;
+}
+
+/* Contrast Fixes */
+.dashboard-layout .text-white, 
+.dashboard-layout .text-light,
+.dashboard-layout .navbar-text {
+    color: #1a1a1a !important;
+}
+
+.nav-link-modern {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.8rem 1.2rem;
+    border-radius: 8px;
+    color: #4b5563 !important;
+    text-decoration: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.nav-link-modern:hover {
+    background: rgba(30, 64, 175, 0.05);
+    color: #1e40af !important;
+}
+
+.nav-link-modern.active {
+    background: #0f172a !important; /* Premium Deep Blue */
+    color: var(--accent-primary, #FFD700) !important;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+}
+
+.card-modern {
+    background: #ffffff !important;
+    border: 1px solid rgba(0,0,0,0.05) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
+    color: #1a1a1a !important;
+}
+
+.stat-card h3 {
+    color: #1a1a1a !important;
+}
+
+/* Pagination MUI-like Styles */
+.pagination-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0.75rem 1.5rem;
+    background: #ffffff;
+    border-top: 1px solid rgba(0,0,0,0.05);
+    font-size: 0.875rem;
+    color: #4b5563;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.pagination-spacer {
+    flex: 1 1 100%;
+}
+
+@media (min-width: 640px) {
+    .pagination-spacer { flex: 1; }
+}
+
+.pagination-select-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pagination-select {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-weight: 600;
+    padding: 0.25rem;
+    color: #1a1a1a;
+}
+
+.pagination-actions {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.pagination-btn {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: #4b5563;
+    transition: all 0.2s;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background: rgba(0,0,0,0.04);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* Grid for Menu (as requested) */
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1.5rem;
+    padding: 1rem;
+}
+
+@media (min-width: 768px) {
+    .menu-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1200px) {
+    .menu-grid {
+        grid-template-columns: repeat(3, 1fr); /* 3 columns for laptop */
+    }
+}
+
+.menu-card-admin {
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,0.05);
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.menu-card-admin:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+    /* Improved Table Responsive Design */
+    .table-responsive {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+        border: 1px solid rgba(0,0,0,0.05);
+        padding: 0;
+        margin-bottom: 1.5rem;
+    }
+    
+    .table-modern {
+        width: 100%;
+        margin-bottom: 0;
+        vertical-align: middle;
+    }
+    
+    .table-modern thead th {
+        background: #f8fafc !important;
+        color: #64748b !important;
+        border-bottom: 2px solid #e2e8f0 !important;
+        padding: 1rem 1.5rem !important;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        white-space: nowrap;
+    }
+    
+    .table-modern tbody td {
+        padding: 1rem 1.5rem !important;
+        vertical-align: middle;
+        color: #334155 !important;
+        border-bottom: 1px solid #f1f5f9 !important;
+        background: #ffffff;
+    }
+
+    .table-modern tbody tr:last-child td {
+        border-bottom: none !important;
+    }
+    
+    /* Input & Form Control Fixes */
+    .form-control, .form-select {
+        background-color: #ffffff !important;
+        border: 1px solid #e2e8f0;
+        padding: 0.6rem 1rem;
+        border-radius: 8px;
+        color: #1e293b;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        background-color: #ffffff !important;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    /* Card Padding Fix */
+    .card-modern {
+        padding: 1.5rem !important; /* Force padding */
+    }
+    
+    /* Global Padding Utilities */
+    .p-responsive {
+        padding: 1.5rem;
+    }
+
+    .menu-card-admin .p-3 {
+        padding: 1.25rem !important;
+    }
+</style>
+
+<div class="dashboard-layout">
+    <script>
+        // Global Pagination Utility
+    class TablePagination {
+        constructor(params) {
+            this.container = params.container; // The div that will hold the table and toolbar
+            this.data = params.data || [];
+            this.renderRow = params.renderRow;
+            this.onPageChange = params.onPageChange;
+            this.rowsPerPage = params.rowsPerPage || 10;
+            this.currentPage = 0;
+            this.isGrid = params.isGrid || false;
+            this.headerHtml = params.headerHtml || '';
+            this.init();
+        }
+
+        init() {
+            this.render();
+        }
+
+        setData(newData) {
+            this.data = newData;
+            this.currentPage = 0;
+            this.render();
+        }
+
+        render() {
+            const start = this.currentPage * this.rowsPerPage;
+            const end = Math.min(start + this.rowsPerPage, this.data.length);
+            const pageData = this.data.slice(start, end);
+
+            let contentHtml = '';
+            if (this.isGrid) {
+                contentHtml = `<div class="menu-grid">${pageData.map((item, idx) => this.renderRow(item, start + idx)).join('')}</div>`;
+            } else {
+                contentHtml = `
+                    <div class="table-responsive">
+                        <table class="table-modern">
+                            ${this.headerHtml || ''}
+                            <tbody>
+                                ${pageData.length > 0 
+                                    ? pageData.map((item, idx) => this.renderRow(item, start + idx)).join('') 
+                                    : '<tr><td colspan="10" class="text-center py-5 text-muted">Ma\'lumotlar yo\'q</td></tr>'}
+                            </tbody>
+                        </table>
+                    </div>`;
+            }
+
+            this.container.innerHTML = contentHtml + this.renderToolbar(start, end);
+            this.attachEvents();
+        }
+
+        renderToolbar(start, end) {
+            const total = this.data.length;
+            return `
+                <div class="pagination-toolbar">
+                    <div class="pagination-spacer"></div>
+                    <div class="pagination-select-wrap">
+                        <span>Qatorlar:</span>
+                        <select class="pagination-select" id="rowsSelect">
+                            <option value="5" ${this.rowsPerPage == 5 ? 'selected' : ''}>5</option>
+                            <option value="10" ${this.rowsPerPage == 10 ? 'selected' : ''}>10</option>
+                            <option value="12" ${this.rowsPerPage == 12 ? 'selected' : ''}>12</option>
+                            <option value="25" ${this.rowsPerPage == 25 ? 'selected' : ''}>25</option>
+                        </select>
+                    </div>
+                    <div class="pagination-info">
+                        ${total > 0 ? `${start + 1}-${end} gacha, ${total} tadan` : '0 tadan 0'}
+                    </div>
+                    <div class="pagination-actions">
+                        <button class="pagination-btn" id="prevPage" ${this.currentPage === 0 ? 'disabled' : ''}>
+                            <i class="bi bi-chevron-left"></i>
+                        </button>
+                        <button class="pagination-btn" id="nextPage" ${end >= total ? 'disabled' : ''}>
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        attachEvents() {
+            const prev = this.container.querySelector('#prevPage');
+            const next = this.container.querySelector('#nextPage');
+            const select = this.container.querySelector('#rowsSelect');
+
+            if (prev) prev.onclick = () => { this.currentPage--; this.render(); };
+            if (next) next.onclick = () => { this.currentPage++; this.render(); };
+            if (select) select.onchange = (e) => { 
+                this.rowsPerPage = parseInt(e.target.value); 
+                this.currentPage = 0; 
+                this.render(); 
+            };
+        }
+    }
+
+    window.TablePagination = TablePagination;
+        // Force light theme for dashboards
+        document.body.classList.remove('dark-theme');
+        document.body.classList.add('light-theme');
+        document.body.classList.add('dashboard-body');
+        document.documentElement.classList.remove('dark-theme');
+    </script>
+    <!-- Unified Sidebar -->
+    <aside class="dashboard-sidebar collapse d-lg-block" id="sidebarMenu">
+        <!-- Brand -->
+        <div class="d-flex align-items-center gap-2 mb-4 px-2">
+            {% block sidebar_brand %}
+            <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm overflow-hidden" style="width: 40px; height: 40px; background: white;">
+                <img src="/static/img/default.webp" onerror="this.src='https://res.cloudinary.com/dpfbu9aid/image/upload/v1766927327/products/defoult.webp'" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <div>
+                <h5 class="mb-0 fw-bold text-dark">Safety.uz</h5>
+                <small class="text-muted" style="font-size: 0.75rem;">Online Store</small>
+            </div>
+            {% endblock %}
+        </div>
+
+        <!-- Menu -->
+        <nav class="nav flex-column gap-1 flex-grow-1">
+            {% block sidebar_menu %}
+            <!-- Default Storefront Links -->
+            <a href="{{ url_for('index') }}" class="nav-link-modern"><i class="bi bi-house"></i> {{ _('nav.home') }}</a>
+            <a href="{{ url_for('menu') }}" class="nav-link-modern"><i class="bi bi-grid"></i> {{ _('nav.menu') }}</a>
+            <a href="{{ url_for('news_page') }}" class="nav-link-modern"><i class="bi bi-newspaper"></i> {{ _('nav.news') }}</a>
+            <a href="{{ url_for('contact') }}" class="nav-link-modern"><i class="bi bi-envelope"></i> {{ _('nav.contact') }}</a>
+            
+            <hr class="my-3 mx-2 opacity-25"/>
+            
+            {% if session.get('user_id') %}
+                 <a href="{{ url_for('profile') }}" class="nav-link-modern"><i class="bi bi-person"></i> {{ _('nav.profile') }}</a>
+                 <a href="{{ url_for('favorites') }}" class="nav-link-modern"><i class="bi bi-heart"></i> {{ _('nav.favorites') }}</a>
+            {% else %}
+                 <a href="{{ url_for('login_page') }}" class="nav-link-modern"><i class="bi bi-box-arrow-in-right"></i> {{ _('nav.login') }}</a>
+                 <a href="{{ url_for('register') }}" class="nav-link-modern"><i class="bi bi-person-plus"></i> {{ _('nav.register') }}</a>
+            {% endif %}
+            {% endblock %}
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="mt-auto pt-3 border-top">
+            {% block sidebar_footer %}
+            {% if session.get('user_id') %}
+            <div class="d-flex align-items-center gap-2 px-2 mb-3">
+                <img src="{{ (session.get('user_avatar') or 'images/default-avatar.svg') | cloudinary_url }}" 
+                     class="rounded-circle shadow-sm" width="32" height="32" style="object-fit: cover;">
+                <div class="overflow-hidden">
+                    <div class="fw-bold small text-truncate">{{ session.get('user_name', 'User') }}</div>
+                </div>
+            </div>
+            <a href="{{ url_for('logout') }}" class="nav-link-modern text-danger">
+                <i class="bi bi-box-arrow-right"></i> {{ _('nav.logout') }}
+            </a>
+            {% endif %}
+            {% endblock %}
+        </div>
+    </aside>
+
+    <!-- Main Layout -->
+    <main class="dashboard-main">
+        <!-- Top Header -->
+        <header class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom fade-up-enter bg-white sticky-top px-4 pt-3 shadow-sm top-header" style="z-index: 999;">
+            <!-- Mobile Toggle -->
+            <button class="btn btn-light d-lg-none me-3" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu">
+                 <i class="bi bi-list"></i>
+            </button>
+
+            <!-- Page Title -->
+            <div class="flex-grow-1">
+                <h2 class="fw-bold mb-1 fs-4">{% block header_title %}Safety.uz{% endblock %}</h2>
+                <p class="text-muted mb-0 small">{% block header_subtitle %}{{ _('home_title') }}{% endblock %}</p>
+            </div>
+
+            <!-- Header Actions -->
+            <div class="d-flex align-items-center gap-3">
+                {% block header_actions %}
+                <!-- Global Search -->
+                <div class="d-none d-md-block position-relative" style="width: 250px;">
+                    <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                    <input type="text" id="globalSearchInput" class="form-control border-0 bg-white rounded-pill ps-5 shadow-sm" placeholder="Qidirish..." style="font-size: 0.9rem;" autocomplete="off">
+                    <div id="globalSearchResults" class="dropdown-menu w-100 mt-2 shadow-lg border-0" style="max-height: 400px; overflow-y: auto;"></div>
+                </div>
+                
+                <!-- Language -->
+                <div class="dropdown">
+                    <button class="btn btn-light-modern btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                        {{ (session.get('interface_language', config.get('DEFAULT_LANGUAGE','ru'))|upper) }}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#" onclick="changeLanguage('uz')">UZ</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="changeLanguage('ru')">RU</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="changeLanguage('en')">EN</a></li>
+                    </ul>
+                 </div>
+                 
+                 <!-- Notifications (Global) -->
+                 <div class="dropdown">
+                     <button class="btn btn-light-modern btn-sm position-relative" data-bs-toggle="dropdown" aria-expanded="false" id="notifyDropdownBtn">
+                        <i class="bi bi-bell"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notifyBadge" style="display:none">
+                            0
+                            <span class="visually-hidden">unread messages</span>
+                        </span>
+                     </button>
+                     <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-0" style="width: 320px; max-height: 400px; overflow-y: auto;" id="notifyDropdownMenu">
+                        <li class="p-3 border-bottom d-flex justify-content-between align-items-center bg-light">
+                            <span class="fw-bold small">Bildirishnomalar</span>
+                            <a href="#" class="text-decoration-none small text-primary" onclick="markAllNotificationsRead(event)">Barchasini o'qish</a>
+                        </li>
+                        <div id="notifyListContainer">
+                            <li class="p-4 text-center text-muted small">Yuklanmoqda...</li>
+                        </div>
+                        <li class="p-2 border-top text-center bg-light">
+                             <a href="{{ url_for('super_admin_notifications') if session.get('role') == 'super_admin' else '#' }}" class="text-decoration-none small text-muted">Barchasini ko'rish</a>
+                        </li>
+                     </ul>
+                 </div>
+                {% endblock %}
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-content fade-up-enter px-4 pb-5" style="animation-delay: 0.1s;">
+            {% block dashboard_content %}
+            {% endblock %}
+        </div>
+        
+        <!-- Re-include Footer -->
+        <div class="px-4 pb-4">
+             {% include 'components/footer.html' %}
+        </div>
+        
+        <!-- Flash Messages for Notification Logic -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="flash-message-hidden d-none" data-category="{{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+        
+        <!-- Floating Notifications Container -->
+        <div id="toast-container" class="position-fixed top-0 end-0 p-3" style="z-index: 2000; margin-top: 80px;"></div>
+
+    <script>
+        // Floating Notification Helper
+        window.showNotification = (message, type = 'success') => {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-white bg-${type === 'error' ? 'danger' : type} border-0 show fade show mb-2`;
+            toast.role = 'alert';
+            toast.style.display = 'block';
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body"><i class="bi bi-${type === 'error' ? 'exclamation-circle' : 'check-circle'} me-2"></i> ${message}</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" onclick="this.closest('.toast').remove()"></button>
+                </div>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 500);
+            }, 4000);
+        };
+
+        // Hook into original flash messages
+        document.addEventListener('DOMContentLoaded', () => {
+            const flashes = document.querySelectorAll('.flash-message-hidden');
+            flashes.forEach(f => {
+                showNotification(f.textContent, f.dataset.category);
+            });
+        });
+    </script>
+    </main>
+</div>
+
+<!-- Global Modals -->
+{% block dashboard_modals %}{% endblock %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const currentPath = window.location.pathname;
+        document.querySelectorAll('.nav-link-modern').forEach(link => {
+            if(link.getAttribute('href') === currentPath) {
+                link.classList.add('active');
+            }
+        });
+
+        // Global Search Logic
+        const searchInput = document.getElementById('globalSearchInput');
+        const searchResults = document.getElementById('globalSearchResults');
+        let searchTimeout = null;
+
+        if (searchInput && searchResults) {
+            searchInput.addEventListener('input', function() {
+                const query = this.value.trim();
+                
+                if (searchTimeout) clearTimeout(searchTimeout);
+                
+                if (query.length < 2) {
+                    searchResults.innerHTML = '';
+                    searchResults.classList.remove('show');
+                    return;
+                }
+
+                searchTimeout = setTimeout(() => {
+                    fetch(`/super-admin/global-search?q=${encodeURIComponent(query)}`)
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.success && data.results.length > 0) {
+                                let html = '';
+                                data.results.forEach(item => {
+                                    let icon = 'bi-search';
+                                    if(item.type === 'order') icon = 'bi-receipt';
+                                    if(item.type === 'user') icon = 'bi-person';
+                                    if(item.type === 'product') icon = 'bi-box-seam';
+                                    
+                                    html += `
+                                        <a href="${item.url}" class="dropdown-item py-2 border-bottom">
+                                            <div class="d-flex align-items-center">
+                                                <div class="bg-light rounded-circle p-2 me-3">
+                                                    <i class="bi ${icon} text-primary"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="fw-bold text-dark count-text">${item.title}</div>
+                                                    <small class="text-muted">${item.subtitle}</small>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    `;
+                                });
+                                searchResults.innerHTML = html;
+                                searchResults.classList.add('show');
+                            } else {
+                                searchResults.innerHTML = '<div class="p-3 text-center text-muted">Natija topilmadi</div>';
+                                searchResults.classList.add('show');
+                            }
+                        })
+                        .catch(err => console.error('Search error:', err));
+                }, 300);
+            });
+
+            // Close search on click outside
+            document.addEventListener('click', function(e) {
+                if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                    searchResults.classList.remove('show');
+                }
+            });
+
+        }
+        
+        // Notification Logic
+        const notifyBtn = document.getElementById('notifyDropdownBtn');
+        const notifyBadge = document.getElementById('notifyBadge');
+        const notifyList = document.getElementById('notifyListContainer');
+        let notificationsLoaded = false;
+
+        function loadNotifications() {
+            fetch('/api/notifications')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        const notifications = data.notifications || [];
+                        const unreadCount = notifications.filter(n => !n.is_read).length;
+
+                        // Badge
+                        if (unreadCount > 0) {
+                            notifyBadge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+                            notifyBadge.style.display = 'block';
+                        } else {
+                            notifyBadge.style.display = 'none';
+                        }
+
+                        // List (only render if dropdown is opened or first load)
+                        if (notificationsLoaded || notifyBtn.getAttribute('aria-expanded') === 'true') {
+                            renderNotificationList(notifications);
+                        }
+                    }
+                })
+                .catch(err => console.error('Notification fetch error:', err));
+        }
+
+        function renderNotificationList(notifications) {
+            if (notifications.length === 0) {
+                notifyList.innerHTML = '<li class="p-4 text-center text-muted small">Bildirishnomalar yo\'q</li>';
+                return;
+            }
+
+            let html = '';
+            notifications.slice(0, 5).forEach(n => {
+                const bgClass = n.is_read ? '' : 'bg-primary bg-opacity-10';
+                html += `
+                    <li>
+                        <a href="#" class="dropdown-item p-3 border-bottom ${bgClass}" style="white-space: normal;">
+                            <div class="d-flex justify-content-between mb-1">
+                                <strong class="small text-truncate" style="max-width: 180px;">${n.title}</strong>
+                                <span class="text-xs text-muted" style="font-size: 0.7rem;">${n.time_ago || ''}</span>
+                            </div>
+                            <p class="mb-0 small text-muted text-truncate">${n.body}</p>
+                        </a>
+                    </li>
+                `;
+            });
+            notifyList.innerHTML = html;
+        }
+
+        // Fetch on load
+        loadNotifications();
+        
+        // Fetch on open
+        if (notifyBtn) {
+            notifyBtn.addEventListener('show.bs.dropdown', function () {
+                notificationsLoaded = true;
+                loadNotifications();
+            });
+        }
+
+        // Helper to mark all read
+        window.markAllNotificationsRead = function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            fetch('/api/notifications/mark-all-read', { method: 'POST', headers: {'Content-Type': 'application/json', 'X-CSRF-Token': window.CSRF_TOKEN || ''} })
+            .then(r => r.json())
+            .then(d => {
+                if(d.success) loadNotifications();
+            });
+        };
+    });
+</script>
+{% block scripts %}{% endblock %}
+{% endblock %}

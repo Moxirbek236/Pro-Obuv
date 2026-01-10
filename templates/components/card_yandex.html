@@ -1,7 +1,6 @@
-{# Premium product card for Menu page #}
+{# Premium modern product card #}
 {% set main_img_path = item.primary_image if item.primary_image else item.image_url if item.image_url else 'defoult.webp' %}
 {% set main_img = main_img_path | cloudinary_url %}
-
 {% set cat_val = (item.category_slug if item.category_slug is defined and item.category_slug else (item.category if item.category is defined and item.category else '')) %}
 {% set sizes_val = (item.sizes if item.sizes is defined and item.sizes else (item.size if item.size is defined and item.size else '')) %}
 {% set colors_val = (item.colors if item.colors is defined and item.colors else (item.color if item.color is defined and item.color else '')) %}
@@ -11,75 +10,123 @@
 {% set rating = item.rating if item.rating is defined else 0 %}
 {% set localized_name = item.name_local or localized_field(item, 'name') or item.name %}
 
-<div
-    class="menu-item-card"
+<div 
+    class="menu-item-card product-card-modern h-100 d-flex flex-column"
     data-id="{{ item.id }}"
     data-category="{{ (cat_val|default('product'))|lower }}"
     data-sizes="{{ (sizes_str|default(''))|lower }}"
     data-colors="{{ (colors_str|default(''))|lower }}"
     data-orders-count="{{ orders_cnt }}"
     data-rating="{{ rating }}"
+    data-search-terms="{{ localized_name }} {{ item.description or '' }}"
     role="link"
     tabindex="0"
+    onclick="window.location.href='/product/{{ item.id }}'"
+    style="cursor: pointer;"
 >
-    <!-- Favorite Button -->
-    <button type="button" class="btn-favorite-top" data-item-id="{{ item.id }}">
-        <i class="bi bi-heart"></i>
-    </button>
+    <div class="position-relative overflow-hidden product-card-image-wrapper">
+        <!-- New Badge -->
+        {% if orders_cnt > 50 %}
+        <div class="position-absolute top-0 start-0 m-2 badge bg-danger text-white rounded-pill px-3 py-1 z-2 shadow-sm fs-7">
+            Hit
+        </div>
+        {% elif (item.is_new) %}
+        <div class="position-absolute top-0 start-0 m-2 badge bg-success text-white rounded-pill px-3 py-1 z-2 shadow-sm fs-7">
+            New
+        </div>
+        {% endif %}
 
-    <!-- Badge -->
-    {% if orders_cnt > 50 %}
-        <div class="card-badge">{{ _('badge.bestseller') if _('badge.bestseller') else 'Hitt' }}</div>
-    {% endif %}
+        <!-- Favorite Button -->
+        <button 
+            type="button" 
+            class="position-absolute top-0 end-0 m-2 btn btn-light rounded-circle shadow-sm border-0 d-flex align-items-center justify-content-center z-2" 
+            style="width: 36px; height: 36px; background: rgba(255,255,255,0.9);"
+            onclick="event.stopPropagation(); toggleFavorite({{ item.id }}, this)"
+            title="Sevimlilarga qo'shish"
+        >
+            <i class="bi bi-heart text-danger"></i>
+        </button>
 
-    <!-- IMAGE AREA (Standardized Swiper for Universal Interaction) -->
-    <div class="card-image-wrap swiper product-card-swiper">
-        <div class="swiper-wrapper">
-            <!-- Main Image -->
-            <div class="swiper-slide">
-                <img
-                    src="{{ main_img }}"
-                    alt="{{ localized_name }}"
-                    loading="lazy"
-                    decoding="async"
-                    onerror="this.src='{{ 'defoult.webp' | cloudinary_url }}'"
-                />
-            </div>
-            
-            <!-- Additional Media Slides -->
-            {% set medias = item.media or [] %}
-            {% for m in medias %}
-                {% set thumb_path = m.media_url if m is mapping and m.media_url else m.image_url if m is mapping and m.image_url else m %}
-                {% if thumb_path and thumb_path != main_img_path %}
+        <!-- Swiper Image Slider -->
+        <div class="swiper product-card-swiper w-100 h-100">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                    <img 
+                        src="{{ main_img }}" 
+                        alt="{{ localized_name }}" 
+                        class="w-100 h-100 object-fit-cover transition-transform duration-500 hover-scale"
+                        loading="lazy"
+                        onerror="this.src='{{ 'defoult.webp' | cloudinary_url }}'"
+                    >
+                </div>
+                {% set medias = item.media or [] %}
+                {% for m in medias %}
+                    {% set thumb_path = m.media_url if m is mapping and m.media_url else m.image_url if m is mapping and m.image_url else m %}
+                    {% if thumb_path and thumb_path != main_img_path %}
                     <div class="swiper-slide">
-                        <img
-                            src="{{ thumb_path | cloudinary_url }}"
-                            alt="{{ localized_name }} view {{ loop.index }}"
+                        <img 
+                            src="{{ thumb_path | cloudinary_url }}" 
+                            alt="{{ localized_name }}" 
+                            class="w-100 h-100 object-fit-cover"
                             loading="lazy"
                             onerror="this.src='{{ 'defoult.webp' | cloudinary_url }}'"
-                        />
+                        >
                     </div>
-                {% endif %}
-            {% endfor %}
-        </div>
-        
-        <!-- Subtle Swiper Indicators -->
-        {% if medias|length > 0 %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {% if medias|length > 0 %}
             <div class="swiper-pagination"></div>
-        {% endif %}
+            {% endif %}
+        </div>
     </div>
 
-    <!-- CONTENT AREA -->
-    <div class="card-content" style="text-align: center; justify-content: center; min-height: 100px;">
-        <h3 class="card-title" style="margin-bottom: 8px;">{{ localized_name }}</h3>
-        
-        <div class="card-rating" style="justify-content: center;">
-            <span class="stars">
-                {% for i in range(1,6) %}
-                    {% if rating >= i %}<i class="bi bi-star-fill"></i>{% elif rating >= i-0.5 %}<i class="bi bi-star-half"></i>{% else %}<i class="bi bi-star"></i>{% endif %}
-                {% endfor %}
-            </span>
-            <span class="rating-text">{{ rating|round(1) }} ({{ orders_cnt }})</span>
+    <!-- Product Info -->
+    <div class="p-3 flex-grow-1 d-flex flex-column">
+        <div class="mb-2">
+            <div class="d-flex justify-content-between align-items-start">
+                <h6 class="fw-bold mb-0 text-dark text-truncate-2 lh-sm" style="height: 2.5em;">{{ localized_name }}</h6>
+            </div>
+            <div class="d-flex align-items-center gap-1 mt-1">
+                <i class="bi bi-star-fill text-warning fs-7"></i>
+                <span class="fw-bold fs-7 text-dark">{{ rating|round(1) }}</span>
+                <span class="text-muted fs-7">({{ orders_cnt }} buyurtma)</span>
+            </div>
+        </div>
+
+        <div class="mt-auto pt-3 border-top d-flex align-items-center justify-content-between">
+            <div>
+                <span class="d-block text-muted fs-7 mb-0">Narxi</span>
+                <span class="fw-bold text-primary fs-6">{{ "{:,.0f}".format(item.price or 0).replace(',', ' ') }} so'm</span>
+            </div>
+            <button 
+                class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center shadow-sm btn-hover-scale" 
+                style="width: 42px; height: 42px;"
+                onclick="event.stopPropagation(); window.location.href='/product/{{ item.id }}'"
+            >
+                <i class="bi bi-arrow-right fs-5"></i>
+            </button>
         </div>
     </div>
 </div>
+
+<style>
+    .product-card-image-wrapper {
+        aspect-ratio: 1 / 1;
+        background: #f8f9fa;
+        position: relative;
+    }
+    .hover-scale {
+        transition: transform 0.5s ease;
+    }
+    .menu-item-card:hover .hover-scale {
+        transform: scale(1.05);
+    }
+    .btn-hover-scale {
+        transition: transform 0.2s ease;
+    }
+    .btn-hover-scale:hover {
+        transform: scale(1.1);
+    }
+    .fs-7 { font-size: 0.85rem; }
+</style>

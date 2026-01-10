@@ -1,5 +1,6 @@
-{% extends "base.html" %} {% block title %}Analytics - Super Admin{% endblock %}
-{% block content %}
+{% extends "super_admin_base.html" %} {% block title %}Analytics - Super Admin{% endblock %}
+
+{% block dashboard_content %}
 <div class="analytics-container">
   <div class="analytics-header">
     <h1> Biznes Analytics va Statistika</h1>
@@ -169,252 +170,10 @@
   </div>
 </div>
 
-<script>
-  function showAnalyticsTab(tabName) {
-    // Barcha tablarni yashirish
-    document.querySelectorAll(".analytics-section").forEach((section) => {
-      section.classList.remove("active");
-    });
-
-    // Barcha tugmalardan active ni olib tashlash
-    document.querySelectorAll(".analytics-tab").forEach((tab) => {
-      tab.classList.remove("active");
-    });
-
-    // Kerakli section va tugmani faollashtirish
-    document.getElementById(`${tabName}-analytics`).classList.add("active");
-    event.target.classList.add("active");
-
-    // Ma'lumotlarni yuklash
-    if (tabName === "orders") {
-      loadOrdersAnalytics();
-    } else if (tabName === "products") {
-      loadProductsAnalytics();
-    } else if (tabName === "customers") {
-      loadCustomersAnalytics();
-    }
-  }
-
-  function loadOrdersAnalytics() {
-    fetch("/api/super-admin/reports?type=monthly")
-      .then((response) => response.json())
-      .then((data) => {
-        let html = `
-                <div class="orders-stats">
-                    <div class="stat-grid">
-                        <div class="stat-item">
-                            <h5>Jami buyurtmalar</h5>
-                            <div class="stat-number">${
-                              data.summary.total_orders
-                            }</div>
-                        </div>
-                        <div class="stat-item">
-                            <h5>O'rtacha check</h5>
-                            <div class="stat-number">${Math.round(
-                              data.summary.total_revenue /
-                                data.summary.total_orders || 0
-                            ).toLocaleString()} so'm</div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        document.getElementById("ordersData").innerHTML = html;
-      })
-      .catch((error) => {
-        document.getElementById("ordersData").innerHTML =
-          '<p class="text-center">Ma\'lumotlarni yuklashda xatolik</p>';
-      });
-  }
-
-  function loadProductsAnalytics() {
-    fetch("/super-admin/get-menu")
-      .then((response) => response.json())
-      .then((data) => {
-        let html = '<div class="products-table">';
-        html += '<table class="analytics-table"><thead><tr>';
-        html +=
-          "<th>Mahsulot</th><th>Kategoriya</th><th>Sotilgan</th><th>Narxi</th><th>Baho</th>";
-        html += "</tr></thead><tbody>";
-
-        data.forEach((product) => {
-          html += `<tr>
-                    <td><strong>${product.name}</strong></td>
-                    <td>${product.category}</td>
-                    <td>${product.orders_count || 0}</td>
-                    <td>${product.price.toLocaleString()} so'm</td>
-                    <td>${product.rating || 0} ⭐</td>
-                </tr>`;
-        });
-
-        html += "</tbody></table></div>";
-        document.getElementById("productsData").innerHTML = html;
-      })
-      .catch((error) => {
-        document.getElementById("productsData").innerHTML =
-          '<p class="text-center">Ma\'lumotlarni yuklashda xatolik</p>';
-      });
-  }
-
-  function loadCustomersAnalytics() {
-    fetch("/api/super-admin/reports?type=monthly")
-      .then((response) => response.json())
-      .then((data) => {
-        let html = '<div class="customers-table">';
-        html += '<table class="analytics-table"><thead><tr>';
-        html +=
-          "<th>Mijoz</th><th>Email</th><th>Buyurtmalar</th><th>Jami xarid</th>";
-        html += "</tr></thead><tbody>";
-
-        data.customers.forEach((customer) => {
-          html += `<tr>
-                    <td><strong>${customer.first_name} ${
-            customer.last_name
-          }</strong></td>
-                    <td>${customer.email}</td>
-                    <td>${customer.orders_count || 0}</td>
-                    <td>${(
-                      customer.total_spent || 0
-                    ).toLocaleString()} so'm</td>
-                </tr>`;
-        });
-
-        html += "</tbody></table></div>";
-        document.getElementById("customersData").innerHTML = html;
-      })
-      .catch((error) => {
-        document.getElementById("customersData").innerHTML =
-          '<p class="text-center">Ma\'lumotlarni yuklashda xatolik</p>';
-      });
-  }
-
-  // Sahifa yuklanganda
-  document.addEventListener("DOMContentLoaded", function () {
-    // Default tab - revenue
-    loadOrdersAnalytics();
-  });
-
-  // Chart rendering
-  let revenueChartInstance = null;
-
-  function formatDateDaysAgo(daysAgo) {
-    const d = new Date();
-    d.setDate(d.getDate() - daysAgo);
-    return d.toISOString().slice(0, 10);
-  }
-
-  function loadOrdersAnalytics() {
-    // use last 30 days
-    const end = formatDateDaysAgo(0);
-    const start = formatDateDaysAgo(29);
-    fetch(`/api/super-admin/reports?start_date=${start}&end_date=${end}`)
-      .then((response) => response.json())
-      .then((data) => {
-        let html = `
-                <div class="orders-stats">
-                    <div class="stat-grid">
-                        <div class="stat-item">
-                            <h5>Jami buyurtmalar</h5>
-                            <div class="stat-number">${
-                              data.summary.total_orders
-                            }</div>
-                        </div>
-                        <div class="stat-item">
-                            <h5>O'rtacha check</h5>
-                            <div class="stat-number">${Math.round(
-                              (data.summary.total_revenue || 0) /
-                                (data.summary.total_orders || 1)
-                            ).toLocaleString()} so'm</div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        document.getElementById("ordersData").innerHTML = html;
-
-        // Build chart from data.sales (array of {date, orders_count, revenue})
-        const labels = (data.sales || []).map((s) => s.date);
-        const revenues = (data.sales || []).map((s) => s.revenue);
-        const ordersCounts = (data.sales || []).map((s) => s.orders_count);
-
-        // include Chart.js dynamically if not present
-        const ensureChartJs = () => {
-          return new Promise((resolve, reject) => {
-            if (window.Chart) return resolve();
-            const s = document.createElement("script");
-            s.src =
-              "https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js";
-            s.onload = () => resolve();
-            s.onerror = () => reject(new Error("Chart.js failed to load"));
-            document.head.appendChild(s);
-          });
-        };
-
-        ensureChartJs()
-          .then(() => {
-            const ctx = document
-              .getElementById("revenueChartCanvas")
-              .getContext("2d");
-            if (revenueChartInstance) {
-              revenueChartInstance.destroy();
-            }
-            revenueChartInstance = new Chart(ctx, {
-              type: "line",
-              data: {
-                labels: labels,
-                datasets: [
-                  {
-                    label: "Daromad",
-                    data: revenues,
-                    borderColor: "#28a745",
-                    backgroundColor: "rgba(40,167,69,0.1)",
-                    yAxisID: "y",
-                  },
-                  {
-                    label: "Buyurtmalar",
-                    data: ordersCounts,
-                    borderColor: "#007bff",
-                    backgroundColor: "rgba(0,123,255,0.08)",
-                    yAxisID: "y1",
-                  },
-                ],
-              },
-              options: {
-                responsive: true,
-                interaction: { mode: "index", intersect: false },
-                stacked: false,
-                scales: {
-                  y: {
-                    type: "linear",
-                    display: true,
-                    position: "left",
-                    title: { display: true, text: "Soʻm" },
-                  },
-                  y1: {
-                    type: "linear",
-                    display: true,
-                    position: "right",
-                    grid: { drawOnChartArea: false },
-                    title: { display: true, text: "Buyurtmalar" },
-                  },
-                },
-              },
-            });
-          })
-          .catch((err) => {
-            console.error("Chart.js yüklenemedi", err);
-          });
-      })
-      .catch((error) => {
-        document.getElementById("ordersData").innerHTML =
-          '<p class="text-center">Ma\'lumotlarni yuklashda xatolik</p>';
-      });
-  }
-</script>
-
 <style>
   .analytics-container {
     padding: 20px;
-    max-width: 1600px;
-    margin: 0 auto;
+    max-width: 100%; /* Adapts to dashboard content area */
   }
 
   .analytics-header {
@@ -662,28 +421,9 @@
     color: #6c757d;
   }
 
-  .btn {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
-  }
-
-  .btn-primary {
-    background-color: #007bff;
-    color: white;
-  }
-
-  .btn-primary:hover {
-    background-color: #0056b3;
-    color: white;
-    text-decoration: none;
-  }
-
   .back-button {
     text-align: center;
+    margin-bottom: 20px;
   }
 
   .text-center {
@@ -718,4 +458,247 @@
     }
   }
 </style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function showAnalyticsTab(tabName) {
+    // Barcha tablarni yashirish
+    document.querySelectorAll(".analytics-section").forEach((section) => {
+      section.classList.remove("active");
+    });
+
+    // Barcha tugmalardan active ni olib tashlash
+    document.querySelectorAll(".analytics-tab").forEach((tab) => {
+      tab.classList.remove("active");
+    });
+
+    // Kerakli section va tugmani faollashtirish
+    document.getElementById(`${tabName}-analytics`).classList.add("active");
+    event.target.classList.add("active");
+
+    // Ma'lumotlarni yuklash
+    if (tabName === "orders") {
+      loadOrdersAnalytics();
+    } else if (tabName === "products") {
+      loadProductsAnalytics();
+    } else if (tabName === "customers") {
+      loadCustomersAnalytics();
+    }
+  }
+
+  function loadOrdersAnalytics() {
+    fetch("/api/super-admin/reports?type=monthly")
+      .then((response) => response.json())
+      .then((data) => {
+        let html = `
+                <div class="orders-stats">
+                    <div class="stat-grid">
+                        <div class="stat-item">
+                            <h5>Jami buyurtmalar</h5>
+                            <div class="stat-number">${
+                              data.summary.total_orders
+                            }</div>
+                        </div>
+                        <div class="stat-item">
+                            <h5>O'rtacha check</h5>
+                            <div class="stat-number">${Math.round(
+                              data.summary.total_revenue /
+                                data.summary.total_orders || 0
+                            ).toLocaleString()} so'm</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        document.getElementById("ordersData").innerHTML = html;
+      })
+      .catch((error) => {
+        document.getElementById("ordersData").innerHTML =
+          '<p class="text-center">Ma\'lumotlarni yuklashda xatolik</p>';
+      });
+  }
+
+  function loadProductsAnalytics() {
+    fetch("/super-admin/get-menu")
+      .then((response) => response.json())
+      .then((data) => {
+        let html = '<div class="products-table">';
+        html += '<table class="table-modern"><thead><tr>';
+        html +=
+          "<th>Mahsulot</th><th>Kategoriya</th><th>Sotilgan</th><th>Narxi</th><th>Baho</th>";
+        html += "</tr></thead><tbody>";
+
+        data.forEach((product) => {
+          html += `<tr>
+                    <td><strong>${product.name}</strong></td>
+                    <td>${product.category}</td>
+                    <td>${product.orders_count || 0}</td>
+                    <td>${product.price.toLocaleString()} so'm</td>
+                    <td>${product.rating || 0} ⭐</td>
+                </tr>`;
+        });
+
+        html += "</tbody></table></div>";
+        document.getElementById("productsData").innerHTML = html;
+      })
+      .catch((error) => {
+        document.getElementById("productsData").innerHTML =
+          '<p class="text-center">Ma\'lumotlarni yuklashda xatolik</p>';
+      });
+  }
+
+  function loadCustomersAnalytics() {
+    fetch("/api/super-admin/reports?type=monthly")
+      .then((response) => response.json())
+      .then((data) => {
+        let html = '<div class="customers-table">';
+        html += '<table class="table-modern"><thead><tr>';
+        html +=
+          "<th>Mijoz</th><th>Email</th><th>Buyurtmalar</th><th>Jami xarid</th>";
+        html += "</tr></thead><tbody>";
+
+        data.customers.forEach((customer) => {
+          html += `<tr>
+                    <td><strong>${customer.first_name} ${
+            customer.last_name
+          }</strong></td>
+                    <td>${customer.email}</td>
+                    <td>${customer.orders_count || 0}</td>
+                    <td>${(
+                      customer.total_spent || 0
+                    ).toLocaleString()} so'm</td>
+                </tr>`;
+        });
+
+        html += "</tbody></table></div>";
+        document.getElementById("customersData").innerHTML = html;
+      })
+      .catch((error) => {
+        document.getElementById("customersData").innerHTML =
+          '<p class="text-center">Ma\'lumotlarni yuklashda xatolik</p>';
+      });
+  }
+
+  // Sahifa yuklanganda
+  document.addEventListener("DOMContentLoaded", function () {
+    // Default tab - revenue
+    loadOrdersAnalytics();
+  });
+
+  // Chart rendering
+  let revenueChartInstance = null;
+
+  function formatDateDaysAgo(daysAgo) {
+    const d = new Date();
+    d.setDate(d.getDate() - daysAgo);
+    return d.toISOString().slice(0, 10);
+  }
+
+  function loadOrdersAnalytics() {
+    // use last 30 days
+    const end = formatDateDaysAgo(0);
+    const start = formatDateDaysAgo(29);
+    fetch(`/api/super-admin/reports?start_date=${start}&end_date=${end}`)
+      .then((response) => response.json())
+      .then((data) => {
+        let html = `
+                <div class="orders-stats">
+                    <div class="stat-grid">
+                        <div class="stat-item">
+                            <h5>Jami buyurtmalar</h5>
+                            <div class="stat-number">${
+                              data.summary.total_orders
+                            }</div>
+                        </div>
+                        <div class="stat-item">
+                            <h5>O'rtacha check</h5>
+                            <div class="stat-number">${Math.round(
+                              (data.summary.total_revenue || 0) /
+                                (data.summary.total_orders || 1)
+                            ).toLocaleString()} so'm</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        document.getElementById("ordersData").innerHTML = html;
+
+        // Build chart from data.sales (array of {date, orders_count, revenue})
+        const labels = (data.sales || []).map((s) => s.date);
+        const revenues = (data.sales || []).map((s) => s.revenue);
+        const ordersCounts = (data.sales || []).map((s) => s.orders_count);
+
+        // include Chart.js dynamically if not present
+        const ensureChartJs = () => {
+          return new Promise((resolve, reject) => {
+            if (window.Chart) return resolve();
+            const s = document.createElement("script");
+            s.src =
+              "https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js";
+            s.onload = () => resolve();
+            s.onerror = () => reject(new Error("Chart.js failed to load"));
+            document.head.appendChild(s);
+          });
+        };
+
+        ensureChartJs()
+          .then(() => {
+            const ctx = document
+              .getElementById("revenueChartCanvas")
+              .getContext("2d");
+            if (revenueChartInstance) {
+              revenueChartInstance.destroy();
+            }
+            revenueChartInstance = new Chart(ctx, {
+              type: "line",
+              data: {
+                labels: labels,
+                datasets: [
+                  {
+                    label: "Daromad",
+                    data: revenues,
+                    borderColor: "#28a745",
+                    backgroundColor: "rgba(40,167,69,0.1)",
+                    yAxisID: "y",
+                  },
+                  {
+                    label: "Buyurtmalar",
+                    data: ordersCounts,
+                    borderColor: "#007bff",
+                    backgroundColor: "rgba(0,123,255,0.08)",
+                    yAxisID: "y1",
+                  },
+                ],
+              },
+              options: {
+                responsive: true,
+                interaction: { mode: "index", intersect: false },
+                stacked: false,
+                scales: {
+                  y: {
+                    type: "linear",
+                    display: true,
+                    position: "left",
+                    title: { display: true, text: "Soʻm" },
+                  },
+                  y1: {
+                    type: "linear",
+                    display: true,
+                    position: "right",
+                    grid: { drawOnChartArea: false },
+                    title: { display: true, text: "Buyurtmalar" },
+                  },
+                },
+              },
+            });
+          })
+          .catch((err) => {
+            console.error("Chart.js yüklenemedi", err);
+          });
+      })
+      .catch((error) => {
+        document.getElementById("ordersData").innerHTML =
+          '<p class="text-center">Ma\'lumotlarni yuklashda xatolik</p>';
+      });
+  }
+</script>
 {% endblock %}

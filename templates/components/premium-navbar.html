@@ -1,0 +1,217 @@
+<!-- ============================================
+     PREMIUM E-COMMERCE NAVBAR COMPONENT
+     Ultra-modern, Apple/Nike inspired design
+     ============================================ -->
+
+<nav class="premium-navbar" id="premiumNavbar">
+    <div class="navbar-container">
+        <!-- Logo -->
+        <a href="{{ url_for('index') }}" class="navbar-logo">
+            <div class="navbar-logo-icon">
+                <i class="bi bi-shield-lock-fill"></i>
+            </div>
+            <span class="navbar-logo-text">Safety.uz</span>
+        </a>
+
+        <!-- Search Bar (Desktop) -->
+        <div class="navbar-search">
+            <i class="bi bi-search navbar-search-icon"></i>
+            <input 
+                type="text" 
+                class="navbar-search-input" 
+                placeholder="Search products, categories..." 
+                id="navbarSearchInput"
+            />
+        </div>
+
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-menu-toggle" id="mobileMenuToggle">
+            <i class="bi bi-list"></i>
+        </button>
+
+        <!-- Navbar Actions -->
+        <div class="navbar-actions">
+            <!-- Cart -->
+            <button class="navbar-action-btn" onclick="window.location.href='{{ url_for('cart') }}'">
+                <i class="bi bi-cart3"></i>
+                {% if session.get('cart_count', 0) > 0 %}
+                <span class="navbar-action-badge">{{ session.get('cart_count') }}</span>
+                {% endif %}
+            </button>
+
+            <!-- Wishlist -->
+            <button class="navbar-action-btn" onclick="window.location.href='{{ url_for('favorites') }}'">
+                <i class="bi bi-heart"></i>
+            </button>
+
+            <!-- Notifications -->
+            <button class="navbar-action-btn" id="notificationsBtn">
+                <i class="bi bi-bell"></i>
+                {% if session.get('unread_notifications', 0) > 0 %}
+                <span class="navbar-action-badge">{{ session.get('unread_notifications') }}</span>
+                {% endif %}
+            </button>
+
+            <!-- User Avatar / Login -->
+            {% if session.get('user_id') %}
+            <img 
+                src="{{ session.get('user_avatar', url_for('static', filename='images/default-avatar.svg')) | cloudinary_url }}" 
+                alt="User" 
+                class="navbar-user-avatar"
+                onclick="window.location.href='{{ url_for('profile') }}'"
+            />
+            {% else %}
+            <button class="navbar-action-btn" onclick="window.location.href='{{ url_for('login_page') }}'">
+                <i class="bi bi-person"></i>
+            </button>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Mega Menu Dropdown -->
+    <div class="mega-menu" id="megaMenu">
+        <div class="mega-menu-container">
+            <div class="mega-menu-grid">
+                <!-- Work Boots Category -->
+                <div class="mega-menu-category">
+                    <h3 class="mega-menu-category-title">Work Boots</h3>
+                    <div class="mega-menu-items">
+                        <a href="#" class="mega-menu-item">
+                            <img src="{{ url_for('static', filename='images/products/ankle-boots.webp') | cloudinary_url }}" alt="Ankle Boots" class="mega-menu-item-image">
+                            <span class="mega-menu-item-name">Ankle Boots</span>
+                            <span class="mega-menu-item-price">$29.99</span>
+                            <button class="mega-menu-item-btn">Add to Cart</button>
+                        </a>
+                        <a href="#" class="mega-menu-item">
+                            <img src="{{ url_for('static', filename='images/products/steel-toe.webp') | cloudinary_url }}" alt="Steel Toe" class="mega-menu-item-image">
+                            <span class="mega-menu-item-name">Steel Toe</span>
+                            <span class="mega-menu-item-price">$39.99</span>
+                            <button class="mega-menu-item-btn">Add to Cart</button>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Safety Shoes Category -->
+                <div class="mega-menu-category">
+                    <h3 class="mega-menu-category-title">Safety Shoes</h3>
+                    <div class="mega-menu-items">
+                        <a href="#" class="mega-menu-item">
+                            <img src="{{ url_for('static', filename='images/products/safety-shoes.webp') | cloudinary_url }}" alt="Safety Shoes" class="mega-menu-item-image">
+                            <span class="mega-menu-item-name">Safety Shoes</span>
+                            <span class="mega-menu-item-price">$28.99</span>
+                            <button class="mega-menu-item-btn">Add to Cart</button>
+                        </a>
+                        <a href="#" class="mega-menu-item">
+                            <img src="{{ url_for('static', filename='images/products/slip-resistant.webp') | cloudinary_url }}" alt="Slip Resistant" class="mega-menu-item-image">
+                            <span class="mega-menu-item-name">Slip Resistant</span>
+                            <span class="mega-menu-item-price">$32.99</span>
+                            <button class="mega-menu-item-btn">Add to Cart</button>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Industrial Wear Category -->
+                <div class="mega-menu-category">
+                    <h3 class="mega-menu-category-title">Industrial Wear</h3>
+                    <div class="mega-menu-items">
+                        <a href="#" class="mega-menu-item">
+                            <img src="{{ url_for('static', filename='images/products/jacket.webp') | cloudinary_url }}" alt="Work Jacket" class="mega-menu-item-image">
+                            <span class="mega-menu-item-name">Work Jacket</span>
+                            <span class="mega-menu-item-price">$33.99</span>
+                            <button class="mega-menu-item-btn">Add to Cart</button>
+                        </a>
+                        <a href="#" class="mega-menu-item">
+                            <img src="{{ url_for('static', filename='images/products/vest.webp') | cloudinary_url }}" alt="Safety Vest" class="mega-menu-item-image">
+                            <span class="mega-menu-item-name">Safety Vest</span>
+                            <span class="mega-menu-item-price">$24.99</span>
+                            <button class="mega-menu-item-btn">Add to Cart</button>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Accessories Category -->
+                <div class="mega-menu-category">
+                    <h3 class="mega-menu-category-title">Accessories</h3>
+                    <div class="mega-menu-items">
+                        <a href="#" class="mega-menu-item">
+                            <img src="{{ url_for('static', filename='images/products/gloves.webp') | cloudinary_url }}" alt="Safety Gloves" class="mega-menu-item-image">
+                            <span class="mega-menu-item-name">Safety Gloves</span>
+                            <span class="mega-menu-item-price">$19.99</span>
+                            <button class="mega-menu-item-btn">Add to Cart</button>
+                        </a>
+                        <a href="#" class="mega-menu-item">
+                            <img src="{{ url_for('static', filename='images/products/helmet.webp') | cloudinary_url }}" alt="Hard Hat" class="mega-menu-item-image">
+                            <span class="mega-menu-item-name">Hard Hat</span>
+                            <span class="mega-menu-item-price">$29.99</span>
+                            <button class="mega-menu-item-btn">Add to Cart</button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<script>
+// Premium Navbar Functionality
+(function() {
+    const navbar = document.getElementById('premiumNavbar');
+    const megaMenu = document.getElementById('megaMenu');
+    const mobileToggle = document.getElementById('mobileMenuToggle');
+    
+    // Scroll effect
+    let lastScroll = 0;
+    window.addEventListener('scroll', () => {
+        const currentScroll = window.pageYOffset;
+        
+        if (currentScroll > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+        
+        lastScroll = currentScroll;
+    });
+    
+    // Mega menu toggle (trigger on logo hover or menu button)
+    let menuTimeout;
+    navbar.addEventListener('mouseenter', () => {
+        clearTimeout(menuTimeout);
+        megaMenu.classList.add('active');
+    });
+    
+    navbar.addEventListener('mouseleave', () => {
+        menuTimeout = setTimeout(() => {
+            megaMenu.classList.remove('active');
+        }, 200);
+    });
+    
+    // Mobile menu toggle
+    if (mobileToggle) {
+        mobileToggle.addEventListener('click', () => {
+            megaMenu.classList.toggle('active');
+            const icon = mobileToggle.querySelector('i');
+            icon.classList.toggle('bi-list');
+            icon.classList.toggle('bi-x-lg');
+        });
+    }
+    
+    // Search functionality
+    const searchInput = document.getElementById('navbarSearchInput');
+    if (searchInput) {
+        let searchTimeout;
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            const query = e.target.value.trim();
+            
+            if (query.length < 2) return;
+            
+            searchTimeout = setTimeout(() => {
+                // Implement search logic here
+                console.log('Searching for:', query);
+                // You can redirect to search page or show dropdown results
+            }, 300);
+        });
+    }
+})();
+</script>

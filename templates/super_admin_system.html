@@ -1,8 +1,8 @@
-{% extends "base.html" %}
+{% extends "super_admin_base.html" %}
 
 {% block title %}Tizim Boshqaruvi - Super Admin{% endblock %}
 
-{% block content %}
+{% block dashboard_content %}
 <div class="system-container">
     <div class="system-header">
         <h1> Tizim Boshqaruvi</h1>
@@ -142,227 +142,10 @@
     </div>
 </div>
 
-<script>
-function clearCache() {
-    if (confirm('Cache tozalansinmi?')) {
-        fetch('/super-admin/clear-cache', {method: 'POST'})
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showSuccessMessage('Cache muvaffaqiyatli tozalandi');
-            } else {
-                showErrorMessage('Cache tozalashda xatolik');
-            }
-        })
-        .catch(() => showErrorMessage('Cache tozalashda xatolik'));
-    }
-}
-
-function backupDatabase() {
-    if (confirm('Database backup yaratilsinmi?')) {
-        fetch('/super-admin/backup-database', {method: 'POST'})
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showSuccessMessage('Database backup yaratildi');
-            } else {
-                showErrorMessage('Backup yaratishda xatolik');
-            }
-        })
-        .catch(() => showErrorMessage('Backup yaratishda xatolik'));
-    }
-}
-
-function clearDatabase() {
-    if (confirm('Diqqat! Barcha buyurtmalar, xabarlar va loglar tozalanadi. Jadval strukturasi va super admin saqlanib qoladi. Davom etasizmi?')) {
-        if (confirm('Jarayonni qaytarib bo\'lmaydi! Ishonchingiz komilmi?')) {
-            showWarningMessage('Tozalash jarayoni boshlandi...');
-            fetch('/super-admin/clear-database', {method: 'POST'})
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showSuccessMessage(data.message);
-                    setTimeout(() => location.reload(), 2000);
-                } else {
-                    showErrorMessage(data.message || 'Xatolik yuz berdi');
-                }
-            })
-            .catch(() => showErrorMessage('Tarmoq xatoligi'));
-        }
-    }
-}
-
-function restartService() {
-    if (confirm('Servis qayta ishga tushirilsinmi?')) {
-        showWarningMessage('Servis qayta ishga tushirilmoqda...');
-        fetch('/super-admin/restart-service', {method: 'POST'})
-        .then(() => {
-            showSuccessMessage('Servis qayta ishga tushirildi');
-            setTimeout(() => location.reload(), 3000);
-        })
-        .catch(() => showErrorMessage('Servisni qayta ishga tushirishda xatolik'));
-    }
-}
-
-function emergencyStop() {
-    if (confirm('Emergency stop amalga oshirilsinmi? Bu jiddiy amal!')) {
-        if (confirm('Rostdan ham to\'xtatmoqchimisiz?')) {
-            fetch('/super-admin/emergency-stop', {method: 'POST'})
-            .then(() => showWarningMessage('Emergency stop amalga oshirildi'))
-            .catch(() => showErrorMessage('Emergency stop da xatolik'));
-        }
-    }
-}
-
-function saveConfig() {
-    const config = {
-        maxOrdersPerHour: document.getElementById('maxOrdersPerHour').value,
-        sessionTimeout: document.getElementById('sessionTimeout').value,
-        rateLimit: document.getElementById('rateLimit').value
-    };
-
-    fetch('/super-admin/save-config', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(config)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            showSuccessMessage('Konfiguratsiya saqlandi');
-        } else {
-            showErrorMessage('Konfiguratsiyani saqlashda xatolik');
-        }
-    })
-    .catch(() => showErrorMessage('Konfiguratsiyani saqlashda xatolik'));
-}
-
-function loadSystemStats() {
-    fetch('/super-admin/get-system-stats')
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            const stats = data.stats;
-            document.getElementById('uptime').textContent = stats.uptime || '0 kun 0 soat';
-            document.getElementById('memory').textContent = stats.memory || '0%';
-            document.getElementById('cpu').textContent = stats.cpu || '0%';
-            document.getElementById('dbSize').textContent = stats.dbSize || '0 MB';
-            document.getElementById('totalOrders').textContent = stats.totalOrders || '0';
-            document.getElementById('totalUsers').textContent = stats.totalUsers || '0';
-            document.getElementById('requestsPerMin').textContent = stats.requestsPerMin || '0';
-            document.getElementById('errorRate').textContent = stats.errorRate || '0%';
-            document.getElementById('avgResponse').textContent = stats.avgResponse || '0ms';
-        }
-    })
-    .catch(error => {
-        console.error('System stats yuklashda xatolik:', error);
-        // Mock data
-        document.getElementById('uptime').textContent = '2 kun 14 soat';
-        document.getElementById('memory').textContent = '45%';
-        document.getElementById('cpu').textContent = '23%';
-        document.getElementById('dbSize').textContent = '15.7 MB';
-        document.getElementById('totalOrders').textContent = '1,234';
-        document.getElementById('totalUsers').textContent = '567';
-        document.getElementById('requestsPerMin').textContent = '12';
-        document.getElementById('errorRate').textContent = '0.8%';
-        document.getElementById('avgResponse').textContent = '250ms';
-    });
-}
-
-function loadSystemLogs() {
-    fetch('/super-admin/get-system-logs')
-    .then(response => response.json())
-    .then(data => {
-        const container = document.getElementById('systemLogs');
-        if (data.success && data.logs.length > 0) {
-            let html = '';
-            data.logs.forEach(log => {
-                html += `<div class="log-entry">${log.time} - ${log.message}</div>`;
-            });
-            container.innerHTML = html;
-        } else {
-            container.innerHTML = `
-                <div class="log-entry">15:30:25 - System started successfully</div>
-                <div class="log-entry">15:30:26 - Database connection established</div>
-                <div class="log-entry">15:30:27 - Super admin panel loaded</div>
-                <div class="log-entry">15:30:30 - Memory usage: 45%</div>
-                <div class="log-entry">15:30:35 - CPU usage: 23%</div>
-            `;
-        }
-    })
-    .catch(error => {
-        console.error('System logs yuklashda xatolik:', error);
-        document.getElementById('systemLogs').innerHTML = `
-            <div class="log-entry">15:30:25 - System started successfully</div>
-            <div class="log-entry">15:30:26 - Database connection established</div>
-            <div class="log-entry">15:30:27 - Super admin panel loaded</div>
-        `;
-    });
-}
-
-function loadEnvironmentInfo() {
-    fetch('/super-admin/get-environment-info')
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            document.getElementById('pythonVersion').textContent = data.info.pythonVersion || 'N/A';
-        }
-    })
-    .catch(() => {
-        document.getElementById('pythonVersion').textContent = 'Python 3.12+';
-    });
-}
-
-function showSuccessMessage(message) {
-    const notification = document.createElement('div');
-    notification.className = 'notification success';
-    notification.textContent = message;
-    document.body.appendChild(notification);
-    setTimeout(() => notification.classList.add('show'), 100);
-    setTimeout(() => notification.remove(), 3000);
-}
-
-function showErrorMessage(message) {
-    const notification = document.createElement('div');
-    notification.className = 'notification error';
-    notification.textContent = message;
-    document.body.appendChild(notification);
-    setTimeout(() => notification.classList.add('show'), 100);
-    setTimeout(() => notification.remove(), 3000);
-}
-
-function showWarningMessage(message) {
-    const notification = document.createElement('div');
-    notification.className = 'notification warning';
-    notification.textContent = message;
-    document.body.appendChild(notification);
-    setTimeout(() => notification.classList.add('show'), 100);
-    setTimeout(() => notification.remove(), 3000);
-}
-
-// Page load
-document.addEventListener('DOMContentLoaded', function() {
-    loadSystemStats();
-    loadSystemLogs();
-    loadEnvironmentInfo();
-
-    // Auto refresh every 30 seconds
-    // Auto refresh every 30 seconds, but pause if hidden or offline
-    setInterval(() => {
-        if (!document.hidden && navigator.onLine) {
-            loadSystemStats();
-            loadSystemLogs();
-        }
-    }, 30000);
-});
-</script>
-
 <style>
 .system-container {
     padding: 20px;
-    max-width: 1400px;
+    max-width: 100%;
     margin: 0 auto;
 }
 
@@ -601,4 +384,222 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 }
 </style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function clearCache() {
+    if (confirm('Cache tozalansinmi?')) {
+        fetch('/super-admin/clear-cache', {method: 'POST'})
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showSuccessMessage('Cache muvaffaqiyatli tozalandi');
+            } else {
+                showErrorMessage('Cache tozalashda xatolik');
+            }
+        })
+        .catch(() => showErrorMessage('Cache tozalashda xatolik'));
+    }
+}
+
+function backupDatabase() {
+    if (confirm('Database backup yaratilsinmi?')) {
+        fetch('/super-admin/backup-database', {method: 'POST'})
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showSuccessMessage('Database backup yaratildi');
+            } else {
+                showErrorMessage('Backup yaratishda xatolik');
+            }
+        })
+        .catch(() => showErrorMessage('Backup yaratishda xatolik'));
+    }
+}
+
+function clearDatabase() {
+    if (confirm('Diqqat! Barcha buyurtmalar, xabarlar va loglar tozalanadi. Jadval strukturasi va super admin saqlanib qoladi. Davom etasizmi?')) {
+        if (confirm('Jarayonni qaytarib bo\'lmaydi! Ishonchingiz komilmi?')) {
+            showWarningMessage('Tozalash jarayoni boshlandi...');
+            fetch('/super-admin/clear-database', {method: 'POST'})
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showSuccessMessage(data.message);
+                    setTimeout(() => location.reload(), 2000);
+                } else {
+                    showErrorMessage(data.message || 'Xatolik yuz berdi');
+                }
+            })
+            .catch(() => showErrorMessage('Tarmoq xatoligi'));
+        }
+    }
+}
+
+function restartService() {
+    if (confirm('Servis qayta ishga tushirilsinmi?')) {
+        showWarningMessage('Servis qayta ishga tushirilmoqda...');
+        fetch('/super-admin/restart-service', {method: 'POST'})
+        .then(() => {
+            showSuccessMessage('Servis qayta ishga tushirildi');
+            setTimeout(() => location.reload(), 3000);
+        })
+        .catch(() => showErrorMessage('Servisni qayta ishga tushirishda xatolik'));
+    }
+}
+
+function emergencyStop() {
+    if (confirm('Emergency stop amalga oshirilsinmi? Bu jiddiy amal!')) {
+        if (confirm('Rostdan ham to\'xtatmoqchimisiz?')) {
+            fetch('/super-admin/emergency-stop', {method: 'POST'})
+            .then(() => showWarningMessage('Emergency stop amalga oshirildi'))
+            .catch(() => showErrorMessage('Emergency stop da xatolik'));
+        }
+    }
+}
+
+function saveConfig() {
+    const config = {
+        maxOrdersPerHour: document.getElementById('maxOrdersPerHour').value,
+        sessionTimeout: document.getElementById('sessionTimeout').value,
+        rateLimit: document.getElementById('rateLimit').value
+    };
+
+    fetch('/super-admin/save-config', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(config)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showSuccessMessage('Konfiguratsiya saqlandi');
+        } else {
+            showErrorMessage('Konfiguratsiyani saqlashda xatolik');
+        }
+    })
+    .catch(() => showErrorMessage('Konfiguratsiyani saqlashda xatolik'));
+}
+
+function loadSystemStats() {
+    fetch('/super-admin/get-system-stats')
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const stats = data.stats;
+            document.getElementById('uptime').textContent = stats.uptime || '0 kun 0 soat';
+            document.getElementById('memory').textContent = stats.memory || '0%';
+            document.getElementById('cpu').textContent = stats.cpu || '0%';
+            document.getElementById('dbSize').textContent = stats.dbSize || '0 MB';
+            document.getElementById('totalOrders').textContent = stats.totalOrders || '0';
+            document.getElementById('totalUsers').textContent = stats.totalUsers || '0';
+            document.getElementById('requestsPerMin').textContent = stats.requestsPerMin || '0';
+            document.getElementById('errorRate').textContent = stats.errorRate || '0%';
+            document.getElementById('avgResponse').textContent = stats.avgResponse || '0ms';
+        }
+    })
+    .catch(error => {
+        console.error('System stats yuklashda xatolik:', error);
+        // Mock data
+        document.getElementById('uptime').textContent = '2 kun 14 soat';
+        document.getElementById('memory').textContent = '45%';
+        document.getElementById('cpu').textContent = '23%';
+        document.getElementById('dbSize').textContent = '15.7 MB';
+        document.getElementById('totalOrders').textContent = '1,234';
+        document.getElementById('totalUsers').textContent = '567';
+        document.getElementById('requestsPerMin').textContent = '12';
+        document.getElementById('errorRate').textContent = '0.8%';
+        document.getElementById('avgResponse').textContent = '250ms';
+    });
+}
+
+function loadSystemLogs() {
+    fetch('/super-admin/get-system-logs')
+    .then(response => response.json())
+    .then(data => {
+        const container = document.getElementById('systemLogs');
+        if (data.success && data.logs.length > 0) {
+            let html = '';
+            data.logs.forEach(log => {
+                html += `<div class="log-entry">${log.time} - ${log.message}</div>`;
+            });
+            container.innerHTML = html;
+        } else {
+            container.innerHTML = `
+                <div class="log-entry">15:30:25 - System started successfully</div>
+                <div class="log-entry">15:30:26 - Database connection established</div>
+                <div class="log-entry">15:30:27 - Super admin panel loaded</div>
+                <div class="log-entry">15:30:30 - Memory usage: 45%</div>
+                <div class="log-entry">15:30:35 - CPU usage: 23%</div>
+            `;
+        }
+    })
+    .catch(error => {
+        console.error('System logs yuklashda xatolik:', error);
+        document.getElementById('systemLogs').innerHTML = `
+            <div class="log-entry">15:30:25 - System started successfully</div>
+            <div class="log-entry">15:30:26 - Database connection established</div>
+            <div class="log-entry">15:30:27 - Super admin panel loaded</div>
+        `;
+    });
+}
+
+function loadEnvironmentInfo() {
+    fetch('/super-admin/get-environment-info')
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('pythonVersion').textContent = data.info.pythonVersion || 'N/A';
+        }
+    })
+    .catch(() => {
+        document.getElementById('pythonVersion').textContent = 'Python 3.12+';
+    });
+}
+
+function showSuccessMessage(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification success';
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.classList.add('show'), 100);
+    setTimeout(() => notification.remove(), 3000);
+}
+
+function showErrorMessage(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification error';
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.classList.add('show'), 100);
+    setTimeout(() => notification.remove(), 3000);
+}
+
+function showWarningMessage(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification warning';
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.classList.add('show'), 100);
+    setTimeout(() => notification.remove(), 3000);
+}
+
+// Page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadSystemStats();
+    loadSystemLogs();
+    loadEnvironmentInfo();
+
+    // Auto refresh every 30 seconds
+    setInterval(() => {
+        if (!document.hidden && navigator.onLine) {
+            loadSystemStats();
+            loadSystemLogs();
+        }
+    }, 30000);
+});
+</script>
 {% endblock %}

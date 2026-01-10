@@ -1,0 +1,79 @@
+{% extends "super_admin_base.html" %}
+
+{% block title %}Bildirishnomalar{% endblock %}
+
+{% block dashboard_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold">Bildirishnomalar Tarixi</h4>
+    <button class="btn btn-primary-modern" onclick="openNotifyComposer()">
+        <i class="bi bi-send"></i> Xabar Yuborish
+    </button>
+</div>
+
+<div class="card-modern">
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Mavzu</th>
+                    <th>Xabar</th>
+                    <th>Kimga</th>
+                    <th>Sana</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for n in notifications %}
+                <tr>
+                    <td>#{{ n.id }}</td>
+                    <td class="fw-bold">{{ n.title }}</td>
+                    <td><div class="text-muted small text-truncate" style="max-width: 300px;">{{ n.body }}</div></td>
+                    <td>
+                        <span class="badge bg-light text-dark border">
+                            {% if n.recipient_type == 'users' %}Foydalanuvchilar
+                            {% elif n.recipient_type == 'staff' %}Xodimlar
+                            {% elif n.recipient_type == 'couriers' %}Kuryerlar
+                            {% elif n.recipient_type == 'all' %}Barchaga
+                            {% else %}Yakka (#{{ n.recipient_id }}){% endif %}
+                        </span>
+                    </td>
+                    <td class="small">{{ n.created_at[:16] }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="text-center py-4 text-muted">Bildirishnomalar tarixi bo'sh.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Re-use the composer modal from dashboard or include it here if needed. 
+     For now, assuming global modal is available in base or dashboard. 
+     But base doesn't have it. Dashboard has it. 
+     So I should probably move the Modal to Base or Duplicate it. 
+     I'll just add a simple modal here for standalone usage. -->
+     
+<div class="modal fade" id="pageNotifyModal" tabindex="-1">
+    <div class="modal-dialog">
+      <form class="modal-content card-modern" method="POST" action="/super-admin/send-notification-form">
+        <div class="modal-header border-bottom-0">
+          <h5 class="modal-title fw-bold">Xabar Yuborish</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+            <p class="text-danger small">Tezkor xabar yuborish (hozircha faqat Dashboard orqali to'liq ishlaydi)</p>
+            <!-- Inputs placeholder -->
+        </div>
+      </form>
+    </div>
+</div>
+
+<script>
+function openNotifyComposer() {
+    // Redirect to dashboard with hash or open local modal
+    window.location.href = "{{ url_for('super_admin_dashboard') }}#notify";
+}
+</script>
+{% endblock %}

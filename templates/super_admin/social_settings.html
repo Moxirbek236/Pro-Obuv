@@ -1,0 +1,74 @@
+{% extends "super_admin_base.html" %}
+
+{% block title %}Ijtimoiy Tarmoqlar{% endblock %}
+
+{% block dashboard_content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold">Ijtimoiy Tarmoqlar Sozlamalari</h4>
+        </div>
+
+        <div class="card-modern mb-4">
+            <h5 class="fw-bold mb-4">Mavjud Havolalar</h5>
+            <div class="table-responsive">
+                <table class="table-modern">
+                    <thead>
+                        <tr>
+                            <th>Icon</th>
+                            <th>Nomi</th>
+                            <th>Havola</th>
+                            <th>Amallar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in socials %}
+                        <tr>
+                            <td>
+                                {% if s.icon_url %}
+                                <img src="{{ s.icon_url }}" width="24" height="24" class="rounded-circle" style="object-fit: cover;">
+                                {% else %}
+                                <i class="bi bi-link-45deg"></i>
+                                {% endif %}
+                            </td>
+                            <td class="fw-bold">{{ s.platform_name }}</td>
+                            <td><a href="{{ s.url }}" target="_blank" class="text-muted small text-truncate d-inline-block" style="max-width: 200px;">{{ s.url }}</a></td>
+                            <td>
+                                <form method="POST" action="/super-admin/settings/social/delete" class="d-inline" onsubmit="return confirm('O\'chirilsinmi?');">
+                                    <input type="hidden" name="social_id" value="{{ s.id }}">
+                                    <button class="btn btn-sm btn-light-modern text-danger"><i class="bi bi-trash"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="4" class="text-center text-muted py-4">Hozircha havolalar yo'q.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card-modern">
+            <h5 class="fw-bold mb-3">Yangi Havola Qo'shish</h5>
+            <form method="POST" action="/super-admin/settings/social/add" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token if csrf_token else '' }}">
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Platforma Nomi</label>
+                    <input type="text" class="form-control" name="platform_name" placeholder="Masalan: Telegram, Instagram" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Icon Yuklash (Ixtiyoriy)</label>
+                    <input type="file" class="form-control" name="icon_file" accept="image/*">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Havola (URL)</label>
+                    <input type="text" class="form-control" name="url" placeholder="https://..." required>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary-modern px-4">Saqlash</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

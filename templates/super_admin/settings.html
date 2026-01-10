@@ -1,92 +1,89 @@
-{% extends 'base.html' %}
+{% extends 'super_admin_base.html' %}
 
 {% block title %}Super Admin - Sozlamalar{% endblock %}
 
-{% block content %}
-<div class="container py-5">
+{% block dashboard_content %}
     <div class="row mb-4">
         <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <h2><i class="bi bi-gear-fill me-2"></i>Sayt Sozlamalari</h2>
-                <a href="{{ url_for('super_admin_dashboard') }}" class="btn btn-outline-secondary">
-                    <i class="bi bi-arrow-left me-1"></i> Dashboardga qaytish
-                </a>
+             <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="h3 fw-bold mb-1">Sayt Sozlamalari</h2>
+                    <p class="text-muted mb-0">Saytning umumiy aloqa ma'lumotlari va ijtimoiy tarmoqlarini boshqarish.</p>
+                </div>
             </div>
-            <p class="text-muted">Saytning umumiy aloqa ma'lumotlari va ijtimoiy tarmoqlarini boshqarish.</p>
         </div>
     </div>
 
     <!-- Aloqa Ma'lumotlari -->
-    <div class="card shadow-sm mb-5">
-        <div class="card-header bg-white py-3">
-            <h5 class="mb-0 text-primary">Aloqa Ma'lumotlari</h5>
+    <div class="card-modern mb-4 p-4">
+        <div class="mb-4">
+            <h5 class="mb-0 fw-bold text-dark">Aloqa Ma'lumotlari</h5>
         </div>
-        <div class="card-body">
+        <div>
             <form action="{{ url_for('super_admin_settings_update') }}" method="POST">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                 <input type="hidden" name="type" value="contact">
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label">Telefon Raqam</label>
+                        <label class="form-label text-muted small fw-bold text-uppercase">Telefon Raqam</label>
                         <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-telephone"></i></span>
-                            <input type="text" class="form-control" name="site_phone" value="{{ site_settings.site_phone }}" placeholder="+998 90 123 45 67">
+                            <span class="input-group-text bg-white border-end-0"><i class="bi bi-telephone"></i></span>
+                            <input type="text" class="form-control border-start-0 ps-0" name="site_phone" value="{{ site_settings.site_phone }}" placeholder="+998 90 123 45 67">
                         </div>
-                        <div class="form-text">Asosiy aloqa telefoni (Header, Footer va Aloqa sahifasida ko'rinadi).</div>
+                        <div class="form-text">Asosiy aloqa telefoni.</div>
                     </div>
                     
                     <div class="col-md-6">
-                        <label class="form-label">Email Manzil</label>
+                        <label class="form-label text-muted small fw-bold text-uppercase">Email Manzil</label>
                         <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                            <input type="email" class="form-control" name="site_email" value="{{ site_settings.site_email }}" placeholder="info@example.com">
+                            <span class="input-group-text bg-white border-end-0"><i class="bi bi-envelope"></i></span>
+                            <input type="email" class="form-control border-start-0 ps-0" name="site_email" value="{{ site_settings.site_email }}" placeholder="info@example.com">
                         </div>
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">Telegram Profil (Username)</label>
+                        <label class="form-label text-muted small fw-bold text-uppercase">Telegram Profil</label>
                         <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-telegram"></i></span>
-                            <input type="text" class="form-control" name="site_telegram_username" value="{{ site_settings.site_telegram_username }}" placeholder="@username">
+                            <span class="input-group-text bg-white border-end-0"><i class="bi bi-telegram"></i></span>
+                            <input type="text" class="form-control border-start-0 ps-0" name="site_telegram_username" value="{{ site_settings.site_telegram_username }}" placeholder="@username">
                         </div>
-                        <div class="form-text">Masalan: @proobuvLLC</div>
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">Telegram Kanal/Guruh Linki</label>
+                        <label class="form-label text-muted small fw-bold text-uppercase">Telegram Kanal</label>
                         <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-link-45deg"></i></span>
-                            <input type="text" class="form-control" name="site_telegram" value="{{ site_settings.site_telegram }}" placeholder="https://t.me/...">
+                            <span class="input-group-text bg-white border-end-0"><i class="bi bi-link-45deg"></i></span>
+                            <input type="text" class="form-control border-start-0 ps-0" name="site_telegram" value="{{ site_settings.site_telegram }}" placeholder="https://t.me/...">
                         </div>
                     </div>
 
                     <div class="col-12">
-                        <label class="form-label">Manzil</label>
+                        <label class="form-label text-muted small fw-bold text-uppercase">Manzil</label>
                         <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
-                            <input type="text" class="form-control" name="site_address" value="{{ site_settings.site_address }}" placeholder="Toshkent sh...">
+                            <span class="input-group-text bg-white border-end-0"><i class="bi bi-geo-alt"></i></span>
+                            <input type="text" class="form-control border-start-0 ps-0" name="site_address" value="{{ site_settings.site_address }}" placeholder="Toshkent sh...">
                         </div>
                     </div>
                 </div>
                 <div class="mt-4 text-end">
-                    <button type="submit" class="btn btn-primary px-4"><i class="bi bi-save me-1"></i> Saqlash</button>
+                    <button type="submit" class="btn btn-modern btn-primary-modern px-4"><i class="bi bi-save me-1"></i> Saqlash</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Ijtimoiy Tarmoqlar -->
-    <div class="card shadow-sm">
-        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-            <h5 class="mb-0 text-primary">Ijtimoiy Tarmoqlar</h5>
-            <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addSocialModal">
+    <div class="card-modern p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="mb-0 fw-bold text-dark">Ijtimoiy Tarmoqlar</h5>
+            <button class="btn btn-modern btn-primary-modern btn-sm" data-bs-toggle="modal" data-bs-target="#addSocialModal">
                 <i class="bi bi-plus-lg me-1"></i> Yangi qo'shish
             </button>
         </div>
-        <div class="card-body">
+        <div>
             <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-light">
+                <table class="table-modern align-middle">
+                    <thead>
                         <tr>
                             <th width="50"><i class="bi bi-arrow-down-up"></i></th>
                             <th>Platforma</th>
@@ -109,9 +106,9 @@
                                 <td><code>{{ link.icon }}</code></td>
                                 <td>
                                     {% if link.active %}
-                                        <span class="badge bg-success-subtle text-success">Faol</span>
+                                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">Faol</span>
                                     {% else %}
-                                        <span class="badge bg-secondary-subtle text-secondary">Nofaol</span>
+                                        <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25">Nofaol</span>
                                     {% endif %}
                                 </td>
                                 <td>
@@ -119,7 +116,7 @@
                                         <form action="{{ url_for('super_admin_settings_social_delete') }}" method="POST" class="d-inline" onsubmit="return confirm('O\'chirishni tasdiqlaysizmi?')">
                                             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                                             <input type="hidden" name="link_id" value="{{ link.id }}">
-                                            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                            <button type="submit" class="btn btn-sm btn-light-modern text-danger"><i class="bi bi-trash"></i></button>
                                         </form>
                                     </div>
                                 </td>
@@ -138,8 +135,9 @@
             </div>
         </div>
     </div>
-</div>
+{% endblock %}
 
+{% block dashboard_modals %}
 <!-- Add Social Modal -->
 <div class="modal fade" id="addSocialModal" tabindex="-1" aria-labelledby="addSocialModalLabel">
     <div class="modal-dialog">

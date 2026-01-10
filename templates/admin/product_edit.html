@@ -1,0 +1,145 @@
+{% extends "dashboard_base.html" %}
+
+{% block title %}Mahsulotni tahrirlash - {{ product.name }}{% endblock %}
+{% block header_title %}Mahsulotni tahrirlash{% endblock %}
+{% block header_subtitle %}{{ product.name }} tafsilotlarini yangilang.{% endblock %}
+
+{% block dashboard_content %}
+<div class="row g-4">
+    <div class="col-lg-8">
+        <form method="POST" action="{{ url_for('admin_edit_menu_item', item_id=product.id) }}" enctype="multipart/form-data" class="card-modern p-4">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            
+            <div class="row g-3">
+                <div class="col-md-8">
+                    <label class="form-label fw-bold small text-muted text-uppercase">Mahsulot Nomi (Asosiy)</label>
+                    <input type="text" name="name" class="form-control" value="{{ product.name }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold small text-muted text-uppercase">Narxi (so'm)</label>
+                    <input type="number" name="price" class="form-control" value="{{ product.price }}" required>
+                </div>
+
+                <!-- Multilingual Names -->
+                <div class="col-12">
+                    <h6 class="fw-bold text-uppercase small text-muted mt-3 mb-3">Nomi (Ko'p tilli)</h6>
+                    <div class="row g-2">
+                        <div class="col-md-4">
+                            <input type="text" name="name_ru" class="form-control" value="{{ product.name_ru }}" placeholder="RU Nomi">
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" name="name_uz" class="form-control" value="{{ product.name_uz }}" placeholder="UZ Nomi">
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" name="name_en" class="form-control" value="{{ product.name_en }}" placeholder="EN Nomi">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold small text-muted text-uppercase">Kategoriya</label>
+                    <select name="category" class="form-select">
+                        <option value="specobuv" {% if product.category == 'specobuv' %}selected{% endif %}>Maxsus Oyoq kiyim (Specobuv)</option>
+                        <option value="specodezhda" {% if product.category == 'specodezhda' %}selected{% endif %}>Maxsus Kiyim (Specodezhda)</option>
+                        <option value="other" {% if product.category not in ['specobuv', 'specodezhda'] %}selected{% endif %}>Boshqa</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold small text-muted text-uppercase">Chegirma (%)</label>
+                    <input type="number" name="discount_percentage" class="form-control" value="{{ product.discount_percentage or 0 }}">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold small text-muted text-uppercase">O'lchamlar</label>
+                    <input type="text" name="sizes" class="form-control" value="{{ product.sizes }}" placeholder="Masalan: 36,37,38">
+                </div>
+                
+                <div class="col-md-6">
+                     <label class="form-label fw-bold small text-muted text-uppercase">Ranglar</label>
+                     <input type="text" name="colors" class="form-control" value="{{ product.colors }}" placeholder="Masalan: black,white">
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label fw-bold small text-muted text-uppercase">Tavsif (Ko'p tilli)</label>
+                    <ul class="nav nav-tabs border-0 bg-light rounded-pill p-1 mb-3" role="tablist">
+                        <li class="nav-item flex-fill"><a class="nav-link rounded-pill active text-center border-0 small py-1" data-bs-toggle="tab" href="#desc-ru">RU</a></li>
+                        <li class="nav-item flex-fill"><a class="nav-link rounded-pill text-center border-0 small py-1" data-bs-toggle="tab" href="#desc-uz">UZ</a></li>
+                        <li class="nav-item flex-fill"><a class="nav-link rounded-pill text-center border-0 small py-1" data-bs-toggle="tab" href="#desc-en">EN</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="desc-ru" class="tab-pane fade show active">
+                            <textarea name="description_ru" class="form-control" rows="4">{{ product.description_ru or product.description }}</textarea>
+                        </div>
+                        <div id="desc-uz" class="tab-pane fade">
+                            <textarea name="description_uz" class="form-control" rows="4">{{ product.description_uz }}</textarea>
+                        </div>
+                        <div id="desc-en" class="tab-pane fade">
+                            <textarea name="description_en" class="form-control" rows="4">{{ product.description_en }}</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label fw-bold small text-muted text-uppercase">Yangi Media yuklash</label>
+                    <input type="file" name="media_files" class="form-control" multiple accept="image/*,video/*">
+                </div>
+
+                <div class="col-12 mt-4">
+                    <button type="submit" class="btn-modern btn-primary-modern px-5">
+                        Saqlash <i class="bi bi-check-lg ms-2"></i>
+                    </button>
+                    <a href="{{ url_for('super_admin_dashboard') }}#menu" class="btn btn-light-modern ms-2">Bekor qilish</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card-modern p-4 mb-4">
+            <h6 class="fw-bold text-uppercase small text-muted mb-3">Hozirgi Media</h6>
+            <div class="row g-2">
+                {% if product.image_url %}
+                <div class="col-6 position-relative">
+                    <img src="{{ product.image_url | cloudinary_url }}" class="w-100 rounded border" style="height: 100px; object-fit: cover;">
+                    <span class="position-absolute top-0 start-0 m-1 badge bg-primary small">Asosiy</span>
+                </div>
+                {% endif %}
+                {% for m in media %}
+                <div class="col-6 position-relative">
+                    <img src="{{ m.media_url | cloudinary_url }}" class="w-100 rounded border" style="height: 100px; object-fit: cover;">
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="card-modern p-4">
+            <h6 class="fw-bold text-uppercase small text-muted mb-3">Statistika & Baholar</h6>
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <div class="h3 mb-0 fw-bold">{{ product.rating or '5.0' }}</div>
+                <div class="text-warning">
+                    {% for i in range(5) %}<i class="bi bi-star-fill small"></i>{% endfor %}
+                </div>
+                <div class="text-muted small">({{ ratings|length }} baho)</div>
+            </div>
+            
+            <div class="list-group list-group-flush">
+                {% for r in ratings[:5] %}
+                <div class="list-group-item px-0 bg-transparent border-0">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="fw-bold small">Mijoz #{{ r.user_id }}</span>
+                        <span class="text-muted smaller">{{ r.created_at[:10] }}</span>
+                    </div>
+                    <div class="text-warning mb-1">
+                        {% for i in range(r.rating) %}<i class="bi bi-star-fill smaller"></i>{% endfor %}
+                    </div>
+                    <p class="small text-muted mb-0">{{ r.comment }}</p>
+                </div>
+                {% endfor %}
+                {% if not ratings %}
+                <p class="text-muted small italic">Hozircha baholar yo'q.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

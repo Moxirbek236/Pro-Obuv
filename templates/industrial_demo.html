@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+
+{% block title %}Industrial Premium Safety Footwear{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;700&family=Inter:wght@400;600&family=Roboto+Condensed:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/industrial-premium.css') }}">
+<style>
+    /* Specific overrides for the demo */
+    .hero-industrial {
+        background-image: url('C:/Users/Moxir_Coder/.gemini/antigravity/brain/a7573c5d-a654-4502-ba05-84732f614933/industrial_hero_boots_1767950982326.png');
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- HERO SECTION -->
+<section class="hero-industrial">
+    <div class="hero-overlay"></div>
+    <div class="container hero-content animate-up">
+        <p class="hero-subtitle">ENGINEERED FOR EXTREMES</p>
+        <h1 class="hero-title">SURVIVE THE <br> <span style="color: var(--accent-primary);">WORKDAY.</span></h1>
+        <p style="font-size: 1.25rem; margin-bottom: 2.5rem; max-width: 600px; color: var(--text-secondary);">
+            Experience elite protection with our carbon-fiber reinforced safety footwear. Designed for the toughest environments on Earth.
+        </p>
+        <div style="display: flex; gap: 20px;">
+            <button class="btn-industrial btn-primary-industrial">
+                SHOP ELITE RANGE <i class="bi bi-arrow-right"></i>
+            </button>
+            <button class="btn-industrial btn-outline-industrial">
+                WHOLESALE INQUIRY
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- HAZARD SEPARATOR -->
+<div class="hazard-stripe"></div>
+
+<!-- PRODUCT GRID & FILTERS -->
+<div class="container-fluid" style="padding: 4rem 2rem; background: var(--base-dark);">
+    <div class="row">
+        <!-- Technical Sidebar -->
+        <aside class="col-md-3">
+            <div class="industrial-card" style="padding: 0;">
+                <div class="filter-sidebar">
+                    <h3 style="margin-bottom: 2rem; font-size: 1.2rem;">TECHNICAL SPECS</h3>
+                    
+                    <div class="filter-group">
+                        <p class="filter-title">PROTECTION CLASS</p>
+                        <label class="checkbox-container">S1 - Basic Safety
+                            <input type="checkbox">
+                            <span class="checkmark"></span>
+                        </label>
+                        <label class="checkbox-container">S2 - Water Resistant
+                            <input type="checkbox">
+                            <span class="checkmark"></span>
+                        </label>
+                        <label class="checkbox-container">S3 - Penetration Res.
+                            <input type="checkbox" checked>
+                            <span class="checkmark"></span>
+                        </label>
+                    </div>
+
+                    <div class="filter-group">
+                        <p class="filter-title">MATERIAL TECHNOLOGY</p>
+                        <label class="checkbox-container">Carbon Fiber Toe
+                            <input type="checkbox" checked>
+                            <span class="checkmark"></span>
+                        </label>
+                        <label class="checkbox-container">Gore-Tex Membrane
+                            <input type="checkbox">
+                            <span class="checkmark"></span>
+                        </label>
+                        <label class="checkbox-container">Kevlar Midsole
+                            <input type="checkbox" checked>
+                            <span class="checkmark"></span>
+                        </label>
+                    </div>
+
+                    <div class="filter-group">
+                        <p class="filter-title">INDUSTRY SECTOR</p>
+                        <select class="form-select" style="background: #3D3D3D; border: 1px solid var(--border-color); color: white;">
+                            <option>Heavy Construction</option>
+                            <option>Oil & Gas</option>
+                            <option>Logistics</option>
+                            <option>Mining</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Product Display -->
+        <main class="col-md-9">
+            <div class="row g-4">
+                <!-- Product Card 1 -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="industrial-card">
+                        <div style="position: absolute; top: 15px; left: 15px;">
+                            <span class="compliance-badge">ISO 20345:2022</span>
+                        </div>
+                        <div style="height: 250px; background: rgba(0,0,0,0.2); border-radius: 8px; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: center;">
+                            <!-- Placeholder for product image -->
+                            <i class="bi bi-box-seam" style="font-size: 4rem; opacity: 0.1;"></i>
+                        </div>
+                        <p style="color: var(--accent-primary); font-size: 0.8rem; font-weight: 700; margin-bottom: 0.5rem;">BESTSELLER</p>
+                        <h3>IRONCLAD BOOT S3</h3>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">Anti-static, Oil resistant, 200J Carbon-Toe protection.</p>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 1.5rem; font-weight: 700;">$189.00</span>
+                            <button class="btn-industrial btn-primary-industrial" style="padding: 8px 16px;">
+                                <i class="bi bi-cart-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Card 2 -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="industrial-card">
+                        <div style="position: absolute; top: 15px; left: 15px;">
+                            <span class="compliance-badge">S1P CERTIFIED</span>
+                        </div>
+                        <div style="height: 250px; background: rgba(0,0,0,0.2); border-radius: 8px; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-box-seam" style="font-size: 4rem; opacity: 0.1;"></i>
+                        </div>
+                        <p style="color: var(--steel-blue); font-size: 0.8rem; font-weight: 700; margin-bottom: 0.5rem;">LIGHTWEIGHT</p>
+                        <h3>TITAN LOW-CUT</h3>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">Breathable mesh with composite safety toe. Ultra comfort.</p>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 1.5rem; font-weight: 700;">$145.00</span>
+                            <button class="btn-industrial btn-primary-industrial" style="padding: 8px 16px;">
+                                <i class="bi bi-cart-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Card 3 -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="industrial-card">
+                        <div style="position: absolute; top: 15px; left: 15px;">
+                            <span class="compliance-badge">HRO - 300°C</span>
+                        </div>
+                        <div style="height: 250px; background: rgba(0,0,0,0.2); border-radius: 8px; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-box-seam" style="font-size: 4rem; opacity: 0.1;"></i>
+                        </div>
+                        <p style="color: var(--accent-secondary); font-size: 0.8rem; font-weight: 700; margin-bottom: 0.5rem;">HEAT RESISTANT</p>
+                        <h3>MAGMA PRO HI-VIS</h3>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">Heat resistant outsole up to 300°C. S3 Protection.</p>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 1.5rem; font-weight: 700;">$210.00</span>
+                            <button class="btn-industrial btn-primary-industrial" style="padding: 8px 16px;">
+                                <i class="bi bi-cart-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- PRODUCT DETAIL PREVIEW -->
+<section style="background: var(--base-dark); padding: 4rem 0;">
+    <div class="container">
+        <div class="industrial-card" style="padding: 4rem;">
+            <div class="row align-items: center;">
+                <div class="col-lg-6">
+                    <img src="C:/Users/Moxir_Coder/.gemini/antigravity/brain/a7573c5d-a654-4502-ba05-84732f614933/industrial_hero_boots_1767950982326.png" class="img-fluid rounded shadow-lg" alt="Product">
+                </div>
+                <div class="col-lg-6">
+                    <h4 style="color: var(--accent-primary);">TITANIUM SERIES</h4>
+                    <h2 style="font-size: 3rem; margin-bottom: 1.5rem;">OMEGA STEALTH S3</h2>
+                    
+                    <table class="specs-table">
+                        <tr>
+                            <td class="specs-label">Protection Class</td>
+                            <td class="specs-value">S3 SRC HRO CI HI</td>
+                        </tr>
+                        <tr>
+                            <td class="specs-label">Toecap</td>
+                            <td class="specs-value">Carbon Nano Fiber (Non-metallic)</td>
+                        </tr>
+                        <tr>
+                            <td class="specs-label">Midsole</td>
+                            <td class="specs-value">Puncture resistant textile (Kevlar)</td>
+                        </tr>
+                        <tr>
+                            <td class="specs-label">Lining</td>
+                            <td class="specs-value">Coolmax® Moisture Management</td>
+                        </tr>
+                        <tr>
+                            <td class="specs-label">Outsole</td>
+                            <td class="specs-value">Dual Density PU/Rubber (Vibram)</td>
+                        </tr>
+                    </table>
+
+                    <div style="margin-top: 3rem; display: flex; gap: 20px; align-items: center;">
+                        <div style="background: #1A1A1A; border: 1px solid var(--border-color); padding: 10px 20px; border-radius: 4px;">
+                            QTY: 1
+                        </div>
+                        <button class="btn-industrial btn-primary-industrial" style="flex-grow: 1;">
+                            ADD TO ARSENAL
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

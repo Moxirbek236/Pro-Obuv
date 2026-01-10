@@ -1,0 +1,102 @@
+{% extends "super_admin_base.html" %}
+
+{% block title %}Mijoz Savollari (AI Unanswered){% endblock %}
+
+{% block dashboard_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold">Mijoz Savollari</h4>
+    <div>
+        <span class="badge bg-warning text-dark">Javob berilmagan: {{ questions|length }}</span>
+    </div>
+</div>
+
+<div class="card-modern">
+    <div class="table-responsive">
+        <table class="table-modern">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th style="width: 40%">Savol</th>
+                    <th>Yuboruvchi</th>
+                    <th>Holat</th>
+                    <th>Sana</th>
+                    <th>Amallar</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for q in questions %}
+                <tr>
+                    <td class="fw-bold">#{{ q.id }}</td>
+                    <td>
+                        <div class="fw-bold text-dark">{{ q.text }}</div>
+                        {% if q.times_asked > 1 %}
+                        <span class="badge bg-danger bg-opacity-10 text-danger mt-1">So'ralgan: {{ q.times_asked }}x</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div>{{ q.sender }}</div>
+                        <small class="text-muted text-uppercase" style="font-size: 0.7rem;">{{ q.source or 'WEB' }}</small>
+                    </td>
+                    <td><span class="badge bg-warning bg-opacity-10 text-warning">Kutilmoqda</span></td>
+                    <td class="small text-muted">{{ q.last_asked_at[:16] }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-light-modern text-primary" onclick="answerQuestion({{ q.id }})">
+                            <i class="bi bi-reply-fill"></i> Javob yozish
+                        </button>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center py-5 text-muted">Hozircha yangi savollar yo'q.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="answerModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content card-modern">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title fw-bold">Savolga javob berish</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-light border mb-3" id="questionText"></div>
+                <label class="form-label small fw-bold">Javobingiz</label>
+                <textarea class="form-control" rows="5" id="answerBody" placeholder="Mijozga yuboriladigan javob..."></textarea>
+                <div class="form-check mt-3">
+                    <input class="form-check-input" type="checkbox" id="addToFAQ">
+                    <label class="form-check-label small" for="addToFAQ">Kelajakda AI avtomatik javob berishi uchun bazaga qo'shish</label>
+                </div>
+            </div>
+            <div class="modal-footer border-top-0">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Bekor qilish</button>
+                <button type="button" class="btn-modern btn-primary-modern" onclick="submitAnswer()">Yuborish</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentQuestionId = null;
+    
+    function answerQuestion(id) {
+        currentQuestionId = id;
+        // In a real scenario, fetch the text from the row or API if not passed. 
+        // For simplicity, we just open modal. Ideally we pass text too.
+        new bootstrap.Modal(document.getElementById('answerModal')).show();
+    }
+    
+    function submitAnswer() {
+        if(!currentQuestionId) return;
+        const answer = document.getElementById('answerBody').value;
+        if(!answer) { alert("Javob yozing!"); return; }
+        
+        // Mock submission
+        alert("Javob yuborildi (bu demo funksiya)");
+        location.reload();
+    }
+</script>
+{% endblock %}

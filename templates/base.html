@@ -100,538 +100,148 @@
     <meta name="theme-color" content="#ffffff" />
     <meta name="csrf-token" content="{{ csrf_token if csrf_token else '' }}">
     <script src="{{ url_for('static', filename='js/loop-protection.js') }}"></script>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      rel="stylesheet" />
-    
-    <!-- Universal Responsive Architecture (Mobile-First) -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive-universal.css') }}" />
-    
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}" />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/global-enhancements.css') }}" />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/responsive.css') }}" />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/global-responsive.css') }}" />
-    <!-- Yangiliklar tasmasi CSS -->
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/news-ticker.css') }}" />
-    <!-- Bootstrap Icons -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
-      rel="stylesheet" />
-    <!-- Responsive overrides for phone & laptop (cleanup) -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive-cleanup.css') }}" />
-
-    <!-- Modern Menu Styles (replaces menu-cards.css) -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/menu-modern.css') }}" />
-    
-    <!-- Modern site-wide design system (overrides & auth/footer styles) -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/site-modern.css') }}" />
-
-    <!-- Enhanced visual styles for better appeal -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/enhanced_styles.css') }}" />
-    
-    <!-- Universal Theme & Animation Libraries -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/universal-theme.css') }}" />
-    <!-- Swiper CSS -->
+    <!-- CORE LIBRARIES -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    <!-- Enhanced Navbar & Footer Design System -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar-footer-enhanced.css') }}" />
-    <!-- AOS CSS -->
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+    
+    <!-- PREMIUM FONTS -->
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;700&family=Inter:wght@400;600&family=Roboto+Condensed:wght@700&display=swap" rel="stylesheet">
+
+    <!-- INDUSTRIAL PREMIUM DESIGN SYSTEM (Primary Brand CSS) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/industrial-premium.css') }}" />
 
     <!-- Global sozlamalar uchun CSS -->
     <style>
-      /* CSS Variables for admin templates */
-      :root {
-        --bg-color: #ffffff;
-        --text-color: #333333;
+      /* CRITICAL BRANDING OVERRIDES */
+      /* Removed Global Body Override to fix storefront designs */
+      /* body { background-color: var(--base-dark) !important; color: var(--text-primary) !important; ... } */
+      body.admin-mode {
+           background-color: var(--base-dark) !important;
+           color: var(--text-primary) !important;
+      }
+      
+      /* Alert Improvements */
+      .alert {
+          border: none;
+          box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          padding: 1rem 1.5rem;
+          border-radius: 8px;
+          position: fixed;
+          top: 80px;
+          right: 20px;
+          z-index: 9999;
+          animation: slideInRight 0.4s ease-out;
+          max-width: 400px;
+      }
+      .alert-dismissible .btn-close {
+          display: none !important; /* Remove close button as requested */
+      }
+      .alert-success {
+          background-color: #d1fae5;
+          color: #065f46;
+          border-left: 4px solid #10b981;
+      }
+      .alert-danger {
+          background-color: #fee2e2;
+          color: #991b1b;
+          border-left: 4px solid #ef4444;
+      }
+      @keyframes slideInRight {
+          from { opacity: 0; transform: translateX(100%); }
+          to { opacity: 1; transform: translateX(0); }
+      }
+      @keyframes fadeOut {
+          from { opacity: 1; }
+          to { opacity: 0; }
       }
 
-      body.dark-theme {
-        --bg-color: #1a1a1a;
-        --text-color: #ffffff;
+      /* Floating Help Button */
+      #helpWidget {
+          position: fixed;
+          bottom: 30px;
+          right: 30px;
+          z-index: 99999; /* Highest as requested */
+      }
+      #helpBtn {
+          width: 56px;
+          height: 56px;
+          border-radius: 50%;
+          background: #4ade80; /* Nice green or gradient */
+          background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+          border: none;
+          box-shadow: 0 4px 15px rgba(22, 163, 74, 0.4);
+          color: white;
+          font-size: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: transform 0.2s;
+      }
+      #helpBtn:hover { transform: scale(1.1); }
+      #helpMenu {
+          position: absolute;
+          bottom: 70px;
+          right: 0;
+          background: white;
+          border-radius: 12px;
+          box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+          width: 200px;
+          overflow: hidden;
+          display: none; /* hidden by default */
+          flex-direction: column;
+      }
+      #helpMenu.show { display: flex; animation: slideUp 0.2s ease-out; }
+      .help-item {
+          padding: 12px 16px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          color: #1a1a1a;
+          text-decoration: none;
+          transition: background 0.2s;
+          font-size: 0.9rem;
+          font-weight: 500;
+          border: none;
+          background: none;
+          width: 100%;
+          text-align: left;
+      }
+      .help-item:hover { background: #f3f4f6; color: #16a34a; }
+      @keyframes slideUp {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
       }
 
-      /* Tungi rejim uchun global CSS - muted backgrounds, white text */
-      body.dark-theme {
-        background: #0b1116 !important; /* very dark, low saturation */
-        color: #ffffff !important; /* all text white for readability */
-        transition: background 200ms ease, color 200ms ease;
+      
+      body.light-theme {
+          background-color: var(--base-light) !important;
+          color: var(--text-dark) !important;
       }
 
-      /* Tungi rejimda jadvallar */
-      body.dark-theme .table {
-        background-color: #1a1a1a !important;
-        color: #ffffff !important;
-      }
-
-      body.dark-theme .table-striped > tbody > tr:nth-of-type(odd) > td,
-      body.dark-theme .table-striped > tbody > tr:nth-of-type(odd) > th {
-        background-color: #2d2d2d !important;
-        color: #ffffff !important;
-      }
-
-      body.dark-theme .table-striped > tbody > tr:nth-of-type(even) > td,
-      body.dark-theme .table-striped > tbody > tr:nth-of-type(even) > th {
-        background-color: #1a1a1a !important;
-        color: #ffffff !important;
-      }
-
-      body.dark-theme .table-hover tbody tr:hover > td,
-      body.dark-theme .table-hover tbody tr:hover > th {
-        background-color: #3d3d3d !important;
-        color: #ffffff !important;
-      }
-
-      body.dark-theme .table-dark {
-        background-color: #1a1a1a !important;
-        color: #ffffff !important;
-      }
-
-      body.dark-theme .table-dark th,
-      body.dark-theme .table-dark td {
-        background-color: #1a1a1a !important;
-        color: #ffffff !important;
-        border-color: #3d3d3d !important;
-      }
-
-      /* Tungi rejimda kartalar */
-      body.dark-theme .card {
-        background-color: #1a1a1a !important;
-        color: #ffffff !important;
-        border-color: #3d3d3d !important;
-      }
-
-      body.dark-theme .card-header {
-        background-color: #2d2d2d !important;
-        color: #ffffff !important;
-        border-bottom-color: #3d3d3d !important;
-      }
-
-      body.dark-theme .card-body {
-        background-color: #1a1a1a !important;
-        color: #ffffff !important;
-      }
-
-      /* Tungi rejimda form elementlari */
-      body.dark-theme .form-control {
-        background-color: #2d2d2d !important;
-        color: #ffffff !important;
-        border-color: #3d3d3d !important;
-      }
-
-      body.dark-theme .form-control:focus {
-        background-color: #2d2d2d !important;
-        color: #ffffff !important;
-        border-color: #4299e1 !important;
-        box-shadow: 0 0 0 0.2rem rgba(66, 153, 225, 0.25) !important;
-      }
-
-      body.dark-theme .form-select {
-        background-color: #2d2d2d !important;
-        color: #ffffff !important;
-        border-color: #3d3d3d !important;
-      }
-
-      body.dark-theme .form-select:focus {
-        background-color: #2d2d2d !important;
-        color: #ffffff !important;
-        border-color: #4299e1 !important;
-        box-shadow: 0 0 0 0.2rem rgba(66, 153, 225, 0.25) !important;
-      }
-
-      /* Tungi rejimda alert'lar */
-      body.dark-theme .alert {
-        background-color: #2d2d2d !important;
-        color: #ffffff !important;
-        border-color: #3d3d3d !important;
-      }
-
-      body.dark-theme .alert-success {
-        background-color: #1a4d1a !important;
-        color: #ffffff !important;
-        border-color: #2d5a2d !important;
-      }
-
-      body.dark-theme .alert-danger {
-        background-color: #4d1a1a !important;
-        color: #ffffff !important;
-        border-color: #5a2d2d !important;
-      }
-
-      body.dark-theme .alert-warning {
-        background-color: #4d3d1a !important;
-        color: #ffffff !important;
-        border-color: #5a4d2d !important;
-      }
-
-      body.dark-theme .alert-info {
-        background-color: #1a3d4d !important;
-        color: #ffffff !important;
-        border-color: #2d4d5a !important;
-      }
-
-      /* Tungi rejimda modal'lar */
-      body.dark-theme .modal-content {
-        background-color: #1a1a1a !important;
-        color: #ffffff !important;
-        border-color: #3d3d3d !important;
-      }
-
-      body.dark-theme .modal-header {
-        background-color: #2d2d2d !important;
-        color: #ffffff !important;
-        border-bottom-color: #3d3d3d !important;
-      }
-
-      body.dark-theme .modal-body {
-        background-color: #1a1a1a !important;
-        color: #ffffff !important;
-      }
-
-      body.dark-theme .modal-footer {
-        background-color: #1a1a1a !important;
-        color: #ffffff !important;
-        border-top-color: #3d3d3d !important;
-      }
-
-      /* Tungi rejimda dropdown'lar */
-      body.dark-theme .dropdown-menu {
-        background-color: #1a1a1a !important;
-        color: #ffffff !important;
-        border-color: #3d3d3d !important;
-      }
-
-      body.dark-theme .dropdown-item {
-        color: #ffffff !important;
-      }
-
-      body.dark-theme .dropdown-item:hover {
-        background-color: #2d2d2d !important;
-        color: #ffffff !important;
-      }
-
-      /* Tungi rejimda list group */
-      body.dark-theme .list-group-item {
-        background-color: #1a1a1a !important;
-        color: #ffffff !important;
-        border-color: #3d3d3d !important;
-      }
-
-      body.dark-theme .list-group-item:hover {
-        background-color: #2d2d2d !important;
-        color: #ffffff !important;
-      }
-
-      /* Tungi rejimda badge'lar */
-      body.dark-theme .badge {
-        color: #ffffff !important;
-      }
-
-      /* Tungi rejimda text ranglari */
-      body.dark-theme .text-muted {
-        color: #a0a0a0 !important;
-      }
-
-      body.dark-theme .text-primary {
-        color: #66b3ff !important;
-      }
-
-      body.dark-theme .text-success {
-        color: #66ff66 !important;
-      }
-
-      body.dark-theme .text-danger {
-        color: #ff6666 !important;
-      }
-
-      body.dark-theme .text-warning {
-        color: #ffcc66 !important;
-      }
-
-      body.dark-theme .text-info {
-        color: #66ccff !important;
-      }
-      body.dark-theme .navbar,
-      body.dark-theme .navbar-nav,
-      body.dark-theme .navbar-dark {
-        background: linear-gradient(90deg, #0f1724 0%, #111827 100%) !important;
-        box-shadow: none !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.03) !important;
-      }
-      body.dark-theme .nav-link,
-      body.dark-theme .navbar-brand,
-      body.dark-theme .navbar-text {
-        color: #ffffff !important;
-        opacity: 0.95;
-      }
-      body.dark-theme .dropdown-menu {
-        background: #071019 !important;
-        border: 1px solid rgba(255, 255, 255, 0.04) !important;
-      }
-      body.dark-theme .dropdown-item {
-        color: #ffffff !important;
-        opacity: 0.95;
-      }
-      body.dark-theme .dropdown-item:hover {
-        background: rgba(255, 255, 255, 0.03) !important;
-        color: #ffffff !important;
-      }
-      body.dark-theme .card,
-      body.dark-theme .modal-content,
-      body.dark-theme .hero-section,
-      body.dark-theme .service-card {
-        background: #0d161b !important; /* muted card bg */
-        color: #ffffff !important;
-        border: 1px solid rgba(255, 255, 255, 0.03) !important;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6) !important;
-      }
-      body.dark-theme .btn-primary {
-        background: linear-gradient(
-          180deg,
-          #334155 0%,
-          #2b3440 100%
-        ) !important; /* muted button */
-        border: 1px solid rgba(255, 255, 255, 0.04) !important;
-        color: #ffffff !important;
-        box-shadow: none !important;
-      }
-      body.dark-theme .btn-outline-primary {
-        border-color: rgba(255, 255, 255, 0.06) !important;
-        color: #e6eef8 !important;
-      }
-      body.dark-theme a {
-        color: #e6eef8 !important;
-      }
-      body.dark-theme .form-control,
-      body.dark-theme .form-select {
-        background: rgba(255, 255, 255, 0.02) !important;
-        border: 1px solid rgba(255, 255, 255, 0.04) !important;
-        color: #ffffff !important;
-      }
-      body.dark-theme input::placeholder,
-      body.dark-theme textarea::placeholder {
-        color: rgba(255, 255, 255, 0.5) !important;
-      }
-
-      /* Shrift o'lchamlari */
-      .font-small {
-        font-size: 14px !important;
-      }
-      .font-medium {
-        font-size: 16px !important;
-      }
-      .font-large {
-        font-size: 18px !important;
-      }
-      .font-xlarge {
-        font-size: 20px !important;
-      }
-
-      /* Cart badge styling */
-      .cart-badge {
-        background: #dc3545;
-        color: white;
-        border-radius: 50%;
-        padding: 2px 6px;
-        font-size: 0.75rem;
-        font-weight: bold;
-        margin-left: 5px;
-        min-width: 18px;
-        height: 18px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      /* Navigation improvements */
-      .nav-link {
-        transition: all 0.3s ease;
-        border-radius: 8px;
-        margin: 0 2px;
-        padding: 8px 12px !important;
-      }
-
-      .nav-link:hover {
-        background: rgba(255, 255, 255, 0.1);
-        transform: translateY(-1px);
-      }
-
-      /* Make the navbar visually fixed and ensure content is padded below it.
-         We add a small helper class so we don't accidentally break bootstrap
-         behavior for off-canvas navbars. JS below will add the class at runtime
-         and compute the correct top padding for the main content. */
-      .fixed-top-custom {
-        position: fixed !important;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 1050 !important;
-        width: 100%;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.12);
-        background-clip: padding-box;
-      }
-
-      /* Qo'shimcha tungi rejim tuzatishlari */
-      body.dark-theme .bg-white,
-      body.dark-theme .bg-light {
-        background-color: #1a1a1a !important;
-        color: #ffffff !important;
-      }
-
-      body.dark-theme .text-dark {
-        color: #ffffff !important;
-      }
-
-      body.dark-theme .border-light {
-        border-color: #3d3d3d !important;
-      }
-
-      body.dark-theme .shadow {
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6) !important;
-      }
-
-      /* Footer va news ticker uchun tungi rejim */
-      body.dark-theme .footer,
-      body.dark-theme .news-ticker {
-        background: #0d161b !important;
-        color: #ffffff !important;
-        border-color: rgba(255, 255, 255, 0.1) !important;
-      }
-
-      /* Pagination uchun tungi rejim */
-      body.dark-theme .pagination .page-link {
-        background-color: #2d2d2d !important;
-        color: #ffffff !important;
-        border-color: #3d3d3d !important;
-      }
-
-      body.dark-theme .pagination .page-item.active .page-link {
-        background-color: #4299e1 !important;
-        border-color: #4299e1 !important;
-        color: #ffffff !important;
-      }
-
-      /* Progress bar uchun tungi rejim */
-      body.dark-theme .progress {
-        background-color: #2d2d2d !important;
-      }
-
-      body.dark-theme .progress-bar {
-        background-color: #4299e1 !important;
-      }
-
-      /* Breadcrumb uchun tungi rejim */
-      body.dark-theme .breadcrumb {
-        background-color: #1a1a1a !important;
-      }
-
-      body.dark-theme .breadcrumb-item a {
-        color: #66b3ff !important;
-      }
-
-      /* Tab navigation uchun tungi rejim */
-      body.dark-theme .nav-tabs .nav-link {
-        background-color: #2d2d2d !important;
-        color: #ffffff !important;
-        border-color: #3d3d3d !important;
-      }
-
-      body.dark-theme .nav-tabs .nav-link.active {
-        background-color: #1a1a1a !important;
-        color: #ffffff !important;
-        border-bottom-color: #1a1a1a !important;
-      }
-
-      /* Filter sidebar va modal uchun */
-      body.dark-theme .filter-sidebar,
-      body.dark-theme .offcanvas {
-        background: #0d161b !important;
-        color: #ffffff !important;
-      }
-
-      body.dark-theme .offcanvas-header {
-        border-bottom-color: #3d3d3d !important;
-      }
-
-      /* Input group uchun */
-      body.dark-theme .input-group-text {
-        background-color: #2d2d2d !important;
-        color: #ffffff !important;
-        border-color: #3d3d3d !important;
-      }
-
-      /* Spinner va loading elements uchun */
-      body.dark-theme .spinner-border {
-        color: #66b3ff !important;
-      }
-
-      /* Toast notifications uchun */
-      body.dark-theme .toast {
-        background-color: #1a1a1a !important;
-        color: #ffffff !important;
-        border-color: #3d3d3d !important;
-      }
-
-      body.dark-theme .toast-header {
-        background-color: #2d2d2d !important;
-        color: #ffffff !important;
-        border-bottom-color: #3d3d3d !important;
-      }
-    </style>
-
-    <style>
-      /* Hide menu/product prices globally for the public site by default.
-         This keeps price data out of the immediate UI while preserving the
-         DOM for scripts and accessibility.
-
-         Use the utility class `show-prices` on <body> to reveal prices when
-         needed (e.g., admin preview or A/B test). */
+      /* Price visibility control */
       .item-price, .menu-item-price, .price-section, .price-label {
-        visibility: hidden !important;
-        height: 0 !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        overflow: hidden !important;
+        display: none !important;
       }
-
-      /* Keep screen readers informed: mark price elements as hidden */
-      .item-price[aria-hidden]::after, .menu-item-price[aria-hidden]::after {
-        content: '';
-      }
-
-      /* Reveal prices when body has .show-prices (developer/admin opt-in) */
+      
       body.show-prices .item-price,
       body.show-prices .menu-item-price,
       body.show-prices .price-section,
       body.show-prices .price-label {
-        visibility: visible !important;
-        height: auto !important;
-        margin: initial !important;
-        padding: initial !important;
-        overflow: visible !important;
+        display: block !important;
       }
-    </style>
 
-    <style>
-      /* Global avatar enforcement: make avatars perfectly circular */
-      img.app-avatar,
-      img.rounded-circle {
+      /* Circular avatars enforcement */
+      img.app-avatar, img.rounded-circle {
         border-radius: 50% !important;
         object-fit: cover !important;
-        display: inline-block !important;
       }
-
-      /* default sizing; individual components may override */
+      /* Default sizing; individual components may override */
       .navbar img.app-avatar {
         width: 32px !important;
         height: 32px !important;
@@ -794,13 +404,11 @@
     </script>
     {% endif %} {% endblock %} {% block extra_head %}{% endblock %}
     <script>
-      // Define CSRF_TOKEN safely to avoid redeclaration errors across templates
-      if (typeof window.CSRF_TOKEN === 'undefined') {
-        try { window.CSRF_TOKEN = {{ csrf_token|tojson }}; } catch(e) { window.CSRF_TOKEN = ''; }
-      }
-      if (typeof CSRF_TOKEN === 'undefined') {
-        CSRF_TOKEN = window.CSRF_TOKEN;
-      }
+      // Define CSRF_TOKEN safely from meta tag
+      (function() {
+        const meta = document.querySelector('meta[name="csrf-token"]');
+        window.CSRF_TOKEN = meta ? meta.getAttribute('content') : '';
+      })();
     </script>
   </head>
   <body
@@ -823,42 +431,42 @@
       }
     </script>
     <script type="application/json" id="base-config">
-    {
-      "translations": {{ translations|tojson|safe if translations is defined else '{}' }},
-      "supported_languages": {{ config.get('SUPPORTED_LANGUAGES', ['uz','ru','en','kz']) | tojson | safe }},
+    {{ {
+      "translations": translations if translations is defined else {},
+      "supported_languages": config.get('SUPPORTED_LANGUAGES', ['uz','ru','en','kz']),
       "session": {
-         "dark_theme": {{ 'true' if session.get('dark_theme') else 'false' }},
-         "font_size": "{{ session.get('font_size', 'medium') }}",
-         "interface_language": "{{ session.get('interface_language', 'uz') }}"
+         "dark_theme": True if session.get('dark_theme') else False,
+         "font_size": session.get('font_size', 'medium'),
+         "interface_language": session.get('interface_language', 'uz')
       },
       "user": {
-         "is_super_admin": {{ (session.get('super_admin') and True) | tojson }},
-         "staff_id": {{ (session.get('staff_id') or None) | tojson }},
-         "courier_id": {{ (session.get('courier_id') or None) | tojson }},
-         "user_id": {{ (session.get('user_id') or None) | tojson }}
+         "is_super_admin": True if session.get('super_admin') else False,
+         "staff_id": session.get('staff_id'),
+         "courier_id": session.get('courier_id'),
+         "user_id": session.get('user_id')
       },
       "messages": {
-         "msg_too_long": {{ _('messages.message_too_long')|tojson }},
-         "send_error": {{ _('messages.message_send_error')|tojson }},
-         "unknown_error": {{ _('messages.unknown_error')|tojson }},
-         "error_occurred": {{ _('messages.error_occurred')|tojson }},
-         "news_added": {{ _('messages.news_added')|tojson }},
-         "save_error": {{ _('messages.save_error')|tojson }},
-         "news_enter_email": {{ _('footer.newsletter_enter_email')|tojson if _('footer.newsletter_enter_email') else "Please enter an email"|tojson }},
-         "news_thanks": {{ _('footer.newsletter_thanks')|tojson if _('footer.newsletter_thanks') else "Thanks! Subscribed (offline)"|tojson }},
-         "news_confirm": {{ _('footer.newsletter_confirm')|tojson if _('footer.newsletter_confirm') else "Confirmed"|tojson }},
-         "loading": {{ _('messages.loading')|tojson if _('messages.loading') else "Loading..."|tojson }},
-         "no_messages": {{ _('messages.no_messages')|tojson if _('messages.no_messages') else "No messages"|tojson }},
-         "enter_title_and_body": {{ _('messages.enter_title_and_body')|tojson if _('messages.enter_title_and_body') else "Enter title and body"|tojson }},
-         "enter_id": {{ _('messages.enter_id')|tojson if _('messages.enter_id') else "Enter ID"|tojson }},
-         "notification_sent": {{ _('messages.notification_sent')|tojson if _('messages.notification_sent') else "Sent!"|tojson }},
-         "title_required": {{ _('messages.title_required')|tojson if _('messages.title_required') else "Title required"|tojson }},
-         "file_upload_error": {{ _('messages.file_upload_error')|tojson if _('messages.file_upload_error') else "Upload error"|tojson }},
-         "no_notifications": {{ _('messages.no_notifications')|tojson if _('messages.no_notifications') else "No notifications"|tojson }}
+         "msg_too_long": _('messages.message_too_long'),
+         "send_error": _('messages.message_send_error'),
+         "unknown_error": _('messages.unknown_error'),
+         "error_occurred": _('messages.error_occurred'),
+         "news_added": _('messages.news_added'),
+         "save_error": _('messages.save_error'),
+         "news_enter_email": _('footer.newsletter_enter_email') if _('footer.newsletter_enter_email') else "Please enter an email",
+         "news_thanks": _('footer.newsletter_thanks') if _('footer.newsletter_thanks') else "Thanks! Subscribed (offline)",
+         "news_confirm": _('footer.newsletter_confirm') if _('footer.newsletter_confirm') else "Confirmed",
+         "loading": _('messages.loading') if _('messages.loading') else "Loading...",
+         "no_messages": _('messages.no_messages') if _('messages.no_messages') else "No messages",
+         "enter_title_and_body": _('messages.enter_title_and_body') if _('messages.enter_title_and_body') else "Enter title and body",
+         "enter_id": _('messages.enter_id') if _('messages.enter_id') else "Enter ID",
+         "notification_sent": _('messages.notification_sent') if _('messages.notification_sent') else "Sent!",
+         "title_required": _('messages.title_required') if _('messages.title_required') else "Title required",
+         "file_upload_error": _('messages.file_upload_error') if _('messages.file_upload_error') else "Upload error",
+         "no_notifications": _('messages.no_notifications') if _('messages.no_notifications') else "No notifications"
       },
-      "default_avatar": {{ 'images/default-avatar.svg' | cloudinary_url | tojson }},
-      "csrf_token": {{ csrf_token|tojson if csrf_token else '""' }}
-    }
+      "default_avatar": 'images/default-avatar.svg' | cloudinary_url,
+      "csrf_token": csrf_token if csrf_token else ""
+    } | tojson | safe }}
     </script>
     <script>
       // Load Base Config
@@ -915,13 +523,17 @@
       }
       
       const theme = localStorage.getItem("theme_preference");
-      if (theme === 'dark') {
+      const isDark = theme === 'dark';
+      
+      if (isDark) {
           document.documentElement.classList.add("dark-theme");
           document.body.classList.add("dark-theme");
+          document.body.classList.remove("light-theme");
           document.body.setAttribute('data-dark-mode', 'true');
       } else {
           document.documentElement.classList.remove("dark-theme");
           document.body.classList.remove("dark-theme");
+          document.body.classList.add("light-theme");
           document.body.setAttribute('data-dark-mode', 'false');
       }
     </script>
@@ -932,8 +544,7 @@
     {% if show_nav %}
 
     <!-- Super Admin Navbar - ONLY for authenticated super admins -->
-    {% if session.get('super_admin') and not session.get('user_id') and not
-    session.get('staff_id') and not session.get('courier_id') %}
+    {% if session.get('role') == 'super_admin' or session.get('super_admin') %}
     <nav
       class="navbar navbar-expand-lg navbar-dark"
       style="
@@ -1080,8 +691,7 @@
     </nav>
 
     <!-- Staff Navbar - ONLY for authenticated staff -->
-    {% elif session.get('staff_id') and not session.get('user_id') and not
-    session.get('super_admin') and not session.get('courier_id') %}
+    {% elif session.get('role') == 'staff' or session.get('staff_id') %}
     <nav
       class="navbar navbar-expand-lg navbar-dark"
       style="
@@ -1215,8 +825,7 @@
     </nav>
 
     <!-- Courier Navbar - ONLY for authenticated couriers -->
-    {% elif session.get('courier_id') and not session.get('user_id') and not
-    session.get('super_admin') and not session.get('staff_id') %}
+    {% elif session.get('role') == 'courier' or session.get('courier_id') %}
     <nav
       class="navbar navbar-expand-lg navbar-dark"
       style="
@@ -1367,137 +976,55 @@
     </nav>
 
     <!-- User Navbar -->
+    <!-- User Navbar -->
     {% elif is_user %}
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg industrial-nav fixed-top-custom">
       <div class="container-fluid">
-        <a class="navbar-brand" href="{{ url_for('index') }}"
-         >{{ _('nav.home') }}</a
+        <a class="navbar-brand fw-bold" href="{{ url_for('index') }}">
+          PRO<span style="color:var(--accent-primary)">OBUV</span>
+        </a>
 
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav">
-          <span class="navbar-toggler-icon"></span>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <i class="bi bi-list fs-2 text-white"></i>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav me-auto">
             <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('menu') }}">{{ _('nav.menu') }}</a>
+              <a class="nav-link" href="{{ url_for('menu') }}">{{ _('nav.menu') }}</a>
             </li>
             <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('favorites') }}">{{ _('nav.favorites') }}</a>
-            </li>
-            {# Shopping cart nav removed per request #}
-            <li class="nav-item d-flex align-items-center">
-              <a class="nav-link" href="{{ url_for('contact') }}">{{ _('nav.contact') }}</a>
-            </li>
-            <li>
-              <a class="nav-link" href="https://maps.app.goo.gl/tQU6Axzj4JvLoGML8">{{ _('nav.address') if _('nav.address') else 'Manzil' }}</a>
+              <a class="nav-link" href="{{ url_for('favorites') }}">{{ _('nav.favorites') }}</a>
             </li>
             <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('news_page') }}">{{ _('nav.news') }}</a>
+              <a class="nav-link" href="{{ url_for('news_page') }}">{{ _('nav.news') }}</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('about') }}">{{ _('nav.about') }}</a>
             </li>
-            <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('downloads') }}">{{ _('nav.downloads') }}</a>
-            </li>
-            <!-- 360 Room removed -->
           </ul>
 
-          <ul class="navbar-nav">
-            <li class="nav-item d-flex align-items-center">
-              <img
-                src="{{ (user_profile.avatar if user_profile else session.get('user_avatar') or 'images/default-avatar.svg') | cloudinary_url }}"
-                alt="avatar"
-                class="rounded-circle"
-                width="32"
-                height="32"
-                style="object-fit: cover; margin-right: 8px"
-                onerror="handleAvatarError(this)" />
-                <span class="navbar-text text-white me-3">{{ user_profile.name or session.get('user_name', _('nav.profile')) }}</span>
-              <button
-                type="button"
-                class="btn btn-sm btn-outline-light nav-notify"
-                title="{{ _('notifications') }}"
-                aria-controls="notifyModal"
-                style="margin-left: 6px; position: relative">
-                
-                <span
-                  id="notify-count"
-                  class="badge bg-danger"
-                  style="
-                    display: none;
-                    position: absolute;
-                    top: -6px;
-                    right: -6px;
-                  "
-                  >0</span
-                >
+          <ul class="navbar-nav align-items-center">
+            <li class="nav-item me-3">
+              <button class="btn-primary-industrial btn-sm py-1 px-3 nav-notify" title="{{ _('notifications') }}">
+                <i class="bi bi-bell"></i>
+                <span id="notify-count" class="badge bg-danger ms-1" style="display:none">0</span>
               </button>
             </li>
             <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle d-flex align-items-center"
-                href="#"
-                role="button"
-                data-bs-toggle="dropdown">
-                  <img
-                    src="{{ (user_profile.avatar if user_profile else session.get('user_avatar') or 'images/default-avatar.svg') | cloudinary_url }}"
-                    alt="avatar"
-                    class="rounded-circle"
-                    width="32"
-                    height="32"
-                    style="object-fit: cover; margin-right: 8px"
-                    onerror="handleAvatarError(this)" />
+              <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                <img src="{{ (session.get('user_avatar') or 'images/default-avatar.svg') | cloudinary_url }}" 
+                     class="app-avatar rounded-circle border border-2 border-secondary" width="40" height="40" alt="Profile">
               </a>
-              <ul class="dropdown-menu dropdown-menu-end">
-                <li class="px-3 py-2 d-flex align-items-center">
-                  <img
-                    src="{{ (session.get('user_avatar') or 'images/default-avatar.svg') | cloudinary_url }}"
-                    alt="avatar"
-                    class="rounded-circle me-2"
-                    width="48"
-                    height="48"
-                    style="object-fit: cover"
-                    onerror="handleAvatarError(this)" />
-                  <div>
-                    <div class="fw-bold">
-                      {{ user_profile.name or session.get('user_name', 'Foydalanuvchi') }}
-                    </div>
-                    <div class="text-muted small">
-                      {{ user_profile.email or session.get('user_email','') }}
-                    </div>
-                  </div>
+              <ul class="dropdown-menu dropdown-menu-end industrial-card p-3" style="min-width: 250px;">
+                <li class="text-center mb-3 pb-3 border-bottom border-secondary border-opacity-25">
+                   <div class="fw-bold fs-5">{{ session.get('user_name', 'Foydalanuvchi') }}</div>
+                   <div class="text-secondary small">{{ session.get('user_email', '') }}</div>
                 </li>
-                <li><hr class="dropdown-divider" /></li>
-                <li>
-                  <a class="dropdown-item" href="{{ url_for('profile') }}"
-            >{{ _('nav.profile') }}</a>
-                </li>
-                <li>
-                  <a
-                    class="dropdown-item"
-                    href="{{ url_for('profile_settings') }}"
-                    >{{ _('nav.profile_settings') }}</a
-                  >
-                </li>
-                <li>
-                  <a
-                    class="dropdown-item"
-                    href="{{ url_for('general_settings') }}"
-                    >{{ _('settings.title') }}</a
-                  >
-                </li>
-                <li><hr class="dropdown-divider" /></li>
-                <li>
-                  <a class="dropdown-item" href="{{ url_for('logout') }}"
-                    >{{ _('nav.logout') }}</a
-                  >
-                </li>
+                <li><a class="dropdown-item py-2" href="{{ url_for('profile') }}"><i class="bi bi-person me-2"></i> {{ _('nav.profile') }}</a></li>
+                <li><a class="dropdown-item py-2" href="{{ url_for('profile_settings') }}"><i class="bi bi-gear me-2"></i> {{ _('nav.settings') }}</a></li>
+                <li><hr class="dropdown-divider opacity-10"></li>
+                <li><a class="dropdown-item py-2 text-danger" href="{{ url_for('logout') }}"><i class="bi bi-box-arrow-right me-2"></i> {{ _('nav.logout') }}</a></li>
               </ul>
             </li>
           </ul>
@@ -1507,92 +1034,53 @@
 
     <!-- Guest Navbar -->
     {% else %}
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg industrial-nav fixed-top-custom">
       <div class="container-fluid">
-  <a class="navbar-brand" href="{{ url_for('index') }}">{{ _('nav.brand') }}</a>
+        <a class="navbar-brand fw-bold" href="{{ url_for('index') }}">
+          PRO<span style="color:var(--accent-primary)">OBUV</span>
+        </a>
 
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav">
-          <span class="navbar-toggler-icon"></span>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <i class="bi bi-list fs-2 text-white"></i>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav me-auto">
             <li class="nav-item">
+              <a class="nav-link active" href="{{ url_for('index') }}">{{ _('nav.home') }}</a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" href="{{ url_for('menu') }}">{{ _('nav.menu') }}</a>
-            </li>
-            {# Mobile/guest cart nav removed per request #}
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('contact') }}">{{ _('nav.contact') }}</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="https://maps.app.goo.gl/tQU6Axzj4JvLoGML8">{{ _('nav.address') if _('nav.address') else 'Manzil' }}</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('about') }}">{{ _('nav.about') }}</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('news_page') }}">{{ _('nav.news') }}</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('downloads') }}"
-                >{{ _('nav.downloads') }}</a
+              <a class="nav-link" href="{{ url_for('about') }}">{{ _('nav.about') }}</a>
             </li>
-            <!-- 360 Room removed -->
           </ul>
 
-          <ul class="navbar-nav">
-            <li class="nav-item dropdown me-2">
-              <a class="nav-link dropdown-toggle" href="#" id="langDropdownGuest" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                {{ (session.get('interface_language', config.get('DEFAULT_LANGUAGE','ru'))|upper) }}
+          <ul class="navbar-nav align-items-center">
+            <li class="nav-item dropdown me-3">
+              <a class="nav-link dropdown-toggle btn-outline-industrial btn-sm px-3" href="#" id="langChoice" role="button" data-bs-toggle="dropdown">
+                {{ LANG|upper }}
               </a>
-              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="langDropdownGuest">
-                <li><a class="dropdown-item" href="#" onclick="changeLanguage('uz')">UZ</a></li>
-                <li><a class="dropdown-item" href="#" onclick="changeLanguage('ru')">RU</a></li>
-                <li><a class="dropdown-item" href="#" onclick="changeLanguage('en')">EN</a></li>
-                <li><a class="dropdown-item" href="#" onclick="changeLanguage('kz')">KZ</a></li>
-                <li><hr class="dropdown-divider"/></li>
-                <li><a class="dropdown-item" href="{{ url_for('general_settings') }}">{{ _('settings.title') }}</a></li>
+              <ul class="dropdown-menu dropdown-menu-end industrial-card">
+                <li><a class="dropdown-item" href="#" onclick="changeLanguage('uz')">O'zbekcha</a></li>
+                <li><a class="dropdown-item" href="#" onclick="changeLanguage('ru')">Русский</a></li>
+                <li><a class="dropdown-item" href="#" onclick="changeLanguage('en')">English</a></li>
               </ul>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('login_page') }}"
-                >{{ _('nav.login') }}</a
-              >
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('register') }}"
-                >{{ _('nav.register') }}</a
-              >
-            </li>
-            <li class="nav-item d-flex align-items-center">
-              <button
-                type="button"
-                class="btn btn-sm btn-outline-light nav-notify"
-                title="{{ _('notifications') }}"
-                aria-controls="notifyModal"
-                style="margin-left: 6px; position: relative">
-                <span
-                  id="notify-count"
-                  class="badge bg-danger"
-                  style="
-                    display: none;
-                    position: absolute;
-                    top: -6px;
-                    right: -6px;
-                  "
-                  >0</span
-                >
-              </button>
+            <li class="nav-item d-flex gap-2">
+              <a href="{{ url_for('login_page') }}" class="btn-outline-industrial btn-sm py-1 px-3">Kirish</a>
+              <a href="{{ url_for('register_page') }}" class="btn-primary-industrial btn-sm py-1 px-3">Ro'yxat</a>
             </li>
           </ul>
         </div>
       </div>
     </nav>
-    {% endif %} {% endif %}
+    {% endif %}
+    {% endif %}
 
     <main class="container mt-4">
       {% with messages = get_flashed_messages(with_categories=true) %} {% if
@@ -4031,9 +3519,92 @@
         const swiper = new Swiper('.default-swiper', {
           loop: true,
           pagination: { el: '.swiper-pagination', clickable: true },
-          navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
         });
       });
     </script>
-    </body>
+      <!-- Floating Help Widget -->
+    <div id="helpWidget">
+        <div id="helpMenu">
+            <button class="help-item" onclick="openAIChat()">
+                <i class="bi bi-robot text-primary"></i> AI Chat
+            </button>
+            {% if session.get('user_id') %}
+            <button class="help-item" onclick="location.href='/chat/staff'">
+                <i class="bi bi-person-badge text-info"></i> Support Chat
+            </button>
+            <button class="help-item" onclick="openAskModal()">
+                <i class="bi bi-envelope-plus text-warning"></i> Super Admin
+            </button>
+            {% else %}
+             <button class="help-item" onclick="location.href='/login'">
+                <i class="bi bi-box-arrow-in-right"></i> Kirish
+            </button>
+            {% endif %}
+        </div>
+        <button id="helpBtn" onclick="toggleHelpMenu()">
+            <i class="bi bi-chat-dots-fill"></i>
+        </button>
+    </div>
+
+    <!-- Ask Super Admin Modal -->
+    <div class="modal fade" id="askAdminModal" tabindex="-1" style="z-index: 100000;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Super Adminga Savol Yo'llash</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <textarea class="form-control" id="questionText" rows="4" placeholder="Savolingizni yozing..."></textarea>
+                </div>
+                <div class="modal-footer">
+                   <button type="button" class="btn btn-primary" onclick="submitQuestion()">Yuborish</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleHelpMenu() {
+            document.getElementById('helpMenu').classList.toggle('show');
+        }
+        
+        function openAIChat() {
+            // Trigger existing chat widget if available
+            const chatBtn = document.querySelector('.chat-widget-toggle');
+            if(chatBtn) chatBtn.click();
+            else alert("AI Chat hozircha faol emas :(");
+        }
+        
+        function openAskModal() {
+             new bootstrap.Modal(document.getElementById('askAdminModal')).show();
+        }
+        
+        function submitQuestion() {
+            const txt = document.getElementById('questionText').value;
+            if(!txt) return;
+            fetch('/api/chat/superadmin-question', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({text: txt, source: 'web'})
+            })
+            .then(r=>r.json())
+            .then(d => {
+                alert(d.message);
+                location.reload();
+            });
+        }
+        
+        // Auto-close alerts
+        document.addEventListener('DOMContentLoaded', () => {
+             const alerts = document.querySelectorAll('.alert');
+             alerts.forEach(a => {
+                 setTimeout(() => {
+                     a.style.animation = 'fadeOut 0.5s forwards';
+                     setTimeout(() => a.remove(), 500);
+                 }, 4000);
+             });
+        });
+    </script>
+  </body>
 </html>

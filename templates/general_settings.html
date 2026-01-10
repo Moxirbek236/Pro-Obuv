@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% block title %}Umumiy sozlamalar{% endblock %} {%
+{% extends "super_admin_base.html" if session.get('super_admin') else "dashboard_base.html" if session.get('staff_id') or session.get('courier_id') else "base.html" %} {% block title %}Umumiy sozlamalar{% endblock %} {%
 block head %}
 <style>
   .settings-container {

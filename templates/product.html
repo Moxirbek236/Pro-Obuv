@@ -25,427 +25,543 @@
   "description": (localized_description or ""),
   "image": (prefer_webp(item.image_url if item.image_url else url_for('static', filename='defoult.webp'))),
   "url": canonical_url(),
-  "brand": {"@type": "Brand", "name": "Pro Obuv"}
+  "brand": {"@type": "Brand", "name": "Pro Obuv"},
+  "offers": {
+    "@type": "Offer",
+    "priceCurrency": "UZS",
+    "price": item.price,
+    "availability": "https://schema.org/InStock"
+  }
 } | tojson }}
 </script>
 {% endblock %}
 
-<!-- Image enlarge modal (reuses same slides) -->
-<div id="imageEnlargeModal" class="image-enlarge-modal" aria-hidden="true">
+{% block head %}
+<style>
+  /* Local Overrides for Product Page */
+  .product-page-wrapper {
+    padding: 40px 0;
+  }
+  
+  .product-media-card {
+     position: relative;
+     background: var(--surface-dark);
+     border: 1px solid var(--border-color);
+     border-radius: 8px;
+     padding: 20px;
+     height: 100%;
+  }
+
+  /* Gallery Styling */
+  .swiper-pagination-bullet-active {
+    background: var(--accent-primary) !important;
+  }
+  
+  .product-thumbs .swiper-slide {
+    opacity: 0.5;
+    transition: all 0.3s;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  
+  .product-thumbs .swiper-slide-thumb-active {
+    opacity: 1;
+    border-color: var(--accent-primary);
+  }
+
+  /* Related Products Grid - Responsive */
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+  }
+  
+  @media (max-width: 576px) {
+    .related-grid {
+       grid-template-columns: repeat(2, 1fr);
+       gap: 10px;
+    }
+    .related-product-card .img-wrap {
+       height: 150px;
+    }
+  }
+
+  /* Review Stars Interactive */
+  .rating-input-stars {
+      display: inline-flex;
+      gap: 5px;
+      direction: ltr;
+  }
+  .rating-input-stars .star {
+      font-size: 2rem;
+      cursor: pointer;
+      color: #333; /* default inactive */
+      transition: color 0.2s;
+  }
+  .rating-input-stars .star.selected,
+  .rating-input-stars .star:hover,
+  .rating-input-stars .star:hover ~ .star {
+     /* Logic handled by JS, but standard CSS hover doesn't work well for "previous siblings" without flex-direction row-reverse hack. 
+        We rely on JS for class 'selected' */
+  }
+  .rating-input-stars .star.selected {
+      color: #FFD700;
+  }
+
+  .comment-item {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Image Enlarge Modal -->
+<div id="imageEnlargeModal" class="image-enlarge-modal" aria-hidden="true" style="z-index: 99999;">
   <div class="image-enlarge-backdrop" tabindex="-1"></div>
   <div class="image-enlarge-content">
     <button class="image-enlarge-close" aria-label="Close"><i class="bi bi-x-lg"></i></button>
     <div class="image-enlarge-swiper swiper" id="imageEnlargeSwiper">
       <div class="swiper-wrapper">
-        {% if all_media and all_media|length > 0 %}
-          {% for m in all_media %}
-            <div class="swiper-slide">
-              {% if m.media_type and m.media_type.startswith('video') %}
-                <video controls muted preload="metadata"><source src="{{ m.media_url }}"></video>
-              {% else %}
-                <img src="{{ prefer_webp(m.media_url) }}" alt="{{ localized_name }}">
-              {% endif %}
-            </div>
-          {% endfor %}
-        {% else %}
-          <div class="swiper-slide">
-            <img src="{{ prefer_webp(item.image_url or url_for('static', filename='defoult.webp')) }}" alt="{{ localized_name }}">
-          </div>
-        {% endif %}
-      </div>
-      <div class="swiper-button-prev"></div>
-      <div class="swiper-button-next"></div>
-      <div class="swiper-pagination"></div>
-    </div>
-  </div>
-</div>
-
-{% block head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/product-page.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/related-products-section.css') }}">
-<style>
-  .item-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .product-media img { max-width: 100%; display: block; }
-  .thumbnails { display:flex; gap:8px; margin-top:10px; }
-  .thumbnails .thumb { cursor:pointer; border-radius:6px; overflow:hidden; width:64px; height:64px; flex:0 0 64px; }
-  .thumbnails .thumb img { width:100%; height:100%; object-fit:cover; }
-  /* ensure thumbnails receive pointer events (prevent accidental overlays from blocking clicks) */
-  .thumbnails, .thumbnails .thumb, .thumbnails .thumb img { pointer-events: auto; }
-  .comment-meta { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:6px; }
-  .comment-stars { color: #ffd166; font-size:16px; }
-  .comment-date { color:#6b7280; font-size:12px; }
-</style>
-{% endblock %}
-
-{% block content %}
-<div id="product-page-data" data-url-template="{{ url_for('product_detail', item_id=0) }}" data-default-image="{{ prefer_webp(item.image_url or url_for('static', filename='defoult.webp')) }}" style="display:none"></div>
-
-<div class="product-container">
-
-  <div class="product-media">
-    {# Debug indicator for media count #}
-    <div style="font-size: 10px; color: #ccc; margin-bottom: 5px;">Media count: {{ all_media|length }}</div>
-    {# Swiper main gallery #}
-    <div class="swiper productMainSwiper universal-swiper" id="productMainSwiper">
-      <div class="swiper-wrapper">
         {% for m in all_media %}
           <div class="swiper-slide">
-            <div class="swiper-zoom-container">
-              {% if m.media_type and m.media_type.startswith('video') %}
-                <video controls muted preload="metadata" class="product-media-video">
-                  <source src="{{ m.media_url }}" type="video/mp4">
-                </video>
-              {% else %}
-                <img src="{{ prefer_webp(m.media_url) }}" alt="{{ localized_name }}" class="product-main-image" loading="lazy" />
-              {% endif %}
-            </div>
+             {% if m.media_type and 'video' in m.media_type %}
+                <video controls style="max-width:100%; max-height:100%"><source src="{{ m.media_url }}"></video>
+             {% else %}
+                <img src="{{ prefer_webp(m.media_url) }}" alt="Large view">
+             {% endif %}
           </div>
         {% endfor %}
       </div>
       <div class="swiper-button-prev"></div>
       <div class="swiper-button-next"></div>
-      <div class="swiper-pagination"></div>
-      <button class="image-enlarge-btn" aria-label="Enlarge images">
-        <i class="bi bi-arrows-fullscreen"></i>
-      </button>
     </div>
-
-    {% if all_media|length > 1 %}
-      <div class="swiper productThumbsSwiper universal-thumbs" id="productThumbsSwiper" style="margin-top: 10px;">
-        <div class="swiper-wrapper">
-          {% for m in all_media %}
-            <div class="swiper-slide thumb-slide">
-              <img src="{{ prefer_webp(m.media_url) }}" alt="thumb {{ loop.index }}" loading="lazy" />
-              {% if m.media_type and m.media_type.startswith('video') %}
-                <div class="video-thumb-icon"><i class="bi bi-play-fill"></i></div>
-              {% endif %}
-            </div>
-          {% endfor %}
-        </div>
-      </div>
-    {% endif %}
-  </div>
-
-  <div class="product-details">
-    <h1 class="item-name">{{ localized_name }}</h1>
-    <p class="description">{{ localized_description }}</p>
-    {% if marketplaces %}
-      <div class="marketplace-block">
-        <span class="marketplace-header">{{ _('Order from:') if _('Order from:') else 'Buyurtma berish:' }}</span>
-        <div class="marketplace-buttons">
-          {% if marketplaces.uzum %}
-            <a href="{{ marketplaces.uzum }}" target="_blank" class="marketplace-btn mp-uzum">
-              <i class="bi bi-shop mp-icon"></i> Uzum Market
-            </a>
-          {% endif %}
-          {% if marketplaces.olx %}
-            <a href="{{ marketplaces.olx }}" target="_blank" class="marketplace-btn mp-olx">
-              <i class="bi bi-cart mp-icon"></i> OLX
-            </a>
-          {% endif %}
-          {% if marketplaces.yandex %}
-            <a href="{{ marketplaces.yandex }}" target="_blank" class="marketplace-btn mp-yandex">
-              <i class="bi bi-truck mp-icon"></i> Yandex Market
-            </a>
-          {% endif %}
-        </div>
-      </div>
-    {% endif %}
-
-    <!-- Superadmin contact (always shown as a primary order option) -->
-    {% set sa_phone = (superadmin_settings.phone if superadmin_settings and superadmin_settings.get('phone') else (config.SUPER_ADMIN_PHONE if config and config.SUPER_ADMIN_PHONE else None)) %}
-    {% if sa_phone %}
-      <div class="superadmin-order-block" style="margin-top:12px;">
-          <a href="tel:{{ sa_phone|replace(' ', '') }}" class="superadmin-phone-link">
-            <svg class="phone-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M21 16.5V21a1 1 0 0 1-1.1.99C9.5 20.9 3.1 14.5 2 4.1A1 1 0 0 1 3 3h3.5a1 1 0 0 1 1 .8c.2 1.3.6 3.1 1.9 5 .9 1.2.4 2.1-.5 2.8l-.7.5a12.4 12.4 0 0 0 5.7 5.7l.5-.7c.7-.9 1.6-1.4 2.8-.5 1.9 1.3 3.7 1.7 5 1.9a1 1 0 0 1 .8 1v3.5z" fill="currentColor"/></svg>
-            <span class="sa-text">{{ _('Order by Phone') if _('Order by Phone') else 'Order by Phone' }}</span>
-            <span class="sa-number">{{ sa_phone }}</span>
-          </a>
-      </div>
-    {% endif %}
-
-    <!-- Rating Summary Block (Google Play Style) -->
-    {% set rating = item.rating|float(0) %}
-    {% set total_reviews = comments|length %}
-    {% set star_counts = {5: 0, 4: 0, 3: 0, 2: 0, 1: 0} %}
-    {% for c in comments %}
-      {% set r_val = (c.rating or 0)|int %}
-      {% if r_val in [1,2,3,4,5] %}
-        {% set _void = star_counts.update({r_val: star_counts[r_val] + 1}) %}
-      {% endif %}
-    {% endfor %}
-
-    <div class="rating-summary-container" aria-label="Rating summary">
-      <div class="rating-avg-block">
-        <div class="rating-avg-number" aria-hidden="true">{{ "%.1f"|format(rating) }}</div>
-        <div class="rating-avg-stars" aria-label="{{ rating }} out of 5 stars">
-          {% for i in range(1,6) %}
-            <i class="bi bi-star{{ '-fill filled' if rating >= i else '-half filled' if rating >= i - 0.5 else '' }}"></i>
-          {% endfor %}
-        </div>
-        <div class="rating-total-count">{{ total_reviews }} sharhlar</div>
-      </div>
-      
-      <div class="rating-bars-block">
-        {% for star_val in [5, 4, 3, 2, 1] %}
-          {% set count = star_counts[star_val] %}
-          {% set percent = (count / total_reviews * 100) if total_reviews > 0 else 0 %}
-          <div class="rating-bar-row">
-            <div class="rating-bar-label">{{ star_val }}</div>
-            <div class="rating-progress-bg">
-                <div class="rating-progress-fill" style="width: {{ percent }}%"></div>
-              </div>
-          </div>
-        {% endfor %}
-      </div>
-    </div>
-
-    <div class="options-row">
-      <div class="select-wrapper">
-        <label for="sizeSelect">O'lcham</label>
-        <select id="sizeSelect" name="size">
-          <option value="">— O'lcham tanlang —</option>
-          {% set _sizes = (item.sizes or '39,40,41,42,43').split(',') %}
-          {% for s in _sizes %}{% if s|trim %}<option value="{{ s|trim }}">{{ s|trim }}</option>{% endif %}{% endfor %}
-        </select>
-      </div>
-
-      <div class="select-wrapper">
-        <label for="colorSelect">Rang</label>
-        <select id="colorSelect" name="color">
-          <option value="">— Rang tanlang —</option>
-          {% set _colors = (item.colors or 'black,white').split(',') %}
-          {% for c in _colors %}{% if c|trim %}<option value="{{ c|trim }}">{{ c|trim }}</option>{% endif %}{% endfor %}
-        </select>
-      </div>
-    </div>
-
-    <!-- Comments -->
-    <div class="comments-section" style="margin-top:18px;">
-      <h3>Mijozlar sharhlari</h3>
-      <form method="POST" action="{{ url_for('post_comment', item_id=item.id) }}">
-        {% if not session.get('user_id') %}
-          <div style="background:#fff3cd;padding:10px;border-radius:6px;margin-bottom:8px;">Iltimos tizimga kiring.</div>
-        {% else %}
-          <!-- Clickable rating input -->
-          <div style="margin-bottom:8px;">
-            <label style="display:block;font-weight:700;margin-bottom:6px;">Sizning bahongiz</label>
-            <div class="rating-input-stars" id="ratingInputStars" aria-hidden="false">
-              <span class="star" data-value="1">★</span>
-              <span class="star" data-value="2">★</span>
-              <span class="star" data-value="3">★</span>
-              <span class="star" data-value="4">★</span>
-              <span class="star" data-value="5">★</span>
-            </div>
-            <input type="hidden" name="rating" id="ratingInput" value="0">
-          </div>
-
-          <textarea name="comment" rows="3" style="width:100%;padding:8px;border-radius:6px;border:1px solid #e6e6e6;"></textarea>
-          <div style="text-align:right;margin-top:8px;"><button type="submit" class="add-cart-btn">Sharh yuborish</button></div>
-        {% endif %}
-      </form>
-
-      <div id="commentsList" style="margin-top:12px;">
-        {% if comments and comments|length > 0 %}
-          {% for c in comments %}
-            <div class="comment-item" style="padding:10px;border:1px solid #eee;border-radius:8px;margin-bottom:8px;">
-              <div class="comment-meta">
-                <div class="comment-author" style="font-weight:700">{{ c.author or c.user_name or 'Anonim' }}</div>
-                <div style="margin-left:auto;display:flex;align-items:center;gap:10px;">
-                  <div class="comment-stars" aria-hidden="true">
-                    {% set cr = (c.rating or c.rate or 0) | float(0) %}
-                    {% for i in range(1,6) %}
-                      {% if cr >= i %}
-                        <span>★</span>
-                      {% else %}
-                        <span style="color:#e6e6e6">☆</span>
-                      {% endif %}
-                    {% endfor %}
-                  </div>
-                  <div class="comment-date">{{ (c.created_at or '')[:19].replace('T',' ') if (c.created_at) else '' }}</div>
-                </div>
-              </div>
-              <div style="color:#333">{{ c.comment or c.text }}</div>
-            </div>
-          {% endfor %}
-        {% else %}
-          <div style="color:#666">Sharhlar mavjud emas.</div>
-        {% endif %}
-      </div>
-    </div>
-
   </div>
 </div>
 
+<div class="container product-page-wrapper">
+  
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb" class="mb-4 d-none d-md-block">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-secondary text-decoration-none text-uppercase small">Bosh sahifa</a></li>
+      <li class="breadcrumb-item"><a href="{{ url_for('menu') }}" class="text-secondary text-decoration-none text-uppercase small">Katalog</a></li>
+      <li class="breadcrumb-item active text-accent" aria-current="page">{{ localized_name }}</li>
+    </ol>
+  </nav>
 
-<script>
-  // Rating stars behavior for comment form
-  (function(){
-    try{
-      const starsWrap = document.getElementById('ratingInputStars');
-      const ratingInput = document.getElementById('ratingInput');
-      if (starsWrap && ratingInput) {
-        const stars = Array.from(starsWrap.querySelectorAll('.star'));
-        function setVisual(val){
-          stars.forEach(s => {
-            const v = parseInt(s.getAttribute('data-value') || '0', 10);
-            if (v <= val) {
-              s.classList.add('selected');
-            } else {
-              s.classList.remove('selected');
-            }
-          });
-        }
-        stars.forEach(s => {
-          s.addEventListener('mouseenter', function(){
-            const v = parseInt(this.getAttribute('data-value')||'0',10);
-            setVisual(v);
-          });
-          s.addEventListener('mouseleave', function(){
-            setVisual(parseInt(ratingInput.value||'0',10));
-          });
-          s.addEventListener('click', function(){
-            const v = parseInt(this.getAttribute('data-value')||'0',10);
-            ratingInput.value = v;
-            setVisual(v);
-          });
-        });
-      }
-    }catch(e){console.warn('rating init failed', e)}
-  })();
-</script>
-
-<!-- Related Products Section (bottom of product page) -->
-<div class="related-products-section">
-  <div class="related-products-container">
-    <h3 class="related-products-title">O'xshash mahsulotlar</h3>
-    {% if related_products and related_products|length > 0 %}
-      <div class="related-products-grid">
-        {% for rp in related_products %}
-          <a class="related-product-card" href="{{ url_for('product_detail', item_id=rp.id) }}">
-            <div class="related-img-wrap">
-              <img src="{{ rp.image_url or url_for('static', filename='defoult.webp') }}" alt="{{ rp.localized_name or rp.name }}">
+  <div class="row g-4">
+    
+    <!-- LEFT COLUMN: IMAGES -->
+    <div class="col-lg-7 animate-fade-in-up">
+      <div class="product-media-card">
+         <div class="swiper productMainSwiper overflow-hidden rounded mb-3" id="productMainSwiper" style="aspect-ratio: 4/3; background: #000;">
+            <div class="swiper-wrapper">
+               {% for m in all_media %}
+                 <div class="swiper-slide d-flex align-items-center justify-content-center bg-black">
+                    {% if m.media_type and 'video' in m.media_type %}
+                       <video controls class="w-100 h-100 object-fit-contain" preload="metadata"><source src="{{ m.media_url }}"></video>
+                    {% else %}
+                       <img src="{{ prefer_webp(m.media_url) }}" class="d-block w-100 h-100 object-fit-contain" alt="Product Image">
+                    {% endif %}
+                 </div>
+               {% endfor %}
             </div>
-            <div class="related-info">
-              <div class="related-name">{{ rp.localized_name or rp.name }}</div>
+            <div class="swiper-button-next" style="color: var(--accent-primary);"></div>
+            <div class="swiper-button-prev" style="color: var(--accent-primary);"></div>
+            <div class="swiper-pagination"></div>
             
-            </div>
-          </a>
-        {% endfor %}
-      </div>
-    {% else %}
-      <div class="no-related-products"><i class="bi bi-box-seam"></i> Boshqa mos mahsulotlar topilmadi.</div>
-    {% endif %}
-  </div>
-</div>
+            <button class="position-absolute bottom-0 end-0 m-3 btn btn-dark btn-sm rounded-circle z-2 image-enlarge-btn" title="Kattalashtirish">
+               <i class="bi bi-arrows-fullscreen"></i>
+            </button>
+         </div>
 
+         {% if all_media|length > 1 %}
+           <div class="swiper productThumbsSwiper product-thumbs" id="productThumbsSwiper">
+              <div class="swiper-wrapper">
+                 {% for m in all_media %}
+                   <div class="swiper-slide cursor-pointer">
+                      <div class="ratio ratio-1x1 bg-dark rounded overflow-hidden">
+                         {% if m.media_type and 'video' in m.media_type %}
+                            <div class="d-flex align-items-center justify-content-center h-100 text-secondary"><i class="bi bi-play-circle-fill fs-4"></i></div>
+                         {% else %}
+                            <img src="{{ prefer_webp(m.media_url) }}" class="w-100 h-100 object-fit-cover" alt="thumb">
+                         {% endif %}
+                      </div>
+                   </div>
+                 {% endfor %}
+              </div>
+           </div>
+         {% endif %}
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: INFO & ACTIONS -->
+    <div class="col-lg-5 animate-fade-in-up" style="animation-delay: 0.1s;">
+      <div class="industrial-card p-4 h-100 d-flex flex-column">
+         
+         <div class="mb-3">
+            <span class="badge bg-warning text-dark text-uppercase fw-bold rounded-1 px-2 py-1 mb-2">
+                <i class="bi bi-shield-check me-1"></i> ISO 20345:2011
+            </span>
+            <h1 class="h2 fw-bold font-heading text-uppercase mb-2 text-light">{{ localized_name }}</h1>
+            
+            <!-- Rating -->
+            <div class="d-flex align-items-center gap-2 mb-3">
+               <div class="text-warning">
+                  {% set rating = item.rating|float(0) %}
+                  {% for i in range(1,6) %}
+                    <i class="bi bi-star{{ '-fill' if rating >= i else '-half' if rating >= i - 0.5 else '' }}"></i>
+                  {% endfor %}
+               </div>
+               <span class="text-secondary small border-start border-secondary ps-2">{{ comments|length }} ta sharh</span>
+            </div>
+         </div>
+
+         <div class="price-section py-3 border-top border-bottom border-secondary border-opacity-25 mb-4">
+             <div class="text-secondary text-uppercase small fw-bold mb-1">Narxi:</div>
+             <div class="d-flex align-items-baseline gap-2">
+                 {% if item.price %}
+                    <h2 class="display-5 fw-bold text-accent mb-0">{{ "{:,.0f}".format(item.price) }}</h2>
+                    <span class="h5 text-secondary">UZS</span>
+                 {% else %}
+                    <h2 class="h3 text-secondary mb-0">So'rov asosida</h2>
+                 {% endif %}
+             </div>
+         </div>
+
+         <div class="description-section mb-4 flex-grow-1">
+             <h6 class="text-uppercase text-light fw-bold mb-2">Tavsif</h6>
+             <p class="text-secondary small lh-lg mb-0 text-truncate-custom line-clamp-4">
+                 {{ localized_description }}
+             </p>
+         </div>
+
+         <!-- Actions -->
+         <div class="action-section mt-auto">
+             <div class="d-grid gap-3">
+                 <button class="btn-primary-industrial justify-content-center py-3 fs-5" onclick="addToCart({{ item.id }})">
+                    <i class="bi bi-cart-plus-fill me-2"></i> Savatga qo'shish
+                 </button>
+                 <div class="d-flex gap-3">
+                    <a href="tel:{{ config.SUPER_ADMIN_PHONE|default('+998991459686') }}" class="btn btn-outline-industrial flex-grow-1 justify-content-center">
+                        <i class="bi bi-telephone me-2"></i> Qo'ng'iroq
+                    </a>
+                    <button class="btn btn-dark border border-secondary text-danger" title="Sevimlilarga"><i class="bi bi-heart"></i></button>
+                 </div>
+             </div>
+
+             <!-- Marketplaces -->
+             {% if marketplaces %}
+              <div class="mt-4 pt-3 border-top border-secondary border-opacity-25">
+                 <small class="text-secondary text-uppercase fw-bold d-block mb-2">Yoki bu yerdan xarid qiling:</small>
+                 <div class="d-flex gap-2 flex-wrap">
+                    {% if marketplaces.uzum %}<a href="{{ marketplaces.uzum }}" target="_blank" class="btn btn-sm btn-dark border-secondary text-light">Uzum Market</a>{% endif %}
+                    {% if marketplaces.olx %}<a href="{{ marketplaces.olx }}" target="_blank" class="btn btn-sm btn-dark border-secondary text-light">OLX</a>{% endif %}
+                 </div>
+              </div>
+             {% endif %}
+         </div>
+
+      </div>
+    </div>
+
+  </div> <!-- End Row -->
+
+  <!-- TECHNICAL SPECS & DETAILS TAB -->
+  <div class="row mt-5 animate-fade-in-up" style="animation-delay: 0.2s;">
+      <div class="col-12">
+          <div class="industrial-card p-0 overflow-hidden">
+              <ul class="nav nav-tabs nav-justified border-secondary border-opacity-25 bg-dark" id="productTabs" role="tablist">
+                  <li class="nav-item" role="presentation">
+                      <button class="nav-link active rounded-0 text-uppercase fw-bold py-3 text-secondary" id="desc-tab" data-bs-toggle="tab" data-bs-target="#desc-pane" type="button" role="tab">Tavsif va Xususiyatlar</button>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                      <button class="nav-link rounded-0 text-uppercase fw-bold py-3 text-secondary" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews-pane" type="button" role="tab">Sharhlar ({{ comments|length }})</button>
+                  </li>
+              </ul>
+              
+              <div class="tab-content p-4 bg-surface-dark" id="productTabContent">
+                  <!-- Description Pane -->
+                  <div class="tab-pane fade show active" id="desc-pane" role="tabpanel">
+                      <div class="row">
+                          <div class="col-lg-8">
+                              <h4 class="text-light fw-bold mb-3 font-heading">Batafsil ma'lumot</h4>
+                              <p class="text-secondary lh-lg mb-4">{{ localized_description }}</p>
+                              
+                              <h5 class="text-light fw-bold mb-3 font-heading mt-5">Texnik Xususiyatlar</h5>
+                              <div class="table-responsive">
+                                  <table class="table table-dark table-striped table-hover border border-secondary border-opacity-25">
+                                      <tbody>
+                                          <tr>
+                                              <th class="py-3 ps-4 text-secondary w-25">Model</th>
+                                              <td class="py-3 text-light">{{ item.name }}</td>
+                                          </tr>
+                                          <tr>
+                                              <th class="py-3 ps-4 text-secondary">Kategoriya</th>
+                                              <td class="py-3 text-light">{{ item.category or 'Safety Equipment' }}</td>
+                                          </tr>
+                                          <tr>
+                                              <th class="py-3 ps-4 text-secondary">O'lchamlar</th>
+                                              <td class="py-3 text-light">{{ item.sizes or '39, 40, 41, 42, 43, 44, 45' }}</td>
+                                          </tr>
+                                          <tr>
+                                              <th class="py-3 ps-4 text-secondary">Himoya darajasi</th>
+                                              <td class="py-3 text-light">S3 SRC (ISO 20345)</td>
+                                          </tr>
+                                          <tr>
+                                              <th class="py-3 ps-4 text-secondary">Material</th>
+                                              <td class="py-3 text-light">Tabiiy charm, po'lat burun</td>
+                                          </tr>
+                                      </tbody>
+                                  </table>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+                  <!-- Reviews Pane -->
+                  <div class="tab-pane fade" id="reviews-pane" role="tabpanel">
+                      <div class="row">
+                          <div class="col-lg-5 mb-4 mb-lg-0">
+                              <div class="bg-dark p-4 rounded border border-secondary text-center">
+                                  <h1 class="display-3 fw-bold text-accent mb-0">{{ "%.1f"|format(rating) }}</h1>
+                                  <div class="text-warning fs-5 mb-2">
+                                     {% for i in range(1,6) %}
+                                       <i class="bi bi-star{{ '-fill' if rating >= i else '-half' if rating >= i - 0.5 else '' }}"></i>
+                                     {% endfor %}
+                                  </div>
+                                  <p class="text-secondary small">{{ comments|length }} ta baho asosida</p>
+                                  
+                                  <button class="btn btn-outline-light w-100 mt-3" type="button" data-bs-toggle="collapse" data-bs-target="#reviewFormCollapse">
+                                      <i class="bi bi-pencil-square me-2"></i> Sharh qoldirish
+                                  </button>
+                                  
+                                  <div class="collapse mt-3 text-start" id="reviewFormCollapse">
+                                     <form method="POST" action="{{ url_for('post_comment', item_id=item.id) }}">
+                                        {% if not session.get('user_id') %}
+                                            <div class="alert alert-dark small">Sharh qoldirish uchun <a href="{{ url_for('login_page') }}" class="text-accent">tizimga kiring</a>.</div>
+                                        {% else %}
+                                            <div class="mb-3">
+                                                <label class="form-label text-secondary small">Bahongiz</label>
+                                                <div class="rating-input-stars" id="ratingInputStars">
+                                                    <span class="star" data-value="1">★</span>
+                                                    <span class="star" data-value="2">★</span>
+                                                    <span class="star" data-value="3">★</span>
+                                                    <span class="star" data-value="4">★</span>
+                                                    <span class="star" data-value="5">★</span>
+                                                </div>
+                                                <input type="hidden" name="rating" id="ratingInput" value="5">
+                                            </div>
+                                            <div class="mb-3">
+                                                <textarea name="comment" class="form-control bg-black text-light border-secondary" rows="3" placeholder="Fikringiz..."></textarea>
+                                            </div>
+                                            <button type="submit" class="btn-primary-industrial btn-sm w-100">Yuborish</button>
+                                        {% endif %}
+                                     </form>
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="col-lg-7">
+                              <h5 class="text-light fw-bold mb-4 font-heading">Foydalanuvchi fikrlari</h5>
+                              <div class="d-flex flex-column gap-3">
+                                  {% if comments %}
+                                    {% for c in comments %}
+                                      <div class="comment-item p-3">
+                                          <div class="d-flex justify-content-between align-items-center mb-2">
+                                              <div class="d-flex align-items-center gap-2">
+                                                  <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center text-white fw-bold" style="width: 32px; height: 32px; font-size: 12px;">
+                                                      {{ (c.author or c.user_name or 'A')[0]|upper }}
+                                                  </div>
+                                                  <span class="fw-bold text-light">{{ c.author or c.user_name or 'Anonim' }}</span>
+                                              </div>
+                                              <span class="text-secondary small" style="font-size: 0.75rem;">{{ (c.created_at or '')[:10] }}</span>
+                                          </div>
+                                          <div class="d-flex text-warning small mb-2">
+                                              {% set cr = (c.rating or c.rate or 0) | float(0) %}
+                                              {% for i in range(1,6) %}
+                                                <i class="bi bi-star{{ '-fill' if cr >= i else '' }}"></i>
+                                              {% endfor %}
+                                          </div>
+                                          <p class="text-secondary small mb-0">{{ c.comment or c.text }}</p>
+                                      </div>
+                                    {% endfor %}
+                                  {% else %}
+                                    <div class="text-center py-5 text-secondary">
+                                        <i class="bi bi-chat-square-text fs-1 d-block mb-3 opacity-25"></i>
+                                        Hozircha sharhlar yo'q
+                                    </div>
+                                  {% endif %}
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <!-- RELATED PRODUCTS -->
+  <div class="mt-5 pt-4 border-top border-secondary border-opacity-25 animate-fade-in-up" style="animation-delay: 0.3s;">
+      <h3 class="h4 fw-bold text-uppercase text-light mb-4 font-heading"><i class="bi bi-collection me-2 text-accent"></i> O'xshash mahsulotlar</h3>
+      
+      {% if related_products %}
+        <div class="related-grid">
+           {% for rp in related_products %}
+             <a href="{{ url_for('product', id=rp.id) }}" class="industrial-card p-0 text-decoration-none overflow-hidden h-100 d-flex flex-column" style="transition: transform 0.2s;">
+                 <div class="position-relative bg-black" style="padding-top: 100%;">
+                     <img src="{{ prefer_webp(rp.image_url or url_for('static', filename='defoult.webp')) }}" class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover" alt="{{ rp.name }}">
+                 </div>
+                 <div class="p-3 flex-grow-1 d-flex flex-column">
+                     <h6 class="text-light fw-bold mb-1 text-truncate">{{ rp.name }}</h6>
+                     <div class="mt-auto pt-2 d-flex justify-content-between align-items-center">
+                         <span class="text-accent fw-bold">{{ "{:,.0f}".format(rp.price) if rp.price else 'TBD' }}</span>
+                         <i class="bi bi-arrow-right text-secondary small"></i>
+                     </div>
+                 </div>
+             </a>
+           {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-secondary">Hozircha o'xshash mahsulotlar topilmadi.</p>
+      {% endif %}
+  </div>
+
+</div>
 {% endblock %}
 
+{% block scripts %}
 <script>
-  (function(){
-    function safeInit(){
-      try{
-        if (!window.Swiper) {
-          console.warn('Swiper not found; skipping product gallery init');
-          return;
-        }
-
-        // avoid double-init
-        if (window._productGalleryInit) return;
-        window._productGalleryInit = true;
-
-        var thumbsEl = document.getElementById('productThumbsSwiper');
-        var mainEl = document.getElementById('productMainSwiper');
-        var enlargeBtn = document.querySelector('.image-enlarge-btn');
-        var modal = document.getElementById('imageEnlargeModal');
-        var modalClose = modal ? modal.querySelector('.image-enlarge-close') : null;
-
-        var thumbsSwiper = null;
-        if (thumbsEl) {
-          thumbsSwiper = new Swiper('#productThumbsSwiper', {
-            spaceBetween: 8,
-            slidesPerView: Math.min(6, Math.max(3, Math.floor(window.innerWidth / 120))),
+document.addEventListener("DOMContentLoaded", function() {
+    // 1. Swiper Initialization
+    if (typeof Swiper !== 'undefined') {
+        var thumbsSwiper = new Swiper("#productThumbsSwiper", {
+            spaceBetween: 10,
+            slidesPerView: 4,
             freeMode: true,
             watchSlidesProgress: true,
-          });
-        }
-
-        var mainSwiper = new Swiper('#productMainSwiper', {
-          spaceBetween: 10,
-          zoom: true,
-          keyboard: { enabled: true },
-          navigation: {
-            nextEl: '#productMainSwiper .swiper-button-next',
-            prevEl: '#productMainSwiper .swiper-button-prev'
-          },
-          pagination: {
-            el: '#productMainSwiper .swiper-pagination',
-            clickable: true,
-            dynamicBullets: true
-          },
-          thumbs: thumbsSwiper ? { swiper: thumbsSwiper } : undefined,
-          on: {
-            init: function() { console.log('Swiper initialized. Slides count:', this.slides.length); },
-            slideChange: function(){
-              try{ if (window._imageEnlargeSwiper) window._imageEnlargeSwiper.slideTo(this.activeIndex); }catch(e){}
+             breakpoints: {
+                320: { slidesPerView: 3 },
+                768: { slidesPerView: 4 },
+                1024: { slidesPerView: 5 }
             }
-          }
+        });
+        
+        var mainSwiper = new Swiper("#productMainSwiper", {
+            spaceBetween: 10,
+            navigation: {
+                nextEl: ".swiper-button-next",
+                prevEl: ".swiper-button-prev",
+            },
+            pagination: {
+                el: ".swiper-pagination",
+                clickable: true,
+            },
+            thumbs: {
+                swiper: thumbsSwiper,
+            },
         });
 
-        // initialize enlarge modal swiper lazily
-        function initModalSwiper(activeIndex){
-          try{
-            if (window._imageEnlargeSwiper) {
-              window._imageEnlargeSwiper.slideTo(activeIndex);
-              return;
-            }
-            window._imageEnlargeSwiper = new Swiper('#imageEnlargeSwiper', {
-              initialSlide: activeIndex || 0,
-              navigation: {
-                nextEl: '#imageEnlargeSwiper .swiper-button-next',
-                prevEl: '#imageEnlargeSwiper .swiper-button-prev'
-              },
-              loop: false,
+        // Enlarge Modal Swiper logic (Optional, simpler implementation)
+        const enlargeBtn = document.querySelector('.image-enlarge-btn');
+        const modal = document.getElementById('imageEnlargeModal');
+        let modalSwiper;
+
+        if(enlargeBtn && modal) {
+            enlargeBtn.addEventListener('click', () => {
+                modal.classList.add('open');
+                modal.setAttribute('aria-hidden', 'false');
+                if(!modalSwiper) {
+                    modalSwiper = new Swiper("#imageEnlargeSwiper", {
+                         initialSlide: mainSwiper.activeIndex,
+                         navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
+                    });
+                } else {
+                    modalSwiper.slideTo(mainSwiper.activeIndex);
+                }
             });
-            window._imageEnlargeSwiper.on('slideChange', function(){
-              try{ mainSwiper.slideTo(this.activeIndex); }catch(e){}
+            
+            modal.addEventListener('click', (e) => {
+               if(e.target.closest('.image-enlarge-close') || e.target.classList.contains('image-enlarge-backdrop')) {
+                   modal.classList.remove('open');
+                   modal.setAttribute('aria-hidden', 'true');
+               }
             });
-          }catch(e){console.warn('modal swiper init failed', e)}
         }
-
-        if (enlargeBtn && modal){
-          enlargeBtn.addEventListener('click', function(){
-            try{
-              modal.classList.add('open');
-              modal.setAttribute('aria-hidden', 'false');
-              initModalSwiper(mainSwiper.activeIndex || 0);
-            }catch(e){console.warn(e)}
-          });
-        }
-
-        if (modal && modalClose){
-          modalClose.addEventListener('click', function(){ modal.classList.remove('open'); modal.setAttribute('aria-hidden', 'true'); });
-          // backdrop click
-          var backdrop = modal.querySelector('.image-enlarge-backdrop');
-          if (backdrop) backdrop.addEventListener('click', function(){ modal.classList.remove('open'); modal.setAttribute('aria-hidden', 'true'); });
-          // esc key
-          document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && modal.classList.contains('open')) { modal.classList.remove('open'); modal.setAttribute('aria-hidden', 'true'); } });
-        }
-
-      }catch(e){ console.warn('product gallery init error', e); }
     }
 
-    // Ensure Swiper library is available before initializing; poll up to 5s
-    function waitForSwiperAndInit(timeoutMs){
-      const start = Date.now();
-      function tick(){
-        if (window.Swiper) { safeInit(); return; }
-        if (Date.now() - start > timeoutMs) { console.warn('product gallery: Swiper not available after timeout'); return; }
-        setTimeout(tick, 200);
-      }
-      tick();
-    }
+    // 2. Rating Star Logic
+    const stars = document.querySelectorAll('.rating-input-stars .star');
+    const input = document.getElementById('ratingInput');
+    
+    if(stars.length > 0 && input) {
+        stars.forEach(star => {
+            star.addEventListener('click', () => {
+                const val = parseInt(star.getAttribute('data-value'));
+                input.value = val;
+                updateStars(val);
+            });
+            star.addEventListener('mouseenter', () => {
+                updateStars(parseInt(star.getAttribute('data-value')));
+            });
+            star.addEventListener('mouseleave', () => {
+                updateStars(parseInt(input.value));
+            });
+        });
 
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ waitForSwiperAndInit(5000); }); else waitForSwiperAndInit(5000);
-  })();
+        function updateStars(val) {
+            stars.forEach(s => {
+                const sVal = parseInt(s.getAttribute('data-value'));
+                if(sVal <= val) s.classList.add('selected');
+                else s.classList.remove('selected');
+            });
+        }
+        // Initialize default
+        updateStars(parseInt(input.value));
+    }
+    
+    // 3. Tab Styling Fix (Bootstrap default overrides)
+    const triggerTabList = document.querySelectorAll('#productTabs button')
+    triggerTabList.forEach(triggerEl => {
+      const tabTrigger = new bootstrap.Tab(triggerEl)
+      triggerEl.addEventListener('click', event => {
+        event.preventDefault()
+        tabTrigger.show()
+        // Toggle active class on nav-link manually if needed for custom styles
+        triggerTabList.forEach(btn => btn.classList.remove('text-accent'));
+        triggerEl.classList.add('text-accent');
+      })
+    })
+
+});
 </script>
+<style>
+/* Scoped Animations */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+}
+/* Tab Customization */
+.nav-tabs .nav-link {
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    border-bottom: 2px solid transparent;
+}
+.nav-tabs .nav-link:hover {
+    color: var(--text-primary);
+    border-color: rgba(255,255,255,0.1);
+}
+.nav-tabs .nav-link.active {
+    background: transparent;
+    color: var(--accent-primary) !important;
+    border-bottom: 2px solid var(--accent-primary);
+}
+</style>
+{% endblock %}

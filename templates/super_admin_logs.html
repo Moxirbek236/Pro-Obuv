@@ -1,9 +1,8 @@
-
-{% extends "base.html" %}
+{% extends "super_admin_base.html" %}
 
 {% block title %}Loglar - Super Admin{% endblock %}
 
-{% block content %}
+{% block dashboard_content %}
 <div class="logs-container">
     <div class="logs-header">
         <h1> Tizim Loglari</h1>
@@ -117,237 +116,10 @@
     </div>
 </div>
 
-<script>
-let autoRefreshInterval = null;
-
-// Loglarni yuklash
-function loadLogs() {
-    const logLevel = document.getElementById('logLevel').value;
-    const logDate = document.getElementById('logDate').value;
-
-    // Real log files'dan ma'lumot olish
-    fetch('/super-admin/get-logs', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            level: logLevel,
-            date: logDate
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            displayLogs(data.logs);
-        } else {
-            // Fallback - mock data
-            const mockLogs = [
-                {
-                    time: '2025-01-23 15:30:45',
-                    level: 'INFO',
-                    message: 'Yangi foydalanuvchi ro\'yxatdan o\'tdi: test@example.com',
-                    source: 'auth.py:142'
-                },
-                {
-                    time: '2025-01-23 15:30:40',
-                    level: 'ERROR',
-                    message: 'Database connection timeout',
-                    source: 'database.py:67'
-                },
-                {
-                    time: '2025-01-23 15:30:35',
-                    level: 'WARNING',
-                    message: 'Rate limit exceeded for IP: 192.168.1.100',
-                    source: 'middleware.py:23'
-                },
-                {
-                    time: '2025-01-23 15:30:30',
-                    level: 'INFO',
-                    message: 'Buyurtma yaratildi: #10125',
-                    source: 'orders.py:89'
-                }
-            ];
-            displayLogs(mockLogs);
-        }
-    })
-    .catch(error => {
-        console.error('Log yuklashda xatolik:', error);
-        showErrorMessage('Loglarni yuklashda xatolik yuz berdi');
-    });
-}
-
-// Loglarni ko'rsatish
-function displayLogs(logs) {
-    const container = document.getElementById('logsDisplay');
-    container.innerHTML = '';
-
-    logs.forEach(log => {
-        const logEntry = document.createElement('div');
-        logEntry.className = `log-entry ${log.level.toLowerCase()}`;
-        logEntry.innerHTML = `
-            <span class="log-time">${log.time}</span>
-            <span class="log-level">${log.level}</span>
-            <span class="log-source">${log.source || 'system'}</span>
-            <span class="log-message">${log.message}</span>
-        `;
-        container.appendChild(logEntry);
-    });
-
-    // Auto scroll to bottom
-    container.scrollTop = container.scrollHeight;
-}
-
-// Loglarni filtrlash
-function filterLogs() {
-    loadLogs();
-}
-
-// Loglarni yangilash
-function refreshLogs() {
-    loadLogs();
-    loadPerformanceStats();
-    loadErrorsSummary();
-    showSuccessMessage('Loglar yangilandi');
-}
-
-// Auto refresh ni boshlash
-function startAutoRefresh() {
-    if (autoRefreshInterval) return;
-
-    autoRefreshInterval = setInterval(() => {
-        loadLogs();
-        loadPerformanceStats();
-    }, 5000); // 5 soniyada bir
-
-    showSuccessMessage('Auto refresh yoqildi');
-}
-
-// Auto refresh ni to'xtatish
-function stopAutoRefresh() {
-    if (autoRefreshInterval) {
-        clearInterval(autoRefreshInterval);
-        autoRefreshInterval = null;
-        showSuccessMessage('Auto refresh o\'chirildi');
-    }
-}
-
-// Log displayni tozalash
-function clearLogDisplay() {
-    document.getElementById('logsDisplay').innerHTML = '';
-    showSuccessMessage('Log display tozalandi');
-}
-
-// Performance statistikalarini yuklash
-function loadPerformanceStats() {
-    fetch('/super-admin/get-performance-stats')
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            document.getElementById('responseTime').textContent = data.stats.responseTime + 'ms';
-            document.getElementById('memoryUsage').textContent = data.stats.memoryUsage + '%';
-            document.getElementById('activeSessions').textContent = data.stats.activeSessions;
-            document.getElementById('errorRate').textContent = data.stats.errorRate + '%';
-        } else {
-            // Fallback mock data
-            document.getElementById('responseTime').textContent = Math.floor(Math.random() * 500 + 200) + 'ms';
-            document.getElementById('memoryUsage').textContent = Math.floor(Math.random() * 40 + 40) + '%';
-            document.getElementById('activeSessions').textContent = Math.floor(Math.random() * 50 + 10);
-            document.getElementById('errorRate').textContent = (Math.random() * 5).toFixed(1) + '%';
-        }
-    })
-    .catch(error => {
-        console.error('Performance stats xatolik:', error);
-        // Fallback mock data
-        document.getElementById('responseTime').textContent = Math.floor(Math.random() * 500 + 200) + 'ms';
-        document.getElementById('memoryUsage').textContent = Math.floor(Math.random() * 40 + 40) + '%';
-        document.getElementById('activeSessions').textContent = Math.floor(Math.random() * 50 + 10);
-        document.getElementById('errorRate').textContent = (Math.random() * 5).toFixed(1) + '%';
-    });
-}
-
-// Xatoliklar xulosasini yuklash
-function loadErrorsSummary() {
-    fetch('/super-admin/get-errors-summary')
-    .then(response => response.json())
-    .then(data => {
-        const container = document.getElementById('errorsSummary');
-        
-        if (data.success && data.errors.length > 0) {
-            let html = '';
-            data.errors.forEach(error => {
-                html += `
-                    <div class="error-item">
-                        <span class="error-time">${error.time}</span>
-                        <span class="error-message">${error.message}</span>
-                        <span class="error-count">${error.count}x</span>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-        } else {
-            container.innerHTML = '<p class="text-center">Xatoliklar topilmadi</p>';
-        }
-    })
-    .catch(error => {
-        console.error('Errors summary xatolik:', error);
-        document.getElementById('errorsSummary').innerHTML = '<p class="text-center">Xatoliklar ma\'lumotlarini yuklashda xatolik</p>';
-    });
-}
-
-// Loglarni yuklab olish
-function downloadLogs() {
-    const logLevel = document.getElementById('logLevel').value;
-    const logDate = document.getElementById('logDate').value;
-
-    const params = new URLSearchParams({
-        level: logLevel,
-        date: logDate
-    });
-
-    window.open(`/super-admin/download-logs?${params.toString()}`, '_blank');
-    showSuccessMessage('Loglar yuklab olinmoqda...');
-}
-
-// Success message
-function showSuccessMessage(message) {
-    const notification = document.createElement('div');
-    notification.className = 'notification success';
-    notification.textContent = message;
-    document.body.appendChild(notification);
-
-    setTimeout(() => notification.classList.add('show'), 100);
-    setTimeout(() => notification.remove(), 3000);
-}
-
-// Error message
-function showErrorMessage(message) {
-    const notification = document.createElement('div');
-    notification.className = 'notification error';
-    notification.textContent = message;
-    document.body.appendChild(notification);
-
-    setTimeout(() => notification.classList.add('show'), 100);
-    setTimeout(() => notification.remove(), 3000);
-}
-
-// Sahifa yuklanganda
-document.addEventListener('DOMContentLoaded', function() {
-    // Bugungi sanani o'rnatish
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('logDate').value = today;
-
-    // Dastlabki ma'lumotlarni yuklash
-    loadLogs();
-    loadPerformanceStats();
-    loadErrorsSummary();
-});
-</script>
-
 <style>
 .logs-container {
     padding: 20px;
-    max-width: 1600px;
+    max-width: 100%;
     margin: 0 auto;
 }
 
@@ -682,4 +454,233 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 }
 </style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let autoRefreshInterval = null;
+
+// Loglarni yuklash
+function loadLogs() {
+    const logLevel = document.getElementById('logLevel').value;
+    const logDate = document.getElementById('logDate').value;
+
+    // Real log files'dan ma'lumot olish
+    fetch('/super-admin/get-logs', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            level: logLevel,
+            date: logDate
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            displayLogs(data.logs);
+        } else {
+            // Fallback - mock data
+            const mockLogs = [
+                {
+                    time: '2025-01-23 15:30:45',
+                    level: 'INFO',
+                    message: 'Yangi foydalanuvchi ro\'yxatdan o\'tdi: test@example.com',
+                    source: 'auth.py:142'
+                },
+                {
+                    time: '2025-01-23 15:30:40',
+                    level: 'ERROR',
+                    message: 'Database connection timeout',
+                    source: 'database.py:67'
+                },
+                {
+                    time: '2025-01-23 15:30:35',
+                    level: 'WARNING',
+                    message: 'Rate limit exceeded for IP: 192.168.1.100',
+                    source: 'middleware.py:23'
+                },
+                {
+                    time: '2025-01-23 15:30:30',
+                    level: 'INFO',
+                    message: 'Buyurtma yaratildi: #10125',
+                    source: 'orders.py:89'
+                }
+            ];
+            displayLogs(mockLogs);
+        }
+    })
+    .catch(error => {
+        console.error('Log yuklashda xatolik:', error);
+        showErrorMessage('Loglarni yuklashda xatolik yuz berdi');
+    });
+}
+
+// Loglarni ko'rsatish
+function displayLogs(logs) {
+    const container = document.getElementById('logsDisplay');
+    container.innerHTML = '';
+
+    logs.forEach(log => {
+        const logEntry = document.createElement('div');
+        logEntry.className = `log-entry ${log.level.toLowerCase()}`;
+        logEntry.innerHTML = `
+            <span class="log-time">${log.time}</span>
+            <span class="log-level">${log.level}</span>
+            <span class="log-source">${log.source || 'system'}</span>
+            <span class="log-message">${log.message}</span>
+        `;
+        container.appendChild(logEntry);
+    });
+
+    // Auto scroll to bottom
+    container.scrollTop = container.scrollHeight;
+}
+
+// Loglarni filtrlash
+function filterLogs() {
+    loadLogs();
+}
+
+// Loglarni yangilash
+function refreshLogs() {
+    loadLogs();
+    loadPerformanceStats();
+    loadErrorsSummary();
+    showSuccessMessage('Loglar yangilandi');
+}
+
+// Auto refresh ni boshlash
+function startAutoRefresh() {
+    if (autoRefreshInterval) return;
+
+    autoRefreshInterval = setInterval(() => {
+        loadLogs();
+        loadPerformanceStats();
+    }, 5000); // 5 soniyada bir
+
+    showSuccessMessage('Auto refresh yoqildi');
+}
+
+// Auto refresh ni to'xtatish
+function stopAutoRefresh() {
+    if (autoRefreshInterval) {
+        clearInterval(autoRefreshInterval);
+        autoRefreshInterval = null;
+        showSuccessMessage('Auto refresh o\'chirildi');
+    }
+}
+
+// Log displayni tozalash
+function clearLogDisplay() {
+    document.getElementById('logsDisplay').innerHTML = '';
+    showSuccessMessage('Log display tozalandi');
+}
+
+// Performance statistikalarini yuklash
+function loadPerformanceStats() {
+    fetch('/super-admin/get-performance-stats')
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('responseTime').textContent = data.stats.responseTime + 'ms';
+            document.getElementById('memoryUsage').textContent = data.stats.memoryUsage + '%';
+            document.getElementById('activeSessions').textContent = data.stats.activeSessions;
+            document.getElementById('errorRate').textContent = data.stats.errorRate + '%';
+        } else {
+            // Fallback mock data
+            document.getElementById('responseTime').textContent = Math.floor(Math.random() * 500 + 200) + 'ms';
+            document.getElementById('memoryUsage').textContent = Math.floor(Math.random() * 40 + 40) + '%';
+            document.getElementById('activeSessions').textContent = Math.floor(Math.random() * 50 + 10);
+            document.getElementById('errorRate').textContent = (Math.random() * 5).toFixed(1) + '%';
+        }
+    })
+    .catch(error => {
+        console.error('Performance stats xatolik:', error);
+        // Fallback mock data
+        document.getElementById('responseTime').textContent = Math.floor(Math.random() * 500 + 200) + 'ms';
+        document.getElementById('memoryUsage').textContent = Math.floor(Math.random() * 40 + 40) + '%';
+        document.getElementById('activeSessions').textContent = Math.floor(Math.random() * 50 + 10);
+        document.getElementById('errorRate').textContent = (Math.random() * 5).toFixed(1) + '%';
+    });
+}
+
+// Xatoliklar xulosasini yuklash
+function loadErrorsSummary() {
+    fetch('/super-admin/get-errors-summary')
+    .then(response => response.json())
+    .then(data => {
+        const container = document.getElementById('errorsSummary');
+        
+        if (data.success && data.errors.length > 0) {
+            let html = '';
+            data.errors.forEach(error => {
+                html += `
+                    <div class="error-item">
+                        <span class="error-time">${error.time}</span>
+                        <span class="error-message">${error.message}</span>
+                        <span class="error-count">${error.count}x</span>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        } else {
+            container.innerHTML = '<p class="text-center">Xatoliklar topilmadi</p>';
+        }
+    })
+    .catch(error => {
+        console.error('Errors summary xatolik:', error);
+        document.getElementById('errorsSummary').innerHTML = '<p class="text-center">Xatoliklar ma\'lumotlarini yuklashda xatolik</p>';
+    });
+}
+
+// Loglarni yuklab olish
+function downloadLogs() {
+    const logLevel = document.getElementById('logLevel').value;
+    const logDate = document.getElementById('logDate').value;
+
+    const params = new URLSearchParams({
+        level: logLevel,
+        date: logDate
+    });
+
+    window.open(`/super-admin/download-logs?${params.toString()}`, '_blank');
+    showSuccessMessage('Loglar yuklab olinmoqda...');
+}
+
+// Success message
+function showSuccessMessage(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification success';
+    notification.textContent = message;
+    document.body.appendChild(notification);
+
+    setTimeout(() => notification.classList.add('show'), 100);
+    setTimeout(() => notification.remove(), 3000);
+}
+
+// Error message
+function showErrorMessage(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification error';
+    notification.textContent = message;
+    document.body.appendChild(notification);
+
+    setTimeout(() => notification.classList.add('show'), 100);
+    setTimeout(() => notification.remove(), 3000);
+}
+
+// Sahifa yuklanganda
+document.addEventListener('DOMContentLoaded', function() {
+    // Bugungi sanani o'rnatish
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('logDate').value = today;
+
+    // Dastlabki ma'lumotlarni yuklash
+    loadLogs();
+    loadPerformanceStats();
+    loadErrorsSummary();
+});
+</script>
 {% endblock %}

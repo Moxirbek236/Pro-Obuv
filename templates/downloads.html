@@ -1,451 +1,240 @@
-{% extends "base.html" %} {% block title %}Yuklamalar - Pro Obuv{% endblock %}
+{% extends "base.html" %}
+{% block title %}Yuklamalar - Pro Obuv{% endblock %}
+
 {% block seo_meta %}
-<meta
-  name="description"
-  content="Pro Obuv mobil ilovalari — buyurtma qilish, menyu ko'rish va yetkazib berish xususiyatlari." />
+<meta name="description" content="Pro Obuv mobil ilovalari - Xavfsizlik oyoq kiyimlari va maxsus kiyimlarni qulay buyurtma qilish uchun." />
 <meta property="og:title" content="Yuklamalar - Pro Obuv" />
-<meta
-  property="og:description"
-  content="Pro Obuv mobil ilovalari — buyurtma qilish, menyu ko'rish va yetkazib berish xususiyatlari." />
-{% endblock %} {% block content %}
-<div class="downloads-container">
-  <div class="downloads-header">
-    <h1>Mobil Ilovalar</h1>
-    <p>
-      Xizmatlardan yanada qulay foydalanish uchun mobil ilovalarni yuklab oling
-    </p>
+<meta property="og:description" content="Mobil ilovalarni yuklab oling va qulay xarid qiling" />
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  
+  <!-- Hero Section -->
+  <div class="industrial-card p-5 text-center mb-5 position-relative overflow-hidden animate-fade-in-up">
+    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: var(--hazard-pattern); opacity: 0.1; pointer-events: none;"></div>
+    <div class="position-relative z-1">
+      <h1 class="display-4 fw-bold text-uppercase mb-3" style="font-family: var(--font-heading); color: var(--accent-primary);">
+        <i class="bi bi-phone me-2"></i> Mobil Ilovalar
+      </h1>
+      <p class="lead text-secondary mb-0">
+        Xizmatlardan yanada qulay va tezkor foydalanish uchun maxsus mobil ilovalarni yuklab oling
+      </p>
+    </div>
   </div>
 
-  <div class="apps-grid">
-    <!-- Foydalanuvchilar uchun asosiy ilova -->
-    <div class="app-card featured animate-fade-in">
-      <div class="app-icon"></div>
-      <div class="app-info">
-        <h3>Pro Obuv App</h3>
-        <p class="app-description">
+  <!-- Apps Grid -->
+  <div class="row g-4">
+    
+    <!-- Main App -->
+    <div class="col-md-6 col-lg-3 animate-fade-in-up" style="animation-delay: 0.1s;">
+      <div class="industrial-card h-100 p-4 border border-warning border-opacity-50 position-relative">
+        <div class="position-absolute top-0 end-0 m-3 badge bg-success text-uppercase fw-bold shadow-sm">
+          Tavsiya
+        </div>
+        
+        <div class="text-center mb-4 pt-2">
+          <div class="d-inline-flex align-items-center justify-content-center bg-dark rounded-circle border border-secondary mb-3" style="width: 80px; height: 80px;">
+            <i class="bi bi-shop display-5 text-light"></i>
+          </div>
+          <h3 class="h4 fw-bold font-heading mb-1">Pro Obuv App</h3>
+          <p class="text-secondary small text-uppercase">Foydalanuvchilar uchun</p>
+        </div>
+        
+        <p class="text-secondary text-center small mb-4">
           Buyurtma berish, mahsulotlarni ko'rish va yetkazib berish xizmatlari
         </p>
-        <div class="app-features">
-          <span class="feature"> Buyurtma</span>
-          <span class="feature"> Menyu</span>
-          <span class="feature"> Yetkazib berish</span>
-          <span class="feature"> Sevimlilar</span>
+
+        <div class="d-flex flex-wrap justify-content-center gap-2 mb-4">
+          <span class="badge bg-dark border border-secondary text-secondary">Buyurtma</span>
+          <span class="badge bg-dark border border-secondary text-secondary">Menyu</span>
+          <span class="badge bg-dark border border-secondary text-secondary">Yetkazib berish</span>
         </div>
-        <div class="app-stats">
-          <span
-            ><i
-              class="bi bi-star-fill ui-icon ui-icon--accent"
-              aria-hidden="true"></i>
-            4.8</span
-          >
-          <span> 10K+</span>
-          <span> 15 MB</span>
+        
+        <div class="d-flex justify-content-around text-secondary small mb-4 border-top border-bottom border-secondary border-opacity-25 py-2">
+          <span><i class="bi bi-star-fill text-warning me-1"></i> 4.8</span>
+          <span><i class="bi bi-download me-1"></i> 10K+</span>
+          <span><i class="bi bi-hdd me-1"></i> 15 MB</span>
         </div>
-      </div>
-      <div class="download-actions">
-        <a
-          href="/static/downloads/restaurant.apk"
-          class="download-btn primary"
-          download>
-          <span> Android yuklab olish</span>
+        
+        <a href="/static/downloads/restaurant.apk" class="btn-primary-industrial w-100 justify-content-center text-decoration-none" download>
+          <i class="bi bi-android2 me-2"></i> Yuklab olish
         </a>
-        <div class="qr-code">
-          <div class="qr-placeholder">QR</div>
-          <small>QR kod bilan yuklab olish</small>
-        </div>
       </div>
     </div>
 
-    <!-- Professional/Pro versiya -->
-    <div class="app-card animate-fade-in" style="animation-delay: 0.2s">
-      <div class="app-icon"></div>
-      <div class="app-info">
-        <h3>Restaurant Pro</h3>
-        <p class="app-description">
-          Biznes mijozlar uchun maxsus imkoniyatlar bilan
+    <!-- Pro Version -->
+    <div class="col-md-6 col-lg-3 animate-fade-in-up" style="animation-delay: 0.2s;">
+      <div class="industrial-card h-100 p-4">
+        <div class="text-center mb-4 pt-2">
+          <div class="d-inline-flex align-items-center justify-content-center rounded-circle border border-warning border-opacity-25 mb-3" style="width: 80px; height: 80px; background: rgba(245, 158, 11, 0.1);">
+            <i class="bi bi-star display-5 text-warning"></i>
+          </div>
+          <h3 class="h4 fw-bold font-heading mb-1">Restaurant Pro</h3>
+          <p class="text-secondary small text-uppercase">Biznes mijozlar uchun</p>
+        </div>
+        
+        <p class="text-secondary text-center small mb-4">
+          Korporativ mijozlar uchun maxsus imkoniyatlar va chegirmalar
         </p>
-        <div class="app-features">
-          <span class="feature"> Hisobotlar</span>
-          <span class="feature"> Chegirmalar</span>
-          <span class="feature"> Tez buyurtma</span>
-          <span class="feature"> SMS xabarnomalar</span>
+
+        <div class="d-flex flex-wrap justify-content-center gap-2 mb-4">
+          <span class="badge bg-dark border border-secondary text-secondary">Hisobotlar</span>
+          <span class="badge bg-dark border border-secondary text-secondary">B2B</span>
+          <span class="badge bg-dark border border-secondary text-secondary">Hujjatlar</span>
         </div>
-        <div class="app-stats">
-          <span
-            ><i
-              class="bi bi-star-fill ui-icon ui-icon--accent"
-              aria-hidden="true"></i>
-            4.9</span
-          >
-          <span> 2K+</span>
-          <span> 18 MB</span>
+        
+        <div class="d-flex justify-content-around text-secondary small mb-4 border-top border-bottom border-secondary border-opacity-25 py-2">
+          <span><i class="bi bi-star-fill text-warning me-1"></i> 4.9</span>
+          <span><i class="bi bi-download me-1"></i> 2K+</span>
+          <span><i class="bi bi-hdd me-1"></i> 18 MB</span>
         </div>
-      </div>
-      <div class="download-actions">
-        <a
-          href="/static/downloads/restaurant-pro.apk"
-          class="download-btn"
-          download>
-          <span> Pro yuklab olish</span>
+        
+        <a href="/static/downloads/restaurant-pro.apk" class="btn-outline-industrial w-100 justify-content-center text-decoration-none" download>
+          <i class="bi bi-android2 me-2"></i> Yuklab olish
         </a>
       </div>
     </div>
 
-    <!-- Admin/Xodimlar uchun -->
-    <div class="app-card animate-fade-in" style="animation-delay: 0.4s">
-      <div class="app-icon"></div>
-      <div class="app-info">
-        <h3>Restaurant Admin</h3>
-        <p class="app-description">
-          Xodimlar va adminlar uchun boshqaruv tizimi
+    <!-- Admin App -->
+    <div class="col-md-6 col-lg-3 animate-fade-in-up" style="animation-delay: 0.3s;">
+      <div class="industrial-card h-100 p-4">
+        <div class="text-center mb-4 pt-2">
+          <div class="d-inline-flex align-items-center justify-content-center rounded-circle border border-info border-opacity-25 mb-3" style="width: 80px; height: 80px; background: rgba(14, 165, 233, 0.1);">
+            <i class="bi bi-gear display-5 text-info"></i>
+          </div>
+          <h3 class="h4 fw-bold font-heading mb-1">Restaurant Admin</h3>
+          <p class="text-secondary small text-uppercase">Xodimlar uchun</p>
+        </div>
+        
+        <p class="text-secondary text-center small mb-4">
+          Buyurtmalar va xodimlarni boshqarish tizimi
         </p>
-        <div class="app-features">
-          <span class="feature"> Buyurtmalar</span>
-          <span class="feature"> Xodimlar</span>
-          <span class="feature"> Statistika</span>
-          <span class="feature"> Sozlamalar</span>
+
+        <div class="d-flex flex-wrap justify-content-center gap-2 mb-4">
+          <span class="badge bg-dark border border-secondary text-secondary">CRM</span>
+          <span class="badge bg-dark border border-secondary text-secondary">Statistika</span>
+          <span class="badge bg-dark border border-secondary text-secondary">Nazorat</span>
         </div>
-        <div class="app-stats">
-          <span
-            ><i
-              class="bi bi-star-fill ui-icon ui-icon--accent"
-              aria-hidden="true"></i>
-            4.7</span
-          >
-          <span> 500+</span>
-          <span> 22 MB</span>
+        
+        <div class="d-flex justify-content-around text-secondary small mb-4 border-top border-bottom border-secondary border-opacity-25 py-2">
+          <span><i class="bi bi-star-fill text-warning me-1"></i> 4.7</span>
+          <span><i class="bi bi-download me-1"></i> 500+</span>
+          <span><i class="bi bi-hdd me-1"></i> 22 MB</span>
         </div>
-      </div>
-      <div class="download-actions">
-        <a
-          href="/static/downloads/restaurant-admin.apk"
-          class="download-btn"
-          download>
-          <span> Admin yuklab olish</span>
+        
+        <a href="/static/downloads/restaurant-admin.apk" class="btn-outline-industrial w-100 justify-content-center text-decoration-none" download>
+          <i class="bi bi-android2 me-2"></i> Yuklab olish
         </a>
       </div>
     </div>
 
-    <!-- Monitor/TV uchun -->
-    <div class="app-card animate-fade-in" style="animation-delay: 0.6s">
-      <div class="app-icon"></div>
-      <div class="app-info">
-        <h3>Restaurant Monitor</h3>
-        <p class="app-description">TV ekranlari uchun buyurtmalar monitori</p>
-        <div class="app-features">
-          <span class="feature"> Katta ekran</span>
-          <span class="feature"
-            ><i
-              class="bi bi-clock ui-icon ui-icon--muted"
-              aria-hidden="true"></i>
-            Real-time</span
-          >
-          <span class="feature"> Ovozli signal</span>
-          <span class="feature"> Ranglar</span>
+    <!-- Monitor App -->
+    <div class="col-md-6 col-lg-3 animate-fade-in-up" style="animation-delay: 0.4s;">
+      <div class="industrial-card h-100 p-4">
+        <div class="text-center mb-4 pt-2">
+          <div class="d-inline-flex align-items-center justify-content-center rounded-circle border border-danger border-opacity-25 mb-3" style="width: 80px; height: 80px; background: rgba(239, 68, 68, 0.1);">
+            <i class="bi bi-tv display-5 text-danger"></i>
+          </div>
+          <h3 class="h4 fw-bold font-heading mb-1">Kitchen Monitor</h3>
+          <p class="text-secondary small text-uppercase">Oshxona ekrani</p>
         </div>
-        <div class="app-stats">
-          <span
-            ><i
-              class="bi bi-star-fill ui-icon ui-icon--accent"
-              aria-hidden="true"></i>
-            4.6</span
-          >
-          <span> 200+</span>
-          <span> 12 MB</span>
+        
+        <p class="text-secondary text-center small mb-4">
+          Oshxona uchun buyurtmalar monitoringi ekrani
+        </p>
+
+        <div class="d-flex flex-wrap justify-content-center gap-2 mb-4">
+          <span class="badge bg-dark border border-secondary text-secondary">Real-time</span>
+          <span class="badge bg-dark border border-secondary text-secondary">TV</span>
+          <span class="badge bg-dark border border-secondary text-secondary">Ovoz</span>
         </div>
-      </div>
-      <div class="download-actions">
-        <a
-          href="/static/downloads/restaurant-monitor.apk"
-          class="download-btn"
-          download>
-          <span> Monitor yuklab olish</span>
+        
+        <div class="d-flex justify-content-around text-secondary small mb-4 border-top border-bottom border-secondary border-opacity-25 py-2">
+          <span><i class="bi bi-star-fill text-warning me-1"></i> 4.6</span>
+          <span><i class="bi bi-download me-1"></i> 200+</span>
+          <span><i class="bi bi-hdd me-1"></i> 12 MB</span>
+        </div>
+        
+        <a href="/static/downloads/restaurant-monitor.apk" class="btn-outline-industrial w-100 justify-content-center text-decoration-none" download>
+          <i class="bi bi-android2 me-2"></i> Yuklab olish
         </a>
       </div>
     </div>
   </div>
 
-  <!-- Qo'shimcha ma'lumotlar -->
-  <div class="additional-info">
-    <div class="info-section">
-      <h3>Foydalanish bo'yicha maslahatlar</h3>
-      <ul>
-        <li>
-          Ilovani Android 7.0 va undan yuqori versiyalarda ishlatishingiz mumkin
-        </li>
-        <li>Internet aloqasi talab qilinadi</li>
-        <li>Ilovalar muntazam yangilanib turadi</li>
-        <li>Barcha ma'lumotlar himoyalangan</li>
-      </ul>
-    </div>
-
-    <div class="info-section">
-      <h3>
-        <i
-          class="bi bi-life-preserver ui-icon ui-icon--muted"
-          aria-hidden="true"></i>
-        Yordam kerakmi?
-      </h3>
-      <p>Ilovalarni o'rnatishda muammo bo'lsa, bizga murojaat qiling:</p>
-      <div class="contact-buttons">
-        <a href="{{ url_for('contact') }}" class="contact-btn"> Aloqa</a>
-        <a href="tel:{{ get_text('footer.phone_href') }}" class="contact-btn">
-          Qo'ng'iroq</a
-        >
-        <a href="mailto:premiumsafety@mail.ru" class="contact-btn"> Email</a>
+  <!-- Additional Info -->
+  <div class="row mt-5 g-4">
+    
+    <!-- Usage Tips -->
+    <div class="col-lg-8 animate-fade-in-up" style="animation-delay: 0.5s;">
+      <div class="industrial-card p-4 h-100">
+        <h4 class="mb-4 text-uppercase fw-bold text-accent">
+            <i class="bi bi-lightbulb me-2"></i> Foydalanish bo'yicha
+        </h4>
+        <ul class="list-unstyled mb-0">
+          <li class="d-flex align-items-start mb-3 pb-3 border-bottom border-secondary border-opacity-25">
+            <i class="bi bi-check-circle-fill text-success me-3 mt-1 fs-5"></i>
+            <div>
+                <strong class="d-block text-white mb-1">Android 7.0+</strong>
+                <span class="text-secondary">Ilovani Android 7.0 va undan yuqori versiyalarda ishlatishingiz mumkin.</span>
+            </div>
+          </li>
+          <li class="d-flex align-items-start mb-3 pb-3 border-bottom border-secondary border-opacity-25">
+            <i class="bi bi-wifi text-success me-3 mt-1 fs-5"></i>
+            <div>
+                <strong class="d-block text-white mb-1">Internet</strong>
+                <span class="text-secondary">To'liq ishlashi uchun doimiy internet aloqasi talab qilinadi.</span>
+            </div>
+          </li>
+          <li class="d-flex align-items-start">
+             <i class="bi bi-shield-check text-success me-3 mt-1 fs-5"></i>
+            <div>
+                <strong class="d-block text-white mb-1">Xavfsizlik</strong>
+                <span class="text-secondary">Barcha ma'lumotlaringiz shifrlangan holda himoyalanadi.</span>
+            </div>
+          </li>
+        </ul>
       </div>
     </div>
+
+    <!-- Help Section -->
+    <div class="col-lg-4 animate-fade-in-up" style="animation-delay: 0.6s;">
+      <div class="industrial-card p-4 h-100 border border-danger border-opacity-25 bg-danger bg-opacity-10">
+        <h4 class="mb-4 text-uppercase fw-bold text-danger">
+            <i class="bi bi-life-preserver me-2"></i> Yordam
+        </h4>
+        <p class="text-secondary mb-4">
+            Ilovalarni o'rnatishda yoki ishlatishda muammo yuzaga kelsa, bizning texnik yordam bo'limiga murojaat qiling.
+        </p>
+        
+        <div class="d-grid gap-3">
+          <a href="{{ url_for('contact') }}" class="btn btn-outline-light d-flex align-items-center justify-content-center">
+            <i class="bi bi-envelope me-2"></i> Aloqa sahifasi
+          </a>
+          <a href="tel:{{ get_text('footer.phone_href') }}" class="btn btn-outline-light d-flex align-items-center justify-content-center">
+             <i class="bi bi-telephone me-2"></i> Qo'ng'iroq qilish
+          </a>
+          <a href="https://t.me/proobuv_support" class="btn btn-outline-light d-flex align-items-center justify-content-center">
+             <i class="bi bi-telegram me-2"></i> Telegram orqali
+          </a>
+        </div>
+      </div>
+    </div>
+
   </div>
+
 </div>
 
 <style>
-  .downloads-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
   }
-
-  .downloads-header {
-    text-align: center;
-    margin-bottom: 40px;
-    padding: 40px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-radius: 20px;
-    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
-  }
-
-  .downloads-header h1 {
-    font-size: 2.5rem;
-    margin-bottom: 15px;
-    font-weight: 700;
-  }
-
-  .downloads-header p {
-    font-size: 1.1rem;
-    opacity: 0.9;
-    margin: 0;
-  }
-
-  .apps-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 25px;
-    margin-bottom: 40px;
-  }
-
-  .app-card {
-    background: white;
-    border-radius: 20px;
-    padding: 25px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
-    position: relative;
-  }
-
-  .app-card.featured {
-    border-color: #4caf50;
-    transform: scale(1.02);
-  }
-
-  .app-card.featured::before {
-    content: "Tavsiya qilinadi";
-    position: absolute;
-    top: -10px;
-    left: 20px;
-    background: #4caf50;
-    color: white;
-    padding: 5px 15px;
-    border-radius: 15px;
-    font-size: 0.8rem;
-    font-weight: 600;
-  }
-
-  .app-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-  }
-
-  .app-icon {
-    font-size: 3rem;
-    text-align: center;
-    margin-bottom: 15px;
-  }
-
-  .app-info h3 {
-    font-size: 1.4rem;
-    font-weight: 700;
-    margin-bottom: 10px;
-    color: #2d3748;
-  }
-
-  .app-description {
-    color: #4a5568;
-    margin-bottom: 15px;
-    line-height: 1.5;
-  }
-
-  .app-features {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 15px;
-  }
-
-  .feature {
-    background: #f7fafc;
-    color: #4a5568;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    border: 1px solid #e2e8f0;
-  }
-
-  .app-stats {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 20px;
-    font-size: 0.9rem;
-    color: #718096;
-  }
-
-  .download-actions {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-  }
-
-  .download-btn {
-    flex: 1;
-    background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
-    color: white;
-    padding: 12px 20px;
-    border-radius: 12px;
-    text-decoration: none;
-    font-weight: 600;
-    text-align: center;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-  }
-
-  .download-btn.primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  }
-
-  .download-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    text-decoration: none;
-    color: white;
-  }
-
-  .qr-code {
-    text-align: center;
-  }
-
-  .qr-placeholder {
-    width: 50px;
-    height: 50px;
-    background: #f7fafc;
-    border: 2px dashed #cbd5e0;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    color: #a0aec0;
-    margin-bottom: 5px;
-  }
-
-  .qr-code small {
-    display: block;
-    color: #718096;
-    font-size: 0.75rem;
-  }
-
-  .additional-info {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-    margin-top: 40px;
-  }
-
-  .info-section {
-    background: #f8f9fa;
-    padding: 25px;
-    border-radius: 15px;
-    border-left: 4px solid #667eea;
-  }
-
-  .info-section h3 {
-    color: #2d3748;
-    margin-bottom: 15px;
-    font-size: 1.2rem;
-  }
-
-  .info-section ul {
-    list-style: none;
-    padding: 0;
-  }
-
-  .info-section ul li {
-    padding: 8px 0;
-    border-bottom: 1px solid #e2e8f0;
-  }
-
-  .info-section ul li:last-child {
-    border-bottom: none;
-  }
-
-  .contact-buttons {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-top: 15px;
-  }
-
-  .contact-btn {
-    background: white;
-    color: #667eea;
-    padding: 8px 16px;
-    border-radius: 8px;
-    text-decoration: none;
-    border: 2px solid #667eea;
-    font-weight: 500;
-    transition: all 0.3s ease;
-  }
-
-  .contact-btn:hover {
-    background: #667eea;
-    color: white;
-    text-decoration: none;
-  }
-
-  @media (max-width: 768px) {
-    .apps-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .app-card.featured {
-      transform: none;
-    }
-
-    .download-actions {
-      flex-direction: column;
-    }
-
-    .additional-info {
-      grid-template-columns: 1fr;
-    }
-
-    .contact-buttons {
-      justify-content: center;
-    }
+  
+  .animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+    opacity: 0;
   }
 </style>
 {% endblock %}

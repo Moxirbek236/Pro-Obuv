@@ -2240,3 +2240,118 @@ werkzeug.exceptions.MethodNotAllowed: 405 Method Not Allowed: The method is not 
 2026-01-01 15:51:09,968 | ERROR | restaurant_app | wrapper:371 | CSRF DEBUG: Received='None', Session='OhZI3ftPw3SROoAqObbQQ6wJ63uvkcaZyhhidL9FcDM', Method='POST', Path='/admin/upload-news-media', Cookies={'g_state': '{"i_l":0,"i_ll":1767165282712,"i_b":"Ifs97MpupQgttC1vTFpTSisYOAs0WycJf8Nunmq9Wpk","i_e":{"enable_itp_optimization":0}}', 'session': '.eJzFj1FPgzAUhf-K6fNgCHMIb8ZponHBzbeZpbmUCzSDor0tZC7775Y5foO5Dzc5Pef0uyfGywaoRmLp54ndGLcYWSGQiM0YFK1U_oCN6Fpk-_NssqDWnXYGQmG1NEdfkC65VD00svhf437G-BfqFhQqFzDa4vUQrsBdkbL1Y7Z62rqKS9J0B1ROzerdS1Sa9yH62Gbdw3eW55vNcnhdRrY_CNgd61oWb8mzWK1dVCqDugSBvAFVWajGYvtz4SKSneIOJmVBmAC68UQYRt4iELmXhGXoRcEtLOI4xrv7aMxYR8wvkBMxDVBVo2hNjcWkWhqlHgxo1z4nA0aKuWzd_zQvsATbGO_v3ae-YudfYyKksA.aVZRnQ.wubK5Zvx3sbBrf0uBsxjYSwpO8Q'}
 2026-01-01 15:51:10,549 | ERROR | restaurant_app | wrapper:371 | CSRF DEBUG: Received='None', Session='OhZI3ftPw3SROoAqObbQQ6wJ63uvkcaZyhhidL9FcDM', Method='POST', Path='/admin/upload-news-media', Cookies={'g_state': '{"i_l":0,"i_ll":1767165282712,"i_b":"Ifs97MpupQgttC1vTFpTSisYOAs0WycJf8Nunmq9Wpk","i_e":{"enable_itp_optimization":0}}', 'session': '.eJzVj1FPgzAUhf-K6fNgCHMIb8ZponHBzbeZpbmUCzSDor0tZC7775Y5foS5Dzc5Pef0uyfGywaoRmLp54ndGLcYWSGQiM0YFK1U_oCN6Fpk-_NssqDWnXYGQmG1NEdfkC65VD00svgnxv2M8S_ULShULmC0xevFXIE7N2Xrx2z1tHUVl6TpDqicmtW7l6g070P0sc26h-8szzeb5fC6jGx_ELA71rUs3pJnsVq7qFQGdQkCeQOqslCNxfbnwkUkO8UdTMqCMAF044kwjLxFIHIvCcvQi4JbWMRxjHf30ZixjphfICdiGqCqRtGaGotJtTRKPRjQrn1OBowUc9m6_2leYAm2Md7fu099xc6_faCzFg.aVZRng.nkmPpUfnuw6tG0GkrBZ7ALiBUOA'}
 2026-01-01 15:51:10,549 | ERROR | restaurant_app | wrapper:371 | CSRF DEBUG: Received='None', Session='OhZI3ftPw3SROoAqObbQQ6wJ63uvkcaZyhhidL9FcDM', Method='POST', Path='/admin/upload-news-media', Cookies={'g_state': '{"i_l":0,"i_ll":1767165282712,"i_b":"Ifs97MpupQgttC1vTFpTSisYOAs0WycJf8Nunmq9Wpk","i_e":{"enable_itp_optimization":0}}', 'session': '.eJzVj1FPgzAUhf-K6fNgCHMIb8ZponHBzbeZpbmUCzSDor0tZC7775Y5foS5Dzc5Pef0uyfGywaoRmLp54ndGLcYWSGQiM0YFK1U_oCN6Fpk-_NssqDWnXYGQmG1NEdfkC65VD00svgnxv2M8S_ULShULmC0xevFXIE7N2Xrx2z1tHUVl6TpDqicmtW7l6g070P0sc26h-8szzeb5fC6jGx_ELA71rUs3pJnsVq7qFQGdQkCeQOqslCNxfbnwkUkO8UdTMqCMAF044kwjLxFIHIvCcvQi4JbWMRxjHf30ZixjphfICdiGqCqRtGaGotJtTRKPRjQrn1OBowUc9m6_2leYAm2Md7fu099xc6_faCzFg.aVZRng.nkmPpUfnuw6tG0GkrBZ7ALiBUOA'}
+2026-01-07 14:33:48,146 | ERROR | restaurant_app | menu:8661 | Menu endpoint error: 'site_settings' is undefined
+2026-01-07 14:33:48,173 | ERROR | restaurant_app | menu:8691 | Menu fallback error: 'site_settings' is undefined
+2026-01-07 14:47:17,635 | ERROR | restaurant_app | menu:8661 | Menu endpoint error: 'site_settings' is undefined
+2026-01-07 14:47:17,662 | ERROR | restaurant_app | menu:8691 | Menu fallback error: 'site_settings' is undefined
+2026-01-07 15:04:19,281 | ERROR | restaurant_app | execute_query:3737 | Database operational error: no such column: total
+2026-01-07 15:04:19,296 | ERROR | restaurant_app | api_orders:511 | api_orders error: no such column: total
+Traceback (most recent call last):
+  File "D:\Safety.uz\app.py", line 452, in api_orders
+    rows = execute_query('SELECT id, user_id, customer_name, ticket_no, total, status, created_at FROM orders ORDER BY id DESC', fetch_all=True) or []
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Safety.uz\app.py", line 3738, in execute_query
+    raise e
+  File "D:\Safety.uz\app.py", line 3650, in execute_query
+    cur.execute(query)
+sqlite3.OperationalError: no such column: total
+2026-01-07 15:14:46,696 | ERROR | restaurant_app | execute_query:3737 | Database operational error: no such column: total
+2026-01-07 15:14:46,701 | ERROR | restaurant_app | api_orders:511 | api_orders error: no such column: total
+Traceback (most recent call last):
+  File "D:\Safety.uz\app.py", line 452, in api_orders
+    rows = execute_query('SELECT id, user_id, customer_name, ticket_no, total, status, created_at FROM orders ORDER BY id DESC', fetch_all=True) or []
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Safety.uz\app.py", line 3738, in execute_query
+    raise e
+  File "D:\Safety.uz\app.py", line 3650, in execute_query
+    cur.execute(query)
+sqlite3.OperationalError: no such column: total
+2026-01-07 15:24:59,379 | ERROR | restaurant_app | execute_query:3737 | Database operational error: no such column: total
+2026-01-07 15:24:59,392 | ERROR | restaurant_app | api_orders:511 | api_orders error: no such column: total
+Traceback (most recent call last):
+  File "D:\Safety.uz\app.py", line 452, in api_orders
+    rows = execute_query('SELECT id, user_id, customer_name, ticket_no, total, status, created_at FROM orders ORDER BY id DESC', fetch_all=True) or []
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Safety.uz\app.py", line 3738, in execute_query
+    raise e
+  File "D:\Safety.uz\app.py", line 3650, in execute_query
+    cur.execute(query)
+sqlite3.OperationalError: no such column: total
+2026-01-07 15:24:59,707 | ERROR | restaurant_app | execute_query:3737 | Database operational error: no such column: total
+2026-01-07 15:24:59,710 | ERROR | restaurant_app | api_orders:511 | api_orders error: no such column: total
+Traceback (most recent call last):
+  File "D:\Safety.uz\app.py", line 452, in api_orders
+    rows = execute_query('SELECT id, user_id, customer_name, ticket_no, total, status, created_at FROM orders ORDER BY id DESC', fetch_all=True) or []
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Safety.uz\app.py", line 3738, in execute_query
+    raise e
+  File "D:\Safety.uz\app.py", line 3650, in execute_query
+    cur.execute(query)
+sqlite3.OperationalError: no such column: total
+2026-01-09 14:41:48,891 | ERROR | restaurant_app | menu:8679 | Menu endpoint error: Encountered unknown tag 'endblock'.
+2026-01-09 14:41:48,898 | ERROR | restaurant_app | menu:8709 | Menu fallback error: Encountered unknown tag 'endblock'.
+2026-01-09 14:45:39,249 | ERROR | restaurant_app | menu:8679 | Menu endpoint error: Encountered unknown tag 'endblock'.
+2026-01-09 14:45:39,253 | ERROR | restaurant_app | menu:8709 | Menu fallback error: Encountered unknown tag 'endblock'.
+2026-01-09 14:54:00,263 | ERROR | restaurant_app | super_admin_dashboard:20356 | Super admin dashboard xatoligi: 'str' object is not callable
+2026-01-09 14:55:22,179 | ERROR | restaurant_app | super_admin_dashboard:20356 | Super admin dashboard xatoligi: 'str' object is not callable
+2026-01-09 14:55:24,504 | ERROR | restaurant_app | super_admin_dashboard:20356 | Super admin dashboard xatoligi: 'str' object is not callable
+2026-01-09 14:55:31,853 | ERROR | restaurant_app | super_admin_dashboard:20356 | Super admin dashboard xatoligi: 'str' object is not callable
+2026-01-09 14:55:34,131 | ERROR | restaurant_app | super_admin_dashboard:20356 | Super admin dashboard xatoligi: 'str' object is not callable
+2026-01-09 14:55:34,856 | ERROR | restaurant_app | super_admin_dashboard:20356 | Super admin dashboard xatoligi: 'str' object is not callable
+2026-01-09 14:55:35,722 | ERROR | restaurant_app | super_admin_dashboard:20356 | Super admin dashboard xatoligi: 'str' object is not callable
+2026-01-09 14:55:35,980 | ERROR | restaurant_app | super_admin_dashboard:20356 | Super admin dashboard xatoligi: 'str' object is not callable
+2026-01-09 14:55:36,545 | ERROR | restaurant_app | super_admin_dashboard:20356 | Super admin dashboard xatoligi: 'str' object is not callable
+2026-01-09 14:55:36,805 | ERROR | restaurant_app | super_admin_dashboard:20356 | Super admin dashboard xatoligi: 'str' object is not callable
+2026-01-09 14:55:38,016 | ERROR | restaurant_app | super_admin_dashboard:20356 | Super admin dashboard xatoligi: 'str' object is not callable
+2026-01-09 14:55:38,450 | ERROR | restaurant_app | super_admin_dashboard:20356 | Super admin dashboard xatoligi: 'str' object is not callable
+2026-01-09 14:55:39,093 | ERROR | restaurant_app | super_admin_dashboard:20356 | Super admin dashboard xatoligi: 'str' object is not callable
+2026-01-09 14:55:39,338 | ERROR | restaurant_app | super_admin_dashboard:20356 | Super admin dashboard xatoligi: 'str' object is not callable
+2026-01-09 15:19:07,367 | ERROR | restaurant_app | admin_edit_menu_item:12292 | Edit menu item error: cannot access local variable 'uploaded_media' where it is not associated with a value
+2026-01-09 11:57:40,221 | ERROR | restaurant_app | execute_query:3754 | Database operational error: no such table: menu_item_media
+2026-01-09 11:57:40,224 | ERROR | restaurant_app | admin_product_edit_page:12052 | Product edit page error: no such table: menu_item_media
+2026-01-09 12:10:18,605 | ERROR | restaurant_app | _get_db_dict:23531 | DB Dict Error: no such column: created_at
+2026-01-09 12:15:22,986 | ERROR | restaurant_app | _get_db_dict:23531 | DB Dict Error: no such column: created_at
+2026-01-09 12:21:02,500 | ERROR | restaurant_app | handle_exception:2801 | Unhandled exception: 'str' object is not callable - URL: http://localhost:5000/super-admin/social
+2026-01-09 12:21:02,579 | ERROR | restaurant_app | handle_exception:2803 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Safety.uz\app.py", line 23579, in super_admin_social_fix
+    return render_template('super_admin/social_settings.html', socials=socials)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 152, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 133, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\super_admin\social_settings.html", line 1, in top-level template code
+    {% extends "super_admin_base.html" %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Safety.uz\templates\super_admin_base.html", line 1, in top-level template code
+    {% extends "dashboard_base.html" %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Safety.uz\templates\dashboard_base.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "D:\Safety.uz\templates\base.html", line 1096, in top-level template code
+    {% endif %} {% endwith %} {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Safety.uz\templates\dashboard_base.html", line 503, in block 'content'
+    {% block dashboard_content %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Safety.uz\templates\super_admin\social_settings.html", line 54, in block 'dashboard_content'
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() if csrf_token else '' }}">
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'str' object is not callable
+
+2026-01-09 12:21:06,835 | ERROR | restaurant_app | _get_db_dict:23531 | DB Dict Error: no such column: created_at
+2026-01-09 17:37:42,988 | ERROR | restaurant_app | _get_db_dict:23576 | DB Dict Error: no such column: created_at
+2026-01-10 07:05:50,509 | ERROR | restaurant_app | _get_db_dict:23576 | DB Dict Error: no such column: created_at

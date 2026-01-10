@@ -11344,3 +11344,291 @@ NoneType: None
 2026-01-01 12:53:24 | ERROR | None
 NoneType: None
 
+2026-01-01 12:53:41 | ERROR | None
+NoneType: None
+
+2026-01-01 12:54:14 | ERROR | None
+NoneType: None
+
+2026-01-01 12:54:20 | ERROR | None
+NoneType: None
+
+2026-01-01 12:54:29 | ERROR | None
+NoneType: None
+
+2026-01-07 12:21:46 | ERROR | None
+NoneType: None
+
+2026-01-07 12:21:47 | ERROR | None
+NoneType: None
+
+2026-01-07 12:21:51 | ERROR | None
+NoneType: None
+
+2026-01-07 12:21:52 | ERROR | None
+NoneType: None
+
+2026-01-07 12:21:56 | ERROR | None
+NoneType: None
+
+2026-01-07 12:21:58 | ERROR | None
+NoneType: None
+
+2026-01-07 12:22:02 | ERROR | None
+NoneType: None
+
+2026-01-07 12:22:04 | ERROR | None
+NoneType: None
+
+2026-01-07 12:22:10 | ERROR | None
+NoneType: None
+
+2026-01-07 12:22:11 | ERROR | None
+NoneType: None
+
+2026-01-07 12:22:20 | ERROR | None
+NoneType: None
+
+2026-01-07 12:22:24 | ERROR | None
+NoneType: None
+
+2026-01-07 12:22:32 | ERROR | None
+NoneType: None
+
+2026-01-07 12:22:40 | ERROR | None
+NoneType: None
+
+2026-01-07 12:22:51 | ERROR | None
+NoneType: None
+
+2026-01-07 12:23:01 | ERROR | None
+NoneType: None
+
+2026-01-07 12:23:19 | ERROR | None
+NoneType: None
+
+2026-01-07 12:23:35 | ERROR | None
+NoneType: None
+
+2026-01-07 12:23:45 | ERROR | None
+NoneType: None
+
+2026-01-07 12:23:49 | ERROR | None
+NoneType: None
+
+2026-01-07 12:24:10 | ERROR | None
+NoneType: None
+
+2026-01-07 12:24:20 | ERROR | None
+NoneType: None
+
+2026-01-07 12:24:24 | ERROR | None
+NoneType: None
+
+2026-01-07 12:24:44 | ERROR | None
+NoneType: None
+
+2026-01-07 12:24:55 | ERROR | None
+NoneType: None
+
+2026-01-07 12:24:59 | ERROR | None
+NoneType: None
+
+2026-01-07 12:25:19 | ERROR | None
+NoneType: None
+
+2026-01-07 12:25:30 | ERROR | None
+NoneType: None
+
+2026-01-07 12:25:34 | ERROR | None
+NoneType: None
+
+2026-01-07 12:25:54 | ERROR | None
+NoneType: None
+
+2026-01-07 12:26:05 | ERROR | None
+NoneType: None
+
+2026-01-07 12:26:28 | ERROR | None
+NoneType: None
+
+2026-01-07 12:26:35 | ERROR | None
+NoneType: None
+
+2026-01-07 12:26:40 | ERROR | None
+NoneType: None
+
+2026-01-07 12:27:03 | ERROR | None
+NoneType: None
+
+2026-01-07 12:27:10 | ERROR | None
+NoneType: None
+
+2026-01-07 12:27:15 | ERROR | None
+NoneType: None
+
+2026-01-07 12:27:38 | ERROR | None
+NoneType: None
+
+2026-01-07 12:27:46 | ERROR | None
+NoneType: None
+
+2026-01-07 12:27:51 | ERROR | None
+NoneType: None
+
+2026-01-07 12:28:12 | ERROR | None
+NoneType: None
+
+2026-01-07 12:28:21 | ERROR | None
+NoneType: None
+
+2026-01-07 12:28:26 | ERROR | None
+NoneType: None
+
+2026-01-07 12:28:47 | ERROR | None
+NoneType: None
+
+2026-01-07 12:28:56 | ERROR | None
+NoneType: None
+
+2026-01-07 12:29:01 | ERROR | None
+NoneType: None
+
+2026-01-07 12:29:21 | ERROR | None
+NoneType: None
+
+2026-01-07 12:29:31 | ERROR | None
+NoneType: None
+
+2026-01-07 12:29:36 | ERROR | None
+NoneType: None
+
+2026-01-07 12:29:56 | ERROR | None
+NoneType: None
+
+2026-01-07 12:30:06 | ERROR | None
+NoneType: None
+
+2026-01-07 12:30:11 | ERROR | None
+NoneType: None
+
+2026-01-07 12:30:31 | ERROR | None
+NoneType: None
+
+2026-01-07 12:30:41 | ERROR | None
+NoneType: None
+
+2026-01-07 12:30:46 | ERROR | None
+NoneType: None
+
+2026-01-07 12:31:05 | ERROR | None
+NoneType: None
+
+2026-01-07 12:31:16 | ERROR | None
+NoneType: None
+
+2026-01-07 12:31:21 | ERROR | None
+NoneType: None
+
+2026-01-07 12:31:40 | ERROR | None
+NoneType: None
+
+2026-01-07 12:31:51 | ERROR | None
+NoneType: None
+
+2026-01-07 12:31:56 | ERROR | None
+NoneType: None
+
+2026-01-07 12:32:15 | ERROR | None
+NoneType: None
+
+2026-01-07 12:32:26 | ERROR | None
+NoneType: None
+
+2026-01-09 12:35:13 | ERROR | None
+NoneType: None
+
+2026-01-09 12:35:14 | ERROR | None
+NoneType: None
+
+2026-01-09 12:35:18 | ERROR | None
+NoneType: None
+
+2026-01-09 12:35:19 | ERROR | None
+NoneType: None
+
+2026-01-09 12:35:23 | ERROR | None
+NoneType: None
+
+2026-01-09 12:35:25 | ERROR | None
+NoneType: None
+
+2026-01-09 12:35:29 | ERROR | None
+NoneType: None
+
+2026-01-09 12:35:31 | ERROR | None
+NoneType: None
+
+2026-01-09 12:35:37 | ERROR | None
+NoneType: None
+
+2026-01-09 12:35:38 | ERROR | None
+NoneType: None
+
+2026-01-09 12:35:47 | ERROR | None
+NoneType: None
+
+2026-01-09 12:35:51 | ERROR | None
+NoneType: None
+
+2026-01-09 12:35:59 | ERROR | None
+NoneType: None
+
+2026-01-09 12:36:07 | ERROR | None
+NoneType: None
+
+2026-01-09 12:36:19 | ERROR | None
+NoneType: None
+
+2026-01-09 12:36:29 | ERROR | None
+NoneType: None
+
+2026-01-09 12:36:46 | ERROR | None
+NoneType: None
+
+2026-01-09 12:37:03 | ERROR | None
+NoneType: None
+
+2026-01-09 12:37:12 | ERROR | None
+NoneType: None
+
+2026-01-09 12:37:17 | ERROR | None
+NoneType: None
+
+2026-01-09 12:37:38 | ERROR | None
+NoneType: None
+
+2026-01-09 12:37:47 | ERROR | None
+NoneType: None
+
+2026-01-09 12:37:52 | ERROR | None
+NoneType: None
+
+2026-01-09 12:38:12 | ERROR | None
+NoneType: None
+
+2026-01-09 12:38:23 | ERROR | None
+NoneType: None
+
+2026-01-09 12:38:27 | ERROR | None
+NoneType: None
+
+2026-01-09 12:38:47 | ERROR | None
+NoneType: None
+
+2026-01-09 12:38:58 | ERROR | None
+NoneType: None
+
+2026-01-09 12:39:02 | ERROR | None
+NoneType: None
+

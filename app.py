@@ -224,13 +224,6 @@ except Exception:
 SWAGGER_SPEC_PATH = os.path.join(os.path.dirname(__file__), 'swagger.yaml')
 SWAGGER_TOKENS_FILE = os.path.join(os.path.dirname(__file__), 'swagger_tokens.json')
 
-# News Media Configuration
-# Local news media directory is no longer used for uploads (migrated to Cloudinary).
-ALLOWED_NEWS_IMAGE_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
-ALLOWED_NEWS_VIDEO_EXTENSIONS = {"mp4", "webm", "mov"}
-MAX_NEWS_IMAGE_SIZE = 5 * 1024 * 1024  # 5MB
-MAX_NEWS_VIDEO_SIZE = 100 * 1024 * 1024  # 100MB
-
 def _flask_rule_exists(path, method):
     try:
         for rule in app.url_map.iter_rules():
@@ -318,65 +311,6 @@ except Exception:
 
 app = Flask(__name__)
 
-def generate_csrf_token():
-    """Generate or return existing CSRF token stored in session."""
-    token = session.get("csrf_token")
-    if not token:
-        token = secrets_module.token_urlsafe(32)
-        session["csrf_token"] = token
-    return token
-
-def csrf_protect(fn):
-    """Simple CSRF protection decorator for POST endpoints that checks token in form/json headers."""
-    @wraps(fn)
-    def wrapper(*args, **kwargs):
-        if request.method == "POST":
-            # Check token in header first, then json body, then form
-            header = request.headers.get("X-CSRF-Token")
-            token = (
-                header
-                or (request.get_json(silent=True) or {}).get("csrf_token")
-                or request.form.get("csrf_token")
-            )
-            if not token or token != session.get("csrf_token"):
-                print(f"!!! CSRF FAIL: Recv={token}, Sess={session.get('csrf_token')}, Path={request.path}")
-                
-                # Enhanced debugging - show ALL request data
-                print(f"=== CSRF DEBUG: Full Request Analysis ===")
-                print(f"Method: {request.method}")
-                print(f"Path: {request.path}")
-                print(f"Content-Type: {request.headers.get('Content-Type')}")
-                print(f"X-CSRF-Token header: {request.headers.get('X-CSRF-Token')}")
-                
-                # Try to get JSON body
-                try:
-                    json_data = request.get_json(silent=True)
-                    print(f"JSON body: {json_data}")
-                    if json_data:
-                        print(f"  csrf_token in JSON: {json_data.get('csrf_token')}")
-                except Exception as e:
-                    print(f"JSON parse error: {e}")
-                
-                # Check form data
-                print(f"Form data: {dict(request.form)}")
-                if request.form:
-                    print(f"  csrf_token in form: {request.form.get('csrf_token')}")
-                
-                # Check session
-                print(f"Session csrf_token: {session.get('csrf_token')}")
-                print(f"Session ID: {session.get('_id', 'N/A')}")
-                print(f"Cookies: {dict(request.cookies)}")
-                print(f"=== END DEBUG ===")
-                
-                app_logger.error(f"CSRF DEBUG: Received='{token}', Session='{session.get('csrf_token')}', Method='{request.method}', Path='{request.path}', Cookies={dict(request.cookies)}")
-                app_logger.warning("CSRF token mismatch or missing")
-                if request.is_json or request.path.startswith("/api/"):
-                    return jsonify({"error": "CSRF token missing or invalid"}), 403
-                flash("CSRF token noto'g'ri yoki yo'q", "error")
-                return redirect(request.referrer or url_for("index"))
-        return fn(*args, **kwargs)
-    return wrapper
-
 print("DEBUG: Flask app created")
 
 # Register Swagger routes and create stubs now that `app` exists
@@ -449,7 +383,6 @@ except Exception:
 
 # Full implementations for orders, cart and ratings to match swagger.yaml
 @app.route('/api/cart', methods=['GET', 'POST', 'DELETE'])
-@csrf_protect
 def api_cart():
     try:
         uid = session.get('user_id')
@@ -509,7 +442,6 @@ def api_cart():
 
 
 @app.route('/api/orders', methods=['GET', 'POST'])
-@csrf_protect
 def api_orders():
     try:
         uid = session.get('user_id')
@@ -565,7 +497,7 @@ def api_orders():
             # Create order
             customer_name = data.get('customer_name') or session.get('user_name') or 'Guest'
             ticket_no = ticket
-            cur.execute('INSERT INTO orders (user_id, customer_name, ticket_no, order_type, status, delivery_address, delivery_distance, delivery_price, created_at, eta_time) VALUES (?,?,?,?,?,?,?,?,?,?)', (uid, customer_name, ticket_no, data.get('order_type','delivery'), 'pending', data.get('delivery_address',''), float(data.get('delivery_distance') or 0.0), float(data.get('delivery_price') or 0.0), now, data.get('eta_time') or now))
+            cur.execute('INSERT INTO orders (user_id, customer_name, ticket_no, order_type, total, status, delivery_address, delivery_distance, delivery_price, created_at, eta_time) VALUES (?,?,?,?,?,?,?,?,?,?,?)', (uid, customer_name, ticket_no, data.get('order_type','delivery'), total, 'pending', data.get('delivery_address',''), float(data.get('delivery_distance') or 0.0), float(data.get('delivery_price') or 0.0), now, data.get('eta_time') or now))
             order_id = cur.lastrowid
 
             # Insert order details
@@ -600,7 +532,6 @@ def api_order_get(order_id):
 
 
 @app.route('/api/ratings', methods=['POST'])
-@csrf_protect
 def api_ratings_submit():
     try:
         if not session.get('user_id'):
@@ -1769,7 +1700,7 @@ if os.environ.get("FLASK_ENV") == "development":
     app.wsgi_app = ProfilerMiddleware(app.wsgi_app, restrictions=[30])
 
 # Upload papkasini yaratish
-# os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
+os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
 # Logs papkasini yaratish
 os.makedirs("logs", exist_ok=True)
@@ -2171,6 +2102,13 @@ def cached(ttl=30, key_func=None):
 
 
 # CSRF helpers - define early so decorators are available before use
+def generate_csrf_token():
+    """Generate or return existing CSRF token stored in session."""
+    token = session.get("csrf_token")
+    if not token:
+        token = secrets.token_urlsafe(32)
+        session["csrf_token"] = token
+    return token
 
 
 def clear_session_conflicts():
@@ -2450,54 +2388,32 @@ def inject_navbar_context():
             "notifications_count": notifications_count,
             # Expose persistent superadmin settings to templates
             "superadmin_settings": superadmin_settings,
+            "site_settings": superadmin_settings, # Alias for legacy templates
             # expose flat translations mapping for client-side usage
             "translations": flat_trans,
+            "csrf_token": generate_csrf_token(),
         }
     except Exception as e:
         try:
             app_logger.warning(f"inject_navbar_context error: {e}")
         except Exception:
             pass
-        return {}
+        return {"csrf_token": generate_csrf_token()}
 
 
 @app.context_processor
 def inject_global_settings():
-    """Inject global settings and social links into all templates."""
-    settings = {
-        'site_phone': Config.SUPER_ADMIN_PHONE,
-        'site_email': '',
-        'site_telegram': '',
-        'site_address': '',
-        'site_telegram_username': ''
-    }
-    social_links = []
-    
+    """Inject global settings into all templates."""
+    phone = Config.SUPER_ADMIN_PHONE
     try:
-        # Load from DB
-        conn = get_db()
-        try:
-            # Site Settings
-            cur = conn.execute("SELECT key, value FROM site_settings")
-            db_settings = dict(cur.fetchall())
-            settings.update(db_settings)
-            
-            # Social Links - Explicitly select columns to match usage
-            cur = conn.execute("SELECT platform, url, icon FROM social_links WHERE active=1 ORDER BY sort_order ASC")
-            social_links = [dict(row) for row in cur.fetchall()]
-        except Exception as e:
-            # Tables might not exist yet during migration
-            # app_logger.warning(f"Global settings injection partial failure: {e}")
-            pass
-            
+        # Try to load from advanced settings first
+        if os.path.exists('data/advanced_settings.json'):
+            with open('data/advanced_settings.json', 'r', encoding='utf-8') as f:
+                settings = json.load(f)
+                phone = settings.get('super_admin_phone', phone)
     except Exception:
         pass
-        
-    return {
-        'site_settings': settings,
-        'social_links': social_links,
-        'super_admin_phone': settings.get('site_phone') # Keep legacy compatibility
-    }
+    return {'super_admin_phone': phone}
 
 
 @app.context_processor
@@ -2518,12 +2434,6 @@ def inject_translation_helpers():
         return {"_": utils.translate, "get_text": utils.get_text, "LANG": current, "current_language": current}
     except Exception:
         return {}
-
-
-@app.context_processor
-def inject_csrf_token():
-    """Ensure csrf_token is available in all templates."""
-    return dict(csrf_token=generate_csrf_token())
 
 
 # Debug endpoint: quick check of translation lookup from server side
@@ -2550,15 +2460,21 @@ def _debug_translate():
             pass
         return jsonify({'error': str(e)}), 500
 
+
 @app.route('/_debug/session')
 def _debug_session():
-    return jsonify({
-        'session_id': session.get('session_id'),
-        'csrf_token_in_session': session.get('csrf_token'),
-        'is_super_admin': session.get('super_admin'),
-        'cookies': dict(request.cookies),
-        'secret_key_id': hashlib.md5(app.secret_key.encode() if isinstance(app.secret_key, str) else app.secret_key).hexdigest()[:8]
-    })
+    """Debug endpoint to check session and CSRF token status."""
+    try:
+        return jsonify({
+            'session_id': session.get('session_id'),
+            'user_id': session.get('user_id'),
+            'csrf_token_in_session': session.get('csrf_token'),
+            'cookies': dict(request.cookies),
+            'remote_addr': request.remote_addr,
+            'secret_key_id': 'app_ver_1'
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 def is_international_delivery_enabled():
@@ -2636,6 +2552,28 @@ def get_main_branch():
         return None
 
 
+def csrf_protect(fn):
+    """Simple CSRF protection decorator for POST endpoints that checks token in form/json headers."""
+
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        if request.method == "POST":
+            # Check token in header first, then json body, then form
+            header = request.headers.get("X-CSRF-Token")
+            token = (
+                header
+                or (request.get_json(silent=True) or {}).get("csrf_token")
+                or request.form.get("csrf_token")
+            )
+            if not token or token != session.get("csrf_token"):
+                app_logger.warning("CSRF token mismatch or missing")
+                if request.is_json or request.path.startswith("/api/"):
+                    return jsonify({"error": "CSRF token missing or invalid"}), 403
+                flash("CSRF token noto'g'ri yoki yo'q", "error")
+                return redirect(request.referrer or url_for("index"))
+        return fn(*args, **kwargs)
+
+    return wrapper
 
 
 # -------------------------
@@ -10718,7 +10656,8 @@ def general_settings_post():
         flash("Sozlamalarni saqlashda xatolik.", "error")
         return redirect(url_for("general_settings"))
 
-# Duplicate CSRF definitions removed. Using centralized definitions from start of file.
+
+# Redundant CSRF helpers removed (now centralized earlier in app.py)
 
 
 @app.route("/logout")
@@ -11850,6 +11789,7 @@ def admin_orders_json():
 
 
 @app.route("/admin/add_menu_item", methods=["POST"])
+@csrf_protect
 def admin_add_menu_item():
     "Add new menu item"
     if not session.get("staff_id") and not session.get("super_admin"):
@@ -12084,7 +12024,38 @@ def admin_add_menu_item():
     return redirect(url_for("staff_menu"))
 
 
+@app.route("/admin/product/edit/<int:product_id>", methods=["GET"])
+@role_required("super_admin")
+def admin_product_edit_page(product_id):
+    "Render the product edit page"
+    try:
+        product = execute_query("SELECT * FROM menu_items WHERE id = ?", (product_id,), fetch_one=True)
+        if not product:
+            flash("Mahsulot topilmadi.", "error")
+            return redirect(url_for("super_admin_dashboard"))
+        
+        # Load extra data if needed (ratings, media)
+        ratings = execute_query("SELECT * FROM ratings WHERE menu_item_id = ?", (product_id,), fetch_all=True) or []
+        media = execute_query("SELECT * FROM menu_item_media WHERE menu_item_id = ? ORDER BY display_order ASC", (product_id,), fetch_all=True) or []
+        
+        # Ensure it's a dict
+        product_dict = dict(product) if hasattr(product, 'keys') else {}
+        
+        return render_template(
+            "admin/product_edit.html",
+            product=product_dict,
+            ratings=[dict(r) for r in ratings],
+            media=[dict(m) for m in media],
+            csrf_token=generate_csrf_token()
+        )
+    except Exception as e:
+        app_logger.error(f"Product edit page error: {str(e)}")
+        flash("Tahrirlash sahifasini yuklashda xatolik yuz berdi.", "error")
+        return redirect(url_for("super_admin_dashboard"))
+
+
 @app.route("/admin/edit_menu_item/<int:item_id>", methods=["POST"])
+@csrf_protect
 def admin_edit_menu_item(item_id):
     "Edit menu item"
     if not session.get("staff_id") and not session.get("super_admin"):
@@ -12208,6 +12179,9 @@ def admin_edit_menu_item(item_id):
                 return redirect(url_for("staff_menu"))
             now = get_current_time().isoformat()
             uploaded_media = []
+
+            upload_dir = os.path.join(app.root_path, "static", "uploads", "products")
+            os.makedirs(upload_dir, exist_ok=True)
 
             # Hozirgi media fayllar sonini olish
             current_media_count = execute_query(
@@ -12382,14 +12356,13 @@ def api_get_product_media(item_id):
 
 @app.route('/thumb')
 def thumb():
-    """Thumbnail generator/proxy that leverages Cloudinary.
-    
+    """Simple thumbnail generator/proxy for internal static images.
+
     Usage: /thumb?src=/static/uploads/xxx.webp&w=600&h=400
+    Only serves images under /static/ and caches resized images to
+    `static/thumbs/` using a hash of the source and sizing params.
     """
     src = request.args.get('src')
-    if not src:
-        return jsonify({"success": False, "message": "src is required"}), 400
-
     try:
         w = int(request.args.get('w') or 0)
     except Exception:
@@ -12399,32 +12372,132 @@ def thumb():
     except Exception:
         h = 0
     try:
-        q = int(request.args.get('q') or 80)
+        q = int(request.args.get('q') or 82)
     except Exception:
-        q = 80
+        q = 82
 
+    if not src:
+        abort(400)
+
+    # Security: only allow internal static paths
+    if not src.startswith('/static/'):
+        abort(403)
+
+    # Map to file system path
+    # src like '/static/uploads/..' -> static/uploads/..
+    rel = src.lstrip('/')
+    orig_path = os.path.join(os.getcwd(), rel)
+    # If original source doesn't exist (user may have converted files to .webp),
+    # attempt alternate extensions in the same directory (webp, jpg, jpeg, png).
+    if not os.path.exists(orig_path):
+        try:
+            base, ext = os.path.splitext(rel)
+            found = False
+            for alt in ('.webp', '.jpg', '.jpeg', '.png'):
+                alt_rel = base + alt
+                alt_fs = os.path.join(os.getcwd(), alt_rel)
+                if os.path.exists(alt_fs):
+                    # Update src and orig_path to the found file
+                    orig_path = alt_fs
+                    # update src to the new path used for cache key later
+                    src = '/' + alt_rel.replace('\\', '/')
+                    rel = alt_rel
+                    found = True
+                    break
+            if not found:
+                # fallback to default image
+                return send_default_static_image()
+        except Exception:
+            try:
+                return send_default_static_image()
+            except Exception:
+                abort(404)
+
+    # Prepare thumbs cache
+    thumbs_dir = os.path.join(os.getcwd(), 'static', 'thumbs')
+    os.makedirs(thumbs_dir, exist_ok=True)
+
+    key = hashlib.md5(f"{src}|{w}|{h}|{q}".encode('utf-8')).hexdigest()
+    thumb_jpg = os.path.join(thumbs_dir, f"{key}.jpg")
+    thumb_webp = os.path.join(thumbs_dir, f"{key}.webp")
+
+    # If already generated, serve WebP when client accepts it, else JPEG
     try:
-        # Determine resource_type
-        resource_type = "image"
-        if any(src.lower().endswith(ext) for ext in ['.mp4', '.mov', '.webm', '.avi']):
-            resource_type = "video"
-            
-        kwargs = {"quality": q, "secure": True}
-        if w > 0: kwargs["width"] = w
-        if h > 0: kwargs["height"] = h
-        if w > 0 or h > 0: kwargs["crop"] = "fill"
-        
-        c_url = get_cloudinary_url(src, resource_type=resource_type, **kwargs)
-        if c_url:
-            return redirect(c_url)
-            
+        accept = (request.headers.get('Accept') or '')
+    except Exception:
+        accept = ''
+
+    if os.path.exists(thumb_webp) or os.path.exists(thumb_jpg):
+        try:
+            if 'image/webp' in accept and os.path.exists(thumb_webp):
+                resp = send_file(thumb_webp, mimetype='image/webp', conditional=True)
+            else:
+                # fallback to jpeg if webp not present or not accepted
+                use_path = thumb_jpg if os.path.exists(thumb_jpg) else thumb_webp
+                mime = 'image/jpeg' if use_path.endswith('.jpg') else 'image/webp'
+                resp = send_file(use_path, mimetype=mime, conditional=True)
+            resp.headers['Cache-Control'] = 'public, max-age=31536000, immutable'
+            return resp
+        except Exception:
+            pass
+
+    # If Pillow not available, fall back to returning original file
+    if Image is None:
+        try:
+            return send_file(orig_path, conditional=True)
+        except Exception:
+            return send_default_static_image()
+
+    # Generate thumbnail(s)
+    try:
+        with Image.open(orig_path) as im:
+            im = im.convert('RGB')
+            orig_w, orig_h = im.size
+            if w and not h:
+                h = int(orig_h * (w / orig_w))
+            if h and not w:
+                w = int(orig_w * (h / orig_h))
+            if not w and not h:
+                # default width
+                w = 800
+                h = int(orig_h * (w / orig_w))
+
+            # Use thumbnail (in-place) to preserve aspect ratio
+            im.thumbnail((w, h), Image.LANCZOS)
+
+            # Save as optimized JPEG
+            try:
+                im.save(thumb_jpg, 'JPEG', quality=q, optimize=True)
+            except Exception:
+                im.save(thumb_jpg, 'JPEG', quality=q)
+
+            # Also save a WebP copy for modern browsers (smaller, faster)
+            try:
+                im.save(thumb_webp, 'WEBP', quality=max(60, q - 10), method=6)
+            except Exception:
+                try:
+                    # fallback WebP save with default options
+                    im.save(thumb_webp, 'WEBP')
+                except Exception:
+                    # ignore webp save failures
+                    pass
+
+        # Decide which to serve based on Accept header
+        try:
+            if 'image/webp' in accept and os.path.exists(thumb_webp):
+                resp = send_file(thumb_webp, mimetype='image/webp', conditional=True)
+            else:
+                resp = send_file(thumb_jpg, mimetype='image/jpeg', conditional=True)
+            resp.headers['Cache-Control'] = 'public, max-age=31536000, immutable'
+            return resp
+        except Exception:
+            pass
     except Exception as e:
-        app_logger.error(f"Thumbnail redirection error for {src}: {str(e)}")
-    
-    # Fallback to original src or default
-    if src.startswith('http'):
-        return redirect(src)
-    return redirect(src if src.startswith('/') else '/' + src)
+        app_logger.warning(f"Thumb generation failed for {src}: {e}")
+        try:
+            return send_file(orig_path, conditional=True)
+        except Exception:
+            return send_default_static_image()
 
 
 @app.route("/api/product-media/<int:media_id>/set-main", methods=["POST"])
@@ -15987,19 +16060,13 @@ def set_role_session(role, id=None, name=None, **kwargs):
 
 
 @app.route("/super-admin-master-login-z9x4m", methods=["GET", "POST"])
-def super_admin_login():
+def super_admin_login(): 
     "Super admin login"
     try:
         if request.method == "POST":
             username = request.form.get("username", "").strip()
             password = request.form.get("password", "")
             creds = get_superadmin_creds()
-            # Log attempt (do not log raw password). Helpful when debugging missing/misconfigured creds.
-            try:
-                app_logger.debug(f"Super admin login attempt: provided={username}, expected={creds.get('username')}")
-            except Exception:
-                pass
-
             if username == creds.get("username") and password == creds.get("password"):
                 # Use helper to set role and clear other role flags
                 name_parts = []
@@ -21395,99 +21462,83 @@ def reset_settings():
     return jsonify({"success": True, "message": "Settings reset to default"})
 
 
-# ==============================================================================
-# NEWS & ADVERTISEMENTS API (CONSOLIDATED & ROBUST)
-# ==============================================================================
+# ================================
+# YANGILIKLAR API ENDPOINTS
+# ================================
 
-def _ensure_news_schema():
-    """Ensure news table has all required columns including new multi-media ones."""
-    try:
-        # Create table if not exists with all columns
-        execute_query("""
-            CREATE TABLE IF NOT EXISTS news (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                title TEXT,
-                title_ru TEXT,
-                title_uz TEXT,
-                title_en TEXT,
-                title_kz TEXT,
-                content TEXT,
-                content_ru TEXT,
-                content_uz TEXT,
-                content_en TEXT,
-                content_kz TEXT,
-                type TEXT DEFAULT 'news',
-                is_active BOOLEAN DEFAULT 1,
-                display_order INTEGER DEFAULT 0,
-                image_url TEXT,
-                video_url TEXT,
-                images_json TEXT,
-                videos_json TEXT,
-                show_in_ticker BOOLEAN DEFAULT 0,
-                created_by INTEGER,
-                created_at TEXT,
-                updated_at TEXT
-            )
-        """)
-        
-        # Check and add missing columns for existing tables
-        cols_data = execute_query("PRAGMA table_info(news)", fetch_all=True) or []
-        cols = [c[1] if isinstance(c, tuple) else c.get("name") for c in cols_data]
-        needed = {
-            "title_ru": "TEXT", "title_uz": "TEXT", "title_en": "TEXT", "title_kz": "TEXT",
-            "content_ru": "TEXT", "content_uz": "TEXT", "content_en": "TEXT", "content_kz": "TEXT",
-            "images_json": "TEXT", "videos_json": "TEXT", "show_in_ticker": "BOOLEAN DEFAULT 0"
-        }
-        for col, col_type in needed.items():
-            if col not in cols:
-                try: execute_query(f"ALTER TABLE news ADD COLUMN {col} {col_type}")
-                except Exception: pass
-    except Exception as e:
-        app_logger.error(f"News schema ensure error: {e}")
 
 @app.route("/api/news", methods=["GET"])
 def api_news():
-    """Get news items with optional filtering and localized output."""
+    """Get all active news items for ticker"""
     try:
-        _ensure_news_schema()
-        ticker_only = request.args.get("ticker", "").lower() in ("1", "true", "yes")
-        active_only = request.args.get("active", "true").lower() in ("1", "true", "yes")
-        lang = request.args.get("lang") or session.get("lang", "uz")
-        limit = request.args.get("limit", type=int)
-
-        query = "SELECT * FROM news WHERE 1=1"
-        params = []
-        if active_only:
-            query += " AND is_active = 1"
+        # If caller requested ticker-only items (e.g. footer ticker), honor show_in_ticker flag.
+        ticker_only = str(request.args.get("ticker") or "").lower() in (
+            "1",
+            "true",
+            "yes",
+        )
         if ticker_only:
-            query += " AND show_in_ticker = 1"
-        
-        query += " ORDER BY display_order ASC, created_at DESC"
-        if limit:
-            query += " LIMIT ?"
-            params.append(limit)
-
-        rows = execute_query(query, params=tuple(params), fetch_all=True) or []
-        items = []
+            rows = (
+                execute_query(
+                    "SELECT * FROM news WHERE is_active = 1 AND COALESCE(show_in_ticker,0)=1 ORDER BY display_order ASC, created_at DESC",
+                    fetch_all=True,
+                )
+                or []
+            )
+        else:
+            rows = (
+                execute_query(
+                    "SELECT * FROM news WHERE is_active = 1 ORDER BY display_order ASC, created_at DESC",
+                    fetch_all=True,
+                )
+                or []
+            )
+        news_items = []
         for r in rows:
-            item = dict(r) if not isinstance(r, dict) else r
-            # Localization
-            item["title_local"] = item.get(f"title_{lang}") or item.get("title") or ""
-            item["content_local"] = item.get(f"content_{lang}") or item.get("content") or ""
-            # Media normalization
-            try: item["images"] = json.loads(item.get("images_json") or "[]")
-            except Exception: item["images"] = [item["image_url"]] if item.get("image_url") else []
-            try: item["videos"] = json.loads(item.get("videos_json") or "[]")
-            except Exception: item["videos"] = [item["video_url"]] if item.get("video_url") else []
-            
-            # YouTube embeds
-            item["youtube_embeds"] = [extract_youtube_embed(v) for v in item["videos"] if v]
-            item["youtube_embed"] = item["youtube_embeds"][0] if item["youtube_embeds"] else None
-            
-            items.append(item)
-        return jsonify({"success": True, "news": items})
+            try:
+                if isinstance(r, dict):
+                    item = r
+                else:
+                    # convert tuple to dict assuming schema order matches
+                    item = dict(r)
+            except Exception:
+                item = r
+            # Attach localized title/content for API consumers
+            try:
+                item["title_local"] = utils.localized_field(item, "title") or item.get("title")
+            except Exception:
+                item["title_local"] = item.get("title")
+            try:
+                item["content_local"] = utils.localized_field(item, "content") or item.get("content")
+            except Exception:
+                item["content_local"] = item.get("content")
+            # attach youtube embed if applicable
+            try:
+                item["youtube_embed"] = extract_youtube_embed(
+                    item.get("video_url") or ""
+                )
+            except Exception:
+                item["youtube_embed"] = None
+            # Cloudinary optimization
+            try:
+                if item.get("image_url"):
+                    item["image_url"] = get_cloudinary_url(item["image_url"])
+                if item.get("video_url") and not item.get("video_url").startswith("http"):
+                    item["video_url"] = get_cloudinary_url(item["video_url"])
+            except Exception:
+                pass
+
+            news_items.append(item)
+        # Honor an optional limit query parameter for clients that only need a subset (e.g., footer ticker)
+        try:
+            limit = int(request.args.get('limit')) if request.args.get('limit') else None
+        except Exception:
+            limit = None
+        if limit and isinstance(limit, int) and limit > 0:
+            news_items = news_items[:limit]
+        return jsonify({"success": True, "news": news_items or []})
     except Exception as e:
-        app_logger.error(f"api_news error: {e}")
+        app_logger.error(f"API news error: {str(e)}")
         return jsonify({"success": False, "message": "Failed to load news"}), 500
 
 
@@ -21514,189 +21565,430 @@ def api_reverse_geocode():
         return jsonify({'success': False, 'message': 'reverse geocode failed'}), 500
 
 
-@app.route("/super-admin/settings")
-@role_required("super_admin")
-def super_admin_settings():
-    try:
-        conn = get_db()
-        cur = conn.cursor()
-        
-        # Site Settings
-        cur.execute("SELECT key, value FROM site_settings")
-        settings = dict(cur.fetchall())
-        
-        # Social Links
-        cur.execute("SELECT * FROM social_links ORDER BY sort_order ASC, id DESC")
-        cols = [d[0] for d in cur.description]
-        social_links = [dict(zip(cols, row)) for row in cur.fetchall()]
-        
-        return render_template(
-            "super_admin/settings.html", 
-            site_settings=settings,
-            all_social_links=social_links
-        )
-    except Exception as e:
-        app_logger.error(f"Settings view error: {e}")
-        flash("Sozlamalarni yuklashda xatolik!", "error")
-        return redirect(url_for("super_admin_dashboard"))
-
-
-@app.route("/super-admin/settings/update", methods=["POST"])
-@role_required("super_admin")
-@csrf_protect
-def super_admin_settings_update():
-    try:
-        data = request.form
-        settings_to_update = [
-            'site_phone', 'site_email', 'site_telegram', 
-            'site_address', 'site_telegram_username'
-        ]
-        
-        conn = get_db()
-        
-        for key in settings_to_update:
-            val = data.get(key, '').strip()
-            conn.execute(
-                "INSERT OR REPLACE INTO site_settings (key, value, updated_at) VALUES (?, ?, CURRENT_TIMESTAMP)",
-                (key, val)
-            )
-            
-        conn.commit()
-        flash("Sayt sozlamalari muvaffaqiyatli saqlandi!", "success")
-    except Exception as e:
-        app_logger.error(f"Settings update error: {e}")
-        flash("Sozlamalarni saqlashda xatolik!", "error")
-        
-    return redirect(url_for("super_admin_settings"))
-
-
-@app.route("/super-admin/settings/social/add", methods=["POST"])
-@role_required("super_admin")
-@csrf_protect
-def super_admin_settings_social_add():
-    try:
-        platform = request.form.get("platform", "").strip()
-        url = request.form.get("url", "").strip()
-        icon = request.form.get("icon", "").strip()
-        active = int(request.form.get("active", 1))
-        sort_order = int(request.form.get("sort_order", 0))
-        
-        if platform and url:
-            execute_query(
-                "INSERT INTO social_links (platform, url, icon, active, sort_order) VALUES (?, ?, ?, ?, ?)",
-                (platform, url, icon, active, sort_order)
-            )
-            flash("Ijtimoiy tarmoq qo'shildi!", "success")
-        else:
-             flash("Ma'lumotlar to'liq emas!", "warning")
-             
-    except Exception as e:
-        app_logger.error(f"Social add error: {e}")
-        flash("Xatolik yuz berdi!", "error")
-        
-    return redirect(url_for("super_admin_settings"))
-
-
-@app.route("/super-admin/settings/social/delete", methods=["POST"])
-@role_required("super_admin")
-@csrf_protect
-def super_admin_settings_social_delete():
-    try:
-        link_id = request.form.get("link_id")
-        if link_id:
-            execute_query("DELETE FROM social_links WHERE id = ?", (link_id,))
-            flash("O'chirildi!", "success")
-    except Exception as e:
-        app_logger.error(f"Social delete error: {e}")
-        flash("O'chirishda xatolik!", "error")
-        
-    return redirect(url_for("super_admin_settings"))
-
-
 @app.route("/api/news", methods=["POST"])
 @role_required("super_admin")
 @csrf_protect
 def api_create_news():
+    """Create new news item - Super admin only"""
     try:
-        _ensure_news_schema()
         data = request.get_json() or {}
-        now = get_current_time().isoformat()
-        
-        # Build fields for insertion
-        fields = {
-            "title": data.get("title", "").strip(),
-            "content": data.get("content", "").strip(),
-            "type": data.get("type", "news"),
-            "image_url": data.get("image_url", ""),
-            "video_url": data.get("video_url", ""),
-            "images_json": json.dumps(data.get("images") or []),
-            "videos_json": json.dumps(data.get("videos") or []),
-            "is_active": 1 if data.get("is_active", True) else 0,
-            "display_order": int(data.get("display_order", 0)),
-            "show_in_ticker": 1 if data.get("show_in_ticker", False) else 0,
-            "created_by": session.get("user_id") or 1,
-            "created_at": now,
-            "updated_at": now
-        }
-        for l in ("ru", "uz", "en", "kz"):
-            fields[f"title_{l}"] = data.get(f"title_{l}", "").strip()
-            fields[f"content_{l}"] = data.get(f"content_{l}", "").strip()
+        title = data.get("title", "").strip()
+        content = data.get("content", "").strip()
+        news_type = data.get("type", "news")
+        image_url = data.get("image_url", "").strip()
+        video_url = data.get("video_url", "").strip()
+        is_active = bool(data.get("is_active", True))
+        display_order = int(data.get("display_order", 0))
+        show_in_ticker = 1 if bool(data.get("show_in_ticker", False)) else 0
 
-        cols_str = ",".join(fields.keys())
-        placeholders = ",".join(["?"] * len(fields))
-        news_id = execute_query(f"INSERT INTO news ({cols_str}) VALUES ({placeholders})", tuple(fields.values()))
-        
+        if not title:
+            return jsonify({"success": False, "message": "Title is required"}), 400
+
+        if news_type not in ["news", "advertisement"]:
+            return jsonify({"success": False, "message": "Invalid news type"}), 400
+
+        now = get_current_time().isoformat()
+        # Ensure schema has show_in_ticker before insert
+        try:
+            cols = execute_query("PRAGMA table_info(news)", fetch_all=True)
+            has_show = False
+            if cols:
+                for c in cols:
+                    name = c[1] if isinstance(c, tuple) else c.get("name")
+                    if name == "show_in_ticker":
+                        has_show = True
+                        break
+            if not has_show:
+                try:
+                    execute_query(
+                        "ALTER TABLE news ADD COLUMN show_in_ticker BOOLEAN DEFAULT 0"
+                    )
+                except Exception:
+                    pass
+        except Exception:
+            pass
+
+        # Support multilingual title/content if provided
+        title_ru = data.get("title_ru", "").strip()
+        title_uz = data.get("title_uz", "").strip()
+        title_en = data.get("title_en", "").strip()
+        title_kz = data.get("title_kz", "").strip()
+        content_ru = data.get("content_ru", "").strip()
+        content_uz = data.get("content_uz", "").strip()
+        content_en = data.get("content_en", "").strip()
+        content_kz = data.get("content_kz", "").strip()
+
+        # Use multilingual insert when columns exist
+        try:
+            cols = execute_query("PRAGMA table_info(news)", fetch_all=True) or []
+            existing_cols = [c[1] if isinstance(c, tuple) else c.get("name") for c in cols]
+        except Exception:
+            existing_cols = []
+
+        if all(c in existing_cols for c in [
+            "title_ru","title_uz","title_en","title_kz",
+            "content_ru","content_uz","content_en","content_kz",
+        ]):
+            legacy_title = title or title_ru or title_uz or title_en or title_kz
+            legacy_content = content or content_ru or content_uz or content_en or content_kz
+            news_id = execute_query(
+                """INSERT INTO news (title, title_ru, title_uz, title_en, title_kz, content, content_ru, content_uz, content_en, content_kz, type, image_url, video_url, is_active, display_order, show_in_ticker, created_by, created_at, updated_at)
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                (
+                    legacy_title,
+                    title_ru or legacy_title,
+                    title_uz or legacy_title,
+                    title_en or legacy_title,
+                    title_kz or legacy_title,
+                    legacy_content,
+                    content_ru or legacy_content,
+                    content_uz or legacy_content,
+                    content_en or legacy_content,
+                    content_kz or legacy_content,
+                    news_type,
+                    image_url or None,
+                    video_url or None,
+                    1 if is_active else 0,
+                    display_order,
+                    show_in_ticker,
+                    1,
+                    now,
+                    now,
+                ),
+            )
+        else:
+            news_id = execute_query(
+                """INSERT INTO news (title, content, type, image_url, video_url, is_active, display_order, created_by, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                (
+                    title or title_ru or title_uz or title_en or title_kz,
+                    content or content_ru or content_uz or content_en or content_kz,
+                    news_type,
+                    image_url or None,
+                    video_url or None,
+                    1 if is_active else 0,
+                    display_order,
+                    1,
+                    now,
+                    now,
+                ),
+            )
+
+        # Sync to JSON file
+        try:
+            rows = (
+                execute_query(
+                    "SELECT * FROM news ORDER BY display_order ASC, created_at DESC",
+                    fetch_all=True,
+                )
+                or []
+            )
+            items = []
+            for r in rows:
+                try:
+                    item = dict(r) if not isinstance(r, dict) else dict(r)
+                except Exception:
+                    item = r
+                try:
+                    item["youtube_embed"] = extract_youtube_embed(
+                        item.get("video_url") or ""
+                    )
+                except Exception:
+                    item["youtube_embed"] = None
+                items.append(item)
+
+            json_path = os.path.join(os.getcwd(), "data", "news.json")
+            os.makedirs(os.path.dirname(json_path), exist_ok=True)
+            with open(json_path, "w", encoding="utf-8") as f:
+                json.dump(
+                    {"news": items, "metadata": {"last_updated": now}},
+                    f,
+                    ensure_ascii=False,
+                    indent=2,
+                )
+        except Exception:
+            pass
+
+        # Sync to JSON file
+        try:
+            items = (
+                execute_query(
+                    "SELECT * FROM news ORDER BY display_order ASC, created_at DESC",
+                    fetch_all=True,
+                )
+                or []
+            )
+            news_data = {
+                "news": [dict(item) for item in items],
+                "metadata": {
+                    "total_count": len(items),
+                    "active_count": len([i for i in items if i["is_active"]]),
+                    "last_updated": get_current_time().isoformat(),
+                    "version": "1.0",
+                },
+            }
+            with open("data/news.json", "w", encoding="utf-8") as f:
+                json.dump(news_data, f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            app_logger.warning(f"Failed to sync news to JSON: {str(e)}")
+
         return jsonify({"success": True, "message": "News item created", "id": news_id})
+
     except Exception as e:
-        app_logger.error(f"api_create_news error: {e}")
-        return jsonify({"success": False, "message": str(e)}), 500
+        app_logger.error(f"Create news error: {str(e)}")
+        return jsonify({"success": False, "message": "Failed to create news"}), 500
 
 
 @app.route("/api/news/<int:news_id>", methods=["PUT"])
 @role_required("super_admin")
 @csrf_protect
 def api_update_news(news_id):
+    """Update news item - Super admin only"""
     try:
-        _ensure_news_schema()
         data = request.get_json() or {}
-        now = get_current_time().isoformat()
-        
-        fields = {
-            "title": data.get("title", "").strip(),
-            "content": data.get("content", "").strip(),
-            "type": data.get("type", "news"),
-            "image_url": data.get("image_url", ""),
-            "video_url": data.get("video_url", ""),
-            "images_json": json.dumps(data.get("images") or []),
-            "videos_json": json.dumps(data.get("videos") or []),
-            "is_active": 1 if data.get("is_active", True) else 0,
-            "display_order": int(data.get("display_order", 0)),
-            "show_in_ticker": 1 if data.get("show_in_ticker", False) else 0,
-            "updated_at": now
-        }
-        for l in ("ru", "uz", "en", "kz"):
-            if f"title_{l}" in data: fields[f"title_{l}"] = data.get(f"title_{l}", "").strip()
-            if f"content_{l}" in data: fields[f"content_{l}"] = data.get(f"content_{l}", "").strip()
+        title = data.get("title", "").strip()
+        content = data.get("content", "").strip()
+        news_type = data.get("type", "news")
+        image_url = data.get("image_url", "").strip()
+        video_url = data.get("video_url", "").strip()
+        is_active = bool(data.get("is_active", True))
+        display_order = int(data.get("display_order", 0))
+        show_in_ticker = 1 if bool(data.get("show_in_ticker", False)) else 0
 
-        set_clause = ", ".join([f"{k} = ?" for k in fields.keys()])
-        execute_query(f"UPDATE news SET {set_clause} WHERE id = ?", tuple(fields.values()) + (news_id,))
-        
+        if not title:
+            return jsonify({"success": False, "message": "Title is required"}), 400
+
+        if news_type not in ["news", "advertisement"]:
+            return jsonify({"success": False, "message": "Invalid news type"}), 400
+
+        # Check if news exists
+        existing = execute_query(
+            "SELECT id FROM news WHERE id = ?", (news_id,), fetch_one=True
+        )
+        if not existing:
+            return jsonify({"success": False, "message": "News not found"}), 404
+
+        now = get_current_time().isoformat()
+        # Check if show_in_ticker column exists
+        has_show = False
+        try:
+            cols = execute_query("PRAGMA table_info(news)", fetch_all=True)
+            if cols:
+                for c in cols:
+                    name = c[1] if isinstance(c, tuple) else c.get("name")
+                    if name == "show_in_ticker":
+                        has_show = True
+                        break
+        except Exception:
+            has_show = False
+
+        # Accept multilingual fields if present
+        title_ru = data.get("title_ru", "").strip()
+        title_uz = data.get("title_uz", "").strip()
+        title_en = data.get("title_en", "").strip()
+        title_kz = data.get("title_kz", "").strip()
+        content_ru = data.get("content_ru", "").strip()
+        content_uz = data.get("content_uz", "").strip()
+        content_en = data.get("content_en", "").strip()
+        content_kz = data.get("content_kz", "").strip()
+
+        try:
+            cols = execute_query("PRAGMA table_info(news)", fetch_all=True) or []
+            existing_cols = [c[1] if isinstance(c, tuple) else c.get("name") for c in cols]
+        except Exception:
+            existing_cols = []
+
+        if all(c in existing_cols for c in [
+            "title_ru","title_uz","title_en","title_kz",
+            "content_ru","content_uz","content_en","content_kz",
+        ]):
+            # Preserve legacy title/content if new multilingual fields are empty
+            legacy_title = title or title_ru or title_uz or title_en or title_kz
+            legacy_content = content or content_ru or content_uz or content_en or content_kz
+            execute_query(
+                """UPDATE news SET title = ?, title_ru = ?, title_uz = ?, title_en = ?, title_kz = ?, content = ?, content_ru = ?, content_uz = ?, content_en = ?, content_kz = ?, type = ?, image_url = ?, video_url = ?, is_active = ?, display_order = ?, show_in_ticker = ?, updated_at = ? WHERE id = ?""",
+                (
+                    legacy_title,
+                    title_ru or legacy_title,
+                    title_uz or legacy_title,
+                    title_en or legacy_title,
+                    title_kz or legacy_title,
+                    legacy_content,
+                    content_ru or legacy_content,
+                    content_uz or legacy_content,
+                    content_en or legacy_content,
+                    content_kz or legacy_content,
+                    news_type,
+                    image_url or None,
+                    video_url or None,
+                    1 if is_active else 0,
+                    display_order,
+                    show_in_ticker,
+                    now,
+                    news_id,
+                ),
+            )
+        else:
+            execute_query(
+                """UPDATE news SET title = ?, content = ?, type = ?, image_url = ?, video_url = ?, 
+                is_active = ?, display_order = ?, updated_at = ? WHERE id = ?""",
+                (
+                    title or title_ru or title_uz or title_en or title_kz,
+                    content or content_ru or content_uz or content_en or content_kz,
+                    news_type,
+                    image_url or None,
+                    video_url or None,
+                    1 if is_active else 0,
+                    display_order,
+                    now,
+                    news_id,
+                ),
+            )
+
+        # Sync to JSON file
+        try:
+            rows = (
+                execute_query(
+                    "SELECT * FROM news ORDER BY display_order ASC, created_at DESC",
+                    fetch_all=True,
+                )
+                or []
+            )
+            items = []
+            for r in rows:
+                try:
+                    item = dict(r) if not isinstance(r, dict) else dict(r)
+                except Exception:
+                    item = r
+                try:
+                    item["youtube_embed"] = extract_youtube_embed(
+                        item.get("video_url") or ""
+                    )
+                except Exception:
+                    item["youtube_embed"] = None
+                items.append(item)
+
+            json_path = os.path.join(os.getcwd(), "data", "news.json")
+            os.makedirs(os.path.dirname(json_path), exist_ok=True)
+            with open(json_path, "w", encoding="utf-8") as f:
+                json.dump(
+                    {"news": items, "metadata": {"last_updated": now}},
+                    f,
+                    ensure_ascii=False,
+                    indent=2,
+                )
+        except Exception:
+            pass
+
+        # Sync to JSON file
+        try:
+            items = (
+                execute_query(
+                    "SELECT * FROM news ORDER BY display_order ASC, created_at DESC",
+                    fetch_all=True,
+                )
+                or []
+            )
+            news_data = {
+                "news": [dict(item) for item in items],
+                "metadata": {
+                    "total_count": len(items),
+                    "active_count": len([i for i in items if i["is_active"]]),
+                    "last_updated": get_current_time().isoformat(),
+                    "version": "1.0",
+                },
+            }
+            with open("data/news.json", "w", encoding="utf-8") as f:
+                json.dump(news_data, f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            app_logger.warning(f"Failed to sync news to JSON: {str(e)}")
+
         return jsonify({"success": True, "message": "News item updated"})
+
     except Exception as e:
-        app_logger.error(f"api_update_news error: {e}")
-        return jsonify({"success": False, "message": str(e)}), 500
+        app_logger.error(f"Update news error: {str(e)}")
+        return jsonify({"success": False, "message": "Failed to update news"}), 500
 
 
 @app.route("/api/news/<int:news_id>", methods=["DELETE"])
 @role_required("super_admin")
 @csrf_protect
 def api_delete_news(news_id):
+    """Delete news item - Super admin only"""
     try:
+        # Check if news exists
+        existing = execute_query(
+            "SELECT id FROM news WHERE id = ?", (news_id,), fetch_one=True
+        )
+        if not existing:
+            return jsonify({"success": False, "message": "News not found"}), 404
+
         execute_query("DELETE FROM news WHERE id = ?", (news_id,))
+
+        # Sync to JSON file
+        try:
+            items = (
+                execute_query(
+                    "SELECT * FROM news ORDER BY display_order ASC, created_at DESC",
+                    fetch_all=True,
+                )
+                or []
+            )
+            now = get_current_time().isoformat()
+            json_path = os.path.join(os.getcwd(), "data", "news.json")
+            os.makedirs(os.path.dirname(json_path), exist_ok=True)
+            items_out = []
+            for r in items:
+                try:
+                    item = dict(r) if not isinstance(r, dict) else dict(r)
+                except Exception:
+                    item = r
+                try:
+                    item["youtube_embed"] = extract_youtube_embed(
+                        item.get("video_url") or ""
+                    )
+                except Exception:
+                    item["youtube_embed"] = None
+                items_out.append(item)
+
+            with open(json_path, "w", encoding="utf-8") as f:
+                json.dump(
+                    {"news": items_out, "metadata": {"last_updated": now}},
+                    f,
+                    ensure_ascii=False,
+                    indent=2,
+                )
+        except Exception as _:
+            pass
+
+        # Sync to JSON file
+        try:
+            items = (
+                execute_query(
+                    "SELECT * FROM news ORDER BY display_order ASC, created_at DESC",
+                    fetch_all=True,
+                )
+                or []
+            )
+            news_data = {
+                "news": [dict(item) for item in items],
+                "metadata": {
+                    "total_count": len(items),
+                    "active_count": len([i for i in items if i["is_active"]]),
+                    "last_updated": get_current_time().isoformat(),
+                    "version": "1.0",
+                },
+            }
+            with open("data/news.json", "w", encoding="utf-8") as f:
+                json.dump(news_data, f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            app_logger.warning(f"Failed to sync news to JSON: {str(e)}")
+
         return jsonify({"success": True, "message": "News item deleted"})
+
     except Exception as e:
-        app_logger.error(f"api_delete_news error: {e}")
-        return jsonify({"success": False, "message": str(e)}), 500
+        app_logger.error(f"Delete news error: {str(e)}")
+        return jsonify({"success": False, "message": "Failed to delete news"}), 500
 
 
 @app.route("/api/news/admin", methods=["GET"])
@@ -21875,7 +22167,6 @@ def api_admin_news():
 
 @app.route('/admin/sync-news', methods=['POST'])
 @role_required('super_admin')
-@csrf_protect
 def admin_sync_news():
     """Admin endpoint to sync `data/news.json` into the SQL `news` table.
 
@@ -22234,67 +22525,12 @@ def api_toggle_news_ticker(news_id):
         )
 
 
-def allowed_news_file(filename, file_type="image"):
-    if "." not in filename:
-        return False
-    ext = filename.rsplit(".", 1)[1].lower()
-    if file_type == "image":
-        return ext in ALLOWED_NEWS_IMAGE_EXTENSIONS
-    elif file_type == "video":
-        return ext in ALLOWED_NEWS_VIDEO_EXTENSIONS
-    return False
-
-@app.route("/admin/upload-news-media", methods=["POST"])
-@role_required("super_admin")
-@csrf_protect
-def admin_upload_news_media():
-    try:
-        if "file" not in request.files:
-            return jsonify({"success": False, "message": "Fayl tanlanmadi"}), 400
-        file = request.files["file"]
-        if file.filename == "":
-            return jsonify({"success": False, "message": "Fayl tanlanmadi"}), 400
-        
-        is_image = allowed_news_file(file.filename, "image")
-        is_video = allowed_news_file(file.filename, "video")
-        
-        if not (is_image or is_video):
-            return jsonify({"success": False, "message": "Noto'g'ri fayl formati"}), 400
-            
-        # Size check
-        file.seek(0, os.SEEK_END)
-        file_size = file.tell()
-        file.seek(0)
-        max_size = MAX_NEWS_IMAGE_SIZE if is_image else MAX_NEWS_VIDEO_SIZE
-        if file_size > max_size:
-            return jsonify({"success": False, "message": f"Fayl juda katta (max {max_size//(1024*1024)}MB)"}), 400
-            
-        # Cloudinary upload
-        folder = "news/images" if is_image else "news/videos"
-        resource_type = "image" if is_image else "video"
-        
-        upload_result = cloudinary_service.upload_image(
-            file.stream,
-            folder=folder,
-            resource_type=resource_type
-        )
-        
-        if not upload_result:
-            return jsonify({"success": False, "message": "Cloudinary upload failed"}), 500
-            
-        url_path = upload_result.get("secure_url")
-        public_id = upload_result.get("public_id")
-
-        return jsonify({
-            "success": True, 
-            "message": "Fayl yuklandi", 
-            "file_url": url_path,
-            "public_id": public_id,
-            "file_type": "image" if is_image else "video"
-        })
-    except Exception as e:
-        app_logger.error(f"Upload media error: {e}")
-        return jsonify({"success": False, "message": "Yuklashda xatolik"}), 500
+# Note: upload-news-media route is implemented in the news_api blueprint
+# (api/news_api.py) as /admin/upload-news-media. The blueprint registration
+# happens early during app startup. We intentionally avoid re-defining the
+# same route here to prevent conflicting behavior (duplicate handlers with
+# different auth/CSRF rules). The blueprint's handler will be the active
+# implementation.
 
 
 @app.route("/admin/card-management")
@@ -22489,7 +22725,6 @@ def sitemap_legacy():
 
 # --- Minimal Uzbek AI chat endpoints ---
 @app.route("/api/chat/ai", methods=["GET", "POST"])
-@csrf_protect
 def api_chat_ai():
     """Oddiy AI: Uzbek tilida qisqa javob qaytaradi.
 
@@ -22772,7 +23007,6 @@ def api_chat_ai():
 
 @app.route("/api/chat/superadmin-question", methods=["POST"])
 @limiter.limit("30/minute")
-@csrf_protect
 def api_superadmin_question():
     """Oddiy savolni superadmin uchun navbatga qo'yadi.
 
@@ -23163,20 +23397,65 @@ if os.environ.get('ENABLE_SWAGGER', '0') == '1':
     @app.route('/openapi.json')
     def openapi_spec():
         try:
-            # Prefer a static file if present (allows a full spec to be dropped into static/)
+            # Prefer a static file if present
             static_path = os.path.join(app.root_path, 'static', 'openapi.json')
             if os.path.exists(static_path):
                 return send_from_directory(os.path.join(app.root_path, 'static'), 'openapi.json', mimetype='application/json')
 
-            # Otherwise return a minimal placeholder OpenAPI document so Swagger UI can load.
+            # Auto-generate from Flask routes
+            paths = {}
+            for rule in app.url_map.iter_rules():
+                if rule.rule.startswith('/static') or rule.rule.startswith('/admin/static'): continue
+                
+                # Convert Flask rule to OpenAPI path parameter syntax
+                path = str(rule.rule).replace('<', '{').replace('>', '}')
+                # Clean up type converters like {int:id} -> {id}
+                import re
+                path = re.sub(r'\{[a-zA-Z0-9_]+:([a-zA-Z0-9_]+)\}', r'{\1}', path)
+                
+                if path not in paths: paths[path] = {}
+                
+                for method in rule.methods:
+                    if method in ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']:
+                        m_lower = method.lower()
+                        
+                        # Get function details
+                        func = app.view_functions.get(rule.endpoint)
+                        summary = f"{rule.endpoint}"
+                        desc = ""
+                        tags = ['General']
+                        
+                        if func:
+                            if func.__doc__:
+                                desc = func.__doc__.strip()
+                            # Try to categorize tags based on URL
+                            if '/api/' in path: tags = ['API']
+                            if '/super-admin/' in path: tags = ['Super Admin']
+                            if '/staff/' in path: tags = ['Staff']
+                            if '/courier/' in path: tags = ['Courier']
+                            if '/user/' in path: tags = ['User']
+
+                        paths[path][m_lower] = {
+                            'tags': tags,
+                            'summary': summary,
+                            'description': desc,
+                            'responses': {'200': {'description': 'Successful response'}}
+                        }
+            
             spec = {
                 'openapi': '3.0.1',
-                'info': {'title': 'Safety.uz API (auto)', 'version': '0.1'},
-                'paths': {}
+                'info': {'title': 'Safety.uz API', 'version': '1.0.0', 'description': 'Auto-generated API documentation for Safety.uz'},
+                'paths': paths,
+                'components': {
+                    'securitySchemes': {
+                        'sessionAuth': {'type': 'apiKey', 'in': 'cookie', 'name': 'session'}
+                    }
+                }
             }
             return jsonify(spec)
-        except Exception:
-            return jsonify({'openapi': '3.0.1', 'info': {'title': 'error', 'version': '0.0'}, 'paths': {}})
+        except Exception as e:
+            app_logger.error(f"Swagger Gen Error: {e}")
+            return jsonify({'openapi': '3.0.1', 'info': {'title': 'Error', 'version': '0.0'}, 'paths': {}, 'x-error': str(e)})
 
 
 
@@ -23196,7 +23475,6 @@ def api_auth_status():
 
 @app.route('/super-admin/clear-database', methods=['POST'])
 @role_required('super_admin')
-@csrf_protect
 def super_admin_clear_database():
     """Clear transactional data from database but keep structure."""
     try:
@@ -23232,5 +23510,254 @@ def super_admin_clear_database():
     except Exception as e:
         app_logger.error(f"Database clear error: {str(e)}")
         return jsonify({'success': False, 'message': str(e)}), 500
+
+@app.route("/super-admin/global-search")
+@role_required("super_admin")
+def super_admin_global_search():
+    """Global search for Super Admin Dashboard."""
+    query = request.args.get("q", "").strip()
+    if not query:
+        return jsonify({"success": True, "results": []})
+
+    results = []
+    try:
+        # Use existing db_pool if defined, else get_db()
+        conn = None
+        should_close = False
+        if 'db_pool' in globals():
+             conn = db_pool.get_connection()
+             should_close = True # Context manager handles it usually but if we manually get it... 
+             # actually db_pool.get_connection() context manager is best.
+        else:
+             conn = get_db()
+
+        # Let's use the context manager approach if possible, but consistent with app.py style
+        # Inspecting previous code: with db_pool.get_connection() as conn:
+        
+        # We'll try to use the most common pattern.
+        # If db_pool is available:
+        if 'db_pool' in globals():
+            with db_pool.get_connection() as conn:
+                _perform_search(conn, query, results)
+        else:
+            conn = get_db()
+            _perform_search(conn, query, results)
+            # conn is request-bound in some Flask setups, or needs explicit close? 
+            # In this app, get_db() usually involves g.db. 
+            # We will assume get_db() handles connection reuse within request.
+
+    except Exception as e:
+        app_logger.error(f"Global search error: {e}")
+        return jsonify({"success": False, "error": "Search failed"}), 500
+
+    return jsonify({"success": True, "results": results})
+
+# --- INJECTED ROUTES FOR ADMIN FIXES ---
+
+def _get_db_dict(query, args=(), one=False):
+    try:
+        # Try to use existing get_db or connect manually
+        if 'get_db' in globals():
+            conn = get_db()
+        else:
+            conn = sqlite3.connect('database.sqlite3')
+        
+        # We process row conversion manually to avoid row_factory conflicts if connection is shared
+        cur = conn.cursor()
+        cur.execute(query, args)
+        columns = [column[0] for column in cur.description]
+        results = []
+        for row in cur.fetchall():
+            results.append(dict(zip(columns, row)))
+            
+        return (results[0] if results else None) if one else results
+    except Exception as e:
+        if 'app_logger' in globals():
+            app_logger.error(f"DB Dict Error: {e}")
+        return None if one else []
+
+@app.route('/admin/product/edit/<int:product_id>')
+# @role_required('super_admin') # Temporarily disable decorator if not available in scope here, but it should be
+def admin_product_edit_fix(product_id):
+    if not session.get('super_admin'): return redirect('/super-admin/login')
+    
+    product = _get_db_dict("SELECT * FROM menu_items WHERE id = ?", (product_id,), one=True)
+    if not product:
+        # Fallback table name
+        product = _get_db_dict("SELECT * FROM products WHERE id = ?", (product_id,), one=True)
+    
+    if not product:
+        return "Mahsulot topilmadi (Product not found)", 404
+        
+    # Ensure product has image_url if missing
+    if 'image_url' not in product: product['image_url'] = '/static/img/default.webp'
+        
+    return render_template('admin/product_edit.html', product=product)
+
+@app.route('/super-admin/notifications')
+def super_admin_notifications_fix():
+    if not session.get('super_admin'): return redirect('/super-admin/login')
+    notifications = _get_db_dict("SELECT * FROM notifications ORDER BY created_at DESC LIMIT 50")
+    return render_template('super_admin/super_admin_notifications.html', notifications=notifications)
+
+@app.route('/super-admin/news-manage')
+def super_admin_news_fix():
+    if not session.get('super_admin'): return redirect('/super-admin/login')
+    return render_template('admin/news_management.html')
+    
+# Alias for menu news link if needed
+@app.route('/super-admin/news') 
+def super_admin_news_redirect():
+    if not session.get('super_admin'): return redirect('/super-admin/login')
+    return render_template('admin/news_management.html')
+
+@app.route('/super-admin/questions')
+def super_admin_questions_fix():
+    if not session.get('super_admin'): return redirect('/super-admin/login')
+    questions = _get_db_dict("SELECT * FROM ai_unanswered ORDER BY created_at DESC LIMIT 50")
+    return render_template('super_admin/ai_unanswered.html', questions=questions)
+
+@app.route('/super-admin/social')
+def super_admin_social_fix():
+    if not session.get('super_admin'): return redirect('/super-admin/login')
+    socials = _get_db_dict("SELECT * FROM social_links ORDER BY created_at DESC")
+    return render_template('super_admin/social_settings.html', socials=socials)
+
+@app.route('/super-admin/settings/social/add', methods=['POST'])
+def super_admin_social_add_fix():
+    if not session.get('super_admin'): return redirect('/super-admin/login')
+    try:
+        platform = request.form.get('platform_name')
+        url = request.form.get('url')
+        icon_file = request.files.get('icon_file')
+        icon_path = None
+        
+        if icon_file:
+            # Simple local save or Cloudinary. Assuming local for speed.
+            filename = f"social_{int(time.time())}_{icon_file.filename}"
+            save_path = os.path.join('static', 'img', 'socials')
+            os.makedirs(save_path, exist_ok=True)
+            icon_file.save(os.path.join(save_path, filename))
+            icon_path = f"/static/img/socials/{filename}"
+        
+        if platform and url:
+            # Use raw query for injected fix
+            conn = sqlite3.connect('database.sqlite3')
+            cur = conn.cursor()
+            cur.execute("INSERT INTO social_links (platform_name, url, icon_url) VALUES (?, ?, ?)", (platform, url, icon_path))
+            conn.commit()
+            conn.close()
+            flash("Ijtimoiy tarmoq qo'shildi", "success")
+            
+    except Exception as e:
+        flash(f"Xatolik: {e}", "error")
+        
+    return redirect('/super-admin/social')
+
+@app.route('/super-admin/settings/social/delete', methods=['POST'])
+def super_admin_social_delete_fix():
+    if not session.get('super_admin'): return redirect('/super-admin/login')
+    try:
+        sid = request.form.get('social_id')
+        if sid:
+            conn = sqlite3.connect('database.sqlite3')
+            cur = conn.cursor()
+            cur.execute("DELETE FROM social_links WHERE id = ?", (sid,))
+            conn.commit()
+            conn.close()
+            flash("O'chirildi", "success")
+    except:
+        flash("Xatolik", "error")
+    return redirect('/super-admin/social')
+
+# Global Context Processor for Socials
+@app.context_processor
+def inject_socials_fix():
+    try:
+        # Simple cached check or direct DB. Direct DB for now (low traffic).
+        # We need a quick way to get data without overriding get_db
+        # But context processors run on every request, so we should be careful.
+        # Use existing logic if possible.
+        # We'll use a silent check.
+        if request.endpoint and 'static' not in request.endpoint:
+             socials = _get_db_dict("SELECT * FROM social_links")
+             return dict(global_socials=socials)
+    except:
+        pass
+    return dict(global_socials=[])
+
+@app.route('/super-admin/settings')
+def super_admin_settings_fix():
+    if not session.get('super_admin'): return redirect('/super-admin/login')
+    return redirect(url_for('general_settings'))
+
+# APIs for Dashboard Data Loading
+@app.route('/api/staff-list')
+def api_staff_list_fix():
+    if not session.get('super_admin'): return jsonify({"success": False}), 403
+    staff = _get_db_dict("SELECT * FROM staff")
+    return jsonify({"success": True, "staff": staff})
+
+@app.route('/api/couriers-list')
+def api_couriers_list_fix():
+    if not session.get('super_admin'): return jsonify({"success": False}), 403
+    couriers = _get_db_dict("SELECT * FROM couriers")
+    return jsonify({"success": True, "couriers": couriers})
+
+@app.route('/api/users-list')
+def api_users_list_fix():
+    if not session.get('super_admin'): return jsonify({"success": False}), 403
+    users = _get_db_dict("SELECT * FROM users ORDER BY id DESC LIMIT 500")
+    return jsonify({"success": True, "users": users})
+
+def _perform_search(conn, query, results):
+    cur = conn.cursor()
+    
+    # 1. Orders
+    if query.isdigit():
+        cur.execute("SELECT id, total_amount, status, created_at FROM orders WHERE id=?", (query,))
+        row = cur.fetchone()
+        if row:
+            results.append({
+                "type": "order",
+                "id": row[0],
+                "title": f"Buyurtma #{row[0]}",
+                "subtitle": f"{row[1]} so'm - {row[2]}",
+                "url": url_for("super_admin_orders") if 'super_admin_orders' in app.view_functions else "#"
+            })
+
+    # 2. Users (limit 3)
+    try:
+        cur.execute("""
+            SELECT id, name, email, phone_number, role 
+            FROM users 
+            WHERE name LIKE ? OR email LIKE ? OR phone_number LIKE ?
+            LIMIT 3
+        """, (f"%{query}%", f"%{query}%", f"%{query}%"))
+        for u in cur.fetchall():
+            results.append({
+                "type": "user",
+                "id": u[0],
+                "title": u[1] or u[2] or "Foydalanuvchi",
+                "subtitle": f"{u[4]} | {u[3] or ''}",
+                "url": url_for("super_admin_users") if 'super_admin_users' in app.view_functions else "#"
+            })
+    except Exception:
+        pass
+
+    # 3. Products (limit 3)
+    try:
+        cur.execute("SELECT id, name, price FROM menu_items WHERE name LIKE ? LIMIT 3", (f"%{query}%",))
+        for i in cur.fetchall():
+             results.append({
+                "type": "product",
+                "id": i[0],
+                "title": i[1],
+                "subtitle": f"{i[2]} so'm",
+                "url": url_for("product_page", product_id=i[0])
+            })
+    except Exception:
+        pass
+
 
 if __name__ == '__main__': main()

@@ -1,89 +1,101 @@
-{% extends 'base.html' %} {% block content %}
-<div class="container mt-4">
-  <h2>Super Admin Profil</h2>
-  <form
-    method="POST"
-    action="{{ url_for('super_admin_profile_update') }}"
-    enctype="multipart/form-data">
-    <div class="mb-3">
-      <label class="form-label">Foydalanuvchi nomi</label>
-      <input
-        type="text"
-        name="username"
-        class="form-control"
-        value="{{ user.username or '' }}"
-        required />
+{% extends "super_admin_base.html" %}
+
+{% block title %}Super Admin Profil{% endblock %}
+
+{% block dashboard_content %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="h3 fw-bold mb-1">Super Admin Profil</h2>
+            <p class="text-muted mb-0">Shaxsiy ma'lumotlar va xavfsizlik sozlamalari</p>
+        </div>
+        <div>
+            <a href="{{ url_for('super_admin_dashboard') }}" class="btn btn-light-modern">
+                <i class="bi bi-arrow-left me-1"></i> Dashboard
+            </a>
+        </div>
     </div>
-    <div class="mb-3">
-      <label class="form-label">Yangi parol (qoldirish shart emas)</label>
-      <input type="password" name="password" class="form-control" />
+
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card-modern">
+                <div class="card-body p-4">
+                     <form method="POST" action="{{ url_for('super_admin_profile_update') }}" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        
+                        <!-- Account Info -->
+                        <h5 class="fw-bold mb-3 text-primary border-bottom pb-2">Hisob Ma'lumotlari</h5>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-uppercase text-muted">Foydalanuvchi nomi</label>
+                                <input type="text" name="username" class="form-control" value="{{ user.username or '' }}" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-uppercase text-muted">Yangi parol</label>
+                                <input type="password" name="password" class="form-control" placeholder="O'zgartirish uchun kiriting" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-uppercase text-muted">Email</label>
+                                <input type="email" name="email" class="form-control" value="{{ user.email or '' }}" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-uppercase text-muted">Telefon</label>
+                                <input type="text" name="phone" class="form-control" value="{{ user.phone or '' }}" />
+                            </div>
+                        </div>
+
+                        <!-- Personal Info -->
+                        <h5 class="fw-bold mb-3 text-primary border-bottom pb-2 mt-4">Shaxsiy Ma'lumotlar</h5>
+                        <div class="row g-3 mb-4">
+                             <div class="col-md-6">
+                                <label class="form-label fw-bold small text-uppercase text-muted">Ism</label>
+                                <input type="text" name="first_name" class="form-control" value="{{ user.first_name or '' }}" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-uppercase text-muted">Familiya</label>
+                                <input type="text" name="last_name" class="form-control" value="{{ user.last_name or '' }}" />
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-bold small text-uppercase text-muted">Manzil</label>
+                                <input type="text" name="address" class="form-control" value="{{ user.address or '' }}" />
+                            </div>
+                        </div>
+
+                        <!-- Payment & Avatar -->
+                        <h5 class="fw-bold mb-3 text-primary border-bottom pb-2 mt-4">Qo'shimcha</h5>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-uppercase text-muted">Karta raqami</label>
+                                <input type="text" name="card_number" class="form-control" placeholder="XXXX-XXXX-XXXX-1234" />
+                                {% if user.card_last4 %}
+                                    <div class="form-text text-success">
+                                        <i class="bi bi-credit-card-fill me-1"></i> Saqlangan: **** **** **** {{ user.card_last4 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                             <div class="col-md-6">
+                                <label class="form-label fw-bold small text-uppercase text-muted">Profil rasmi</label>
+                                <input type="file" name="avatar" accept="image/*" class="form-control" />
+                            </div>
+                             {% if user.avatar %}
+                                <div class="col-12">
+                                    <div class="d-flex align-items-center gap-3 p-2 bg-light rounded">
+                                        <img src="{{ prefer_webp(user.avatar or url_for('static', filename='images/default-avatar.svg')) }}" 
+                                             width="60" height="60" class="rounded-circle object-fit-cover shadow-sm" alt="Avatar">
+                                        <span class="text-muted small">Joriy profil rasmi</span>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-5">
+                            <a href="{{ url_for('super_admin_dashboard') }}" class="btn btn-light-modern btn-lg px-4">Bekor qilish</a>
+                            <button type="submit" class="btn btn-primary-modern btn-lg px-5">
+                                <i class="bi bi-save me-2"></i> Saqlash
+                            </button>
+                        </div>
+                     </form>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="mb-3">
-      <label class="form-label">Ism</label>
-      <input
-        type="text"
-        name="first_name"
-        class="form-control"
-        value="{{ user.first_name or '' }}" />
-    </div>
-    <div class="mb-3">
-      <label class="form-label">Familiya</label>
-      <input
-        type="text"
-        name="last_name"
-        class="form-control"
-        value="{{ user.last_name or '' }}" />
-    </div>
-    <div class="mb-3">
-      <label class="form-label">Telefon</label>
-      <input
-        type="text"
-        name="phone"
-        class="form-control"
-        value="{{ user.phone or '' }}" />
-    </div>
-    <div class="mb-3">
-      <label class="form-label">Email</label>
-      <input
-        type="email"
-        name="email"
-        class="form-control"
-        value="{{ user.email or '' }}" />
-    </div>
-    <div class="mb-3">
-      <label class="form-label">Manzil</label>
-      <input
-        type="text"
-        name="address"
-        class="form-control"
-        value="{{ user.address or '' }}" />
-    </div>
-    <div class="mb-3">
-      <label class="form-label">Karta (faqat oxirgi 4 raqam saqlanadi)</label>
-      <input
-        type="text"
-        name="card_number"
-        class="form-control"
-        placeholder="XXXX-XXXX-XXXX-1234" />
-      {% if user.card_last4 %}
-      <div class="form-text">
-        Saqlangan karta: **** **** **** {{ user.card_last4 }}
-      </div>
-      {% endif %}
-    </div>
-    <div class="mb-3">
-      <label class="form-label">Profil rasmi</label>
-      <input type="file" name="avatar" accept="image/*" class="form-control" />
-      {% if user.avatar %}
-      <div class="mt-2">
-        <img
-          src="{{ prefer_webp(user.avatar or url_for('static', filename='images/default-avatar.svg')) }}"
-          width="120"
-          class="app-avatar" />
-      </div>
-      {% endif %}
-    </div>
-    <button class="btn btn-primary">Saqlash</button>
-  </form>
-</div>
 {% endblock %}

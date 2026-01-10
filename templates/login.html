@@ -3,28 +3,40 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Kirish - Pro-Obuv</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      rel="stylesheet" />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}" />
-    <!-- Modern site styles (auth/footer) -->
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/site-modern.css') }}" />
+    <title>{{ _('nav.login') }} - Pro-Obuv</title>
+    
+    <!-- Core styles -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/industrial-premium.css') }}">
+    
+    <!-- Theme Script -->
+    <script>
+      (function() {
+        if (!localStorage.getItem("theme_preference")) localStorage.setItem("theme_preference", "light");
+        const theme = localStorage.getItem("theme_preference");
+        if (theme === 'dark') {
+          document.documentElement.classList.add("dark-theme");
+          document.body.classList.add("dark-theme");
+        } else {
+          document.documentElement.classList.remove("dark-theme");
+          document.body.classList.add("light-theme");
+        }
+      })();
+    </script>
   </head>
   <body class="auth-page">
     <div class="auth-card">
-      <div class="brand">
+      <div class="text-center mb-4">
         <img
           src="{{ 'favicons/favicon-32x32.png' | cloudinary_url }}"
-          alt="logo"
+          alt="Pro Obuv"
+          style="height: 48px; width: auto;"
+          class="mb-3"
           onerror="this.style.display='none'" />
         <div>
-          <h2 class="mb-0">{{ _('nav.login') }}</h2>
-          <small class="text-muted-weak">{{ _('nav.brand') }}</small>
+          <h2 class="h3 fw-bold text-uppercase font-heading" style="color: var(--accent-primary);">{{ _('nav.login') }}</h2>
+          <small class="text-secondary">{{ _('nav.brand') }}</small>
         </div>
       </div>
 
@@ -44,45 +56,58 @@
       <form method="POST">
         <input type="hidden" name="next" id="nextInput" value="{{ request.args.get('next','') }}" />
         <div class="mb-3">
-          <label for="email" class="form-label"> Email</label>
-          <input
-            type="email"
-            class="form-control"
-            id="email"
-            name="email"
-            autocomplete="email"
-            required />
+          <label for="email" class="form-label text-secondary small text-uppercase fw-bold">Email</label>
+          <div class="input-group">
+            <span class="input-group-text bg-dark border-secondary text-secondary"><i class="bi bi-envelope"></i></span>
+            <input
+              type="email"
+              class="form-control bg-dark border-secondary text-light"
+              id="email"
+              name="email"
+              autocomplete="email"
+              placeholder="name@example.com"
+              required />
+          </div>
         </div>
 
-        <div class="mb-3">
-          <label for="password" class="form-label"> Parol</label>
-          <input
-            type="password"
-            class="form-control"
-            id="password"
-            name="password"
-            autocomplete="current-password"
-            required />
+        <div class="mb-4">
+          <div class="d-flex justify-content-between">
+              <label for="password" class="form-label text-secondary small text-uppercase fw-bold">Parol</label>
+              <a href="{{ url_for('forgot') }}" class="small text-accent text-decoration-none">Unutdingizmi?</a>
+          </div>
+          <div class="input-group">
+             <span class="input-group-text bg-dark border-secondary text-secondary"><i class="bi bi-key"></i></span>
+             <input
+              type="password"
+              class="form-control bg-dark border-secondary text-light"
+              id="password"
+              name="password"
+              autocomplete="current-password"
+              placeholder="••••••••"
+              required />
+          </div>
         </div>
 
-        <button type="submit" class="btn btn-login">Kirish</button>
+        <button type="submit" class="btn-primary-industrial w-100 justify-content-center mb-3">
+          Kirish <i class="bi bi-box-arrow-in-right ms-2"></i>
+        </button>
       </form>
 
-      <div class="text-center mt-3">
+      <div class="text-center mb-3">
+         <span class="text-secondary small">Yoki ijtimoiy tarmoqlar orqali</span>
+      </div>
+      
+      <div class="d-flex justify-content-center mb-4">
         <div id="g_id_signin"></div>
       </div>
 
-      <div class="text-center mt-2">
-        <a href="{{ url_for('forgot') }}">Parolni unutdingiz?</a>
-      </div>
-
-      <div class="text-center mt-3">
-        <p>
+      <div class="text-center pt-3 border-top border-secondary border-opacity-25">
+        <p class="text-secondary mb-2">
           Akkauntingiz yo'qmi?
-          <a href="{{ url_for('register') }}">Ro'yxatdan o'ting</a>
+          <a href="{{ url_for('register') }}" class="text-accent fw-bold text-decoration-none">Ro'yxatdan o'ting</a>
         </p>
-        <a href="{{ url_for('index') }}" class="btn btn-outline-secondary"
-          >⬅ Bosh sahifa</a
+        <a href="{{ url_for('index') }}" class="text-secondary small text-decoration-none d-inline-flex align-items-center"
+          ><i class="bi bi-arrow-left me-1"></i> Bosh sahifa</a
         >
       </div>
     </div>
@@ -111,7 +136,6 @@
       function initGoogleSignIn() {
         try {
           if (!window.google || !google.accounts || !google.accounts.id) {
-            console.warn('Google Identity script not available yet');
             return;
           }
           const CLIENT_ID = '{{ GOOGLE_CLIENT_ID }}';
@@ -122,33 +146,42 @@
         }
       }
 
-      // Load GSI script dynamically and call init on load to ensure availability
+      // Load GSI script dynamically
       (function loadGsi(){
         var s = document.createElement('script');
         s.src = 'https://accounts.google.com/gsi/client';
         s.async = true; s.defer = true;
         s.onload = function(){ initGoogleSignIn(); };
-        s.onerror = function(){ console.warn('Failed to load Google Identity Services script'); };
         document.head.appendChild(s);
       })();
     </script>
+    
+    <script>
+        // Custom form styles for focused inputs (optional JS enhancement)
+        const inputs = document.querySelectorAll('.form-control');
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.classList.add('border-warning');
+            });
+            input.addEventListener('blur', () => {
+                input.parentElement.classList.remove('border-warning');
+            });
+        });
+    </script>
 
       <script>
-        // Intercept traditional form POST and perform AJAX login so we can update navbar immediately
+        // Intercept traditional form POST and perform AJAX login
         (function(){
           try {
             const form = document.querySelector('form');
             if (!form) return;
             form.addEventListener('submit', function(e){
-              // If user/agent wants full-page submit, allow when holding meta/ctrl — but default use AJAX
               if (e.metaKey || e.ctrlKey) return;
               e.preventDefault();
               const fd = new FormData(form);
               const body = new URLSearchParams();
               for (const pair of fd.entries()) { body.append(pair[0], pair[1]); }
-              // prefer to send X-Requested-With header so server returns JSON with `next`
               const headers = { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' };
-              // ensure next input populated from sessionStorage if available
               try { if (!document.getElementById('nextInput').value && sessionStorage.getItem('preLogin')) document.getElementById('nextInput').value = sessionStorage.getItem('preLogin'); } catch(e){}
 
               fetch(form.action || window.location.pathname, {
@@ -157,7 +190,6 @@
                 headers: headers,
                 body: body.toString()
               }).then(r=>{
-                // Try to parse JSON; if parse fails, capture final URL/status so we can navigate.
                 return r.text().then(text => {
                   try {
                     return JSON.parse(text);
@@ -168,21 +200,15 @@
               }).then(data=>{
                 if (data && data.success) {
                   try { localStorage.setItem('auth', JSON.stringify({ logged: true, role: data.role || null, user: data.user || null })); } catch(e) {}
-                  try { if (window.AuthStore && typeof window.AuthStore.set === 'function') window.AuthStore.set({ logged: true, role: data.role || null, user: data.user || null }); } catch(e) {}
                   window.location = data.next || '/';
                   return;
                 }
-
-                // If server returned a non-JSON redirect final page, navigate to that URL if available
                 if (data && data.url) {
                   window.location = data.url;
                   return;
                 }
-
-                // Fallback: reload current page to allow server-rendered flash messages
                 window.location.reload();
               }).catch(err=>{
-                console.error('Login AJAX failed', err);
                 form.submit();
               });
             });

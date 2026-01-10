@@ -3,30 +3,41 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ro'yxatdan o'tish - Oyoq kiyim do'koni</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      rel="stylesheet" />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}" />
-    <!-- Modern site styles (auth/footer) -->
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/site-modern.css') }}" />
+    <title>Ro'yxatdan o'tish - Pro-Obuv</title>
+    
+    <!-- Core styles -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/industrial-premium.css') }}">
+    
+    <!-- Theme Script -->
+    <script>
+      (function() {
+        if (!localStorage.getItem("theme_preference")) localStorage.setItem("theme_preference", "light");
+        const theme = localStorage.getItem("theme_preference");
+        if (theme === 'dark') {
+          document.documentElement.classList.add("dark-theme");
+          document.body.classList.add("dark-theme");
+        } else {
+          document.documentElement.classList.remove("dark-theme");
+          document.body.classList.add("light-theme");
+        }
+      })();
+    </script>
   </head>
   <body class="auth-page">
-    <div class="auth-card">
-        <div class="brand">
+    <div class="auth-card" style="max-width: 600px;">
+        <div class="text-center mb-4">
         <img
           src="{{ 'icons/logo-compact.webp' | cloudinary_url }}"
           alt="logo"
+          style="height: 48px; width: auto;"
+          class="mb-3"
           onerror="this.onerror=null; this.src='{{ 'favicons/favicon-32x32.png' | cloudinary_url }}'" />
         <div>
-          <h2 class="mb-0">{{ _('nav.register') }}</h2>
-          <small class="text-muted-weak"
-            >{{ _('footer.register_subtitle') if _('footer.register_subtitle')
-            else '' }}</small
+          <h2 class="h3 fw-bold text-uppercase font-heading" style="color: var(--accent-primary);">{{ _('nav.register') }}</h2>
+          <small class="text-secondary"
+            >{{ _('footer.register_subtitle') if _('footer.register_subtitle') else '' }}</small
           >
         </div>
       </div>
@@ -45,128 +56,129 @@
       {% endfor %} {% endif %} {% endwith %}
 
       <form method="POST">
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <label for="first_name" class="form-label"> Ism</label>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="first_name" class="form-label text-secondary small text-uppercase fw-bold">Ism</label>
             <input
               type="text"
-              class="form-control"
+              class="form-control bg-dark border-secondary text-light"
               id="first_name"
               name="first_name"
               required />
           </div>
-          <div class="col-md-6 mb-3">
-            <label for="last_name" class="form-label"> Familiya</label>
+          <div class="col-md-6">
+            <label for="last_name" class="form-label text-secondary small text-uppercase fw-bold">Familiya</label>
             <input
               type="text"
-              class="form-control"
+              class="form-control bg-dark border-secondary text-light"
               id="last_name"
               name="last_name"
               required />
           </div>
-        </div>
+        
+          <div class="col-12">
+            <label for="email" class="form-label text-secondary small text-uppercase fw-bold">Email</label>
+            <div class="input-group">
+                <span class="input-group-text bg-dark border-secondary text-secondary"><i class="bi bi-envelope"></i></span>
+                <input
+                type="email"
+                class="form-control bg-dark border-secondary text-light"
+                id="email"
+                name="email"
+                placeholder="email@example.com"
+                required />
+            </div>
+          </div>
 
-        <div class="mb-3">
-          <label for="email" class="form-label"> Email</label>
-          <input
-            type="email"
-            class="form-control"
-            id="email"
-            name="email"
-            required />
-        </div>
+          <div class="col-12">
+            <label for="phone" class="form-label text-secondary small text-uppercase fw-bold">Telefon</label>
+            <div class="input-group">
+                <span class="input-group-text bg-dark border-secondary text-secondary"><i class="bi bi-phone"></i></span>
+                <input
+                type="tel"
+                class="form-control bg-dark border-secondary text-light"
+                id="phone"
+                name="phone"
+                placeholder="+998901234567" />
+            </div>
+          </div>
 
-        <div class="mb-3">
-          <label for="phone" class="form-label"> Telefon</label>
-          <input
-            type="tel"
-            class="form-control"
-            id="phone"
-            name="phone"
-            placeholder="+998901234567" />
-        </div>
+          <!-- Xarita bilan manzil tanlash -->
+          <div class="col-12">
+            <label for="address" class="form-label text-secondary small text-uppercase fw-bold">Yashash manzili</label>
+            <div class="mb-2">
+              <input
+                type="text"
+                class="form-control bg-dark border-secondary text-light"
+                id="address"
+                name="address"
+                placeholder="Manzilni xaritadan tanlang"
+                readonly
+                required />
+            </div>
+            <div
+              id="register-map"
+              style="height: 250px; border-radius: 8px; border: 1px solid var(--border-color);"></div>
+            <div class="mt-2">
+              <input type="hidden" id="address_latitude" name="address_latitude" />
+              <input type="hidden" id="address_longitude" name="address_longitude" />
+              <small class="text-secondary"><i class="bi bi-geo-alt me-1"></i> Xaritada joyingizni belgilang</small>
+            </div>
+          </div>
 
-        <!-- Xarita bilan manzil tanlash -->
-        <div class="mb-3">
-          <label for="address" class="form-label"> Yashash manzili</label>
-          <div class="mb-2">
+          <div class="col-md-6">
+            <label for="password" class="form-label text-secondary small text-uppercase fw-bold">Parol</label>
             <input
-              type="text"
-              class="form-control"
-              id="address"
-              name="address"
-              placeholder="Manzilni xaritadan tanlang"
-              readonly
+              type="password"
+              class="form-control bg-dark border-secondary text-light"
+              id="password"
+              name="password"
+              autocomplete="new-password"
               required />
           </div>
-          <div
-            id="register-map"
-            style="height: 250px; border-radius: 10px"></div>
-          <div class="mt-2">
+
+          <div class="col-md-6">
+            <label for="confirm_password" class="form-label text-secondary small text-uppercase fw-bold">Parolni tasdiqlash</label>
             <input
-              type="hidden"
-              id="address_latitude"
-              name="address_latitude" />
-            <input
-              type="hidden"
-              id="address_longitude"
-              name="address_longitude" />
-            <small class="text-muted">Xaritada joyingizni belgilang</small>
+              type="password"
+              class="form-control bg-dark border-secondary text-light"
+              id="confirm_password"
+              name="confirm_password"
+              autocomplete="new-password"
+              required />
           </div>
         </div>
 
-        <div class="mb-3">
-          <label for="password" class="form-label"> Parol</label>
-          <input
-            type="password"
-            class="form-control"
-            id="password"
-            name="password"
-            autocomplete="new-password"
-            required />
-        </div>
-
-        <div class="mb-3">
-          <label for="confirm_password" class="form-label">
-            Parolni tasdiqlash</label
-          >
-          <input
-            type="password"
-            class="form-control"
-            id="confirm_password"
-            name="confirm_password"
-            autocomplete="new-password"
-            required />
-        </div>
-
-        <button type="submit" class="btn btn-register">
-          Ro'yxatdan o'tish
+        <button type="submit" class="btn-primary-industrial w-100 justify-content-center mt-4 mb-3">
+          Ro'yxatdan o'tish <i class="bi bi-person-plus-fill ms-2"></i>
         </button>
       </form>
 
-      <div class="text-center mt-3">
+      <div class="text-center mb-3">
+        <span class="text-secondary small">Yoki Google orqali</span>
+      </div>
+      
+      <div class="d-flex justify-content-center mb-4">
         <div id="g_id_signin"></div>
       </div>
 
-      <div class="text-center mt-2">
-        <small class="text-muted">Yoki Google orqali ro'yxatdan o'ting</small>
-      </div>
-
-      <div class="text-center mt-3">
-        <p>
-          Akkauntingiz bormi? <a href="{{ url_for('login_page') }}">Kirish</a>
+      <div class="text-center pt-3 border-top border-secondary border-opacity-25">
+        <p class="text-secondary mb-2">
+          Akkauntingiz bormi? <a href="{{ url_for('login_page') }}" class="text-accent fw-bold text-decoration-none">Kirish</a>
         </p>
-        <a href="{{ url_for('index') }}" class="btn btn-outline-secondary"
-          >⬅ Bosh sahifa</a
+        <a href="{{ url_for('index') }}" class="text-secondary small text-decoration-none d-inline-flex align-items-center"
+          ><i class="bi bi-arrow-left me-1"></i> Bosh sahifa</a
         >
       </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Yandex Maps script loaded globally in base.html -->
-    <!-- Fallback: if Yandex isn't available, load Leaflet (OpenStreetMap) so users can pick an address -->
+    
+    <!-- Yandex / Maps Scripts -->
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=e76555cc-e03d-4c5c-9d6c-24ed5140d3a7&lang=uz_UZ" type="text/javascript"></script>
+
     <script>
-      // Google Sign-In for registration: similar to login flow
+      // Google Sign-In for registration
       function handleRegisterCredentialResponse(response) {
         if (!response || !response.credential) return;
         fetch('/auth/google', {
@@ -176,7 +188,6 @@
           body: JSON.stringify({ credential: response.credential })
         }).then(r => r.json()).then(data => {
           if (data && data.success) {
-            // Redirect to profile or provided next
             window.location = data.next || '/profile';
           } else {
             alert('Google registratsiya xatosi: ' + (data && data.error || '')); 
@@ -198,7 +209,6 @@
         s.src = 'https://accounts.google.com/gsi/client';
         s.async = true; s.defer = true;
         s.onload = function(){ initGoogleSignInRegister(); };
-        s.onerror = function(){ console.warn('Failed to load Google Identity Services script'); };
         document.head.appendChild(s);
       })();
 
@@ -217,7 +227,6 @@
           }
           if (attempts >= maxAttempts) {
             clearInterval(iv);
-            // Yandex didn't load, fallback to Leaflet
             try {
               initLeafletFallback();
             } catch (e) {
@@ -228,17 +237,13 @@
       };
 
       ensureYMaps(function () {
-        // Toshkent markazi
         const tashkent = [41.2995, 69.2401];
-
-        // Xarita yaratish
         registerMap = new ymaps.Map("register-map", {
           center: tashkent,
           zoom: 12,
           controls: ["zoomControl", "typeSelector"],
         });
 
-        // Foydalanuvchi joylashuvini olishga harakat qilish
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(
             function (position) {
@@ -256,7 +261,6 @@
           );
         }
 
-        // Xaritaga bosish hodisasi
         registerMap.events.add("click", function (e) {
           const coords = e.get("coords");
           setRegisterLocation(coords);
@@ -264,12 +268,10 @@
       });
 
       function setRegisterLocation(coords) {
-        // Avvalgi marker olib tashlash
         if (registerMarker) {
           registerMap.geoObjects.remove(registerMarker);
         }
 
-        // Yangi marker qo'yish
         registerMarker = new ymaps.Placemark(
           coords,
           {
@@ -278,59 +280,45 @@
           },
           {
             draggable: true,
-            iconColor: "#4CAF50",
+            iconColor: "#FFD700", // Yellow for industrial
           }
         );
 
         registerMap.geoObjects.add(registerMarker);
 
-        // Marker siqilganda yangi joylashuvni olish
         registerMarker.events.add("dragend", function () {
           const newCoords = registerMarker.geometry.getCoordinates();
           setRegisterLocation(newCoords);
         });
 
-        // Koordinatalarni saqlash
         document.getElementById("address_latitude").value = coords[0];
         document.getElementById("address_longitude").value = coords[1];
 
-        // Manzilni olish (Reverse Geocoding)
         ymaps.geocode(coords).then(function (res) {
           const firstGeoObject = res.geoObjects.get(0);
           let address = "";
-
           if (firstGeoObject) {
             address = firstGeoObject.getAddressLine();
           } else {
-            address = `Lat: ${coords[0].toFixed(6)}, Lng: ${coords[1].toFixed(
-              6
-            )}`;
+            address = `Lat: ${coords[0].toFixed(6)}, Lng: ${coords[1].toFixed(6)}`;
           }
-
           document.getElementById("address").value = address;
         });
       }
 
-      // Leaflet fallback implementation
       function initLeafletFallback() {
-        // Only load once
         if (window._leaflet_loaded) return initLeafletMap();
         window._leaflet_loaded = true;
 
-        // Inject Leaflet CSS
         const lnk = document.createElement("link");
         lnk.rel = "stylesheet";
         lnk.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
         document.head.appendChild(lnk);
 
-        // Inject Leaflet JS
         const scr = document.createElement("script");
         scr.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
         scr.onload = function () {
           initLeafletMap();
-        };
-        scr.onerror = function () {
-          console.warn("Failed to load Leaflet script");
         };
         document.body.appendChild(scr);
       }
@@ -338,19 +326,16 @@
       function initLeafletMap() {
         try {
           const tashkent = [41.2995, 69.2401];
-          // ensure container has non-zero height
           const el = document.getElementById("register-map");
           if (el && (!el.style.height || el.style.height === "0px"))
             el.style.height = "250px";
 
-          // Create map
           registerMap = L.map("register-map").setView(tashkent, 12);
           L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
             maxZoom: 19,
             attribution: "&copy; OpenStreetMap contributors",
           }).addTo(registerMap);
 
-          // Try geolocation
           if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
               function (position) {
@@ -361,57 +346,35 @@
                 registerMap.setView(userLocation, 15);
                 setRegisterLocationLeaflet(userLocation);
               },
-              function () {
-                /* ignore */
-              }
+              function () {}
             );
           }
 
           registerMap.on("click", function (e) {
             setRegisterLocationLeaflet([e.latlng.lat, e.latlng.lng]);
           });
-        } catch (e) {
-          console.warn("Leaflet init error", e);
-        }
+        } catch (e) { }
       }
 
       function setRegisterLocationLeaflet(coords) {
-        // remove old marker
         try {
           if (registerMarker && registerMap && registerMap.removeLayer) {
             registerMap.removeLayer(registerMarker);
           }
         } catch (e) {}
 
-        registerMarker = L.marker([coords[0], coords[1]], {
-          draggable: true,
-        }).addTo(registerMap);
+        registerMarker = L.marker([coords[0], coords[1]], { draggable: true }).addTo(registerMap);
         registerMarker.on("dragend", function (e) {
           const latlng = registerMarker.getLatLng();
           setRegisterLocationLeaflet([latlng.lat, latlng.lng]);
         });
 
-        // Save coords
         document.getElementById("address_latitude").value = coords[0];
         document.getElementById("address_longitude").value = coords[1];
-
-        // Reverse geocode via Nominatim (OpenStreetMap)
-        // Use server-side proxy for reverse geocoding to avoid CORS issues with Nominatim
-        fetch(`/api/reverse_geocode?format=jsonv2&lat=${coords[0]}&lon=${coords[1]}`)
-          .then((r) => r.json())
-          .then((data) => {
-            const display =
-              data && data.display_name
-                ? data.display_name
-                : `Lat: ${coords[0].toFixed(6)}, Lng: ${coords[1].toFixed(6)}`;
-            const addrEl = document.getElementById("address");
-            if (addrEl) addrEl.value = display;
-          })
-          .catch(() => {
-            const addrEl = document.getElementById("address");
-            if (addrEl)
-              addrEl.value = `Lat: ${coords[0].toFixed(6)}, Lng: ${coords[1].toFixed(6)}`;
-          });
+        
+        // Simple fallback address
+        const addrEl = document.getElementById("address");
+        if(addrEl) addrEl.value = `Lat: ${coords[0].toFixed(6)}, Lng: ${coords[1].toFixed(6)}`;
       }
     </script>
   </body>
