@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% block title %}Yuklamalar - Pro Obuv{% endblock %}
+{% block title %}{{ _('nav.downloads') or 'Yuklamalar' }} - Pro Obuv{% endblock %}
 
 {% block seo_meta %}
-<meta name="description" content="Pro Obuv mobil ilovalari - Xavfsizlik oyoq kiyimlari va maxsus kiyimlarni qulay buyurtma qilish uchun." />
-<meta property="og:title" content="Yuklamalar - Pro Obuv" />
-<meta property="og:description" content="Mobil ilovalarni yuklab oling va qulay xarid qiling" />
+<meta name="description" content="{{ _('meta.downloads_description') or 'Pro Obuv mobil ilovalari - Xavfsizlik oyoq kiyimlari va maxsus kiyimlarni qulay buyurtma qilish uchun.' }}" />
+<meta property="og:title" content="{{ _('nav.downloads') or 'Yuklamalar' }} - Pro Obuv" />
+<meta property="og:description" content="{{ _('meta.downloads_description') or 'Mobil ilovalarni yuklab oling va qulay xarid qiling' }}" />
 {% endblock %}
 
 {% block content %}

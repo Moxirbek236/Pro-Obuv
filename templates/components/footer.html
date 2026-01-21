@@ -1,38 +1,66 @@
-<!-- Global Footer Component -->
+<!-- Premium Industrial Footer -->
 <footer class="site-footer" role="contentinfo" aria-label="{{ _('footer.site_footer') if _('footer.site_footer') else 'Site footer' }}">
   {% include 'components/news_ticker.html' %}
+
+  <div class="footer-wave">
+    <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+      <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25"></path>
+      <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5"></path>
+      <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z"></path>
+    </svg>
+  </div>
 
   <div class="container">
     <div class="footer-grid">
       <!-- Brand & Description -->
       <div class="footer-col footer-brand" data-aos="fade-up" data-aos-delay="100">
-        <h6 class="brand-title">{{ _('nav.brand') }}</h6>
+        <div class="brand-logo-wrapper">
+          <div class="brand-icon">
+            <i class="bi bi-shield-check"></i>
+          </div>
+          <h6 class="brand-title">{{ _('nav.brand') }}</h6>
+        </div>
         <p class="brand-desc">{{ _('footer.company_desc') }}</p>
         
+        <!-- Social Links with Modern Design -->
         <div class="social-row">
-          {% if social_links %}
-            {% for link in social_links %}
-            <a href="{{ link.url }}" target="_blank" class="social-icon-btn {{ link.platform|lower }}" aria-label="{{ link.platform }}" title="{{ link.platform }}">
-                 {% if 'bi-' in link.icon %}
-                    <i class="{{ link.icon }}"></i>
-                 {% else %}
-                    <img src="{{ link.icon | cloudinary_url }}" alt="{{ link.platform }}" width="20" height="20" loading="lazy">
-                 {% endif %}
-            </a>
+          {% set socials = social_links if social_links else (global_socials if global_socials else []) %}
+          {% if socials and socials|length > 0 %}
+            {% for link in socials %}
+              {% set platform = link.get('platform') or link.get('platform_name') or 'social' %}
+              {% set url = link.get('url') or link.get('link') or link.get('url_link') or '#' %}
+              {% set icon = link.get('icon') or link.get('icon_url') or link.get('icon_path') or '' %}
+              <a href="{{ url }}" target="_blank" class="social-icon-btn {{ platform|lower }}" aria-label="{{ platform }}" title="{{ platform }}">
+                {% if icon and (icon.startswith('http') or icon.startswith('/') or '://' in icon) %}
+                  <img src="{{ icon | cloudinary_url }}" alt="{{ platform }}" width="20" height="20" loading="lazy">
+                {% elif icon %}
+                  <i class="{{ icon|e }}"></i>
+                {% else %}
+                  <i class="bi bi-share"></i>
+                {% endif %}
+              </a>
             {% endfor %}
           {% else %}
-             <!-- Fallback if social links not yet configured -->
              <a href="https://t.me/proobuvLLC" class="social-icon-btn telegram"><i class="bi bi-telegram"></i></a>
+             <a href="#" class="social-icon-btn instagram"><i class="bi bi-instagram"></i></a>
+             <a href="#" class="social-icon-btn facebook"><i class="bi bi-facebook"></i></a>
           {% endif %}
         </div>
 
-        <div class="newsletter-box mt-5">
+        <!-- Newsletter with Premium Design -->
+        <div class="newsletter-box">
+            <div class="newsletter-icon">
+              <i class="bi bi-envelope-heart"></i>
+            </div>
             <h5>{{ _('footer.newsletter_title') or 'Obuna bo\'ling' }}</h5>
-            <p class="small opacity-50">{{ _('footer.newsletter_subtitle') or 'Eng so\'nggi yangiliklar va chegirmalarni birinchilardan bo\'lib biling.' }}</p>
+            <p class="small">{{ _('footer.newsletter_subtitle') or 'Eng so\'nggi yangiliklar va chegirmalarni birinchilardan bo\'lib biling.' }}</p>
             <form class="newsletter-form" onsubmit="return handleNewsletter(event)">
                 <div class="input-group">
                   <input type="email" class="form-control" name="email" placeholder="{{ _('footer.newsletter_placeholder') }}" required>
-                  <button type="submit" class="btn btn-primary">{{ _('footer.subscribe') }}</button>
+                  <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-send"></i>
+                    <span>{{ _('footer.subscribe') }}</span>
+                  </button>
                 </div>
                 <div class="newsletter-feedback mt-2" style="display:none"></div>
             </form>
@@ -41,36 +69,48 @@
 
       <!-- Quick Links -->
       <div class="footer-col" data-aos="fade-up" data-aos-delay="200">
-        <h6>{{ _('nav.quick_links') }}</h6>
+        <h6><i class="bi bi-link-45deg me-2"></i>{{ _('nav.quick_links') }}</h6>
         <ul>
-          <li><a href="{{ url_for('index') }}">{{ _('nav.home') }}</a></li>
-          <li><a href="{{ url_for('menu') }}">{{ _('nav.menu') }}</a></li>
-          <li><a href="{{ url_for('about') }}">{{ _('nav.about') }}</a></li>
-          <li><a href="{{ url_for('contact') }}">{{ _('nav.contact') }}</a></li>
+          <li><a href="{{ url_for('index') }}"><i class="bi bi-chevron-right"></i>{{ _('nav.home') }}</a></li>
+          <li><a href="{{ url_for('menu') }}"><i class="bi bi-chevron-right"></i>{{ _('nav.menu') }}</a></li>
+          <li><a href="{{ url_for('about') }}"><i class="bi bi-chevron-right"></i>{{ _('nav.about') }}</a></li>
+          <li><a href="{{ url_for('contact') }}"><i class="bi bi-chevron-right"></i>{{ _('nav.contact') }}</a></li>
         </ul>
       </div>
 
       <!-- Contact Info -->
       <div class="footer-col" data-aos="fade-up" data-aos-delay="300">
-        <h6>{{ _('footer.contact_info') }}</h6>
+        <h6><i class="bi bi-telephone me-2"></i>{{ _('footer.contact_info') }}</h6>
         <ul class="contact-list">
           <li>
             {% set ph = site_settings.site_phone if site_settings.site_phone else get_text('footer.phone_display') %}
             {% set ph_href = ph|replace(' ', '') %}
-            <a href="tel:{{ ph_href }}"><i class="bi bi-telephone me-2 text-accent"></i>{{ ph }}</a>
+            <a href="tel:{{ ph_href }}" class="contact-link">
+              <div class="contact-icon"><i class="bi bi-telephone"></i></div>
+              <span>{{ ph }}</span>
+            </a>
           </li>
           <li>
             {% set em = site_settings.site_email if site_settings.site_email else 'premiumsafety@mail.ru' %}
-            <a href="mailto:{{ em }}"><i class="bi bi-envelope me-2 text-accent"></i>{{ em }}</a>
+            <a href="mailto:{{ em }}" class="contact-link">
+              <div class="contact-icon"><i class="bi bi-envelope"></i></div>
+              <span>{{ em }}</span>
+            </a>
           </li>
           <li>
             {% set addr = site_settings.site_address if site_settings.site_address else get_text('footer.address') %}
-            <a href="https://maps.app.goo.gl/Ezg462SRmBYLxfUY6" target="_blank"><i class="bi bi-geo-alt me-2 text-accent"></i>{{ addr }}</a>
+            <a href="https://maps.app.goo.gl/Ezg462SRmBYLxfUY6" target="_blank" class="contact-link">
+              <div class="contact-icon"><i class="bi bi-geo-alt"></i></div>
+              <span>{{ addr }}</span>
+            </a>
           </li>
           <li class="mt-4">
-            <div class="hours-box p-3 rounded" style="background: var(--footer-surface)">
-                <strong class="text-bright d-block mb-1"><i class="bi bi-clock me-2"></i>{{ _('footer.hours') }}</strong>
-                <div class="opacity-50 small">{{ _('footer.hours_working') }}</div>
+            <div class="hours-box">
+                <div class="hours-icon"><i class="bi bi-clock"></i></div>
+                <div class="hours-content">
+                  <strong>{{ _('footer.hours') }}</strong>
+                  <div class="hours-time">{{ _('footer.hours_working') }}</div>
+                </div>
             </div>
           </li>
         </ul>
@@ -78,24 +118,451 @@
 
       <!-- Services -->
       <div class="footer-col" data-aos="fade-up" data-aos-delay="400">
-        <h6>{{ _('footer.services') }}</h6>
+        <h6><i class="bi bi-gear me-2"></i>{{ _('footer.services') }}</h6>
         <ul>
-          <li><a href="{{ url_for('contact') }}#delivery">{{ _('footer.delivery') }}</a></li>
-          <li><a href="{{ url_for('about') }}#return-policy">{{ _('footer.return_policy') }}</a></li>
-          <li><a href="{{ url_for('contact') }}#payment">{{ _('footer.payment_methods') }}</a></li>
-          <li><a href="{{ url_for('kafolatlar') }}">{{ _('nav.warranty') }}</a></li>
+          <li><a href="{{ url_for('contact') }}#delivery"><i class="bi bi-chevron-right"></i>{{ _('footer.delivery') }}</a></li>
+          <li><a href="{{ url_for('about') }}#return-policy"><i class="bi bi-chevron-right"></i>{{ _('footer.return_policy') }}</a></li>
+          <li><a href="{{ url_for('contact') }}#payment"><i class="bi bi-chevron-right"></i>{{ _('footer.payment_methods') }}</a></li>
+          <li><a href="{{ url_for('kafolatlar') }}"><i class="bi bi-chevron-right"></i>{{ _('nav.warranty') }}</a></li>
         </ul>
       </div>
     </div>
 
     <!-- Bottom Bar -->
     <div class="footer-bottom">
-      <div class="copyright">{{ _('footer.copyright')|safe }}</div>
+      <div class="copyright">
+        <i class="bi bi-c-circle me-1"></i>
+        {{ _('footer.copyright')|safe }}
+      </div>
       <div class="footer-legal-links">
-        <a href="{{ url_for('static', filename='oferta.pdf') }}" target="_blank">{{ _('footer.privacy') }}</a>
-        <a href="{{ url_for('static', filename='oferta.pdf') }}" target="_blank">{{ _('footer.terms') }}</a>
-        <a href="{{ url_for('static', filename='oferta.pdf') }}" target="_blank">{{ _('footer.cookies') }}</a>
+        <a href="{{ url_for('static', filename='oferta.pdf') }}" target="_blank">
+          <i class="bi bi-shield-lock"></i>{{ _('footer.privacy') }}
+        </a>
+        <a href="{{ url_for('static', filename='oferta.pdf') }}" target="_blank">
+          <i class="bi bi-file-text"></i>{{ _('footer.terms') }}
+        </a>
+        <a href="{{ url_for('static', filename='oferta.pdf') }}" target="_blank">
+          <i class="bi bi-cookie"></i>{{ _('footer.cookies') }}
+        </a>
       </div>
     </div>
   </div>
 </footer>
+
+<style>
+/* Premium Footer Styles */
+.site-footer {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  color: #e0e0e0;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.footer-wave {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.footer-wave svg {
+  position: relative;
+  display: block;
+  width: calc(100% + 1.3px);
+  height: 80px;
+  fill: var(--accent-primary, #FFD700);
+}
+
+.site-footer .container {
+  padding: 60px 20px 30px;
+  position: relative;
+  z-index: 2;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+/* Brand Section */
+.footer-brand {
+  grid-column: span 1;
+}
+
+.brand-logo-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.brand-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, var(--accent-primary, #FFD700), #FFA500);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #1a1a2e;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+.brand-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent-primary, #FFD700);
+  margin: 0;
+}
+
+.brand-desc {
+  color: #b0b0b0;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+/* Enhanced Social Icons */
+.social-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.social-icon-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.05));
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #e0e0e0;
+  font-size: 20px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.social-icon-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--accent-primary, #FFD700), #FFA500);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: -1;
+}
+
+.social-icon-btn:hover {
+  background: var(--accent-primary, #FFD700);
+  color: #1a1a2e;
+  transform: translateY(-6px) scale(1.08);
+  box-shadow: 0 16px 32px rgba(255, 215, 0, 0.4);
+  border-color: var(--accent-primary, #FFD700);
+}
+
+.social-icon-btn:hover::before {
+  opacity: 1;
+}
+
+.social-icon-btn i {
+  z-index: 1;
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.social-icon-btn:hover i {
+  transform: scale(1.1);
+}
+
+.social-icon-btn:active {
+  transform: translateY(-3px) scale(1.05);
+}
+
+/* Platform-specific hover effects */
+.social-icon-btn.telegram:hover {
+  background: linear-gradient(135deg, #0088cc, #006699);
+  color: white;
+}
+
+.social-icon-btn.instagram:hover {
+  background: linear-gradient(135deg, #e4405f, #c13584, #833ab4);
+  color: white;
+}
+
+.social-icon-btn.facebook:hover {
+  background: linear-gradient(135deg, #1877f2, #166fe5);
+  color: white;
+}
+
+/* Newsletter */
+.newsletter-box {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.newsletter-box::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+  animation: pulse 4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+.newsletter-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, var(--accent-primary, #FFD700), #FFA500);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #1a1a2e;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.newsletter-box h5 {
+  color: var(--accent-primary, #FFD700);
+  font-weight: 700;
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.newsletter-box p {
+  color: #b0b0b0;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.newsletter-form .input-group {
+  position: relative;
+  z-index: 1;
+}
+
+.newsletter-form .form-control {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #e0e0e0;
+  padding: 12px 16px;
+  border-radius: 12px 0 0 12px;
+}
+
+.newsletter-form .form-control:focus {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--accent-primary, #FFD700);
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+  color: #fff;
+}
+
+.newsletter-form .btn-primary {
+  background: linear-gradient(135deg, var(--accent-primary, #FFD700), #FFA500);
+  border: none;
+  color: #1a1a2e;
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 0 12px 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.newsletter-form .btn-primary:hover {
+  transform: translateX(4px);
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+}
+
+/* Footer Columns */
+.footer-col h6 {
+  color: var(--accent-primary, #FFD700);
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.footer-col ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-col ul li {
+  margin-bottom: 12px;
+}
+
+.footer-col ul li a {
+  color: #b0b0b0;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  padding: 4px 0;
+}
+
+.footer-col ul li a:hover {
+  color: var(--accent-primary, #FFD700);
+  transform: translateX(4px);
+}
+
+.footer-col ul li a i.bi-chevron-right {
+  font-size: 12px;
+  transition: transform 0.3s ease;
+}
+
+.footer-col ul li a:hover i.bi-chevron-right {
+  transform: translateX(4px);
+}
+
+/* Contact Links */
+.contact-link {
+  display: flex !important;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.contact-link:hover {
+  background: rgba(255, 215, 0, 0.1);
+  transform: translateX(0) !important;
+}
+
+.contact-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--accent-primary, #FFD700), #FFA500);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1a1a2e;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+/* Hours Box */
+.hours-box {
+  background: rgba(255, 215, 0, 0.05);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.hours-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--accent-primary, #FFD700), #FFA500);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1a1a2e;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.hours-content strong {
+  color: var(--accent-primary, #FFD700);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.hours-time {
+  color: #b0b0b0;
+  font-size: 0.9rem;
+}
+
+/* Footer Bottom */
+.footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.copyright {
+  color: #b0b0b0;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+}
+
+.footer-legal-links {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.footer-legal-links a {
+  color: #b0b0b0;
+  text-decoration: none;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+}
+
+.footer-legal-links a:hover {
+  color: var(--accent-primary, #FFD700);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .footer-legal-links {
+    justify-content: center;
+  }
+  
+  .footer-wave svg {
+    height: 60px;
+  }
+}
+</style>

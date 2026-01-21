@@ -38,36 +38,73 @@
 
 {% block head %}
 <style>
-  /* Local Overrides for Product Page */
+  /* Enhanced Product Page Design */
   .product-page-wrapper {
-    padding: 40px 0;
+    padding: 20px 0;
+    background: linear-gradient(135deg, var(--surface-dark) 0%, rgba(0,0,0,0.3) 100%);
+    min-height: 100vh;
   }
   
   .product-media-card {
      position: relative;
      background: var(--surface-dark);
-     border: 1px solid var(--border-color);
-     border-radius: 8px;
-     padding: 20px;
+     border: 2px solid var(--accent-primary);
+     border-radius: 16px;
+     padding: 0;
      height: 100%;
+     overflow: hidden;
+     box-shadow: 0 8px 32px rgba(255, 215, 0, 0.15);
+     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .product-media-card:hover {
+     border-color: var(--accent-primary);
+     transform: translateY(-4px);
+     box-shadow: 0 12px 40px rgba(255, 215, 0, 0.25);
   }
 
-  /* Gallery Styling */
+  /* Light theme override */
+  body.light-theme .product-page-wrapper {
+    background: linear-gradient(135deg, var(--surface-light) 0%, rgba(255,255,255,0.8) 100%);
+  }
+  
+  body.light-theme .product-media-card {
+    background: var(--surface-light);
+    border-color: var(--accent-primary);
+  }
+
+  /* Enhanced Gallery */
+  .swiper-pagination-bullet {
+    background: var(--accent-primary) !important;
+    opacity: 0.8;
+    transition: all 0.3s ease;
+  }
+  
   .swiper-pagination-bullet-active {
     background: var(--accent-primary) !important;
+    opacity: 1;
+    transform: scale(1.2);
   }
   
   .product-thumbs .swiper-slide {
-    opacity: 0.5;
-    transition: all 0.3s;
+    opacity: 0.6;
+    transition: all 0.3s ease;
     border: 2px solid transparent;
-    border-radius: 4px;
+    border-radius: 8px;
     overflow: hidden;
+    cursor: pointer;
+  }
+  
+  .product-thumbs .swiper-slide:hover {
+    opacity: 1;
+    border-color: var(--accent-primary);
+    transform: scale(1.05);
   }
   
   .product-thumbs .swiper-slide-thumb-active {
     opacity: 1;
     border-color: var(--accent-primary);
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
   }
 
   /* Related Products Grid - Responsive */
@@ -118,29 +155,6 @@
 {% endblock %}
 
 {% block content %}
-<!-- Image Enlarge Modal -->
-<div id="imageEnlargeModal" class="image-enlarge-modal" aria-hidden="true" style="z-index: 99999;">
-  <div class="image-enlarge-backdrop" tabindex="-1"></div>
-  <div class="image-enlarge-content">
-    <button class="image-enlarge-close" aria-label="Close"><i class="bi bi-x-lg"></i></button>
-    <div class="image-enlarge-swiper swiper" id="imageEnlargeSwiper">
-      <div class="swiper-wrapper">
-        {% for m in all_media %}
-          <div class="swiper-slide">
-             {% if m.media_type and 'video' in m.media_type %}
-                <video controls style="max-width:100%; max-height:100%"><source src="{{ m.media_url }}"></video>
-             {% else %}
-                <img src="{{ prefer_webp(m.media_url) }}" alt="Large view">
-             {% endif %}
-          </div>
-        {% endfor %}
-      </div>
-      <div class="swiper-button-prev"></div>
-      <div class="swiper-button-next"></div>
-    </div>
-  </div>
-</div>
-
 <div class="container product-page-wrapper">
   
   <!-- Breadcrumb -->
@@ -157,7 +171,7 @@
     <!-- LEFT COLUMN: IMAGES -->
     <div class="col-lg-7 animate-fade-in-up">
       <div class="product-media-card">
-         <div class="swiper productMainSwiper overflow-hidden rounded mb-3" id="productMainSwiper" style="aspect-ratio: 4/3; background: #000;">
+         <div class="swiper productMainSwiper mb-3" id="productMainSwiper" style="aspect-ratio: 4/3; background: #000;">
             <div class="swiper-wrapper">
                {% for m in all_media %}
                  <div class="swiper-slide d-flex align-items-center justify-content-center bg-black">
@@ -172,10 +186,6 @@
             <div class="swiper-button-next" style="color: var(--accent-primary);"></div>
             <div class="swiper-button-prev" style="color: var(--accent-primary);"></div>
             <div class="swiper-pagination"></div>
-            
-            <button class="position-absolute bottom-0 end-0 m-3 btn btn-dark btn-sm rounded-circle z-2 image-enlarge-btn" title="Kattalashtirish">
-               <i class="bi bi-arrows-fullscreen"></i>
-            </button>
          </div>
 
          {% if all_media|length > 1 %}
@@ -220,18 +230,6 @@
             </div>
          </div>
 
-         <div class="price-section py-3 border-top border-bottom border-secondary border-opacity-25 mb-4">
-             <div class="text-secondary text-uppercase small fw-bold mb-1">Narxi:</div>
-             <div class="d-flex align-items-baseline gap-2">
-                 {% if item.price %}
-                    <h2 class="display-5 fw-bold text-accent mb-0">{{ "{:,.0f}".format(item.price) }}</h2>
-                    <span class="h5 text-secondary">UZS</span>
-                 {% else %}
-                    <h2 class="h3 text-secondary mb-0">So'rov asosida</h2>
-                 {% endif %}
-             </div>
-         </div>
-
          <div class="description-section mb-4 flex-grow-1">
              <h6 class="text-uppercase text-light fw-bold mb-2">Tavsif</h6>
              <p class="text-secondary small lh-lg mb-0 text-truncate-custom line-clamp-4">
@@ -241,19 +239,15 @@
 
          <!-- Actions -->
          <div class="action-section mt-auto">
-             <div class="d-grid gap-3">
-                 <button class="btn-primary-industrial justify-content-center py-3 fs-5" onclick="addToCart({{ item.id }})">
-                    <i class="bi bi-cart-plus-fill me-2"></i> Savatga qo'shish
-                 </button>
-                 <div class="d-flex gap-3">
-                    <a href="tel:{{ config.SUPER_ADMIN_PHONE|default('+998991459686') }}" class="btn btn-outline-industrial flex-grow-1 justify-content-center">
-                        <i class="bi bi-telephone me-2"></i> Qo'ng'iroq
-                    </a>
-                    <button class="btn btn-dark border border-secondary text-danger" title="Sevimlilarga"><i class="bi bi-heart"></i></button>
-                 </div>
+             <div class="d-flex gap-3">
+                <a href="tel:{{ config.SUPER_ADMIN_PHONE|default('+998991459686') }}" class="btn btn-outline-industrial flex-grow-1 justify-content-center">
+                    <i class="bi bi-telephone me-2"></i> Qo'ng'iroq
+                </a>
+                <button class="btn btn-dark border border-secondary text-danger" title="Sevimlilarga"><i class="bi bi-heart"></i></button>
              </div>
+         </div>
 
-             <!-- Marketplaces -->
+         <!-- Marketplaces -->
              {% if marketplaces %}
               <div class="mt-4 pt-3 border-top border-secondary border-opacity-25">
                  <small class="text-secondary text-uppercase fw-bold d-block mb-2">Yoki bu yerdan xarid qiling:</small>
@@ -303,17 +297,93 @@
                                               <th class="py-3 ps-4 text-secondary">Kategoriya</th>
                                               <td class="py-3 text-light">{{ item.category or 'Safety Equipment' }}</td>
                                           </tr>
+                                          {% if item.purpose %}
+                                          <tr>
+                                              <th class="py-3 ps-4 text-secondary">Foydalanish sohasi</th>
+                                              <td class="py-3 text-light">{{ item.purpose }}</td>
+                                          </tr>
+                                          {% endif %}
+                                          {% if item.season %}
+                                          <tr>
+                                              <th class="py-3 ps-4 text-secondary">Mavsum</th>
+                                              <td class="py-3 text-light">{{ item.season }}</td>
+                                          </tr>
+                                          {% endif %}
+                                          {% if item.material %}
+                                          <tr>
+                                              <th class="py-3 ps-4 text-secondary">Material</th>
+                                              <td class="py-3 text-light">{{ item.material }}</td>
+                                          </tr>
+                                          {% endif %}
+                                          {% if item.size_list %}
                                           <tr>
                                               <th class="py-3 ps-4 text-secondary">O'lchamlar</th>
-                                              <td class="py-3 text-light">{{ item.sizes or '39, 40, 41, 42, 43, 44, 45' }}</td>
+                                              <td class="py-3 text-light">
+                                                  {% for size in item.size_list %}
+                                                      <span class="badge bg-secondary me-1">{{ size }}</span>
+                                                  {% endfor %}
+                                              </td>
                                           </tr>
+                                          {% endif %}
+                                          {% if item.color_list %}
+                                          <tr>
+                                              <th class="py-3 ps-4 text-secondary">Ranglar</th>
+                                              <td class="py-3 text-light">
+                                                  {% for color in item.color_list %}
+                                                      <span class="badge bg-secondary me-1">{{ color }}</span>
+                                                  {% endfor %}
+                                              </td>
+                                          </tr>
+                                          {% endif %}
+                                          {% if item.feature_list %}
+                                          <tr>
+                                              <th class="py-3 ps-4 text-secondary">Xususiyatlar</th>
+                                              <td class="py-3 text-light">
+                                                  {% for feature in item.feature_list %}
+                                                      <span class="badge bg-primary me-1 mb-1">{{ feature }}</span>
+                                                  {% endfor %}
+                                              </td>
+                                          </tr>
+                                          {% endif %}
+                                          {% if item.shoe_type %}
+                                          <tr>
+                                              <th class="py-3 ps-4 text-secondary">Poyabzal turi</th>
+                                              <td class="py-3 text-light">{{ item.shoe_type }}</td>
+                                          </tr>
+                                          {% endif %}
+                                          {% if item.sole_type %}
+                                          <tr>
+                                              <th class="py-3 ps-4 text-secondary">Taglik</th>
+                                              <td class="py-3 text-light">{{ item.sole_type }}</td>
+                                          </tr>
+                                          {% endif %}
+                                          {% if item.height %}
+                                          <tr>
+                                              <th class="py-3 ps-4 text-secondary">Balandligi</th>
+                                              <td class="py-3 text-light">{{ item.height }}</td>
+                                          </tr>
+                                          {% endif %}
+                                          {% if item.clothing_type %}
+                                          <tr>
+                                              <th class="py-3 ps-4 text-secondary">Kiyim turi</th>
+                                              <td class="py-3 text-light">{{ item.clothing_type }}</td>
+                                          </tr>
+                                          {% endif %}
+                                          {% if item.thickness %}
+                                          <tr>
+                                              <th class="py-3 ps-4 text-secondary">Qalinligi</th>
+                                              <td class="py-3 text-light">{{ item.thickness }}</td>
+                                          </tr>
+                                          {% endif %}
+                                          {% if item.standard %}
+                                          <tr>
+                                              <th class="py-3 ps-4 text-secondary">Standart</th>
+                                              <td class="py-3 text-light">{{ item.standard }}</td>
+                                          </tr>
+                                          {% endif %}
                                           <tr>
                                               <th class="py-3 ps-4 text-secondary">Himoya darajasi</th>
                                               <td class="py-3 text-light">S3 SRC (ISO 20345)</td>
-                                          </tr>
-                                          <tr>
-                                              <th class="py-3 ps-4 text-secondary">Material</th>
-                                              <td class="py-3 text-light">Tabiiy charm, po'lat burun</td>
                                           </tr>
                                       </tbody>
                                   </table>
@@ -410,14 +480,13 @@
       {% if related_products %}
         <div class="related-grid">
            {% for rp in related_products %}
-             <a href="{{ url_for('product', id=rp.id) }}" class="industrial-card p-0 text-decoration-none overflow-hidden h-100 d-flex flex-column" style="transition: transform 0.2s;">
+             <a href="http://{{ request.host }}/product/{{ rp.id }}" class="industrial-card p-0 text-decoration-none overflow-hidden h-100 d-flex flex-column" style="transition: transform 0.2s;">
                  <div class="position-relative bg-black" style="padding-top: 100%;">
                      <img src="{{ prefer_webp(rp.image_url or url_for('static', filename='defoult.webp')) }}" class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover" alt="{{ rp.name }}">
                  </div>
                  <div class="p-3 flex-grow-1 d-flex flex-column">
                      <h6 class="text-light fw-bold mb-1 text-truncate">{{ rp.name }}</h6>
                      <div class="mt-auto pt-2 d-flex justify-content-between align-items-center">
-                         <span class="text-accent fw-bold">{{ "{:,.0f}".format(rp.price) if rp.price else 'TBD' }}</span>
                          <i class="bi bi-arrow-right text-secondary small"></i>
                      </div>
                  </div>
@@ -458,39 +527,26 @@ document.addEventListener("DOMContentLoaded", function() {
             pagination: {
                 el: ".swiper-pagination",
                 clickable: true,
+                dynamicBullets: true,
             },
             thumbs: {
                 swiper: thumbsSwiper,
             },
+            loop: true,
+            effect: 'fade',
+            fadeEffect: {
+                crossFade: true
+            },
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false,
+            },
+            breakpoints: {
+                320: { slidesPerView: 1 },
+                768: { slidesPerView: 1 },
+                1024: { slidesPerView: 1 }
+            }
         });
-
-        // Enlarge Modal Swiper logic (Optional, simpler implementation)
-        const enlargeBtn = document.querySelector('.image-enlarge-btn');
-        const modal = document.getElementById('imageEnlargeModal');
-        let modalSwiper;
-
-        if(enlargeBtn && modal) {
-            enlargeBtn.addEventListener('click', () => {
-                modal.classList.add('open');
-                modal.setAttribute('aria-hidden', 'false');
-                if(!modalSwiper) {
-                    modalSwiper = new Swiper("#imageEnlargeSwiper", {
-                         initialSlide: mainSwiper.activeIndex,
-                         navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
-                    });
-                } else {
-                    modalSwiper.slideTo(mainSwiper.activeIndex);
-                }
-            });
-            
-            modal.addEventListener('click', (e) => {
-               if(e.target.closest('.image-enlarge-close') || e.target.classList.contains('image-enlarge-backdrop')) {
-                   modal.classList.remove('open');
-                   modal.setAttribute('aria-hidden', 'true');
-               }
-            });
-        }
-    }
 
     // 2. Rating Star Logic
     const stars = document.querySelectorAll('.rating-input-stars .star');
@@ -522,7 +578,99 @@ document.addEventListener("DOMContentLoaded", function() {
         updateStars(parseInt(input.value));
     }
     
-    // 3. Tab Styling Fix (Bootstrap default overrides)
+    // 3. Enhanced Product Interactions
+    function addToCart(productId) {
+        // Show loading state
+        const btn = event.target;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i> Qo'shilmoqda...';
+        btn.disabled = true;
+        
+        fetch('/api/cart/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': window.BASE_CONFIG?.csrf_token || ''
+            },
+            body: JSON.stringify({
+                product_id: productId,
+                quantity: 1
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.success) {
+                // Show success message
+                showNotification('Mahsulot savatga qo'shildi!', 'success');
+                // Update cart count if available
+                if (typeof updateCartCount === 'function') {
+                    updateCartCount();
+                }
+            } else {
+                showNotification('Xatolik yuz berdi!', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Cart add error:', error);
+            showNotification('Xatolik yuz berdi!', 'error');
+        })
+        .finally(() => {
+            // Restore button state
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        });
+    }
+    
+    // Notification helper
+    function showNotification(message, type = 'info') {
+        // Remove existing notifications
+        const existing = document.querySelectorAll('.notification-toast');
+        existing.forEach(el => el.remove());
+        
+        // Create new notification
+        const notification = document.createElement('div');
+        notification.className = `notification-toast ${type}`;
+        notification.innerHTML = `
+            <div class="notification-content">
+                <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
+                ${message}
+            </div>
+            <button class="notification-close" onclick="this.parentElement.remove()">&times;</button>
+        `;
+        
+        // Style the notification
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            padding: 16px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            transform: translateX(100%);
+            ${type === 'success' ? 'background: #28a745;' : 'background: #dc3545;'}
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Animate in
+        setTimeout(() => {
+            notification.style.transform = 'translateX(0)';
+        }, 100);
+        
+        // Auto remove after 3 seconds
+        setTimeout(() => {
+            if (notification.parentElement) {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => notification.remove(), 300);
+            }
+        }, 3000);
+    }
+    
+    // 4. Tab Styling Fix (Bootstrap default overrides)
     const triggerTabList = document.querySelectorAll('#productTabs button')
     triggerTabList.forEach(triggerEl => {
       const tabTrigger = new bootstrap.Tab(triggerEl)

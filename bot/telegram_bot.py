@@ -888,7 +888,7 @@ async def handle_message(update: "Update", context: "ContextTypes.DEFAULT_TYPE")
             await _send_main_keyboard(update)
             return
         if text == "спецодежда":
-            await products_cmd_category(update, context, category_slug="spetsodejda")
+            await products_cmd_category(update, context, category_slug="specodezhda")
             # After listing items, return user to main keyboard for further actions
             await _send_main_keyboard(update)
             return

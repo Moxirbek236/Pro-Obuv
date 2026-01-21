@@ -3,7 +3,101 @@
      Ultra-modern, Apple/Nike inspired design
      ============================================ -->
 
+<style>
+/* Premium Navbar Links */
+.navbar-nav-premium {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.nav-link-premium {
+    color: var(--text-primary);
+    text-decoration: none;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    padding: 6px 12px;
+    border-radius: 6px;
+    white-space: nowrap;
+}
+
+.nav-link-premium:hover {
+    color: var(--accent-primary);
+    background: rgba(255, 215, 0, 0.05);
+}
+
+.nav-link-premium.active {
+    color: var(--base-dark);
+    background: var(--accent-primary);
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+/* Responsive adjustment */
+@media (max-width: 1200px) {
+    .navbar-nav-premium {
+        display: none;
+    }
+}
+
+.mega-menu-links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.mega-menu-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    padding: 10px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.mega-menu-nav-link:hover {
+    background: rgba(255, 215, 0, 0.1);
+    color: var(--accent-primary);
+}
+
+.mega-menu-nav-link.active {
+    background: rgba(255, 215, 0, 0.15);
+    color: var(--accent-primary);
+    border-left: 3px solid var(--accent-primary);
+}
+
+.mega-menu-nav-link i {
+    font-size: 1.1rem;
+    color: var(--accent-primary);
+}
+
+.mobile-only-links {
+    display: none;
+}
+
+@media (max-width: 991px) {
+    .mobile-only-links {
+        display: block;
+    }
+}
+
+.navbar-user-avatar.active {
+    border: 2px solid var(--accent-primary);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+}
+</style>
+
 <nav class="premium-navbar" id="premiumNavbar">
+
     <div class="navbar-container">
         <!-- Logo -->
         <a href="{{ url_for('index') }}" class="navbar-logo">
@@ -24,6 +118,40 @@
             />
         </div>
 
+        <!-- Navigation Links (Desktop) -->
+        <ul class="navbar-nav-premium">
+            <li>
+                <a href="{{ url_for('menu') }}" class="nav-link-premium {{ 'active' if request.endpoint == 'menu' else '' }}">
+                    {{ _('nav.menu') or 'Mahsulotlar' }}
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('news_page') }}" class="nav-link-premium {{ 'active' if request.endpoint == 'news_page' else '' }}">
+                    {{ _('nav.news') or 'Yangiliklar' }}
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('downloads') }}" class="nav-link-premium {{ 'active' if request.endpoint == 'downloads' else '' }}">
+                    {{ _('nav.downloads') or 'Yuklashlar' }}
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('contact') }}" class="nav-link-premium {{ 'active' if request.endpoint == 'contact' else '' }}">
+                    {{ _('nav.contact') or 'Aloqa' }}
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('kafolatlar') }}" class="nav-link-premium {{ 'active' if request.endpoint == 'kafolatlar' or request.endpoint == 'kafolatlar_page' else '' }}">
+                    {{ _('nav.warranty') or 'Kafolatlar' }}
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('about') }}" class="nav-link-premium {{ 'active' if request.endpoint == 'about' else '' }}">
+                    {{ _('nav.about') or 'Biz haqimizda' }}
+                </a>
+            </li>
+        </ul>
+
         <!-- Mobile Menu Toggle -->
         <button class="mobile-menu-toggle" id="mobileMenuToggle">
             <i class="bi bi-list"></i>
@@ -32,7 +160,7 @@
         <!-- Navbar Actions -->
         <div class="navbar-actions">
             <!-- Cart -->
-            <button class="navbar-action-btn" onclick="window.location.href='{{ url_for('cart') }}'">
+            <button class="navbar-action-btn" onclick="window.location.href='{{ url_for('cart') }}';">
                 <i class="bi bi-cart3"></i>
                 {% if session.get('cart_count', 0) > 0 %}
                 <span class="navbar-action-badge">{{ session.get('cart_count') }}</span>
@@ -40,7 +168,7 @@
             </button>
 
             <!-- Wishlist -->
-            <button class="navbar-action-btn" onclick="window.location.href='{{ url_for('favorites') }}'">
+            <button class="navbar-action-btn" onclick="window.location.href='{{ url_for('favorites') }}';">
                 <i class="bi bi-heart"></i>
             </button>
 
@@ -57,11 +185,11 @@
             <img 
                 src="{{ session.get('user_avatar', url_for('static', filename='images/default-avatar.svg')) | cloudinary_url }}" 
                 alt="User" 
-                class="navbar-user-avatar"
-                onclick="window.location.href='{{ url_for('profile') }}'"
+                class="navbar-user-avatar {{ 'active' if request.endpoint == 'profile' else '' }}"
+                onclick="window.location.href='{{ url_for('profile') }}';"
             />
             {% else %}
-            <button class="navbar-action-btn" onclick="window.location.href='{{ url_for('login_page') }}'">
+            <button class="navbar-action-btn" onclick="window.location.href='{{ url_for('login_page') }}';">
                 <i class="bi bi-person"></i>
             </button>
             {% endif %}
@@ -72,6 +200,37 @@
     <div class="mega-menu" id="megaMenu">
         <div class="mega-menu-container">
             <div class="mega-menu-grid">
+                <!-- Main Navigation Category -->
+                <div class="mega-menu-category mobile-only-links">
+                    <h3 class="mega-menu-category-title">{{ _('nav.quick_links') or 'Navigation' }}</h3>
+                    <div class="mega-menu-links">
+                        <a href="{{ url_for('menu') }}" class="mega-menu-nav-link {{ 'active' if request.endpoint == 'menu' else '' }}">
+                            <i class="bi bi-grid-3x3-gap"></i>
+                            <span>{{ _('nav.menu') or 'Mahsulotlar' }}</span>
+                        </a>
+                        <a href="{{ url_for('news_page') }}" class="mega-menu-nav-link {{ 'active' if request.endpoint == 'news_page' else '' }}">
+                            <i class="bi bi-newspaper"></i>
+                            <span>{{ _('nav.news') or 'Yangiliklar' }}</span>
+                        </a>
+                        <a href="{{ url_for('downloads') }}" class="mega-menu-nav-link {{ 'active' if request.endpoint == 'downloads' else '' }}">
+                            <i class="bi bi-download"></i>
+                            <span>{{ _('nav.downloads') or 'Yuklashlar' }}</span>
+                        </a>
+                        <a href="{{ url_for('contact') }}" class="mega-menu-nav-link {{ 'active' if request.endpoint == 'contact' else '' }}">
+                            <i class="bi bi-envelope"></i>
+                            <span>{{ _('nav.contact') or 'Aloqa' }}</span>
+                        </a>
+                        <a href="{{ url_for('kafolatlar') }}" class="mega-menu-nav-link {{ 'active' if request.endpoint == 'kafolatlar' or request.endpoint == 'kafolatlar_page' else '' }}">
+                            <i class="bi bi-shield-check"></i>
+                            <span>{{ _('nav.warranty') or 'Kafolatlar' }}</span>
+                        </a>
+                        <a href="{{ url_for('about') }}" class="mega-menu-nav-link {{ 'active' if request.endpoint == 'about' else '' }}">
+                            <i class="bi bi-info-circle"></i>
+                            <span>{{ _('nav.about') or 'Biz haqimizda' }}</span>
+                        </a>
+                    </div>
+                </div>
+
                 <!-- Work Boots Category -->
                 <div class="mega-menu-category">
                     <h3 class="mega-menu-category-title">Work Boots</h3>

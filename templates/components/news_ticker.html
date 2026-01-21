@@ -1,33 +1,193 @@
-<!-- News Ticker Component -->
-<div class="news-ticker-container">
-  <div class="news-ticker-wrapper">
-    <div class="news-ticker-title">
-      <i class="bi bi-newspaper"></i> <span>{{ _('ticker.title') if _('ticker.title') else 'YANGILIKLAR' }}</span>
+<!-- E-commerce style News Ticker (safety shoes/shop style) -->
+<div class="news-ticker-container py-4">
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <div class="d-flex align-items-center gap-2">
+      <i class="bi bi-newspaper fs-4 text-accent"></i>
+      <strong class="text-uppercase">{{ _('ticker.title') if _('ticker.title') else 'YANGILIKLAR' }}</strong>
     </div>
-
-    <div class="news-ticker swiper" id="news-ticker-swiper">
-      <div class="swiper-wrapper" id="news-ticker-content">
-        <!-- Slides will be injected here -->
-        <div class="swiper-slide news-item loading">
-          <div class="news-image-wrapper">
-             <div class="placeholder-glow w-100 h-100"></div>
-          </div>
-          <div class="news-text-content">
-            <div class="news-title">{{ _('messages.loading') }}</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Add Swiper Pagination -->
-      <div class="swiper-pagination"></div>
-    </div>
-    
     {% if session.get('super_admin') %}
-    <button id="addTickerNewsBtn" title="{{ _('ticker.add_news') }}" onclick="openTickerNewsModal()">
+    <button id="addTickerNewsBtn" class="btn btn-sm btn-outline-secondary" title="{{ _('ticker.add_news') }}" onclick="openTickerNewsModal()">
       <i class="bi bi-plus-lg"></i>
     </button>
     {% endif %}
   </div>
-</div>
 
-  {# News ticker script is included globally in base.html; avoid duplicate includes here #}
+  <div class="news-ticker-swiper swiper" id="news-ticker-swiper">
+    <!-- Navigation buttons -->
+    <div class="news-ticker-nav prev" onclick="window._newsTickerSwiper?.slidePrev()">
+      <i class="bi bi-chevron-left"></i>
+    </div>
+    <div class="news-ticker-nav next" onclick="window._newsTickerSwiper?.slideNext()">
+      <i class="bi bi-chevron-right"></i>
+    </div>
+    
+    <div class="swiper-wrapper" id="news-ticker-content">
+      <!-- Slides injected by JS: each slide will contain only the image. Title shown on hover. -->
+      <div class="swiper-slide news-item loading">
+        <div class="news-image-wrapper" style="width:120px; height:120px; border-radius:8px; overflow:hidden; background:#f3f4f6"></div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+/* Enhanced News Ticker Styles */
+.news-ticker-container {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.05), rgba(255, 215, 0, 0.02));
+  border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.news-ticker-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent-primary, #FFD700), transparent);
+  animation: tickerShine 3s ease-in-out infinite;
+}
+
+@keyframes tickerShine {
+  0% { left: -100%; }
+  50% { left: 100%; }
+  100% { left: 100%; }
+}
+
+.news-ticker-swiper {
+  padding: 16px 0;
+  position: relative;
+}
+
+/* Center the swiper container */
+.news-ticker-swiper .swiper-wrapper {
+  justify-content: center;
+  align-items: center;
+}
+
+.news-item {
+  width: 140px !important;
+  height: 140px !important;
+  border-radius: 16px !important;
+  overflow: hidden;
+  position: relative;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 215, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  margin: 0 auto; /* Center each item */
+}
+
+.news-item:hover {
+  transform: translateY(-8px) scale(1.05);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3);
+  border-color: var(--accent-primary, #FFD700);
+}
+
+.news-image-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.news-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.news-item:hover img {
+  transform: scale(1.1);
+}
+
+.news-title-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  color: #fff;
+  padding: 12px 8px 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  line-height: 1.3;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.news-item:hover .news-title-overlay {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.news-slide-link {
+  display: block;
+  width: 100%;
+  height: 100%;
+  text-decoration: none;
+}
+
+/* Loading state */
+.news-item.loading {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.05) 75%);
+  background-size: 200% 100%;
+  animation: loadingShimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes loadingShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.news-text-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 16px;
+  text-align: center;
+  color: #b0b0b0;
+  font-style: italic;
+}
+
+/* Navigation buttons for better slider control */
+.news-ticker-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 215, 0, 0.9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s ease;
+  color: #1a1a2e;
+  font-size: 16px;
+}
+
+.news-ticker-nav:hover {
+  background: var(--accent-primary, #FFD700);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.news-ticker-nav.prev {
+  left: 10px;
+}
+
+.news-ticker-nav.next {
+  right: 10px;
+}
+  </style>
+
+{# News ticker script is included globally in base.html; avoid duplicate includes here #}
+
+  </div>

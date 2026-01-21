@@ -1,0 +1,3657 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Safety.uz API",
+    "description": "Automatically generated OpenAPI 3.0 specification for Safety.uz.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "/",
+      "description": "Current server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "api",
+      "description": "Public API endpoints"
+    },
+    {
+      "name": "admin",
+      "description": "Admin panel endpoints"
+    },
+    {
+      "name": "super-admin",
+      "description": "Super Admin endpoints"
+    },
+    {
+      "name": "staff",
+      "description": "Staff endpoints"
+    },
+    {
+      "name": "general",
+      "description": "General website pages"
+    },
+    {
+      "name": "auth",
+      "description": "Authentication"
+    },
+    {
+      "name": "cart",
+      "description": "Shopping Cart"
+    },
+    {
+      "name": "orders",
+      "description": "Order management"
+    },
+    {
+      "name": "products",
+      "description": "Product catalog"
+    },
+    {
+      "name": "users",
+      "description": "User management"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "SessionAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "session"
+      }
+    },
+    "schemas": {
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "code": {
+            "type": "integer"
+          }
+        }
+      },
+      "AuthLoginRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "AuthRegisterRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "type": "string"
+          },
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "AuthStatusResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "logged_in": {
+            "type": "boolean"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "email": {
+            "type": "string"
+          },
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "email"
+        ]
+      },
+      "Product": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number",
+            "format": "float"
+          },
+          "image_url": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "rating": {
+            "type": "number",
+            "format": "float"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "Category": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "OrderItem": {
+        "type": "object",
+        "properties": {
+          "product_id": {
+            "type": "integer"
+          },
+          "quantity": {
+            "type": "integer"
+          },
+          "price": {
+            "type": "number"
+          }
+        }
+      },
+      "Order": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "user_id": {
+            "type": "integer"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderItem"
+            }
+          },
+          "total": {
+            "type": "number"
+          }
+        }
+      },
+      "CartItem": {
+        "type": "object",
+        "properties": {
+          "itemId": {
+            "type": "integer"
+          },
+          "product_id": {
+            "type": "integer"
+          },
+          "quantity": {
+            "type": "integer"
+          }
+        }
+      },
+      "Rating": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "product_id": {
+            "type": "integer"
+          },
+          "user_id": {
+            "type": "integer"
+          },
+          "rating": {
+            "type": "integer"
+          },
+          "comment": {
+            "type": "string"
+          }
+        }
+      },
+      "NewsItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "image_url": {
+            "type": "string"
+          },
+          "is_active": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/_debug/session": {
+      "get": {
+        "tags": [
+          "general"
+        ],
+        "summary": "debug session",
+        "operationId": "_debug_session_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/_debug/translate": {
+      "get": {
+        "tags": [
+          "general"
+        ],
+        "summary": "debug translate",
+        "operationId": "_debug_translate_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/add-to-favorites/{menu_item_id}": {
+      "post": {
+        "tags": [
+          "general"
+        ],
+        "summary": "Add to favorites",
+        "operationId": "add_to_favorites_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "menu_item_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/add_to_cart": {
+      "post": {
+        "tags": [
+          "general"
+        ],
+        "summary": "Add to cart",
+        "operationId": "add_to_cart_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/admin/360-management": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Admin 360 management",
+        "operationId": "admin_360_management_get",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/admin/ai/faq": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Admin ai faq",
+        "operationId": "admin_ai_faq_get",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/admin/ai/teach": {
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Admin ai teach",
+        "operationId": "admin_ai_teach_post",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/admin/ai/unanswered": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Admin ai unanswered",
+        "operationId": "admin_ai_unanswered_get",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/admin/card-management": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Admin card management",
+        "operationId": "admin_card_management_get",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/admin/delete_all_products_and_seed": {
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Admin delete all products and seed",
+        "operationId": "admin_delete_all_products_and_seed_post",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/admin/delete_menu_item/{item_id}": {
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Admin delete menu item",
+        "operationId": "admin_delete_menu_item_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/admin/orders.json": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Admin orders json",
+        "operationId": "admin_orders_json_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/admin/reset_menu_for_tests": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Admin reset menu for tests",
+        "operationId": "admin_reset_menu_for_tests_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Admin reset menu for tests",
+        "operationId": "admin_reset_menu_for_tests_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "options": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Admin reset menu for tests",
+        "operationId": "admin_reset_menu_for_tests_options",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "head": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Admin reset menu for tests",
+        "operationId": "admin_reset_menu_for_tests_head",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/admin/reset_menu_for_tests/": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Admin reset menu for tests",
+        "operationId": "admin_reset_menu_for_tests_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Admin reset menu for tests",
+        "operationId": "admin_reset_menu_for_tests_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "options": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Admin reset menu for tests",
+        "operationId": "admin_reset_menu_for_tests_options",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "head": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Admin reset menu for tests",
+        "operationId": "admin_reset_menu_for_tests_head",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/admin/sync-news": {
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Admin sync news",
+        "operationId": "admin_sync_news_post",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/admin/toggle_menu_item/{item_id}": {
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Admin toggle menu item",
+        "operationId": "admin_toggle_menu_item_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api": {
+      "get": {
+        "tags": [
+          "general"
+        ],
+        "summary": "Api home",
+        "operationId": "api_home_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/360-photos": {
+      "get": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api get 360 photos",
+        "operationId": "api_get_360_photos_get",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "stub auth login",
+        "operationId": "_stub_auth_login_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthLoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "options": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "stub auth login",
+        "operationId": "_stub_auth_login_options",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "stub auth logout",
+        "operationId": "_stub_auth_logout_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "options": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "stub auth logout",
+        "operationId": "_stub_auth_logout_options",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "stub auth register",
+        "operationId": "_stub_auth_register_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthRegisterRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "options": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "stub auth register",
+        "operationId": "_stub_auth_register_options",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/auth/status": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "stub auth status",
+        "operationId": "_stub_auth_status_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "options": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "stub auth status",
+        "operationId": "_stub_auth_status_options",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/card-data": {
+      "get": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api get card data",
+        "operationId": "api_get_card_data_get",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/cart": {
+      "get": {
+        "tags": [
+          "cart"
+        ],
+        "summary": "Api cart",
+        "operationId": "api_cart_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "cart"
+        ],
+        "summary": "Api cart",
+        "operationId": "api_cart_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "cart"
+        ],
+        "summary": "Api cart",
+        "operationId": "api_cart_delete",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/cart-count": {
+      "get": {
+        "tags": [
+          "cart"
+        ],
+        "summary": "Api cart count",
+        "operationId": "api_cart_count_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/categories": {
+      "get": {
+        "tags": [
+          "api"
+        ],
+        "summary": "categories list",
+        "operationId": "_categories_list_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "api"
+        ],
+        "summary": "categories list",
+        "operationId": "_categories_list_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "options": {
+        "tags": [
+          "api"
+        ],
+        "summary": "categories list",
+        "operationId": "_categories_list_options",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/categories/{cat_id}": {
+      "get": {
+        "tags": [
+          "api"
+        ],
+        "summary": "category item",
+        "operationId": "_category_item_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cat_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "api"
+        ],
+        "summary": "category item",
+        "operationId": "_category_item_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cat_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "api"
+        ],
+        "summary": "category item",
+        "operationId": "_category_item_delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cat_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "options": {
+        "tags": [
+          "api"
+        ],
+        "summary": "category item",
+        "operationId": "_category_item_options",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cat_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/change-font-size": {
+      "post": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Change font size",
+        "operationId": "change_font_size_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/change-language": {
+      "post": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Change language",
+        "operationId": "change_language_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/change-theme": {
+      "post": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Change theme",
+        "operationId": "change_theme_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/chat-unread-count": {
+      "get": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api chat unread count",
+        "operationId": "api_chat_unread_count_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/chat/ai": {
+      "get": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api chat ai",
+        "operationId": "api_chat_ai_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api chat ai",
+        "operationId": "api_chat_ai_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/chat/receive": {
+      "post": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api chat receive",
+        "operationId": "api_chat_receive_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/chat/send": {
+      "post": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api chat send",
+        "operationId": "api_chat_send_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/chat/superadmin-question": {
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Api superadmin question",
+        "operationId": "api_superadmin_question_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/chats": {
+      "get": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api chats",
+        "operationId": "api_chats_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api chats",
+        "operationId": "api_chats_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/chats/{d}/messages": {
+      "get": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api chat messages",
+        "operationId": "api_chat_messages_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "d",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api chat messages",
+        "operationId": "api_chat_messages_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "d",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/couriers-list": {
+      "get": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api couriers list fix",
+        "operationId": "api_couriers_list_fix_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/delete-360-photo/{photo_id}": {
+      "delete": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api delete 360 photo",
+        "operationId": "api_delete_360_photo_delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "photo_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/find-nearest-branch": {
+      "post": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api find nearest branch",
+        "operationId": "api_find_nearest_branch_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/get-menu-ratings/{menu_item_id}": {
+      "get": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api get menu ratings",
+        "operationId": "api_get_menu_ratings_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "menu_item_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/health": {
+      "get": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api health",
+        "operationId": "api_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/internal-members": {
+      "get": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api internal members",
+        "operationId": "api_internal_members_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/member/{member_id}": {
+      "get": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api member profile",
+        "operationId": "api_member_profile_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "member_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/members": {
+      "get": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api members",
+        "operationId": "api_members_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/menu-search": {
+      "get": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api menu search",
+        "operationId": "api_menu_search_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/news": {
+      "get": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api news",
+        "operationId": "api_news_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api create news",
+        "operationId": "api_create_news_post",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/news/active": {
+      "get": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api get active news",
+        "operationId": "api_get_active_news_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/news/admin": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Api admin news",
+        "operationId": "api_admin_news_get",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/news/ticker": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Api admin news ticker",
+        "operationId": "api_admin_news_ticker_get",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/news/ticker/toggle/{news_id}": {
+      "post": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api toggle news ticker",
+        "operationId": "api_toggle_news_ticker_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "news_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/news/toggle/{news_id}": {
+      "post": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api toggle news",
+        "operationId": "api_toggle_news_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "news_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/news/{news_id}": {
+      "put": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api update news",
+        "operationId": "api_update_news_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "news_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api delete news",
+        "operationId": "api_delete_news_delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "news_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/notifications": {
+      "get": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api get notifications",
+        "operationId": "api_get_notifications_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/notifications/mark-all-read": {
+      "post": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Mark all notifications read",
+        "operationId": "mark_all_notifications_read_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/notifications/mark-read": {
+      "post": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api mark notifications read",
+        "operationId": "api_mark_notifications_read_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/notifications/{notification_id}/read": {
+      "post": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Mark notification read",
+        "operationId": "mark_notification_read_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "notification_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/operator-chat/staff/chats": {
+      "get": {
+        "tags": [
+          "staff"
+        ],
+        "summary": "Api operator chat staff chats",
+        "operationId": "api_operator_chat_staff_chats_get",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/operator-chat/staff/chats/{chat_id}/messages": {
+      "get": {
+        "tags": [
+          "staff"
+        ],
+        "summary": "Api operator chat staff messages",
+        "operationId": "api_operator_chat_staff_messages_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "chat_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/operator-chat/staff/chats/{chat_id}/send": {
+      "post": {
+        "tags": [
+          "staff"
+        ],
+        "summary": "Api operator chat staff send",
+        "operationId": "api_operator_chat_staff_send_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "chat_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/operator-chat/user/history": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Api operator chat user history",
+        "operationId": "api_operator_chat_user_history_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/operator-chat/user/send": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Api operator chat user send",
+        "operationId": "api_operator_chat_user_send_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/orders": {
+      "get": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Api orders",
+        "operationId": "api_orders_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Api orders",
+        "operationId": "api_orders_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/orders/{order_id}": {
+      "get": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Api order get",
+        "operationId": "api_order_get_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "order_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/payment-cards": {
+      "get": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api get payment cards",
+        "operationId": "api_get_payment_cards_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/payment-methods": {
+      "get": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api get payment methods",
+        "operationId": "api_get_payment_methods_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/private-chat/{user_id}": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Api private chat",
+        "operationId": "api_private_chat_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Api private chat",
+        "operationId": "api_private_chat_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/private-chats": {
+      "get": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api private chats",
+        "operationId": "api_private_chats_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/product-media/identify": {
+      "post": {
+        "tags": [
+          "products"
+        ],
+        "summary": "Api product media identify",
+        "operationId": "api_product_media_identify_post",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/product-media/reorder": {
+      "post": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Api reorder product media",
+        "operationId": "api_reorder_product_media_post",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/product-media/{item_id}": {
+      "get": {
+        "tags": [
+          "products"
+        ],
+        "summary": "Api get product media",
+        "operationId": "api_get_product_media_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/product-media/{media_id}/delete": {
+      "delete": {
+        "tags": [
+          "products"
+        ],
+        "summary": "Api delete product media",
+        "operationId": "api_delete_product_media_delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "media_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/product-media/{media_id}/set-main": {
+      "post": {
+        "tags": [
+          "products"
+        ],
+        "summary": "Api set main media",
+        "operationId": "api_set_main_media_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "media_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/products": {
+      "get": {
+        "tags": [
+          "products"
+        ],
+        "summary": "db products",
+        "operationId": "_db_products_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "products"
+        ],
+        "summary": "db products",
+        "operationId": "_db_products_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "options": {
+        "tags": [
+          "products"
+        ],
+        "summary": "db products",
+        "operationId": "_db_products_options",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/products/{product_id}": {
+      "get": {
+        "tags": [
+          "products"
+        ],
+        "summary": "db product item",
+        "operationId": "_db_product_item_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "product_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "products"
+        ],
+        "summary": "db product item",
+        "operationId": "_db_product_item_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "product_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "products"
+        ],
+        "summary": "db product item",
+        "operationId": "_db_product_item_delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "product_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "options": {
+        "tags": [
+          "products"
+        ],
+        "summary": "db product item",
+        "operationId": "_db_product_item_options",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "product_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/ratings": {
+      "post": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api ratings submit",
+        "operationId": "api_ratings_submit_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/ratings/product/{product_id}": {
+      "get": {
+        "tags": [
+          "products"
+        ],
+        "summary": "Api ratings for product",
+        "operationId": "api_ratings_for_product_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "product_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/reset-settings": {
+      "post": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Reset settings",
+        "operationId": "reset_settings_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/reverse_geocode": {
+      "get": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api reverse geocode",
+        "operationId": "api_reverse_geocode_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/save-card-data": {
+      "post": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api save card data",
+        "operationId": "api_save_card_data_post",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/save-settings": {
+      "post": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Save settings",
+        "operationId": "save_settings_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/search-nearby-places": {
+      "post": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api search nearby places",
+        "operationId": "api_search_nearby_places_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/send-notification": {
+      "post": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api send notification",
+        "operationId": "api_send_notification_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/set-active-360-photo/{photo_id}": {
+      "post": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api set active 360 photo",
+        "operationId": "api_set_active_360_photo_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "photo_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/set-font-size": {
+      "post": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api set font size",
+        "operationId": "api_set_font_size_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/set-language": {
+      "post": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api set language",
+        "operationId": "api_set_language_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/set-settings": {
+      "post": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api set settings",
+        "operationId": "api_set_settings_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/set-theme": {
+      "post": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api set theme",
+        "operationId": "api_set_theme_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/staff-list": {
+      "get": {
+        "tags": [
+          "staff"
+        ],
+        "summary": "Api staff list fix",
+        "operationId": "api_staff_list_fix_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/status": {
+      "get": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api status",
+        "operationId": "api_status_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/submit-rating": {
+      "post": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api submit rating",
+        "operationId": "api_submit_rating_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/super-admin/backup-database": {
+      "post": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Api super backup db",
+        "operationId": "api_super_backup_db_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "options": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Api super backup db",
+        "operationId": "api_super_backup_db_options",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/super-admin/clear-cache": {
+      "post": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Api super clear cache",
+        "operationId": "api_super_clear_cache_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "options": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Api super clear cache",
+        "operationId": "api_super_clear_cache_options",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/super-admin/dashboard-stats": {
+      "get": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Api super admin dashboard stats",
+        "operationId": "api_super_admin_dashboard_stats_get",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/super-admin/export-couriers": {
+      "get": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Api super admin export couriers",
+        "operationId": "api_super_admin_export_couriers_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/super-admin/export-report": {
+      "post": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Api super admin export report",
+        "operationId": "api_super_admin_export_report_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/super-admin/export-staff": {
+      "get": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Api super admin export staff",
+        "operationId": "api_super_admin_export_staff_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/super-admin/get-environment-info": {
+      "get": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Api super get env info",
+        "operationId": "api_super_get_env_info_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "options": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Api super get env info",
+        "operationId": "api_super_get_env_info_options",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/super-admin/get-system-logs": {
+      "get": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Api super get system logs",
+        "operationId": "api_super_get_system_logs_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "options": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Api super get system logs",
+        "operationId": "api_super_get_system_logs_options",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/super-admin/get-system-stats": {
+      "get": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Api super get system stats",
+        "operationId": "api_super_get_system_stats_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "options": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Api super get system stats",
+        "operationId": "api_super_get_system_stats_options",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/super-admin/reports": {
+      "get": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Api super admin reports",
+        "operationId": "api_super_admin_reports_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/swagger/generate_key": {
+      "post": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Generate swagger key",
+        "operationId": "generate_swagger_key_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/terminate-all-sessions": {
+      "post": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api terminate all sessions",
+        "operationId": "api_terminate_all_sessions_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/terminate-session": {
+      "post": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api terminate session",
+        "operationId": "api_terminate_session_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/translations": {
+      "get": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api translations",
+        "operationId": "api_translations_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/upload-360-photos": {
+      "post": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api upload 360 photos",
+        "operationId": "api_upload_360_photos_post",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/upload-qr": {
+      "post": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api upload qr",
+        "operationId": "api_upload_qr_post",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/user-sessions": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Api user sessions",
+        "operationId": "api_user_sessions_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "db users list",
+        "operationId": "_db_users_list_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "options": {
+        "tags": [
+          "users"
+        ],
+        "summary": "db users list",
+        "operationId": "_db_users_list_options",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/users-list": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Api users list fix",
+        "operationId": "api_users_list_fix_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/users/me": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "stub users me",
+        "operationId": "_stub_users_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "options": {
+        "tags": [
+          "users"
+        ],
+        "summary": "stub users me",
+        "operationId": "_stub_users_me_options",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/api/users/{user_id}": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "stub user item",
+        "operationId": "_stub_user_item_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "users"
+        ],
+        "summary": "stub user item",
+        "operationId": "_stub_user_item_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "users"
+        ],
+        "summary": "stub user item",
+        "operationId": "_stub_user_item_delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "options": {
+        "tags": [
+          "users"
+        ],
+        "summary": "stub user item",
+        "operationId": "_stub_user_item_options",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/auth/google": {
+      "post": {
+        "tags": [
+          "general"
+        ],
+        "summary": "Auth google",
+        "operationId": "auth_google_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/courier/set-price-time": {
+      "post": {
+        "tags": [
+          "general"
+        ],
+        "summary": "Courier set price time",
+        "operationId": "courier_set_price_time_post",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/data/news.json": {
+      "get": {
+        "tags": [
+          "general"
+        ],
+        "summary": "Public news json",
+        "operationId": "public_news_json_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/data/{filename}": {
+      "get": {
+        "tags": [
+          "general"
+        ],
+        "summary": "Serve data file",
+        "operationId": "serve_data_file_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "filename",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/debug/chats-info": {
+      "get": {
+        "tags": [
+          "general"
+        ],
+        "summary": "Debug chats info",
+        "operationId": "debug_chats_info_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/debug/menu-item-localized": {
+      "get": {
+        "tags": [
+          "general"
+        ],
+        "summary": "Debug menu item localized",
+        "operationId": "debug_menu_item_localized_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/debug/notifications-info": {
+      "get": {
+        "tags": [
+          "general"
+        ],
+        "summary": "Debug notifications info",
+        "operationId": "debug_notifications_info_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/get_cart_count": {
+      "get": {
+        "tags": [
+          "general"
+        ],
+        "summary": "Api cart count",
+        "operationId": "api_cart_count_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/login_page": {
+      "get": {
+        "tags": [
+          "general"
+        ],
+        "summary": "Login page",
+        "operationId": "login_page_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "general"
+        ],
+        "summary": "Login page",
+        "operationId": "login_page_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/openapi.json": {
+      "get": {
+        "tags": [
+          "general"
+        ],
+        "summary": "Openapi spec",
+        "operationId": "openapi_spec_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/order/pending/{order_id}": {
+      "get": {
+        "tags": [
+          "general"
+        ],
+        "summary": "Order pending approval",
+        "operationId": "order_pending_approval_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "order_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/remove-from-favorites/{menu_item_id}": {
+      "post": {
+        "tags": [
+          "general"
+        ],
+        "summary": "Remove from favorites",
+        "operationId": "remove_from_favorites_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "menu_item_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/settings": {
+      "post": {
+        "tags": [
+          "general"
+        ],
+        "summary": "General settings post",
+        "operationId": "general_settings_post_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/super-admin/answer-user-question": {
+      "post": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Answer user question",
+        "operationId": "answer_user_question_post",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/super-admin/backup-database": {
+      "post": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Super admin backup database",
+        "operationId": "super_admin_backup_database_post",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/super-admin/clear-cache": {
+      "post": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Super admin clear cache",
+        "operationId": "super_admin_clear_cache_post",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/super-admin/clear-database": {
+      "post": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Super admin clear database",
+        "operationId": "super_admin_clear_database_post",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/super-admin/get-environment-info": {
+      "get": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Super admin get environment info",
+        "operationId": "super_admin_get_environment_info_get",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/super-admin/get-errors-summary": {
+      "get": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Super admin get errors summary",
+        "operationId": "super_admin_get_errors_summary_get",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/super-admin/get-logs": {
+      "post": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Super admin get logs",
+        "operationId": "super_admin_get_logs_post",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/super-admin/get-menu": {
+      "get": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Super admin get menu",
+        "operationId": "super_admin_get_menu_get",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/super-admin/get-orders": {
+      "get": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Super admin get orders",
+        "operationId": "super_admin_get_orders_get",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/super-admin/get-performance-stats": {
+      "get": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Super admin get performance stats",
+        "operationId": "super_admin_get_performance_stats_get",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/super-admin/get-ratings": {
+      "get": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Super admin get ratings",
+        "operationId": "super_admin_get_ratings_get",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/super-admin/get-receipts": {
+      "get": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Super admin get receipts",
+        "operationId": "super_admin_get_receipts_get",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/super-admin/get-system-logs": {
+      "get": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Super admin get system logs",
+        "operationId": "super_admin_get_system_logs_get",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/super-admin/get-system-stats": {
+      "get": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Super admin get system stats",
+        "operationId": "super_admin_get_system_stats_get",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/super-admin/global-search": {
+      "get": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Super admin global search",
+        "operationId": "super_admin_global_search_get",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/super-admin/reset-courier-password": {
+      "post": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Super admin reset courier password",
+        "operationId": "super_admin_reset_courier_password_post",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/super-admin/reset-staff-password": {
+      "post": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Super admin reset staff password",
+        "operationId": "super_admin_reset_staff_password_post",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/super-admin/reset-user-password": {
+      "post": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Super admin reset user password",
+        "operationId": "super_admin_reset_user_password_post",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/super-admin/save-config": {
+      "post": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Super admin save config",
+        "operationId": "super_admin_save_config_post",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/super-admin/send-code": {
+      "post": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Super admin send code",
+        "operationId": "super_admin_send_code_post",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/super-admin/send-notification": {
+      "post": {
+        "tags": [
+          "super-admin"
+        ],
+        "summary": "Super admin send notification",
+        "operationId": "super_admin_send_notification_post",
+        "security": [
+          {
+            "SessionAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/swagger.yaml": {
+      "get": {
+        "tags": [
+          "general"
+        ],
+        "summary": "Swagger spec",
+        "operationId": "swagger_spec_get",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/user/status/{ticket_no}": {
+      "get": {
+        "tags": [
+          "general"
+        ],
+        "summary": "User status",
+        "operationId": "user_status_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ticket_no",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    }
+  }
+}

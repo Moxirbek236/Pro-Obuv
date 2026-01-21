@@ -3,7 +3,7 @@
   <div class="navbar-container">
     
     <!-- Logo -->
-    <a href="{{ url_for('index') }}" class="navbar-brand">
+    <a href="{{ url_for('menu') }}" class="navbar-brand">
       <div class="navbar-logo">
         <i class="bi bi-shield-check"></i>
       </div>
@@ -24,40 +24,44 @@
     <!-- Navigation Links (Desktop) -->
     <ul class="navbar-nav">
       <li class="nav-item">
-        <a href="{{ url_for('menu') }}" class="nav-link">
+        <a href="{{ url_for('menu') }}" class="nav-link {{ 'active' if request.endpoint == 'menu' else '' }}">
           <i class="bi bi-grid-3x3-gap"></i>
           {{ _('nav.menu') or 'Mahsulotlar' }}
         </a>
       </li>
       
       <li class="nav-item">
-        <a href="{{ url_for('news_page') }}" class="nav-link">
+        <a href="{{ url_for('news_page') }}" class="nav-link {{ 'active' if request.endpoint == 'news_page' else '' }}">
           <i class="bi bi-newspaper"></i>
           {{ _('nav.news') or 'Yangiliklar' }}
         </a>
       </li>
       
       <li class="nav-item">
-        <a href="{{ url_for('about') }}" class="nav-link">
+        <a href="{{ url_for('about') }}" class="nav-link {{ 'active' if request.endpoint == 'about' else '' }}">
           <i class="bi bi-info-circle"></i>
           {{ _('nav.about') or 'Biz haqimizda' }}
         </a>
       </li>
       
       <li class="nav-item">
-        <a href="{{ url_for('contact') }}" class="nav-link">
+        <a href="{{ url_for('contact') }}" class="nav-link {{ 'active' if request.endpoint == 'contact' else '' }}">
           <i class="bi bi-envelope"></i>
           {{ _('nav.contact') or 'Aloqa' }}
         </a>
       </li>
       
-      <!-- Cart -->
       <li class="nav-item">
-        <a href="{{ url_for('cart') }}" class="nav-link">
-          <i class="bi bi-cart3"></i>
-          {% if session.get('cart_count', 0) > 0 %}
-            <span class="cart-badge">{{ session.get('cart_count') }}</span>
-          {% endif %}
+        <a href="{{ url_for('kafolatlar_page') }}" class="nav-link {{ 'active' if request.endpoint == 'kafolatlar_page' else '' }}">
+          <i class="bi bi-shield-check"></i>
+          {{ _('nav.warranty') or 'Kafolatlar' }}
+        </a>
+      </li>
+      
+      <li class="nav-item">
+        <a href="{{ url_for('downloads') }}" class="nav-link {{ 'active' if request.endpoint == 'downloads' else '' }}">
+          <i class="bi bi-download"></i>
+          {{ _('nav.downloads') or 'Yuklashlar' }}
         </a>
       </li>
       
@@ -67,6 +71,24 @@
           <a href="{{ url_for('profile') }}" class="nav-link">
             <i class="bi bi-person-circle"></i>
             {{ session.get('user_name', 'Profil') }}
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{{ url_for('favorites') }}" class="nav-link">
+            <i class="bi bi-heart"></i>
+            {{ _('nav.favorites') or 'Sevimlilar' }}
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{{ url_for('profile_settings') }}" class="nav-link">
+            <i class="bi bi-gear"></i>
+            {{ _('nav.settings') or 'Sozlamalar' }}
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{{ url_for('logout') }}" class="nav-link" onclick="handleLogout(event)">
+            <i class="bi bi-box-arrow-right"></i>
+            {{ _('nav.logout') or 'Chiqish' }}
           </a>
         </li>
       {% else %}
@@ -122,15 +144,18 @@
 
   <!-- Mobile Navigation Links -->
   <ul class="mobile-nav-links">
-    <li><a href="{{ url_for('menu') }}" class="nav-link"><i class="bi bi-grid-3x3-gap"></i> {{ _('nav.menu') or 'Mahsulotlar' }}</a></li>
-    <li><a href="{{ url_for('news_page') }}" class="nav-link"><i class="bi bi-newspaper"></i> {{ _('nav.news') or 'Yangiliklar' }}</a></li>
-    <li><a href="{{ url_for('about') }}" class="nav-link"><i class="bi bi-info-circle"></i> {{ _('nav.about') or 'Biz haqimizda' }}</a></li>
-    <li><a href="{{ url_for('contact') }}" class="nav-link"><i class="bi bi-envelope"></i> {{ _('nav.contact') or 'Aloqa' }}</a></li>
-    <li><a href="{{ url_for('cart') }}" class="nav-link"><i class="bi bi-cart3"></i> {{ _('nav.cart') or 'Savatcha' }}</a></li>
+  <li><a href="{{ url_for('menu') }}" class="nav-link {{ 'active' if request.endpoint == 'menu' else '' }}"><i class="bi bi-grid-3x3-gap"></i> {{ _('nav.menu') or 'Mahsulotlar' }}</a></li>
+    <li><a href="{{ url_for('news_page') }}" class="nav-link {{ 'active' if request.endpoint == 'news_page' else '' }}"><i class="bi bi-newspaper"></i> {{ _('nav.news') or 'Yangiliklar' }}</a></li>
+    <li><a href="{{ url_for('about') }}" class="nav-link {{ 'active' if request.endpoint == 'about' else '' }}"><i class="bi bi-info-circle"></i> {{ _('nav.about') or 'Biz haqimizda' }}</a></li>
+    <li><a href="{{ url_for('contact') }}" class="nav-link {{ 'active' if request.endpoint == 'contact' else '' }}"><i class="bi bi-envelope"></i> {{ _('nav.contact') or 'Aloqa' }}</a></li>
+    <li><a href="{{ url_for('kafolatlar_page') }}" class="nav-link {{ 'active' if request.endpoint == 'kafolatlar_page' else '' }}"><i class="bi bi-shield-check"></i> {{ _('nav.warranty') or 'Kafolatlar' }}</a></li>
+    <li><a href="{{ url_for('downloads') }}" class="nav-link {{ 'active' if request.endpoint == 'downloads' else '' }}"><i class="bi bi-download"></i> {{ _('nav.downloads') or 'Yuklashlar' }}</a></li>
     
     {% if session.get('user_id') %}
       <li><a href="{{ url_for('profile') }}" class="nav-link"><i class="bi bi-person-circle"></i> {{ _('nav.profile') or 'Profil' }}</a></li>
-      <li><a href="{{ url_for('logout') }}" class="nav-link"><i class="bi bi-box-arrow-right"></i> {{ _('nav.logout') or 'Chiqish' }}</a></li>
+      <li><a href="{{ url_for('favorites') }}" class="nav-link"><i class="bi bi-heart"></i> {{ _('nav.favorites') or 'Sevimlilar' }}</a></li>
+      <li><a href="{{ url_for('profile_settings') }}" class="nav-link"><i class="bi bi-gear"></i> {{ _('nav.settings') or 'Sozlamalar' }}</a></li>
+      <li><a href="{{ url_for('logout') }}" class="nav-link" onclick="handleLogout(event)"><i class="bi bi-box-arrow-right"></i> {{ _('nav.logout') or 'Chiqish' }}</a></li>
     {% else %}
       <li><a href="{{ url_for('login_page') }}" class="nav-link"><i class="bi bi-box-arrow-in-right"></i> {{ _('nav.login') or 'Kirish' }}</a></li>
       <li><a href="{{ url_for('register') }}" class="nav-link"><i class="bi bi-person-plus"></i> {{ _('nav.register') or 'Ro\'yxatdan o\'tish' }}</a></li>
@@ -210,4 +235,89 @@ function changeLanguage(lang) {
   })
   .catch(error => console.error('Language change error:', error));
 }
+
+// Handle logout with immediate navbar update
+function handleLogout(event) {
+  event.preventDefault();
+  const logoutUrl = event.currentTarget.href;
+  
+  // Show loading state
+  const icon = event.currentTarget.querySelector('i');
+  icon.className = 'bi bi-arrow-repeat';
+  icon.style.animation = 'spin 1s linear infinite';
+  
+  fetch(logoutUrl, {
+    method: 'GET',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest'
+    }
+  })
+  .then(response => {
+    if (response.redirected) {
+      // Update navbar immediately
+      updateNavbarAfterLogout();
+      // Redirect after a short delay
+      setTimeout(() => {
+        window.location.href = response.url;
+      }, 500);
+    } else {
+      window.location.href = logoutUrl;
+    }
+  })
+  .catch(error => {
+    console.error('Logout error:', error);
+    window.location.href = logoutUrl;
+  });
+}
+
+// Update navbar immediately after logout
+function updateNavbarAfterLogout() {
+  const userMenuItems = document.querySelectorAll('.navbar-nav .nav-item');
+  userMenuItems.forEach(item => {
+    const link = item.querySelector('a');
+    if (link && (link.href.includes('profile') || link.href.includes('logout'))) {
+      item.style.display = 'none';
+    }
+  });
+  
+  // Show login button
+  const navbarNav = document.querySelector('.navbar-nav');
+  if (navbarNav) {
+    const loginItem = document.createElement('li');
+    loginItem.className = 'nav-item';
+    loginItem.innerHTML = `
+      <a href="/login" class="nav-link">
+        <i class="bi bi-box-arrow-in-right"></i>
+        Kirish
+      </a>
+    `;
+    navbarNav.appendChild(loginItem);
+  }
+  
+  // Update mobile menu too
+  const mobileNavLinks = document.querySelector('.mobile-nav-links');
+  if (mobileNavLinks) {
+    const mobileItems = mobileNavLinks.querySelectorAll('li');
+    mobileItems.forEach(item => {
+      const link = item.querySelector('a');
+      if (link && (link.href.includes('profile') || link.href.includes('logout'))) {
+        item.style.display = 'none';
+      }
+    });
+    
+    const mobileLoginItem = document.createElement('li');
+    mobileLoginItem.innerHTML = `<a href="/login" class="nav-link"><i class="bi bi-box-arrow-in-right"></i> Kirish</a>`;
+    mobileNavLinks.appendChild(mobileLoginItem);
+  }
+}
+
+// Add spinning animation
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+`;
+document.head.appendChild(style);
 </script>

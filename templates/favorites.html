@@ -1,15 +1,18 @@
-{% extends "base.html" %} {% block title %}Sevimlilar - Pro Obuv{% endblock %}
+{% extends "base.html" %} 
+{% block title %}{{ _('nav.favorites') or 'Sevimlilar' }} - Pro Obuv{% endblock %} 
 {% block seo_meta %}
 <meta
   name="description"
-  content="Siz saqlab qo'ygan sevimli mahsulotlar — Pro Obuv. Tez buyurtma va oson boshqaruv." />
-<meta property="og:title" content="Sevimlilar - Pro Obuv" />
+  content="{{ _('meta.favorites_description') or 'Siz saqlab qo\'yghan sevimli mahsulotlar — Pro Obuv. Tez buyurtma va oson boshqaruv.' }}" />
+<meta property="og:title" content="{{ _('nav.favorites') or 'Sevimlilar' }} - Pro Obuv" />
 <meta
   property="og:description"
-  content="Siz saqlab qo'ygan sevimli mahsulotlar — Pro Obuv." />
-{% endblock %} {% block content %}
+  content="{{ _('meta.favorites_description') or 'Siz saqlab qo\'yghan sevimli mahsulotlar — Pro Obuv.' }}" />
+{% endblock %} 
+
+{% block content %}
 <div class="card favorites-card p-3">
-  <h2 data-translate="favorites_title">Sevimlilar</h2>
+  <h2 data-translate="favorites_title">{{ _('nav.favorites') or 'Sevimlilar' }}</h2>
 
   {% if favorites %}
   <div class="favorites-grid">
@@ -19,7 +22,7 @@
         <img
           src="{{ (item.image_url or 'images/default.webp') | cloudinary_url }}"
           alt="{{ item.name }}"
-          onerror="this.src='{{ 'images/default.webp' | cloudinary_url }}'" />
+          onerror="this.src='{{ url_for('static', filename='images/default.webp') }}';" />
       </div>
       <div class="fav-body">
         <h4 class="fav-title">{{ item.name }}</h4>
@@ -29,7 +32,7 @@
           <form method="post" action="{{ url_for('add_to_cart') }}">
             <input type="hidden" name="menu_item_id" value="{{ item.id }}" />
             <button type="submit" class="btn btn-sm btn-success">
-              Qo'shish
+              {{ _('cart.add') or 'Qo\'shish' }}
             </button>
           </form>
         </div>
@@ -41,7 +44,7 @@
             type="submit"
             class="btn btn-sm btn-danger"
             onclick="return confirm('Sevimlilardan olib tashlaysizmi?')">
-            Olib tashlash
+            {{ _('favorites.remove') or 'O\'chirish' }}
           </button>
         </form>
       </div>

@@ -3,14 +3,15 @@
 {% block title %}Mijoz Savollari (AI Unanswered){% endblock %}
 
 {% block dashboard_content %}
+<!-- AI Questions Section -->
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h4 class="fw-bold">Mijoz Savollari</h4>
+    <h4 class="fw-bold">AI Savollari</h4>
     <div>
         <span class="badge bg-warning text-dark">Javob berilmagan: {{ questions|length }}</span>
     </div>
 </div>
 
-<div class="card-modern">
+<div class="card-modern mb-4">
     <div class="table-responsive">
         <table class="table-modern">
             <thead>
@@ -40,14 +41,73 @@
                     <td><span class="badge bg-warning bg-opacity-10 text-warning">Kutilmoqda</span></td>
                     <td class="small text-muted">{{ q.last_asked_at[:16] }}</td>
                     <td>
-                        <button class="btn btn-sm btn-light-modern text-primary" onclick="answerQuestion({{ q.id }})">
+                        <button class="btn btn-sm btn-light-modern text-primary" onclick="answerQuestion('{{ q.id }}')">
                             <i class="bi bi-reply-fill"></i> Javob yozish
                         </button>
                     </td>
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="6" class="text-center py-5 text-muted">Hozircha yangi savollar yo'q.</td>
+                    <td colspan="6" class="text-center py-5 text-muted">Hozircha yangi AI savollari yo'q.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- User Questions Section -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold">Foydalanuvchi Kontakt Savollari</h4>
+    <div>
+        <span class="badge bg-info text-dark">Jami: {{ user_questions|length }}</span>
+    </div>
+</div>
+
+<div class="card-modern">
+    <div class="table-responsive">
+        <table class="table-modern">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Ism</th>
+                    <th>Email</th>
+                    <th>Telefon</th>
+                    <th>Mavzu</th>
+                    <th>Xabar</th>
+                    <th>Sana</th>
+                    <th>Amallar</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for q in user_questions %}
+                <tr>
+                    <td class="fw-bold">#{{ q.id }}</td>
+                    <td>{{ q.user_name }}</td>
+                    <td>{{ q.email or '-' }}</td>
+                    <td>{{ q.phone or '-' }}</td>
+                    <td>{{ q.subject }}</td>
+                    <td>
+                        <div style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ q.message }}">
+                            {{ q.message }}
+                        </div>
+                    </td>
+                    <td class="small text-muted">{{ q.created_at[:16] if q.created_at else '-' }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-light-modern text-primary" 
+                                onclick="answerUserQuestion(this)" 
+                                data-id="{{ q.id }}" 
+                                data-name="{{ q.user_name|e }}" 
+                                data-subject="{{ q.subject|e }}" 
+                                data-message="{{ q.message|e }}" 
+                                data-email="{{ q.email|e }}">
+                            <i class="bi bi-reply-fill"></i> Javob yozish
+                        </button>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="8" class="text-center py-5 text-muted">Hozircha foydalanuvchi savollari yo'q.</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -81,6 +141,7 @@
 
 <script>
     let currentQuestionId = null;
+    let currentQuestionEmail = null;
     
     function answerQuestion(id) {
         currentQuestionId = id;
@@ -89,14 +150,53 @@
         new bootstrap.Modal(document.getElementById('answerModal')).show();
     }
     
+    function answerUserQuestion(button) {
+        currentQuestionId = button.dataset.id;
+        currentQuestionEmail = button.dataset.email;
+        
+        const questionText = document.getElementById('questionText');
+        questionText.innerHTML = `
+            <strong>Foydalanuvchi:</strong> ${button.dataset.name}<br>
+            <strong>Email:</strong> ${button.dataset.email}<br>
+            <strong>Mavzu:</strong> ${button.dataset.subject}<br>
+            <strong>Xabar:</strong> ${button.dataset.message}
+        `;
+        
+        new bootstrap.Modal(document.getElementById('answerModal')).show();
+    }
+    
     function submitAnswer() {
         if(!currentQuestionId) return;
         const answer = document.getElementById('answerBody').value;
         if(!answer) { alert("Javob yozing!"); return; }
         
-        // Mock submission
-        alert("Javob yuborildi (bu demo funksiya)");
-        location.reload();
+        // Submit answer to backend
+        fetch('/super-admin/answer-user-question', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content || ''
+            },
+            body: JSON.stringify({
+                question_id: currentQuestionId,
+                answer: answer,
+                email: currentQuestionEmail
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                alert("Javob muvaffaqiyatli yuborildi!");
+                bootstrap.Modal.getInstance(document.getElementById('answerModal')).hide();
+                location.reload();
+            } else {
+                alert("Xatolik: " + (data.message || "Javob yuborilmadi"));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("Javob yuborishda xatolik yuz berdi");
+        });
     }
 </script>
 {% endblock %}

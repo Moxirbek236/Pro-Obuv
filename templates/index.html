@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block seo_meta %}
-  <meta name="description" content="Pro Obuv (Safety.uz) — spetsobuv, work boots, kроссовки, krasofka va ish kiyimlari. Sifatli himoya poyabzallari (steel toe, composite toe), antistatic/ESD, professional workwear. Buyurtma va yetkazib berish O'zbekiston bo'ylab." />
+  <meta name="description" content="{{ _('meta.home_description') }}" />
   <meta name="keywords" content="pro obuv, spetsobuv, spets obuv, spestobuv, spest obuv, safety shoes, safety.uz, work boots, protective shoes, steel toe, composite toe, ESD shoes, antistatic, botinki, botinki ish, krasofka, krosovka, krossovka, кроссовки, krosofkalar, krosofkalar, sneakers, sport shoes, cross, crossovki, кроссовки, tufli, etik, ish kiyimlari, spetsodejda, himoya poyabzal, buyurtma, yetkazib berish, Toshkent, Uzbekistan" />
   <meta property="og:title" content="Pro Obuv - Bosh sahifa | Sifatli Spetsobuv va Ish Kiyimlari" />
   <meta property="og:description" content="Pro Obuv — O'zbekistondagi eng yaxshi spetsobuv va ish kiyimlari do'koni. Xavfsizlik poyabzallari, ish kiyimlari, himoya vositalari." />
@@ -99,15 +99,14 @@
   <div class="hero-industrial-home hazard-stripe-animate animate-up">
     <div class="container text-center">
       <h1 class="display-3 fw-bold mb-4" style="font-family: var(--font-heading);">
-        PRO OBUV <br><span style="color:var(--accent-primary)">ELITE SAFETY GEAR</span>
+        {{ _('homepage.hero_title') }} <br><span style="color:var(--accent-primary)">{{ _('homepage.hero_subtitle') }}</span>
       </h1>
       <p class="lead text-secondary max-width-600 mx-auto mb-5">
-          High-performance ISO-certified safety footwear and protection. 
-          Engineered for extreme environments, designed for professionals.
+          {{ _('homepage.hero_description') }}
       </p>
       <div class="d-flex justify-content-center gap-3">
-          <a href="{{ url_for('menu') }}" class="btn-primary-industrial px-5 py-3">SHOP CATALOG</a>
-          <a href="{{ url_for('about') }}" class="btn-outline-industrial px-5 py-3">TECHNICAL SPECS</a>
+          <a href="{{ url_for('menu') }}" class="btn-primary-industrial px-5 py-3">{{ _('homepage.shop_catalog') }}</a>
+          <a href="{{ url_for('about') }}" class="btn-outline-industrial px-5 py-3">{{ _('homepage.technical_specs') }}</a>
       </div>
     </div>
   </div>
@@ -118,14 +117,14 @@
       <form action="{{ url_for('menu') }}" method="get" class="d-flex flex-wrap gap-3">
         <div class="input-group" style="flex: 2;">
             <span class="input-group-text bg-transparent border-secondary text-secondary"><i class="bi bi-search"></i></span>
-            <input name="q" type="search" class="form-control bg-transparent border-secondary text-white" placeholder="Search safety gear: S3 boots, hi-vis jackets, composite toe...">
+            <input name="q" type="search" class="form-control bg-transparent border-secondary text-white" placeholder="{{ _('menu.search_gear_placeholder') }}">
         </div>
         <select name="category" class="form-select bg-transparent border-secondary text-white" style="flex: 1;">
-          <option value="" class="bg-dark">All Categories</option>
-          <option value="specobuv" class="bg-dark">Safety Footwear</option>
-          <option value="specodezhda" class="bg-dark">Protective Clothing</option>
+          <option value="" class="bg-dark">{{ _('menu.all_categories') or _('menu.all_products') }}</option>
+          <option value="specobuv" class="bg-dark">{{ _('menu.safety_footwear') or _('menu.specobuv_category') }}</option>
+          <option value="specodezhda" class="bg-dark">{{ _('menu.protective_clothing') or _('menu.specodezhda_category') }}</option>
         </select>
-        <button type="submit" class="btn-primary-industrial px-5">FIND GEAR</button>
+        <button type="submit" class="btn-primary-industrial px-5">{{ _('homepage.find_gear') }}</button>
       </form>
     </div>
 
@@ -133,16 +132,16 @@
     <div class="home-service-grid pb-5">
         <div class="industrial-service-card" data-aos="fade-up">
             <span class="service-icon-large"><i class="bi bi-shield-check"></i></span>
-            <h3 class="mb-3">ISO-CERTIFIED FOOTWEAR</h3>
-            <p class="text-secondary small">ISO 20345 compliant S1-S3 safety boots, anti-static footwear, and heavy-duty impact protection.</p>
-            <a href="{{ url_for('menu') }}" class="btn-outline-industrial w-100 text-center d-block py-2 mt-3">BROWSE CATALOG</a>
+            <h3 class="mb-3">{{ _('homepage.iso_certified') }}</h3>
+            <p class="text-secondary small">{{ _('homepage.iso_description') }}</p>
+            <a href="{{ url_for('menu') }}" class="btn-outline-industrial w-100 text-center d-block py-2 mt-3">{{ _('homepage.browse_catalog') }}</a>
         </div>
         
         <div class="industrial-service-card" data-aos="fade-up" data-aos-delay="200">
             <span class="service-icon-large"><i class="bi bi-tools"></i></span>
-            <h3 class="mb-3">PROFESSIONAL WORKWEAR</h3>
-            <p class="text-secondary small">High-visibility gear, flame-retardant industrial wear, and reinforced construction apparel.</p>
-            <a href="{{ url_for('menu') }}" class="btn-outline-industrial w-100 text-center d-block py-2 mt-3">VIEW WORKWEAR</a>
+            <h3 class="mb-3">{{ _('homepage.professional_workwear') }}</h3>
+            <p class="text-secondary small">{{ _('homepage.workwear_description') }}</p>
+            <a href="{{ url_for('menu') }}" class="btn-outline-industrial w-100 text-center d-block py-2 mt-3">{{ _('homepage.view_workwear') }}</a>
         </div>
     </div>
 

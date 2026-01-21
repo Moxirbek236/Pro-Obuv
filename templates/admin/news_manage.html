@@ -1,5 +1,5 @@
 {% extends "super_admin_base.html" %} {% block title %}Yangiliklarni boshqarish - Admin{%
-endblock %} {% block content %}
+endblock %} {% block dashboard_content %}
 <div class="container mt-4">
   <h1> Yangiliklar (Superadmin)</h1>
 
@@ -13,15 +13,9 @@ endblock %} {% block content %}
     </div>
     <div class="mb-3">
       <label class="form-label">Rasm (URL yoki fayl)</label>
-      <input
-        class="form-control"
-        type="text"
-        name="image_url"
-        placeholder="Masalan: /static/uploads/news1.webp" />
-      <small class="text-muted"
-        >Agar faylni yuklamoqchi bo'lsangiz, serverga yuklash funksiyasi yo'q —
-        avvalo faylni uploads papkasiga qo'ying va URL kiriting.</small
-      >
+      <input class="form-control" type="text" name="image_url" placeholder="Masalan: https://res.cloudinary.com/.../image.jpg" />
+      <div class="form-text">Yoki rasm faylini tanlang (u avtomatik Cloudinaryga yuklanadi).</div>
+      <input class="form-control mt-2" type="file" name="image_file" accept="image/*">
     </div>
     <div class="mb-3">
       <label class="form-label">YouTube URL</label>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Translation Test</title>
+</head>
+<body>
+    <h1>Translation Test Page</h1>
+    
+    <h2>Server-side translations:</h2>
+    <p>nav.home: {{ _('nav.home') }}</p>
+    <p>menu.all_products: {{ _('menu.all_products') }}</p>
+    <p>footer.company_desc: {{ _('footer.company_desc') }}</p>
+    
+    <h2>Current language: {{ current_language }}</h2>
+    
+    <h2>Available translations count: {{ translations|length }}</h2>
+    
+    <h2>Sample client-side translations:</h2>
+    <p>nav.home: <span data-translate="nav.home"></span></p>
+    <p>menu.all_products: <span data-translate="menu.all_products"></span></p>
+    
+    <script>
+        console.log('Available translations:', window.TRANSLATIONS);
+        console.log('Sample translations:');
+        console.log('nav.home:', window.TRANSLATIONS['nav.home']);
+        console.log('menu.all_products:', window.TRANSLATIONS['menu.all_products']);
+        
+        // Test translation function
+        function translatePage() {
+            document.querySelectorAll('[data-translate]').forEach(el => {
+                const key = el.getAttribute('data-translate');
+                if (window.TRANSLATIONS && window.TRANSLATIONS[key]) {
+                    el.textContent = window.TRANSLATIONS[key];
+                }
+            });
+        }
+        
+        // Run translation
+        translatePage();
+    </script>
+</body>
+</html>

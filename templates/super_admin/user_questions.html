@@ -1,0 +1,30 @@
+{% extends 'super_admin_base.html' %}
+{% block title %}User Questions{% endblock %}
+
+{% block dashboard_content %}
+<div class="p-4">
+  <h3>Contact Questions</h3>
+  {% if questions and questions|length > 0 %}
+    <table class="table table-striped mt-3">
+      <thead>
+        <tr><th>#</th><th>Name</th><th>Email</th><th>Phone</th><th>Subject</th><th>Message</th><th>Created</th></tr>
+      </thead>
+      <tbody>
+        {% for q in questions %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ q.user_name }}</td>
+          <td>{{ q.email }}</td>
+          <td>{{ q.phone }}</td>
+          <td>{{ q.subject }}</td>
+          <td>{{ q.message }}</td>
+          <td>{{ q.created_at }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="alert alert-info">No questions submitted yet.</div>
+  {% endif %}
+</div>
+{% endblock %}

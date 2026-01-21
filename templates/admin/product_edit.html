@@ -20,35 +20,108 @@
                     <input type="number" name="price" class="form-control" value="{{ product.price }}" required>
                 </div>
 
-                <!-- Multilingual Names -->
+                <!-- Category Selection First -->
                 <div class="col-12">
-                    <h6 class="fw-bold text-uppercase small text-muted mt-3 mb-3">Nomi (Ko'p tilli)</h6>
-                    <div class="row g-2">
-                        <div class="col-md-4">
-                            <input type="text" name="name_ru" class="form-control" value="{{ product.name_ru }}" placeholder="RU Nomi">
-                        </div>
-                        <div class="col-md-4">
-                            <input type="text" name="name_uz" class="form-control" value="{{ product.name_uz }}" placeholder="UZ Nomi">
-                        </div>
-                        <div class="col-md-4">
-                            <input type="text" name="name_en" class="form-control" value="{{ product.name_en }}" placeholder="EN Nomi">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
                     <label class="form-label fw-bold small text-muted text-uppercase">Kategoriya</label>
-                    <select name="category" class="form-select">
-                        <option value="specobuv" {% if product.category == 'specobuv' %}selected{% endif %}>Maxsus Oyoq kiyim (Specobuv)</option>
-                        <option value="specodezhda" {% if product.category == 'specodezhda' %}selected{% endif %}>Maxsus Kiyim (Specodezhda)</option>
-                        <option value="other" {% if product.category not in ['specobuv', 'specodezhda'] %}selected{% endif %}>Boshqa</option>
+                    <select name="category" class="form-select" id="categorySelect" onchange="updateCategoryFields()">
+                        <option value="Safety Boots" {% if product.category == 'Safety Boots' %}selected{% endif %}>Safety Boots (Xavfsizlik Oyoq Kiyim)</option>
+                        <option value="Protective Suits" {% if product.category == 'Protective Suits' %}selected{% endif %}>Protective Suits (Himoya Kiyimlari)</option>
+                        <option value="Head Protection" {% if product.category == 'Head Protection' %}selected{% endif %}>Head Protection (Bosh Himoyasi)</option>
+                        <option value="Hand Protection" {% if product.category == 'Hand Protection' %}selected{% endif %}>Hand Protection (Qo'l Himoyasi)</option>
+                        <option value="Eye Protection" {% if product.category == 'Eye Protection' %}selected{% endif %}>Eye Protection (Ko'z Himoyasi)</option>
+                        <option value="Respiratory Protection" {% if product.category == 'Respiratory Protection' %}selected{% endif %}>Respiratory Protection (Nafas Yo'llari Himoyasi)</option>
                     </select>
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label fw-bold small text-muted text-uppercase">Chegirma (%)</label>
-                    <input type="number" name="discount_percentage" class="form-control" value="{{ product.discount_percentage or 0 }}">
+
+                <!-- Category-specific fields -->
+                <div id="categoryFields">
+                    <!-- Safety Boots Fields -->
+                    <div id="safetyBootsFields" class="category-fields" style="display: none;">
+                        <h6 class="fw-bold text-uppercase small text-muted mt-3 mb-3">Safety Boots Xususiyatlari</h6>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <label class="form-label">Material</label>
+                                <select name="boot_material" class="form-select">
+                                    <option value="">Tanlang</option>
+                                    <option value="leather" {% if product.boot_material == 'leather' %}selected{% endif %}>Teri (Leather)</option>
+                                    <option value="rubber" {% if product.boot_material == 'rubber' %}selected{% endif %}>Rezina (Rubber)</option>
+                                    <option value="composite" {% if product.boot_material == 'composite' %}selected{% endif %}>Kompozit (Composite)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Himoya Sinfasi</label>
+                                <select name="protection_class" class="form-select">
+                                    <option value="">Tanlang</option>
+                                    <option value="S1" {% if product.protection_class == 'S1' %}selected{% endif %}>S1</option>
+                                    <option value="S2" {% if product.protection_class == 'S2' %}selected{% endif %}>S2</option>
+                                    <option value="S3" {% if product.protection_class == 'S3' %}selected{% endif %}>S3</option>
+                                    <option value="S4" {% if product.protection_class == 'S4' %}selected{% endif %}>S4</option>
+                                    <option value="S5" {% if product.protection_class == 'S5' %}selected{% endif %}>S5</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Uch Himoyasi</label>
+                                <select name="toe_protection" class="form-select">
+                                    <option value="">Tanlang</option>
+                                    <option value="steel" {% if product.toe_protection == 'steel' %}selected{% endif %}>Po'lat (Steel)</option>
+                                    <option value="composite" {% if product.toe_protection == 'composite' %}selected{% endif %}>Kompozit (Composite)</option>
+                                    <option value="aluminum" {% if product.toe_protection == 'aluminum' %}selected{% endif %}>Alyuminiy (Aluminum)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Taglik Himoyasi</label>
+                                <select name="sole_protection" class="form-select">
+                                    <option value="">Tanlang</option>
+                                    <option value="steel" {% if product.sole_protection == 'steel' %}selected{% endif %}>Po'lat (Steel)</option>
+                                    <option value="composite" {% if product.sole_protection == 'composite' %}selected{% endif %}>Kompozit (Composite)</option>
+                                    <option value="kevlar" {% if product.sole_protection == 'kevlar' %}selected{% endif %}>Kevlar</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Protective Suits Fields -->
+                    <div id="protectiveSuitsFields" class="category-fields" style="display: none;">
+                        <h6 class="fw-bold text-uppercase small text-muted mt-3 mb-3">Protective Suits Xususiyatlari</h6>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <label class="form-label">Material</label>
+                                <select name="suit_material" class="form-select">
+                                    <option value="">Tanlang</option>
+                                    <option value="cotton" {% if product.suit_material == 'cotton' %}selected{% endif %}>Paxta (Cotton)</option>
+                                    <option value="polyester" {% if product.suit_material == 'polyester' %}selected{% endif %}>Poliester (Polyester)</option>
+                                    <option value="nomex" {% if product.suit_material == 'nomex' %}selected{% endif %}>Nomex</option>
+                                    <option value="kevlar" {% if product.suit_material == 'kevlar' %}selected{% endif %}>Kevlar</option>
+                                    <option value="gore-tex" {% if product.suit_material == 'gore-tex' %}selected{% endif %}>Gore-Tex</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Himoya Turi</label>
+                                <select name="protection_type" class="form-select">
+                                    <option value="">Tanlang</option>
+                                    <option value="fire_resistant" {% if product.protection_type == 'fire_resistant' %}selected{% endif %}>Olovga Chidamli</option>
+                                    <option value="chemical_resistant" {% if product.protection_type == 'chemical_resistant' %}selected{% endif %}>Kimyoviy Himoya</option>
+                                    <option value="waterproof" {% if product.protection_type == 'waterproof' %}selected{% endif %}>Suv O'tkazmaydigan</option>
+                                    <option value="anti_static" {% if product.protection_type == 'anti_static' %}selected{% endif %}>Antistatik</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Foydalanish Sohasi</label>
+                                <select name="application_area" class="form-select">
+                                    <option value="">Tanlang</option>
+                                    <option value="construction" {% if product.application_area == 'construction' %}selected{% endif %}>Qurilish</option>
+                                    <option value="oil_gas" {% if product.application_area == 'oil_gas' %}selected{% endif %}>Neft-Gaz</option>
+                                    <option value="manufacturing" {% if product.application_area == 'manufacturing' %}selected{% endif %}>Ishlab Chiqarish</option>
+                                    <option value="electrical" {% if product.application_area == 'electrical' %}selected{% endif %}>Elektrotexnika</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Other categories can be added similarly -->
                 </div>
 
+                <!-- Common fields -->
                 <div class="col-md-6">
                     <label class="form-label fw-bold small text-muted text-uppercase">O'lchamlar</label>
                     <input type="text" name="sizes" class="form-control" value="{{ product.sizes }}" placeholder="Masalan: 36,37,38">
@@ -57,6 +130,11 @@
                 <div class="col-md-6">
                      <label class="form-label fw-bold small text-muted text-uppercase">Ranglar</label>
                      <input type="text" name="colors" class="form-control" value="{{ product.colors }}" placeholder="Masalan: black,white">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold small text-muted text-uppercase">Chegirma (%)</label>
+                    <input type="number" name="discount_percentage" class="form-control" value="{{ product.discount_percentage or 0 }}">
                 </div>
 
                 <div class="col-12">
@@ -142,4 +220,35 @@
         </div>
     </div>
 </div>
+
+<script>
+function updateCategoryFields() {
+    const category = document.getElementById('categorySelect').value;
+    const allFields = document.querySelectorAll('.category-fields');
+    
+    // Hide all category fields
+    allFields.forEach(field => {
+        field.style.display = 'none';
+    });
+    
+    // Show relevant category fields
+    switch(category) {
+        case 'Safety Boots':
+            document.getElementById('safetyBootsFields').style.display = 'block';
+            break;
+        case 'Protective Suits':
+            document.getElementById('protectiveSuitsFields').style.display = 'block';
+            break;
+        // Add other categories as needed
+        default:
+            // Show no specific fields for other categories
+            break;
+    }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    updateCategoryFields();
+});
+</script>
 {% endblock %}

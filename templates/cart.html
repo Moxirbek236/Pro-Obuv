@@ -1,24 +1,23 @@
-{% extends "base.html" %} {% block title %}{{ get_text("Savatcha - Pro Obuv") or 'Savatcha - Pro Obuv' }}{% endblock %} {%
-block seo_meta %}
+{% extends "base.html" %} {% block title %}{{ _('cart.page_title') }}{% endblock %} {% block seo_meta %}
 <meta
   name="description"
-  content="Savatcha — Pro Obuv. Spetsobuv, spetsodejda va ish kiyimlari buyurtmalarini yakunlang." />
+  content="{{ _('cart.meta_description') }}" />
 <meta
   name="keywords"
-  content="pro obuv, savatcha, buyurtma, spetsobuv, ish kiyimlari, oyoq kiyim" />
+  content="{{ _('cart.meta_keywords') }}" />
 <link rel="canonical" href="{{ canonical_url() }}" />
 <meta property="og:type" content="website" />
-<meta property="og:title" content="Savatcha — Pro Obuv" />
+<meta property="og:title" content="{{ _('cart.og_title') }}" />
 <meta
   property="og:description"
-  content="Savatcha — mahsulotlarni ko'rish va buyurtmani yakunlash" />
+  content="{{ _('cart.og_description') }}" />
 <meta property="og:url" content="{{ request.url }}" />
 <meta
   property="og:image"
   content="{{ url_for('static', filename='defoult.webp') }}" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="Savatcha — Pro Obuv" />
-<meta name="twitter:description" content="Savatcha — buyurtmani yakunlash" />
+<meta name="twitter:title" content="{{ _('cart.twitter_title') }}" />
+<meta name="twitter:description" content="{{ _('cart.twitter_description') }}" />
 <meta
   name="twitter:image"
   content="{{ url_for('static', filename='defoult.webp') }}" />
@@ -26,7 +25,7 @@ block seo_meta %}
   {
     "@context": "https://schema.org",
     "@type": "CheckoutPage",
-    "name": "Savatcha — Pro Obuv",
+    "name": "{{ _('cart.schema_name') }}",
     "url": "{{ request.url }}"
   }
 </script>
@@ -38,7 +37,7 @@ block seo_meta %}
     <div class="col-lg-8">
       <div class="industrial-card p-4 mb-4">
         <h2 class="h4 mb-4 border-bottom border-secondary border-opacity-25 pb-3">
-          <i class="bi bi-cart3 me-2 text-accent"></i> {{ get_text("Savatcha") }}
+          <i class="bi bi-cart3 me-2 text-accent"></i> {{ _('cart.title') }}
         </h2>
         
         {% if cart_items %}
@@ -75,9 +74,9 @@ block seo_meta %}
         {% else %}
           <div class="text-center py-5">
             <i class="bi bi-cart-x display-1 text-secondary opacity-50 mb-3"></i>
-            <p class="h5 text-secondary">{{ get_text("Savatchangiz bo'sh") }}</p>
+            <p class="h5 text-secondary">{{ _('cart.empty_title') }}</p>
             <a href="{{ url_for('menu') }}" class="btn-primary-industrial mt-3">
-                <i class="bi bi-shop me-2"></i> {{ get_text("Xaridni boshlash") }}
+                <i class="bi bi-shop me-2"></i> {{ _('cart.continue_shopping') }}
             </a>
           </div>
         {% endif %}
@@ -1254,41 +1253,8 @@ block seo_meta %}
           }
         });
       </script>
-      {% else %}
-      <div class="alert alert-warning">
-            <p>{{ get_text("Buyurtma berish uchun avval tizimga kiring") }}</p>
-        <div style="display: flex; gap: 10px">
-            <a href="{{ url_for('menu') }}" class="btn"
-            ><i
-              class="bi bi-arrow-left ui-icon ui-icon--muted"
-              aria-hidden="true"></i>
-            {{ get_text("Menuga qaytish") }}</a
-          >
-            <a
-            href="{{ url_for('login_page') }}"
-            class="btn big"
-            style="background: #4caf50">
-            {{ get_text("Foydalanuvchi kirishi") }}</a
-          >
-            <a
-            href="{{ url_for('register') }}"
-            class="btn big"
-            style="background: #2196f3">
-            {{ get_text("Ro'yxatdan o'tish") }}</a
-          >
-        </div>
-      </div>
-      {% endif %}
-    </div>
-    {% else %}
-      <div class="empty-cart">
-      <p>{{ get_text("Savatchangiz bo'sh") }}</p>
-      <a href="{{ url_for('menu') }}" class="btn big"> {{ get_text("Mahsulot tanlash") }}</a>
-    </div>
-    {% endif %}
-  </div>
-</div>
-<!-- End cart-page-container -->
+      
+    <!-- End cart-page-container -->
 
 <style>
   /* ================================

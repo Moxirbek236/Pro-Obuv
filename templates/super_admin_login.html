@@ -1,47 +1,45 @@
-{% extends "base.html" %} {% block title %}Super Admin Login{% endblock %} {%
-block content %}
+{% extends "base.html" %} {% block title %}Super Admin Login{% endblock %} {% block content %}
 <div class="login-container">
   <div class="login-card">
     <div class="login-header">
-      <h1>Super Admin Panel</h1>
-      <p>Tizimni to'liq boshqarish uchun kirish</p>
+      <h1>{{ _('super_admin.title') }}</h1>
+      <p>{{ _('super_admin.login_description') }}</p>
     </div>
 
     <form method="POST" class="login-form">
       <div class="form-group">
-        <label>Username:</label>
+        <label>{{ _('username') }}:</label>
         <input
           type="text"
           name="username"
           required
-          placeholder="masteradmin"
+          placeholder="{{ _('super_admin.username_placeholder') }}"
           autocomplete="username" />
       </div>
 
       <div class="form-group">
-        <label>Parol:</label>
+        <label>{{ _('password') }}:</label>
         <input
           type="password"
           name="password"
           required
-          placeholder="Super admin paroli"
+          placeholder="{{ _('super_admin.password_placeholder') }}"
           autocomplete="current-password" />
       </div>
 
-      <button type="submit" class="btn btn-primary btn-full">Kirish</button>
-    </form>
-
+      <button type="submit" class="btn btn-primary btn-full">{{ _('login') }}</button>
+      </form>
     <!-- Forgot password removed for super-admin to avoid public reset links -->
 
     <div class="login-info">
       <small class="text-muted"
-        >Super admin paneli faqat yuqori huquqli foydalanuvchilar uchun</small
+        >{{ _('super_admin.info_text') }}</small
       >
     </div>
 
     <div class="login-back">
       <a href="{{ url_for('index') }}" class="btn btn-secondary"
-        >⬅ Asosiy sahifaga qaytish</a
+        >⬅ {{ _('back_to_home') }}</a
       >
     </div>
   </div>

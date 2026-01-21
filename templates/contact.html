@@ -1,13 +1,13 @@
 {% extends "base.html" %}
-{% block title %}{{ get_text("Aloqa - Pro Obuv") or 'Aloqa - Pro Obuv' }}{% endblock %}
+{% block title %}{{ _('nav.contact') or 'Aloqa' }} - Pro Obuv{% endblock %}
 
 {% block seo_meta %}
-<meta name="description" content="Pro Obuv bilan bog'laning - Xavfsizlik oyoq kiyimlari va maxsus kiyimlar bo'yicha maslahat va buyurtmalar uchun." />
-<meta name="keywords" content="pro obuv, aloqa, bog'lanish, telefon, manzil, safety shoes contact" />
+<meta name="description" content="{{ _('meta.contact_description') or 'Pro Obuv bilan bog\'laning - Xavfsizlik oyoq kiyimlari va maxsus kiyimlar bo\'yicha maslahat va buyurtmalar uchun.' }}" />
+<meta name="keywords" content="{{ _('meta.contact_keywords') or 'pro obuv, aloqa, bog\'lanish, telefon, manzil, safety shoes contact' }}" />
 <link rel="canonical" href="{{ canonical_url() }}" />
 <meta property="og:type" content="website" />
-<meta property="og:title" content="Aloqa - Pro Obuv" />
-<meta property="og:description" content="Biz bilan bog'laning - Professional maslahat va yordam" />
+<meta property="og:title" content="{{ _('nav.contact') or 'Aloqa' }} - Pro Obuv" />
+<meta property="og:description" content="{{ _('meta.contact_description') or 'Biz bilan bog\'laning - Professional maslahat va yordam' }}" />
 <meta property="og:url" content="{{ request.url }}" />
 {% endblock %}
 
@@ -19,10 +19,10 @@
     <div class="position-absolute top-0 start-0 w-100 h-100" style="background: var(--hazard-pattern); opacity: 0.1; pointer-events: none;"></div>
     <div class="position-relative z-1">
       <h1 class="display-4 fw-bold text-uppercase mb-3" style="font-family: var(--font-heading); color: var(--accent-primary);">
-        <i class="bi bi-chat-dots me-2"></i> Biz Bilan Bog'laning
+        <i class="bi bi-chat-dots me-2"></i> {{ _('contact.title') or 'Biz Bilan Bog\'laning' }}
       </h1>
       <p class="lead text-secondary mb-0">
-        Savollaringiz bormi yoki hamkorlik qilmoqchimisiz? Biz sizga yordam berishdan mamnunmiz!
+        {{ _('contact.subtitle') or 'Savollaringiz bormi yoki hamkorlik qilmoqchimisiz? Biz sizga yordam berishdan mamnunmiz!' }}
       </p>
     </div>
   </div>
@@ -36,51 +36,51 @@
              <div class="bg-warning bg-opacity-25 rounded p-2 me-3">
                  <i class="bi bi-envelope-fill text-warning fs-4"></i>
              </div>
-             <h2 class="h4 fw-bold text-uppercase mb-0 font-heading">Xabar Yuborish</h2>
+             <h2 class="h4 fw-bold text-uppercase mb-0 font-heading">{{ _('contact.send_message') or 'Xabar Yuborish' }}</h2>
          </div>
          
          <form method="post" class="needs-validation" novalidate>
             <div class="row g-3">
                 <div class="col-md-6">
-                    <label for="name" class="form-label small text-secondary fw-bold text-uppercase">Ismingiz <span class="text-danger">*</span></label>
+                    <label for="name" class="form-label small text-secondary fw-bold text-uppercase">{{ _('contact.name') or 'Ismingiz' }} <span class="text-danger">*</span></label>
                     <div class="input-group">
                         <span class="input-group-text bg-dark border-secondary text-secondary"><i class="bi bi-person"></i></span>
-                        <input type="text" class="form-control bg-dark border-secondary text-light" id="name" name="name" placeholder="Ismingizni kiriting" required>
+                        <input type="text" class="form-control bg-dark border-secondary text-light" id="name" name="name" placeholder="{{ _('contact.name_placeholder') or 'Ismingizni kiriting' }}" required>
                     </div>
                 </div>
                 
                 <div class="col-md-6">
-                    <label for="email" class="form-label small text-secondary fw-bold text-uppercase">Email</label>
+                    <label for="email" class="form-label small text-secondary fw-bold text-uppercase">{{ _('contact.email') or 'Email' }}</label>
                     <div class="input-group">
                         <span class="input-group-text bg-dark border-secondary text-secondary"><i class="bi bi-at"></i></span>
-                        <input type="email" class="form-control bg-dark border-secondary text-light" id="email" name="email" placeholder="example@mail.com">
+                        <input type="email" class="form-control bg-dark border-secondary text-light" id="email" name="email" placeholder="{{ _('contact.email_placeholder') or 'example@mail.com' }}">
                     </div>
                 </div>
 
                 <div class="col-md-6">
-                    <label for="phone" class="form-label small text-secondary fw-bold text-uppercase">Telefon</label>
+                    <label for="phone" class="form-label small text-secondary fw-bold text-uppercase">{{ _('contact.phone') or 'Telefon' }}</label>
                     <div class="input-group">
                          <span class="input-group-text bg-dark border-secondary text-secondary"><i class="bi bi-phone"></i></span>
-                        <input type="tel" class="form-control bg-dark border-secondary text-light" id="phone" name="phone" placeholder="+998...">
+                        <input type="tel" class="form-control bg-dark border-secondary text-light" id="phone" name="phone" placeholder="{{ _('contact.phone_placeholder') or '+998...' }}">
                     </div>
                 </div>
                 
                 <div class="col-md-6">
-                    <label for="subject" class="form-label small text-secondary fw-bold text-uppercase">Mavzu <span class="text-danger">*</span></label>
+                    <label for="subject" class="form-label small text-secondary fw-bold text-uppercase">{{ _('contact.subject') or 'Mavzu' }} <span class="text-danger">*</span></label>
                     <div class="input-group">
                         <span class="input-group-text bg-dark border-secondary text-secondary"><i class="bi bi-tag"></i></span>
-                        <input type="text" class="form-control bg-dark border-secondary text-light" id="subject" name="subject" required placeholder="Xabar mavzusi">
+                        <input type="text" class="form-control bg-dark border-secondary text-light" id="subject" name="subject" required placeholder="{{ _('contact.subject_placeholder') or 'Xabar mavzusi' }}">
                     </div>
                 </div>
                 
                 <div class="col-12">
-                     <label for="message" class="form-label small text-secondary fw-bold text-uppercase">Xabar <span class="text-danger">*</span></label>
-                     <textarea class="form-control bg-dark border-secondary text-light" id="message" name="message" rows="5" placeholder="Xabaringizni yozing..." required></textarea>
+                     <label for="message" class="form-label small text-secondary fw-bold text-uppercase">{{ _('contact.message') or 'Xabar' }} <span class="text-danger">*</span></label>
+                     <textarea class="form-control bg-dark border-secondary text-light" id="message" name="message" rows="5" placeholder="{{ _('contact.message_placeholder') or 'Xabaringizni yozing...' }}" required></textarea>
                 </div>
                 
-                <div class="col-12 mt-4">
-                    <button type="submit" class="btn-primary-industrial w-100 justify-content-center py-3">
-                        Yuborish <i class="bi bi-send-fill ms-2"></i>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-warning btn-lg px-5 text-uppercase fw-bold">
+                        <i class="bi bi-send-fill me-2"></i> {{ _('contact.send_button') or 'Yuborish' }}
                     </button>
                 </div>
             </div>
@@ -105,7 +105,7 @@
                      <i class="bi bi-person-badge text-primary"></i>
                  </div>
                  <div>
-                     <span class="text-secondary small text-uppercase fw-bold">Mas'ul shaxs</span>
+                     <span class="text-secondary small text-uppercase fw-bold">{{ _('contact.manager') or 'Mas\'ul shaxs' }}</span>
                      <h5 class="mb-0 fw-bold">Avaz</h5>
                  </div>
              </div>
@@ -116,7 +116,7 @@
                      <i class="bi bi-telephone text-success"></i>
                  </div>
                  <div>
-                     <span class="text-secondary small text-uppercase fw-bold">Telefon</span>
+                     <span class="text-secondary small text-uppercase fw-bold">{{ _('contact.phone') or 'Telefon' }}</span>
                      {% set ph = site_settings.site_phone if site_settings.site_phone else '+998 99 145 96 86' %}
                      <h5 class="mb-0 fw-bold text-light"><a href="tel:{{ ph|replace(' ', '') }}" class="text-decoration-none text-reset">{{ ph }}</a></h5>
                  </div>
@@ -128,7 +128,7 @@
                      <i class="bi bi-envelope text-warning"></i>
                  </div>
                  <div>
-                     <span class="text-secondary small text-uppercase fw-bold">Email</span>
+                     <span class="text-secondary small text-uppercase fw-bold">{{ _('contact.email') or 'Email' }}</span>
                      {% set em = site_settings.site_email if site_settings.site_email else 'premiumsafety@mail.ru' %}
                      <h5 class="mb-0 fw-bold"><a href="mailto:{{ em }}" class="text-decoration-none text-reset fs-6">{{ em }}</a></h5>
                  </div>
@@ -140,29 +140,33 @@
                      <i class="bi bi-geo-alt text-danger"></i>
                  </div>
                  <div>
-                     <span class="text-secondary small text-uppercase fw-bold">Manzil</span>
+                     <span class="text-secondary small text-uppercase fw-bold">{{ _('contact.address') or 'Manzil' }}</span>
                      {% set addr = site_settings.site_address if site_settings.site_address else 'Toshkent, Sergeli tumani, Yuqori Darxon mahalla' %}
                      <h5 class="mb-0 fw-bold fs-6 text-light lh-base">{{ addr }}</h5>
-                       <a href="https://maps.app.goo.gl/tQU6Axzj4JvLoGML8" target="_blank" class="small text-accent text-decoration-none mt-1 d-inline-block">Xaritada ko'rish <i class="bi bi-box-arrow-up-right"></i></a>
+                       <a href="https://maps.app.goo.gl/tQU6Axzj4JvLoGML8" target="_blank" class="small text-accent text-decoration-none mt-1 d-inline-block">{{ _('contact.view_map') or 'Xaritada ko\'rish' }} <i class="bi bi-box-arrow-up-right"></i></a>
                  </div>
              </div>
              
              <!-- Working Hours -->
              <div class="p-3 rounded bg-dark border border-secondary mt-2">
-                 <h6 class="text-uppercase text-secondary fw-bold small mb-2"><i class="bi bi-clock me-2"></i> Ish vaqti</h6>
+                 <h6 class="text-uppercase text-secondary fw-bold small mb-2"><i class="bi bi-clock me-2"></i> {{ _('contact.working_hours') or 'Ish vaqti' }}</h6>
                  <div class="d-flex justify-content-between mb-1">
-                     <span>Dushanba - Juma:</span>
+                     <span>{{ _('contact.monday_friday') or 'Dushanba - Juma' }}:</span>
                      <span class="text-accent fw-bold">09:00 - 18:00</span>
                  </div>
+                 <div class="d-flex justify-content-between mb-1">
+                     <span>{{ _('contact.saturday') or 'Shanba' }}:</span>
+                     <span class="text-accent fw-bold">09:00 - 15:00</span>
+                 </div>
                  <div class="d-flex justify-content-between">
-                     <span>Shanba - Yakshanba:</span>
-                     <span class="text-secondary">Dam olish</span>
+                     <span>{{ _('contact.sunday') or 'Yakshanba' }}:</span>
+                     <span class="text-warning fw-bold">{{ _('contact.closed') or 'Dam olish' }}</span>
                  </div>
              </div>
              
              <!-- Socials -->
              <div class="mt-2">
-                 <h6 class="text-uppercase text-secondary fw-bold small mb-3">Ijtimoiy Tarmoqlar</h6>
+                 <h6 class="text-uppercase text-secondary fw-bold small mb-3">{{ _('contact.social_media') or 'Ijtimoiy Tarmoqlar' }}</h6>
                  <div class="d-flex gap-2 flex-wrap">
                     {% if global_socials %}
                       {% for link in global_socials %}
@@ -198,13 +202,13 @@
   <!-- Map Section -->
   <div class="industrial-card p-4 mt-4 animate-fade-in-up" style="animation-delay: 0.3s;">
     <h3 class="h4 fw-bold text-uppercase mb-4 font-heading border-start border-4 border-danger ps-3">
-        Joylashuv
+        {{ _('contact.location') or 'Joylashuv' }}
     </h3>
-    <div style="height: 400px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color);">
+    <div style="height: 450px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color);">
         <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3871.507884418295!2d69.2034331!3d41.2365664!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38ae61003e24fa7b%3A0x582c809e62c1776c!2sPro-Obuv!5e1!3m2!1suz!2s!4v1759051640636!5m2!1suz!2s"
-          width="100%"
-          height="100%"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3871.507647183177!2d69.20085817666552!3d41.23657040533564!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38ae61003e24fa7b%3A0x582c809e62c1776c!2sPro-Obuv!5e1!3m2!1suz!2s!4v1768131017496!5m2!1suz!2s"
+          width="600"
+          height="450"
           style="border:0;"
           allowfullscreen=""
           loading="lazy"

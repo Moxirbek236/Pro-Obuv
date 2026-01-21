@@ -1,0 +1,53 @@
+/* Minimal chat styling for staff chat page */
+.staff-chat-app {
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.chat-list {
+  min-height: 70vh;
+  background: #ffffff;
+}
+
+.chat-items {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.chat-window {
+  min-height: 70vh;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-window-header {
+  background: #ffffff;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.chat-send-form {
+  background: #ffffff;
+}
+
+.chat-message {
+  max-width: 85%;
+  word-wrap: break-word;
+}
+
+.chat-message.user {
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+.chat-message.staff {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: #fff;
+  margin-left: auto;
+}
+

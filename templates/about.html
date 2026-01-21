@@ -1,13 +1,13 @@
 {% extends "base.html" %}
-{% block title %}{{ get_text("Biz haqimizda - Pro Obuv") or 'Biz haqimizda - Pro Obuv' }}{% endblock %}
+{% block title %}{{ _('nav.about') or 'Biz haqimizda' }} - Pro Obuv{% endblock %}
 
 {% block seo_meta %}
-<meta name="description" content="Pro Obuv - Xavfsizlik oyoq kiyimlari va maxsus kiyimlar bo'yicha professional yetkazib beruvchi. Sifatli mahsulotlar va ishonchli xizmat." />
-<meta name="keywords" content="pro obuv, xavfsizlik oyoq kiyim, maxsus kiyim, safety shoes, protective clothing, ish kiyimlari" />
+<meta name="description" content="{{ _('meta.about_description') or 'Pro Obuv - Xavfsizlik oyoq kiyimlari va maxsus kiyimlar bo\'yicha professional yetkazib beruvchi. Sifatli mahsulotlar va ishonchli xizmat.' }}" />
+<meta name="keywords" content="{{ _('meta.about_keywords') or 'pro obuv, xavfsizlik oyoq kiyim, maxsus kiyim, safety shoes, protective clothing, ish kiyimlari' }}" />
 <link rel="canonical" href="{{ canonical_url() }}" />
 <meta property="og:type" content="website" />
-<meta property="og:title" content="Biz haqimizda - Pro Obuv" />
-<meta property="og:description" content="Professional xavfsizlik oyoq kiyimlari va maxsus kiyimlar yetkazib beruvchisi" />
+<meta property="og:title" content="{{ _('nav.about') or 'Biz haqimizda' }} - Pro Obuv" />
+<meta property="og:description" content="{{ _('meta.about_description') or 'Professional xavfsizlik oyoq kiyimlari va maxsus kiyimlar yetkazib beruvchisi' }}" />
 <meta property="og:url" content="{{ request.url }}" />
 <meta property="og:image" content="{{ url_for('static', filename='defoult.webp') }}" />
 {% endblock %}
@@ -20,10 +20,10 @@
     <div class="position-absolute top-0 start-0 w-100 h-100" style="background: var(--hazard-pattern); opacity: 0.1; pointer-events: none;"></div>
     <div class="position-relative z-1">
       <h1 class="display-4 fw-bold text-uppercase mb-3" style="font-family: var(--font-heading); color: var(--accent-primary);">
-        <i class="bi bi-shield-check me-2"></i> Biz Haqimizda
+        <i class="bi bi-shield-check me-2"></i> {{ _('nav.about') or 'Biz Haqimizda' }}
       </h1>
       <p class="lead text-secondary mb-0">
-        Sizning xavfsizligingiz — bizning eng oliy maqsadimiz. Professional himoya vositalari bo'yicha ishonchli hamkor.
+        {{ _('about.slogan') or 'Sizning xavfsizligingiz — bizning eng oliy maqsadimiz. Professional himoya vositalari bo\'yicha ishonchli hamkor.' }}
       </p>
     </div>
   </div>
@@ -33,30 +33,28 @@
     <div class="row align-items-center">
         <div class="col-lg-6 mb-4 mb-lg-0">
              <h2 class="h3 fw-bold text-uppercase mb-4 font-heading border-start border-4 border-accent ps-3">
-                 Kompaniya haqida
+                 {{ _('about.company_title') or 'Kompaniya haqida' }}
              </h2>
              <p class="lead text-light mb-4">
-                 <strong>Pro Obuv</strong> - O'zbekistonda xavfsizlik oyoq kiyimlari va maxsus himoya kiyimlari sohasida yetakchi kompaniyalardan biri.
+                 <strong>Pro Obuv</strong> - {{ _('about.company_description') or 'O\'zbekistonda xavfsizlik oyoq kiyimlari va maxsus himoya kiyimlari sohasida yetakchi kompaniyalardan biri.' }}
              </p>
              <p class="text-secondary">
-                 Bizning mahsulotlarimiz eng og'ir sharoitlarda ham sizni himoya qilishga mo'ljallangan. 
-                 Qurilish, ishlab chiqarish, neft-gaz, kimyo va energetika sohalari uchun maxsus sertifikatlangan, 
-                 xalqaro standartlarga javob beradigan himoya vositalarini taqdim etamiz.
+                 {{ _('about.company_details') or 'Bizning mahsulotlarimiz eng og\'ir sharoitlarda ham sizni himoya qilishga mo\'ljallangan. Qurilish, ishlab chiqarish, neft-gaz, kimyo va energetika sohalari uchun maxsus sertifikatlangan, xalqaro standartlarga javob beradigan himoya vositalarini taqdim etamiz.' }}
              </p>
              <div class="d-flex gap-3 mt-4">
                  <div class="text-center">
                      <h3 class="display-6 fw-bold text-accent mb-0">10+</h3>
-                     <span class="small text-uppercase text-secondary">Yil tajriba</span>
+                     <span class="small text-uppercase text-secondary">{{ _('about.years_experience') or 'Yil tajriba' }}</span>
                  </div>
                  <div class="vr bg-secondary opacity-25 mx-3"></div>
                  <div class="text-center">
                      <h3 class="display-6 fw-bold text-accent mb-0">5000+</h3>
-                     <span class="small text-uppercase text-secondary">Mamnun mijozlar</span>
+                     <span class="small text-uppercase text-secondary">{{ _('about.satisfied_customers') or 'Mamnun mijozlar' }}</span>
                  </div>
                  <div class="vr bg-secondary opacity-25 mx-3"></div>
                  <div class="text-center">
                      <h3 class="display-6 fw-bold text-accent mb-0">100%</h3>
-                     <span class="small text-uppercase text-secondary">Sifat kafolati</span>
+                     <span class="small text-uppercase text-secondary">{{ _('about.quality_guarantee') or 'Sifat kafolati' }}</span>
                  </div>
              </div>
         </div>
@@ -64,7 +62,7 @@
             <div class="position-relative rounded-4 overflow-hidden shadow-lg border border-secondary border-opacity-50">
                 <img src="{{ url_for('static', filename='defoult.webp') }}" alt="Pro Obuv Warehouse" class="img-fluid w-100 object-fit-cover" style="min-height: 350px;">
                 <div class="position-absolute bottom-0 start-0 w-100 p-4 bg-black bg-opacity-75 backdrop-blur">
-                    <p class="mb-0 text-white fst-italic">"Har bir qadamda ishonchli himoya"</p>
+                    <p class="mb-0 text-white fst-italic">{{ _('about.motto') or 'Har bir qadamda ishonchli himoya' }}</p>
                 </div>
             </div>
         </div>

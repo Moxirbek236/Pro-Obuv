@@ -1,5 +1,8 @@
-{% extends "super_admin_base.html" if session.get('super_admin') else "dashboard_base.html" if session.get('staff_id') or session.get('courier_id') else "base.html" %} {% block title %}Umumiy sozlamalar{% endblock %} {%
-block head %}
+{% extends "super_admin_base.html" %}
+
+{% block title %}Umumiy sozlamalar{% endblock %}
+
+{% block extra_css %}
 <style>
   .settings-container {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);

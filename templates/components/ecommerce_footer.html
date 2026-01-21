@@ -1,240 +1,201 @@
-<!-- Premium E-Commerce Footer -->
-<footer class="luxury-footer">
-  
-  <!-- Why Choose Us Section -->
-  <div class="why-choose-section">
-    <div class="ecommerce-container">
-      <h2 class="why-choose-title">Nima uchun bizni tanlaysiz?</h2>
-      
-      <div class="features-grid">
-        <!-- Feature 1 -->
-        <div class="feature-card" data-aos="fade-up" data-aos-delay="0">
-          <div class="feature-icon">
-            <i class="bi bi-shield-check"></i>
+<!-- Universal E-commerce Footer for Safety Shoes & Workwear -->
+<footer class="safety-footer" role="contentinfo">
+  <div class="container footer-inner">
+    <div class="grid footer-top">
+      <div class="col brand-col">
+        <a class="brand" href="{{ url_for('index') }}" aria-label="Pro Obuv">
+          <div class="brand-logo">PO</div>
+          <div class="brand-meta">
+            <div class="brand-name">Pro Obuv</div>
+            <div class="brand-slogan">{{ _('footer.tagline') or 'Safety shoes & workwear' }}</div>
           </div>
-          <h3 class="feature-title">Yuqori Sifat</h3>
-          <p class="feature-description">
-            Barcha mahsulotlarimiz xalqaro standartlarga mos keladi va sertifikatlangan
-          </p>
-        </div>
+        </a>
+        <p class="brand-desc">{{ _('footer.brand_desc') or 'Ish joyingiz uchun ishonchli, bardoshli va qulay xavfsizlik oyoq kiyimlari.' }}</p>
 
-        <!-- Feature 2 -->
-        <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
-          <div class="feature-icon">
-            <i class="bi bi-award"></i>
-          </div>
-          <h3 class="feature-title">Premium Materiallar</h3>
-          <p class="feature-description">
-            Faqat eng yaxshi va ishonchli materiallardan foydalaniladi
-          </p>
+        <div class="social-row" aria-label="Follow us">
+          <a class="social" href="#" aria-label="Facebook"><i class="bi bi-facebook"></i><span class="sr-only">Facebook</span></a>
+          <a class="social" href="#" aria-label="Instagram"><i class="bi bi-instagram"></i><span class="sr-only">Instagram</span></a>
+          <a class="social" href="#" aria-label="Telegram"><i class="bi bi-telegram"></i><span class="sr-only">Telegram</span></a>
         </div>
+      </div>
 
-        <!-- Feature 3 -->
-        <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
-          <div class="feature-icon">
-            <i class="bi bi-truck"></i>
-          </div>
-          <h3 class="feature-title">Bepul Yetkazib Berish</h3>
-          <p class="feature-description">
-            O'zbekiston bo'ylab tez va bepul yetkazib berish xizmati
-          </p>
+      <div class="col links-col">
+        <h4 class="col-title">{{ _('footer.shop') or 'Do\'kon' }}</h4>
+        <ul class="links-list">
+          <li><a href="{{ url_for('menu') }}">{{ _('nav.products') or 'Mahsulotlar' }}</a></li>
+          <li><a href="{{ url_for('menu', category='safety-shoes') }}">{{ _('cat.shoes') or 'Xavfsizlik oyoq kiyimlari' }}</a></li>
+          <li><a href="{{ url_for('menu', category='workwear') }}">{{ _('cat.workwear') or 'Ish kiyimlari' }}</a></li>
+          <li><a href="{{ url_for('about') }}">{{ _('nav.about') or 'Biz haqimizda' }}</a></li>
+        </ul>
+      </div>
+
+      <div class="col ticker-col">
+        <h4 class="col-title">{{ _('footer.latest') or 'Yangi mahsulotlar' }}</h4>
+        <div class="ticker" id="footerTicker" role="list" aria-label="Latest items">
+          <!-- JS will fill cards here. Uses graceful fallback text when empty. -->
+          <div class="ticker-fallback">{{ _('footer.loading') or 'Yuklanmoqda...' }}</div>
         </div>
+      </div>
+
+      <div class="col contact-col">
+        <h4 class="col-title">{{ _('footer.contact') or 'Aloqa' }}</h4>
+        <address class="contact">
+          <div><i class="bi bi-telephone"></i> <a href="tel:+998901234567">+998 90 123 45 67</a></div>
+          <div><i class="bi bi-envelope"></i> <a href="mailto:info@proobuv.uz">info@proobuv.uz</a></div>
+          <div><i class="bi bi-geo-alt"></i> <span>{{ _('footer.address') or 'Toshkent, O\'zbekiston' }}</span></div>
+        </address>
+
+        <form id="footerNewsletter" class="newsletter" onsubmit="return footerSubscribe(event)">
+          <label for="footerEmail" class="sr-only">{{ _('footer.email_placeholder') or 'Email' }}</label>
+          <div class="newsletter-row">
+            <input id="footerEmail" name="email" type="email" required placeholder="{{ _('footer.email_placeholder') or 'Email manzilingiz' }}">
+            <button class="btn" type="submit">{{ _('footer.subscribe') or 'Obuna' }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="grid footer-bottom">
+      <div class="col left">
+        <div class="trusts">
+          <span class="trust">SSL</span>
+          <span class="trust">30 kun kafolat</span>
+          <span class="trust">Sertifikatlar</span>
+        </div>
+      </div>
+      <div class="col center payments" aria-hidden="true">
+        <img src="/static/payments/visa.svg" alt="Visa">
+        <img src="/static/payments/mastercard.svg" alt="MasterCard">
+        <img src="/static/payments/uzcard.svg" alt="UzCard">
+      </div>
+      <div class="col right legal">
+        <a href="#">{{ _('footer.privacy') or 'Maxfiylik siyosati' }}</a>
+        <a href="#">{{ _('footer.terms') or 'Foydalanish shartlari' }}</a>
+        <div class="copyright">&copy; {{ current_year if current_year else 2024 }} Pro Obuv</div>
       </div>
     </div>
   </div>
-
-  <!-- Main Footer -->
-  <div class="footer-main">
-    <div class="ecommerce-container">
-      
-      <!-- Footer Brand -->
-      <div class="footer-brand-section">
-        <div class="footer-logo">
-          <div class="footer-logo-icon">
-            <i class="bi bi-shield-check"></i>
-          </div>
-          <span class="footer-logo-text">SAFETY.UZ</span>
-        </div>
-      </div>
-
-      <!-- Footer Content Grid -->
-      <div class="footer-content-grid">
-        
-        <!-- Shop Column -->
-        <div class="footer-column">
-          <h4 class="footer-column-title">Do'kon</h4>
-          <ul class="footer-links">
-            <li><a href="{{ url_for('menu') }}">Mahsulotlar</a></li>
-            <li><a href="{{ url_for('menu') }}?category=safety-footwear">Xavfsizlik Oyoq Kiyimlari</a></li>
-            <li><a href="{{ url_for('menu') }}?category=protective-clothing">Maxsus Kiyimlar</a></li>
-            <li><a href="{{ url_for('about') }}">Biz haqimizda</a></li>
-            <li><a href="{{ url_for('contact') }}">Aloqa</a></li>
-          </ul>
-        </div>
-
-        <!-- Customer Service Column -->
-        <div class="footer-column">
-          <h4 class="footer-column-title">Mijozlar Xizmati</h4>
-          <ul class="footer-links">
-            <li><a href="#">FAQ</a></li>
-            <li><a href="#">Yetkazib Berish va Qaytarish</a></li>
-            <li><a href="#">O'lcham Jadvali</a></li>
-            <li><a href="#">Buyurtmani Kuzatish</a></li>
-          </ul>
-        </div>
-
-        <!-- Newsletter Column -->
-        <div class="footer-column">
-          <h4 class="footer-column-title">Yangiliklar</h4>
-          <p class="newsletter-text">
-            So'nggi yangiliklar va maxsus takliflardan xabardor bo'ling
-          </p>
-          <form class="newsletter-form" onsubmit="return handleNewsletterSubmit(event)">
-            <div class="newsletter-input-wrapper">
-              <input 
-                type="email" 
-                name="email"
-                class="newsletter-input" 
-                placeholder="Email manzilingiz"
-                required
-              />
-              <button type="submit" class="newsletter-btn">
-                Obuna
-              </button>
-            </div>
-          </form>
-
-          <!-- Contact Info -->
-          <div class="footer-contact-info">
-            <div class="contact-info-item">
-              <i class="bi bi-telephone"></i>
-              <a href="tel:{{ site_settings.site_phone if site_settings.site_phone else '+998991459686' }}">
-                {{ site_settings.site_phone if site_settings.site_phone else '+998 99 145 96 86' }}
-              </a>
-            </div>
-            <div class="contact-info-item">
-              <i class="bi bi-envelope"></i>
-              <a href="mailto:{{ site_settings.site_email if site_settings.site_email else 'premiumsafety@mail.ru' }}">
-                {{ site_settings.site_email if site_settings.site_email else 'premiumsafety@mail.ru' }}
-              </a>
-            </div>
-            <div class="contact-info-item">
-              <i class="bi bi-geo-alt"></i>
-              <span>{{ site_settings.site_address if site_settings.site_address else 'Toshkent, Sergeli tumani' }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Contact Column -->
-        <div class="footer-column">
-          <h4 class="footer-column-title">Aloqa</h4>
-          <p class="newsletter-text">
-            So'nggi yangiliklar va takliflar uchun obuna bo'ling
-          </p>
-          <form class="newsletter-form" onsubmit="return handleNewsletterSubmit(event)">
-            <div class="newsletter-input-wrapper">
-              <input 
-                type="email" 
-                name="email"
-                class="newsletter-input" 
-                placeholder="Email manzilingiz"
-                required
-              />
-              <button type="submit" class="newsletter-btn">
-                Obuna
-              </button>
-            </div>
-          </form>
-
-          <!-- Social Links -->
-          <div class="footer-social-section">
-            <h5 class="social-title">Bizni Kuzatib Boring</h5>
-            <div class="footer-social-links">
-              {% if global_socials %}
-                {% for link in global_socials %}
-                  <a href="{{ link.url }}" target="_blank" class="social-link" title="{{ link.platform_name }}">
-                    {% if link.icon_url %}
-                      <img src="{{ link.icon_url }}" alt="{{ link.platform_name }}" style="width: 24px; height: 24px; object-fit: contain;">
-                    {% else %}
-                      <i class="bi bi-link-45deg"></i>
-                    {% endif %}
-                  </a>
-                {% endfor %}
-              {% else %}
-                <a href="https://www.facebook.com" target="_blank" class="social-link" title="Facebook">
-                  <i class="bi bi-facebook"></i>
-                </a>
-                <a href="https://www.instagram.com" target="_blank" class="social-link" title="Instagram">
-                  <i class="bi bi-instagram"></i>
-                </a>
-                <a href="https://www.tiktok.com" target="_blank" class="social-link" title="TikTok">
-                  <i class="bi bi-tiktok"></i>
-                </a>
-                <a href="https://t.me/proobuvLLC" target="_blank" class="social-link" title="Telegram">
-                  <i class="bi bi-telegram"></i>
-                </a>
-              {% endif %}
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-  <!-- Footer Bottom -->
-  <div class="footer-bottom">
-    <div class="ecommerce-container">
-      <div class="footer-bottom-content">
-        
-        <!-- Copyright -->
-        <div class="footer-copyright">
-          © {{ now.year if now else '2026' }} Safety.uz. Barcha huquqlar himoyalangan.
-          <div class="footer-links-inline">
-            <a href="#">Maxfiylik Siyosati</a>
-            <a href="#">Foydalanish Shartlari</a>
-          </div>
-        </div>
-
-        <!-- Payment Methods -->
-        <div class="footer-payment-methods">
-          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='32' viewBox='0 0 50 32'%3E%3Crect width='50' height='32' rx='4' fill='%231A1F71'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='12' font-weight='bold'%3EVISA%3C/text%3E%3C/svg%3E" alt="Visa" class="payment-icon">
-          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='32' viewBox='0 0 50 32'%3E%3Crect width='50' height='32' rx='4' fill='%23EB001B'/%3E%3Ccircle cx='20' cy='16' r='10' fill='%23EB001B'/%3E%3Ccircle cx='30' cy='16' r='10' fill='%23F79E1B'/%3E%3C/svg%3E" alt="Mastercard" class="payment-icon">
-          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='32' viewBox='0 0 50 32'%3E%3Crect width='50' height='32' rx='4' fill='%23003087'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='10' font-weight='bold'%3EPayPal%3C/text%3E%3C/svg%3E" alt="PayPal" class="payment-icon">
-          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='32' viewBox='0 0 50 32'%3E%3Crect width='50' height='32' rx='4' fill='%234299e1'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='11' font-weight='bold'%3EClick%3C/text%3E%3C/svg%3E" alt="Click" class="payment-icon">
-          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='32' viewBox='0 0 50 32'%3E%3Crect width='50' height='32' rx='4' fill='%2310b981'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='10' font-weight='bold'%3EPayme%3C/text%3E%3C/svg%3E" alt="Payme" class="payment-icon">
-          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='32' viewBox='0 0 50 32'%3E%3Crect width='50' height='32' rx='4' fill='%236366f1'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='9' font-weight='bold'%3EStripe%3C/text%3E%3C/svg%3E" alt="Stripe" class="payment-icon">
-        </div>
-
-      </div>
-    </div>
-  </div>
-
 </footer>
 
+<button id="backToTop" class="back-to-top" aria-label="Back to top">↑</button>
+
 <style>
-/* Premium Footer Styles */
-.luxury-footer {
-  margin-top: 5rem;
+:root{--bg:#0b1220;--panel:#0f1724;--muted:#dbe7ff;--muted-2:rgba(219,231,255,0.6);--accent:#ffd700}
+.safety-footer{background:var(--bg);color:var(--muted-2);font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial}
+.container{max-width:1200px;margin:0 auto;padding:28px 18px}
+.grid{display:grid;gap:18px}
+.footer-top{grid-template-columns:1.4fr 1fr 1.6fr 1fr;align-items:start}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit}
+.brand-logo{width:56px;height:56px;border-radius:8px;background:linear-gradient(45deg,var(--accent),#ffb84d);display:flex;align-items:center;justify-content:center;font-weight:800;color:#111}
+.brand-meta .brand-name{font-weight:800;color:#fff}
+.brand-slogan{font-size:0.9rem;color:var(--muted-2)}
+.brand-desc{margin:10px 0;color:rgba(255,255,255,0.62);max-width:320px}
+.social-row{display:flex;gap:12px;margin-top:12px}
+.social{display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,rgba(255,215,0,0.1),rgba(255,215,0,0.05));border:1px solid rgba(255,215,0,0.2);color:var(--muted);text-decoration:none;position:relative;overflow:hidden;transition:all 0.4s cubic-bezier(0.4,0,0.2,1)}
+.social::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,var(--accent),#ffb84d);opacity:0;transition:opacity 0.4s ease;z-index:-1}
+.social:hover{background:var(--accent);color:#111;transform:translateY(-4px) scale(1.05);box-shadow:0 12px 24px rgba(255,215,0,0.3);border-color:var(--accent)}
+.social:hover::before{opacity:1}
+.social i{font-size:20px;z-index:1;position:relative}
+.social:active{transform:translateY(-2px) scale(1.02)}
+.col-title{color:var(--accent);text-transform:uppercase;font-size:0.82rem;margin-bottom:8px}
+.links-list{list-style:none;padding:0;margin:0}
+.links-list li{margin:6px 0}
+.links-list a{color:var(--muted-2);text-decoration:none}
+.links-list a:hover{color:#fff}
+
+/* Enhanced Ticker styles */
+.ticker{display:flex;align-items:center;gap:16px;overflow:hidden;padding:12px 0;position:relative}
+.ticker::before{content:'';position:absolute;left:0;top:0;bottom:0;width:60px;background:linear-gradient(90deg,var(--bg),transparent);z-index:2}
+.ticker::after{content:'';position:absolute;right:0;top:0;bottom:0;width:60px;background:linear-gradient(-90deg,var(--bg),transparent);z-index:2}
+.ticker-fallback{color:var(--muted-2);padding:20px;text-align:center;font-style:italic}
+.ticker-track{display:flex;gap:16px;animation:smoothScroll 30s linear infinite}
+.ticker-track:hover{animation-play-state:paused}
+@keyframes smoothScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.ticker-card{width:200px;background:linear-gradient(135deg,var(--panel),rgba(15,23,36,0.8));border-radius:12px;overflow:hidden;flex:0 0 auto;border:1px solid rgba(255,215,0,0.1);cursor:pointer;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);position:relative}
+.ticker-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,var(--accent),#ffb84d);transform:translateX(-100%);transition:transform 0.6s ease}
+.ticker-card:hover::before{transform:translateX(0)}
+.ticker-card:hover{transform:translateY(-8px) scale(1.02);box-shadow:0 16px 32px rgba(0,0,0,0.4);border-color:var(--accent)}
+.ticker-card img{width:100%;height:120px;object-fit:cover;display:block;transition:transform 0.4s ease}
+.ticker-card:hover img{transform:scale(1.1)}
+.ticker-card .body{padding:14px;display:flex;flex-direction:column;gap:8px;background:rgba(0,0,0,0.2)}
+.ticker-title{font-weight:700;color:#fff;font-size:0.95rem;line-height:1.3;height:2.6em;overflow:hidden;transition:color 0.3s ease}
+.ticker-card:hover .ticker-title{color:var(--accent)}
+.ticker-price{color:var(--accent);font-weight:800;font-size:1.05rem;text-shadow:0 2px 4px rgba(0,0,0,0.3)}
+.ticker-cta{margin-top:auto;background:linear-gradient(135deg,var(--accent),#ffb84d);color:#111;text-align:center;padding:8px;border-radius:8px;font-weight:700;transition:all 0.3s ease;position:relative;overflow:hidden}
+.ticker-cta::before{content:'';position:absolute;top:50%;left:50%;width:0;height:0;background:rgba(255,255,255,0.3);border-radius:50%;transform:translate(-50%,-50%);transition:width 0.6s,height 0.6s}
+.ticker-card:hover .ticker-cta::before{width:100%;height:100%}
+.ticker-card:hover .ticker-cta{transform:scale(1.05);box-shadow:0 4px 12px rgba(255,215,0,0.4)}
+
+.newsletter{margin-top:6px}
+.newsletter-row{display:flex;gap:8px}
+.newsletter-row input{flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--muted-2)}
+.btn{background:var(--accent);color:#111;padding:10px 12px;border-radius:8px;border:none;font-weight:700}
+.contact{font-style:normal;color:var(--muted-2)}
+
+.footer-bottom{margin-top:18px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.03);grid-template-columns:1fr 1fr 1fr;align-items:center}
+.trusts{display:flex;gap:10px}
+.trust{background:rgba(255,255,255,0.03);padding:6px 8px;border-radius:8px;color:var(--muted-2);font-weight:700}
+.payments img{height:26px;margin-right:8px;opacity:0.95}
+.links-legal{display:flex;gap:12px}
+.links-legal a{color:var(--muted-2)}
+
+.back-to-top{position:fixed;right:18px;bottom:18px;background:var(--accent);color:#111;border-radius:50%;width:44px;height:44px;display:none;align-items:center;justify-content:center;z-index:1200;box-shadow:0 8px 20px rgba(0,0,0,0.35);cursor:pointer}
+
+/* Responsive */
+@media (max-width:980px){.footer-top{grid-template-columns:1fr 1fr;}.footer-bottom{grid-template-columns:1fr;gap:12px}.ticker-card{width:150px}}
+@media (max-width:560px){.footer-top{grid-template-columns:1fr}.brand-desc{max-width:none}}
+</style>
+
+<script>
+// Simple, robust footer JS: loads items and provides auto-scroll + hover pause
+async function fetchJson(url){try{const r=await fetch(url);if(!r.ok) return null;return await r.json()}catch(e){return null}}
+
+async function buildTicker(){
+  const container=document.getElementById('footerTicker');
+  if(!container) return;
+  let items=[];
+  const p=await fetchJson('/api/products?limit=6');
+  if(p && Array.isArray(p.products) && p.products.length) items=p.products.map(x=>({id:x.id,title:x.title,image:x.image_url,price:x.price,url:x.url||('/product/'+x.id)}));
+  if(items.length<3){
+    const n=await fetchJson('/api/news?limit=6');
+    if(n && Array.isArray(n.news)) items=items.concat(n.news.map(x=>({id:x.id,title:x.title,image:x.image_url,price:null,url:'/news/'+x.id}))).slice(0,6);
+  }
+  if(items.length===0){ container.innerHTML='<div class="ticker-fallback">{{ _('footer.no_items') or "Mahsulotlar mavjud emas" }}</div>'; return }
+
+  const track=document.createElement('div'); track.className='ticker-track';
+  items.forEach(it=>{
+    const card=document.createElement('div'); card.className='ticker-card'; card.setAttribute('role','listitem');
+    card.tabIndex=0; card.onclick=()=>location.href=it.url; card.onkeydown=(e)=>{if(e.key==='Enter')location.href=it.url};
+    const img=it.image||it.image_url||'/static/defoult.webp';
+    card.innerHTML=`<img src="${img}" alt="${(it.title||'').replace(/"/g,'')}"><div class="body"><div class="ticker-title">${(it.title||'').substring(0,80)}</div>${it.price?`<div class="ticker-price">${it.price}</div>`:''}<div class="ticker-cta">{{ _('footer.view') or 'Batafsil' }}</div></div>`;
+    track.appendChild(card);
+  });
+  container.innerHTML=''; container.appendChild(track);
+
+  const vp=document.getElementById('footerTicker'); let auto=null;
+  const startAuto=()=>{ if(auto) clearInterval(auto); auto=setInterval(()=>{ if(!vp) return; const max=vp.scrollWidth - vp.clientWidth; if(vp.scrollLeft+10>=max) vp.scrollTo({left:0,behavior:'smooth'}); else vp.scrollBy({left:170,behavior:'smooth'}) },3200)};
+  vp.addEventListener('mouseenter',()=>{ if(auto) clearInterval(auto) }); vp.addEventListener('mouseleave',startAuto);
+  startAuto();
 }
 
-/* Why Choose Us Section */
+function footerSubscribe(e){ e.preventDefault(); const form=document.getElementById('footerNewsletter'); if(!form) return false; const email=form.email.value; const btn=form.querySelector('button'); const orig=btn.textContent; btn.textContent='{{ _('footer.subscribed') or "Rahmat!" }}'; btn.disabled=true; fetch('/api/newsletter',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})}).catch(()=>{}).finally(()=>setTimeout(()=>{btn.textContent=orig;btn.disabled=false;form.reset()},1200)); return false }
+
+document.addEventListener('DOMContentLoaded',()=>{ buildTicker(); const back=document.getElementById('backToTop'); if(back){ window.addEventListener('scroll',()=>{ back.style.display=window.scrollY>300?'flex':'none' }); back.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'})) } });
+</script>
+
 .why-choose-section {
-  background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
-  padding: 4rem 0;
-  border-top: 1px solid var(--luxury-border);
-}
-
-body.dark-theme .why-choose-section {
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  padding: 60px 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  text-align: center;
 }
 
 .why-choose-title {
-  text-align: center;
-  font-size: 2rem;
+  font-size: 2.5rem;
   font-weight: 700;
-  color: var(--luxury-text);
   margin-bottom: 3rem;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 2px;
 }
 
 .features-grid {
@@ -244,6 +205,513 @@ body.dark-theme .why-choose-section {
   max-width: 1200px;
   margin: 0 auto;
 }
+
+.feature-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
+  padding: 2rem;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+}
+
+.feature-icon {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #ffd700, #ffed4e);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  font-size: 1.5rem;
+  color: #1a1a1a;
+}
+
+.feature-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #ffffff;
+}
+
+.feature-description {
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+}
+
+.footer-main {
+  padding: 60px 0 40px;
+  background: #1a1a1a;
+}
+
+.ecommerce-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.footer-content-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.footer-column {
+  min-width: 0;
+}
+
+.footer-column-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: #ffd700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.footer-brand {
+  margin-bottom: 2rem;
+}
+
+.brand-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #ffd700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.brand-description {
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.social-links {
+  display: flex;
+  gap: 1rem;
+}
+
+.social-link {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.social-link:hover {
+  background: #ffd700;
+  color: #1a1a1a;
+  transform: translateY(-2px);
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin-bottom: 0.75rem;
+}
+
+.footer-links a {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: #ffd700;
+}
+
+/* Footer News Ticker (product-card style) */
+.footer-news-ticker {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.ticker-viewport {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.12) transparent;
+  flex: 1 1 auto;
+}
+
+.ticker-viewport::-webkit-scrollbar { height: 8px }
+.ticker-viewport::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 8px }
+
+.ticker-track {
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+  padding-bottom: 6px;
+}
+
+.ticker-card {
+  width: 180px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.ticker-card:hover { transform: translateY(-6px); box-shadow: 0 10px 25px rgba(0,0,0,0.35) }
+
+.card-media { height: 110px; background:#111 }
+.card-media img { width:100%; height:100%; object-fit:cover; display:block }
+
+.card-body { padding: 10px 12px; display:flex; flex-direction:column; gap:8px }
+.card-badge { background: #ffd700; color:#111; padding:4px 8px; border-radius:999px; font-size:0.75rem; display:inline-block; font-weight:700 }
+.card-title { font-size:0.9rem; font-weight:600; color:#fff; line-height:1.2; height:2.4em; overflow:hidden }
+.card-price { color:#ffd700; font-weight:700; font-size:0.95rem }
+.card-cta { margin-top:auto; background: linear-gradient(135deg,#ffd700,#ffed4e); color:#111; text-align:center; padding:6px 8px; border-radius:8px; font-weight:700 }
+
+.ticker-controls { display:flex; gap:0.5rem; margin-left:8px }
+.slider-btn { width:36px; height:36px; border-radius:50%; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.03); color:#fff }
+.slider-btn:hover { background:#ffd700; color:#111 }
+
+.ticker-empty { color: rgba(255,255,255,0.6); padding:18px }
+
+.loading-placeholder i {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.newsletter-form {
+  margin-bottom: 2rem;
+}
+
+.newsletter-input-wrapper {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.newsletter-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 0.9rem;
+}
+
+.newsletter-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.newsletter-input:focus {
+  outline: none;
+  border-color: #ffd700;
+  box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2);
+}
+
+.newsletter-btn {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #ffd700, #ffed4e);
+  border: none;
+  border-radius: 8px;
+  color: #1a1a1a;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.newsletter-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+}
+
+.contact-item i {
+  color: #ffd700;
+  font-size: 1rem;
+}
+
+.footer-bottom {
+  background: #0d0d0d;
+  padding: 2rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-bottom-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.copyright {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.footer-bottom-links {
+  display: flex;
+  gap: 2rem;
+}
+
+.footer-bottom-links a {
+  color: rgba(255, 255, 255, 0.5);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+}
+
+.footer-bottom-links a:hover {
+  color: #ffd700;
+}
+
+/* Payment & Trust */
+.payment-methods { display:flex; gap:0.75rem; align-items:center }
+.payment-icon { width:44px; height:28px; display:inline-flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.04); border-radius:6px; border:1px solid rgba(255,255,255,0.04) }
+.trust-badges { display:flex; gap:0.75rem; align-items:center }
+.trust-badge { color:rgba(255,255,255,0.8); font-size:0.85rem; background:rgba(255,255,255,0.03); padding:6px 8px; border-radius:8px }
+
+/* Featured products */
+.featured-products { margin-top:12px }
+.small-title { font-size:0.85rem; color:rgba(255,255,255,0.85); margin-bottom:8px }
+.featured-list { display:flex; gap:8px; }
+.featured-mini { width:72px; background:rgba(255,255,255,0.03); border-radius:8px; overflow:hidden; cursor:pointer }
+.featured-mini img { width:100%; height:72px; object-fit:cover }
+
+/* Back to top */
+.back-to-top { position:fixed; right:18px; bottom:18px; width:44px; height:44px; border-radius:50%; background:#ffd700; color:#111; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 20px rgba(0,0,0,0.35); cursor:pointer; z-index:1200; display:none }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .why-choose-title {
+    font-size: 2rem;
+  }
+  
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .footer-content-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .footer-bottom-content {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .footer-bottom-links {
+    justify-content: center;
+  }
+  
+  .newsletter-input-wrapper {
+    flex-direction: column;
+  }
+  
+  .newsletter-btn {
+    width: 100%;
+  }
+}
+</style>
+
+<script>
+// E-commerce-style footer news ticker
+let newsData = [];
+let autoScrollInterval = null;
+
+async function loadFooterNews() {
+  try {
+    const response = await fetch('/api/news?limit=8');
+    if (response.ok) {
+      const result = await response.json();
+      newsData = result.news || [];
+      renderFooterTicker();
+      startAutoScroll();
+    } else {
+      renderFooterEmpty();
+    }
+  } catch (err) {
+    console.error('Failed to load footer news', err);
+    renderFooterEmpty();
+  }
+}
+
+function renderFooterEmpty() {
+  const track = document.getElementById('footerNewsTicker');
+  if (!track) return;
+  track.innerHTML = `<div class="ticker-empty">{{ _('footer.no_news') or 'Yangiliklar mavjud emas' }}</div>`;
+}
+
+function renderFooterTicker() {
+  const track = document.getElementById('footerNewsTicker');
+  if (!track) return;
+  if (newsData.length === 0) return renderFooterEmpty();
+
+  track.innerHTML = newsData.map(item => {
+    const img = item.image_url || '/static/defoult.webp';
+    const title = (item.title_local || item.title || '').replace(/"/g, '&quot;');
+    const price = item.price ? `<div class="card-price">${item.price}</div>` : '';
+    const badge = item.is_new ? `<span class="card-badge">Yangi</span>` : '';
+    const href = item.product_url || `/news/${item.id}`;
+
+    return `
+      <div class="ticker-card" onclick="openNewsOrProduct('${href}')">
+        <div class="card-media"><img src="${img}" alt="${title}"></div>
+        <div class="card-body">
+          ${badge}
+          <div class="card-title">${title}</div>
+          ${price}
+          <div class="card-cta">Batafsil</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function openNewsOrProduct(href) {
+  window.location.href = href;
+}
+
+function tickerScroll(direction) {
+  const viewport = document.querySelector('.ticker-viewport');
+  if (!viewport) return;
+  const card = viewport.querySelector('.ticker-card');
+  if (!card) return;
+  const cardWidth = card.getBoundingClientRect().width + 12; // gap
+  viewport.scrollBy({ left: direction * cardWidth * 2, behavior: 'smooth' });
+  resetAutoScroll();
+}
+
+function startAutoScroll() {
+  stopAutoScroll();
+  const viewport = document.querySelector('.ticker-viewport');
+  if (!viewport) return;
+  const card = viewport.querySelector('.ticker-card');
+  if (!card) return;
+  autoScrollInterval = setInterval(() => {
+    const maxScroll = viewport.scrollWidth - viewport.clientWidth;
+    if (viewport.scrollLeft >= maxScroll - 10) {
+      viewport.scrollTo({ left: 0, behavior: 'smooth' });
+    } else {
+      viewport.scrollBy({ left: card.getBoundingClientRect().width + 12, behavior: 'smooth' });
+    }
+  }, 3500);
+}
+
+function stopAutoScroll() {
+  if (autoScrollInterval) {
+    clearInterval(autoScrollInterval);
+    autoScrollInterval = null;
+  }
+}
+
+function resetAutoScroll() {
+  stopAutoScroll();
+  startAutoScroll();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadFooterNews();
+
+  const ticker = document.querySelector('.footer-news-ticker');
+  if (ticker) {
+    ticker.addEventListener('mouseenter', stopAutoScroll);
+    ticker.addEventListener('mouseleave', startAutoScroll);
+  }
+  // Load featured products
+  loadFeaturedProducts();
+
+  // Back-to-top behavior
+  const back = document.getElementById('backToTop');
+  if (back) {
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 300) back.style.display = 'flex'; else back.style.display = 'none';
+    });
+    back.addEventListener('click', () => window.scrollTo({top:0,behavior:'smooth'}));
+  }
+});
+
+// Simple featured products loader
+async function loadFeaturedProducts() {
+  const container = document.getElementById('footerFeaturedProducts');
+  if (!container) return;
+  try {
+    const res = await fetch('/api/products?featured=1&limit=4');
+    if (!res.ok) throw new Error('no');
+    const json = await res.json();
+    const items = json.products || [];
+    container.innerHTML = items.map(p => `
+      <div class="featured-mini" onclick="window.location.href='${p.url||('/product/'+p.id)}'">
+        <img src="${p.image_url||'/static/defoult.webp'}" alt="${(p.title||'').replace(/"/g,'&quot;')}">
+      </div>
+    `).join('');
+  } catch (e) {
+    // fallback: show placeholders
+    container.innerHTML = `
+      <div class="featured-mini"><img src="/static/defoult.webp" alt=""></div>
+      <div class="featured-mini"><img src="/static/defoult.webp" alt=""></div>
+      <div class="featured-mini"><img src="/static/defoult.webp" alt=""></div>
+    `;
+  }
+}
+
+// Newsletter submission handler
+function handleNewsletterSubmit(event) {
+  event.preventDefault();
+  const form = event.target;
+  const email = form.querySelector('input[name="email"]').value;
+  const btn = form.querySelector('.newsletter-btn');
+  const original = btn.textContent;
+  btn.textContent = '{{ _('footer.subscribed') or 'Muvaffaqiyatli!' }}';
+  btn.disabled = true;
+  setTimeout(()=>{ btn.textContent = original; btn.disabled = false; form.reset(); },1500);
+  // optionally send to server (non-blocking)
+  fetch('/api/newsletter', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email}) }).catch(()=>{});
+  return false;
+}
+</script>
 
 .feature-card {
   text-align: center;
@@ -361,58 +829,31 @@ body.dark-theme .why-choose-section {
   padding-left: 0.5rem;
 }
 
-/* Newsletter */
-.newsletter-text {
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 1.5rem;
-  line-height: 1.6;
-}
-
-.newsletter-form {
-  margin-bottom: 2rem;
-}
-
-.newsletter-input-wrapper {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.newsletter-input {
-  flex: 1;
-  padding: 0.875rem 1.25rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.05);
-  color: white;
-  font-size: 0.9375rem;
-  transition: all 0.3s ease;
-}
-
-.newsletter-input:focus {
-  outline: none;
-  border-color: var(--luxury-gold);
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.newsletter-input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.newsletter-btn {
-  padding: 0.875rem 1.75rem;
-  background: var(--luxury-gold);
-  color: var(--luxury-black);
+/* Deprecated duplicate news-slider CSS removed; using footer news ticker styles above */
   border: none;
-  border-radius: 8px;
-  font-weight: 700;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  white-space: nowrap;
+  pointer-events: all;
+  color: var(--luxury-black);
 }
 
-.newsletter-btn:hover {
-  background: var(--luxury-gold-dark);
-  transform: translateY(-2px);
+.slider-btn:hover {
+  background: var(--luxury-gold);
+  transform: scale(1.1);
+}
+
+.slider-btn.prev-btn {
+  margin-right: auto;
+}
+
+.slider-btn.next-btn {
+  margin-left: auto;
 }
 
 /* Contact Info */
@@ -558,20 +999,3 @@ body.dark-theme .why-choose-section {
   }
 }
 </style>
-
-<script>
-function handleNewsletterSubmit(event) {
-  event.preventDefault();
-  const form = event.target;
-  const email = form.querySelector('input[name="email"]').value;
-  
-  // Add your newsletter subscription logic here
-  console.log('Newsletter subscription:', email);
-  
-  // Show success message
-  alert('Rahmat! Siz muvaffaqiyatli obuna bo\'ldingiz.');
-  form.reset();
-  
-  return false;
-}
-</script>

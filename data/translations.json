@@ -35,7 +35,11 @@
       "clear_filters": "Очистить все",
       "mobile_filters": "Фильтры",
       "section_title": "Специальная одежда и обувь",
-      "breadcrumb": "Меню - Спецобувь и спецодежда"
+      "breadcrumb": "Меню - Спецобувь и спецодежда",
+      "catalog_title": "КАТАЛОГ 2024",
+      "catalog_subtitle": "Инженерная обувь и спецодежда для промышленной безопасности",
+      "filters": "ФИЛЬТРЫ",
+      "search_gear_placeholder": "Поиск снаряжения безопасности: ботинки S3, куртки высокой видимости, композитный носок..."
     },
     "nav": {
       "home": "Главная",
@@ -49,13 +53,30 @@
       "cart": "Корзина",
       "warranty": "Гарантии",
       "quick_links": "Быстрые ссылки",
+      "homepage": {
+        "hero_title": "PRO OBUV",
+        "hero_subtitle": "ЭЛИТНАЯ БЕЗОПАСНОСТЬ",
+        "hero_description": "Высокопроизводительная сертифицированная ISO обувь и средства защиты. Разработана для экстремальных условий, создана для профессионалов.",
+        "shop_catalog": "КАТАЛОГ МАГАЗИНА",
+        "technical_specs": "ТЕХНИЧЕСКИЕ ХАРАКТЕРИСТИКИ",
+        "all_categories": "Все категории",
+        "safety_footwear": "Защитная обувь",
+        "protective_clothing": "Защитная одежда",
+        "find_gear": "НАЙТИ СНАРЯЖЕНИЕ",
+        "iso_certified": "СЕРТИФИЦИРОВАННАЯ ISO ОБУВЬ",
+        "iso_description": "Соответствующая ISO 20345 защитная обувь S1-S3, антистатическая обувь и защита от тяжелых ударов.",
+        "browse_catalog": "ПРОСМОТРЕТЬ КАТАЛОГ",
+        "professional_workwear": "ПРОФЕССИОНАЛЬНАЯ РАБОЧАЯ ОДЕЖДА",
+        "workwear_description": "Одежда высокой видимости, огнестойкая промышленная одежда и усиленная строительная одежда.",
+        "view_workwear": "ПОСМОТРЕТЬ РАБОЧУЮ ОДЕЖДУ"
+      },
       "profile": "Профиль",
       "profile_settings": "Настройки профиля",
       "profile_info": "Данные профиля",
       "login": "Войти",
       "logout": "Выйти",
-      "register": "Регистрация"
-      ,"staff_panel": "Панель сотрудников",
+      "register": "Регистрация",
+      "staff_panel": "Панель сотрудников",
       "dashboard": "Панель",
       "staff_menu": "Управление меню",
       "staff_list": "Список сотрудников"
@@ -63,13 +84,12 @@
     "footer": {
       "contact_info": "Контакты",
       "hours": "Часы работы",
-        "phone_display": "+998 97 719 57 70",
-        "phone_href": "+998977195770",
+      "phone_display": "+998 97 719 57 70",
+      "phone_href": "+998977195770",
       "services": "Услуги",
       "follow_us": "Подписывайтесь",
       "subscribe": "Подписаться",
-      "subscribe_placeholder": "Ваш email"
-    ,
+      "subscribe_placeholder": "Ваш email",
       "company_desc": "Крупнейший магазин обуви в Узбекистане. Качественные товары и отличный сервис - наш приоритет.",
       "address": "Ташкент, Сергелийский район, Юкори Дархон",
       "hours_working": "Понедельник - Пятница: 9:00 - 18:00",
@@ -103,19 +123,18 @@
       "language_saved": "Язык сохранен",
       "language_local_change": "Язык изменен локально"
     },
-  "home_title": "Главная",
+    "home_title": "Главная",
     "language": "Язык",
     "meta_description": "Pro Obuv - качественная рабочая обувь и спецодежда. Онлайн-заказ и доставка по Узбекистану.",
-  "meta_keywords": "Pro Obuv, обувь, спецобувь, спецодежда, доставка, заказ",
-  "meta_product_suffix": "Купить в Pro Obuv.",
-    "profile": "Профиль", 
+    "meta_keywords": "Pro Obuv, обувь, спецобувь, спецодежда, доставка, заказ",
+    "meta_product_suffix": "Купить в Pro Obuv.",
+    "profile": "Профиль",
     "logout": "Выход",
     "notifications": "Уведомления",
     "theme": "Тема",
     "dark_mode": "Темная тема",
     "light_mode": "Светлая тема",
-    "about": "О приложении"
-  ,
+    "about": "О приложении",
     "language_names": {
       "ru": "Русский",
       "uz": "O'zbekcha",
@@ -194,8 +213,7 @@
       "send": "Отправить",
       "cancel": "Отменить",
       "loading_preview": "Уведомления загружаются..."
-    }
-    ,
+    },
     "ticker": {
       "add_news": "Добавить новость",
       "image_label": "Изображение",
@@ -206,8 +224,7 @@
       "type_news": "Новость",
       "type_ad": "Реклама",
       "active_label": "Активно"
-    }
-    ,
+    },
     "Biz bilan bog'lanish": "Связаться с нами",
     "Sizning savollaringiz va takliflaringiz biz uchun muhim": "Ваши вопросы и предложения важны для нас",
     "Savol yuborish": "Отправить вопрос",
@@ -292,7 +309,11 @@
       "clear_filters": "Barchasini tozalash",
       "mobile_filters": "Filterlar",
       "section_title": "Maxsus kiyim va poyabzal",
-      "breadcrumb": "Menu - Spetsobuv va Ish kiyimlari"
+      "breadcrumb": "Menu - Spetsobuv va Ish kiyimlari",
+      "catalog_title": "KATALOG 2024",
+      "catalog_subtitle": "Aniq muhandislik xavfsizlik poyabzallari va ish kiyimlari",
+      "filters": "FILTRLAR",
+      "search_gear_placeholder": "Xavfsizlik jihozlarini qidiring: S3 etiklari, yuqori ko'rinadigan kurtkalar, kompozit burun..."
     },
     "nav": {
       "home": "Bosh sahifa",
@@ -306,49 +327,81 @@
       "cart": "Savat",
       "warranty": "Kafolatlar",
       "quick_links": "Tez havolalar",
-      "profile": "Profil",
-      "profile_settings": "Profil sozlamalari",
-      "profile_info": "Profil ma'lumotlari",
-      "login": "Kirish",
-      "logout": "Chiqish",
-      "register": "Ro'yxatdan o'tish"
-      ,"staff_panel": "Xodim Panel",
       "dashboard": "Dashboard",
       "staff_menu": "Menyu boshqaruvi",
       "staff_list": "Xodimlar ro'yxati"
     },
-    "footer": {
-      "contact_info": "Aloqa ma'lumotlari",
-      "hours": "Ish vaqti",
-        "phone_display": "+998 97 719 57 70",
-        "phone_href": "+998977195770",
-      "services": "Xizmatlar",
-      "follow_us": "Bizni kuzating",
-      "subscribe": "Obuna bo'lish",
-      "subscribe_placeholder": "Sizning email"
-    ,
-      "company_desc": "O'zbekistondagi eng yirik oyoq kiyim do'koni. Sifatli mahsulotlar va eng yaxshi xizmat ko'rsatish bizning ustuvorligimiz.",
-      "address": "Toshkent, Sergeli tumani, Yuqori Darxon mahalla fuqarolar yig'ini",
-      "hours_working": "Dushanba - Juma: 9:00 - 18:00",
-      "weekend_hours": "Shanba - Yakshanba: Dam",
-      "delivery": "Yetkazib berish",
-      "return_policy": "Qaytarish siyosati",
-      "categories": "Kategoriyalar",
-      "cat_specobuv": "Spets-obuv",
-      "cat_specodezhda": "Spets-odezhda",
-      "cat_all_products": "Barcha mahsulotlar",
-      "cat_consultation": "Konsultatsiya",
-      "payment_methods": "To'lov usullari",
-      "pay_cash": "Naqd",
-      "pay_card": "Plastik karta",
-      "pay_click": "Click",
-      "pay_payme": "Payme",
-      "pay_bank_transfer": "Bank o'tkazmasi",
-      "copyright": "© 2025 <strong>Pro Obuv</strong> - Oyoq kiyim do'koni | Barcha huquqlar himoyalangan",
-      "privacy": "Maxfiylik siyosati",
-      "terms": "Foydalanish shartlari",
-      "cookies": "Cookie siyosati"
+    "homepage": {
+      "hero_title": "PRO OBUV",
+      "hero_subtitle": "ELIT XAVFSIZLIK JIHOZLARI",
+      "hero_description": "Yuqori samaradorlikdagi ISO sertifikatli xavfsizlik poyabzallari va himoya vositalari. Ekstremal sharoitlar uchun mo'ljallangan, professionalar uchun yaratilgan.",
+      "shop_catalog": "DO'KON KATALOGI",
+      "technical_specs": "TEXNIK XUSUSIYATLAR",
+      "all_categories": "Barcha kategoriyalar",
+      "safety_footwear": "Xavfsizlik poyabzallari",
+      "protective_clothing": "Himoya kiyimlari",
+      "find_gear": "JIHOZLARNI TOPISH",
+      "iso_certified": "ISO SERTIFIKATLI POYABZALLAR",
+      "iso_description": "ISO 20345 ga mos S1-S3 xavfsizlik etiklari, antistatik poyabzallar va og'ir zarba himoyasi.",
+      "browse_catalog": "KATALOGNI KO'RISH",
+      "professional_workwear": "PROFESSIONAL ISH KIYIMLARI",
+      "workwear_description": "Yuqori ko'rinadigan jihozlar, olovga chidamli sanoat kiyimlari va mustahkamlangan qurilish kiyimlari.",
+      "view_workwear": "ISH KIYIMLARINI KO'RISH"
     },
+    "cart": {
+      "title": "Savatcha",
+      "page_title": "Savatcha - Pro Obuv",
+      "meta_description": "Savatcha — Pro Obuv. Spetsobuv, spetsodejda va ish kiyimlari buyurtmalarini yakunlang.",
+      "meta_keywords": "pro obuv, savatcha, buyurtma, spetsobuv, ish kiyimlari, oyoq kiyim",
+      "og_title": "Savatcha — Pro Obuv",
+      "og_description": "Savatcha — mahsulotlarni ko'rish va buyurtmani yakunlash",
+      "twitter_title": "Savatcha — Pro Obuv",
+      "twitter_description": "Savatcha — buyurtmani yakunlash",
+      "schema_name": "Savatcha — Pro Obuv",
+      "empty_title": "Savatchangiz bo'sh",
+      "empty_message": "Savatchangizda hozircha hech narsa yo'q. Katalogimizdan mahsulotlarni qo'shing.",
+      "continue_shopping": "Xarid qilishni davom ettirish",
+      "cart_total": "Jami summa",
+      "checkout": "Buyurtmani rasmiylashtirish",
+      "quantity": "Miqdor",
+      "price": "Narx",
+      "remove": "O'chirish",
+      "update_cart": "Savatchani yangilash"
+    },
+    "logout": "Chiqish",
+    "register": "Ro'yxatdan o'tish",
+    "staff_panel": "Xodim Panel",
+    "staff": {
+      "login_title": "Xodim Kirish",
+      "staff_id": "Xodim ID",
+      "password": "Parol",
+      "login_button": "Kirish",
+      "staff_id_placeholder": "Xodim ID raqamini kiriting",
+      "password_placeholder": "Parolni kiriting",
+      "login_subtitle": "Xavfsizlik tizimiga kirish"
+    },
+    "dashboard": "Dashboard",
+    "staff_menu": "Menyu boshqaruvi",
+    "staff_list": "Xodimlar ro'yxati",
+    "admin": {
+      "super_admin_only": "Faqat Super Admin"
+    }
+  },
+  "footer": {
+    "contact_info": "Aloqa ma'lumotlari",
+    "hours": "Ish vaqti",
+    "phone_display": "+998 97 719 57 70",
+    "phone_href": "+998977195770",
+    "services": "Xizmatlar",
+    "follow_us": "Bizni kuzating",
+    "subscribe": "Obuna bo'lish",
+    "subscribe_placeholder": "Sizning email",
+    "copyright": "© 2025 <strong>Pro Obuv</strong> - Oyoq kiyim do'koni | Barcha huquqlar himoyalangan",
+    "privacy": "Maxfiylik siyosati",
+    "terms": "Foydalanish shartlari",
+    "cookies": "Cookie siyosati"
+  },
+  "settings": {
     "settings": {
       "title": "Sozlamalar",
       "description": "Mavzu, til va bildirishnomalarni boshqarish",
@@ -360,19 +413,18 @@
       "language_saved": "Til saqlandi",
       "language_local_change": "Til mahalliy o'zgartirildi"
     },
-  "home_title": "Asosiy",
+    "home_title": "Asosiy",
     "language": "Til",
     "meta_description": "Pro Obuv - sifatli poyabzal va ish kiyimlari. Onlayn buyurtma va yetkazib berish.",
-  "meta_keywords": "Pro Obuv, oyoq kiyim, spetsobuv, spetsodezhda, yetkazib berish, buyurtma",
-  "meta_product_suffix": "Pro Obuv do'konidan sotib oling.",
+    "meta_keywords": "Pro Obuv, oyoq kiyim, spetsobuv, spetsodezhda, yetkazib berish, buyurtma",
+    "meta_product_suffix": "Pro Obuv do'konidan sotib oling.",
     "profile": "Profil",
     "logout": "Chiqish",
     "notifications": "Bildirishnomalar",
     "theme": "Mavzu",
     "dark_mode": "Tungi mavzu",
-    "light_mode": "Kunduzgi mavzu", 
-    "about": "Ilova haqida"
-  ,
+    "light_mode": "Kunduzgi mavzu",
+    "about": "Ilova haqida",
     "language_names": {
       "ru": "Русский",
       "uz": "O'zbekcha",
@@ -451,8 +503,7 @@
       "send": "Yuborish",
       "cancel": "Bekor qilish",
       "loading_preview": "Bildirishnomalar yuklanmoqda..."
-    }
-    ,
+    },
     "ticker": {
       "add_news": "Yangilik qo'shish",
       "image_label": "Rasm",
@@ -463,8 +514,7 @@
       "type_news": "Yangilik",
       "type_ad": "Reklama",
       "active_label": "Faol"
-    }
-    ,
+    },
     "Biz bilan bog'lanish": "Biz bilan bog'lanish",
     "Sizning savollaringiz va takliflaringiz biz uchun muhim": "Sizning savollaringiz va takliflaringiz biz uchun muhim",
     "Savol yuborish": "Savol yuborish",
@@ -516,7 +566,7 @@
   "en": {
     "colors": {
       "black": "Black",
-      "white": "White", 
+      "white": "White",
       "brown": "Brown",
       "gray": "Gray",
       "blue": "Blue",
@@ -549,7 +599,11 @@
       "clear_filters": "Clear All",
       "mobile_filters": "Filters",
       "section_title": "Work Shoes and Clothing",
-      "breadcrumb": "Menu - Work Shoes and Clothing"
+      "breadcrumb": "Menu - Work Shoes and Clothing",
+      "catalog_title": "CATALOG 2024",
+      "catalog_subtitle": "Precision Engineered Safety Footwear & Workwear",
+      "filters": "FILTERS",
+      "search_gear_placeholder": "Search safety gear: S3 boots, hi-vis jackets, composite toe..."
     },
     "nav": {
       "home": "Home",
@@ -568,8 +622,8 @@
       "profile_info": "Profile Info",
       "login": "Login",
       "logout": "Logout",
-      "register": "Register"
-      ,"staff_panel": "Staff Panel",
+      "register": "Register",
+      "staff_panel": "Staff Panel",
       "dashboard": "Dashboard",
       "staff_menu": "Manage Menu",
       "staff_list": "Staff list"
@@ -577,13 +631,12 @@
     "footer": {
       "contact_info": "Contact Info",
       "hours": "Opening Hours",
-        "phone_display": "+998 97 719 57 70",
-        "phone_href": "+998977195770",
+      "phone_display": "+998 97 719 57 70",
+      "phone_href": "+998977195770",
       "services": "Services",
       "follow_us": "Follow Us",
       "subscribe": "Subscribe",
-      "subscribe_placeholder": "Your email"
-    ,
+      "subscribe_placeholder": "Your email",
       "company_desc": "The largest footwear store in Uzbekistan. Quality products and excellent service are our priority.",
       "address": "Tashkent, Sergeli district, Yuqori Darxon mahalla",
       "hours_working": "Mon - Fri: 9:00 - 18:00",
@@ -601,7 +654,7 @@
       "pay_click": "Click",
       "pay_payme": "Payme",
       "pay_bank_transfer": "Bank Transfer",
-      "copyright": "© 2025 <strong>Pro Obuv</strong> - Footwear store | All rights reserved",
+      "copyright": " 2025 <strong>Pro Obuv</strong> - Footwear store | All rights reserved",
       "privacy": "Privacy Policy",
       "terms": "Terms of Use",
       "cookies": "Cookie Policy"
@@ -617,19 +670,18 @@
       "language_saved": "Language saved",
       "language_local_change": "Language changed locally"
     },
-  "home_title": "Home",
+    "home_title": "Home",
     "language": "Language",
     "meta_description": "Pro Obuv - quality work shoes and workwear. Online ordering and delivery in Uzbekistan.",
-  "meta_keywords": "Pro Obuv, shoes, work shoes, workwear, delivery, order",
-  "meta_product_suffix": "Buy from Pro Obuv.",
+    "meta_keywords": "Pro Obuv, shoes, work shoes, workwear, delivery, order",
+    "meta_product_suffix": "Buy from Pro Obuv.",
     "profile": "Profile",
     "logout": "Logout",
     "notifications": "Notifications",
     "theme": "Theme",
     "dark_mode": "Dark mode",
     "light_mode": "Light mode",
-    "about": "About"
-  ,
+    "about": "About",
     "language_names": {
       "ru": "Rusian",
       "uz": "O'zbekcha",
@@ -708,8 +760,7 @@
       "send": "Send",
       "cancel": "Cancel",
       "loading_preview": "Loading notifications..."
-    }
-    ,
+    },
     "ticker": {
       "add_news": "Add news",
       "image_label": "Image",
@@ -720,8 +771,7 @@
       "type_news": "News",
       "type_ad": "Advertisement",
       "active_label": "Active"
-    }
-    ,
+    },
     "Biz bilan bog'lanish": "Contact us",
     "Sizning savollaringiz va takliflaringiz biz uchun muhim": "Your questions and suggestions are important to us",
     "Savol yuborish": "Send a question",
@@ -768,7 +818,31 @@
     "Tayyor": "Ready",
     "Yetkazildi": "Delivered",
     "Bekor qilindi": "Cancelled",
-    "Menuga o'tish": "Go to menu"
+    "Menuga o'tish": "Go to menu",
+    "admin": {
+      "title": "Admin Panel",
+      "subtitle": "Restaurant System Management",
+      "welcome": "Hello",
+      "login_description": "Login to system",
+      "orders": "Orders",
+      "orders_description": "Manage and track orders",
+      "menu": "Menu",
+      "menu_description": "Manage food and drinks",
+      "monitor": "Monitor",
+      "monitor_description": "Order monitor (for TV)",
+      "employees": "Employees",
+      "employees_description": "Employee list",
+      "news": "News",
+      "news_description": "Manage site news and advertisements",
+      "news_manager": "News Management",
+      "super_admin": "Super Admin",
+      "super_admin_description": "Full system management",
+      "super_admin_only": "Super Admin Only",
+      "login": "Admin Login",
+      "login_button": "Login",
+      "register_button": "Register",
+      "logout": "Logout"
+    }
   },
   "kz": {
     "colors": {
@@ -825,8 +899,8 @@
       "profile_info": "Мәліметтер профиля",
       "login": "Кіру",
       "logout": "Шығу",
-      "register": "Тіркелу"
-      ,"staff_panel": "Қызметкерлер панелі",
+      "register": "Тіркелу",
+      "staff_panel": "Қызметкерлер панелі",
       "dashboard": "Панель",
       "staff_menu": "Мәзірді басқару",
       "staff_list": "Қызметкерлер тізімі"
@@ -834,13 +908,12 @@
     "footer": {
       "contact_info": "Байланыс мәліметтері",
       "hours": "Жұмыс уақыты",
-        "phone_display": "+998 97 719 57 70",
-        "phone_href": "+998977195770",
+      "phone_display": "+998 97 719 57 70",
+      "phone_href": "+998977195770",
       "services": "Қызметтер",
       "follow_us": "Бізді бақылаңыз",
       "subscribe": "Жазылу",
-      "subscribe_placeholder": "Сіздің email"
-    ,
+      "subscribe_placeholder": "Сіздің email",
       "company_desc": "Өзбекстандағы ең ірі аяқ киім дүкені. Сапалы өнімдер мен үздік қызмет көрсету - біздің басымдылықтарымыз.",
       "address": "Ташкент, Сергели ауданы, Юқори Дархон",
       "hours_working": "Дүйсенбіден жұмаға: 9:00 - 18:00",
@@ -874,19 +947,18 @@
       "language_saved": "Тіл сақталды",
       "language_local_change": "Тіл жергілікті түрде өзгертілді"
     },
-  "home_title": "Басты бет",
+    "home_title": "Басты бет",
     "language": "Тіл",
     "meta_description": "Pro Obuv - сапалы аяқ киім және жұмыс киімдері. Онлайн тапсырыс және жеткізу.",
-  "meta_keywords": "Pro Obuv, аяқ киім, арнайы аяқ киім, жұмыс киімі, жеткізу, тапсырыс",
-  "meta_product_suffix": "Pro Obuv-тен сатып алыңыз.",
+    "meta_keywords": "Pro Obuv, аяқ киім, арнайы аяқ киім, жұмыс киімі, жеткізу, тапсырыс",
+    "meta_product_suffix": "Pro Obuv-тен сатып алыңыз.",
     "profile": "Профиль",
     "logout": "Шығу",
     "notifications": "Хабарландырулар",
     "theme": "Тақырып",
     "dark_mode": "Қараңғы тақырып",
     "light_mode": "Жарық тақырып",
-    "about": "Қолданба туралы"
-  ,
+    "about": "Қолданба туралы",
     "language_names": {
       "ru": "Русский",
       "uz": "O'zbekcha",
@@ -965,8 +1037,7 @@
       "send": "Жіберу",
       "cancel": "Бас тарту",
       "loading_preview": "Хабарламалар жүктелуде..."
-    }
-    ,
+    },
     "ticker": {
       "add_news": "Жаңалық қосу",
       "image_label": "Сурет",
@@ -977,8 +1048,7 @@
       "type_news": "Жаңалық",
       "type_ad": "Жарнама",
       "active_label": "Белсенді"
-    }
-    ,
+    },
     "Biz bilan bog'lanish": "Байланыс",
     "Sizning savollaringiz va takliflaringiz biz uchun muhim": "Сіздің сұрақтарыңыз бен ұсыныстарыңыз біз үшін маңызды",
     "Savol yuborish": "Сұрақ жіберу",

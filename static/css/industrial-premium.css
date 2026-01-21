@@ -8,19 +8,19 @@
     /* COLOR PALETTE */
     /* Dark Mode Defaults (Deep Iron Charcoal) */
     --base-dark: #0f172a; /* Premium Deep Blue */
-    --surface-dark: #1e293b; /* Slate Blue */
+    --surface-dark: #fcfcfc; /* Slate Blue */
     --accent-primary: #FFD700; /* Safety Yellow */
     --accent-secondary: #f97316; /* Vibrant Orange */
     --steel-blue: #4682B4;
     --steel-grey: #708090;
-    --text-primary: #FFFFFF;
+    --text-primary: #6d6d6d;
     --text-secondary: #AAAAAA;
     --border-color: rgba(255, 255, 255, 0.08);
     
     /* Global Component Variables */
     --nav-bg: #020617;
     --footer-bg: #010409;
-    --input-bg: #0f172a;
+    --input-bg: #ffffff;
     
     /* Light Mode (Clean Industrial White) */
     --base-light: #F5F5F7;
@@ -154,7 +154,6 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .industrial-card {
-    background: var(--surface-dark);
     border: 1px solid var(--border-color);
     border-radius: 4px;
     box-shadow: var(--shadow-heavy);
@@ -207,6 +206,12 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--accent-primary) !important;
 }
 
+.nav-link.active {
+    color: var(--accent-primary) !important;
+    background-color: rgba(255, 215, 0, 0.1) !important;
+    border-radius: 4px;
+}
+
 .dropdown-menu {
     background: var(--surface-dark) !important;
     border: 1px solid var(--border-color) !important;
@@ -230,6 +235,8 @@ h1, h2, h3, h4, h5, h6 {
     border: 1px solid var(--border-color) !important;
     color: var(--text-primary) !important;
     border-radius: var(--card-radius) !important;
+    text-align: center;
+    box-shadow: var(--shadow-heavy);
 }
 
 .table {

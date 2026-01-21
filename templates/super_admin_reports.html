@@ -62,25 +62,25 @@
         <div class="summary-card">
             <h4> O'sish Sur'ati</h4>
             <div class="summary-value" id="growth-rate">+0%</div>
-            <div class="summary-subtitle">Oldingi davr bilan</div>
+            <div class="summary-subtitle">{{ _('reports.previous_period') or 'Oldingi davr bilan' }}</div>
         </div>
     </div>
 
     <!-- Detailed Reports -->
     <div class="reports-section">
         <div class="report-tabs">
-            <button class="tab-btn active" onclick="showReportTab('sales')"> Sotuvlar</button>
-            <button class="tab-btn" onclick="showReportTab('products')"> Mahsulotlar</button>
-            <button class="tab-btn" onclick="showReportTab('customers')"> Mijozlar</button>
-            <button class="tab-btn" onclick="showReportTab('staff')"> Xodimlar</button>
-            <button class="tab-btn" onclick="showReportTab('branches')"> Filiallar</button>
+            <button class="tab-btn active" onclick="showReportTab('sales')">{{ _('reports.sales') or 'Sotuvlar' }}</button>
+            <button class="tab-btn" onclick="showReportTab('products')">{{ _('reports.products') or 'Mahsulotlar' }}</button>
+            <button class="tab-btn" onclick="showReportTab('customers')">{{ _('reports.customers') or 'Mijozlar' }}</button>
+            <button class="tab-btn" onclick="showReportTab('staff')">{{ _('reports.staff') or 'Xodimlar' }}</button>
+            <button class="tab-btn" onclick="showReportTab('branches')">{{ _('reports.branches') or 'Filiallar' }}</button>
         </div>
 
         <!-- Sales Report Tab -->
         <div id="sales-report" class="report-tab active">
             <div class="report-content">
                 <div id="sales-data" class="table-responsive">
-                    <p class="text-center">Hisobot yaratish uchun yuqoridagi tugmani bosing</p>
+                    <p class="text-center">{{ _('reports.generate_report') or 'Hisobot yaratish uchun yuqoridagi tugmani bosing' }}</p>
                 </div>
             </div>
         </div>
@@ -88,9 +88,9 @@
         <!-- Products Report Tab -->
         <div id="products-report" class="report-tab">
             <div class="report-content">
-                <h3> Mahsulotlar Hisoboti</h3>
+                <h3> {{ _('reports.products_report') or 'Mahsulotlar Hisoboti' }}</h3>
                 <div id="products-data" class="table-responsive">
-                    <p class="text-center">Hisobot yaratish uchun yuqoridagi tugmani bosing</p>
+                    <p class="text-center">{{ _('reports.generate_report') or 'Hisobot yaratish uchun yuqoridagi tugmani bosing' }}</p>
                 </div>
             </div>
         </div>

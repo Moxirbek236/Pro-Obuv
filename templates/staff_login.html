@@ -1,114 +1,205 @@
 
-<!DOCTYPE html>
-<html lang="uz">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xodim Kirish - Restaurant</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+{% extends "base.html" %}
 
-        .login-container {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-        }
+{% block title %}{{ _('nav.staff_login') or 'Xodim Kirish' }} - Safety.uz{% endblock %}
 
-        .login-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
+{% block content %}
+<div class="staff-login-container">
+    <div class="login-card">
+        <div class="login-header">
+            <div class="logo">
+                <i class="bi bi-shield-check"></i>
+                <span>Safety.uz</span>
+            </div>
+            <h2>{{ _('staff.login_title') or 'Xodim Kirish' }}</h2>
+            <p class="login-subtitle">{{ _('staff.login_subtitle') or 'Xavfsizlik tizimiga kirish' }}</p>
+        </div>
+        
+        <form method="POST" class="login-form">
+            <div class="form-group">
+                <label for="staff_id">{{ _('staff.staff_id') or 'Xodim ID' }}</label>
+                <input type="text" id="staff_id" name="staff_id" class="form-control" required 
+                       placeholder="{{ _('staff.staff_id_placeholder') or 'Xodim ID raqamini kiriting' }}">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">{{ _('staff.password') or 'Parol' }}</label>
+                <input type="password" id="password" name="password" class="form-control" required 
+                       placeholder="{{ _('staff.password_placeholder') or 'Parolni kiriting' }}">
+            </div>
+            
+            <button type="submit" class="btn-login">
+                <i class="bi bi-box-arrow-in-right"></i>
+                {{ _('staff.login_button') or 'Kirish' }}
+            </button>
+        </form>
+        
+        <div class="login-footer">
+            <p>{{ _('staff.no_account') or 'Hisobingiz yo\'qmi?' }} 
+               <a href="{{ url_for('register') }}">{{ _('staff.register') or 'Ro\'yxatdan o\'tish' }}</a>
+            </p>
+        </div>
+    </div>
+</div>
 
-        .login-header h2 {
-            color: #333;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
+<style>
+.staff-login-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
 
-        .login-header p {
-            color: #666;
-            margin: 0;
-        }
+.login-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 3rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+.login-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
 
-        .form-label {
-            font-weight: 500;
-            color: #333;
-            margin-bottom: 8px;
-        }
+.logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #667eea;
+}
 
-        .form-control {
-            border: 2px solid #e9ecef;
-            border-radius: 10px;
-            padding: 12px 15px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
+.logo i {
+    font-size: 2rem;
+}
 
-        .form-control:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-        }
+.login-header h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 0.5rem;
+}
 
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            border-radius: 10px;
-            padding: 12px 30px;
-            font-size: 16px;
-            font-weight: 500;
-            width: 100%;
-            transition: all 0.3s ease;
-        }
+.login-subtitle {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin: 0;
+}
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-        }
+.form-group {
+    margin-bottom: 1.5rem;
+}
 
-        .btn-secondary {
-            background: #6c757d;
-            border: none;
-            border-radius: 10px;
-            padding: 10px 25px;
-            font-size: 14px;
-            width: 100%;
-            margin-top: 10px;
-            transition: all 0.3s ease;
-        }
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #374151;
+}
 
-        .btn-secondary:hover {
-            background: #5a6268;
-            transform: translateY(-1px);
-        }
+.form-control {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
 
-        .alert {
-            border-radius: 10px;
-            margin-bottom: 20px;
-            padding: 12px 15px;
-        }
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    outline: none;
+}
 
-        .back-link {
-            text-align: center;
-            margin-top: 20px;
-        }
+.btn-login {
+    width: 100%;
+    padding: 0.875rem;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
 
-        .back-link a {
+.btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+.login-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.login-footer p {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.login-footer a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.login-footer a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .login-card {
+        margin: 1rem;
+        padding: 2rem;
+    }
+    
+    .staff-login-container {
+        padding: 1rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add form validation
+    const form = document.querySelector('.login-form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            
+            if (!username || !password) {
+                e.preventDefault();
+                alert('{{ _('staff.required_fields') or 'Barcha maydonlar toldirilgan' }}');
+                return false;
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
             color: #667eea;
             text-decoration: none;
             font-size: 14px;

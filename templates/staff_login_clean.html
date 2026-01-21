@@ -1,0 +1,221 @@
+{% extends "staff_base_standalone.html" %}
+
+{% block title %}{{ _('staff.login_title') or 'Xodim Kirish' }} - Safety.uz{% endblock %}
+
+{% block staff_content %}
+<div class="d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+    <div class="login-card">
+        <div class="login-header">
+            <div class="logo">
+                <i class="bi bi-shield-check"></i>
+                <span>Safety.uz</span>
+            </div>
+            <h2>{{ _('staff.login_title') or 'Xodim Kirish' }}</h2>
+            <p class="login-subtitle">{{ _('staff.login_subtitle') or 'Xavfsizlik tizimiga kirish' }}</p>
+        </div>
+        
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+        
+        <form method="POST" class="login-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <div class="form-group">
+                <label for="staff_id">{{ _('staff.staff_id') or 'Xodim ID' }}</label>
+                <input type="text" id="staff_id" name="staff_id" class="form-control" required 
+                       placeholder="{{ _('staff.staff_id_placeholder') or 'Xodim ID raqamini kiriting' }}"
+                       autocomplete="username">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">{{ _('staff.password') or 'Parol' }}</label>
+                <input type="password" id="password" name="password" class="form-control" required 
+                       placeholder="{{ _('staff.password_placeholder') or 'Parolni kiriting' }}"
+                       autocomplete="current-password">
+            </div>
+            
+            <button type="submit" class="btn-login">
+                <i class="bi bi-box-arrow-in-right"></i>
+                {{ _('staff.login_button') or 'Kirish' }}
+            </button>
+        </form>
+        
+        <div class="login-footer">
+            <p><a href="{{ url_for('index') }}" class="back-link">⬅ Bosh sahifaga qaytish</a></p>
+        </div>
+    </div>
+</div>
+
+<style>
+.login-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 3rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1976d2;
+}
+
+.logo i {
+    font-size: 2rem;
+}
+
+.login-header h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 0.5rem;
+}
+
+.login-subtitle {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #1976d2;
+    box-shadow: 0 0 3px rgba(25, 118, 210, 0.1);
+    outline: none;
+}
+
+.btn-login {
+    width: 100%;
+    padding: 0.875rem;
+    background: linear-gradient(135deg, #1976d2, #1565c0);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(25, 118, 210, 0.3);
+}
+
+.login-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.back-link {
+    color: #1976d2;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.back-link:hover {
+    color: #1565c0;
+    text-decoration: underline;
+}
+
+.alert {
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border: none;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #fee, #fdd);
+    color: #991b1b;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+    color: #065f46;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .login-card {
+        margin: 1rem;
+        padding: 2rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add form validation
+    const form = document.querySelector('.login-form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const staffId = document.getElementById('staff_id').value.trim();
+            const password = document.getElementById('password').value;
+            
+            if (!staffId || !password) {
+                e.preventDefault();
+                alert('Barcha maydonlar toldirilgan');
+                return false;
+            }
+            
+            if (isNaN(staffId)) {
+                e.preventDefault();
+                alert('Xodim ID raqam bo\'lishi kerak');
+                return false;
+            }
+        });
+    }
+    
+    // Auto-focus on first input
+    document.getElementById('staff_id').focus();
+});
+</script>
+{% endblock %}

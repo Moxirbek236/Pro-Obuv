@@ -1,8 +1,6 @@
-{% extends "dashboard_base.html" %}
+{% extends "staff_base_standalone.html" %}
 
 {% block title %}Xodim Dashboard | Safety.uz{% endblock %}
-{% block header_title %}Xush kelibsiz! 👋{% endblock %}
-{% block header_subtitle %}Bugungi buyurtmalar holati.{% endblock %}
 
 {% block sidebar_menu %}
 <a href="{{ url_for('staff_dashboard') }}" class="nav-link-modern active">
@@ -20,22 +18,182 @@
 <a href="{{ url_for('news_page') }}" class="nav-link-modern">
     <i class="bi bi-newspaper"></i> Yangiliklar
 </a>
+<a href="{{ url_for('staff_chat_page') }}" class="nav-link-modern">
+    <i class="bi bi-chat-dots"></i> Chat
+</a>
 {% endblock %}
 
-{% block dashboard_content %}
+{% block head %}
+<style>
+/* Enhanced dashboard styles */
+.stat-card {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    position: relative;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), #6366f1);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.stat-icon.warning { background: linear-gradient(135deg, #fef3c7, #fde68a); color: #d97706; }
+.stat-icon.success { background: linear-gradient(135deg, #d1fae5, #a7f3d0); color: #059669; }
+.stat-icon.primary { background: linear-gradient(135deg, #dbeafe, #bfdbfe); color: #1d4ed8; }
+
+.card-modern {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+}
+
+.card-modern:hover {
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+}
+
+.table-modern {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.table-modern th {
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+    border: none;
+    font-weight: 600;
+    color: #374151;
+    padding: 1rem;
+}
+
+.table-modern td {
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+}
+
+.badge {
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 0.75rem;
+    border: 1px solid;
+}
+
+.btn-light-modern {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-light-modern:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #475569;
+    transform: translateY(-1px);
+}
+
+#refreshIndicator {
+    background: linear-gradient(135deg, #ffffff, #f8fafc);
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.chat-message {
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    max-width: 80%;
+    word-wrap: break-word;
+}
+
+.chat-message.user {
+    background: linear-gradient(135deg, #ffffff, #f8fafc);
+    border: 1px solid #e2e8f0;
+    color: #374151;
+}
+
+.chat-message.staff {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    margin-left: auto;
+}
+
+.notification-item {
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+}
+
+.notification-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.notification-item.unread {
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border-color: #3b82f6;
+}
+</style>
+<style>
+/* Glassmorphism card */
+.glass-card {
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    border: 1px solid rgba(255,255,255,0.18);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.glass-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 36px rgba(0,0,0,0.15);
+}
+</style>
+{% endblock %}
+
+{% block staff_content %}
     <!-- Auto Refresh Timer in Header Area (injected via JS or just placed here floating) -->
     <!-- We can place it at the top right of content -->
-    <div class="d-flex justify-content-end mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0">👋 Xush kelibsiz, {{ session.get('user_name', 'Xodim') }}!</h2>
         <div class="bg-white px-3 py-2 rounded-pill shadow-sm border d-flex align-items-center gap-2" id="refreshIndicator">
             <span class="spinner-grow spinner-grow-sm text-success" role="status" aria-hidden="true"></span>
             <span id="refreshTimer" class="small fw-bold text-success">Yangilanish: 10s</span>
         </div>
     </div>
-
     <!-- Stats Grid -->
     <div class="row g-4 mb-5">
         <div class="col-md-3">
-            <div class="card-modern stat-card">
+            <div class="glass-card stat-card">
                 <div class="stat-icon warning"><i class="bi bi-hourglass-split"></i></div>
                 <div>
                     <div class="text-muted small fw-bold text-uppercase">Kutilmoqda</div>
@@ -44,7 +202,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card-modern stat-card">
+            <div class="glass-card stat-card">
                 <div class="stat-icon success"><i class="bi bi-check-lg"></i></div>
                 <div>
                     <div class="text-muted small fw-bold text-uppercase">Tayyor</div>
@@ -53,7 +211,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card-modern stat-card">
+            <div class="glass-card stat-card">
                 <div class="stat-icon primary" style="background: #f1f5f9; color: #64748b;"><i class="bi bi-bag-check"></i></div>
                 <div>
                     <div class="text-muted small fw-bold text-uppercase">Berildi</div>
@@ -62,7 +220,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card-modern stat-card">
+            <div class="glass-card stat-card">
                 <div class="stat-icon primary"><i class="bi bi-basket"></i></div>
                 <div>
                     <div class="text-muted small fw-bold text-uppercase">Jami</div>
@@ -75,7 +233,7 @@
     <div class="row g-4">
         <!-- Left Column: Active Orders -->
         <div class="col-lg-8">
-            <div class="card-modern p-4 mb-4">
+            <div class="glass-card p-4 mb-4">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h4 class="fw-bold m-0">Faol Buyurtmalar</h4>
                     <button class="btn btn-sm btn-light-modern" onclick="refreshOrders()">
@@ -88,7 +246,7 @@
             </div>
 
             <!-- Completed Orders (History) -->
-            <div class="card-modern p-4">
+            <div class="glass-card p-4">
                 <h5 class="fw-bold mb-3">Tugallanganlar (Oxirgi 20)</h5>
                 <div class="table-responsive">
                     <table id="completedOrdersTable" class="table-modern">
@@ -125,36 +283,8 @@
             </div>
         </div>
 
-        <!-- Right Column: Notifications & Chat -->
+        <!-- Right Column: Notifications -->
         <div class="col-lg-4">
-            <!-- Operator Chat -->
-            <div class="card-modern p-0 mb-4 overflow-hidden" style="height: 600px; display: flex; flex-direction: column;">
-                <div class="p-3 border-bottom d-flex justify-content-between align-items-center bg-light">
-                    <h6 class="fw-bold mb-0">💬 Mijoz Chatlari</h6>
-                    <button class="btn btn-sm btn-link text-muted p-0" onclick="loadOperatorChats()"><i class="bi bi-arrow-clockwise"></i></button>
-                </div>
-                
-                <div class="d-flex flex-column h-100">
-                    <!-- Chat List -->
-                    <div id="operatorChatList" class="border-bottom overflow-auto" style="height: 200px; background: #fff;">
-                        <div class="text-center p-3 text-muted small">Yuklanmoqda...</div>
-                    </div>
-                    
-                    <!-- Messages Area -->
-                    <div id="operatorChatMessages" class="flex-grow-1 p-3 overflow-auto bg-light" style="font-size: 0.9rem;">
-                        <div class="text-center text-muted mt-5 small">Chat tanlang</div>
-                    </div>
-                    
-                    <!-- Input Area -->
-                    <div class="p-2 border-top bg-white">
-                        <div class="input-group">
-                            <input type="text" id="operatorChatInput" class="form-control border-0 bg-light" placeholder="Javob yozing...">
-                            <button class="btn btn-primary" onclick="sendOperatorReply()"><i class="bi bi-send"></i></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Notifications -->
             <div class="card-modern p-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -164,7 +294,7 @@
                 <div class="d-flex flex-column gap-3" style="max-height: 400px; overflow-y: auto;">
                     {% if notifications %}
                         {% for n in notifications %}
-                        <div class="p-3 rounded border {{ 'bg-light' if n.is_read else 'bg-primary bg-opacity-10 border-primary border-opacity-25' }}">
+                        <div class="notification-item p-3 {{ 'bg-light' if n.is_read else 'unread' }}">
                             <div class="d-flex justify-content-between mb-1">
                                 <small class="fw-bold">{{ n.title }}</small>
                                 <small class="text-muted">{{ n.time_ago }}</small>
@@ -182,207 +312,144 @@
             </div>
         </div>
     </div>
-{% endblock %}
 
-{% block scripts %}
-<script>
-    // CSRF token safe init
-    // Use a safer way to pass CSRF token to avoid lint errors
-    window.CSRF_TOKEN = "{{ csrf_token }}";
+    <script>
+        // CSRF token safe init
+        // Use a safer way to pass CSRF token to avoid lint errors
+        window.CSRF_TOKEN = "{{ csrf_token }}";
 
-    let ordersPagination = null;
+        let ordersPagination = null;
 
-    function initOrders() {
-        const rawData = JSON.parse(document.getElementById('staff-orders-json').textContent);
-        const activeOrders = rawData.filter(o => ['waiting', 'ready'].includes(o.status));
-        
-        ordersPagination = new TablePagination({
-            container: document.getElementById('active-orders-container'),
-            data: activeOrders,
-            rowsPerPage: 10,
-            headerHtml: '<thead><tr><th>#</th><th>Ticket</th><th>Mijoz</th><th>Buyurtma</th><th>Vaqt</th><th>Holat</th><th>Amallar</th></tr></thead>',
-            renderRow: (o, idx) => `
-                <tr data-order-id="${o.id}" data-status="${o.status}">
-                    <td>${idx + 1}</td>
-                    <td class="fw-bold text-primary">#${o.ticket_no || 'N/A'}</td>
-                    <td>${o.customer_name || 'N/A'}</td>
-                    <td><small class="text-muted text-truncate d-inline-block" style="max-width: 150px;">${o.order_items || '...'}</small></td>
-                    <td class="small">${(o.created_at || '').slice(0,16).replace('T', ' ')}</td>
-                    <td>${getStatusBadge(o.status)}</td>
-                    <td>
-                        <div class="d-flex gap-2">
-                            ${o.status === 'waiting' ? `<button class="btn btn-sm btn-success text-white" onclick="markReady(${o.id})"><i class="bi bi-check-lg"></i></button>` : ''}
-                            ${o.status === 'ready' ? `<button class="btn btn-sm btn-dark text-white" onclick="markServed(${o.id})"><i class="bi bi-bag-check"></i></button>` : ''}
-                            <button class="btn btn-sm btn-danger text-white" onclick="cancelOrder(${o.id})"><i class="bi bi-x-lg"></i></button>
-                        </div>
-                    </td>
-                </tr>`
-        });
-        
-        // Update Stats
-        document.getElementById('waitingCount').textContent = activeOrders.filter(o => o.status === 'waiting').length;
-        document.getElementById('readyCount').textContent = activeOrders.filter(o => o.status === 'ready').length;
-        document.getElementById('totalOrders').textContent = rawData.length;
-    }
-
-    let refreshInterval;
-    let refreshCountdown = 10;
-
-    function startRefreshCountdown() {
-        refreshCountdown = 10;
-        refreshInterval = setInterval(() => {
-            refreshCountdown--;
-            const timerEl = document.getElementById('refreshTimer');
-            if(timerEl) timerEl.textContent = `Yangilanish: ${refreshCountdown}s`;
+        function initOrders() {
+            const rawData = JSON.parse(document.getElementById('staff-orders-json').textContent);
+            const activeOrders = rawData.filter(o => ['waiting', 'ready'].includes(o.status));
             
-            if (refreshCountdown <= 0) {
-                refreshOrders(); // Call refreshOrders instead of location.reload()
-                refreshCountdown = 10; // Reset countdown after refresh
-            }
-        }, 1000);
-    }
+            ordersPagination = new TablePagination({
+                container: document.getElementById('active-orders-container'),
+                data: activeOrders,
+                rowsPerPage: 10,
+                headerHtml: '<thead><tr><th>#</th><th>Ticket</th><th>Mijoz</th><th>Buyurtma</th><th>Vaqt</th><th>Holat</th><th>Amallar</th></tr></thead>',
+                renderRow: (o, idx) => `
+                    <tr data-order-id="${o.id}" data-status="${o.status}">
+                        <td>${idx + 1}</td>
+                        <td class="fw-bold text-primary">#${o.ticket_no || 'N/A'}</td>
+                        <td>${o.customer_name || 'N/A'}</td>
+                        <td><small class="text-muted text-truncate d-inline-block" style="max-width: 150px;">${o.order_items || '...'}</small></td>
+                        <td class="small">${(o.created_at || '').slice(0,16).replace('T', ' ')}</td>
+                        <td>${getStatusBadge(o.status)}</td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                ${o.status === 'waiting' ? `<button class="btn btn-sm btn-success text-white" onclick="markReady(${o.id})"><i class="bi bi-check-lg"></i></button>` : ''}
+                                ${o.status === 'ready' ? `<button class="btn btn-sm btn-dark text-white" onclick="markServed(${o.id})"><i class="bi bi-bag-check"></i></button>` : ''}
+                                <button class="btn btn-sm btn-danger text-white" onclick="cancelOrder(${o.id})"><i class="bi bi-x-lg"></i></button>
+                            </div>
+                        </td>
+                    </tr>`
+            });
+            
+            // Update Stats
+            document.getElementById('waitingCount').textContent = activeOrders.filter(o => o.status === 'waiting').length;
+            document.getElementById('readyCount').textContent = activeOrders.filter(o => o.status === 'ready').length;
+            document.getElementById('totalOrders').textContent = rawData.length;
+        }
 
-    function refreshOrders() {
-        fetch('/api/orders')
-            .then(r => r.json())
-            .then(data => {
-                if (data.success && data.orders) {
-                    const activeOrders = data.orders.filter(o => ['waiting', 'ready'].includes(o.status));
-                    ordersPagination.setData(activeOrders);
-                    
-                    document.getElementById('waitingCount').textContent = activeOrders.filter(o => o.status === 'waiting').length;
-                    document.getElementById('readyCount').textContent = activeOrders.filter(o => o.status === 'ready').length;
-                    
-                    // Update served count from the full data, assuming 'served' orders are also in data.orders
-                    const servedCount = data.orders.filter(o => o.status === 'served').length;
-                    document.getElementById('servedCount').textContent = servedCount;
+        let refreshInterval;
+        let refreshCountdown = 10;
 
-                    document.getElementById('totalOrders').textContent = data.orders.length;
+        function startRefreshCountdown() {
+            refreshCountdown = 10;
+            refreshInterval = setInterval(() => {
+                refreshCountdown--;
+                const timerEl = document.getElementById('refreshTimer');
+                if(timerEl) timerEl.textContent = `Yangilanish: ${refreshCountdown}s`;
+                
+                if (refreshCountdown <= 0) {
+                    refreshOrders(); // Call refreshOrders instead of location.reload()
+                    refreshCountdown = 10; // Reset countdown after refresh
                 }
-            })
-            .catch(error => console.error('Error refreshing orders:', error));
-    }
-
-    function getStatusBadge(s) {
-        if(s === 'waiting') return '<span class="badge bg-warning bg-opacity-10 text-warning border">⏳ Kutilmoqda</span>';
-        if(s === 'ready') return '<span class="badge bg-success bg-opacity-10 text-success border">Tayyor</span>';
-        return `<span class="badge bg-secondary">${s}</span>`;
-    }
-
-    function markReady(orderId) {
-        if (confirm('Bu buyurtmani tayyor deb belgilamoqchimisiz?')) {
-            const form = document.createElement('form'); form.method = 'POST'; form.action = `/admin/order/${orderId}/ready`;
-            const csrf = document.createElement('input'); csrf.type = 'hidden'; csrf.name = 'csrf_token'; csrf.value = window.CSRF_TOKEN || '';
-            form.appendChild(csrf);
-            document.body.appendChild(form); form.submit();
+            }, 1000);
         }
-    }
 
-    function markServed(orderId) {
-        if (confirm('Bu buyurtma mijozga berilganini tasdiqlaysizmi?')) {
-            const form = document.createElement('form'); form.method = 'POST'; form.action = `/admin/order/${orderId}/served`;
-            const csrf = document.createElement('input'); csrf.type = 'hidden'; csrf.name = 'csrf_token'; csrf.value = window.CSRF_TOKEN || '';
-            form.appendChild(csrf);
-            document.body.appendChild(form); form.submit();
+        function refreshOrders() {
+            fetch('/api/orders')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success && data.orders) {
+                        const activeOrders = data.orders.filter(o => ['waiting', 'ready'].includes(o.status));
+                        ordersPagination.setData(activeOrders);
+                        
+                        document.getElementById('waitingCount').textContent = activeOrders.filter(o => o.status === 'waiting').length;
+                        document.getElementById('readyCount').textContent = activeOrders.filter(o => o.status === 'ready').length;
+                        
+                        // Update served count from the full data, assuming 'served' orders are also in data.orders
+                        const servedCount = data.orders.filter(o => o.status === 'served').length;
+                        document.getElementById('servedCount').textContent = servedCount;
+
+                        document.getElementById('totalOrders').textContent = data.orders.length;
+                    }
+                })
+                .catch(error => console.error('Error refreshing orders:', error));
         }
-    }
 
-    function cancelOrder(orderId) {
-        if (confirm('Bu buyurtmani bekor qilmoqchimisiz?')) {
-            const form = document.createElement('form'); form.method = 'POST'; form.action = `/admin/order/${orderId}/cancel`;
-            const csrf = document.createElement('input'); csrf.type = 'hidden'; csrf.name = 'csrf_token'; csrf.value = window.CSRF_TOKEN || '';
-            form.appendChild(csrf);
-            document.body.appendChild(form); form.submit();
+        function getStatusBadge(s) {
+            if(s === 'waiting') return '<span class="badge bg-warning bg-opacity-10 text-warning border">⏳ Kutilmoqda</span>';
+            if(s === 'ready') return '<span class="badge bg-success bg-opacity-10 text-success border">Tayyor</span>';
+            return `<span class="badge bg-secondary">${s}</span>`;
         }
-    }
 
-    function markAsRead(id) {
-        fetch(`/api/notifications/${id}/read`, { method: 'POST', headers: {'Content-Type': 'application/json'} })
-        .then(r=>r.json()).then(d=>{ if(d.success) location.reload(); });
-    }
-    
-    function markAllAsRead() {
-        if(confirm('Hammasini o\'qish?')) {
-            fetch('/api/notifications/mark-all-read', { method: 'POST', headers: {'Content-Type': 'application/json'} })
+        function markReady(orderId) {
+            if (confirm('Bu buyurtmani tayyor deb belgilamoqchimisiz?')) {
+                const form = document.createElement('form'); form.method = 'POST'; form.action = `/admin/order/${orderId}/ready`;
+                const csrf = document.createElement('input'); csrf.type = 'hidden'; csrf.name = 'csrf_token'; csrf.value = window.CSRF_TOKEN || '';
+                form.appendChild(csrf);
+                document.body.appendChild(form); form.submit();
+            }
+        }
+
+        function markServed(orderId) {
+            if (confirm('Bu buyurtma mijozga berilganini tasdiqlaysizmi?')) {
+                const form = document.createElement('form'); form.method = 'POST'; form.action = `/admin/order/${orderId}/served`;
+                const csrf = document.createElement('input'); csrf.type = 'hidden'; csrf.name = 'csrf_token'; csrf.value = window.CSRF_TOKEN || '';
+                form.appendChild(csrf);
+                document.body.appendChild(form); form.submit();
+            }
+        }
+
+        function cancelOrder(orderId) {
+            if (confirm('Bu buyurtmani bekor qilmoqchimisiz?')) {
+                const form = document.createElement('form'); form.method = 'POST'; form.action = `/admin/order/${orderId}/cancel`;
+                const csrf = document.createElement('input'); csrf.type = 'hidden'; csrf.name = 'csrf_token'; csrf.value = window.CSRF_TOKEN || '';
+                form.appendChild(csrf);
+                document.body.appendChild(form); form.submit();
+            }
+        }
+
+        function markAsRead(id) {
+            fetch(`/api/notifications/${id}/read`, { method: 'POST', headers: {'Content-Type': 'application/json'} })
             .then(r=>r.json()).then(d=>{ if(d.success) location.reload(); });
         }
-    }
-
-    // Operator Chat Logic (Same as original)
-    let currentOperatorChatId = null;
-    function loadOperatorChats() {
-        fetch('/api/operator-chat/staff/chats').then(r => r.json().catch(()=>({}))).then(j => {
-            const listEl = document.getElementById('operatorChatList');
-            if (!listEl) return;
-            listEl.innerHTML = '';
-            if (!j || !j.success || !j.chats || j.chats.length === 0) {
-                listEl.innerHTML = '<div class="text-center p-3 text-muted small">Chatlar yo\'q</div>'; return;
-            }
-            j.chats.forEach(c => {
-                const item = document.createElement('div');
-                item.className = 'p-2 border-bottom cursor-pointer hover-bg-light ' + (c.is_new ? 'bg-warning bg-opacity-10' : '');
-                item.style.cursor = 'pointer';
-                item.innerHTML = `
-                    <div class="d-flex justify-content-between">
-                        <span class="fw-bold small">${c.client_name || 'User'}</span>
-                        ${c.unread_count > 0 ? `<span class="badge bg-danger rounded-pill">${c.unread_count}</span>` : ''}
-                    </div>
-                    <div class="text-xs text-muted text-truncate">${c.last_text || ''}</div>
-                `;
-                item.onclick = () => {
-                    currentOperatorChatId = c.id;
-                    // highlight active?
-                    loadOperatorMessages(c.id);
-                };
-                listEl.appendChild(item);
-            });
-        }).catch(()=>{});
-    }
-
-    function loadOperatorMessages(chatId) {
-        fetch(`/api/operator-chat/staff/chats/${chatId}/messages`).then(r => r.json().catch(()=>({}))).then(j => {
-            const box = document.getElementById('operatorChatMessages');
-            if(!box) return;
-            box.innerHTML = '';
-            if(!j || !j.messages) { box.innerHTML='Empty'; return;}
-            j.messages.forEach(m => {
-                 const div = document.createElement('div');
-                 div.className = `mb-2 p-2 rounded small ${m.sender_type==='user'?'bg-white border ms-0 me-auto':'bg-primary text-white ms-auto me-0'}`;
-                 div.style.maxWidth = '80%';
-                 div.textContent = m.text;
-                 box.appendChild(div);
-            });
-            box.scrollTop = box.scrollHeight;
-        });
-    }
-
-    function sendOperatorReply() {
-        const inp = document.getElementById('operatorChatInput');
-        if(!inp || !currentOperatorChatId || !inp.value.trim()) return;
-        fetch(`/api/operator-chat/staff/chats/${currentOperatorChatId}/send`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json', 'X-CSRF-Token': window.CSRF_TOKEN || ''},
-            body: JSON.stringify({ text: inp.value.trim() })
-        }).then(r=>r.json()).then(d=>{
-            if(d.success) { inp.value=''; loadOperatorMessages(currentOperatorChatId); }
-        });
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        initOrders();
-        loadOperatorChats();
         
-        // Timer Logic
-        let countdown = 10;
-        const timerEl = document.getElementById('refreshTimer');
-        setInterval(() => {
-            countdown--;
-            if(timerEl) timerEl.textContent = `Yangilanish: ${countdown}s`;
-            if (countdown <= 0) {
-                refreshOrders();
-                countdown = 10;
+        function markAllAsRead() {
+            if(confirm('Hammasini o\'qish?')) {
+                fetch('/api/notifications/mark-all-read', { method: 'POST', headers: {'Content-Type': 'application/json'} })
+                .then(r=>r.json()).then(d=>{ if(d.success) location.reload(); });
             }
-        }, 1000);
-    });
-</script>
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initOrders();
+            
+            // Timer Logic
+            let countdown = 10;
+            const timerEl = document.getElementById('refreshTimer');
+            setInterval(() => {
+                countdown--;
+                if(timerEl) timerEl.textContent = `Yangilanish: ${countdown}s`;
+                if (countdown <= 0) {
+                    refreshOrders();
+                    countdown = 10;
+                }
+            }, 1000);
+        });
+    </script>
 {% endblock %}

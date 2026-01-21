@@ -2,6 +2,26 @@
 
 {% block title %}Ijtimoiy Tarmoqlar{% endblock %}
 
+{% block extra_css %}
+<style>
+.card-modern h5,
+.card-modern .form-label,
+.card-modern .form-check-label,
+.card-modern th,
+.card-modern td {
+    color: #333 !important;
+}
+
+body.dark-theme .card-modern h5,
+body.dark-theme .card-modern .form-label,
+body.dark-theme .card-modern .form-check-label,
+body.dark-theme .card-modern th,
+body.dark-theme .card-modern td {
+    color: #fff !important;
+}
+</style>
+{% endblock %}
+
 {% block dashboard_content %}
 <div class="row justify-content-center">
     <div class="col-md-8">
@@ -25,13 +45,18 @@
                         {% for s in socials %}
                         <tr>
                             <td>
-                                {% if s.icon_url %}
-                                <img src="{{ s.icon_url }}" width="24" height="24" class="rounded-circle" style="object-fit: cover;">
+                                {% set icon_src = s.icon if s.icon else (s.icon_url if s.icon_url else '') %}
+                                {% if icon_src %}
+                                    {% if icon_src.startswith('http') %}
+                                        <img src="{{ icon_src }}" width="24" height="24" class="rounded-circle" style="object-fit: cover;" onerror="this.src='/static/images/default-icon.png';">
+                                    {% else %}
+                                        <i class="{{ icon_src }}" style="font-size: 24px;"></i>
+                                    {% endif %}
                                 {% else %}
-                                <i class="bi bi-link-45deg"></i>
+                                    <i class="bi bi-link-45deg" style="font-size: 24px;"></i>
                                 {% endif %}
                             </td>
-                            <td class="fw-bold">{{ s.platform_name }}</td>
+                            <td class="fw-bold">{{ s.platform if s.platform else (s.platform_name if s.platform_name else '—') }}</td>
                             <td><a href="{{ s.url }}" target="_blank" class="text-muted small text-truncate d-inline-block" style="max-width: 200px;">{{ s.url }}</a></td>
                             <td>
                                 <form method="POST" action="/super-admin/settings/social/delete" class="d-inline" onsubmit="return confirm('O\'chirilsinmi?');">
@@ -52,22 +77,61 @@
             <h5 class="fw-bold mb-3">Yangi Havola Qo'shish</h5>
             <form method="POST" action="/super-admin/settings/social/add" enctype="multipart/form-data">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token if csrf_token else '' }}">
+
                 <div class="mb-3">
-                    <label class="form-label small fw-bold">Platforma Nomi</label>
-                    <input type="text" class="form-control" name="platform_name" placeholder="Masalan: Telegram, Instagram" required>
+                    <label class="form-label small fw-bold">Platformani tanlang</label>
+                    <select class="form-select" id="platformType" name="platform_type" required>
+                        <option value="">-- Tanlang --</option>
+                        <option value="telegram">Telegram (kanal)</option>
+                        <option value="telegram_group">Telegram (guruh)</option>
+                        <option value="uzum">Uzum Market</option>
+                        <option value="yandex">Yandex Market</option>
+                        <option value="instagram">Instagram</option>
+                        <option value="facebook">Facebook</option>
+                        <option value="youtube">YouTube</option>
+                        <option value="other">Boshqa (custom nom va rasm)</option>
+                    </select>
                 </div>
-                <div class="mb-3">
+
+                <div class="mb-3 d-none" id="platformNameWrap">
+                    <label class="form-label small fw-bold">Platforma Nomi (custom)</label>
+                    <input type="text" class="form-control" name="platform_name" placeholder="Masalan: MyChannel">
+                </div>
+
+                <div class="mb-3 d-none" id="iconUploadWrap">
                     <label class="form-label small fw-bold">Icon Yuklash (Ixtiyoriy)</label>
                     <input type="file" class="form-control" name="icon_file" accept="image/*">
                 </div>
+
                 <div class="mb-3">
                     <label class="form-label small fw-bold">Havola (URL)</label>
                     <input type="text" class="form-control" name="url" placeholder="https://..." required>
                 </div>
+
                 <div class="d-flex justify-content-end">
                     <button type="submit" class="btn btn-primary-modern px-4">Saqlash</button>
                 </div>
             </form>
+
+            <script>
+              (function(){
+                const sel = document.getElementById('platformType');
+                const nameWrap = document.getElementById('platformNameWrap');
+                const iconWrap = document.getElementById('iconUploadWrap');
+                function updateFields(){
+                  const v = sel.value;
+                  if(v === 'other'){
+                    nameWrap.classList.remove('d-none');
+                    iconWrap.classList.remove('d-none');
+                  } else {
+                    nameWrap.classList.add('d-none');
+                    iconWrap.classList.add('d-none');
+                  }
+                }
+                sel.addEventListener('change', updateFields);
+                updateFields();
+              })();
+            </script>
         </div>
     </div>
 </div>

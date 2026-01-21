@@ -1,0 +1,3020 @@
+[
+  {
+    "path": "/swagger.yaml",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "swagger_spec",
+    "tag": "general",
+    "returns_json": true
+  },
+  {
+    "path": "/swagger-login",
+    "methods": [
+      "GET",
+      "POST"
+    ],
+    "role": "public",
+    "function": "swagger_login",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/docs",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "swagger_ui",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/api/swagger/generate_key",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "generate_swagger_key",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/cart",
+    "methods": [
+      "GET",
+      "POST",
+      "DELETE"
+    ],
+    "role": "public",
+    "function": "api_cart",
+    "tag": "cart",
+    "returns_json": true
+  },
+  {
+    "path": "/api/orders",
+    "methods": [
+      "GET",
+      "POST"
+    ],
+    "role": "public",
+    "function": "api_orders",
+    "tag": "orders",
+    "returns_json": true
+  },
+  {
+    "path": "/api/orders/<int:order_id>",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "api_order_get",
+    "tag": "orders",
+    "returns_json": true
+  },
+  {
+    "path": "/api/ratings",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "api_ratings_submit",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/ratings/product/<int:product_id>",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "api_ratings_for_product",
+    "tag": "products",
+    "returns_json": true
+  },
+  {
+    "path": "/api/auth/login",
+    "methods": [
+      "POST",
+      "OPTIONS"
+    ],
+    "role": "public",
+    "function": "_stub_auth_login",
+    "tag": "auth",
+    "returns_json": true
+  },
+  {
+    "path": "/api/auth/register",
+    "methods": [
+      "POST",
+      "OPTIONS"
+    ],
+    "role": "public",
+    "function": "_stub_auth_register",
+    "tag": "auth",
+    "returns_json": true
+  },
+  {
+    "path": "/api/auth/logout",
+    "methods": [
+      "POST",
+      "OPTIONS"
+    ],
+    "role": "public",
+    "function": "_stub_auth_logout",
+    "tag": "auth",
+    "returns_json": true
+  },
+  {
+    "path": "/api/auth/status",
+    "methods": [
+      "GET",
+      "OPTIONS"
+    ],
+    "role": "public",
+    "function": "_stub_auth_status",
+    "tag": "auth",
+    "returns_json": true
+  },
+  {
+    "path": "/api/users",
+    "methods": [
+      "GET",
+      "OPTIONS"
+    ],
+    "role": "public",
+    "function": "_db_users_list",
+    "tag": "users",
+    "returns_json": true
+  },
+  {
+    "path": "/api/users/me",
+    "methods": [
+      "GET",
+      "OPTIONS"
+    ],
+    "role": "public",
+    "function": "_stub_users_me",
+    "tag": "users",
+    "returns_json": true
+  },
+  {
+    "path": "/api/users/<int:user_id>",
+    "methods": [
+      "GET",
+      "PUT",
+      "DELETE",
+      "OPTIONS"
+    ],
+    "role": "public",
+    "function": "_stub_user_item",
+    "tag": "users",
+    "returns_json": true
+  },
+  {
+    "path": "/api/categories",
+    "methods": [
+      "GET",
+      "POST",
+      "OPTIONS"
+    ],
+    "role": "public",
+    "function": "_categories_list",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/categories/<int:cat_id>",
+    "methods": [
+      "GET",
+      "PUT",
+      "DELETE",
+      "OPTIONS"
+    ],
+    "role": "public",
+    "function": "_category_item",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/super-admin/get-system-stats",
+    "methods": [
+      "GET",
+      "OPTIONS"
+    ],
+    "role": "public",
+    "function": "api_super_get_system_stats",
+    "tag": "api",
+    "returns_json": false
+  },
+  {
+    "path": "/api/super-admin/get-system-logs",
+    "methods": [
+      "GET",
+      "OPTIONS"
+    ],
+    "role": "public",
+    "function": "api_super_get_system_logs",
+    "tag": "api",
+    "returns_json": false
+  },
+  {
+    "path": "/api/super-admin/get-environment-info",
+    "methods": [
+      "GET",
+      "OPTIONS"
+    ],
+    "role": "public",
+    "function": "api_super_get_env_info",
+    "tag": "api",
+    "returns_json": false
+  },
+  {
+    "path": "/api/super-admin/clear-cache",
+    "methods": [
+      "POST",
+      "OPTIONS"
+    ],
+    "role": "public",
+    "function": "api_super_clear_cache",
+    "tag": "api",
+    "returns_json": false
+  },
+  {
+    "path": "/api/super-admin/backup-database",
+    "methods": [
+      "POST",
+      "OPTIONS"
+    ],
+    "role": "public",
+    "function": "api_super_backup_db",
+    "tag": "api",
+    "returns_json": false
+  },
+  {
+    "path": "/api/products",
+    "methods": [
+      "GET",
+      "POST",
+      "OPTIONS"
+    ],
+    "role": "public",
+    "function": "_db_products",
+    "tag": "products",
+    "returns_json": true
+  },
+  {
+    "path": "/api/products/<int:product_id>",
+    "methods": [
+      "GET",
+      "PUT",
+      "DELETE",
+      "OPTIONS"
+    ],
+    "role": "public",
+    "function": "_db_product_item",
+    "tag": "products",
+    "returns_json": true
+  },
+  {
+    "path": "/_debug/translate",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "_debug_translate",
+    "tag": "general",
+    "returns_json": true
+  },
+  {
+    "path": "/_debug/session",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "_debug_session",
+    "tag": "general",
+    "returns_json": true
+  },
+  {
+    "path": "/api/user-sessions",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "api_user_sessions",
+    "tag": "users",
+    "returns_json": true
+  },
+  {
+    "path": "/api/set-settings",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "api_set_settings",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/translations",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "api_translations",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "index",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/system-management-panel-x8k2m",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "admin_index",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/system-management-panel-master-z8x9k",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "system_management_panel",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/monitor",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "monitor",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/admin/monitor",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "admin_monitor_alt",
+    "tag": "admin",
+    "returns_json": false
+  },
+  {
+    "path": "/admin",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "admin_redirect",
+    "tag": "admin",
+    "returns_json": false
+  },
+  {
+    "path": "/admin/dashboard",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "admin_dashboard_redirect",
+    "tag": "admin",
+    "returns_json": false
+  },
+  {
+    "path": "/staff",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "staff_redirect",
+    "tag": "staff",
+    "returns_json": false
+  },
+  {
+    "path": "/staff/login",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "staff_login_redirect",
+    "tag": "staff",
+    "returns_json": false
+  },
+  {
+    "path": "/courier",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "courier_redirect",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/courier/login",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "courier_login_redirect",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/superadmin",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "superadmin_redirect",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "superadmin_redirect",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/admin/super",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "superadmin_redirect",
+    "tag": "admin",
+    "returns_json": false
+  },
+  {
+    "path": "/api/super-admin/reports",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "api_super_admin_reports",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/super-admin/export-report",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "api_super_admin_export_report",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/super-admin/export-staff",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "api_super_admin_export_staff",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/super-admin/export-couriers",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "api_super_admin_export_couriers",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/admin/login",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "admin_login_redirect",
+    "tag": "admin",
+    "returns_json": false
+  },
+  {
+    "path": "/dashboard",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "dashboard_redirect",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/display-monitor-tv-screen-z9p4n",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "admin_monitor",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/admin/delete_all_products_and_seed",
+    "methods": [
+      "POST"
+    ],
+    "role": "super_admin",
+    "function": "admin_delete_all_products_and_seed",
+    "tag": "admin",
+    "returns_json": true
+  },
+  {
+    "path": "/menu",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "menu",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/product/<int:item_id>",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "product_detail",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/product/<int:item_id>/comment",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "post_comment",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/api/menu-search",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "api_menu_search",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/add_to_cart",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "add_to_cart",
+    "tag": "general",
+    "returns_json": true
+  },
+  {
+    "path": "/debug/menu-item-localized",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "debug_menu_item_localized",
+    "tag": "general",
+    "returns_json": true
+  },
+  {
+    "path": "/cart",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "cart",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/view_cart",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "view_cart",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/remove_from_cart/<int:cart_item_id>",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "remove_from_cart",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/favorites",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "favorites",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/add-to-favorites/<int:menu_item_id>",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "add_to_favorites",
+    "tag": "general",
+    "returns_json": true
+  },
+  {
+    "path": "/remove-from-favorites/<int:menu_item_id>",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "remove_from_favorites",
+    "tag": "general",
+    "returns_json": true
+  },
+  {
+    "path": "/register",
+    "methods": [
+      "GET",
+      "POST"
+    ],
+    "role": "public",
+    "function": "register",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/profile",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "profile",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/update_profile",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "update_profile",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/api/terminate-session",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "api_terminate_session",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/terminate-all-sessions",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "api_terminate_all_sessions",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/update_address",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "update_address",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/change_password",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "change_password",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/profile/settings",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "profile_settings",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/settings",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "general_settings",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/settings",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "general_settings_post",
+    "tag": "general",
+    "returns_json": true
+  },
+  {
+    "path": "/logout",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "logout",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/place_order",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "place_order",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/place-order",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "place_order",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/user",
+    "methods": [
+      "GET",
+      "POST"
+    ],
+    "role": "public",
+    "function": "user_page",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/user/status/<int:ticket_no>",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "user_status",
+    "tag": "general",
+    "returns_json": true
+  },
+  {
+    "path": "/order/pending/<int:order_id>",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "order_pending_approval",
+    "tag": "general",
+    "returns_json": true
+  },
+  {
+    "path": "/user/cancel/<int:ticket_no>",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "user_cancel_order",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/user/success/<int:ticket_no>",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "user_success",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/receipt/<int:ticket_no>",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "view_receipt",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/contact",
+    "methods": [
+      "GET",
+      "POST"
+    ],
+    "role": "public",
+    "function": "contact",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/about",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "about",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/kafolatlar",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "kafolatlar_page",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/downloads",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "downloads",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/courier-secure-login-k4m7p",
+    "methods": [
+      "GET",
+      "POST"
+    ],
+    "role": "public",
+    "function": "courier_login",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/courier/dashboard",
+    "methods": [
+      "GET"
+    ],
+    "role": "courier",
+    "function": "courier_dashboard",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/courier/order/<int:order_id>/take",
+    "methods": [
+      "POST"
+    ],
+    "role": "courier",
+    "function": "courier_take_order",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/courier/order/<int:order_id>/delivered",
+    "methods": [
+      "GET",
+      "POST"
+    ],
+    "role": "courier",
+    "function": "courier_mark_delivered",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/courier/set-price-time",
+    "methods": [
+      "POST"
+    ],
+    "role": "courier",
+    "function": "courier_set_price_time",
+    "tag": "general",
+    "returns_json": true
+  },
+  {
+    "path": "/courier/logout",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "courier_logout",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/admin/orders.json",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "admin_orders_json",
+    "tag": "admin",
+    "returns_json": true
+  },
+  {
+    "path": "/admin/add_menu_item",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "admin_add_menu_item",
+    "tag": "admin",
+    "returns_json": false
+  },
+  {
+    "path": "/admin/product/edit/<int:product_id>",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "admin_product_edit_page",
+    "tag": "admin",
+    "returns_json": false
+  },
+  {
+    "path": "/admin/edit_menu_item/<int:item_id>",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "admin_edit_menu_item",
+    "tag": "admin",
+    "returns_json": false
+  },
+  {
+    "path": "/api/product-media/<int:item_id>",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "api_get_product_media",
+    "tag": "products",
+    "returns_json": true
+  },
+  {
+    "path": "/thumb",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "thumb",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/api/product-media/<int:media_id>/set-main",
+    "methods": [
+      "POST"
+    ],
+    "role": "staff",
+    "function": "api_set_main_media",
+    "tag": "products",
+    "returns_json": true
+  },
+  {
+    "path": "/api/product-media/<int:media_id>/delete",
+    "methods": [
+      "DELETE"
+    ],
+    "role": "staff",
+    "function": "api_delete_product_media",
+    "tag": "products",
+    "returns_json": true
+  },
+  {
+    "path": "/api/product-media/reorder",
+    "methods": [
+      "POST"
+    ],
+    "role": "staff",
+    "function": "api_reorder_product_media",
+    "tag": "orders",
+    "returns_json": true
+  },
+  {
+    "path": "/api/product-media/identify",
+    "methods": [
+      "POST"
+    ],
+    "role": "staff",
+    "function": "api_product_media_identify",
+    "tag": "products",
+    "returns_json": true
+  },
+  {
+    "path": "/staff/chat",
+    "methods": [
+      "GET"
+    ],
+    "role": "staff",
+    "function": "staff_chat_page",
+    "tag": "staff",
+    "returns_json": false
+  },
+  {
+    "path": "/admin/toggle_menu_item/<int:item_id>",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "admin_toggle_menu_item",
+    "tag": "admin",
+    "returns_json": true
+  },
+  {
+    "path": "/admin/delete_menu_item/<int:item_id>",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "admin_delete_menu_item",
+    "tag": "admin",
+    "returns_json": true
+  },
+  {
+    "path": "/admin/reset_menu_for_tests",
+    "methods": [
+      "GET",
+      "POST",
+      "OPTIONS",
+      "HEAD"
+    ],
+    "role": "public",
+    "function": "admin_reset_menu_for_tests",
+    "tag": "admin",
+    "returns_json": true
+  },
+  {
+    "path": "/admin/reset_menu_for_tests/",
+    "methods": [
+      "GET",
+      "POST",
+      "OPTIONS",
+      "HEAD"
+    ],
+    "role": "public",
+    "function": "admin_reset_menu_for_tests",
+    "tag": "admin",
+    "returns_json": true
+  },
+  {
+    "path": "/api",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "api_home",
+    "tag": "general",
+    "returns_json": true
+  },
+  {
+    "path": "/api/get-menu-ratings/<int:menu_item_id>",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "api_get_menu_ratings",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/submit-rating",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "api_submit_rating",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/chat/receive",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "api_chat_receive",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/chat/send",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "api_chat_send",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/operator-chat/user/send",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "api_operator_chat_user_send",
+    "tag": "users",
+    "returns_json": true
+  },
+  {
+    "path": "/api/operator-chat/user/history",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "api_operator_chat_user_history",
+    "tag": "users",
+    "returns_json": true
+  },
+  {
+    "path": "/api/operator-chat/staff/chats",
+    "methods": [
+      "GET"
+    ],
+    "role": "staff",
+    "function": "api_operator_chat_staff_chats",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/operator-chat/staff/chats/<int:chat_id>/messages",
+    "methods": [
+      "GET"
+    ],
+    "role": "staff",
+    "function": "api_operator_chat_staff_messages",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/operator-chat/staff/chats/<int:chat_id>/send",
+    "methods": [
+      "POST"
+    ],
+    "role": "staff",
+    "function": "api_operator_chat_staff_send",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/status",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "api_status",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/admin/ai/unanswered",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "admin_ai_unanswered",
+    "tag": "admin",
+    "returns_json": true
+  },
+  {
+    "path": "/admin/ai/teach",
+    "methods": [
+      "POST"
+    ],
+    "role": "super_admin",
+    "function": "admin_ai_teach",
+    "tag": "admin",
+    "returns_json": true
+  },
+  {
+    "path": "/admin/ai/faq",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "admin_ai_faq",
+    "tag": "admin",
+    "returns_json": true
+  },
+  {
+    "path": "/super-admin/pages",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_pages",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/pages/edit/<page_key>",
+    "methods": [
+      "GET",
+      "POST"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_edit_page",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/ai-unanswered",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_ai_unanswered_ui",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/api/news/active",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "api_get_active_news",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/payment-cards",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "api_get_payment_cards",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/payment-methods",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "api_get_payment_methods",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/set-language",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "api_set_language",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/set-theme",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "api_set_theme",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/set-font-size",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "api_set_font_size",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/search-nearby-places",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "api_search_nearby_places",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/find-nearest-branch",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "api_find_nearest_branch",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/health",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "api_health",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/get_cart_count",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "api_cart_count",
+    "tag": "general",
+    "returns_json": true
+  },
+  {
+    "path": "/api/cart-count",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "api_cart_count",
+    "tag": "cart",
+    "returns_json": true
+  },
+  {
+    "path": "/admin-panel",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "admin_panel_redirect",
+    "tag": "admin",
+    "returns_json": false
+  },
+  {
+    "path": "/admin-panel-secure",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "admin_panel_redirect",
+    "tag": "admin",
+    "returns_json": false
+  },
+  {
+    "path": "/admin-dashboard",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "admin_panel_redirect",
+    "tag": "admin",
+    "returns_json": false
+  },
+  {
+    "path": "/staff-panel",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "staff_panel_redirect",
+    "tag": "staff",
+    "returns_json": false
+  },
+  {
+    "path": "/employee-panel",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "staff_panel_redirect",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/courier-panel",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "courier_panel_redirect",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/static/<path:filename>",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "static_files",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/order/<int:ticket_no>",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "track_order",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/login",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "login",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/favicon.ico",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "favicon_redirect",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/auth/google",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "auth_google",
+    "tag": "general",
+    "returns_json": true
+  },
+  {
+    "path": "/login_page",
+    "methods": [
+      "GET",
+      "POST"
+    ],
+    "role": "public",
+    "function": "login_page",
+    "tag": "general",
+    "returns_json": true
+  },
+  {
+    "path": "/forgot",
+    "methods": [
+      "GET",
+      "POST"
+    ],
+    "role": "public",
+    "function": "forgot",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/forgot/verify",
+    "methods": [
+      "GET",
+      "POST"
+    ],
+    "role": "public",
+    "function": "forgot_verify",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/forgot/reset-password",
+    "methods": [
+      "GET",
+      "POST"
+    ],
+    "role": "public",
+    "function": "forgot_reset_password",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/news",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "news_page",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/data/news.json",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "public_news_json",
+    "tag": "general",
+    "returns_json": true
+  },
+  {
+    "path": "/super-admin/news",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_news_list",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/news/add",
+    "methods": [
+      "POST"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_add_news",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/news/delete/<int:news_id>",
+    "methods": [
+      "POST"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_delete_news",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/news/<int:news_id>",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "news_detail",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin-master-login-z9x4m",
+    "methods": [
+      "GET",
+      "POST"
+    ],
+    "role": "public",
+    "function": "super_admin_login",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/logout",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "super_admin_logout",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/profile",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_profile",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/advanced-settings",
+    "methods": [
+      "GET",
+      "POST"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_advanced_settings",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/forgot",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "super_admin_forgot",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/send-code",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "super_admin_send_code",
+    "tag": "super-admin",
+    "returns_json": true
+  },
+  {
+    "path": "/super-admin/verify-code",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "super_admin_verify_code",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/reset-password",
+    "methods": [
+      "GET",
+      "POST"
+    ],
+    "role": "public",
+    "function": "super_admin_reset_password",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/profile/update",
+    "methods": [
+      "POST"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_profile_update",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/get-orders",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_get_orders",
+    "tag": "super-admin",
+    "returns_json": true
+  },
+  {
+    "path": "/super-admin/get-menu",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_get_menu",
+    "tag": "super-admin",
+    "returns_json": true
+  },
+  {
+    "path": "/super-admin/get-receipts",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_get_receipts",
+    "tag": "super-admin",
+    "returns_json": true
+  },
+  {
+    "path": "/super-admin/get-ratings",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_get_ratings",
+    "tag": "super-admin",
+    "returns_json": true
+  },
+  {
+    "path": "/super-admin/add-menu-item",
+    "methods": [
+      "POST"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_add_menu_item",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/admin/repair-missing-images",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "admin_repair_missing_images",
+    "tag": "admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/add-branch",
+    "methods": [
+      "POST"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_add_branch",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/toggle-branch/<int:branch_id>",
+    "methods": [
+      "POST"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_toggle_branch",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/delete-branch/<int:branch_id>",
+    "methods": [
+      "POST"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_delete_branch",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/delete-user-db/<int:user_id>",
+    "methods": [
+      "POST"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_delete_user_db",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/reset-staff-password",
+    "methods": [
+      "POST"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_reset_staff_password",
+    "tag": "super-admin",
+    "returns_json": true
+  },
+  {
+    "path": "/super-admin/reset-courier-password",
+    "methods": [
+      "POST"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_reset_courier_password",
+    "tag": "super-admin",
+    "returns_json": true
+  },
+  {
+    "path": "/super-admin/reset-user-password",
+    "methods": [
+      "POST"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_reset_user_password",
+    "tag": "super-admin",
+    "returns_json": true
+  },
+  {
+    "path": "/api/notifications/<int:notification_id>/read",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "mark_notification_read",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/notifications/mark-all-read",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "mark_all_notifications_read",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/super-admin/send-notification",
+    "methods": [
+      "POST"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_send_notification",
+    "tag": "super-admin",
+    "returns_json": true
+  },
+  {
+    "path": "/api/notifications",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "api_get_notifications",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/super-admin/notifications",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_notifications",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/api/notifications/mark-read",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "api_mark_notifications_read",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/chats",
+    "methods": [
+      "GET",
+      "POST"
+    ],
+    "role": "public",
+    "function": "api_chats",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/chats/<chat_id>/messages",
+    "methods": [
+      "GET",
+      "POST"
+    ],
+    "role": "public",
+    "function": "api_chat_messages",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/debug/chats-info",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "debug_chats_info",
+    "tag": "general",
+    "returns_json": true
+  },
+  {
+    "path": "/debug/notifications-info",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "debug_notifications_info",
+    "tag": "general",
+    "returns_json": true
+  },
+  {
+    "path": "/api/private-chats",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "api_private_chats",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/private-chat/<user_type>/<int:user_id>",
+    "methods": [
+      "GET",
+      "POST"
+    ],
+    "role": "public",
+    "function": "api_private_chat",
+    "tag": "users",
+    "returns_json": true
+  },
+  {
+    "path": "/api/chat-unread-count",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "api_chat_unread_count",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/internal-members",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "api_internal_members",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/members",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "api_members",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/member/<member_type>/<int:member_id>",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "api_member_profile",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/send-notification",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "api_send_notification",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/super-admin/get-logs",
+    "methods": [
+      "POST"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_get_logs",
+    "tag": "super-admin",
+    "returns_json": true
+  },
+  {
+    "path": "/super-admin/get-performance-stats",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_get_performance_stats",
+    "tag": "super-admin",
+    "returns_json": true
+  },
+  {
+    "path": "/super-admin/get-errors-summary",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_get_errors_summary",
+    "tag": "super-admin",
+    "returns_json": true
+  },
+  {
+    "path": "/super-admin/download-logs",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_download_logs",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/get-system-stats",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_get_system_stats",
+    "tag": "super-admin",
+    "returns_json": true
+  },
+  {
+    "path": "/super-admin/get-system-logs",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_get_system_logs",
+    "tag": "super-admin",
+    "returns_json": true
+  },
+  {
+    "path": "/super-admin/get-environment-info",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_get_environment_info",
+    "tag": "super-admin",
+    "returns_json": true
+  },
+  {
+    "path": "/super-admin/clear-cache",
+    "methods": [
+      "POST"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_clear_cache",
+    "tag": "super-admin",
+    "returns_json": true
+  },
+  {
+    "path": "/super-admin/backup-database",
+    "methods": [
+      "POST"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_backup_database",
+    "tag": "super-admin",
+    "returns_json": true
+  },
+  {
+    "path": "/super-admin/save-config",
+    "methods": [
+      "POST"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_save_config",
+    "tag": "super-admin",
+    "returns_json": true
+  },
+  {
+    "path": "/api/super-admin/dashboard-stats",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "api_super_admin_dashboard_stats",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/staff-login",
+    "methods": [
+      "GET",
+      "POST"
+    ],
+    "role": "public",
+    "function": "staff_login_simple",
+    "tag": "staff",
+    "returns_json": false
+  },
+  {
+    "path": "/staff-secure-login-w7m2k",
+    "methods": [
+      "GET",
+      "POST"
+    ],
+    "role": "public",
+    "function": "staff_login",
+    "tag": "staff",
+    "returns_json": false
+  },
+  {
+    "path": "/staff-secure-login-j7h3n",
+    "methods": [
+      "GET",
+      "POST"
+    ],
+    "role": "public",
+    "function": "staff_login",
+    "tag": "staff",
+    "returns_json": false
+  },
+  {
+    "path": "/staff/dashboard",
+    "methods": [
+      "GET"
+    ],
+    "role": "staff",
+    "function": "staff_dashboard",
+    "tag": "staff",
+    "returns_json": false
+  },
+  {
+    "path": "/staff/order/<int:order_id>/ready",
+    "methods": [
+      "POST"
+    ],
+    "role": "staff",
+    "function": "staff_mark_order_ready",
+    "tag": "staff",
+    "returns_json": false
+  },
+  {
+    "path": "/admin/order/<int:order_id>/ready",
+    "methods": [
+      "POST"
+    ],
+    "role": "staff",
+    "function": "staff_mark_order_ready",
+    "tag": "admin",
+    "returns_json": false
+  },
+  {
+    "path": "/staff/order/<int:order_id>/served",
+    "methods": [
+      "POST"
+    ],
+    "role": "staff",
+    "function": "staff_mark_order_served",
+    "tag": "staff",
+    "returns_json": false
+  },
+  {
+    "path": "/admin/order/<int:order_id>/served",
+    "methods": [
+      "POST"
+    ],
+    "role": "staff",
+    "function": "staff_mark_order_served",
+    "tag": "admin",
+    "returns_json": false
+  },
+  {
+    "path": "/admin/order/<int:order_id>/cancel",
+    "methods": [
+      "POST"
+    ],
+    "role": "staff",
+    "function": "staff_cancel_order",
+    "tag": "admin",
+    "returns_json": false
+  },
+  {
+    "path": "/staff/order/<int:order_id>/cancel",
+    "methods": [
+      "POST"
+    ],
+    "role": "staff",
+    "function": "staff_cancel_order",
+    "tag": "staff",
+    "returns_json": false
+  },
+  {
+    "path": "/admin/order/<int:order_id>/approve",
+    "methods": [
+      "POST"
+    ],
+    "role": "super_admin",
+    "function": "superadmin_approve_order",
+    "tag": "admin",
+    "returns_json": false
+  },
+  {
+    "path": "/staff/menu",
+    "methods": [
+      "GET"
+    ],
+    "role": "staff",
+    "function": "staff_menu",
+    "tag": "staff",
+    "returns_json": false
+  },
+  {
+    "path": "/admin/menu",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "admin_menu",
+    "tag": "admin",
+    "returns_json": false
+  },
+  {
+    "path": "/admin/employees",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "admin_employees",
+    "tag": "admin",
+    "returns_json": false
+  },
+  {
+    "path": "/admin/logout",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "admin_logout",
+    "tag": "admin",
+    "returns_json": false
+  },
+  {
+    "path": "/staff/employees",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "staff_employees",
+    "tag": "staff",
+    "returns_json": false
+  },
+  {
+    "path": "/staff/logout",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "staff_logout",
+    "tag": "staff",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin-control-panel-master-z8x9k",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_dashboard",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin-dashboard-ultimate-m4st3r",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_dashboard",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/dashboard-ultimate-m4st3r",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_dashboard",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/analytics",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_analytics",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/reports",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_reports",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/system",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "super_admin_system",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/logs",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "super_admin_logs",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/delete-courier/<int:courier_id>",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "super_admin_delete_courier",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/staff/register",
+    "methods": [
+      "GET",
+      "POST"
+    ],
+    "role": "public",
+    "function": "staff_register",
+    "tag": "staff",
+    "returns_json": false
+  },
+  {
+    "path": "/staff-register-secure-k3x8p",
+    "methods": [
+      "GET",
+      "POST"
+    ],
+    "role": "public",
+    "function": "staff_register_new",
+    "tag": "staff",
+    "returns_json": false
+  },
+  {
+    "path": "/staff/register",
+    "methods": [
+      "GET",
+      "POST"
+    ],
+    "role": "public",
+    "function": "staff_register_new",
+    "tag": "staff",
+    "returns_json": false
+  },
+  {
+    "path": "/courier/register",
+    "methods": [
+      "GET",
+      "POST"
+    ],
+    "role": "public",
+    "function": "courier_register",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/add-staff",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "super_admin_add_staff",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/delete-staff/<int:staff_id>",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "super_admin_delete_staff",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/add-courier",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "super_admin_add_courier",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/delete-user",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "super_admin_delete_user",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/api/change-language",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "change_language",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/change-theme",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "change_theme",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/change-font-size",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "change_font_size",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/save-settings",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "save_settings",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/reset-settings",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "reset_settings",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/news",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "api_news",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/reverse_geocode",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "api_reverse_geocode",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/news",
+    "methods": [
+      "POST"
+    ],
+    "role": "super_admin",
+    "function": "api_create_news",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/news/<int:news_id>",
+    "methods": [
+      "PUT"
+    ],
+    "role": "super_admin",
+    "function": "api_update_news",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/news/<int:news_id>",
+    "methods": [
+      "DELETE"
+    ],
+    "role": "super_admin",
+    "function": "api_delete_news",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/news/admin",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "api_admin_news",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/admin/sync-news",
+    "methods": [
+      "POST"
+    ],
+    "role": "super_admin",
+    "function": "admin_sync_news",
+    "tag": "admin",
+    "returns_json": true
+  },
+  {
+    "path": "/api/news/toggle/<int:news_id>",
+    "methods": [
+      "POST"
+    ],
+    "role": "super_admin",
+    "function": "api_toggle_news",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/admin/news",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "admin_news_management",
+    "tag": "admin",
+    "returns_json": false
+  },
+  {
+    "path": "/admin/news-manager",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "admin_news_manager",
+    "tag": "admin",
+    "returns_json": false
+  },
+  {
+    "path": "/admin/news/new",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "admin_news_new",
+    "tag": "admin",
+    "returns_json": false
+  },
+  {
+    "path": "/admin/news/edit/<int:news_id>",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "admin_news_edit",
+    "tag": "admin",
+    "returns_json": false
+  },
+  {
+    "path": "/admin/news/save",
+    "methods": [
+      "POST"
+    ],
+    "role": "super_admin",
+    "function": "admin_news_save",
+    "tag": "admin",
+    "returns_json": false
+  },
+  {
+    "path": "/admin/news-ticker",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "admin_news_ticker_management",
+    "tag": "admin",
+    "returns_json": false
+  },
+  {
+    "path": "/api/news/ticker",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "api_admin_news_ticker",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/news/ticker/toggle/<int:news_id>",
+    "methods": [
+      "POST"
+    ],
+    "role": "super_admin",
+    "function": "api_toggle_news_ticker",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/admin/card-management",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "admin_card_management",
+    "tag": "admin",
+    "returns_json": true
+  },
+  {
+    "path": "/api/card-data",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "api_get_card_data",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/save-card-data",
+    "methods": [
+      "POST"
+    ],
+    "role": "super_admin",
+    "function": "api_save_card_data",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/upload-qr",
+    "methods": [
+      "POST"
+    ],
+    "role": "super_admin",
+    "function": "api_upload_qr",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/admin/360-management",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "admin_360_management",
+    "tag": "admin",
+    "returns_json": true
+  },
+  {
+    "path": "/api/360-photos",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "api_get_360_photos",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/upload-360-photos",
+    "methods": [
+      "POST"
+    ],
+    "role": "super_admin",
+    "function": "api_upload_360_photos",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/set-active-360-photo/<int:photo_id>",
+    "methods": [
+      "POST"
+    ],
+    "role": "super_admin",
+    "function": "api_set_active_360_photo",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/delete-360-photo/<int:photo_id>",
+    "methods": [
+      "DELETE"
+    ],
+    "role": "super_admin",
+    "function": "api_delete_360_photo",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/data/<path:filename>",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "serve_data_file",
+    "tag": "general",
+    "returns_json": true
+  },
+  {
+    "path": "/sitemap-legacy.xml",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "sitemap_legacy",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/api/chat/ai",
+    "methods": [
+      "GET",
+      "POST"
+    ],
+    "role": "public",
+    "function": "api_chat_ai",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/chat/superadmin-question",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "api_superadmin_question",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/sitemap.xml",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "sitemap",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/swagger",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "swagger_ui",
+    "tag": "general",
+    "returns_json": false
+  },
+  {
+    "path": "/openapi.json",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "openapi_spec",
+    "tag": "general",
+    "returns_json": true
+  },
+  {
+    "path": "/api/auth/status",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "api_auth_status",
+    "tag": "auth",
+    "returns_json": true
+  },
+  {
+    "path": "/super-admin/clear-database",
+    "methods": [
+      "POST"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_clear_database",
+    "tag": "super-admin",
+    "returns_json": true
+  },
+  {
+    "path": "/super-admin/global-search",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_global_search",
+    "tag": "super-admin",
+    "returns_json": true
+  },
+  {
+    "path": "/admin/product/edit/<int:product_id>",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "admin_product_edit_fix",
+    "tag": "admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/notifications",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "super_admin_notifications_fix",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/news-manage",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "super_admin_news_fix",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/news",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "super_admin_news_redirect",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/questions",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "super_admin_questions_fix",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/user-questions",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "super_admin_user_questions",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/social",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "super_admin_social_fix",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/settings/social/add",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "super_admin_social_add_fix",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/get-system-stats",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "get_system_stats",
+    "tag": "super-admin",
+    "returns_json": true
+  },
+  {
+    "path": "/super-admin/get-system-logs",
+    "methods": [
+      "GET"
+    ],
+    "role": "super_admin",
+    "function": "get_system_logs",
+    "tag": "super-admin",
+    "returns_json": true
+  },
+  {
+    "path": "/super-admin/answer-user-question",
+    "methods": [
+      "POST"
+    ],
+    "role": "super_admin",
+    "function": "answer_user_question",
+    "tag": "super-admin",
+    "returns_json": true
+  },
+  {
+    "path": "/super-admin/settings/social/delete",
+    "methods": [
+      "POST"
+    ],
+    "role": "public",
+    "function": "super_admin_social_delete_fix",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/super-admin/settings",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "super_admin_settings_fix",
+    "tag": "super-admin",
+    "returns_json": false
+  },
+  {
+    "path": "/api/staff-list",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "api_staff_list_fix",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/couriers-list",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "api_couriers_list_fix",
+    "tag": "api",
+    "returns_json": true
+  },
+  {
+    "path": "/api/users-list",
+    "methods": [
+      "GET"
+    ],
+    "role": "public",
+    "function": "api_users_list_fix",
+    "tag": "users",
+    "returns_json": true
+  }
+]

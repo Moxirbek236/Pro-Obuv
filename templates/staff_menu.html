@@ -1,7 +1,30 @@
-{% extends "dashboard_base.html" %}
+{% extends "staff_base_standalone.html" %}
+
+{% block title %}Menyu Boshqaruvi | Safety.uz{% endblock %}
+
+{% block sidebar_menu %}
+<a href="{{ url_for('staff_dashboard') }}" class="nav-link-modern">
+    <i class="bi bi-grid"></i> Dashboard
+</a>
+<a href="{{ url_for('staff_menu') }}" class="nav-link-modern active">
+    <i class="bi bi-clipboard-data"></i> Menyu Boshqaruvi
+</a>
+<a href="{{ url_for('staff_employees') }}" class="nav-link-modern">
+    <i class="bi bi-people"></i> Xodimlar
+</a>
+<a href="{{ url_for('admin_monitor') }}" class="nav-link-modern">
+    <i class="bi bi-tv"></i> Monitor
+</a>
+<a href="{{ url_for('news_page') }}" class="nav-link-modern">
+    <i class="bi bi-newspaper"></i> Yangiliklar
+</a>
+<a href="{{ url_for('staff_chat_page') }}" class="nav-link-modern">
+    <i class="bi bi-chat-dots"></i> Chat
+</a>
+{% endblock %}
 
 {% block head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/color_select.css') }}">
+
 <style>
     /* Custom styles for staff menu management */
     .color-select {
@@ -63,29 +86,8 @@
 </style>
 {% endblock %}
 
-{% block title %}Mahsulotlar Boshqaruvi | Safety.uz{% endblock %}
-{% block header_title %}Mahsulotlar Boshqaruvi 📦{% endblock %}
-{% block header_subtitle %}Do'kon mahsulotlarini tahrirlang va yangilarini qo'shing.{% endblock %}
 
-{% block sidebar_menu %}
-<a href="{{ url_for('staff_dashboard') }}" class="nav-link-modern">
-    <i class="bi bi-grid"></i> Dashboard
-</a>
-<a href="{{ url_for('staff_menu') }}" class="nav-link-modern active">
-    <i class="bi bi-clipboard-data"></i> Menyu Boshqaruvi
-</a>
-<a href="{{ url_for('staff_employees') }}" class="nav-link-modern">
-    <i class="bi bi-people"></i> Xodimlar
-</a>
-<a href="{{ url_for('admin_monitor') }}" class="nav-link-modern">
-    <i class="bi bi-tv"></i> Monitor
-</a>
-<a href="{{ url_for('news_page') }}" class="nav-link-modern">
-    <i class="bi bi-newspaper"></i> Yangiliklar
-</a>
-{% endblock %}
-
-{% block dashboard_content %}
+{% block staff_content %}
     {# determine interface language for displaying localized fields #}
     {% set lang = session.get('interface_language', config.DEFAULT_LANGUAGE) %}
 
@@ -101,112 +103,154 @@
             </div>
         </div>
 
-        <form method="post" action="{{ url_for('admin_add_menu_item') }}" enctype="multipart/form-data">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <div class="row g-4">
-                <!-- Names Section -->
-                <div class="col-lg-12">
-                    <h6 class="fw-bold text-uppercase small text-muted mb-3">Mahsulot nomi</h6>
+        <form method="post" action="{{ url_for('admin_add_menu_item') }}" enctype="multipart/form-data" id="addProductForm">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            
+            <!-- Category Selection - First Step -->
+            <div class="row g-4 mb-4">
+                <div class="col-12">
+                    <h6 class="fw-bold text-uppercase small text-muted mb-3">1. Kategoriyani tanlang</h6>
                     <div class="row g-3">
-                        <div class="col-md-4">
-                            <label class="form-label fw-bold small">Asosiy nomi (RU)</label>
-                            <input type="text" name="name_ru" class="form-control" placeholder="Masalan: Спецобувь Pro" required>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">Mahsulot turi *</label>
+                            <select name="category" id="categorySelect" class="form-select" required>
+                                <option value="">Kategoriyani tanlang...</option>
+                                <option value="specobuv">👞 Спецобувь (Maxsus poyabzal)</option>
+                                <option value="specodezhda">👔 Спецодежда (Maxsus kiyimlar)</option>
+                            </select>
                         </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-bold small">Nomi (UZ)</label>
-                            <input type="text" name="name_uz" class="form-control" placeholder="Masalan: Maxsus poyabzal Pro">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-bold small">Nomi (EN)</label>
-                            <input type="text" name="name_en" class="form-control" placeholder="e.g. Special shoes Pro">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">Foydalanish sohasi *</label>
+                            <select name="purpose" id="purposeSelect" class="form-select" required>
+                                <option value="">Foydalanish sohasini tanlang...</option>
+                            </select>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Price & Category -->
-                <div class="col-md-4">
-                    <label class="form-label fw-bold small text-uppercase text-muted">Narxi (so'm)</label>
+            <!-- Product Names - Second Step -->
+            <div class="row g-4 mb-4" id="namesSection">
+                <div class="col-12">
+                    <h6 class="fw-bold text-uppercase small text-muted mb-3">2. Mahsulot nomlari</h6>
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold small">Nomi (RU) *</label>
+                            <input type="text" name="name_ru" class="form-control" placeholder="Masalan: Спецобувь Pro" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold small">Nomi (UZ) *</label>
+                            <input type="text" name="name_uz" class="form-control" placeholder="Masalan: Maxsus poyabzal Pro" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold small">Nomi (EN)</label>
+                            <input type="text" name="name_en" class="form-control" placeholder="e.g. Special shoes Pro">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold small">Nomi (KZ)</label>
+                            <input type="text" name="name_kz" class="form-control" placeholder="Мысалы: Арнайы аяқ киім Pro">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pricing -->
+            <!-- Pricing & Attributes -->
+            <div class="row g-4 mb-4" id="pricingSection">
+                <div class="col-md-3">
+                    <label class="form-label fw-bold small text-uppercase text-muted">Narxi (so'm) *</label>
                     <div class="input-group">
                         <span class="input-group-text bg-light border-end-0"><i class="bi bi-cash"></i></span>
                         <input type="number" name="price" class="form-control ps-0" placeholder="250000" required>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label class="form-label fw-bold small text-uppercase text-muted">Chegirma (%)</label>
                     <div class="input-group">
                         <span class="input-group-text bg-light border-end-0"><i class="bi bi-percent"></i></span>
                         <input type="number" name="discount_percentage" class="form-control ps-0" step="0.1" min="0" max="100" placeholder="0">
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <label class="form-label fw-bold small text-uppercase text-muted">Kategoriya</label>
-                    <select name="category" class="form-select" required>
-                        <option value="">Tanlang</option>
-                        <option value="specobuv">Спецобувь</option>
-                        <option value="specodezhda">Спецодежда</option>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold small text-uppercase text-muted">Vazni (kg)</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-speedometer2"></i></span>
+                        <input type="text" name="weight" class="form-control ps-0" placeholder="1.5">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold small text-uppercase text-muted">Mavsum</label>
+                    <select name="season" class="form-select">
+                        <option value="">Mavsumni tanlang...</option>
+                        <option value="yoz">🌞 Yozgi</option>
+                        <option value="qish">❄️ Qishki</option>
+                        <option value="bahor">🌸 Bahorgi</option>
+                        <option value="kuz">🍂 Kuzgi</option>
+                        <option value="yil-bo'yi">🌤️ Yil bo'yi</option>
                     </select>
                 </div>
+            </div>
 
-                <!-- Media & Sizes -->
-                <div class="col-md-6">
-                    <label class="form-label fw-bold small text-uppercase text-muted">Media fayllar (Rasm/Video)</label>
-                    <input type="file" name="media_files" class="form-control" accept="image/*,video/*" multiple>
-                    <div class="form-text small">Birinchi rasm asosiy bo'ladi.</div>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label fw-bold small text-uppercase text-muted">O'lchamlar</label>
-                    <input type="text" name="sizes" class="form-control" placeholder="Masalan: 36,37,38,39">
-                    <div class="form-text small">Vergul bilan ajrating</div>
-                </div>
+            <!-- Category-specific fields -->
+            <div id="categoryFields"></div>
 
-                <!-- Colors -->
+            <!-- Descriptions -->
+            <div class="row g-4 mb-4" id="descriptionsSection">
                 <div class="col-12">
-                    <label class="form-label fw-bold small text-uppercase text-muted">Ranglar</label>
-                    <div class="color-select">
-                        {% set supported_colors = {
-                          'black': 'Qora', 'white': 'Oq', 'brown': 'Jigarrang', 'gray': 'Kulrang',
-                          'red': 'Qizil', 'blue': 'Ko\'k', 'green': 'Yashil', 'yellow': 'Sariq',
-                          'orange': 'To\'q sariq', 'purple': 'Siyoh rang', 'pink': 'Pushti', 'beige': 'Bej'
-                        } %}
-                        {% for color_key, color_name in supported_colors.items() %}
-                        <label class="color-option">
-                            <input type="checkbox" name="colors[]" value="{{ color_key }}" class="d-none">
-                            <span class="color-swatch" style="background-color: {{ color_key }};"></span>
-                            <span>{{ color_name }}</span>
-                        </label>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                <!-- Descriptions -->
-                <div class="col-12">
-                    <h6 class="fw-bold text-uppercase small text-muted mb-3">Tavsif (Ko'p tilli)</h6>
-                    <ul class="nav nav-tabs border-0 bg-light rounded-pill p-1 mb-3" role="tablist">
-                        <li class="nav-item flex-fill"><a class="nav-link rounded-pill active text-center border-0 small py-1" data-bs-toggle="tab" href="#desc-ru">RU</a></li>
-                        <li class="nav-item flex-fill"><a class="nav-link rounded-pill text-center border-0 small py-1" data-bs-toggle="tab" href="#desc-uz">UZ</a></li>
-                        <li class="nav-item flex-fill"><a class="nav-link rounded-pill text-center border-0 small py-1" data-bs-toggle="tab" href="#desc-en">EN</a></li>
-                    </ul>
-                    <div class="tab-content">
-                        <div id="desc-ru" class="tab-pane fade show active">
-                            <textarea name="description_ru" class="form-control" rows="3" placeholder="Описание товара на русском..."></textarea>
+                    <h6 class="fw-bold text-uppercase small text-muted mb-3">Tavsiflar</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">Tavsif (RU)</label>
+                            <textarea name="description_ru" class="form-control" rows="3" placeholder="Mahsulot haqida batafsil ma'lumot..."></textarea>
                         </div>
-                        <div id="desc-uz" class="tab-pane fade">
-                            <textarea name="description_uz" class="form-control" rows="3" placeholder="Mahsulot tavsifi o'zbek tilida..."></textarea>
-                        </div>
-                        <div id="desc-en" class="tab-pane fade">
-                            <textarea name="description_en" class="form-control" rows="3" placeholder="Product description in English..."></textarea>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">Tavsif (UZ)</label>
+                            <textarea name="description_uz" class="form-control" rows="3" placeholder="Mahsulot haqida batafsil ma'lumot..."></textarea>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="col-12 text-end">
-                    <input type="hidden" name="name" value="Auto-filled">
-                    <button type="submit" class="btn btn-primary-modern px-5">
-                        <i class="bi bi-plus-lg me-2"></i> Qo'shish
+            <!-- Media Upload -->
+            <div class="row g-4 mb-4" id="mediaSection">
+                <div class="col-12">
+                    <h6 class="fw-bold text-uppercase small text-muted mb-3">Rasmlar va media</h6>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold small">Asosiy rasm *</label>
+                            <input type="file" name="main_image" class="form-control" accept="image/*" required>
+                            <small class="text-muted">Asosiy mahsulot rasmi</small>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold small">Qo'shimcha rasmlar</label>
+                            <input type="file" name="additional_images" class="form-control" accept="image/*" multiple>
+                            <small class="text-muted">Bir nechta rasm tanlashingiz mumkin</small>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold small">Video (ixtiyoriy)</label>
+                            <input type="file" name="video" class="form-control" accept="video/*">
+                            <small class="text-muted">Mahsulot videosi</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="row g-4">
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-plus-circle me-2"></i>
+                        Mahsulotni qo'shish
                     </button>
+                    <a href="{{ url_for('staff_menu') }}" class="btn btn-secondary btn-lg ms-2">
+                        <i class="bi bi-x-circle me-2"></i>
+                        Bekor qilish
+                    </a>
                 </div>
             </div>
         </form>
+
+        <hr class="my-5">
     </div>
 
     <!-- Products List Section -->
@@ -267,7 +311,7 @@
                     <div class="edit-form-container" id="edit-form-{{ item.id }}" style="display: none;">
                         <hr class="my-4">
                         <form method="post" action="{{ url_for('admin_edit_menu_item', item_id=item.id) }}" enctype="multipart/form-data">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                              <div class="row g-3">
                                 <div class="col-12"><input type="text" name="name_ru" value="{{ item.name_ru or item.name }}" class="form-control form-control-sm" placeholder="Nomi (RU)" required></div>
                                 <div class="col-6"><input type="text" name="name_uz" value="{{ item.name_uz or '' }}" class="form-control form-control-sm" placeholder="Nomi (UZ)"></div>
@@ -279,6 +323,7 @@
                                     </select>
                                 </div>
                                 <div class="col-6"><input type="number" name="discount_percentage" value="{{ item.discount_percentage or 0 }}" class="form-control form-control-sm" placeholder="Skidka %"></div>
+                                <div class="col-6"><input type="text" name="weight" value="{{ item.weight or '' }}" class="form-control form-control-sm" placeholder="Vazni (kg)"></div>
                                 <div class="col-12">
                                     <textarea name="description_ru" class="form-control form-control-sm mb-2" rows="2" placeholder="Tavsif (RU)">{{ item.description_ru or item.description or '' }}</textarea>
                                     <textarea name="description_uz" class="form-control form-control-sm" rows="2" placeholder="Tavsif (UZ)">{{ item.description_uz or '' }}</textarea>
@@ -323,9 +368,7 @@
         </div>
         {% endfor %}
     </div>
-{% endblock %}
-
-{% block dashboard_modals %}
+    
     <!-- Item Ratings Modal -->
     <div class="modal fade" id="ratingsModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -362,10 +405,8 @@
             </div>
         </div>
     </div>
-{% endblock %}
 
-{% block scripts %}
-<script>
+    <script>
     function toggleEdit(itemId) {
         const editForm = document.getElementById("edit-form-" + itemId);
         if (editForm.style.display === "none") {
@@ -428,84 +469,107 @@
             });
     }
 
-    async function openStaffMediaModal(itemId) {
-        const modal = new bootstrap.Modal(document.getElementById('staffMediaModal'));
-        const list = document.getElementById('staffMediaList');
-        const title = document.getElementById('staffMediaTitle');
-        
-        title.textContent = `Mahsulot media (ID: ${itemId})`;
-        list.innerHTML = '<div class="text-center py-5 w-100"><div class="spinner-border text-primary"></div></div>';
-        modal.show();
+    let staffMediaModalInstance = null;
+    let currentMediaItemId = null;
 
+    async function loadMediaList(itemId) {
+        if (!itemId) return;
+        const list = document.getElementById('staffMediaList');
+        // Use grid system classes
+        list.className = 'row g-3'; 
+        
         try {
             const res = await fetch('/api/product-media/' + itemId);
             const j = await res.json();
             const media = (j && j.media) ? j.media : [];
             
-            if (media.length === 0) {
-                list.innerHTML = '<div class="text-center py-5 text-muted">Media mavjud emas</div>';
+            if (!media || media.length === 0) {
+                list.innerHTML = '<div class="col-12 text-center py-5 text-muted">Media mavjud emas</div>';
                 return;
             }
 
             list.innerHTML = '';
             media.forEach(m => {
                 const wrap = document.createElement('div');
-                wrap.className = 'media-thumb-wrap';
+                wrap.className = 'col-6 col-md-4'; 
                 
                 let mediaElement = '';
                 if (m.media_type && m.media_type.startsWith('video')) {
-                    mediaElement = `<video src="${m.media_url}" class="w-100" style="height: 120px; object-fit: cover;"></video>`;
+                    mediaElement = `<video src="${m.media_url}" class="card-img-top bg-black" style="height: 120px; object-fit: cover;" controls></video>`;
                 } else {
-                    mediaElement = `<img src="${m.media_url}" class="w-100" style="height: 120px; object-fit: cover;">`;
+                    mediaElement = `<img src="${m.media_url}" class="card-img-top" style="height: 120px; object-fit: cover;">`;
                 }
+                
+                const mainBadge = m.is_main ? 
+                    '<span class="position-absolute top-0 start-0 badge bg-success m-2">Asosiy</span>' 
+                    : '';
 
                 wrap.innerHTML = `
-                    ${mediaElement}
-                    <div class="p-2 border-top d-flex gap-1 justify-content-between">
-                        <button class="btn btn-xs btn-light text-primary border-0" onclick="setMediaMain(${itemId}, '${m.media_url}')" title="Asosiy">
-                            <i class="bi ${m.is_main ? 'bi-check-circle-fill' : 'bi-circle'}"></i>
-                        </button>
-                        <button class="btn btn-xs btn-light text-danger border-0" onclick="deleteMedia('${m.media_url}', ${itemId})" title="O'chirish">
-                            <i class="bi bi-trash"></i>
-                        </button>
+                    <div class="card h-100 shadow-sm position-relative">
+                        ${mainBadge}
+                        ${mediaElement}
+                        <div class="card-body p-2 d-flex justify-content-between gap-1">
+                            <button class="btn btn-sm btn-outline-primary flex-grow-1" onclick="setMediaMain(${m.id}, ${itemId})" title="Asosiy qilish" ${m.is_main ? 'disabled' : ''}>
+                                <i class="bi bi-check-lg"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger flex-grow-1" onclick="deleteMedia(${m.id}, ${itemId})" title="O'chirish">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
                     </div>
                 `;
                 list.appendChild(wrap);
             });
         } catch (e) {
-            list.innerHTML = 'Xatolik yuz berdi';
+            list.innerHTML = '<div class="col-12 text-danger text-center">Xatolik yuz berdi</div>';
+        }
+    }
+    
+    async function openStaffMediaModal(itemId) {
+        currentMediaItemId = itemId;
+        const el = document.getElementById('staffMediaModal');
+        const list = document.getElementById('staffMediaList');
+        
+        document.getElementById('staffMediaTitle').textContent = `Mahsulot media (ID: ${itemId})`;
+        list.className = 'w-100'; // Reset class
+        list.innerHTML = '<div class="text-center py-5 w-100"><div class="spinner-border text-primary"></div></div>';
+        
+        if (!staffMediaModalInstance) {
+            staffMediaModalInstance = new bootstrap.Modal(el);
+        }
+        
+        // Show modal first if not visible
+        if (!el.classList.contains('show')) {
+            staffMediaModalInstance.show();
+        }
+        
+        await loadMediaList(itemId);
+    }
+
+    async function setMediaMain(mediaId, itemId) {
+        if(!confirm('Bu faylni asosiy deb belgilashni xohlaysizmi?')) return;
+        try {
+            const resp = await fetch('/api/product-media/' + mediaId + '/set-main', { method: 'POST' });
+            if (resp.ok) {
+                await loadMediaList(itemId);
+            } else {
+                alert("Xatolik yuz berdi");
+            }
+        } catch(e) {
+             console.error(e);
         }
     }
 
-    async function setMediaMain(itemId, mediaUrl) {
+    async function deleteMedia(mediaId, itemId) {
+        if (!confirm('Bu faylni o\\'chirmoqchimisiz?')) return;
         try {
-            const resp = await fetch('/api/product-media/identify', { 
-                method: 'POST', 
-                headers: {'Content-Type':'application/json'}, 
-                body: JSON.stringify({ item_id: itemId, media_url: mediaUrl }) 
-            });
-            const jj = await resp.json();
-            if (jj && jj.media_id) {
-                await fetch(`/api/product-media/${jj.media_id}/set-main`, { method: 'POST' });
-                openStaffMediaModal(itemId);
-            }
-        } catch(e) {}
-    }
-
-    async function deleteMedia(mediaUrl, itemId) {
-        if (!confirm('Bu faylni o\'chirmoqchimisiz?')) return;
-        try {
-            const resp = await fetch('/api/product-media/identify', { 
-                method: 'POST', 
-                headers: {'Content-Type':'application/json'}, 
-                body: JSON.stringify({ media_url: mediaUrl }) 
-            });
-            const jj = await resp.json();
-            if (jj && jj.media_id) {
-                await fetch(`/api/product-media/${jj.media_id}/delete`, { method: 'DELETE' });
-                openStaffMediaModal(itemId);
-            }
-        } catch(e) {}
+             const resp = await fetch('/api/product-media/' + mediaId + '/delete', { method: 'DELETE' });
+             if (resp.ok) {
+                 await loadMediaList(itemId);
+             } else {
+                 alert("O'chirishda xatolik");
+             }
+        } catch(e) { console.error(e); }
     }
 
     function toggleMenuItem(itemId) {
@@ -538,5 +602,260 @@
             cb.addEventListener('change', () => label.classList.toggle('selected', cb.checked));
         });
     });
+    </script>
+
+<script>
+// Category-based dynamic form fields
+const categoryData = {
+    specobuv: {
+        purposes: {
+            'qurilish': '👷 Qurilish',
+            'neft-gaz': '🛢️ Neft va gaz',
+            'kimyo': '🧪 Kimyo sanoati',
+            'tog-kon': '⛏️ Tog-kon sanoati',
+            'oziq-ovqat': '🍽️ Oziq-ovqat sanoati',
+            'tibbiy': '🏥 Tibbiyot',
+            'harbiy': '🪖 Harbiy',
+            'umumiy': '👞 Umumiy foydalanish'
+        },
+        materials: {
+            'tabiiy-charm': '🐄 Tabiiy charm',
+            'suniy-charm': '🦭 Suniy charm',
+            'eko-koja': '🌱 Eko-koja',
+            'zamsh': '🦌 Zamsh',
+            'rezina': '🛞 Rezina',
+            'termokauchuk': '🔥 Termokauchuk',
+            'poliuretan': '⚗️ Poliuretan',
+            'pvc': '🔧 PVC',
+            'kombinatsiyalangan': '🔀 Kombinatsiyalangan material'
+        },
+        features: {
+            'waterproof': '💧 Suv otkazmaydigan',
+            'temir-burun': '🔩 Temir burunli',
+            'antistatik': '⚡ Antistatik',
+            'tok-izolyatsiya': '🔌 Tok izolyatsiyasi',
+            'issiqqarshi': '🔥 Issiqqa qarshi',
+            'sovuqqarshi': '❄️ Sovuqqa qarshi',
+            'neft-moy-chidam': '🛢️ Neft-moy chidamli',
+            'kislota-chidam': '🧪 Kislota chidamli',
+            'shaffof': '👁️ Shaffof',
+            'yengil': '🪶 Yengil',
+            'ergonomik': '🦶 Ergonomik'
+        },
+        sizes: ['36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46', '47'],
+        colors: {
+            'black': '⚫ Qora',
+            'white': '⚪ Oq',
+            'brown': '🤎 Jigarrang',
+            'gray': '🔘 Kulrang',
+            'red': '🔴 Qizil',
+            'blue': '🔵 Ko\'k',
+            'green': '🟢 Yashil',
+            'yellow': '🟡 Sariq',
+            'orange': '🟠 To\'q sariq',
+            'beige': '🟤 Bej'
+        }
+    },
+    specodezhda: {
+        purposes: {
+            'qurilish': '👷 Qurilish',
+            'neft-gaz': '🛢️ Neft va gaz',
+            'kimyo': '🧪 Kimyo sanoati',
+            'tog-kon': '⛏️ Tog-kon sanoati',
+            'oziq-ovqat': '🍽️ Oziq-ovqat sanoati',
+            'tibbiy': '🏥 Tibbiyot',
+            'harbiy': '🪖 Harbiy',
+            'umumiy': '👔 Umumiy foydalanish'
+        },
+        materials: {
+            'paxta': '🌾 Paxta',
+            'poliester': '🧵 Poliester',
+            'aralash': '🔀 Aralash tola',
+            'kevlar': '🛡️ Kevlar',
+            'nomex': '🔥 Nomex',
+            'titan': '⚙️ Titan qotishma',
+            'polipropilen': '🔬 Polipropilen',
+            'akril': '💎 Akril',
+            'viskoza': '🌿 Viskoza',
+            'spandeks': '🦾 Spandeks'
+        },
+        features: {
+            'flame-resistant': '🔥 Olovga chidamli',
+            'waterproof': '💧 Suv otkazmaydigan',
+            'antistatik': '⚡ Antistatik',
+            'breathable': '💨 Nafas oladigan',
+            'uv-protection': '☀️ UV himoya',
+            'chemical-resistant': '🧪 Kimyoviy chidamli',
+            'high-visibility': '👁️ Yuqori ko\'rinchanlik',
+            'reinforced': '🛡️ Mustahkamlangan',
+            'lightweight': '🪶 Yengil',
+            'quick-dry': '🌊 Tez quriydigan'
+        },
+        sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', '4XL', '5XL'],
+        colors: {
+            'black': '⚫ Qora',
+            'white': '⚪ Oq',
+            'gray': '🔘 Kulrang',
+            'blue': '🔵 Ko\'k',
+            'green': '🟢 Yashil',
+            'orange': '🟠 Xavfsizlik to\'q sariq',
+            'yellow': '🟡 Yuqori ko\'rinchanlik sariq',
+            'red': '🔴 Qizil'
+        }
+    }
+};
+
+// Initialize category selection
+document.addEventListener('DOMContentLoaded', function() {
+    const categorySelect = document.getElementById('categorySelect');
+    const purposeSelect = document.getElementById('purposeSelect');
+    const categoryFields = document.getElementById('categoryFields');
+    
+    categorySelect.addEventListener('change', function() {
+        const category = this.value;
+        updatePurposeOptions(category);
+        categoryFields.innerHTML = '';
+        
+        if (category) {
+            generateCategoryFields(category);
+        }
+    });
+    
+    purposeSelect.addEventListener('change', function() {
+        const category = categorySelect.value;
+        if (category) {
+            generateCategoryFields(category);
+        }
+    });
+});
+
+function updatePurposeOptions(category) {
+    const purposeSelect = document.getElementById('purposeSelect');
+    purposeSelect.innerHTML = '<option value="">Foydalanish sohasini tanlang...</option>';
+    
+    if (category && categoryData[category]) {
+        const purposes = categoryData[category].purposes;
+        for (const [key, label] of Object.entries(purposes)) {
+            const option = document.createElement('option');
+            option.value = key;
+            option.textContent = label;
+            purposeSelect.appendChild(option);
+        }
+    }
+}
+
+function generateCategoryFields(category) {
+    const categoryFields = document.getElementById('categoryFields');
+    const purpose = document.getElementById('purposeSelect').value;
+    const data = categoryData[category];
+    
+    if (!data) return;
+    
+    let html = '<div class="row g-4 mb-4"><div class="col-12"><h6 class="fw-bold text-uppercase small text-muted mb-3">3. Xususiyatlar va materiallar</h6>';
+    
+    // Material selection
+    html += '<div class="col-md-6"><label class="form-label fw-bold small">Material *</label>';
+    html += '<select name="material" class="form-select" required>';
+    html += '<option value="">Materialni tanlang...</option>';
+    for (const [key, label] of Object.entries(data.materials)) {
+        html += '<option value="' + key + '">' + label + '</option>';
+    }
+    html += '</select></div>';
+    
+    // Features multi-select
+    html += '<div class="col-md-6"><label class="form-label fw-bold small">Xususiyatlar</label>';
+    html += '<div class="border rounded p-3" style="max-height: 200px; overflow-y: auto;">';
+    for (const [key, label] of Object.entries(data.features)) {
+        html += '<div class="form-check mb-2">';
+        html += '<input class="form-check-input" type="checkbox" name="features[]" value="' + key + '" id="feature_' + key + '">';
+        html += '<label class="form-check-label small" for="feature_' + key + '">' + label + '</label>';
+        html += '</div>';
+    }
+    html += '</div></div>';
+    
+    // Sizes
+    html += '<div class="col-md-6"><label class="form-label fw-bold small">Olchamlar *</label>';
+    html += '<div class="border rounded p-3" style="max-height: 150px; overflow-y: auto;">';
+    for (const size of data.sizes) {
+        html += '<div class="form-check form-check-inline">';
+        html += '<input class="form-check-input" type="checkbox" name="sizes[]" value="' + size + '" id="size_' + size + '">';
+        html += '<label class="form-check-label" for="size_' + size + '">' + size + '</label>';
+        html += '</div>';
+    }
+    html += '</div></div>';
+    
+    // Colors
+    html += '<div class="col-md-6"><label class="form-label fw-bold small">Ranglar *</label>';
+    html += '<div class="border rounded p-3" style="max-height: 150px; overflow-y: auto;">';
+    for (const [key, label] of Object.entries(data.colors)) {
+        html += '<div class="form-check mb-2">';
+        html += '<input class="form-check-input" type="checkbox" name="colors[]" value="' + key + '" id="color_' + key + '">';
+        html += '<label class="form-check-label small" for="color_' + key + '">' + label + '</label>';
+        html += '</div>';
+    }
+    html += '</div></div>';
+    
+    // Category-specific fields
+    if (category === 'specobuv') {
+        html += '<div class="col-md-4"><label class="form-label fw-bold small">Poyabzal turi</label>';
+        html += '<select name="shoe_type" class="form-select">';
+        html += '<option value="">Tanlang...</option>';
+        html += '<option value="botinka">🥾 Botinka</option>';
+        html += '<option value="yengil-botinka">👟 Yengil botinka</option>';
+        html += '<option value="polubotinka">👞 Polubotinka</option>';
+        html += '<option value="sabo">👡 Sabo</option>';
+        html += '<option value="kalosha">🥾 Kalosha</option>';
+        html += '</select></div>';
+        
+        html += '<div class="col-md-4"><label class="form-label fw-bold small">Taglik</label>';
+        html += '<select name="sole_type" class="form-select">';
+        html += '<option value="">Tanlang...</option>';
+        html += '<option value="polyuretan">🔧 Poliuretan</option>';
+        html += '<option value="rezina">🛞 Rezina</option>';
+        html += '<option value="termokauchuk">🔥 Termokauchuk</option>';
+        html += '<option value="pvc">🔧 PVC</option>';
+        html += '</select></div>';
+        
+        html += '<div class="col-md-4"><label class="form-label fw-bold small">Balandligi</label>';
+        html += '<select name="height" class="form-select">';
+        html += '<option value="">Tanlang...</option>';
+        html += '<option value="past">📏 Past</option>';
+        html += '<option value="orta">📐 Orta</option>';
+        html += '<option value="baland">📏 Baland</option>';
+        html += '</select></div>';
+    } else if (category === 'specodezhda') {
+        html += '<div class="col-md-4"><label class="form-label fw-bold small">Kiyim turi</label>';
+        html += '<select name="clothing_type" class="form-select">';
+        html += '<option value="">Tanlang...</option>';
+        html += '<option value="kostyum">🦺 Kostyum</option>';
+        html += '<option value="futbolka">👕 Futbolka</option>';
+        html += '<option value="shim">👖 Shim</option>';
+        html += '<option value="kurtka">🧥 Kurtka</option>';
+        html += '<option value="bryuki">👖 Bryuki</option>';
+        html += '<option value="perchatka">🧤 Perchatka</option>';
+        html += '<option value="boshligiz">🎩 Boshligiz</option>';
+        html += '</select></div>';
+        
+        html += '<div class="col-md-4"><label class="form-label fw-bold small">Qalinligi</label>';
+        html += '<select name="thickness" class="form-select">';
+        html += '<option value="">Tanlang...</option>';
+        html += '<option value="yengil">🪶 Yengil</option>';
+        html += '<option value="orta">⚖️ Orta</option>';
+        html += '<option value="qalin">🛡️ Qalin</option>';
+        html += '</select></div>';
+        
+        html += '<div class="col-md-4"><label class="form-label fw-bold small">Standart</label>';
+        html += '<select name="standard" class="form-select">';
+        html += '<option value="">Tanlang...</option>';
+        html += '<option value="GOST">🇷🇺 GOST</option>';
+        html += '<option value="ISO">🌍 ISO</option>';
+        html += '<option value="EN">🇪🇺 EN</option>';
+        html += '<option value="DIN">🇩🇪 DIN</option>';
+        html += '</select></div>';
+    }
+    
+    html += '</div></div>';
+    categoryFields.innerHTML = html;
+}
 </script>
 {% endblock %}
