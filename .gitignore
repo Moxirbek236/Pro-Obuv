@@ -110,4 +110,5 @@ dist/
 .gitattributes
 
 logs/
-*.log
+*.log.env
+.env.example
