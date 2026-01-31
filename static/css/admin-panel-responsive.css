@@ -1,0 +1,1016 @@
+/**
+ * ═══════════════════════════════════════════════════════════════════════
+ * ADMIN PANEL - UNIVERSAL MEGA RESPONSIVE DESIGN SYSTEM
+ * ═══════════════════════════════════════════════════════════════════════
+ * 
+ * Purpose: Professional, ultra-responsive admin dashboard for Superadmin & Staff
+ * Approach: Mobile-first, accessible, performance-optimized
+ * Author: Senior Frontend Engineer & Professional UI/UX Designer
+ * Version: 3.0.0
+ * Last Updated: 2026-01-31
+ * 
+ * ═══════════════════════════════════════════════════════════════════════
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════
+   1. CSS CUSTOM PROPERTIES & DESIGN TOKENS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+:root {
+    /* ─────────────────────────────────────────────────────────────────
+       ADMIN PANEL COLORS (Professional Light Theme)
+       ───────────────────────────────────────────────────────────────── */
+    --admin-bg-primary: #f8fafc;
+    --admin-bg-secondary: #ffffff;
+    --admin-bg-tertiary: #f1f5f9;
+    
+    --admin-text-primary: #0f172a;
+    --admin-text-secondary: #64748b;
+    --admin-text-muted: #94a3b8;
+    
+    --admin-border-color: #e2e8f0;
+    --admin-border-light: #f1f5f9;
+    
+    --admin-accent-primary: #3b82f6;
+    --admin-accent-secondary: #8b5cf6;
+    --admin-accent-success: #10b981;
+    --admin-accent-warning: #f59e0b;
+    --admin-accent-danger: #ef4444;
+    --admin-accent-info: #06b6d4;
+    
+    /* ─────────────────────────────────────────────────────────────────
+       ADMIN LAYOUT DIMENSIONS (Responsive)
+       ───────────────────────────────────────────────────────────────── */
+    --admin-sidebar-width-desktop: 280px;
+    --admin-sidebar-width-laptop: 260px;
+    --admin-sidebar-width-tablet: 240px;
+    --admin-sidebar-width-mobile: 280px;
+    
+    --admin-topbar-height: clamp(60px, 8vh, 72px);
+    --admin-content-max-width: 1800px;
+    
+    /* ─────────────────────────────────────────────────────────────────
+       ADMIN SPACING (Fluid & Responsive)
+       ───────────────────────────────────────────────────────────────── */
+    --admin-space-xs: clamp(0.5rem, 1vw, 0.75rem);
+    --admin-space-sm: clamp(0.75rem, 1.5vw, 1rem);
+    --admin-space-md: clamp(1rem, 2vw, 1.5rem);
+    --admin-space-lg: clamp(1.5rem, 3vw, 2rem);
+    --admin-space-xl: clamp(2rem, 4vw, 3rem);
+    
+    /* ─────────────────────────────────────────────────────────────────
+       ADMIN SHADOWS & EFFECTS
+       ───────────────────────────────────────────────────────────────── */
+    --admin-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --admin-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --admin-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --admin-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    
+    /* ─────────────────────────────────────────────────────────────────
+       Z-INDEX SCALE
+       ───────────────────────────────────────────────────────────────── */
+    --admin-z-sidebar: 1050;
+    --admin-z-topbar: 1040;
+    --admin-z-dropdown: 1060;
+    --admin-z-modal-backdrop: 1070;
+    --admin-z-modal: 1080;
+    --admin-z-toast: 2000;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   2. ADMIN BODY & LAYOUT RESET
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Force admin mode styles */
+body.admin-mode,
+body.dashboard-body {
+    background-color: var(--admin-bg-primary) !important;
+    color: var(--admin-text-primary) !important;
+    padding-top: 0 !important;
+    overflow-x: hidden;
+}
+
+/* Hide storefront elements in admin mode */
+body.admin-mode > nav.industrial-nav,
+body.admin-mode > nav.navbar.fixed-top-custom,
+body.admin-mode nav.navbar-expand-lg.industrial-nav,
+body.admin-mode > footer,
+body.admin-mode > .footer,
+body.admin-mode .site-footer,
+body.admin-mode #news-ticker {
+    display: none !important;
+}
+
+/* Reset base.html main container for admin */
+body.admin-mode main.container {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    max-width: none !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   3. DASHBOARD LAYOUT STRUCTURE
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dashboard-layout {
+    display: flex;
+    min-height: 100vh;
+    background: var(--admin-bg-primary);
+    position: relative;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   4. SIDEBAR (Fully Responsive)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dashboard-sidebar {
+    width: var(--admin-sidebar-width-desktop);
+    background: #ffffff !important; /* Force white background for admin sidebar */
+    border-right: 1px solid var(--admin-border-color);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 2000 !important; /* High z-index to stay above everything */
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15) !important; /* Stronger shadow on mobile */
+    overflow-y: auto;
+    overflow-x: hidden;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Custom scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: var(--admin-border-color) transparent;
+}
+
+.dashboard-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.dashboard-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.dashboard-sidebar::-webkit-scrollbar-thumb {
+    background: var(--admin-border-color);
+    border-radius: 3px;
+}
+
+.dashboard-sidebar::-webkit-scrollbar-thumb:hover {
+    background: var(--admin-text-muted);
+}
+
+/* Sidebar brand */
+.sidebar-brand {
+    padding: var(--admin-space-lg) var(--admin-space-md);
+    border-bottom: 1px solid var(--admin-border-light);
+    flex-shrink: 0;
+}
+
+/* Sidebar navigation */
+.sidebar-nav {
+    flex: 1;
+    padding: var(--admin-space-md);
+    overflow-y: auto;
+}
+
+/* Sidebar footer */
+.sidebar-footer {
+    padding: var(--admin-space-md);
+    border-top: 1px solid var(--admin-border-light);
+    flex-shrink: 0;
+}
+
+/* Navigation links */
+.nav-link-modern {
+    display: flex;
+    align-items: center;
+    gap: var(--admin-space-sm);
+    padding: var(--admin-space-sm) var(--admin-space-md);
+    border-radius: 8px;
+    color: #64748b !important; /* Force readable color */
+    text-decoration: none !important;
+    font-weight: 500;
+    font-size: 0.9375rem;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: 4px;
+    position: relative;
+    min-height: 44px; /* Touch-friendly */
+}
+
+.nav-link-modern i {
+    font-size: 1.125rem;
+    flex-shrink: 0;
+}
+
+.nav-link-modern:hover {
+    background: rgba(59, 130, 246, 0.08);
+    color: var(--admin-accent-primary);
+    text-decoration: none;
+}
+
+.nav-link-modern.active {
+    background: #3b82f6 !important; /* Force primary blue */
+    color: #ffffff !important; /* Force white text */
+    box-shadow: var(--admin-shadow-sm);
+}
+
+.nav-link-modern.active i {
+    color: #ffffff;
+}
+
+/* Navigation section headers */
+.nav-section-header {
+    padding: var(--admin-space-md) var(--admin-space-md) var(--admin-space-xs);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--admin-text-muted);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   5. MAIN CONTENT AREA
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dashboard-main {
+    flex: 1;
+    margin-left: var(--admin-sidebar-width-desktop);
+    min-width: 0; /* Prevent flex overflow */
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(180deg, var(--admin-bg-primary) 0%, var(--admin-bg-tertiary) 100%);
+    min-height: 100vh;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   6. TOP HEADER / NAVBAR
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.top-header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--admin-border-color);
+    padding: var(--admin-space-md) var(--admin-space-xl);
+    box-shadow: var(--admin-shadow-sm);
+    z-index: var(--admin-z-topbar);
+    position: sticky;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--admin-space-md);
+    min-height: var(--admin-topbar-height);
+    flex-shrink: 0;
+}
+
+/* Mobile menu toggle */
+.mobile-menu-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: none;
+    background: transparent;
+    color: var(--admin-text-primary);
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.mobile-menu-toggle:hover {
+    background: var(--admin-bg-tertiary);
+}
+
+.mobile-menu-toggle i {
+    font-size: 1.5rem;
+}
+
+/* Header title */
+.header-title {
+    flex: 1;
+    min-width: 0;
+}
+
+.header-title h2 {
+    font-size: clamp(1.125rem, 2vw, 1.5rem);
+    font-weight: 700;
+    margin: 0;
+    color: var(--admin-text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.header-subtitle {
+    font-size: 0.875rem;
+    color: var(--admin-text-secondary);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Header actions */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--admin-space-sm);
+    flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   7. DASHBOARD CONTENT AREA
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dashboard-content {
+    flex: 1;
+    max-width: var(--admin-content-max-width);
+    margin: 0 auto;
+    width: 100%;
+    padding: var(--admin-space-xl);
+    animation: fadeInContent 0.4s ease-out;
+}
+
+@keyframes fadeInContent {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   8. CARDS & WIDGETS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.card-modern {
+    background: var(--admin-bg-secondary);
+    border: 1px solid var(--admin-border-color);
+    border-radius: 12px;
+    padding: var(--admin-space-lg);
+    box-shadow: var(--admin-shadow-sm);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-modern:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--admin-shadow-md);
+}
+
+/* Stat cards */
+.stat-card {
+    position: relative;
+    overflow: hidden;
+    background: var(--admin-bg-secondary);
+    border: 1px solid var(--admin-border-color);
+    border-radius: 12px;
+    padding: var(--admin-space-lg);
+    box-shadow: var(--admin-shadow-sm);
+}
+
+.stat-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--admin-accent-primary);
+    opacity: 0.6;
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: var(--admin-space-md);
+}
+
+.stat-icon.primary {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--admin-accent-primary);
+}
+
+.stat-icon.success {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--admin-accent-success);
+}
+
+.stat-icon.warning {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--admin-accent-warning);
+}
+
+.stat-icon.danger {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--admin-accent-danger);
+}
+
+.stat-icon.info {
+    background: rgba(6, 182, 212, 0.1);
+    color: var(--admin-accent-info);
+}
+
+/* Dashboard grid */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--admin-space-lg);
+}
+
+@media (min-width: 481px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 769px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 1025px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (min-width: 1600px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   9. TABLES (Responsive)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.table-responsive-wrapper {
+    background: var(--admin-bg-secondary);
+    border-radius: 12px;
+    box-shadow: var(--admin-shadow-sm);
+    border: 1px solid var(--admin-border-color);
+    overflow: hidden;
+    margin-bottom: var(--admin-space-lg);
+}
+
+.table-modern {
+    width: 100%;
+    margin-bottom: 0;
+    border-collapse: collapse;
+}
+
+.table-modern thead th {
+    background: var(--admin-bg-tertiary);
+    color: var(--admin-text-secondary);
+    border-bottom: 2px solid var(--admin-border-color);
+    padding: var(--admin-space-md) var(--admin-space-lg);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    text-align: left;
+}
+
+.table-modern tbody td {
+    padding: var(--admin-space-md) var(--admin-space-lg);
+    vertical-align: middle;
+    color: var(--admin-text-primary);
+    border-bottom: 1px solid var(--admin-border-light);
+    background: var(--admin-bg-secondary);
+}
+
+.table-modern tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table-modern tbody tr:hover td {
+    background: var(--admin-bg-tertiary);
+}
+
+/* Mobile card view for tables */
+@media (max-width: 768px) {
+    .table-mobile-cards {
+        display: block;
+    }
+    
+    .table-mobile-cards thead {
+        display: none;
+    }
+    
+    .table-mobile-cards tbody {
+        display: block;
+    }
+    
+    .table-mobile-cards tbody tr {
+        display: block;
+        margin-bottom: var(--admin-space-md);
+        padding: var(--admin-space-md);
+        border: 1px solid var(--admin-border-color);
+        border-radius: 8px;
+        background: var(--admin-bg-secondary);
+    }
+    
+    .table-mobile-cards tbody td {
+        display: flex;
+        justify-content: space-between;
+        padding: var(--admin-space-xs) 0;
+        border: none;
+        border-bottom: 1px solid var(--admin-border-light);
+    }
+    
+    .table-mobile-cards tbody td:last-child {
+        border-bottom: none;
+    }
+    
+    .table-mobile-cards tbody td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--admin-text-secondary);
+        margin-right: var(--admin-space-md);
+        flex-shrink: 0;
+    }
+}
+
+/* Horizontal scroll for wide tables on small screens */
+@media (max-width: 768px) {
+    .table-responsive-wrapper:not(.table-mobile-cards) {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .table-responsive-wrapper:not(.table-mobile-cards) table {
+        min-width: 600px;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   10. FORMS & INPUTS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.form-control,
+.form-select {
+    background-color: var(--admin-bg-secondary);
+    border: 1px solid var(--admin-border-color);
+    padding: var(--admin-space-sm) var(--admin-space-md);
+    border-radius: 8px;
+    color: var(--admin-text-primary);
+    font-size: 0.9375rem;
+    min-height: 44px; /* Touch-friendly */
+    transition: all 0.2s;
+}
+
+.form-control:focus,
+.form-select:focus {
+    background-color: var(--admin-bg-secondary);
+    border-color: var(--admin-accent-primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    outline: none;
+}
+
+.form-control::placeholder {
+    color: var(--admin-text-muted);
+}
+
+/* Form labels */
+.form-label {
+    font-weight: 600;
+    color: var(--admin-text-primary);
+    margin-bottom: var(--admin-space-xs);
+    font-size: 0.875rem;
+}
+
+/* Input groups */
+.input-group {
+    display: flex;
+    gap: var(--admin-space-xs);
+}
+
+.input-group .form-control {
+    flex: 1;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   11. BUTTONS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--admin-space-xs);
+    padding: var(--admin-space-sm) var(--admin-space-lg);
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    min-height: 44px; /* Touch-friendly */
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.btn-primary {
+    background: var(--admin-accent-primary);
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: var(--admin-shadow-md);
+}
+
+.btn-secondary {
+    background: var(--admin-bg-tertiary);
+    color: var(--admin-text-primary);
+}
+
+.btn-secondary:hover {
+    background: var(--admin-border-color);
+}
+
+.btn-success {
+    background: var(--admin-accent-success);
+    color: #ffffff;
+}
+
+.btn-success:hover {
+    background: #059669;
+}
+
+.btn-danger {
+    background: var(--admin-accent-danger);
+    color: #ffffff;
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+}
+
+.btn-light-modern {
+    background: var(--admin-bg-tertiary);
+    border: 1px solid var(--admin-border-color);
+    color: var(--admin-text-secondary);
+}
+
+.btn-light-modern:hover {
+    background: var(--admin-bg-secondary);
+    color: var(--admin-text-primary);
+}
+
+.btn-light-modern.active {
+    background: var(--admin-accent-primary);
+    color: #ffffff;
+    border-color: var(--admin-accent-primary);
+}
+
+/* Button sizes */
+.btn-sm {
+    padding: var(--admin-space-xs) var(--admin-space-md);
+    font-size: 0.875rem;
+    min-height: 36px;
+}
+
+.btn-lg {
+    padding: var(--admin-space-md) var(--admin-space-xl);
+    font-size: 1rem;
+    min-height: 52px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   12. SIDEBAR BACKDROP (Mobile)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1999 !important; /* One less than sidebar */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.sidebar-backdrop.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   13. RESPONSIVE BREAKPOINTS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Ultra-wide (≥ 1600px) */
+@media (min-width: 1600px) {
+    .dashboard-content {
+        padding: var(--admin-space-xl) calc(var(--admin-space-xl) * 1.5);
+    }
+}
+
+/* Desktop & Large (1025px - 1599px) */
+@media (min-width: 1025px) and (max-width: 1599px) {
+    .dashboard-sidebar {
+        width: var(--admin-sidebar-width-desktop);
+    }
+    
+    .dashboard-main {
+        margin-left: var(--admin-sidebar-width-desktop);
+    }
+}
+
+/* Laptop (769px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .dashboard-sidebar {
+        width: var(--admin-sidebar-width-laptop);
+    }
+    
+    .dashboard-main {
+        margin-left: var(--admin-sidebar-width-laptop);
+    }
+    
+    .dashboard-content {
+        padding: var(--admin-space-lg);
+    }
+}
+
+/* Tablet (481px - 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+    .dashboard-sidebar {
+        transform: translateX(-100%);
+        width: var(--admin-sidebar-width-tablet);
+    }
+    
+    .dashboard-sidebar.show {
+        transform: translateX(0);
+    }
+    
+    .dashboard-main {
+        margin-left: 0;
+    }
+    
+    .mobile-menu-toggle {
+        display: flex;
+    }
+    
+    .dashboard-content {
+        padding: var(--admin-space-md);
+    }
+    
+    .top-header {
+        padding: var(--admin-space-md);
+    }
+    
+    .header-subtitle {
+        display: none;
+    }
+}
+
+/* Mobile (≤ 480px) */
+@media (max-width: 480px) {
+    .dashboard-sidebar {
+        transform: translateX(-100%);
+        width: var(--admin-sidebar-width-mobile);
+    }
+    
+    .dashboard-sidebar.show {
+        transform: translateX(0);
+    }
+    
+    .dashboard-main {
+        margin-left: 0;
+    }
+    
+    .mobile-menu-toggle {
+        display: flex;
+    }
+    
+    .dashboard-content {
+        padding: var(--admin-space-sm);
+    }
+    
+    .top-header {
+        padding: var(--admin-space-sm);
+    }
+    
+    /* Superadmin Dashboard Mobile Fixes */
+    .card-modern {
+        padding: var(--admin-space-md) !important;
+    }
+    
+    /* Tab navigation mobile scroll */
+    .d-flex.gap-2.overflow-auto {
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+    
+    .d-flex.gap-2.overflow-auto::-webkit-scrollbar {
+        display: none;
+    }
+    
+    /* Stat cards mobile */
+    .stat-card {
+        padding: var(--admin-space-sm) !important;
+    }
+    
+    .stat-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.25rem;
+    }
+    
+    /* Branch cards mobile */
+    .col-md-6.col-lg-4 {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+    
+    /* Questions cards mobile */
+    .col-md-6.col-lg-4 {
+        margin-bottom: var(--admin-space-md);
+    }
+    
+    /* Modal mobile */
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+    
+    .modal-content {
+        border-radius: 12px;
+    }
+    
+    .header-subtitle {
+        display: none;
+    }
+    
+    .header-actions {
+        gap: var(--admin-space-xs);
+    }
+    
+    /* Stack buttons vertically on very small screens */
+    .btn-group {
+        flex-direction: column;
+    }
+    
+    /* Hide less important header actions */
+    .header-actions > *:nth-child(n+3) {
+        display: none;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   14. PAGINATION
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.pagination-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--admin-space-md);
+    padding: var(--admin-space-md);
+    background: var(--admin-bg-secondary);
+    border-top: 1px solid var(--admin-border-light);
+}
+
+.pagination-select-wrap {
+    display: flex;
+    align-items: center;
+    gap: var(--admin-space-sm);
+}
+
+.pagination-actions {
+    display: flex;
+    gap: var(--admin-space-xs);
+}
+
+.pagination-btn {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    border: 1px solid var(--admin-border-color);
+    background: var(--admin-bg-secondary);
+    color: var(--admin-text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background: var(--admin-bg-tertiary);
+    border-color: var(--admin-accent-primary);
+    color: var(--admin-accent-primary);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   15. UTILITIES
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Text colors */
+.text-primary { color: var(--admin-text-primary) !important; }
+.text-secondary { color: var(--admin-text-secondary) !important; }
+.text-muted { color: var(--admin-text-muted) !important; }
+
+/* Background colors */
+.bg-primary { background-color: var(--admin-bg-primary) !important; }
+.bg-secondary { background-color: var(--admin-bg-secondary) !important; }
+.bg-tertiary { background-color: var(--admin-bg-tertiary) !important; }
+
+/* Spacing utilities */
+.p-responsive { padding: var(--admin-space-lg); }
+.px-responsive { padding-left: var(--admin-space-lg); padding-right: var(--admin-space-lg); }
+.py-responsive { padding-top: var(--admin-space-lg); padding-bottom: var(--admin-space-lg); }
+
+/* Border utilities */
+.border-light { border-color: var(--admin-border-light) !important; }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   16. ACCESSIBILITY
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Focus visible */
+*:focus-visible {
+    outline: 2px solid var(--admin-accent-primary);
+    outline-offset: 2px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .dashboard-sidebar,
+    .card-modern,
+    .table-responsive-wrapper {
+        border-width: 2px;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   17. PRINT STYLES
+   ═══════════════════════════════════════════════════════════════════════ */
+
+@media print {
+    .dashboard-sidebar,
+    .top-header,
+    .mobile-menu-toggle,
+    .sidebar-backdrop,
+    .header-actions,
+    .pagination-toolbar {
+        display: none !important;
+    }
+    
+    .dashboard-main {
+        margin-left: 0 !important;
+    }
+    
+    .dashboard-content {
+        padding: 0 !important;
+    }
+    
+    .card-modern {
+        break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #000;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   END OF ADMIN PANEL MEGA RESPONSIVE DESIGN SYSTEM
+   ═══════════════════════════════════════════════════════════════════════ */

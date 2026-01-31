@@ -6,62 +6,62 @@
 
 {% block dashboard_content %}
     <!-- Dashboard Tabs Navigation -->
-    <div class="d-flex gap-2 gap-md-3 mb-4 mb-md-5 overflow-auto pb-2 border-bottom-0 justify-content-start justify-content-md-center px-2 px-md-0" style="scrollbar-width: none; -ms-overflow-style: none;">
-        <button class="btn btn-light-modern px-3 px-md-4 py-2 d-flex align-items-center gap-2 active border-0 shadow-sm flex-shrink-0" onclick="showTab('staff')" id="tab-btn-staff">
-            <i class="bi bi-people fs-5"></i> <span>Xodimlar</span>
+    <div class="d-flex gap-2 mb-4 overflow-auto pb-2 border-bottom-0 px-2 px-md-0" style="scrollbar-width: thin; -ms-overflow-style: none; -webkit-overflow-scrolling: touch;">
+        <button class="btn btn-light-modern px-3 py-2 d-flex align-items-center gap-2 active border-0 shadow-sm flex-shrink-0" onclick="showTab('staff')" id="tab-btn-staff" style="min-width: auto; white-space: nowrap;">
+            <i class="bi bi-people fs-5"></i> <span class="d-none d-sm-inline">Xodimlar</span>
         </button>
-        <button class="btn btn-light-modern px-3 px-md-4 py-2 d-flex align-items-center gap-2 border-0 shadow-sm flex-shrink-0" onclick="showTab('couriers')" id="tab-btn-couriers">
-            <i class="bi bi-bicycle fs-5"></i> <span>Kuryerlar</span>
+        <button class="btn btn-light-modern px-3 py-2 d-flex align-items-center gap-2 border-0 shadow-sm flex-shrink-0" onclick="showTab('couriers')" id="tab-btn-couriers" style="min-width: auto; white-space: nowrap;">
+            <i class="bi bi-bicycle fs-5"></i> <span class="d-none d-sm-inline">Kuryerlar</span>
         </button>
-        <button class="btn btn-light-modern px-3 px-md-4 py-2 d-flex align-items-center gap-2 border-0 shadow-sm flex-shrink-0" onclick="showTab('users')" id="tab-btn-users">
-            <i class="bi bi-person-badge fs-5"></i> <span>Foydalanuvchilar</span>
+        <button class="btn btn-light-modern px-3 py-2 d-flex align-items-center gap-2 border-0 shadow-sm flex-shrink-0" onclick="showTab('users')" id="tab-btn-users" style="min-width: auto; white-space: nowrap;">
+            <i class="bi bi-person-badge fs-5"></i> <span class="d-none d-sm-inline">Foydalanuvchilar</span>
         </button>
-        <button class="btn btn-light-modern px-3 px-md-4 py-2 d-flex align-items-center gap-2 border-0 shadow-sm flex-shrink-0" onclick="showTab('branches')" id="tab-btn-branches">
-            <i class="bi bi-shop fs-5"></i> <span>Filiallar</span>
+        <button class="btn btn-light-modern px-3 py-2 d-flex align-items-center gap-2 border-0 shadow-sm flex-shrink-0" onclick="showTab('branches')" id="tab-btn-branches" style="min-width: auto; white-space: nowrap;">
+            <i class="bi bi-shop fs-5"></i> <span class="d-none d-sm-inline">Filiallar</span>
         </button>
-        <button class="btn btn-light-modern px-3 px-md-4 py-2 d-flex align-items-center gap-2 border-0 shadow-sm flex-shrink-0" onclick="showTab('orders')" id="tab-btn-orders">
-            <i class="bi bi-cart fs-5"></i> <span>Buyurtmalar</span>
+        <button class="btn btn-light-modern px-3 py-2 d-flex align-items-center gap-2 border-0 shadow-sm flex-shrink-0" onclick="showTab('orders')" id="tab-btn-orders" style="min-width: auto; white-space: nowrap;">
+            <i class="bi bi-cart fs-5"></i> <span class="d-none d-sm-inline">Buyurtmalar</span>
         </button>
-        <button class="btn btn-light-modern px-3 px-md-4 py-2 d-flex align-items-center gap-2 border-0 shadow-sm flex-shrink-0" onclick="showTab('menu')" id="tab-btn-menu">
-            <i class="bi bi-grid-3x3 fs-5"></i> <span>Menyu</span>
+        <button class="btn btn-light-modern px-3 py-2 d-flex align-items-center gap-2 border-0 shadow-sm flex-shrink-0" onclick="showTab('menu')" id="tab-btn-menu" style="min-width: auto; white-space: nowrap;">
+            <i class="bi bi-grid-3x3 fs-5"></i> <span class="d-none d-sm-inline">Menyu</span>
         </button>
     </div>
 
     <!-- Analytics Cards -->
-    <div class="row g-3 g-md-4 mb-4 mb-md-5">
+    <div class="row g-2 g-md-3 mb-4">
         <div class="col-6 col-md-3">
-            <div class="card-modern stat-card h-100 d-flex flex-column align-items-center text-center p-3">
-                <div class="stat-icon primary mb-2 mb-md-3"><i class="bi bi-cart-check"></i></div>
+            <div class="card-modern stat-card h-100 d-flex flex-column align-items-center text-center p-2 p-md-3">
+                <div class="stat-icon primary mb-2"></div>
                 <div>
-                    <div class="text-muted small fw-bold text-uppercase mb-1" style="letter-spacing: 0.5px; font-size: 0.65rem;">Jami Buyurtmalar</div>
-                    <h2 class="mb-0 fw-bold fs-4 fs-md-2">{{ stats.total_orders }}</h2>
+                    <div class="text-muted small fw-bold text-uppercase mb-1" style="letter-spacing: 0.5px; font-size: 0.6rem;">Jami Buyurtmalar</div>
+                    <h2 class="mb-0 fw-bold" style="font-size: clamp(1.25rem, 4vw, 2rem);">{{ stats.total_orders }}</h2>
                 </div>
             </div>
         </div>
         <div class="col-6 col-md-3">
-            <div class="card-modern stat-card h-100 d-flex flex-column align-items-center text-center p-3">
-                <div class="stat-icon warning mb-2 mb-md-3"><i class="bi bi-clock-history"></i></div>
+            <div class="card-modern stat-card h-100 d-flex flex-column align-items-center text-center p-2 p-md-3">
+                <div class="stat-icon warning mb-2"><i class="bi bi-clock-history"></i></div>
                 <div>
-                    <div class="text-muted small fw-bold text-uppercase mb-1" style="letter-spacing: 0.5px; font-size: 0.65rem;">Kutayotgan</div>
-                    <h2 class="mb-0 fw-bold fs-4 fs-md-2">{{ stats.waiting_orders }}</h2>
+                    <div class="text-muted small fw-bold text-uppercase mb-1" style="letter-spacing: 0.5px; font-size: 0.6rem;">Kutayotgan</div>
+                    <h2 class="mb-0 fw-bold" style="font-size: clamp(1.25rem, 4vw, 2rem);">{{ stats.waiting_orders }}</h2>
                 </div>
             </div>
         </div>
         <div class="col-6 col-md-3">
-            <div class="card-modern stat-card h-100 d-flex flex-column align-items-center text-center p-3">
-                <div class="stat-icon success mb-2 mb-md-3"><i class="bi bi-people"></i></div>
+            <div class="card-modern stat-card h-100 d-flex flex-column align-items-center text-center p-2 p-md-3">
+                <div class="stat-icon success mb-2"><i class="bi bi-people"></i></div>
                 <div>
-                    <div class="text-muted small fw-bold text-uppercase mb-1" style="letter-spacing: 0.5px; font-size: 0.65rem;">Foydalanuvchilar</div>
-                    <h2 class="mb-0 fw-bold fs-4 fs-md-2">{{ stats.total_users }}</h2>
+                    <div class="text-muted small fw-bold text-uppercase mb-1" style="letter-spacing: 0.5px; font-size: 0.6rem;">Foydalanuvchilar</div>
+                    <h2 class="mb-0 fw-bold" style="font-size: clamp(1.25rem, 4vw, 2rem);">{{ stats.total_users }}</h2>
                 </div>
             </div>
         </div>
         <div class="col-6 col-md-3">
-            <div class="card-modern stat-card h-100 d-flex flex-column align-items-center text-center p-3">
-                <div class="stat-icon info mb-2 mb-md-3"><i class="bi bi-bicycle"></i></div>
+            <div class="card-modern stat-card h-100 d-flex flex-column align-items-center text-center p-2 p-md-3">
+                <div class="stat-icon info mb-2"><i class="bi bi-bicycle"></i></div>
                 <div>
-                    <div class="text-muted small fw-bold text-uppercase mb-1" style="letter-spacing: 0.5px; font-size: 0.65rem;">Kuryerlar</div>
-                    <h2 class="mb-0 fw-bold fs-4 fs-md-2">{{ stats.total_couriers }}</h2>
+                    <div class="text-muted small fw-bold text-uppercase mb-1" style="letter-spacing: 0.5px; font-size: 0.6rem;">Kuryerlar</div>
+                    <h2 class="mb-0 fw-bold" style="font-size: clamp(1.25rem, 4vw, 2rem);">{{ stats.total_couriers }}</h2>
                 </div>
             </div>
         </div>
@@ -434,14 +434,27 @@
             .then(d => {
                 if(d.success) {
                     container.innerHTML = ''; // Clear spinner
-                    new TablePagination({
-                         container: container,
-                         data: d.staff,
-                         rowsPerPage: 10,
-                         headerHtml: '<thead><tr><th>ID</th><th>Xodim</th><th>Telefon</th><th>Passport</th><th>Amallar</th></tr></thead>',
-                         renderRow: (s) => `<tr><td data-label="ID">#${s.id}</td><td data-label="Xodim"><div class="fw-bold">${s.first_name} ${s.last_name}</div></td><td data-label="Telefon">${s.phone}</td><td data-label="Passport">${s.passport_series || ''}${s.passport_number || ''}</td><td data-label="Amallar"><div class="d-flex gap-1"><button class="btn btn-sm btn-light-modern text-primary" onclick="resetStaffPassword(${s.id})"><i class="bi bi-key"></i></button><a href="/super-admin/database/staff" class="btn btn-sm btn-light-modern text-info"><i class="bi bi-pencil"></i></a><button class="btn btn-sm btn-light-modern text-danger" onclick="deleteStaff(${s.id})"><i class="bi bi-trash"></i></button></div></td></tr>`
-                    });
-                    container.dataset.loaded = "true";
+                    
+                    // Check if TablePagination is defined
+                    if (typeof TablePagination !== 'undefined') {
+                        new TablePagination({
+                             container: container,
+                             data: d.staff,
+                             rowsPerPage: 10,
+                             headerHtml: '<thead><tr><th>ID</th><th>Xodim</th><th>Telefon</th><th>Passport</th><th>Amallar</th></tr></thead>',
+                             renderRow: (s) => `<tr><td data-label="ID">#${s.id}</td><td data-label="Xodim"><div class="fw-bold">${s.first_name} ${s.last_name}</div></td><td data-label="Telefon">${s.phone}</td><td data-label="Passport">${s.passport_series || ''}${s.passport_number || ''}</td><td data-label="Amallar"><div class="d-flex gap-1"><button class="btn btn-sm btn-light-modern text-primary" onclick="resetStaffPassword(${s.id})"><i class="bi bi-key"></i></button><a href="/super-admin/database/staff" class="btn btn-sm btn-light-modern text-info"><i class="bi bi-pencil"></i></a><button class="btn btn-sm btn-light-modern text-danger" onclick="deleteStaff(${s.id})"><i class="bi bi-trash"></i></button></div></td></tr>`
+                        });
+                        container.dataset.loaded = "true";
+                    } else {
+                        // Fallback: render simple table
+                        let tableHTML = '<div class="table-responsive"><table class="table-modern table-mobile-cards"><thead><tr><th>ID</th><th>Xodim</th><th>Telefon</th><th>Passport</th><th>Amallar</th></tr></thead><tbody>';
+                        d.staff.forEach(s => {
+                            tableHTML += `<tr><td data-label="ID">#${s.id}</td><td data-label="Xodim"><div class="fw-bold">${s.first_name} ${s.last_name}</div></td><td data-label="Telefon">${s.phone}</td><td data-label="Passport">${s.passport_series || ''}${s.passport_number || ''}</td><td data-label="Amallar"><div class="d-flex gap-1"><button class="btn btn-sm btn-light-modern text-primary" onclick="resetStaffPassword(${s.id})"><i class="bi bi-key"></i></button><a href="/super-admin/database/staff" class="btn btn-sm btn-light-modern text-info"><i class="bi bi-pencil"></i></a><button class="btn btn-sm btn-light-modern text-danger" onclick="deleteStaff(${s.id})"><i class="bi bi-trash"></i></button></div></td></tr>`;
+                        });
+                        tableHTML += '</tbody></table></div>';
+                        container.innerHTML = tableHTML;
+                        container.dataset.loaded = "true";
+                    }
                 } else {
                     container.innerHTML = '<div class="alert alert-warning">Ma\'lumot topilmadi.</div>';
                 }
@@ -463,13 +476,22 @@
             .then(d => {
                 if(d.success) {
                     container.innerHTML = ''; 
-                    new TablePagination({
-                        container: container,
-                        data: d.couriers,
-                        rowsPerPage: 10,
-                        headerHtml: '<thead><tr><th>ID</th><th>Kuryer</th><th>Telefon</th><th>Amallar</th></tr></thead>',
-                        renderRow: (c) => `<tr><td data-label="ID">#${c.id}</td><td data-label="Kuryer"><div class="fw-bold">${c.first_name} ${c.last_name}</div></td><td data-label="Telefon">${c.phone}</td><td data-label="Amallar"><div class="d-flex gap-1"><button class="btn btn-sm btn-light-modern text-primary" onclick="resetCourierPassword(${c.id})"><i class="bi bi-key"></i></button><a href="/super-admin/database/couriers" class="btn btn-sm btn-light-modern text-info"><i class="bi bi-pencil"></i></a><button class="btn btn-sm btn-light-modern text-danger" onclick="deleteCourier(${c.id})"><i class="bi bi-trash"></i></button></div></td></tr>`
-                    });
+                    if (typeof TablePagination !== 'undefined') {
+                        new TablePagination({
+                            container: container,
+                            data: d.couriers,
+                            rowsPerPage: 10,
+                            headerHtml: '<thead><tr><th>ID</th><th>Kuryer</th><th>Telefon</th><th>Amallar</th></tr></thead>',
+                            renderRow: (c) => `<tr><td data-label="ID">#${c.id}</td><td data-label="Kuryer"><div class="fw-bold">${c.first_name} ${c.last_name}</div></td><td data-label="Telefon">${c.phone}</td><td data-label="Amallar"><div class="d-flex gap-1"><button class="btn btn-sm btn-light-modern text-primary" onclick="resetCourierPassword(${c.id})"><i class="bi bi-key"></i></button><a href="/super-admin/database/couriers" class="btn btn-sm btn-light-modern text-info"><i class="bi bi-pencil"></i></a><button class="btn btn-sm btn-light-modern text-danger" onclick="deleteCourier(${c.id})"><i class="bi bi-trash"></i></button></div></td></tr>`
+                        });
+                    } else {
+                        let tableHTML = '<div class="table-responsive"><table class="table-modern table-mobile-cards"><thead><tr><th>ID</th><th>Kuryer</th><th>Telefon</th><th>Amallar</th></tr></thead><tbody>';
+                        d.couriers.forEach(c => {
+                            tableHTML += `<tr><td data-label="ID">#${c.id}</td><td data-label="Kuryer"><div class="fw-bold">${c.first_name} ${c.last_name}</div></td><td data-label="Telefon">${c.phone}</td><td data-label="Amallar"><div class="d-flex gap-1"><button class="btn btn-sm btn-light-modern text-primary" onclick="resetCourierPassword(${c.id})"><i class="bi bi-key"></i></button><a href="/super-admin/database/couriers" class="btn btn-sm btn-light-modern text-info"><i class="bi bi-pencil"></i></a><button class="btn btn-sm btn-light-modern text-danger" onclick="deleteCourier(${c.id})"><i class="bi bi-trash"></i></button></div></td></tr>`;
+                        });
+                        tableHTML += '</tbody></table></div>';
+                        container.innerHTML = tableHTML;
+                    }
                     container.dataset.loaded = "true";
                 } else {
                     container.innerHTML = '<div class="alert alert-warning">Ma\'lumot topilmadi.</div>';
@@ -489,14 +511,23 @@
             .then(d => {
                  if(d.success) {
                      container.innerHTML = '';
-                     new TablePagination({
-                        container: container,
-                        data: d.users,
-                        rowsPerPage: 10,
-                        headerHtml: '<thead><tr><th>ID</th><th>Mijoz</th><th>Telefon/Email</th><th>Manzil</th><th>Amallar</th></tr></thead>',
-                        renderRow: (u) => `<tr><td data-label="ID">${u.id}</td><td data-label="Mijoz"><div class="fw-bold">${u.first_name || ''} ${u.last_name || ''}</div><small class="text-muted">${u.username || ''}</small></td><td data-label="Telefon/Email"><div>${u.phone_number || u.phone || '-'}</div><div class="text-muted small">${u.email || ''}</div></td><td data-label="Manzil">${u.address || '-'}</td><td data-label="Amallar"><div class="d-flex gap-1"><a href="/super-admin/database/users" class="btn btn-sm btn-light-modern text-info"><i class="bi bi-pencil"></i></a><button class="btn btn-sm btn-light-modern text-danger" onclick="deleteUser(${u.id})"><i class="bi bi-trash"></i></button></div></td></tr>`
-                    });
-                    container.dataset.loaded = "true";
+                     if (typeof TablePagination !== 'undefined') {
+                         new TablePagination({
+                            container: container,
+                            data: d.users,
+                            rowsPerPage: 10,
+                            headerHtml: '<thead><tr><th>ID</th><th>Mijoz</th><th>Telefon/Email</th><th>Manzil</th><th>Amallar</th></tr></thead>',
+                            renderRow: (u) => `<tr><td data-label="ID">${u.id}</td><td data-label="Mijoz"><div class="fw-bold">${u.first_name || ''} ${u.last_name || ''}</div><small class="text-muted">${u.username || ''}</small></td><td data-label="Telefon/Email"><div>${u.phone_number || u.phone || '-'}</div><div class="text-muted small">${u.email || ''}</div></td><td data-label="Manzil">${u.address || '-'}</td><td data-label="Amallar"><div class="d-flex gap-1"><a href="/super-admin/database/users" class="btn btn-sm btn-light-modern text-info"><i class="bi bi-pencil"></i></a><button class="btn btn-sm btn-light-modern text-danger" onclick="deleteUser(${u.id})"><i class="bi bi-trash"></i></button></div></td></tr>`
+                        });
+                     } else {
+                         let tableHTML = '<div class="table-responsive"><table class="table-modern table-mobile-cards"><thead><tr><th>ID</th><th>Mijoz</th><th>Telefon/Email</th><th>Manzil</th><th>Amallar</th></tr></thead><tbody>';
+                         d.users.forEach(u => {
+                             tableHTML += `<tr><td data-label="ID">${u.id}</td><td data-label="Mijoz"><div class="fw-bold">${u.first_name || ''} ${u.last_name || ''}</div><small class="text-muted">${u.username || ''}</small></td><td data-label="Telefon/Email"><div>${u.phone_number || u.phone || '-'}</div><div class="text-muted small">${u.email || ''}</div></td><td data-label="Manzil">${u.address || '-'}</td><td data-label="Amallar"><div class="d-flex gap-1"><a href="/super-admin/database/users" class="btn btn-sm btn-light-modern text-info"><i class="bi bi-pencil"></i></a><button class="btn btn-sm btn-light-modern text-danger" onclick="deleteUser(${u.id})"><i class="bi bi-trash"></i></button></div></td></tr>`;
+                         });
+                         tableHTML += '</tbody></table></div>';
+                         container.innerHTML = tableHTML;
+                     }
+                     container.dataset.loaded = "true";
                  } else {
                      container.innerHTML = '<div class="alert alert-warning">Ma\'lumot topilmadi.</div>';
                  }
@@ -510,22 +541,39 @@
             .then(res => res.json())
             .then(data => {
                 if(data.success && data.orders) {
-                    new TablePagination({
-                        container: container,
-                        data: data.orders,
-                        rowsPerPage: 10,
-                        headerHtml: `<thead><tr><th>ID</th><th>Ticket</th><th>Mijoz</th><th>Jami</th><th>Holat</th><th>Sana</th><th>Amallar</th></tr></thead>`,
-                        renderRow: (o) => `
-                            <tr>
-                                <td class="fw-bold" data-label="ID">#${o.id}</td>
-                                <td data-label="Ticket"><span class="badge bg-light text-dark border">#${o.ticket_no}</span></td>
-                                <td data-label="Mijoz">${o.customer_name || 'Mehmon'}</td>
-                                <td class="fw-bold text-dark" data-label="Jami">${formatCurrency(o.total)}</td>
-                                <td data-label="Holat">${getStatusBadge(o.status)}</td>
-                                <td class="small text-muted" data-label="Sana">${new Date(o.created_at).toLocaleDateString()}</td>
-                                <td data-label="Amallar"><div class="d-flex gap-1 justify-content-end"><a href="/api/orders/${o.id}" target="_blank" class="btn btn-sm btn-light-modern text-primary"><i class="bi bi-eye"></i></a></div></td>
-                            </tr>`
-                    });
+                    if (typeof TablePagination !== 'undefined') {
+                        new TablePagination({
+                            container: container,
+                            data: data.orders,
+                            rowsPerPage: 10,
+                            headerHtml: `<thead><tr><th>ID</th><th>Ticket</th><th>Mijoz</th><th>Jami</th><th>Holat</th><th>Sana</th><th>Amallar</th></tr></thead>`,
+                            renderRow: (o) => `
+                                <tr>
+                                    <td class="fw-bold" data-label="ID">#${o.id}</td>
+                                    <td data-label="Ticket"><span class="badge bg-light text-dark border">#${o.ticket_no}</span></td>
+                                    <td data-label="Mijoz">${o.customer_name || 'Mehmon'}</td>
+                                    <td class="fw-bold text-dark" data-label="Jami">${formatCurrency(o.total)}</td>
+                                    <td data-label="Holat">${getStatusBadge(o.status)}</td>
+                                    <td class="small text-muted" data-label="Sana">${new Date(o.created_at).toLocaleDateString()}</td>
+                                    <td data-label="Amallar"><div class="d-flex gap-1 justify-content-end"><a href="/api/orders/${o.id}" target="_blank" class="btn btn-sm btn-light-modern text-primary"><i class="bi bi-eye"></i></a></div></td>
+                                </tr>`
+                        });
+                    } else {
+                        const tbody = document.getElementById('ordersTableBody');
+                        if (tbody) {
+                            tbody.innerHTML = data.orders.map(o => `
+                                <tr>
+                                    <td data-label="ID">#${o.id}</td>
+                                    <td data-label="Ticket"><span class="badge bg-light text-dark border">#${o.ticket_no}</span></td>
+                                    <td data-label="Mijoz">${o.customer_name || 'Mehmon'}</td>
+                                    <td data-label="Jami">${formatCurrency(o.total)}</td>
+                                    <td data-label="Holat">${getStatusBadge(o.status)}</td>
+                                    <td data-label="Sana">${new Date(o.created_at).toLocaleDateString()}</td>
+                                    <td data-label="Amallar"><a href="/api/orders/${o.id}" target="_blank" class="btn btn-sm btn-light-modern text-primary"><i class="bi bi-eye"></i></a></td>
+                                </tr>
+                            `).join('');
+                        }
+                    }
                 }
             }).catch(console.error);
     }
@@ -536,32 +584,41 @@
             .then(res => res.json())
             .then(data => {
                 if(data.success && data.data) {
-                    new TablePagination({
-                        container: container,
-                        data: data.data,
-                        rowsPerPage: 12, // 3x4 grid for laptop
-                        isGrid: true,
-                        renderRow: (p) => `
-                            <div class="menu-card-admin cursor-pointer" onclick="location.href='/admin/product/edit/${p.id}'">
-                                <div class="position-relative">
-                                    <img src="${p.image_url.startsWith('http') ? p.image_url : '/static/img/placeholder.png'}" class="w-100" style="height: 160px; object-fit: cover;">
-                                    <div class="position-absolute top-0 end-0 p-2">
-                                        <span class="badge ${p.is_active ? 'bg-success' : 'bg-danger'}">${p.is_active ? 'Faol' : 'Nofaol'}</span>
+                    if (typeof TablePagination !== 'undefined') {
+                        new TablePagination({
+                            container: container,
+                            data: data.data,
+                            rowsPerPage: 12, // 3x4 grid for laptop
+                            isGrid: true,
+                            renderRow: (p) => `
+                                <div class="menu-card-admin cursor-pointer" onclick="location.href='/admin/product/edit/${p.id}'">
+                                    <div class="position-relative">
+                                        <img src="${p.image_url.startsWith('http') ? p.image_url : '/static/img/placeholder.png'}" class="w-100" style="height: 160px; object-fit: cover;">
+                                        <div class="position-absolute top-0 end-0 p-2">
+                                            <span class="badge ${p.is_active ? 'bg-success' : 'bg-danger'}">${p.is_active ? 'Faol' : 'Nofaol'}</span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="p-3">
-                                    <div class="d-flex justify-content-between mb-1">
-                                        <h6 class="fw-bold mb-0">${p.name}</h6>
-                                        <span class="text-primary fw-bold small">${formatCurrency(p.price)}</span>
+                                    <div class="p-3">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <h6 class="fw-bold mb-0">${p.name}</h6>
+                                            <span class="text-primary fw-bold small">${formatCurrency(p.price)}</span>
+                                        </div>
+                                        <p class="text-muted small mb-3 text-truncate">${p.category || 'Kategoriyasiz'}</p>
+                                        <div class="d-flex gap-2">
+                                            <a href="/admin/product/edit/${p.id}" class="btn btn-sm btn-light-modern flex-grow-1">Tahrir</a>
+                                            <button class="btn btn-sm btn-light-modern text-danger" onclick="deleteProduct(${p.id})"><i class="bi bi-trash"></i></button>
+                                        </div>
                                     </div>
-                                    <p class="text-muted small mb-3 text-truncate">${p.category || 'Kategoriyasiz'}</p>
-                                    <div class="d-flex gap-2">
-                                        <a href="/admin/product/edit/${p.id}" class="btn btn-sm btn-light-modern flex-grow-1">Tahrir</a>
-                                        <button class="btn btn-sm btn-light-modern text-danger" onclick="deleteProduct(${p.id})"><i class="bi bi-trash"></i></button>
-                                    </div>
-                                </div>
-                            </div>`
-                    });
+                                </div>`
+                        });
+                    } else {
+                        let gridHTML = '<div class="row g-3">';
+                        data.data.slice(0, 12).forEach(p => {
+                            gridHTML += `<div class="col-6 col-md-4 col-lg-3"><div class="card h-100"><div class="position-relative"><img src="${p.image_url.startsWith('http') ? p.image_url : '/static/img/placeholder.png'}" class="card-img-top" style="height: 160px; object-fit: cover;"><div class="position-absolute top-0 end-0 p-2"><span class="badge ${p.is_active ? 'bg-success' : 'bg-danger'}">${p.is_active ? 'Faol' : 'Nofaol'}</span></div></div><div class="card-body"><h6 class="card-title">${p.name}</h6><p class="text-muted small">${p.category || 'Kategoriyasiz'}</p><div class="d-flex gap-2"><a href="/admin/product/edit/${p.id}" class="btn btn-sm btn-primary flex-grow-1">Tahrir</a></div></div></div></div>`;
+                        });
+                        gridHTML += '</div>';
+                        container.innerHTML = gridHTML;
+                    }
                 }
             }).catch(console.error);
     }
@@ -677,7 +734,8 @@
             m.show();
         };
         window.showAddBranchModal = () => {
-             alert('Branch management currently read-only in this view.');
+            const m = new bootstrap.Modal(document.getElementById('addBranchModal'));
+            m.show();
         };
         window.showAddMenuModal = () => {
              window.location.href = '/staff/menu';
@@ -753,6 +811,78 @@
                 form.submit();
             }
         };
+        // Global Search URL Handler
+        const params = new URLSearchParams(window.location.search);
+        const tab = params.get('tab');
+        const action = params.get('action');
+        const q = params.get('q');
+
+        if(tab) {
+            const btn = document.getElementById('tab-btn-' + tab);
+            if(btn) btn.click();
+        }
+
+        setTimeout(() => {
+            if(action === 'add_staff' && window.showAddStaffModal) window.showAddStaffModal();
+            if(action === 'add_courier' && window.showAddCourierModal) window.showAddCourierModal();
+            if(action === 'add_branch' && window.showAddBranchModal) window.showAddBranchModal();
+            if(action === 'add_menu' && window.showAddMenuModal) window.showAddMenuModal();
+
+            if(q) {
+                if(tab === 'users' && window.filterUsers) {
+                    const inp = document.querySelector('#users input');
+                    if(inp) { inp.value = q; window.filterUsers(q); }
+                }
+                if(tab === 'orders' && window.filterOrders) {
+                     const inp = document.querySelector('#orders input');
+                    if(inp) { inp.value = q; window.filterOrders(q); }
+                }
+            }
+            
+            if(window.location.hash) {
+                const target = document.querySelector(window.location.hash);
+                if(target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    // Visual highlight
+                    target.classList.add('bg-warning', 'bg-opacity-25');
+                    setTimeout(() => target.classList.remove('bg-warning', 'bg-opacity-25'), 2000);
+                }
+            }
+        }, 500);
+
     })();
 </script>
+<div class="modal fade" id="addBranchModal" tabindex="-1">
+    <div class="modal-dialog">
+        <form class="modal-content card-modern" method="POST" action="/super-admin/add-branch">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title fw-bold">Yangi Filial Qo'shish</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Filial Nomi</label>
+                    <input type="text" name="name" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Manzil</label>
+                    <textarea name="address" class="form-control" rows="2" required></textarea>
+                </div>
+                <div class="mb-3">
+                   <label class="form-label small fw-bold">Ish vaqti</label>
+                   <input type="text" name="working_hours" class="form-control" placeholder="09:00 - 22:00" required>
+                </div>
+                 <div class="mb-3">
+                    <label class="form-label small fw-bold">Location (Lat, Long)</label>
+                    <input type="text" name="location" class="form-control" placeholder="41.311081, 69.240562">
+                </div>
+            </div>
+            <div class="modal-footer border-top-0">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Bekor qilish</button>
+                <button type="submit" class="btn-modern btn-primary-modern">Saqlash</button>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock %}

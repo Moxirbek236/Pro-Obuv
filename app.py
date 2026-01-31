@@ -20697,6 +20697,95 @@ def super_admin_dashboard():
         )
 
 
+@app.route("/super-admin/global-search")
+@role_required("super_admin")
+def super_admin_global_search():
+    query = request.args.get("q", "").lower().strip()
+    if not query:
+        return jsonify({"success": True, "results": []})
+
+    results = []
+    
+    # 1. Static Admin Pages & Actions
+    admin_pages = [
+        {"title": "Dashboard", "url": url_for('super_admin_dashboard'), "keywords": ["home", "bosh", "panel"]},
+        {"title": "Xodimlar Boshqaruvi", "url": url_for('super_admin_dashboard', tab='staff'), "keywords": ["staff", "xodim", "ishchi", "employee"]},
+        {"title": "Yangi Xodim Qo'shish", "url": url_for('super_admin_dashboard', tab='staff', action='add_staff'), "keywords": ["add staff", "yangi xodim", "xodim qo'shish"]},
+        {"title": "Kuryerlar Boshqaruvi", "url": url_for('super_admin_dashboard', tab='couriers'), "keywords": ["courier", "kuryer", "yetkazib berish"]},
+        {"title": "Yangi Kuryer Qo'shish", "url": url_for('super_admin_dashboard', tab='couriers', action='add_courier'), "keywords": ["add courier", "yangi kuryer", "kuryer qo'shish"]},
+        {"title": "Foydalanuvchilar", "url": url_for('super_admin_dashboard', tab='users'), "keywords": ["user", "foydalanuvchi", "mijoz"]},
+        {"title": "Buyurtmalar Tarixi", "url": url_for('super_admin_dashboard', tab='orders'), "keywords": ["order", "buyurtma", "zakaz"]},
+        {"title": "Menyu va Mahsulotlar", "url": url_for('super_admin_dashboard', tab='menu'), "keywords": ["menu", "mahsulot", "product", "ovqat"]},
+        {"title": "Yangi Mahsulot Qo'shish", "url": url_for('super_admin_dashboard', tab='menu', action='add_menu'), "keywords": ["add product", "yangi mahsulot"]},
+        {"title": "Filiallar", "url": url_for('super_admin_dashboard', tab='branches'), "keywords": ["branch", "filial", "location"]},
+        {"title": "Yangi Filial Qo'shish", "url": url_for('super_admin_dashboard', tab='branches', action='add_branch'), "keywords": ["add branch", "yangi filial"]},
+        {"title": "Tizim Sozlamalari", "url": url_for('general_settings'), "keywords": ["settings", "sozlama", "konfiguratsiya"]},
+        {"title": "Hisobotlar", "url": url_for('super_admin_reports'), "keywords": ["report", "hisobot", "statistika"]},
+        {"title": "Tizim Holati", "url": url_for('super_admin_system'), "keywords": ["system", "tizim", "status"]},
+        {"title": "Yangiliklar", "url": "/super-admin/news", "keywords": ["news", "yangilik", "xabar"]},
+        {"title": "Savollar Javobi", "url": "/super-admin/questions", "keywords": ["question", "savol", "javob", "faq"]}
+    ]
+
+    for page in admin_pages:
+        if query in page["title"].lower() or any(k in query for k in page["keywords"]):
+            results.append({
+                "title": page["title"],
+                "subtitle": "Admin Sahifasi / Xizmat",
+                "url": page["url"],
+                "type": "page"
+            })
+
+    # 2. Search Products (DB)
+    try:
+        db_products = execute_query("SELECT id, name, category, price FROM menu_items WHERE LOWER(name) LIKE ?", ('%' + query + '%',), fetch_all=True)
+        if db_products:
+            for p in db_products:
+                p_dict = dict(p) if hasattr(p, 'keys') else p
+                results.append({
+                    "title": p_dict['name'],
+                    "subtitle": f"Mahsulot ({p_dict.get('category', 'General')}) - {p_dict.get('price')} so'm",
+                    "url": url_for('product_detail', product_id=p_dict['id']),
+                    "type": "product"
+                })
+    except Exception as e:
+        app_logger.warning(f"Search products error: {e}")
+
+    # 3. Search Users (DB)
+    try:
+        # DB fix: Search by email/username as full_name might not exist
+        db_users = execute_query("SELECT id, email FROM users WHERE LOWER(email) LIKE ?", ('%' + query + '%',), fetch_all=True)
+        if db_users:
+            for u in db_users:
+                u_dict = dict(u) if hasattr(u, 'keys') else u
+                email = u_dict.get('email', '')
+                results.append({
+                    "title": email or f"User #{u_dict.get('id')}",
+                    "subtitle": f"ID: {u_dict.get('id')}",
+                    "url": url_for('super_admin_dashboard', tab='users', q=email), 
+                    "type": "user"
+                })
+    except Exception as e:
+        app_logger.warning(f"Search users error: {e}")
+
+    # 4. Search Orders (DB)
+    try:
+        if query.isdigit():
+             db_orders = execute_query("SELECT id, total_amount, status FROM orders WHERE id = ?", (query,), fetch_all=True)
+             if db_orders:
+                for o in db_orders:
+                    o_dict = dict(o) if hasattr(o, 'keys') else o
+                    results.append({
+                        "title": f"Buyurtma #{o_dict['id']}",
+                        "subtitle": f"Summa: {o_dict['total_amount']} | Holat: {o_dict['status']}",
+                        "url": url_for('super_admin_dashboard', tab='orders', q=str(o_dict['id'])),
+                        "type": "order"
+                    })
+    except Exception as e:
+        app_logger.warning(f"Search orders error: {e}")
+
+    return jsonify({"success": True, "results": results[:15]})
+
+
 @app.route("/super-admin/analytics")
 @role_required("super_admin")
 def super_admin_analytics():
@@ -23927,46 +24016,7 @@ def super_admin_clear_database():
         app_logger.error(f"Database clear error: {str(e)}")
         return jsonify({'success': False, 'message': str(e)}), 500
 
-@app.route("/super-admin/global-search")
-@role_required("super_admin")
-def super_admin_global_search():
-    """Global search for Super Admin Dashboard."""
-    query = request.args.get("q", "").strip()
-    if not query:
-        return jsonify({"success": True, "results": []})
 
-    results = []
-    try:
-        # Use existing db_pool if defined, else get_db()
-        conn = None
-        should_close = False
-        if 'db_pool' in globals():
-             conn = db_pool.get_connection()
-             should_close = True # Context manager handles it usually but if we manually get it... 
-             # actually db_pool.get_connection() context manager is best.
-        else:
-             conn = get_db()
-
-        # Let's use the context manager approach if possible, but consistent with app.py style
-        # Inspecting previous code: with db_pool.get_connection() as conn:
-        
-        # We'll try to use the most common pattern.
-        # If db_pool is available:
-        if 'db_pool' in globals():
-            with db_pool.get_connection() as conn:
-                _perform_search(conn, query, results)
-        else:
-            conn = get_db()
-            _perform_search(conn, query, results)
-            # conn is request-bound in some Flask setups, or needs explicit close? 
-            # In this app, get_db() usually involves g.db. 
-            # We will assume get_db() handles connection reuse within request.
-
-    except Exception as e:
-        app_logger.error(f"Global search error: {e}")
-        return jsonify({"success": False, "error": "Search failed"}), 500
-
-    return jsonify({"success": True, "results": results})
 
 # --- INJECTED ROUTES FOR ADMIN FIXES ---
 

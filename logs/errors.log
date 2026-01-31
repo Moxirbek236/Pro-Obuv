@@ -5055,3 +5055,90 @@ Traceback (most recent call last):
     data = self.rfile.read(10_000_000)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 MemoryError
+2026-01-31 19:18:12,772 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:18:13,137 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:18:16,610 | ERROR | werkzeug | _log:96 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 362, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 347, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2026-01-31 19:18:16,611 | ERROR | werkzeug | _log:96 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 362, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 347, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2026-01-31 19:18:16,780 | ERROR | werkzeug | _log:96 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 362, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 347, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2026-01-31 19:18:16,934 | ERROR | werkzeug | _log:96 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 362, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 347, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2026-01-31 19:18:28,805 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:18:31,901 | ERROR | werkzeug | _log:96 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 362, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 347, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2026-01-31 19:18:31,913 | ERROR | werkzeug | _log:96 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 362, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 347, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2026-01-31 19:18:32,164 | ERROR | werkzeug | _log:96 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 362, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 347, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2026-01-31 19:18:36,517 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:18:37,081 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:18:42,863 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:18:49,191 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:18:51,509 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:19:02,633 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:19:17,505 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:19:20,698 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:19:22,288 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:19:23,592 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:19:24,693 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:19:25,436 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:19:27,299 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:19:33,081 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:19:34,640 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:19:42,566 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:19:44,181 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:19:48,527 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:25:39,462 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:25:42,887 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:25:44,610 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:25:44,922 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:25:47,083 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:25:47,860 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:25:48,701 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:26:31,465 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:27:28,509 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:27:44,964 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name

@@ -36,12 +36,36 @@
         container.appendChild(slide);
       });
 
+      // Duplicate slides if there are fewer items for seamless loop
+      if (items.length < 6) {
+        const slidesToDuplicate = Math.ceil(6 / items.length);
+        for (let i = 0; i < slidesToDuplicate; i++) {
+          items.slice(0, 12).forEach(it => {
+            const slide = document.createElement('div');
+            slide.className = 'swiper-slide news-item';
+            const rawTitle = it.localized_title || it.title_local || it.title || '';
+            let title = '';
+            if (typeof rawTitle === 'string') {
+              title = rawTitle;
+            } else if (typeof rawTitle === 'object' && rawTitle !== null) {
+              const currentLang = document.body.getAttribute('data-language') || 'uz';
+              title = rawTitle[currentLang] || Object.values(rawTitle)[0] || '';
+            }
+            title = String(title).substring(0, 120);
+            const imageHtml = (it.image_url) ? ('<img src="' + it.image_url + '" alt="' + (title.replace(/"/g, '') || '') + '" loading="lazy"/>') : '<div class="news-image-wrapper placeholder-glow"></div>';
+            slide.innerHTML = '<a class="news-slide-link" href="/news/' + (it.id || '') + '" style="display:block; width:100%; height:100%">' + imageHtml + '<div class="news-title-overlay">' + title + '</div></a>';
+            container.appendChild(slide);
+          });
+        }
+      }
+
       // Initialize enhanced swiper if available
       if (typeof Swiper !== 'undefined') {
         try {
           if (window._newsTickerSwiper) window._newsTickerSwiper.destroy(true, true);
           window._newsTickerSwiper = new Swiper('#news-ticker-swiper', {
             loop: true,
+            loopedSlides: Math.max(items.length * 2, 6),
             slidesPerView: 1.2,
             spaceBetween: 16,
             centeredSlides: true,

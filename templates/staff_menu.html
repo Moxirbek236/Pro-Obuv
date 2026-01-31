@@ -129,26 +129,14 @@
                 </div>
             </div>
 
-            <!-- Product Names - Second Step -->
+            <!-- Product Name - Second Step -->
             <div class="row g-4 mb-4" id="namesSection">
                 <div class="col-12">
-                    <h6 class="fw-bold text-uppercase small text-muted mb-3">2. Mahsulot nomlari</h6>
+                    <h6 class="fw-bold text-uppercase small text-muted mb-3">2. Mahsulot nomi</h6>
                     <div class="row g-3">
-                        <div class="col-md-3">
-                            <label class="form-label fw-bold small">Nomi (RU) *</label>
-                            <input type="text" name="name_ru" class="form-control" placeholder="Masalan: Спецобувь Pro" required>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label fw-bold small">Nomi (UZ) *</label>
-                            <input type="text" name="name_uz" class="form-control" placeholder="Masalan: Maxsus poyabzal Pro" required>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label fw-bold small">Nomi (EN)</label>
-                            <input type="text" name="name_en" class="form-control" placeholder="e.g. Special shoes Pro">
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label fw-bold small">Nomi (KZ)</label>
-                            <input type="text" name="name_kz" class="form-control" placeholder="Мысалы: Арнайы аяқ киім Pro">
+                        <div class="col-md-12">
+                            <label class="form-label fw-bold small">Mahsulot nomi (Yagona) *</label>
+                            <input type="text" name="name" class="form-control" placeholder="Masalan: Maxsus poyabzal Pro" required>
                         </div>
                     </div>
                 </div>
@@ -204,15 +192,23 @@
             <!-- Descriptions -->
             <div class="row g-4 mb-4" id="descriptionsSection">
                 <div class="col-12">
-                    <h6 class="fw-bold text-uppercase small text-muted mb-3">Tavsiflar</h6>
+                    <h6 class="fw-bold text-uppercase small text-muted mb-3">Tavsiflar (4 tilda)</h6>
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label fw-bold small">Tavsif (RU)</label>
-                            <textarea name="description_ru" class="form-control" rows="3" placeholder="Mahsulot haqida batafsil ma'lumot..."></textarea>
+                            <label class="form-label fw-bold small">Tavsif (UZ) *</label>
+                            <textarea name="description_uz" class="form-control" rows="3" placeholder="Mahsulot haqida batafsil ma'lumot (o'zbekcha)" required></textarea>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold small">Tavsif (UZ)</label>
-                            <textarea name="description_uz" class="form-control" rows="3" placeholder="Mahsulot haqida batafsil ma'lumot..."></textarea>
+                            <label class="form-label fw-bold small">Tavsif (RU) *</label>
+                            <textarea name="description_ru" class="form-control" rows="3" placeholder="Описание продукта (на русском)" required></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">Tavsif (EN)</label>
+                            <textarea name="description_en" class="form-control" rows="3" placeholder="Product description (in English)"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">Tavsif (KZ)</label>
+                            <textarea name="description_kz" class="form-control" rows="3" placeholder="Өнім сипаттамасы (қазақша)"></textarea>
                         </div>
                     </div>
                 </div>
@@ -320,8 +316,10 @@
                         <form method="post" action="{{ url_for('admin_edit_menu_item', item_id=item.id) }}" enctype="multipart/form-data">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                              <div class="row g-2">
-                                <div class="col-12"><input type="text" name="name_ru" value="{{ item.name_ru or item.name }}" class="form-control form-control-sm" placeholder="Nomi (RU)" required></div>
-                                <div class="col-12"><input type="text" name="name_uz" value="{{ item.name_uz or '' }}" class="form-control form-control-sm" placeholder="Nomi (UZ)"></div>
+                                <div class="col-12">
+                                    <label class="small text-muted mb-1">Mahsulot nomi</label>
+                                    <input type="text" name="name" value="{{ item.name }}" class="form-control form-control-sm" placeholder="Nomi" required>
+                                </div>
                                 <div class="col-6"><input type="number" name="price" value="{{ item.price }}" class="form-control form-control-sm" placeholder="Narxi" required></div>
                                 <div class="col-6">
                                     <select name="category" class="form-select form-select-sm" required>
@@ -344,11 +342,13 @@
                                 </div>
                                 <div class="col-6"><input type="text" name="material" value="{{ item.material or '' }}" class="form-control form-control-sm" placeholder="Material"></div>
                                 <div class="col-12">
+                                    <label class="small text-muted mb-1">Tavsiflar (4 tilda)</label>
+                                    <textarea name="description_uz" class="form-control form-control-sm mb-1" rows="2" placeholder="Tavsif (UZ)">{{ item.description_uz or '' }}</textarea>
                                     <textarea name="description_ru" class="form-control form-control-sm mb-1" rows="2" placeholder="Tavsif (RU)">{{ item.description_ru or item.description or '' }}</textarea>
-                                    <textarea name="description_uz" class="form-control form-control-sm" rows="2" placeholder="Tavsif (UZ)">{{ item.description_uz or '' }}</textarea>
+                                    <textarea name="description_en" class="form-control form-control-sm mb-1" rows="2" placeholder="Tavsif (EN)">{{ item.description_en or '' }}</textarea>
+                                    <textarea name="description_kz" class="form-control form-control-sm" rows="2" placeholder="Tavsif (KZ)">{{ item.description_kz or '' }}</textarea>
                                 </div>
                                 <div class="col-12 text-end mt-2">
-                                    <input type="hidden" name="name" value="Auto">
                                     <button type="button" class="btn btn-xs btn-light me-1" onclick="toggleEdit({{ item.id }})">Bekor</button>
                                     <button type="submit" class="btn btn-xs btn-primary">Saqlash</button>
                                 </div>

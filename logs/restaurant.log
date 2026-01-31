@@ -12344,3 +12344,160 @@ MemoryError
 2026-01-30 21:00:07,415 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
 2026-01-30 21:00:20,933 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
 2026-01-30 22:24:30,241 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 18:27:20,945 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/static/favicons/favicon.ico
+2026-01-31 18:27:25,857 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 18:29:17,136 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 18:29:37,219 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 18:29:51,971 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 18:46:27,216 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/static/favicons/favicon.ico
+2026-01-31 18:46:37,718 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 18:50:39,949 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 18:50:45,913 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 18:53:01,034 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 18:53:08,018 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 18:57:22,267 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 18:57:34,708 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 18:59:38,367 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 18:59:46,025 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 18:59:54,712 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 19:00:03,953 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 19:00:11,668 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 19:04:03,375 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 19:04:10,275 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 19:04:13,997 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 19:04:20,539 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 19:04:30,987 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 19:07:43,816 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 19:07:49,580 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 19:07:51,860 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 19:18:06,560 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 19:18:12,772 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:18:12,773 | WARNING | restaurant_app | super_admin_global_search:20763 | Search users error: no such column: full_name
+2026-01-31 19:18:13,137 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:18:13,137 | WARNING | restaurant_app | super_admin_global_search:20763 | Search users error: no such column: full_name
+2026-01-31 19:18:16,151 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 19:18:16,610 | ERROR | werkzeug | _log:96 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 362, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 347, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2026-01-31 19:18:16,611 | ERROR | werkzeug | _log:96 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 362, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 347, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2026-01-31 19:18:16,780 | ERROR | werkzeug | _log:96 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 362, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 347, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2026-01-31 19:18:16,934 | ERROR | werkzeug | _log:96 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 362, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 347, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2026-01-31 19:18:28,805 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:18:28,805 | WARNING | restaurant_app | super_admin_global_search:20763 | Search users error: no such column: full_name
+2026-01-31 19:18:31,563 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 19:18:31,901 | ERROR | werkzeug | _log:96 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 362, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 347, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2026-01-31 19:18:31,913 | ERROR | werkzeug | _log:96 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 362, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 347, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2026-01-31 19:18:32,164 | ERROR | werkzeug | _log:96 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 362, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 347, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2026-01-31 19:18:36,517 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:18:36,517 | WARNING | restaurant_app | super_admin_global_search:20763 | Search users error: no such column: full_name
+2026-01-31 19:18:37,081 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:18:37,082 | WARNING | restaurant_app | super_admin_global_search:20763 | Search users error: no such column: full_name
+2026-01-31 19:18:42,863 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:18:42,863 | WARNING | restaurant_app | super_admin_global_search:20763 | Search users error: no such column: full_name
+2026-01-31 19:18:49,191 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:18:49,192 | WARNING | restaurant_app | super_admin_global_search:20763 | Search users error: no such column: full_name
+2026-01-31 19:18:51,509 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:18:51,512 | WARNING | restaurant_app | super_admin_global_search:20763 | Search users error: no such column: full_name
+2026-01-31 19:18:55,450 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 19:18:58,254 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 19:19:02,633 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:19:02,634 | WARNING | restaurant_app | super_admin_global_search:20763 | Search users error: no such column: full_name
+2026-01-31 19:19:17,505 | WARNING | restaurant_app | super_admin_global_search:20748 | Search products error: Could not build url for endpoint 'product_detail' with values ['product_id']. Did you forget to specify values ['item_id']?
+2026-01-31 19:19:17,505 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:19:17,506 | WARNING | restaurant_app | super_admin_global_search:20763 | Search users error: no such column: full_name
+2026-01-31 19:19:20,698 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:19:20,699 | WARNING | restaurant_app | super_admin_global_search:20763 | Search users error: no such column: full_name
+2026-01-31 19:19:22,288 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:19:22,289 | WARNING | restaurant_app | super_admin_global_search:20763 | Search users error: no such column: full_name
+2026-01-31 19:19:23,592 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:19:23,592 | WARNING | restaurant_app | super_admin_global_search:20763 | Search users error: no such column: full_name
+2026-01-31 19:19:24,693 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:19:24,693 | WARNING | restaurant_app | super_admin_global_search:20763 | Search users error: no such column: full_name
+2026-01-31 19:19:25,436 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:19:25,437 | WARNING | restaurant_app | super_admin_global_search:20763 | Search users error: no such column: full_name
+2026-01-31 19:19:27,299 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:19:27,299 | WARNING | restaurant_app | super_admin_global_search:20763 | Search users error: no such column: full_name
+2026-01-31 19:19:33,081 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:19:33,082 | WARNING | restaurant_app | super_admin_global_search:20763 | Search users error: no such column: full_name
+2026-01-31 19:19:34,640 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:19:34,641 | WARNING | restaurant_app | super_admin_global_search:20763 | Search users error: no such column: full_name
+2026-01-31 19:19:42,566 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:19:42,567 | WARNING | restaurant_app | super_admin_global_search:20763 | Search users error: no such column: full_name
+2026-01-31 19:19:44,181 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:19:44,182 | WARNING | restaurant_app | super_admin_global_search:20763 | Search users error: no such column: full_name
+2026-01-31 19:19:48,527 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:19:48,528 | WARNING | restaurant_app | super_admin_global_search:20763 | Search users error: no such column: full_name
+2026-01-31 19:25:39,462 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:25:39,464 | WARNING | restaurant_app | super_admin_global_search:20767 | Search users error: no such column: full_name
+2026-01-31 19:25:42,887 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:25:42,887 | WARNING | restaurant_app | super_admin_global_search:20767 | Search users error: no such column: full_name
+2026-01-31 19:25:44,610 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:25:44,611 | WARNING | restaurant_app | super_admin_global_search:20767 | Search users error: no such column: full_name
+2026-01-31 19:25:44,922 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:25:44,922 | WARNING | restaurant_app | super_admin_global_search:20767 | Search users error: no such column: full_name
+2026-01-31 19:25:47,083 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:25:47,084 | WARNING | restaurant_app | super_admin_global_search:20767 | Search users error: no such column: full_name
+2026-01-31 19:25:47,860 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:25:47,862 | WARNING | restaurant_app | super_admin_global_search:20767 | Search users error: no such column: full_name
+2026-01-31 19:25:48,701 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:25:48,702 | WARNING | restaurant_app | super_admin_global_search:20767 | Search users error: no such column: full_name
+2026-01-31 19:26:11,547 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 19:26:31,465 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:26:31,466 | WARNING | restaurant_app | super_admin_global_search:20767 | Search users error: no such column: full_name
+2026-01-31 19:26:58,891 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 19:27:28,509 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:27:28,510 | WARNING | restaurant_app | super_admin_global_search:20767 | Search users error: no such column: full_name
+2026-01-31 19:27:29,998 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 19:27:44,964 | ERROR | restaurant_app | execute_query:3815 | Database operational error: no such column: full_name
+2026-01-31 19:27:44,965 | WARNING | restaurant_app | super_admin_global_search:20767 | Search users error: no such column: full_name
+2026-01-31 19:27:48,588 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 19:44:54,984 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 19:47:09,357 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 20:36:55,896 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json

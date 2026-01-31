@@ -369,6 +369,7 @@
         <!-- Main Product Area -->
         <section class="shop-products animate-up" style="animation-delay: 0.2s;">
             <div class="product-grid-main">
+                {% set placeholder_img = url_for('static', filename='img/placeholder-product.png') %}
                 {% for item in men %}
                 <a class="industrial-product-card product-item-node" 
                    data-name="{{ item.name|lower }}" 
@@ -386,10 +387,11 @@
                    style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
                     <div class="img-wrapper">
                         <img 
-                            src="{{ (item.primary_image or item.image_url or 'defoult.webp') | cloudinary_url }}"  
+                            src="{{ (item.primary_image or item.image_url or 'images/default-product.jpg') | cloudinary_url }}"  
                             alt="{{ item.name }}" 
                             class="product-img"
                             loading="lazy"
+                            onerror="this.onerror=null;this.src='{{ placeholder_img }}';"
                         />
                         {% if item.is_new %}
                         <div class="position-absolute top-0 start-0 m-3">

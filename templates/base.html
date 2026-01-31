@@ -33,6 +33,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/industrial-premium.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/universal_responsive.css') }}">
     
+    <!-- E-Commerce Universal Responsive System -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ecommerce-responsive-universal.css') }}">
+    
     <!-- Base Styles -->
     <!-- Base Styles handled by industrial-premium.css -->
     
@@ -179,6 +182,8 @@
     <!-- Main Content Area -->
     <main class="container mt-4">
         <!-- Flash Messages -->
+        <!-- Flash Messages -->
+        {% block flash_messages %}
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
@@ -189,6 +194,7 @@
                 {% endfor %}
             {% endif %}
         {% endwith %}
+        {% endblock %}
         
         <!-- Page Content -->
         {% block content %}

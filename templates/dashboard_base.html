@@ -1,5 +1,12 @@
 {% extends "base.html" %}
 
+{% block extra_head %}
+<!-- Admin Panel Mega Responsive Design System -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-panel-responsive.css') }}">
+{% endblock %}
+
+{% block flash_messages %}{% endblock %}
+
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
@@ -516,9 +523,6 @@ body {
             {% endblock %}
         </div>
         
-        <!-- Mobile Backdrop -->
-        <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="bootstrap.Collapse.getInstance(document.getElementById('sidebarMenu')).hide()"></div>
-
         <!-- Menu -->
         <nav class="nav flex-column gap-1 flex-grow-1 overflow-auto" style="scrollbar-width: thin;">
             {% block sidebar_menu %}
@@ -558,6 +562,9 @@ body {
             {% endblock %}
         </div>
     </aside>
+    
+    <!-- Mobile Backdrop (Moved OUTSIDE sidebar to fix click issues) -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="bootstrap.Collapse.getInstance(document.getElementById('sidebarMenu')).hide()" style="z-index: 1049;"></div>
 
     <!-- Main Layout -->
     <main class="dashboard-main">
@@ -585,48 +592,23 @@ body {
                 </div>
                 
                 <!-- Mobile Search Toggle -->
-                <button class="btn btn-light-modern btn-sm d-md-none rounded-circle bg-transparent border-0" type="button" onclick="document.getElementById('mobileSearchBar').classList.toggle('d-none'); document.getElementById('globalSearchInputMobile').focus();">
+                <button class="btn btn-light-modern btn-sm d-md-none rounded-circle bg-transparent border-0" type="button" onclick="const m = document.getElementById('mobileSearchBar'); if(m) { m.classList.toggle('d-none'); const i = document.getElementById('globalSearchInputMobile'); if(i) i.focus(); }">
                     <i class="bi bi-search"></i>
                 </button>
 
                 
-                <!-- Language -->
-                <div class="dropdown">
-                    <button class="btn btn-light-modern btn-sm dropdown-toggle" data-bs-toggle="dropdown">
-                        {{ (session.get('interface_language', config.get('DEFAULT_LANGUAGE','ru'))|upper) }}
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="#" onclick="changeLanguage('uz')">UZ</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="changeLanguage('ru')">RU</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="changeLanguage('en')">EN</a></li>
-                    </ul>
-                 </div>
-                 
-                 <!-- Notifications (Global) -->
-                 <div class="dropdown">
-                     <button class="btn btn-light-modern btn-sm position-relative" data-bs-toggle="dropdown" aria-expanded="false" id="notifyDropdownBtn">
-                        <i class="bi bi-bell"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notifyBadge" style="display:none">
-                            0
-                            <span class="visually-hidden">unread messages</span>
-                        </span>
-                     </button>
-                     <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-0" style="width: 320px; max-height: 400px; overflow-y: auto;" id="notifyDropdownMenu">
-                        <li class="p-3 border-bottom d-flex justify-content-between align-items-center bg-light">
-                            <span class="fw-bold small">Bildirishnomalar</span>
-                            <a href="#" class="text-decoration-none small text-primary" onclick="markAllNotificationsRead(event)">Barchasini o'qish</a>
-                        </li>
-                        <div id="notifyListContainer">
-                            <li class="p-4 text-center text-muted small">Yuklanmoqda...</li>
-                        </div>
-                        <li class="p-2 border-top text-center bg-light">
-                             <a href="{{ url_for('super_admin_notifications') if session.get('role') == 'super_admin' else '#' }}" class="text-decoration-none small text-muted">Barchasini ko'rish</a>
-                        </li>
-                     </ul>
-                 </div>
+                <!-- Language & Notifications Removed as requested -->
                 {% endblock %}
             </div>
         </header>
+
+        <!-- Mobile Search Bar (Initially Hidden) -->
+        <div id="mobileSearchBar" class="d-md-none bg-white px-4 pb-3 border-bottom d-none">
+            <div class="position-relative">
+                <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                <input type="text" id="globalSearchInputMobile" class="form-control border-0 bg-light rounded-pill ps-5" placeholder="Qidirish..." autocomplete="off">
+            </div>
+        </div>
 
         <!-- Dashboard Content -->
         <div class="dashboard-content px-4 pb-5">
@@ -670,7 +652,16 @@ body {
         document.addEventListener('DOMContentLoaded', () => {
             const flashes = document.querySelectorAll('.flash-message-hidden');
             flashes.forEach(f => {
-                showNotification(f.textContent, f.dataset.category);
+                const msg = f.textContent.trim();
+                // Prevent duplicate flashes on refresh (check if same msg shown < 10s ago)
+                const storageKey = 'flash_shown_' + msg.substring(0, 30).replace(/\s+/g, '_');
+                const lastShown = sessionStorage.getItem(storageKey);
+                const now = Date.now();
+
+                if (!lastShown || (now - parseInt(lastShown)) > 10000) {
+                    showNotification(msg, f.dataset.category);
+                    sessionStorage.setItem(storageKey, now.toString());
+                }
             });
             
             // Sidebar Backdrop Logic
@@ -704,11 +695,14 @@ body {
 
         // Global Search Logic
         const searchInput = document.getElementById('globalSearchInput');
+        const searchInputMobile = document.getElementById('globalSearchInputMobile');
         const searchResults = document.getElementById('globalSearchResults');
         let searchTimeout = null;
 
-        if (searchInput && searchResults) {
-            searchInput.addEventListener('input', function() {
+        function handleSearch(input) {
+            if (!input || !searchResults) return;
+            
+            input.addEventListener('input', function() {
                 const query = this.value.trim();
                 
                 if (searchTimeout) clearTimeout(searchTimeout);
@@ -755,15 +749,20 @@ body {
                         .catch(err => console.error('Search error:', err));
                 }, 300);
             });
-
-            // Close search on click outside
-            document.addEventListener('click', function(e) {
-                if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
-                    searchResults.classList.remove('show');
-                }
-            });
-
         }
+
+        handleSearch(searchInput);
+        handleSearch(searchInputMobile);
+
+        // Close search on click outside
+        document.addEventListener('click', function(e) {
+            const isClickInside = (searchInput && searchInput.contains(e.target)) || 
+                                 (searchInputMobile && searchInputMobile.contains(e.target)) || 
+                                 (searchResults && searchResults.contains(e.target));
+            if (!isClickInside && searchResults) {
+                searchResults.classList.remove('show');
+            }
+        });
         
         // Notification Logic
         const notifyBtn = document.getElementById('notifyDropdownBtn');
@@ -780,15 +779,18 @@ body {
                         const unreadCount = notifications.filter(n => !n.is_read).length;
 
                         // Badge
-                        if (unreadCount > 0) {
-                            notifyBadge.textContent = unreadCount > 99 ? '99+' : unreadCount;
-                            notifyBadge.style.display = 'block';
-                        } else {
-                            notifyBadge.style.display = 'none';
+                        // Badge
+                        if (notifyBadge) {
+                            if (unreadCount > 0) {
+                                notifyBadge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+                                notifyBadge.style.display = 'block';
+                            } else {
+                                notifyBadge.style.display = 'none';
+                            }
                         }
 
                         // List (only render if dropdown is opened or first load)
-                        if (notificationsLoaded || notifyBtn.getAttribute('aria-expanded') === 'true') {
+                        if (notifyBtn && (notificationsLoaded || notifyBtn.getAttribute('aria-expanded') === 'true')) {
                             renderNotificationList(notifications);
                         }
                     }
