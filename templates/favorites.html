@@ -12,7 +12,7 @@
 
 {% block content %}
 <div class="card favorites-card p-3">
-  <h2 data-translate="favorites_title">{{ _('nav.favorites') or 'Sevimlilar' }}</h2>
+  <h2 data-translate="favorites_title">{{ _('favorites.title') }}</h2>
 
   {% if favorites %}
   <div class="favorites-grid">
@@ -43,8 +43,8 @@
           <button
             type="submit"
             class="btn btn-sm btn-danger"
-            onclick="return confirm('Sevimlilardan olib tashlaysizmi?')">
-            {{ _('favorites.remove') or 'O\'chirish' }}
+            onclick="return confirm('{{ _('favorites.remove_confirm') }}')">
+            {{ _('cart.remove') or 'O\'chirish' }}
           </button>
         </form>
       </div>
@@ -53,10 +53,10 @@
   </div>
   {% else %}
   <div class="text-center" style="padding: 50px">
-    <h4>Sevimli mahsulotlaringiz yo'q</h4>
-    <p>Mahsulotlarni sevimlilar ro'yxatiga qo'shish uchun katalogga o'ting</p>
+    <h4>{{ _('favorites.empty_title') }}</h4>
+    <p>{{ _('favorites.empty_desc') }}</p>
     <a href="{{ url_for('menu') }}" class="btn btn-primary">
-      Katalogga o'tish</a
+      {{ _('favorites.go_to_catalog') }}</a
     >
   </div>
   {% endif %}

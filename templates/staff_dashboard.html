@@ -263,9 +263,9 @@
                             {% if o.get('status') in ['served', 'cancelled', 'delivered'] and completed_count < 20 %}
                             {% set completed_count = completed_count + 1 %}
                             <tr data-status="{{ o.get('status') }}">
-                                <td>#{{ o.get('ticket_no', 'N/A') }}</td>
-                                <td>{{ o.get('customer_name', 'N/A') }}</td>
-                                <td>
+                                <td data-label="Ticket">#{{ o.get('ticket_no', 'N/A') }}</td>
+                                <td data-label="Mijoz">{{ o.get('customer_name', 'N/A') }}</td>
+                                <td data-label="Holat">
                                     {% if o.get('status') == 'served' %} <span class="badge bg-secondary bg-opacity-10 text-secondary">Berildi</span>
                                     {% elif o.get('status') == 'cancelled' %} <span class="badge bg-danger bg-opacity-10 text-danger">Bekor</span>
                                     {% elif o.get('status') == 'delivered' %} <span class="badge bg-info bg-opacity-10 text-info">Yetkazildi</span>
@@ -331,13 +331,13 @@
                 headerHtml: '<thead><tr><th>#</th><th>Ticket</th><th>Mijoz</th><th>Buyurtma</th><th>Vaqt</th><th>Holat</th><th>Amallar</th></tr></thead>',
                 renderRow: (o, idx) => `
                     <tr data-order-id="${o.id}" data-status="${o.status}">
-                        <td>${idx + 1}</td>
-                        <td class="fw-bold text-primary">#${o.ticket_no || 'N/A'}</td>
-                        <td>${o.customer_name || 'N/A'}</td>
-                        <td><small class="text-muted text-truncate d-inline-block" style="max-width: 150px;">${o.order_items || '...'}</small></td>
-                        <td class="small">${(o.created_at || '').slice(0,16).replace('T', ' ')}</td>
-                        <td>${getStatusBadge(o.status)}</td>
-                        <td>
+                        <td data-label="#">${idx + 1}</td>
+                        <td class="fw-bold text-primary" data-label="Ticket">#${o.ticket_no || 'N/A'}</td>
+                        <td data-label="Mijoz">${o.customer_name || 'N/A'}</td>
+                        <td data-label="Buyurtma"><small class="text-muted text-truncate d-inline-block" style="max-width: 150px;">${o.order_items || '...'}</small></td>
+                        <td class="small" data-label="Vaqt">${(o.created_at || '').slice(0,16).replace('T', ' ')}</td>
+                        <td data-label="Holat">${getStatusBadge(o.status)}</td>
+                        <td data-label="Amallar">
                             <div class="d-flex gap-2">
                                 ${o.status === 'waiting' ? `<button class="btn btn-sm btn-success text-white" onclick="markReady(${o.id})"><i class="bi bi-check-lg"></i></button>` : ''}
                                 ${o.status === 'ready' ? `<button class="btn btn-sm btn-dark text-white" onclick="markServed(${o.id})"><i class="bi bi-bag-check"></i></button>` : ''}

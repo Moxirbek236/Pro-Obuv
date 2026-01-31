@@ -73,10 +73,10 @@
   <nav aria-label="breadcrumb" class="mb-4">
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
-        <a href="{{ url_for('index') }}">Bosh sahifa</a>
+        <a href="{{ url_for('index') }}">{{ _('news_detail.back_to_all') }}</a>
       </li>
       <li class="breadcrumb-item">
-        <a href="{{ url_for('index') }}#news">Yangiliklar</a>
+        <a href="{{ url_for('index') }}#news">{{ _('nav.news') }}</a>
       </li>
       <li class="breadcrumb-item active" aria-current="page">
         {{ news.title }}
@@ -92,8 +92,8 @@
         <div class="news-header">
           <div class="news-meta">
             <span class="news-type {{ news.type }}">
-              {% if news.type == 'news' %} 📢 Yangilik {% elif news.type ==
-              'advertisement' %} 🎯 Reklama {% else %} 📄 Maqola {% endif %}
+              {% if news.type == 'news' %} 📢 {{ _('news_detail.news_type_news') }} {% elif news.type ==
+              'advertisement' %} 🎯 {{ _('news_detail.news_type_ad') }} {% else %} 📄 {{ _('news_detail.news_type_article') }} {% endif %}
             </span>
             <span class="news-date">
               {{ news.created_at.split('T')[0] if news.created_at else '' }}
@@ -135,7 +135,7 @@
           </div>
           {% else %}
           <div class="news-text-content">
-            <p>Batafsil ma'lumot kiritilmagan.</p>
+            <p>{{ _('news_detail.no_detail') }}</p>
           </div>
           {% endif %}
         </div>
@@ -146,17 +146,17 @@
             <a
               href="{{ url_for('index') }}./news"
               class="btn btn-outline-primary">
-              <i class="bi bi-arrow-left"></i> Barcha yangiliklar
+              <i class="bi bi-arrow-left"></i> {{ _('news_detail.back_to_all') }}
             </a>
             <button
               class="btn btn-outline-secondary"
               onclick="window.history.back()">
-              <i class="bi bi-arrow-left-circle"></i> Orqaga
+              <i class="bi bi-arrow-left-circle"></i> {{ _('news_detail.back') }}
             </button>
           </div>
 
           <div class="news-share">
-            <span class="share-label">Ulashish:</span>
+            <span class="share-label">{{ _('news_detail.share') }}</span>
             <a
               href="https://www.facebook.com/sharer/sharer.php?u={{ request.url | urlencode }}"
               target="_blank"
@@ -185,7 +185,7 @@
       <!-- Related News (horizontal ribbon) -->
       <div class="related-news mt-5">
         <div class="ribbon-header">
-          <h3 class="related-title">Boshqa yangiliklar</h3>
+          <h3 class="related-title">{{ _('news_detail.other_news') }}</h3>
           <div class="ribbon-controls">
             <button
               class="ribbon-btn"

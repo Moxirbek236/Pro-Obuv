@@ -124,9 +124,76 @@
       font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 1px;
-      margin-bottom: 5px;
+      margin-bottom: 8px;
       display: block;
+      font-weight: 600;
   }
+  
+  /* Filter Sidebar Enhancements */
+  .shop-sidebar .industrial-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 215, 0, 0.1);
+  }
+  
+  body.light-theme .shop-sidebar .industrial-card {
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+  
+  .shop-sidebar h4 {
+      color: var(--accent-primary);
+      font-weight: 700;
+  }
+  
+  body.light-theme .shop-sidebar h4 {
+      color: #1e293b;
+  }
+  
+  .shop-sidebar .form-control,
+  .shop-sidebar .form-select {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 215, 0, 0.2);
+      color: #f1f5f9;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      transition: all 0.3s;
+  }
+  
+  body.light-theme .shop-sidebar .form-control,
+  body.light-theme .shop-sidebar .form-select {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      color: #1e293b;
+  }
+  
+  .shop-sidebar .form-control:focus,
+  .shop-sidebar .form-select:focus {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+      color: white;
+  }
+  
+  body.light-theme .shop-sidebar .form-control:focus,
+  body.light-theme .shop-sidebar .form-select:focus {
+      background: white;
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+      color: #1e293b;
+  }
+  
+  .shop-sidebar .form-select option {
+      background: #1e293b;
+      color: white;
+  }
+  
+  body.light-theme .shop-sidebar .form-select option {
+      background: white;
+      color: #1e293b;
+  }
+
 </style>
 {% endblock %}
 
@@ -140,13 +207,26 @@
 </div>
 
 <div class="container pb-5">
+    <!-- Mobile Filter Toggle -->
+    <button class="btn btn-primary-industrial w-100 mb-3 d-lg-none d-block" type="button" onclick="toggleMobileFilter()">
+        <i class="bi bi-funnel me-2"></i> {{ _('menu.filters') }}
+    </button>
+
     <div class="shop-layout">
+
         <!-- Sidebar Filters -->
-        <aside class="shop-sidebar animate-left" style="position: sticky; top: 100px; height: fit-content; align-self: start; z-index: 10;">
-            <div class="industrial-card p-4">
-                <h4 class="mb-4 d-flex align-items-center">
-                    <i class="bi bi-funnel me-2"></i> {{ _('menu.filters') }}
-                </h4>
+        <aside class="shop-sidebar animate-left" id="shopSidebar" style="position: sticky; top: 100px; height: fit-content; align-self: start; z-index: 90;">
+            <div class="filter-backdrop d-lg-none" onclick="toggleMobileFilter()"></div>
+            <div class="industrial-card p-4 filter-content">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="mb-0 d-flex align-items-center">
+                        <i class="bi bi-funnel me-2"></i> {{ _('menu.filters') }}
+                    </h4>
+                    <!-- Mobile Close Button -->
+                    <button type="button" class="btn btn-sm btn-light border d-lg-none rounded-circle" onclick="toggleMobileFilter()">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
                 
                 <div class="mb-3">
                     <label class="category-label">{{ _('menu.search_products') or 'Search Products' }}</label>
@@ -159,47 +239,45 @@
                 <div class="mb-3">
                     <label class="category-label">{{ _('menu.category') or 'Category' }}</label>
                     <select class="form-select" id="categoryFilter">
-                        <option value="">{{ _('menu.all_categories') or 'All Categories' }}</option>
-                        <option value="Safety Boots">{{ _('menu.safety_boots') or 'Safety Boots' }}</option>
-                        <option value="Protective Suits">{{ _('menu.protective_suits') or 'Protective Suits' }}</option>
-                        <option value="Head Protection">{{ _('menu.head_protection') or 'Head Protection' }}</option>
-                        <option value="Hand Protection">{{ _('menu.hand_protection') or 'Hand Protection' }}</option>
-                        <option value="Eye Protection">{{ _('menu.eye_protection') or 'Eye Protection' }}</option>
-                        <option value="Respiratory Protection">{{ _('menu.respiratory_protection') or 'Respiratory Protection' }}</option>
+                        <option value="">{{ _('menu.all_categories') or 'Barcha kategoriyalar' }}</option>
+                        <option value="specobuv">{{ _('menu.safety_boots') or 'Maxsus poyabzal' }}</option>
+                        <option value="specodezhda">{{ _('menu.protective_suits') or 'Maxsus kiyimlar' }}</option>
                     </select>
                 </div>
 
                 <div class="mb-3">
-                    <label class="category-label">{{ _('menu.size_range') or 'Size Range' }}</label>
-                    <select class="form-select" id="sizeFilter">
-                        <option value="">{{ _('menu.all_sizes') or 'All Sizes' }}</option>
-                        <option value="36-40">36-40</option>
-                        <option value="41-43">41-43</option>
-                        <option value="44-46">44-46</option>
-                        <option value="47+">{{ _('menu.size_47_plus') or '47 and above' }}</option>
+                    <label class="category-label">Brend</label>
+                    <select class="form-select" id="brandFilter">
+                        <option value="">Barcha brendlar</option>
+                        <option value="delta plus">Delta Plus</option>
+                        <option value="safety jogger">Safety Jogger</option>
+                        <option value="uzshoes">UzShoes</option>
+                        <option value="pro obuv">Pro Obuv</option>
                     </select>
                 </div>
 
                 <div class="mb-3">
                     <label class="category-label">{{ _('menu.material') or 'Material' }}</label>
                     <select class="form-select" id="materialFilter">
-                        <option value="">{{ _('menu.all_materials') or 'All Materials' }}</option>
-                        <option value="Leather">{{ _('menu.leather') or 'Leather' }}</option>
-                        <option value="Rubber">{{ _('menu.rubber') or 'Rubber' }}</option>
-                        <option value="Steel">{{ _('menu.steel') or 'Steel' }}</option>
-                        <option value="Composite">{{ _('menu.composite') or 'Composite' }}</option>
+                        <option value="">{{ _('menu.all_materials') or 'Barcha materiallar' }}</option>
+                        <option value="tabiiy-charm">Tabiiy charm</option>
+                        <option value="suniy-charm">Sun'iy charm</option>
+                        <option value="rezina">Rezina</option>
+                        <option value="paxta">Paxta</option>
+                        <option value="poliester">Poliester</option>
                     </select>
                 </div>
 
                 <div class="mb-3">
-                    <label class="category-label">{{ _('menu.protection_level') or 'Protection Level' }}</label>
+                    <label class="category-label">{{ _('menu.protection_level') or 'Himoya darajasi' }}</label>
                     <select class="form-select" id="protectionFilter">
-                        <option value="">{{ _('menu.all_levels') or 'All Levels' }}</option>
+                        <option value="">{{ _('menu.all_levels') or 'Barcha darajalar' }}</option>
                         <option value="S1">S1</option>
+                        <option value="S1P">S1P</option>
                         <option value="S2">S2</option>
                         <option value="S3">S3</option>
-                        <option value="S4">S4</option>
-                        <option value="S5">S5</option>
+                        <option value="GOST">GOST</option>
+                        <option value="ISO">ISO</option>
                     </select>
                 </div>
 
@@ -214,11 +292,79 @@
                 </div>
 
                 <div class="d-grid gap-2">
-                    <button class="btn btn-primary-industrial" onclick="applyFilters()">{{ _('menu.apply_filters') or 'Apply Filters' }}</button>
+                    <button class="btn btn-primary-industrial" onclick="applyFiltersMobile()">{{ _('menu.apply_filters') or 'Apply Filters' }}</button>
                     <button class="btn btn-outline-secondary" onclick="clearFilters()">{{ _('menu.clear_filters') or 'Clear All' }}</button>
                 </div>
             </div>
         </aside>
+
+        <style>
+        /* Mobile Filter Modal Styles */
+        @media (max-width: 991px) {
+            #shopSidebar {
+                position: fixed !important;
+                top: 0 !important;
+                left: 0;
+                width: 100%;
+                height: 100% !important;
+                z-index: 2000 !important;
+                visibility: hidden;
+                transition: visibility 0.3s;
+            }
+
+            #shopSidebar.show {
+                visibility: visible;
+            }
+
+            .filter-backdrop {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                opacity: 0;
+                transition: opacity 0.3s;
+            }
+            
+            #shopSidebar.show .filter-backdrop {
+                opacity: 1;
+            }
+
+            .filter-content {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                max-height: 90vh; /* Bottom sheet style or adjust for full screen */
+                height: auto;
+                background: var(--bg-body, #fff);
+                border-radius: 20px 20px 0 0;
+                overflow-y: auto;
+                transform: translateY(100%);
+                transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+                box-shadow: 0 -5px 25px rgba(0,0,0,0.2);
+            }
+
+            /* Dark mode support */
+            body.dark-theme .filter-content {
+                background: #1e293b; 
+            }
+
+            /* Full screen on very small phones if preferred, currently bottom sheet style */
+            @media (max-width: 576px) {
+                .filter-content {
+                    height: 100%;
+                    max-height: 100%;
+                    border-radius: 0;
+                }
+            }
+
+            #shopSidebar.show .filter-content {
+                transform: translateY(0);
+            }
+        }
+        </style>
 
         <!-- Main Product Area -->
         <section class="shop-products animate-up" style="animation-delay: 0.2s;">
@@ -231,6 +377,11 @@
                    data-rating="{{ item.rating or 0 }}"
                    data-new="{{ item.is_new or false }}"
                    data-product-id="{{ item.id }}"
+                   data-brand="{{ (item.brand or '')|lower }}"
+                   data-material="{{ (item.material or '')|lower }}"
+                   data-season="{{ (item.season or '')|lower }}"
+                   data-features="{{ (item.features or '')|lower }}"
+                   data-protection="{{ (item.standard or '')|lower }}"
                    href="http://{{ request.host }}/product/{{ item.id }}" 
                    style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
                     <div class="img-wrapper">
@@ -273,7 +424,11 @@ document.addEventListener('DOMContentLoaded', function() {
         category: card.getAttribute('data-category') || '',
         price: parseFloat(card.getAttribute('data-price')) || 0,
         rating: parseFloat(card.getAttribute('data-rating')) || 0,
-        isNew: card.getAttribute('data-new') === 'true'
+        isNew: card.getAttribute('data-new') === 'true',
+        brand: card.getAttribute('data-brand') || '',
+        material: card.getAttribute('data-material') || '',
+        season: card.getAttribute('data-season') || '',
+        protection: card.getAttribute('data-protection') || ''
     }));
     filteredProducts = [...allProducts];
     
@@ -281,48 +436,46 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('productSearch').addEventListener('input', applyFilters);
     
     // Add change listeners to all select filters
-    ['categoryFilter', 'sizeFilter', 'materialFilter', 'protectionFilter', 'sortFilter'].forEach(id => {
-        document.getElementById(id).addEventListener('change', applyFilters);
+    ['categoryFilter', 'sizeFilter', 'materialFilter', 'protectionFilter', 'sortFilter', 'brandFilter'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('change', applyFilters);
     });
     
     // Product cards are already <a> tags, so they should work naturally
     // Just ensure any JavaScript doesn't interfere with normal link behavior
 });
 
-// Enhanced role detection and UI updates
+// Enhanced role detection using BASE_CONFIG (no API calls needed)
 (function() {
-  // Fast role detection with immediate UI updates
+  // Get role from BASE_CONFIG which is set by server
   function detectAndUpdateRole() {
-    fetch('/api/auth-check')
-      .then(res => res.json())
-      .then(data => {
-        if (data && data.user) {
-          const user = data.user;
-          const isSuperAdmin = user.is_super_admin || false;
-          const isStaff = user.staff_id || false;
-          const isCourier = user.courier_id || false;
-          const isUser = user.user_id || false;
-          
-          // Update global variables
-          window.CURRENT_MEMBER_ID = user.user_id || user.staff_id || user.courier_id || null;
-          window.CURRENT_MEMBER_TYPE = isUser ? 'user' : (isStaff ? 'staff' : (isCourier ? 'courier' : 'anonymous'));
-          
-          // Update UI immediately
-          updateNavbarForRole(isSuperAdmin, isStaff, isCourier, isUser);
-          updateSidebarForRole(isSuperAdmin, isStaff, isCourier, isUser);
-        }
-      })
-      .catch(err => console.warn('Auth check failed:', err));
+    try {
+      const config = window.BASE_CONFIG || {};
+      const user = config.user || {};
+      
+      const isSuperAdmin = user.is_super_admin || false;
+      const isStaff = user.staff_id ? true : false;
+      const isCourier = user.courier_id ? true : false;
+      const isUser = user.user_id ? true : false;
+      
+      // Update global variables
+      window.CURRENT_MEMBER_ID = user.user_id || user.staff_id || user.courier_id || null;
+      window.CURRENT_MEMBER_TYPE = isUser ? 'user' : (isStaff ? 'staff' : (isCourier ? 'courier' : 'anonymous'));
+      
+      // Update UI immediately
+      updateNavbarForRole(isSuperAdmin, isStaff, isCourier, isUser);
+      updateSidebarForRole(isSuperAdmin, isStaff, isCourier, isUser);
+    } catch(err) {
+      console.warn('Role detection failed:', err);
+    }
   }
   
   function updateNavbarForRole(isSuperAdmin, isStaff, isCourier, isUser) {
     const navbar = document.querySelector('.navbar');
-    const userNavbar = document.querySelector('a[href*="logout"]');
     
     if (isSuperAdmin || isStaff || isCourier) {
       // Hide navbar for staff roles
       if (navbar) navbar.style.display = 'none';
-      if (userNavbar) userNavbar.style.display = 'none';
     } else if (isUser) {
       // Show user navbar
       if (navbar) navbar.style.display = 'block';
@@ -344,9 +497,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
   
-  // Run detection immediately and then every 5 seconds
+  // Run detection once on page load
   detectAndUpdateRole();
-  setInterval(detectAndUpdateRole, 5000);
 })();
 
 function applyFilters() {
@@ -357,6 +509,8 @@ function applyFilters() {
     const protection = document.getElementById('protectionFilter').value;
     const sortBy = document.getElementById('sortFilter').value;
     
+    const brand = document.getElementById('brandFilter') ? document.getElementById('brandFilter').value.toLowerCase() : '';
+    
     filteredProducts = allProducts.filter(product => {
         // Search by name or description (combined search)
         const matchesSearch = !searchTerm || 
@@ -366,16 +520,20 @@ function applyFilters() {
         // Category filter
         const matchesCategory = !category || product.category === category.toLowerCase();
         
-        // Size filter (simplified - would need actual size data)
-        const matchesSize = !size;
+        // Brand filter
+        const matchesBrand = !brand || product.brand === brand;
         
-        // Material filter (simplified - would need actual material data)
-        const matchesMaterial = !material;
+        // Material filter
+        const matchesMaterial = !material || product.material === material.toLowerCase();
         
-        // Protection level filter (simplified - would need actual protection data)
-        const matchesProtection = !protection;
+        // Protection level filter
+        const matchesProtection = !protection || product.protection.includes(protection.toLowerCase());
         
-        return matchesSearch && matchesCategory && matchesSize && matchesMaterial && matchesProtection;
+        // Season filter (using size filter slot for season in this context if needed, or keeping it as is)
+        // If we want to filter by season:
+        // const matchesSeason = !season || product.season === season.toLowerCase();
+        
+        return matchesSearch && matchesCategory && matchesBrand && matchesMaterial && matchesProtection;
     });
     
     // Sort products
@@ -428,14 +586,34 @@ function renderProducts() {
 
 function clearFilters() {
     document.getElementById('productSearch').value = '';
-    document.getElementById('categoryFilter').value = '';
-    document.getElementById('sizeFilter').value = '';
-    document.getElementById('materialFilter').value = '';
-    document.getElementById('protectionFilter').value = '';
-    document.getElementById('sortFilter').value = 'name';
+    if(document.getElementById('categoryFilter')) document.getElementById('categoryFilter').value = '';
+    if(document.getElementById('sizeFilter')) document.getElementById('sizeFilter').value = '';
+    if(document.getElementById('materialFilter')) document.getElementById('materialFilter').value = '';
+    if(document.getElementById('protectionFilter')) document.getElementById('protectionFilter').value = '';
+    if(document.getElementById('brandFilter')) document.getElementById('brandFilter').value = '';
+    if(document.getElementById('sortFilter')) document.getElementById('sortFilter').value = 'name';
     
     filteredProducts = [...allProducts];
     renderProducts();
+}
+
+// Mobile Filter Modal Logic
+function toggleMobileFilter() {
+    const sidebar = document.getElementById('shopSidebar');
+    if (sidebar) {
+        sidebar.classList.toggle('show');
+        // Prevent body scroll when modal is open
+        if (sidebar.classList.contains('show')) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+    }
+}
+
+function applyFiltersMobile() {
+    applyFilters();
+    toggleMobileFilter(); // Close modal after applying
 }
 </script>
 {% endblock %}

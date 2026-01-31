@@ -19,10 +19,10 @@
     <div class="position-absolute top-0 start-0 w-100 h-100" style="background: var(--hazard-pattern); opacity: 0.1; pointer-events: none;"></div>
     <div class="position-relative z-1">
       <h1 class="display-4 fw-bold text-uppercase mb-3" style="font-family: var(--font-heading); color: var(--accent-primary);">
-        <i class="bi bi-newspaper me-2"></i> Yangiliklar va Aksiyalar
+        <i class="bi bi-newspaper me-2"></i> {{ _('news_page.hero_title') }}
       </h1>
       <p class="lead text-secondary mb-0">
-        So'nggi yangiliklar, maxsus takliflar va kompaniya hayotidagi muhim voqealar
+        {{ _('news_page.hero_subtitle') }}
       </p>
     </div>
   </div>
@@ -30,7 +30,7 @@
   <!-- News Ticker -->
   <div class="industrial-card mb-5 p-3 d-flex align-items-center gap-3 animate-fade-in-up" style="animation-delay: 0.1s; background: linear-gradient(90deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 100%);">
     <div class="badge bg-warning text-dark fw-bold text-uppercase px-3 py-2" style="flex-shrink: 0;">
-      <i class="bi bi-megaphone-fill me-1"></i> Yangiliklar
+      <i class="bi bi-megaphone-fill me-1"></i> {{ _('nav.news') }}
     </div>
     <div class="flex-grow-1 overflow-hidden position-relative">
       <div id="ticker-text-content" class="text-light fw-bold" style="white-space: nowrap; animation: ticker-scroll 30s linear infinite;">
@@ -65,7 +65,7 @@
         <!-- Content -->
         <div class="p-4 d-flex flex-column flex-grow-1 position-relative">
           <div class="mb-2 text-secondary small text-uppercase fw-bold">
-            <i class="bi bi-tag-fill me-1 text-accent"></i> Yangilik
+            <i class="bi bi-tag-fill me-1 text-accent"></i> {{ _('news_page.category_tag') }}
           </div>
           
           <h3 class="h5 mb-3 fw-bold font-heading">
@@ -84,15 +84,15 @@
           
           <div class="d-flex justify-content-between align-items-center mt-auto pt-3 border-top border-secondary border-opacity-25">
              <a href="{{ url_for('news_detail', news_id=item.id) }}" class="btn-primary-industrial btn-sm py-2 px-3">
-               Batafsil <i class="bi bi-arrow-right ms-1"></i>
+               {{ _('news_page.read_more') }} <i class="bi bi-arrow-right ms-1"></i>
              </a>
              
              <div class="d-flex gap-2">
                {% set detail_url = url_for('news_detail', news_id=item.id, _external=True) %}
-               <a href="https://t.me/share/url?url={{ detail_url }}" target="_blank" class="btn btn-outline-secondary btn-sm" title="Telegramda ulashish">
+               <a href="https://t.me/share/url?url={{ detail_url }}" target="_blank" class="btn btn-outline-secondary btn-sm" title="{{ _('news_page.share_telegram') }}">
                  <i class="bi bi-telegram"></i>
                </a>
-               <button onclick="copyNewsLink('{{ detail_url }}')" class="btn btn-outline-secondary btn-sm" title="Nusxalash">
+               <button onclick="copyNewsLink('{{ detail_url }}')" class="btn btn-outline-secondary btn-sm" title="{{ _('news_page.copy_link') }}">
                  <i class="bi bi-link-45deg"></i>
                </button>
              </div>
@@ -108,10 +108,10 @@
     <div class="mb-4 text-secondary opacity-50 display-1">
       <i class="bi bi-newspaper"></i>
     </div>
-    <h3 class="h4 text-light mb-3">Hozircha yangiliklar ro'yxati bo'sh</h3>
-    <p class="text-secondary mb-4">Yangiliklardan xabardor bo'lish uchun bizni kuzatib boring</p>
+    <h3 class="h4 text-light mb-3">{{ _('news_page.empty_title') }}</h3>
+    <p class="text-secondary mb-4">{{ _('news_page.empty_desc') }}</p>
     <a href="{{ url_for('menu') }}" class="btn-primary-industrial">
-      <i class="bi bi-shop me-2"></i> Mahsulotlarni ko'rish
+      <i class="bi bi-shop me-2"></i> {{ _('news_page.view_products') }}
     </a>
   </div>
   {% endif %}

@@ -25,7 +25,7 @@
   "description": (localized_description or ""),
   "image": (prefer_webp(item.image_url if item.image_url else url_for('static', filename='defoult.webp'))),
   "url": canonical_url(),
-  "brand": {"@type": "Brand", "name": "Pro Obuv"},
+  "brand": {"@type": "Brand", "name": "{{ item.brand if item.brand else 'Pro Obuv' }}"},
   "offers": {
     "@type": "Offer",
     "priceCurrency": "UZS",
@@ -36,7 +36,7 @@
 </script>
 {% endblock %}
 
-{% block head %}
+{% block extra_head %}
 <style>
   /* Enhanced Product Page Design */
   .product-page-wrapper {
@@ -110,17 +110,28 @@
   /* Related Products Grid - Responsive */
   .related-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 20px;
+  }
+  
+  .related-grid .industrial-card {
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255,255,255,0.05);
+  }
+  
+  .related-grid .industrial-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent-primary);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
   }
   
   @media (max-width: 576px) {
     .related-grid {
        grid-template-columns: repeat(2, 1fr);
-       gap: 10px;
+       gap: 12px;
     }
-    .related-product-card .img-wrap {
-       height: 150px;
+    .related-grid .industrial-card h6 {
+       font-size: 0.85rem;
     }
   }
 
@@ -139,8 +150,7 @@
   .rating-input-stars .star.selected,
   .rating-input-stars .star:hover,
   .rating-input-stars .star:hover ~ .star {
-     /* Logic handled by JS, but standard CSS hover doesn't work well for "previous siblings" without flex-direction row-reverse hack. 
-        We rely on JS for class 'selected' */
+     color: #ffc107; /* active color */
   }
   .rating-input-stars .star.selected {
       color: #FFD700;
@@ -297,6 +307,18 @@
                                               <th class="py-3 ps-4 text-secondary">Kategoriya</th>
                                               <td class="py-3 text-light">{{ item.category or 'Safety Equipment' }}</td>
                                           </tr>
+                                           {% if item.brand %}
+                                           <tr>
+                                               <th class="py-3 ps-4 text-secondary">Brend</th>
+                                               <td class="py-3 text-light">{{ item.brand }}</td>
+                                           </tr>
+                                           {% endif %}
+                                           {% if item.weight %}
+                                           <tr>
+                                               <th class="py-3 ps-4 text-secondary">Vazni</th>
+                                               <td class="py-3 text-light">{{ item.weight }} kg</td>
+                                           </tr>
+                                           {% endif %}
                                           {% if item.purpose %}
                                           <tr>
                                               <th class="py-3 ps-4 text-secondary">Foydalanish sohasi</th>
@@ -480,7 +502,7 @@
       {% if related_products %}
         <div class="related-grid">
            {% for rp in related_products %}
-             <a href="http://{{ request.host }}/product/{{ rp.id }}" class="industrial-card p-0 text-decoration-none overflow-hidden h-100 d-flex flex-column" style="transition: transform 0.2s;">
+             <a href="http://{{ request.host }}/product/{{ rp.id }}" class="industrial-card p-0 text-decoration-none overflow-hidden h-100 d-flex flex-column">
                  <div class="position-relative bg-black" style="padding-top: 100%;">
                      <img src="{{ prefer_webp(rp.image_url or url_for('static', filename='defoult.webp')) }}" class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover" alt="{{ rp.name }}">
                  </div>
@@ -548,6 +570,8 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
 
+    } // end if Swiper check
+
     // 2. Rating Star Logic
     const stars = document.querySelectorAll('.rating-input-stars .star');
     const input = document.getElementById('ratingInput');
@@ -583,14 +607,14 @@ document.addEventListener("DOMContentLoaded", function() {
         // Show loading state
         const btn = event.target;
         const originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i> Qo'shilmoqda...';
+        btn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i> Qo\'shilmoqda...';
         btn.disabled = true;
         
         fetch('/api/cart/add', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-Token': window.BASE_CONFIG?.csrf_token || ''
+                'X-CSRF-Token': (window.BASE_CONFIG && window.BASE_CONFIG.csrf_token) || ''
             },
             body: JSON.stringify({
                 product_id: productId,
@@ -601,7 +625,7 @@ document.addEventListener("DOMContentLoaded", function() {
         .then(data => {
             if (data && data.success) {
                 // Show success message
-                showNotification('Mahsulot savatga qo'shildi!', 'success');
+                showNotification('Mahsulot savatga qo\'shildi!', 'success');
                 // Update cart count if available
                 if (typeof updateCartCount === 'function') {
                     updateCartCount();
@@ -671,17 +695,17 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     
     // 4. Tab Styling Fix (Bootstrap default overrides)
-    const triggerTabList = document.querySelectorAll('#productTabs button')
+    const triggerTabList = document.querySelectorAll('#productTabs button');
     triggerTabList.forEach(triggerEl => {
-      const tabTrigger = new bootstrap.Tab(triggerEl)
+      const tabTrigger = new bootstrap.Tab(triggerEl);
       triggerEl.addEventListener('click', event => {
-        event.preventDefault()
-        tabTrigger.show()
+        event.preventDefault();
+        tabTrigger.show();
         // Toggle active class on nav-link manually if needed for custom styles
         triggerTabList.forEach(btn => btn.classList.remove('text-accent'));
         triggerEl.classList.add('text-accent');
-      })
-    })
+      });
+    });
 
 });
 </script>

@@ -34,6 +34,9 @@
 <a href="{{ url_for('super_admin_system') }}" class="nav-link-modern {{ 'active' if request.endpoint == 'super_admin_system' }}">
     <i class="bi bi-cpu"></i> Tizim Holati
 </a>
+<a href="{{ url_for('super_admin_database') }}" class="nav-link-modern {{ 'active' if 'database' in request.endpoint }}">
+    <i class="bi bi-database-fill-gear"></i> Ma'lumotlar Bazasi
+</a>
 <a href="{{ url_for('super_admin_logs') }}" class="nav-link-modern {{ 'active' if request.endpoint == 'super_admin_logs' }}">
     <i class="bi bi-journal-code"></i> Tizim Loglari
 </a>

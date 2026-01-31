@@ -1,71 +1,161 @@
-{% extends 'base.html' %} {% block title %}{{ get_text("Profil - Oyoq kiyim
-do'koni") or 'Profil - Oyoq kiyim do\'koni' }}{% endblock %} {% block head %}
+{% extends "base.html" %}
+{% block title %}{{ _('profile_page.title') }} - {{ _('nav.brand') }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    .profile-sidebar-card {
+        background: linear-gradient(135deg, var(--surface-dark) 0%, #1a202c 100%);
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        position: sticky;
+        top: 100px;
+    }
+    
+    .profile-nav-link {
+        display: flex;
+        align-items: center;
+        padding: 12px 20px;
+        color: var(--text-secondary);
+        text-decoration: none;
+        border-radius: 12px;
+        margin-bottom: 5px;
+        transition: all 0.3s ease;
+        font-family: var(--font-heading);
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+    }
+    
+    .profile-nav-link i {
+        font-size: 1.1rem;
+        width: 24px;
+        margin-right: 12px;
+        color: var(--accent-primary);
+        opacity: 0.7;
+    }
+    
+    .profile-nav-link:hover {
+        background: rgba(255, 215, 0, 0.05);
+        color: var(--accent-primary);
+    }
+    
+    .profile-nav-link.active {
+        background: var(--accent-primary);
+        color: var(--base-dark);
+    }
+    
+    .profile-nav-link.active i {
+        color: var(--base-dark);
+        opacity: 1;
+    }
+    
+    .stat-badge {
+        background: rgba(255, 215, 0, 0.1);
+        border: 1px solid rgba(255, 215, 0, 0.2);
+        color: var(--accent-primary);
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+    }
+    
+    .avatar-upload-wrapper {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .avatar-edit-btn {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        width: 32px;
+        height: 32px;
+        background: var(--accent-primary);
+        color: var(--base-dark);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        transition: transform 0.2s ease;
+    }
+    
+    .avatar-edit-btn:hover {
+        transform: scale(1.1);
+    }
+    
+    .section-anchor {
+        scroll-margin-top: 100px;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-
 <div class="container product-page-wrapper py-5">
   <div class="row g-4">
-    <!-- Left Column: Profile Card & Stats -->
+    <!-- Left Column: Navigation & Summary -->
     <div class="col-lg-4">
-      <!-- Profile Card -->
-      <div class="industrial-card p-4 text-center mb-4 position-relative overflow-hidden">
-        <div class="position-absolute top-0 start-0 w-100 h-100" style="background: var(--hazard-pattern); opacity: 0.05; pointer-events: none;"></div>
-        
-        <div class="position-relative">
-            <div class="d-inline-block p-1 rounded-circle border border-2 border-accent mb-3">
-                {% if user and user.avatar %}
-                <img src="{{ user.avatar | cloudinary_url }}" alt="Avatar" class="rounded-circle object-fit-cover" style="width: 120px; height: 120px;" onerror="this.src='{{ 'images/default-avatar.svg' | cloudinary_url }}'">
-                {% else %}
-                <img src="{{ 'images/default-avatar.svg' | cloudinary_url }}" alt="Avatar" class="rounded-circle object-fit-cover" style="width: 120px; height: 120px;">
-                {% endif %}
+      <div class="profile-sidebar-card shadow-lg overflow-hidden">
+        <div class="hazard-stripe"></div>
+        <div class="p-4 pt-5 text-center">
+            <div class="avatar-upload-wrapper mb-4">
+                <div class="d-inline-block p-1 rounded-circle border border-3 border-accent">
+                    {% if user and user.avatar %}
+                    <img src="{{ user.avatar | cloudinary_url }}" alt="Avatar" class="rounded-circle object-fit-cover" style="width: 140px; height: 140px;" onerror="this.onerror=null; this.src='/static/img/default-avatar.svg';">
+                    {% else %}
+                    <img src="{{ 'images/default-avatar.svg' | cloudinary_url }}" alt="Avatar" class="rounded-circle object-fit-cover" style="width: 140px; height: 140px;">
+                    {% endif %}
+                </div>
+                <a href="{{ url_for('profile_settings') }}" class="avatar-edit-btn">
+                    <i class="bi bi-camera"></i>
+                </a>
             </div>
             
-            <h3 class="h4 fw-bold text-uppercase mb-1">
+            <h3 class="h4 fw-bold text-uppercase mb-1 font-heading">
                 {% if user and user.first_name %} {{ user.first_name }} {{ user.last_name or '' }} 
                 {% elif session.get('user_name') %} {{ session.get('user_name') }} 
-                {% else %} Foydalanuvchi {% endif %}
+                {% else %} {{ _('profile_page.user_label') }} {% endif %}
             </h3>
-            <div class="badge bg-warning text-dark text-uppercase fw-bold mb-4">
-                {% if session.get('staff_id') %} Xodim {% elif session.get('courier_id') %} Kuryer {% else %} Mijoz {% endif %}
+            <div class="stat-badge mb-4">
+                {% if session.get('staff_id') %} {{ _('profile_page.role_staff') }} {% elif session.get('courier_id') %} {{ _('profile_page.role_courier') }} {% else %} {{ _('profile_page.role_client') }} {% endif %}
             </div>
 
-            <!-- Stats Grid (Compact) -->
-            <div class="row g-2 text-start small mb-4">
-                <div class="col-6">
-                    <div class="p-2 border border-secondary border-opacity-25 rounded bg-black bg-opacity-25">
-                        <div class="text-secondary text-uppercase" style="font-size: 0.7rem;">{{ get_text("Buyurtmalar") }}</div>
-                        <div class="fw-bold fs-5 text-accent">{{ orders|length }}</div>
-                    </div>
-                </div>
-                <div class="col-6">
-                    <div class="p-2 border border-secondary border-opacity-25 rounded bg-black bg-opacity-25">
-                        <div class="text-secondary text-uppercase" style="font-size: 0.7rem;">{{ get_text("Jami Summa") }}</div>
-                        <div class="fw-bold text-success">{{ "{:,.0f}".format(orders|sum(attribute='total_amount') or 0) }}</div>
-                    </div>
-                </div>
+            <!-- Profile Nav -->
+            <div class="text-start mt-4">
+                <a href="#personal-info" class="profile-nav-link">
+                    <i class="bi bi-person"></i> {{ _('profile_page.personal_info') }}
+                </a>
+                <a href="#address-info" class="profile-nav-link">
+                    <i class="bi bi-geo-alt"></i> {{ _('profile_page.address_title') }}
+                </a>
+                <a href="#order-history" class="profile-nav-link">
+                    <i class="bi bi-bag-check"></i> {{ _('profile_page.order_history') }}
+                </a>
+                <a href="#security" class="profile-nav-link">
+                    <i class="bi bi-shield-lock"></i> {{ _('profile_page.change_password') }}
+                </a>
+                <a href="{{ url_for('profile_settings') }}" class="profile-nav-link">
+                    <i class="bi bi-gear"></i> {{ _('nav.profile_settings') }}
+                </a>
+                <hr class="border-secondary border-opacity-25">
+                <a href="{{ url_for('logout') }}" class="profile-nav-link text-danger">
+                    <i class="bi bi-box-arrow-right"></i> {{ _('nav.logout') }}
+                </a>
             </div>
-            
-            <!-- Turn off/Logout -->
-            <a href="{{ url_for('logout') }}" class="btn btn-outline-danger w-100">
-                <i class="bi bi-box-arrow-right me-2"></i> {{ get_text("Chiqish") }}
-            </a>
         </div>
       </div>
-
-      <!-- Navigation Menu (Optional, relying on scroll/tabs? Or just stacked?) -->
-      <!-- We will just stack the forms in the right column for simplicity, or use tabs? 
-           Stacked is fine for now, or maybe an accordion. Stacked with clear headers is Industrial style. -->
     </div>
 
-    <!-- Right Column: Forms & Data -->
+    <!-- Right Column: Content -->
     <div class="col-lg-8">
-      
       <!-- Flash Messages -->
       {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         {% for category, message in messages %}
-        <div class="alert alert-{{ 'danger' if category=='error' else 'success' if category=='success' else category }} alert-dismissible fade show mb-4" role="alert">
+        <div class="alert alert-industrial alert-{{ 'danger' if category=='error' else 'success' if category=='success' else category }} alert-dismissible fade show mb-4" role="alert">
+          <i class="bi {{ 'bi-exclamation-triangle' if category=='error' else 'bi-check-circle' }} me-2"></i>
           {{ message }}
           <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
@@ -73,159 +163,196 @@ do'koni") or 'Profil - Oyoq kiyim do\'koni' }}{% endblock %} {% block head %}
       {% endif %}
       {% endwith %}
 
-      <!-- Personal Info -->
-      <div class="industrial-card p-4 mb-4">
-        <h4 class="mb-4 d-flex align-items-center text-uppercase fw-bold fs-5">
-            <i class="bi bi-person-gear me-2 text-accent"></i> {{ get_text("Shaxsiy ma'lumotlar") }}
-        </h4>
-        <form method="POST" action="{{ url_for('update_profile') }}">
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label class="form-label small text-secondary">{{ get_text("Ism") }}</label>
-                    <input type="text" class="form-control" name="first_name" value="{{ user.first_name if user else '' }}" required>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label small text-secondary">{{ get_text("Familiya") }}</label>
-                    <input type="text" class="form-control" name="last_name" value="{{ user.last_name if user else '' }}">
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label small text-secondary">{{ get_text("Email") }}</label>
-                    <input type="email" class="form-control" name="email" value="{{ user.email if user else '' }}" required>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label small text-secondary">{{ get_text("Telefon") }}</label>
-                    <input type="text" class="form-control" name="phone" value="{{ user.phone if user else '' }}" placeholder="+998...">
-                </div>
-                <div class="col-12 text-end">
-                    <button type="submit" class="btn-primary-industrial btn-sm">{{ get_text("Saqlash") }}</button>
-                </div>
-            </div>
-        </form>
+      <!-- Quick Stats Grid -->
+      <div class="row g-3 mb-4">
+          <div class="col-md-4">
+              <div class="industrial-card p-3 text-center">
+                  <div class="text-secondary small text-uppercase mb-1">{{ _('profile_page.stat_orders') }}</div>
+                  <div class="h3 fw-bold text-accent mb-0">{{ orders|length }}</div>
+              </div>
+          </div>
+          <div class="col-md-4">
+              <div class="industrial-card p-3 text-center">
+                  <div class="text-secondary small text-uppercase mb-1">{{ _('profile_page.order_status') }}</div>
+                  <div class="h3 fw-bold text-success mb-0">
+                      {{ orders|selectattr('status', 'equalto', 'delivered')|list|length }}
+                  </div>
+              </div>
+          </div>
+          <div class="col-md-4">
+              <div class="industrial-card p-3 text-center">
+                  <div class="text-secondary small text-uppercase mb-1">Jami summa</div>
+                  <div class="h3 fw-bold text-accent mb-0" style="font-size: 1.2rem;">
+                      {{ "{:,.0f}".format(orders|sum(attribute='total_amount') or 0) }}
+                  </div>
+              </div>
+          </div>
       </div>
 
-      <!-- Address -->
-      <div class="industrial-card p-4 mb-4">
-         <h4 class="mb-4 d-flex align-items-center text-uppercase fw-bold fs-5">
-            <i class="bi bi-geo-alt me-2 text-accent"></i> {{ get_text("Yashash manzili") }}
-        </h4>
-        <form method="POST" action="{{ url_for('update_address') }}">
-            <div class="mb-3">
-                <div class="input-group">
-                    <input type="text" id="address" name="address" class="form-control bg-dark text-light" value="{{ user.address if user else '' }}" readonly placeholder="Manzilni xaritadan tanlang">
-                    <button class="btn btn-outline-secondary" type="button"><i class="bi bi-map"></i></button>
+      <!-- Sections -->
+      <div id="personal-info" class="section-anchor">
+          <div class="industrial-card p-4 mb-4">
+            <h4 class="mb-4 d-flex align-items-center text-uppercase fw-bold fs-5">
+                <i class="bi bi-person-gear me-2 text-accent"></i> {{ _('profile_page.personal_info') }}
+            </h4>
+            <form method="POST" action="{{ url_for('update_profile') }}">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label-industrial">{{ _('profile_page.first_name') }}</label>
+                        <input type="text" class="form-control-industrial" name="first_name" value="{{ user.first_name if user else '' }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label-industrial">{{ _('profile_page.last_name') }}</label>
+                        <input type="text" class="form-control-industrial" name="last_name" value="{{ user.last_name if user else '' }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label-industrial">{{ _('auth.email_label') }}</label>
+                        <input type="email" class="form-control-industrial" name="email" value="{{ user.email if user else '' }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label-industrial">{{ _('auth.phone_label') }}</label>
+                        <input type="text" class="form-control-industrial" name="phone" value="{{ user.phone if user else '' }}" placeholder="+998...">
+                    </div>
+                    <div class="col-12 text-end">
+                        <button type="submit" class="btn-primary-industrial px-4">{{ _('profile_page.save') }}</button>
+                    </div>
                 </div>
-            </div>
-            
-            <div id="profile-map" style="height: 250px; border-radius: 8px; border: 1px solid var(--border-color);" class="mb-3"></div>
-            
-            <input type="hidden" id="address_latitude" name="address_latitude" value="{{ (user.address_latitude if user else '') or session.get('user_address_latitude', '') }}">
-            <input type="hidden" id="address_longitude" name="address_longitude" value="{{ (user.address_longitude if user else '') or session.get('user_address_longitude', '') }}">
-            
-            <div class="text-end">
-                <button type="submit" class="btn-primary-industrial btn-sm">{{ get_text("Manzilni yangilash") }}</button>
-            </div>
-        </form>
+            </form>
+          </div>
       </div>
 
-       <!-- Change Password -->
-      <div class="industrial-card p-4 mb-4">
-        <h4 class="mb-4 d-flex align-items-center text-uppercase fw-bold fs-5">
-            <i class="bi bi-shield-lock me-2 text-accent"></i> {{ get_text("Parolni o'zgartirish") }}
-        </h4>
-        <form method="POST" action="{{ url_for('change_password') }}">
-             <div class="row g-3">
-                <div class="col-md-6">
-                    <label class="form-label small text-secondary">{{ get_text("Joriy parol") }}</label>
-                    <input type="password" class="form-control" name="current_password" required>
+      <div id="address-info" class="section-anchor">
+          <div class="industrial-card p-4 mb-4">
+             <h4 class="mb-4 d-flex align-items-center text-uppercase fw-bold fs-5">
+                <i class="bi bi-geo-alt me-2 text-accent"></i> {{ _('profile_page.address_title') }}
+            </h4>
+            <form method="POST" action="{{ url_for('update_address') }}">
+                <div class="mb-3">
+                    <div class="input-group-industrial">
+                        <span class="input-icon"><i class="bi bi-map"></i></span>
+                        <input type="text" id="address" name="address" class="form-control-industrial" value="{{ user.address if user else '' }}" readonly placeholder="{{ _('auth.address_placeholder') }}">
+                    </div>
                 </div>
-                 <div class="col-md-6">
-                    <label class="form-label small text-secondary">{{ get_text("Yangi parol") }}</label>
-                    <input type="password" class="form-control" name="new_password" required>
+                
+                <div id="profile-map" class="map-industrial mb-3" style="height: 250px;"></div>
+                
+                <input type="hidden" id="address_latitude" name="address_latitude" value="{{ (user.address_latitude if user else '') or session.get('user_address_latitude', '') }}">
+                <input type="hidden" id="address_longitude" name="address_longitude" value="{{ (user.address_longitude if user else '') or session.get('user_address_longitude', '') }}">
+                
+                <div class="text-end">
+                    <button type="submit" class="btn-primary-industrial px-4">{{ _('profile_page.update_address') }}</button>
                 </div>
-                <!-- Add confirmation layout? -->
-                <div class="col-12 text-end">
-                    <button type="submit" class="btn-primary-industrial btn-sm">{{ get_text("O'zgartirish") }}</button>
-                </div>
-             </div>
-        </form>
+            </form>
+          </div>
       </div>
 
-      <!-- Orders History -->
-      <div class="industrial-card p-4 mb-4">
-         <h4 class="mb-4 d-flex align-items-center text-uppercase fw-bold fs-5">
-            <i class="bi bi-clock-history me-2 text-accent"></i> {{ get_text("Buyurtmalar tarixi") }}
-        </h4>
-        {% if orders %}
-        <div class="table-responsive">
-            <table class="table table-dark table-hover border-secondary small">
-                <thead>
-                    <tr class="text-secondary text-uppercase">
-                        <th>#ID</th>
-                        <th>{{ get_text("Sana") }}</th>
-                        <th>{{ get_text("Holat") }}</th>
-                        <th>{{ get_text("Summa") }}</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for order in orders %}
-                    <tr>
-                        <td class="fw-bold text-accent">{{ order.ticket_no }}</td>
-                        <td>{{ order.created_at[:16].replace('T', ' ') if order.created_at else '' }}</td>
-                        <td>
-                            <span class="badge border 
-                                {% if order.status == 'delivered' %}border-success text-success
-                                {% elif order.status == 'cancelled' %}border-danger text-danger
-                                {% else %}border-warning text-warning{% endif %}">
-                                {{ order.status }}
-                            </span>
-                        </td>
-                        <td>{{ "{:,.0f}".format(order.total_amount or 0) }}</td>
-                        <td class="text-end">
-                             <a href="{{ url_for('view_receipt', ticket_no=order.ticket_no) }}" class="btn btn-sm btn-outline-light py-0 px-2"><i class="bi bi-receipt"></i></a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        {% else %}
-        <p class="text-secondary text-center py-3">{{ get_text("Buyurtmalar mavjud emas") }}</p>
-        {% endif %}
+      <div id="order-history" class="section-anchor">
+          <div class="industrial-card p-4 mb-4">
+             <h4 class="mb-4 d-flex align-items-center text-uppercase fw-bold fs-5">
+                <i class="bi bi-clock-history me-2 text-accent"></i> {{ _('profile_page.order_history') }}
+            </h4>
+            {% if orders %}
+            <div class="table-responsive">
+                <table class="table table-dark table-hover border-secondary small">
+                    <thead>
+                        <tr class="text-secondary text-uppercase">
+                            <th>#ID</th>
+                            <th>{{ _('profile_page.order_date') }}</th>
+                            <th>{{ _('profile_page.order_status') }}</th>
+                            <th>{{ _('profile_page.order_amount') }}</th>
+                            <th class="text-end">Chek</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <td class="fw-bold text-accent">{{ order.ticket_no }}</td>
+                            <td>{{ order.created_at[:16].replace('T', ' ') if order.created_at else '' }}</td>
+                            <td>
+                                <span class="badge border 
+                                    {% if order.status == 'delivered' %}border-success text-success
+                                    {% elif order.status == 'cancelled' %}border-danger text-danger
+                                    {% else %}border-warning text-warning{% endif %}">
+                                    {{ order.status }}
+                                </span>
+                            </td>
+                            <td>{{ "{:,.0f}".format(order.total_amount or 0) }} so'm</td>
+                            <td class="text-end">
+                                 <a href="{{ url_for('view_receipt', ticket_no=order.ticket_no) }}" class="btn btn-sm btn-outline-industrial py-1 px-2"><i class="bi bi-receipt"></i></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-cart-x fs-1 text-secondary opacity-25 mb-3 d-block"></i>
+                <p class="text-secondary">{{ _('profile_page.no_orders') }}</p>
+                <a href="{{ url_for('menu') }}" class="btn-primary-industrial btn-sm text-decoration-none d-inline-block">{{ _('nav.menu') }}</a>
+            </div>
+            {% endif %}
+          </div>
       </div>
-      
-      <!-- Active Sessions -->
-      <div class="industrial-card p-4">
-          <h4 class="mb-4 d-flex align-items-center text-uppercase fw-bold fs-5">
-            <i class="bi bi-laptop me-2 text-accent"></i> {{ get_text("Faol sessiyalar") }}
-        </h4>
-        {% if sessions %}
-            {% for s in sessions %}
-             <div class="d-flex justify-content-between align-items-center border-bottom border-secondary border-opacity-25 pb-3 mb-3">
-                 <div>
-                     <div class="d-flex align-items-center gap-2">
-                         <span class="fw-bold">{{ s.ip }}</span>
-                         {% if s.session_id == session.session_id %}
-                         <span class="badge bg-success small">{{ get_text("Joriy") }}</span>
-                         {% endif %}
-                     </div>
-                     <div class="small text-secondary">{{ s.user_agent }}</div>
-                     <div class="small text-secondary">{{ s.last_seen }}</div>
+
+      <div id="security" class="section-anchor">
+          <div class="industrial-card p-4 mb-4">
+            <h4 class="mb-4 d-flex align-items-center text-uppercase fw-bold fs-5">
+                <i class="bi bi-shield-lock me-2 text-accent"></i> {{ _('profile_page.change_password') }}
+            </h4>
+            <form method="POST" action="{{ url_for('change_password') }}">
+                 <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label-industrial">{{ _('profile_page.current_password') }}</label>
+                        <input type="password" class="form-control-industrial" name="current_password" required>
+                    </div>
+                     <div class="col-md-6">
+                        <label class="form-label-industrial">{{ _('profile_page.new_password') }}</label>
+                        <input type="password" class="form-control-industrial" name="new_password" required>
+                    </div>
+                    <div class="col-12 text-end">
+                        <button type="submit" class="btn-primary-industrial px-4">{{ _('profile_page.change_button') }}</button>
+                    </div>
                  </div>
-                 <button class="btn btn-sm btn-outline-danger" onclick="terminateSession('{{ s.session_id }}', {{ 'true' if s.session_id == session.session_id else 'false' }})">
-                     {{ get_text("Tugatish") }}
-                 </button>
-             </div>
-            {% endfor %}
-        {% else %}
-         <p class="text-secondary text-center">{{ get_text("Faol sessiyalar yo'q") }}</p>
-        {% endif %}
+            </form>
+          </div>
+      </div>
+
+      <!-- Active Sessions -->
+      <div class="industrial-card p-4 shadow-lg border-danger border-opacity-10">
+          <h4 class="mb-4 d-flex align-items-center text-uppercase fw-bold fs-5">
+            <i class="bi bi-laptop me-2 text-accent"></i> {{ _('profile_page.active_sessions') }}
+        </h4>
+        <div id="sessions-container">
+            {% if sessions %}
+                {% for s in sessions %}
+                 <div class="d-flex justify-content-between align-items-center border-bottom border-secondary border-opacity-25 pb-3 mb-3">
+                     <div>
+                         <div class="d-flex align-items-center gap-2 mb-1">
+                             <span class="fw-bold">{{ s.ip }}</span>
+                             {% if s.session_id == session.session_id %}
+                             <span class="badge bg-success small" style="font-size: 0.6rem;">{{ _('profile_page.current_session') }}</span>
+                             {% endif %}
+                         </div>
+                         <div class="small text-secondary opacity-75">{{ s.user_agent[:60] }}...</div>
+                         <div class="small text-secondary"><i class="bi bi-clock me-1"></i> {{ s.last_seen }}</div>
+                     </div>
+                     <button class="btn btn-sm btn-outline-danger px-3 terminate-session-btn" 
+                             data-session-id="{{ s.session_id }}" 
+                             data-is-current="{{ 'true' if s.session_id == session.session_id else 'false' }}">
+                         {{ _('profile_page.terminate') }}
+                     </button>
+                 </div>
+                {% endfor %}
+            {% else %}
+             <p class="text-secondary text-center">{{ _('profile_page.no_sessions') }}</p>
+            {% endif %}
+        </div>
       </div>
 
     </div>
   </div>
 </div>
-
 {% endblock %}
 
 {% block scripts %}
@@ -235,14 +362,9 @@ do'koni") or 'Profil - Oyoq kiyim do\'koni' }}{% endblock %} {% block head %}
 
   function initProfileMap() {
     try {
-      const userLat = parseFloat(
-        document.getElementById("address_latitude").value
-      );
-      const userLng = parseFloat(
-        document.getElementById("address_longitude").value
-      );
-      const center =
-        userLat && userLng ? [userLat, userLng] : [41.2995, 69.2401];
+      const userLat = parseFloat(document.getElementById("address_latitude").value);
+      const userLng = parseFloat(document.getElementById("address_longitude").value);
+      const center = userLat && userLng ? [userLat, userLng] : [41.2995, 69.2401];
 
       profileMap = new ymaps.Map("profile-map", {
         center: center,
@@ -255,106 +377,76 @@ do'koni") or 'Profil - Oyoq kiyim do\'koni' }}{% endblock %} {% block head %}
       }
 
       profileMap.events.add("click", function (e) {
-        const coords = e.get("coords");
-        setProfileLocation(coords);
+        setProfileLocation(e.get("coords"));
       });
     } catch (e) {
       console.warn("Profile map init failed", e);
     }
   }
 
-  // Ensure Yandex maps is available before initializing (fallback if script blocked)
   (function ensureYMapsThenInit() {
     if (window.ymaps) return initProfileMap();
-    if (window.YANDEX_MAPS_LOADED === true && window.ymaps)
-      return initProfileMap();
     let attempts = 0;
-    const maxAttempts = 25;
     const iv = setInterval(() => {
-      attempts += 1;
-      if (window.ymaps) {
-        clearInterval(iv);
-        return initProfileMap();
-      }
-      if (attempts >= maxAttempts) {
-        clearInterval(iv);
-        // console.warn("Yandex Maps not available; profile map not initialized");
-      }
+      attempts++;
+      if (window.ymaps) { clearInterval(iv); return initProfileMap(); }
+      if (attempts >= 25) clearInterval(iv);
     }, 200);
   })();
 
   function setProfileLocation(coords) {
-    // Avvalgi marker olib tashlash
-    if (profileMarker) {
-      profileMap.geoObjects.remove(profileMarker);
-    }
-
-    // Yangi marker qo'yish
-    profileMarker = new ymaps.Placemark(
-      coords,
-      {
-        hintContent: "Sizning manzilingiz",
-        balloonContent: "Yashash manzilingiz",
-      },
-      {
-        draggable: true,
-        iconColor: "#4CAF50",
-      }
-    );
-
+    if (profileMarker) profileMap.geoObjects.remove(profileMarker);
+    profileMarker = new ymaps.Placemark(coords, { hintContent: "Joylashuvingiz" }, { draggable: true, iconColor: "#ffd700" });
     profileMap.geoObjects.add(profileMarker);
-
-    // Marker siqilganda yangi joylashuvni olish
-    profileMarker.events.add("dragend", function () {
-      const newCoords = profileMarker.geometry.getCoordinates();
-      setProfileLocation(newCoords);
-    });
-
-    // Koordinatalarni saqlash
+    profileMarker.events.add("dragend", () => setProfileLocation(profileMarker.geometry.getCoordinates()));
+    
     document.getElementById("address_latitude").value = coords[0];
     document.getElementById("address_longitude").value = coords[1];
 
-    // Manzilni olish (Reverse Geocoding)
-    ymaps.geocode(coords).then(function (res) {
-      const firstGeoObject = res.geoObjects.get(0);
-      let address = "";
-
-      if (firstGeoObject) {
-        address = firstGeoObject.getAddressLine();
-      } else {
-        address = `Lat: ${coords[0].toFixed(6)}, Lng: ${coords[1].toFixed(6)}`;
-      }
-
-      document.getElementById("address").value = address;
+    ymaps.geocode(coords).then(res => {
+      const addr = res.geoObjects.get(0) ? res.geoObjects.get(0).getAddressLine() : `Lat: ${coords[0].toFixed(6)}, Lng: ${coords[1].toFixed(6)}`;
+      document.getElementById("address").value = addr;
     });
   }
 
   async function terminateSession(sessionId, reloadCurrent = false) {
+    if(!confirm("Ushbu sessiyani tugatmoqchimisiz?")) return;
     try {
       const resp = await fetch("/api/terminate-session", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRF-Token": typeof CSRF_TOKEN !== "undefined" ? CSRF_TOKEN : "",
-        },
-        body: JSON.stringify({ session_id: sessionId }),
+        headers: { "Content-Type": "application/json", "X-CSRF-Token": typeof CSRF_TOKEN !== "undefined" ? CSRF_TOKEN : "" },
+        body: JSON.stringify({ session_id: sessionId })
       });
-      const data = await resp.json();
-      if (resp.ok && data.success) {
-        if (reloadCurrent) location.reload();
-        await loadSessions();
-      } else {
-        alert(data.message || "Sessiyani tugatishda xatolik");
-      }
-    } catch (e) {
-      alert("Tarmoqqa ulanish xatosi");
-    }
+      if (resp.ok) location.reload();
+      else alert("Xatolik yuz berdi");
+    } catch (e) { alert("Tarmoq xatosi"); }
   }
 
-  const DEFAULT_AVATAR_URL = "{{ 'images/default-avatar.svg' | cloudinary_url }}";
-  function handleProfileAvatarError(img) {
-     img.src = DEFAULT_AVATAR_URL;
-     img.onerror = null;
-  }
+  // Use event delegation for session termination
+  document.addEventListener('click', function(e) {
+      if (e.target.classList.contains('terminate-session-btn')) {
+          const sessionId = e.target.getAttribute('data-session-id');
+          const isCurrent = e.target.getAttribute('data-is-current') === 'true';
+          terminateSession(sessionId, isCurrent);
+      }
+  });
+  
+  // Smooth scroll for nav links
+  document.querySelectorAll('.profile-nav-link[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+              window.scrollTo({
+                  top: target.offsetTop - 100,
+                  behavior: 'smooth'
+              });
+              // Update active state
+              document.querySelectorAll('.profile-nav-link').forEach(l => l.classList.remove('active'));
+              this.classList.add('active');
+          }
+      });
+  });
 </script>
 {% endblock %}
+

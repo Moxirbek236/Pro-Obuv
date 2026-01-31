@@ -15,10 +15,10 @@
     <div class="position-absolute top-0 start-0 w-100 h-100" style="background: var(--hazard-pattern); opacity: 0.1; pointer-events: none;"></div>
     <div class="position-relative z-1">
       <h1 class="display-4 fw-bold text-uppercase mb-3" style="font-family: var(--font-heading); color: var(--accent-primary);">
-        <i class="bi bi-phone me-2"></i> Mobil Ilovalar
+        <i class="bi bi-phone me-2"></i> {{ _('downloads.title') }}
       </h1>
       <p class="lead text-secondary mb-0">
-        Xizmatlardan yanada qulay va tezkor foydalanish uchun maxsus mobil ilovalarni yuklab oling
+        {{ _('downloads.subtitle') }}
       </p>
     </div>
   </div>
@@ -26,29 +26,29 @@
   <!-- Apps Grid -->
   <div class="row g-4">
     
-    <!-- Main App -->
+    <!-- User App -->
     <div class="col-md-6 col-lg-3 animate-fade-in-up" style="animation-delay: 0.1s;">
       <div class="industrial-card h-100 p-4 border border-warning border-opacity-50 position-relative">
         <div class="position-absolute top-0 end-0 m-3 badge bg-success text-uppercase fw-bold shadow-sm">
-          Tavsiya
+          {{ _('downloads.recommended') or 'Tavsiya' }}
         </div>
         
         <div class="text-center mb-4 pt-2">
           <div class="d-inline-flex align-items-center justify-content-center bg-dark rounded-circle border border-secondary mb-3" style="width: 80px; height: 80px;">
             <i class="bi bi-shop display-5 text-light"></i>
           </div>
-          <h3 class="h4 fw-bold font-heading mb-1">Pro Obuv App</h3>
-          <p class="text-secondary small text-uppercase">Foydalanuvchilar uchun</p>
+          <h3 class="h4 fw-bold font-heading mb-1">{{ _('downloads.user_app_title') }}</h3>
+          <p class="text-secondary small text-uppercase">{{ _('downloads.user_app_subtitle') or 'Foydalanuvchilar uchun' }}</p>
         </div>
         
         <p class="text-secondary text-center small mb-4">
-          Buyurtma berish, mahsulotlarni ko'rish va yetkazib berish xizmatlari
+          {{ _('downloads.user_app_desc') }}
         </p>
 
         <div class="d-flex flex-wrap justify-content-center gap-2 mb-4">
-          <span class="badge bg-dark border border-secondary text-secondary">Buyurtma</span>
-          <span class="badge bg-dark border border-secondary text-secondary">Menyu</span>
-          <span class="badge bg-dark border border-secondary text-secondary">Yetkazib berish</span>
+          <span class="badge bg-dark border border-secondary text-secondary">{{ _('downloads.feature_order') or 'Buyurtma' }}</span>
+          <span class="badge bg-dark border border-secondary text-secondary">{{ _('downloads.feature_menu') or 'Menyu' }}</span>
+          <span class="badge bg-dark border border-secondary text-secondary">{{ _('downloads.feature_delivery') or 'Yetkazib berish' }}</span>
         </div>
         
         <div class="d-flex justify-content-around text-secondary small mb-4 border-top border-bottom border-secondary border-opacity-25 py-2">
@@ -57,31 +57,31 @@
           <span><i class="bi bi-hdd me-1"></i> 15 MB</span>
         </div>
         
-        <a href="/static/downloads/restaurant.apk" class="btn-primary-industrial w-100 justify-content-center text-decoration-none" download>
-          <i class="bi bi-android2 me-2"></i> Yuklab olish
+        <a href="/static/downloads/pro-obuv.apk" class="btn-primary-industrial w-100 justify-content-center text-decoration-none" download>
+          <i class="bi bi-android2 me-2"></i> {{ _('downloads.download_apk') }}
         </a>
       </div>
     </div>
 
-    <!-- Pro Version -->
+    <!-- Business Version -->
     <div class="col-md-6 col-lg-3 animate-fade-in-up" style="animation-delay: 0.2s;">
       <div class="industrial-card h-100 p-4">
         <div class="text-center mb-4 pt-2">
           <div class="d-inline-flex align-items-center justify-content-center rounded-circle border border-warning border-opacity-25 mb-3" style="width: 80px; height: 80px; background: rgba(245, 158, 11, 0.1);">
             <i class="bi bi-star display-5 text-warning"></i>
           </div>
-          <h3 class="h4 fw-bold font-heading mb-1">Restaurant Pro</h3>
-          <p class="text-secondary small text-uppercase">Biznes mijozlar uchun</p>
+          <h3 class="h4 fw-bold font-heading mb-1">{{ _('downloads.business_app_title') }}</h3>
+          <p class="text-secondary small text-uppercase">{{ _('downloads.pro_app_subtitle') or 'Biznes mijozlar uchun' }}</p>
         </div>
         
         <p class="text-secondary text-center small mb-4">
-          Korporativ mijozlar uchun maxsus imkoniyatlar va chegirmalar
+          {{ _('downloads.business_app_desc') }}
         </p>
 
         <div class="d-flex flex-wrap justify-content-center gap-2 mb-4">
-          <span class="badge bg-dark border border-secondary text-secondary">Hisobotlar</span>
-          <span class="badge bg-dark border border-secondary text-secondary">B2B</span>
-          <span class="badge bg-dark border border-secondary text-secondary">Hujjatlar</span>
+          <span class="badge bg-dark border border-secondary text-secondary">{{ _('downloads.feature_reports') or 'Hisobotlar' }}</span>
+          <span class="badge bg-dark border border-secondary text-secondary">{{ _('downloads.feature_b2b') or 'B2B' }}</span>
+          <span class="badge bg-dark border border-secondary text-secondary">{{ _('downloads.feature_docs') or 'Hujjatlar' }}</span>
         </div>
         
         <div class="d-flex justify-content-around text-secondary small mb-4 border-top border-bottom border-secondary border-opacity-25 py-2">
@@ -90,8 +90,8 @@
           <span><i class="bi bi-hdd me-1"></i> 18 MB</span>
         </div>
         
-        <a href="/static/downloads/restaurant-pro.apk" class="btn-outline-industrial w-100 justify-content-center text-decoration-none" download>
-          <i class="bi bi-android2 me-2"></i> Yuklab olish
+        <a href="/static/downloads/pro-obuv-business.apk" class="btn-outline-industrial w-100 justify-content-center text-decoration-none" download>
+          <i class="bi bi-android2 me-2"></i> {{ _('downloads.download_apk') }}
         </a>
       </div>
     </div>
@@ -103,18 +103,18 @@
           <div class="d-inline-flex align-items-center justify-content-center rounded-circle border border-info border-opacity-25 mb-3" style="width: 80px; height: 80px; background: rgba(14, 165, 233, 0.1);">
             <i class="bi bi-gear display-5 text-info"></i>
           </div>
-          <h3 class="h4 fw-bold font-heading mb-1">Restaurant Admin</h3>
-          <p class="text-secondary small text-uppercase">Xodimlar uchun</p>
+          <h3 class="h4 fw-bold font-heading mb-1">{{ _('downloads.admin_app_title') }}</h3>
+          <p class="text-secondary small text-uppercase">{{ _('downloads.admin_app_subtitle') or 'Xodimlar uchun' }}</p>
         </div>
         
         <p class="text-secondary text-center small mb-4">
-          Buyurtmalar va xodimlarni boshqarish tizimi
+          {{ _('downloads.admin_app_desc') }}
         </p>
 
         <div class="d-flex flex-wrap justify-content-center gap-2 mb-4">
-          <span class="badge bg-dark border border-secondary text-secondary">CRM</span>
-          <span class="badge bg-dark border border-secondary text-secondary">Statistika</span>
-          <span class="badge bg-dark border border-secondary text-secondary">Nazorat</span>
+          <span class="badge bg-dark border border-secondary text-secondary">{{ _('downloads.feature_crm') or 'CRM' }}</span>
+          <span class="badge bg-dark border border-secondary text-secondary">{{ _('downloads.feature_stats') or 'Statistika' }}</span>
+          <span class="badge bg-dark border border-secondary text-secondary">{{ _('downloads.feature_control') or 'Nazorat' }}</span>
         </div>
         
         <div class="d-flex justify-content-around text-secondary small mb-4 border-top border-bottom border-secondary border-opacity-25 py-2">
@@ -123,8 +123,8 @@
           <span><i class="bi bi-hdd me-1"></i> 22 MB</span>
         </div>
         
-        <a href="/static/downloads/restaurant-admin.apk" class="btn-outline-industrial w-100 justify-content-center text-decoration-none" download>
-          <i class="bi bi-android2 me-2"></i> Yuklab olish
+        <a href="/static/downloads/pro-obuv-admin.apk" class="btn-outline-industrial w-100 justify-content-center text-decoration-none" download>
+          <i class="bi bi-android2 me-2"></i> {{ _('downloads.download_apk') }}
         </a>
       </div>
     </div>
@@ -136,18 +136,18 @@
           <div class="d-inline-flex align-items-center justify-content-center rounded-circle border border-danger border-opacity-25 mb-3" style="width: 80px; height: 80px; background: rgba(239, 68, 68, 0.1);">
             <i class="bi bi-tv display-5 text-danger"></i>
           </div>
-          <h3 class="h4 fw-bold font-heading mb-1">Kitchen Monitor</h3>
-          <p class="text-secondary small text-uppercase">Oshxona ekrani</p>
+          <h3 class="h4 fw-bold font-heading mb-1">{{ _('downloads.monitor_app_title') }}</h3>
+          <p class="text-secondary small text-uppercase">{{ _('downloads.monitor_app_subtitle') or 'Monitor ekrani' }}</p>
         </div>
         
         <p class="text-secondary text-center small mb-4">
-          Oshxona uchun buyurtmalar monitoringi ekrani
+          {{ _('downloads.monitor_app_desc') }}
         </p>
 
         <div class="d-flex flex-wrap justify-content-center gap-2 mb-4">
-          <span class="badge bg-dark border border-secondary text-secondary">Real-time</span>
-          <span class="badge bg-dark border border-secondary text-secondary">TV</span>
-          <span class="badge bg-dark border border-secondary text-secondary">Ovoz</span>
+          <span class="badge bg-dark border border-secondary text-secondary">{{ _('downloads.feature_realtime') or 'Real-time' }}</span>
+          <span class="badge bg-dark border border-secondary text-secondary">{{ _('downloads.feature_tv') or 'TV' }}</span>
+          <span class="badge bg-dark border border-secondary text-secondary">{{ _('downloads.feature_sound') or 'Ovoz' }}</span>
         </div>
         
         <div class="d-flex justify-content-around text-secondary small mb-4 border-top border-bottom border-secondary border-opacity-25 py-2">
@@ -156,8 +156,8 @@
           <span><i class="bi bi-hdd me-1"></i> 12 MB</span>
         </div>
         
-        <a href="/static/downloads/restaurant-monitor.apk" class="btn-outline-industrial w-100 justify-content-center text-decoration-none" download>
-          <i class="bi bi-android2 me-2"></i> Yuklab olish
+        <a href="/static/downloads/pro-obuv-monitor.apk" class="btn-outline-industrial w-100 justify-content-center text-decoration-none" download>
+          <i class="bi bi-android2 me-2"></i> {{ _('downloads.download_apk') }}
         </a>
       </div>
     </div>
@@ -170,28 +170,28 @@
     <div class="col-lg-8 animate-fade-in-up" style="animation-delay: 0.5s;">
       <div class="industrial-card p-4 h-100">
         <h4 class="mb-4 text-uppercase fw-bold text-accent">
-            <i class="bi bi-lightbulb me-2"></i> Foydalanish bo'yicha
+            <i class="bi bi-lightbulb me-2"></i> {{ _('downloads.usage_tips_title') }}
         </h4>
         <ul class="list-unstyled mb-0">
           <li class="d-flex align-items-start mb-3 pb-3 border-bottom border-secondary border-opacity-25">
             <i class="bi bi-check-circle-fill text-success me-3 mt-1 fs-5"></i>
             <div>
-                <strong class="d-block text-white mb-1">Android 7.0+</strong>
-                <span class="text-secondary">Ilovani Android 7.0 va undan yuqori versiyalarda ishlatishingiz mumkin.</span>
+                <strong class="d-block text-white mb-1">{{ _('downloads.android_version') }}</strong>
+                <span class="text-secondary">{{ _('downloads.android_desc') }}</span>
             </div>
           </li>
           <li class="d-flex align-items-start mb-3 pb-3 border-bottom border-secondary border-opacity-25">
             <i class="bi bi-wifi text-success me-3 mt-1 fs-5"></i>
             <div>
-                <strong class="d-block text-white mb-1">Internet</strong>
-                <span class="text-secondary">To'liq ishlashi uchun doimiy internet aloqasi talab qilinadi.</span>
+                <strong class="d-block text-white mb-1">{{ _('downloads.internet_title') }}</strong>
+                <span class="text-secondary">{{ _('downloads.internet_desc') }}</span>
             </div>
           </li>
           <li class="d-flex align-items-start">
              <i class="bi bi-shield-check text-success me-3 mt-1 fs-5"></i>
             <div>
-                <strong class="d-block text-white mb-1">Xavfsizlik</strong>
-                <span class="text-secondary">Barcha ma'lumotlaringiz shifrlangan holda himoyalanadi.</span>
+                <strong class="d-block text-white mb-1">{{ _('downloads.security_title') }}</strong>
+                <span class="text-secondary">{{ _('downloads.security_desc') }}</span>
             </div>
           </li>
         </ul>
@@ -202,21 +202,21 @@
     <div class="col-lg-4 animate-fade-in-up" style="animation-delay: 0.6s;">
       <div class="industrial-card p-4 h-100 border border-danger border-opacity-25 bg-danger bg-opacity-10">
         <h4 class="mb-4 text-uppercase fw-bold text-danger">
-            <i class="bi bi-life-preserver me-2"></i> Yordam
+            <i class="bi bi-life-preserver me-2"></i> {{ _('downloads.help_title') }}
         </h4>
         <p class="text-secondary mb-4">
-            Ilovalarni o'rnatishda yoki ishlatishda muammo yuzaga kelsa, bizning texnik yordam bo'limiga murojaat qiling.
+            {{ _('downloads.help_desc') }}
         </p>
         
         <div class="d-grid gap-3">
           <a href="{{ url_for('contact') }}" class="btn btn-outline-light d-flex align-items-center justify-content-center">
-            <i class="bi bi-envelope me-2"></i> Aloqa sahifasi
+            <i class="bi bi-envelope me-2"></i> {{ _('downloads.contact_page') }}
           </a>
           <a href="tel:{{ get_text('footer.phone_href') }}" class="btn btn-outline-light d-flex align-items-center justify-content-center">
-             <i class="bi bi-telephone me-2"></i> Qo'ng'iroq qilish
+             <i class="bi bi-telephone me-2"></i> {{ _('downloads.call_us') }}
           </a>
           <a href="https://t.me/proobuv_support" class="btn btn-outline-light d-flex align-items-center justify-content-center">
-             <i class="bi bi-telegram me-2"></i> Telegram orqali
+             <i class="bi bi-telegram me-2"></i> {{ _('downloads.via_telegram') }}
           </a>
         </div>
       </div>

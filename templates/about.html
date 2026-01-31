@@ -60,7 +60,7 @@
         </div>
         <div class="col-lg-6">
             <div class="position-relative rounded-4 overflow-hidden shadow-lg border border-secondary border-opacity-50">
-                <img src="{{ url_for('static', filename='defoult.webp') }}" alt="Pro Obuv Warehouse" class="img-fluid w-100 object-fit-cover" style="min-height: 350px;">
+                <img src="https://res.cloudinary.com/dpfbu9aid/image/upload/v1766927327/products/defoult.webp" alt="Pro Obuv Warehouse" class="img-fluid w-100 object-fit-cover" style="min-height: 350px;">
                 <div class="position-absolute bottom-0 start-0 w-100 p-4 bg-black bg-opacity-75 backdrop-blur">
                     <p class="mb-0 text-white fst-italic">{{ _('about.motto') or 'Har bir qadamda ishonchli himoya' }}</p>
                 </div>
@@ -70,7 +70,7 @@
   </div>
 
   <!-- Features Grid -->
-  <h3 class="text-uppercase fw-bold text-center mb-4 text-secondary ls-2">Bizning Afzalliklarimiz</h3>
+  <h3 class="text-uppercase fw-bold text-center mb-4 text-secondary ls-2">{{ _('about.advantages_title') }}</h3>
   <div class="row g-4 mb-5">
     <!-- Feature 1 -->
     <div class="col-md-6 col-lg-4 animate-fade-in-up" style="animation-delay: 0.2s;">
@@ -78,9 +78,9 @@
         <div class="d-inline-flex align-items-center justify-content-center rounded-circle border border-success border-opacity-25 mb-3" style="width: 70px; height: 70px; background: rgba(16, 185, 129, 0.1);">
            <i class="bi bi-award fs-2 text-success"></i>
         </div>
-        <h4 class="h5 fw-bold text-uppercase mb-3">Yuqori Sifat</h4>
+        <h4 class="h5 fw-bold text-uppercase mb-3">{{ _('about.adv1_title') }}</h4>
         <p class="text-secondary small">
-          Barcha mahsulotlarimiz xalqaro ISO standartlariga mos va sertifikatlangan. Faqat tekshirilgan brendlar.
+          {{ _('about.adv1_desc') }}
         </p>
       </div>
     </div>
@@ -91,9 +91,9 @@
         <div class="d-inline-flex align-items-center justify-content-center rounded-circle border border-warning border-opacity-25 mb-3" style="width: 70px; height: 70px; background: rgba(245, 158, 11, 0.1);">
            <i class="bi bi-truck fs-2 text-warning"></i>
         </div>
-        <h4 class="h5 fw-bold text-uppercase mb-3">Tez Yetkazib Berish</h4>
+        <h4 class="h5 fw-bold text-uppercase mb-3">{{ _('about.adv2_title') }}</h4>
         <p class="text-secondary small">
-          O'zbekiston bo'ylab tezkor logistika. Toshkent shahrida 24 soat ichida yetkazib beramiz.
+          {{ _('about.adv2_desc') }}
         </p>
       </div>
     </div>
@@ -104,9 +104,9 @@
         <div class="d-inline-flex align-items-center justify-content-center rounded-circle border border-info border-opacity-25 mb-3" style="width: 70px; height: 70px; background: rgba(14, 165, 233, 0.1);">
            <i class="bi bi-headset fs-2 text-info"></i>
         </div>
-        <h4 class="h5 fw-bold text-uppercase mb-3">Professional Maslahat</h4>
+        <h4 class="h5 fw-bold text-uppercase mb-3">{{ _('about.adv3_title') }}</h4>
         <p class="text-secondary small">
-          Bizning mutaxassislarimiz sizning sohangizga mos keladigan eng to'g'ri himoya vositalarini tanlashda yordam beradi.
+          {{ _('about.adv3_desc') }}
         </p>
       </div>
     </div>
@@ -117,9 +117,9 @@
         <div class="d-inline-flex align-items-center justify-content-center rounded-circle border border-danger border-opacity-25 mb-3" style="width: 70px; height: 70px; background: rgba(239, 68, 68, 0.1);">
            <i class="bi bi-shield-fill-check fs-2 text-danger"></i>
         </div>
-        <h4 class="h5 fw-bold text-uppercase mb-3">Kafolat</h4>
+        <h4 class="h5 fw-bold text-uppercase mb-3">{{ _('about.adv4_title') }}</h4>
         <p class="text-secondary small">
-          Mahsulotlarimizga rasmiy kafolat beramiz. Sifatga 100% javob beramiz yoki pulingizni qaytaramiz.
+          {{ _('about.adv4_desc') }}
         </p>
       </div>
     </div>
@@ -130,9 +130,9 @@
         <div class="d-inline-flex align-items-center justify-content-center rounded-circle border border-primary border-opacity-25 mb-3" style="width: 70px; height: 70px; background: rgba(59, 130, 246, 0.1);">
            <i class="bi bi-wallet2 fs-2 text-primary"></i>
         </div>
-        <h4 class="h5 fw-bold text-uppercase mb-3">Qulay To'lov</h4>
+        <h4 class="h5 fw-bold text-uppercase mb-3">{{ _('about.adv5_title') }}</h4>
         <p class="text-secondary small">
-          Click, Payme, Uzum, naqd pul, terminal va korporativ o'tkazmalar. Barcha turdagi to'lovlar qabul qilinadi.
+          {{ _('about.adv5_desc') }}
         </p>
       </div>
     </div>
@@ -143,9 +143,9 @@
         <div class="d-inline-flex align-items-center justify-content-center rounded-circle border border-secondary border-opacity-25 mb-3" style="width: 70px; height: 70px; background: rgba(107, 114, 128, 0.1);">
            <i class="bi bi-people fs-2 text-white"></i>
         </div>
-        <h4 class="h5 fw-bold text-uppercase mb-3">B2B va Korporativ</h4>
+        <h4 class="h5 fw-bold text-uppercase mb-3">{{ _('about.adv6_title') }}</h4>
         <p class="text-secondary small">
-          Korxonalar uchun maxsus takliflar, ulgurji narxlar va shartnoma asosida ishlash imkoniyati.
+          {{ _('about.adv6_desc') }}
         </p>
       </div>
     </div>
@@ -154,28 +154,28 @@
   <!-- Product Categories Snippet -->
   <div class="industrial-card p-4 mb-5 animate-fade-in-up" style="animation-delay: 0.8s;">
     <h3 class="h4 fw-bold text-uppercase mb-4 font-heading border-start border-4 border-warning ps-3">
-        Mahsulot Yo'nalishlari
+        {{ _('about.directions_title') }}
     </h3>
     <div class="row g-3">
         <div class="col-md-4">
             <div class="p-3 bg-dark border border-secondary rounded h-100">
                 <i class="bi bi-boot fs-3 text-warning mb-2 d-block"></i>
-                <h5 class="fw-bold text-light">Xavfsizlik Oyoq Kiyimlari</h5>
-                <p class="small text-secondary mb-0">Botinkalar, etiklar, payabzallar (S1, S2, S3 toifalari)</p>
+                <h5 class="fw-bold text-light">{{ _('about.dir1_title') }}</h5>
+                <p class="small text-secondary mb-0">{{ _('about.dir1_desc') }}</p>
             </div>
         </div>
         <div class="col-md-4">
             <div class="p-3 bg-dark border border-secondary rounded h-100">
                 <i class="bi bi-person-workspace fs-3 text-warning mb-2 d-block"></i>
-                <h5 class="fw-bold text-light">Maxsus Kiyimlar</h5>
-                <p class="small text-secondary mb-0">Kombinezonlar, kostyumlar, jiletlar va kurtkalar</p>
+                <h5 class="fw-bold text-light">{{ _('about.dir2_title') }}</h5>
+                <p class="small text-secondary mb-0">{{ _('about.dir2_desc') }}</p>
             </div>
         </div>
         <div class="col-md-4">
             <div class="p-3 bg-dark border border-secondary rounded h-100">
                 <i class="bi bi-shield-shaded fs-3 text-warning mb-2 d-block"></i>
-                <h5 class="fw-bold text-light">Himoya Vositalari</h5>
-                <p class="small text-secondary mb-0">Dubulg'alar, ko'zoynaklar, qo'lqoplar va respiratorlar</p>
+                <h5 class="fw-bold text-light">{{ _('about.dir3_title') }}</h5>
+                <p class="small text-secondary mb-0">{{ _('about.dir3_desc') }}</p>
             </div>
         </div>
     </div>
@@ -184,19 +184,18 @@
   <!-- CTA -->
   <div class="industrial-card p-5 text-center position-relative overflow-hidden animate-fade-in-up" style="animation-delay: 0.9s;">
     <div class="position-relative z-1">
-        <h2 class="h3 fw-bold text-uppercase mb-3">Savollaringiz bormi?</h2>
-        <p class="text-secondary mb-4">Bizning mutaxassislarimiz barcha savollaringizga javob berishga tayyor.</p>
+        <h2 class="h3 fw-bold text-uppercase mb-3">{{ _('about.cta_title') }}</h2>
+        <p class="text-secondary mb-4">{{ _('about.cta_desc') }}</p>
         <div class="d-flex justify-content-center gap-3 flex-wrap">
             <a href="{{ url_for('contact') }}" class="btn-primary-industrial">
-                <i class="bi bi-envelope me-2"></i> Bog'lanish
+                <i class="bi bi-envelope me-2"></i> {{ _('about.cta_contact') }}
             </a>
             <a href="{{ url_for('menu') }}" class="btn-outline-industrial">
-                <i class="bi bi-shop me-2"></i> Mahsulotlarni ko'rish
+                <i class="bi bi-shop me-2"></i> {{ _('about.cta_products') }}
             </a>
         </div>
     </div>
   </div>
-
 </div>
 
 <style>

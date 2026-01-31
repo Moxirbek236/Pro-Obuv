@@ -1,0 +1,280 @@
+/* UNIVERSAL RESPONSIVE ARCHITECTURE
+   Role: Frontend Architecture Assistant
+   Objective: Make the web app fully responsive across all devices
+*/
+
+/* =========================================
+   1. CORE VARIABLES & TYPOGRAPHY SCALING
+   ========================================= */
+:root {
+    /* Responsive Spacing */
+    --spacing-xs: 0.5rem;   /* 8px */
+    --spacing-sm: 1rem;     /* 16px */
+    --spacing-md: 1.5rem;   /* 24px */
+    --spacing-lg: 2rem;     /* 32px */
+    --spacing-xl: 3rem;     /* 48px */
+
+    /* Sidebar Widths */
+    --sidebar-width-desktop: 280px;
+    --sidebar-width-tablet: 240px;
+    --sidebar-width-mobile: 0px;
+}
+
+/* Fluid Typography */
+html {
+    font-size: 16px;
+}
+
+@media (max-width: 768px) {
+    html {
+        font-size: 14px; /* Scale down base font size for mobile */
+    }
+}
+
+/* =========================================
+   2. DASHBOARD LAYOUT ADAPTATIONS
+   ========================================= */
+
+/* Desktop Specifics (Large Screens) */
+@media (min-width: 1200px) {
+    .dashboard-content {
+        padding: var(--spacing-xl) !important;
+    }
+}
+
+/* Laptop/Tablet Specifics */
+@media (max-width: 1199px) {
+    .dashboard-sidebar {
+        width: var(--sidebar-width-tablet) !important;
+    }
+    
+    .dashboard-main {
+        margin-left: var(--sidebar-width-tablet) !important;
+    }
+}
+
+/* Mobile/Tablet Portrait Specifics */
+@media (max-width: 991px) {
+    /* Layout Reset */
+    .dashboard-layout {
+        flex-direction: column;
+    }
+
+    .dashboard-sidebar {
+        position: fixed;
+        left: -100%; /* Hidden by default */
+        top: 0;
+        bottom: 0;
+        width: 280px !important;
+        z-index: 1060; /* Higher than header */
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 4px 0 24px rgba(0,0,0,0.1);
+    }
+
+    .dashboard-sidebar.show {
+        left: 0;
+    }
+    
+    .dashboard-main {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+
+    /* Top Header Mobile Fixes */
+    .top-header {
+        padding: var(--spacing-sm) !important;
+        position: sticky;
+        top: 0;
+    }
+    
+    /* Content Padding */
+    .dashboard-content {
+        padding: var(--spacing-sm) !important;
+    }
+    
+    /* Sidebar Backdrop */
+    .sidebar-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 1055;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s;
+        backdrop-filter: blur(2px);
+    }
+    
+    .sidebar-backdrop.show {
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+/* =========================================
+   3. UNIVERSAL COMPONENTS
+   ========================================= */
+
+/* Responsive Cards & Grids */
+@media (max-width: 768px) {
+    /* Collapse Grids */
+    .row, .home-service-grid, .shop-layout, .footer-grid, .stats-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: var(--spacing-sm) !important;
+    }
+    
+    .col, .col-1, .col-2, .col-3, .col-4, .col-5, .col-6, 
+    .col-7, .col-8, .col-9, .col-10, .col-11, .col-12,
+    .col-md-6, .col-lg-4 {
+        width: 100% !important;
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
+    
+    /* Exceptions for small utility grids (like icons or small flags) */
+    .d-flex.gap-2.align-items-center, 
+    .d-flex.gap-2.justify-content-center,
+    .pagination-toolbar .d-flex {
+        flex-direction: row !important; /* Keep small inline items as row */
+    }
+}
+
+/* Responsive Tables - horizontal scroll wrapper */
+.table-responsive-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: var(--spacing-sm);
+    border-radius: 8px;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+@media (max-width: 991px) {
+    table {
+        min-width: 600px; /* Force minimum width to trigger scroll */
+    }
+    
+    /* Optional: Card view for tables on mobile */
+    .table-mobile-cards tbody tr {
+        display: block;
+        background: white;
+        margin-bottom: 1rem;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        padding: 1rem;
+    }
+    
+    .table-mobile-cards thead {
+        display: none; /* Hide header on card view */
+    }
+    
+    .table-mobile-cards td {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0 !important;
+        border: none !important;
+        border-bottom: 1px solid #f9f9f9 !important;
+    }
+    
+    .table-mobile-cards td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #666;
+        margin-right: 1rem;
+    }
+}
+
+/* =========================================
+   4. FORM ELEMENTS & INPUTS
+   ========================================= */
+@media (max-width: 768px) {
+    /* Stack forms */
+    .form-inline, .d-flex.align-items-center.gap-2 {
+        flex-wrap: wrap;
+    }
+    
+    .form-control, .form-select, .btn {
+        height: 44px; /* Larger touch targets */
+    }
+    
+    /* Full width inputs */
+    input[type="text"], 
+    input[type="email"], 
+    input[type="password"], 
+    input[type="search"], 
+    select, 
+    textarea {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    
+    /* Search Bar Tweaks */
+    .top-header .d-flex.align-items-center {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+/* =========================================
+   5. NAVIGATION & MENUS
+   ========================================= */
+/* Mobile Bottom Navigation (Optional Enhancement for Users) */
+.mobile-bottom-nav {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    /* Adjust Navbar toggler */
+    .navbar-toggler {
+        padding: 0.5rem;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Dropdown menus - full width on mobile */
+    .dropdown-menu {
+        position: fixed !important;
+        top: auto !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        border-radius: 16px 16px 0 0 !important;
+        margin: 0 !important;
+        transform: none !important;
+        padding: 20px !important;
+        box-shadow: 0 -10px 40px rgba(0,0,0,0.2) !important;
+        z-index: 2000 !important;
+        animation: slideUpMobile 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    @keyframes slideUpMobile {
+        from { transform: translateY(100%) !important; }
+        to { transform: translateY(0) !important; }
+    }
+}
+
+/* =========================================
+   6. UTILITIES
+   ========================================= */
+@media (max-width: 576px) {
+    .d-mobile-none { display: none !important; }
+    .d-mobile-block { display: block !important; }
+    .w-mobile-100 { width: 100% !important; }
+}
+
+@media (min-width: 992px) {
+    .d-desktop-none { display: none !important; }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) {
+    .btn:hover {
+        transform: none !important; /* Disable hover animations on touch */
+    }
+    
+    /* Increase tap targets */
+    a, button, .nav-link {
+        cursor: pointer;
+        touch-action: manipulation;
+    }
+}

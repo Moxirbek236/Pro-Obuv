@@ -1,0 +1,3296 @@
+<!DOCTYPE html>
+
+<html lang="uz">
+  <head>
+  <meta charset="utf-8" />
+  <!-- Inline favicon to avoid /favicon.ico 404 and reduce external requests -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23ffffff'/%3E%3Ctext x='2' y='12' font-size='12' fill='%23000'%3EP%3C/text%3E%3C/svg%3E" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Google Search Console verification -->
+  <meta name="google-site-verification" content="rTTyCeprWsCMNo0unnRWETF1MiikewIO27vPVJPStCc" />
+  <title>спецобувь / Safety  - nav.products - Safety.uz</title>
+  
+  
+<meta name="description" content="meta.products_description" />
+<meta name="keywords" content="meta.products_keywords" />
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/v1/favicons/apple-touch-icon" />
+    <link rel="icon" type="image/webp" sizes="32x32" href="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/v1/favicons/favicon-32x32" />
+    <link rel="icon" type="image/webp" sizes="16x16" href="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/v1/favicons/favicon-16x16" />
+    <link rel="shortcut icon" href="https://res.cloudinary.com/dpfbu9aid/raw/upload/v1/favicons/favicon.ico" />
+    <link rel="manifest" href="https://res.cloudinary.com/dpfbu9aid/raw/upload/v1/favicons/site.webmanifest" />
+    <meta name="theme-color" content="#4299e1" />
+    <meta name="msapplication-TileColor" content="#4299e1" />
+    <!-- Fallbacks for servers that don't serve static/favicons yet (keeps compatibility) -->
+    <!-- If these static files are not present, the server may instead serve /favicons/* from project root -->
+    <script>
+      (function(){
+        // If Flask static returns 404 for these resources in production, you can copy your /favicons into static/favicons.
+      })();
+    </script>
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="csrf-token" content="n2z7ki8Ceef7WBkshrl4zFOUW5HRlp3TZsD8EgBhnC4">
+    <script src="/uz/static/js/loop-protection.js"></script>
+    <!-- CORE LIBRARIES -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+    
+    <!-- PREMIUM FONTS -->
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;700&family=Inter:wght@400;600&family=Roboto+Condensed:wght@700&display=swap" rel="stylesheet">
+
+    <!-- INDUSTRIAL PREMIUM DESIGN SYSTEM (Primary Brand CSS) -->
+    <link rel="stylesheet" href="/uz/static/css/industrial-premium.css" />
+
+    <!-- Global sozlamalar uchun CSS -->
+    <style>
+      /* CRITICAL BRANDING OVERRIDES */
+      /* Removed Global Body Override to fix storefront designs */
+      /* body { background-color: var(--base-dark) !important; color: var(--text-primary) !important; ... } */
+      body.admin-mode {
+           background-color: var(--base-dark) !important;
+           color: var(--text-primary) !important;
+      }
+      
+      /* Alert Improvements */
+      .alert {
+          border: none;
+          box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          padding: 1rem 1.5rem;
+          border-radius: 8px;
+          position: fixed;
+          top: 80px;
+          right: 20px;
+          z-index: 9999;
+          animation: slideInRight 0.4s ease-out;
+          max-width: 400px;
+      }
+      .alert-dismissible .btn-close {
+          display: none !important; /* Remove close button as requested */
+      }
+      .alert-success {
+          background-color: #d1fae5;
+          color: #065f46;
+          border-left: 4px solid #10b981;
+      }
+      .alert-danger {
+          background-color: #fee2e2;
+          color: #991b1b;
+          border-left: 4px solid #ef4444;
+      }
+      @keyframes slideInRight {
+          from { opacity: 0; transform: translateX(100%); }
+          to { opacity: 1; transform: translateX(0); }
+      }
+      @keyframes fadeOut {
+          from { opacity: 1; }
+          to { opacity: 0; }
+      }
+
+      /* Floating Help Button */
+      #helpWidget {
+          position: fixed;
+          bottom: 30px;
+          right: 30px;
+          z-index: 99999; /* Highest as requested */
+      }
+      #helpBtn {
+          width: 56px;
+          height: 56px;
+          border-radius: 50%;
+          background: #4ade80; /* Nice green or gradient */
+          background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+          border: none;
+          box-shadow: 0 4px 15px rgba(22, 163, 74, 0.4);
+          color: white;
+          font-size: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: transform 0.2s;
+      }
+      #helpBtn:hover { transform: scale(1.1); }
+      #helpMenu {
+          position: absolute;
+          bottom: 70px;
+          right: 0;
+          background: white;
+          border-radius: 12px;
+          box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+          width: 200px;
+          overflow: hidden;
+          display: none; /* hidden by default */
+          flex-direction: column;
+      }
+      #helpMenu.show { display: flex; animation: slideUp 0.2s ease-out; }
+      .help-item {
+          padding: 12px 16px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          color: #1a1a1a;
+          text-decoration: none;
+          transition: background 0.2s;
+          font-size: 0.9rem;
+          font-weight: 500;
+          border: none;
+          background: none;
+          width: 100%;
+          text-align: left;
+      }
+      .help-item:hover { background: #f3f4f6; color: #16a34a; }
+      @keyframes slideUp {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+      }
+
+      
+      body.light-theme {
+          background-color: var(--base-light) !important;
+          color: var(--text-dark) !important;
+      }
+
+      /* Price visibility control */
+      .item-price, .menu-item-price, .price-section, .price-label {
+        display: none !important;
+      }
+      
+      body.show-prices .item-price,
+      body.show-prices .menu-item-price,
+      body.show-prices .price-section,
+      body.show-prices .price-label {
+        display: block !important;
+      }
+
+      /* Circular avatars enforcement */
+      img.app-avatar, img.rounded-circle {
+        border-radius: 50% !important;
+        object-fit: cover !important;
+      }
+      /* Default sizing; individual components may override */
+      .navbar img.app-avatar {
+        width: 32px !important;
+        height: 32px !important;
+      }
+
+      .dropdown-menu img.app-avatar {
+        width: 48px !important;
+        height: 48px !important;
+      }
+    </style>
+
+     
+    
+    <!-- Public chat widget -->
+    <script src="/static/chat_widget.js"></script>
+    <!-- Robust fallback: ensure nav-notify clicks always open notify modal and manage aria-hidden -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        try {
+          const safeJson = (res) => res.json().catch(() => ({}));
+          const openNotifyModal = async (btn) => {
+            try {
+              const modal = document.getElementById("notifyModal");
+              if (!modal) {
+                // nothing to show
+                return;
+              }
+              // If this is a non-super-admin viewer, try to fetch notifications and populate preview
+              const preview = document.getElementById("notifyListPreview");
+                if (preview) {
+                preview.innerHTML =
+                  '<div class="text-muted">messages.loading</div>';
+                try {
+                  const res = await fetch("/api/notifications");
+                  const data = await safeJson(res);
+                  const list = (data && data.notifications) || [];
+                  preview.innerHTML = "";
+                  if (list.length === 0)
+                    preview.innerHTML =
+                      '<div class="text-muted">messages.no_notifications</div>';
+                  list.slice(0, 10).forEach((n) => {
+                    const item = document.createElement("div");
+                    item.className = "mb-2";
+                    item.innerHTML = `<div style="font-weight:600">${
+                      n.title || ""
+                    }</div><div style="font-size:12px;color:#666">${
+                      n.body || ""
+                    }</div><hr/>`;
+                    preview.appendChild(item);
+                  });
+                } catch (e) {
+                  preview.innerHTML =
+                    '<div class="text-muted">messages.notifications_load_error</div>';
+                }
+              }
+
+              // show modal and set accessibility attributes
+              modal.style.display = "block";
+              modal.setAttribute("aria-hidden", "false");
+              // ensure focus
+              modal.setAttribute("tabindex", "-1");
+              modal.focus && modal.focus();
+              // mark read best-effort
+              fetch("/api/notifications/mark-read", {
+                method: "POST",
+                headers: {
+                  "X-CSRF-Token":
+                    typeof CSRF_TOKEN !== "undefined" ? CSRF_TOKEN : "",
+                },
+              })
+                .then(() => {})
+                .catch(() => {});
+            } catch (e) {
+              /* ignore */
+            }
+          };
+
+          // Attach listeners (use delegation-safe approach)
+          const attach = () => {
+            const btns = document.querySelectorAll(".nav-notify");
+            btns.forEach((b) => {
+              // remove duplicate listeners by cloning node if needed
+              if (!b.__notifyAttached) {
+                b.addEventListener("click", (ev) => {
+                  ev.preventDefault();
+                  openNotifyModal(b);
+                });
+                b.__notifyAttached = true;
+              }
+            });
+          };
+          attach();
+          // also observe for dynamically injected nav buttons
+          const nav = document.querySelector("nav");
+          if (nav) {
+            const mo = new MutationObserver(() => attach());
+            mo.observe(nav, { childList: true, subtree: true });
+          }
+
+              // Close handlers to set aria-hidden
+          const closeViewer = document.getElementById("notifyCloseViewer");
+          if (closeViewer) {
+            closeViewer.addEventListener("click", function () {
+              const m = document.getElementById("notifyModal");
+              if (m) {
+                m.style.display = "none";
+                m.setAttribute("aria-hidden", "true");
+              }
+            });
+          }
+          // Also ensure cancel buttons set aria-hidden
+          const cancelBtn = document.getElementById("notifyCancelBtn");
+          if (cancelBtn) {
+            cancelBtn.addEventListener("click", function () {
+              const m = document.getElementById("notifyModal");
+              if (m) {
+                m.style.display = "none";
+                m.setAttribute("aria-hidden", "true");
+              }
+            });
+          }
+        } catch (e) {
+          // swallow to avoid breaking other scripts
+        }
+      });
+    </script>
+    <script
+      src="https://api-maps.yandex.ru/2.1/?apikey=637236f3-a3e8-4047-b3f7-4704e79d74e0&lang=uz_UZ"
+      type="text/javascript"></script>
+    <script>
+      // Set a global flag once ymaps is available so pages can detect load failures
+      (function checkYMaps() {
+        window.YANDEX_MAPS_LOADED = false;
+        var maxAttempts = 20;
+        var attempts = 0;
+        var iv = setInterval(function () {
+          attempts += 1;
+          if (window.ymaps) {
+            window.YANDEX_MAPS_LOADED = true;
+            clearInterval(iv);
+            console.log("Yandex Maps loaded successfully");
+            return;
+          }
+          if (attempts >= maxAttempts) {
+            clearInterval(iv);
+            window.YANDEX_MAPS_LOADED = false;
+            console.warn(
+              "Yandex Maps failed to load (check YANDEX_MAPS_API and network)"
+            );
+          }
+        }, 200);
+      })();
+    </script>
+      
+<style>
+  /* Industrial Shop Overrides */
+  .shop-hero-banner {
+      background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1590674000180-874ca5d8628b?w=1600&q=80');
+      background-size: cover;
+      background-position: center;
+      padding: 100px 0;
+      border-bottom: 2px solid var(--accent-primary);
+      text-align: center;
+      margin-bottom: 50px;
+      color: white; /* Ensure text is white on hero */
+  }
+
+  .shop-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 30px;
+  }
+
+  .product-grid-main {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      padding: 10px 0;
+  }
+
+  .shop-sidebar {
+      max-height: calc(100vh - 120px);
+      overflow-y: auto;
+  }
+
+  .shop-sidebar .industrial-card {
+      padding: 20px !important;
+  }
+
+  .shop-sidebar .mb-3 {
+      margin-bottom: 15px !important;
+  }
+
+  @media (max-width: 1200px) {
+      .product-grid-main {
+          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+          gap: 20px;
+      }
+  }
+
+  @media (max-width: 991px) {
+      .shop-layout {
+          grid-template-columns: 1fr;
+          gap: 30px;
+      }
+      
+      .product-grid-main {
+          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+          gap: 15px;
+      }
+  }
+
+  @media (max-width: 768px) {
+      .product-grid-main {
+          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+          gap: 12px;
+      }
+  }
+
+  /* Enhanced product card styling */
+  .industrial-product-card {
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      color: var(--text-primary);
+      position: relative;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Light theme override */
+  body.light-theme .industrial-product-card {
+      border-color: rgba(0,0,0,0.08);
+      color: var(--text-dark);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  }
+
+  .industrial-product-card:hover {
+      border-color: var(--accent-primary);
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 8px 25px rgba(255, 215, 0, 0.15);
+  }
+
+  .img-wrapper {
+      position: relative;
+      aspect-ratio: 1/1;
+      background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+      overflow: hidden;
+  }
+  
+  body.light-theme .img-wrapper {
+      background: linear-gradient(135deg, #f5f5f5, #e8e8e8);
+  }
+
+  .product-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+  }
+
+  .industrial-product-card:hover .product-img {
+      transform: scale(1.05);
+  }
+
+  .category-label {
+      font-family: var(--font-heading);
+      color: var(--accent-primary);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 5px;
+      display: block;
+  }
+</style>
+
+    <script>
+      // Define CSRF_TOKEN safely from meta tag
+      (function() {
+        const meta = document.querySelector('meta[name="csrf-token"]');
+        window.CSRF_TOKEN = meta ? meta.getAttribute('content') : '';
+      })();
+    </script>
+  </head>
+  <body
+    class=""
+    data-dark-mode="false"
+    data-font-size="medium"
+    data-language="uz">
+    <script>
+      // Ensure avatar fallback exists early so inline onerror handlers won't throw
+      window.DEFAULT_AVATAR = "https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/v1/static-root/images/default-avatar.svg";
+      if (typeof window.handleAvatarError !== 'function') {
+        window.handleAvatarError = function(img){
+          try {
+            if (img && img.src !== window.DEFAULT_AVATAR) {
+              img.src = window.DEFAULT_AVATAR;
+              img.onerror = null;
+            }
+          } catch(e){}
+        };
+      }
+    </script>
+    <script type="application/json" id="base-config">
+    {"csrf_token": "n2z7ki8Ceef7WBkshrl4zFOUW5HRlp3TZsD8EgBhnC4", "default_avatar": "https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/v1/static-root/images/default-avatar.svg", "messages": {"enter_id": "messages.enter_id", "enter_title_and_body": "messages.enter_title_and_body", "error_occurred": "messages.error_occurred", "file_upload_error": "messages.file_upload_error", "loading": "messages.loading", "msg_too_long": "messages.message_too_long", "news_added": "messages.news_added", "news_confirm": "footer.newsletter_confirm", "news_enter_email": "footer.newsletter_enter_email", "news_thanks": "footer.newsletter_thanks", "no_messages": "messages.no_messages", "no_notifications": "messages.no_notifications", "notification_sent": "messages.notification_sent", "save_error": "messages.save_error", "send_error": "messages.message_send_error", "title_required": "messages.title_required", "unknown_error": "messages.unknown_error"}, "session": {"dark_theme": false, "font_size": "medium", "interface_language": "uz"}, "supported_languages": ["uz", "ru", "en", "kz", "tr", "ar"], "translations": {"admin.super_admin_only": "Faqat Super Admin", "cart.cart_total": "Jami summa", "cart.checkout": "Buyurtmani rasmiylashtirish", "cart.continue_shopping": "Xarid qilishni davom ettirish", "cart.empty_message": "Savatchangizda hozircha hech narsa yo\u0027q. Katalogimizdan mahsulotlarni qo\u0027shing.", "cart.empty_title": "Savatchangiz bo\u0027sh", "cart.meta_description": "Savatcha \u2014 Pro Obuv. Spetsobuv, spetsodejda va ish kiyimlari buyurtmalarini yakunlang.", "cart.meta_keywords": "pro obuv, savatcha, buyurtma, spetsobuv, ish kiyimlari, oyoq kiyim", "cart.og_description": "Savatcha \u2014 mahsulotlarni ko\u0027rish va buyurtmani yakunlash", "cart.og_title": "Savatcha \u2014 Pro Obuv", "cart.page_title": "Savatcha - Pro Obuv", "cart.price": "Narx", "cart.quantity": "Miqdor", "cart.remove": "O\u0027chirish", "cart.schema_name": "Savatcha \u2014 Pro Obuv", "cart.title": "Savatcha", "cart.twitter_description": "Savatcha \u2014 buyurtmani yakunlash", "cart.twitter_title": "Savatcha \u2014 Pro Obuv", "cart.update_cart": "Savatchani yangilash", "colors.beige": "Bej", "colors.black": "Qora", "colors.blue": "Ko\u0027k", "colors.brown": "Jigarrang", "colors.gray": "Kulrang", "colors.green": "Yashil", "colors.khaki": "Xaki", "colors.navy": "To\u0027q ko\u0027k", "colors.orange": "To\u0027q sariq", "colors.purple": "Siyohrang", "colors.red": "Qizil", "colors.white": "Oq", "colors.yellow": "Sariq", "dashboard": "Dashboard", "homepage.all_categories": "Barcha kategoriyalar", "homepage.browse_catalog": "KATALOGNI KO\u0027RISH", "homepage.find_gear": "JIHOZLARNI TOPISH", "homepage.hero_description": "Yuqori samaradorlikdagi ISO sertifikatli xavfsizlik poyabzallari va himoya vositalari. Ekstremal sharoitlar uchun mo\u0027ljallangan, professionalar uchun yaratilgan.", "homepage.hero_subtitle": "ELIT XAVFSIZLIK JIHOZLARI", "homepage.hero_title": "PRO OBUV", "homepage.iso_certified": "ISO SERTIFIKATLI POYABZALLAR", "homepage.iso_description": "ISO 20345 ga mos S1-S3 xavfsizlik etiklari, antistatik poyabzallar va og\u0027ir zarba himoyasi.", "homepage.professional_workwear": "PROFESSIONAL ISH KIYIMLARI", "homepage.protective_clothing": "Himoya kiyimlari", "homepage.safety_footwear": "Xavfsizlik poyabzallari", "homepage.shop_catalog": "DO\u0027KON KATALOGI", "homepage.technical_specs": "TEXNIK XUSUSIYATLAR", "homepage.view_workwear": "ISH KIYIMLARINI KO\u0027RISH", "homepage.workwear_description": "Yuqori ko\u0027rinadigan jihozlar, olovga chidamli sanoat kiyimlari va mustahkamlangan qurilish kiyimlari.", "logout": "Chiqish", "menu.all_products": "Barcha turdagi", "menu.breadcrumb": "Menu - Spetsobuv va Ish kiyimlari", "menu.catalog_subtitle": "Aniq muhandislik xavfsizlik poyabzallari va ish kiyimlari", "menu.catalog_title": "KATALOG 2024", "menu.category": "Kategoriya", "menu.clear_filters": "Barchasini tozalash", "menu.color": "Rang", "menu.color_placeholder": "Masalan: qora", "menu.filter_and_search": "Filter va qidiruv", "menu.filters": "FILTRLAR", "menu.mobile_filters": "Filterlar", "menu.search_gear_placeholder": "Xavfsizlik jihozlarini qidiring: S3 etiklari, yuqori ko\u0027rinadigan kurtkalar, kompozit burun...", "menu.search_placeholder": "Qidirish... (nom, tavsif)", "menu.section_title": "Maxsus kiyim va poyabzal", "menu.size": "O\u0027lcham", "menu.size_placeholder": "Masalan: 40", "menu.sort": "Saralash", "menu.sort_default": "Standart", "menu.sort_name_asc": "Nomi: A-Z", "menu.sort_name_desc": "Nomi: Z-A", "menu.sort_popularity": "Ommaboplik", "menu.sort_rating": "Bahoga ko\u0027ra", "menu.specobuv_category": "Maxsus Poyabzallar", "menu.specodezhda_category": "Maxsus Kiyimlar", "nav.about": "Savollar", "nav.brand": "Pro Obuv", "nav.cart": "Savat", "nav.contact": "Aloqa", "nav.dashboard": "Dashboard", "nav.downloads": "Yuklamalar", "nav.favorites": "Sevimlilar", "nav.home": "Bosh sahifa", "nav.menu": "Menyu", "nav.news": "Yangiliklar", "nav.quick_links": "Tez havolalar", "nav.staff_list": "Xodimlar ro\u0027yxati", "nav.staff_menu": "Menyu boshqaruvi", "nav.warranty": "Kafolatlar", "register": "Ro\u0027yxatdan o\u0027tish", "staff.login_button": "Kirish", "staff.login_subtitle": "Xavfsizlik tizimiga kirish", "staff.login_title": "Xodim Kirish", "staff.password": "Parol", "staff.password_placeholder": "Parolni kiriting", "staff.staff_id": "Xodim ID", "staff.staff_id_placeholder": "Xodim ID raqamini kiriting", "staff_list": "Xodimlar ro\u0027yxati", "staff_menu": "Menyu boshqaruvi", "staff_panel": "Xodim Panel"}, "user": {"courier_id": null, "is_super_admin": false, "staff_id": null, "user_id": null}}
+    </script>
+    <script>
+      // Load Base Config
+      window.BASE_CONFIG = {};
+      try {
+        const cfgEl = document.getElementById('base-config');
+        if(cfgEl) window.BASE_CONFIG = JSON.parse(cfgEl.textContent);
+      } catch(e) { console.error('Base config parse failed', e); }
+
+      // Expose server-side translations for the current language to JS
+      window.TRANSLATIONS = window.BASE_CONFIG.translations || {};
+    </script>
+    <script>
+      // Language switch helper used by navbar buttons. It saves choice to session via
+      // /api/change-language and reloads the page so server-rendered labels update.
+      async function changeLanguage(lang) {
+        try {
+          applyLanguageStyles(lang);
+          localStorage.setItem('language', lang);
+          document.body.setAttribute('data-language', lang);
+        } catch (e) {}
+        try {
+          fetch('/api/change-language', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ language: lang })
+          }).catch(function(){});
+        } catch (_) {}
+        var supported = window.BASE_CONFIG.supported_languages || ['uz','ru','en','kz'];
+        var path = window.location.pathname || '/';
+        var segs = path.split('/');
+        if (segs.length && segs[segs.length-1] === '') segs.pop();
+        if (segs.length > 1 && supported.indexOf(segs[1]) !== -1) {
+          segs[1] = lang;
+        } else {
+          segs.splice(1, 0, lang);
+        }
+        if (segs.length <= 2 || (segs.length === 3 && segs[2] === '')) {
+          segs = ['', lang, 'menu'];
+        }
+        var newPath = segs.join('/');
+        if (!newPath.startsWith('/')) newPath = '/' + newPath;
+        var qs = window.location.search || '';
+        var hash = window.location.hash || '';
+        window.location.assign(newPath + qs + hash);
+      };
+    </script>
+    <!-- Theme preference handling (default: dark theme for foydalanuvchi sahifalari) -->
+    <script>
+      // Agar localStorage da hali mavzu saqlanmagan bo‘lsa, default = dark
+      if (!localStorage.getItem("theme_preference")) {
+        localStorage.setItem("theme_preference", "dark");
+      }
+      
+      const theme = localStorage.getItem("theme_preference");
+      const isDark = theme === 'dark';
+      
+      if (isDark) {
+          document.documentElement.classList.add("dark-theme");
+          document.body.classList.add("dark-theme");
+          document.body.classList.remove("light-theme");
+          document.body.setAttribute('data-dark-mode', 'true');
+      } else {
+          document.documentElement.classList.remove("dark-theme");
+          document.body.classList.remove("dark-theme");
+          document.body.classList.add("light-theme");
+          document.body.setAttribute('data-dark-mode', 'false');
+      }
+    </script>
+    <script>
+      // Loop protection is now handled by /static/js/loop-protection.js
+    </script>
+    <!-- Navigation Bar - SECURE ROLE CHECKING -->
+    
+    
+
+    <!-- User Navbar -->
+    
+    <nav class="navbar navbar-expand-lg industrial-nav fixed-top-custom">
+      <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="/uz/">
+          PRO<span style="color:var(--accent-primary)">OBUV</span>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <i class="bi bi-list fs-2 text-white"></i>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            
+            <li class="nav-item">
+              <a class="nav-link" href="/uz/menu">Menyu</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/uz/favorites">Sevimlilar</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/uz/news">Yangiliklar</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/uz/downloads">Yuklamalar</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/uz/contact">Aloqa</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/uz/kafolatlar">Kafolatlar</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/uz/about">Savollar</a>
+            </li>
+          </ul>
+
+          <ul class="navbar-nav align-items-center">
+            <li class="nav-item dropdown me-3">
+              <a class="nav-link dropdown-toggle btn-outline-industrial btn-sm px-3" href="#" id="langChoice" role="button" data-bs-toggle="dropdown">
+                UZ
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end industrial-card">
+                <li><a class="dropdown-item" href="#" onclick="changeLanguage('uz')">O'zbekcha</a></li>
+                <li><a class="dropdown-item" href="#" onclick="changeLanguage('ru')">Русский</a></li>
+                <li><a class="dropdown-item" href="#" onclick="changeLanguage('en')">English</a></li>
+              </ul>
+            </li>
+            <li class="nav-item d-flex gap-2">
+              <a href="/uz/login_page" class="btn-outline-industrial btn-sm py-1 px-3">Kirish</a>
+              <a href="" class="btn-primary-industrial btn-sm py-1 px-3">Ro'yxat</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <style>
+      /* Active navbar highlight */
+      .navbar-nav .nav-link.active, .navbar-nav .nav-link.show-active {
+        color: #000 !important;
+        background: #ffeb3b;
+        border-radius: 6px;
+      }
+    </style>
+
+    <script>
+      (function(){
+        try{
+          // Hide profile dropdown immediately after logout click to reduce flash
+          const logoutLink = document.querySelector('a[href*="/logout"]');
+          if(logoutLink){
+            logoutLink.addEventListener('click', function(){
+              // remove user dropdown if present
+              const userDropdown = document.querySelector('.navbar .nav-item.dropdown');
+              if(userDropdown) userDropdown.remove();
+              // show login/register quick placeholders
+              const navList = document.querySelector('.navbar .navbar-nav.align-items-center');
+              if(navList){
+                const joinHtml = '<li class="nav-item d-flex gap-2"><a href="'+(window.location.origin + '/login')+'" class="btn-outline-industrial btn-sm py-1 px-3">Kirish</a><a href="'+(window.location.origin + '/register')+'" class="btn-primary-industrial btn-sm py-1 px-3">Ro\'yxat</a></li>';
+                navList.insertAdjacentHTML('afterbegin', joinHtml);
+              }
+            });
+          }
+
+          // Highlight active nav item based on `current_page` variable if available
+          const currentPage = 'menu';
+          if(currentPage){
+            document.querySelectorAll('.navbar-nav a.nav-link').forEach(a => {
+              try{ if(a.getAttribute('href') && a.getAttribute('href').indexOf(currentPage) !== -1){ a.classList.add('show-active'); } }catch(e){}
+            });
+          }
+        }catch(e){ console.warn('Navbar script error', e) }
+      })();
+    </script>
+    
+
+    
+    
+
+    <main class="container mt-4 ">
+        
+      
+<div class="shop-hero-banner">
+    <div class="container animate-up">
+        <h1 class="display-3 fw-bold mb-3">KATALOG 2024</h1>
+        <label class="form-label text-secondary small text-uppercase fw-bold mb-3">menu.search_products</label>
+        <p class="lead opacity-75">Aniq muhandislik xavfsizlik poyabzallari va ish kiyimlari</p>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <div class="shop-layout">
+        <!-- Sidebar Filters -->
+        <aside class="shop-sidebar animate-left" style="position: sticky; top: 100px; height: fit-content; align-self: start; z-index: 10;">
+            <div class="industrial-card p-4">
+                <h4 class="mb-4 d-flex align-items-center">
+                    <i class="bi bi-funnel me-2"></i> FILTRLAR
+                </h4>
+                
+                <div class="mb-3">
+                    <label class="category-label">menu.search_products</label>
+                    <div class="position-relative">
+                        <input type="text" id="productSearch" class="form-control" placeholder="Qidirish... (nom, tavsif)">
+                        <i class="bi bi-search position-absolute top-50 end-0 translate-middle-y me-3 opacity-50"></i>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="category-label">Kategoriya</label>
+                    <select class="form-select" id="categoryFilter">
+                        <option value="">menu.all_categories</option>
+                        <option value="Safety Boots">menu.safety_boots</option>
+                        <option value="Protective Suits">menu.protective_suits</option>
+                        <option value="Head Protection">menu.head_protection</option>
+                        <option value="Hand Protection">menu.hand_protection</option>
+                        <option value="Eye Protection">menu.eye_protection</option>
+                        <option value="Respiratory Protection">menu.respiratory_protection</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="category-label">menu.size_range</label>
+                    <select class="form-select" id="sizeFilter">
+                        <option value="">menu.all_sizes</option>
+                        <option value="36-40">36-40</option>
+                        <option value="41-43">41-43</option>
+                        <option value="44-46">44-46</option>
+                        <option value="47+">menu.size_47_plus</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="category-label">menu.material</label>
+                    <select class="form-select" id="materialFilter">
+                        <option value="">menu.all_materials</option>
+                        <option value="Leather">menu.leather</option>
+                        <option value="Rubber">menu.rubber</option>
+                        <option value="Steel">menu.steel</option>
+                        <option value="Composite">menu.composite</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="category-label">menu.protection_level</label>
+                    <select class="form-select" id="protectionFilter">
+                        <option value="">menu.all_levels</option>
+                        <option value="S1">S1</option>
+                        <option value="S2">S2</option>
+                        <option value="S3">S3</option>
+                        <option value="S4">S4</option>
+                        <option value="S5">S5</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="category-label">menu.sort_by</label>
+                    <select class="form-select" id="sortFilter">
+                        <option value="name">menu.sort_name</option>
+                        <option value="category">menu.sort_category</option>
+                        <option value="rating">Bahoga ko&#39;ra</option>
+                        <option value="newest">menu.sort_newest</option>
+                    </select>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary-industrial" onclick="applyFilters()">menu.apply_filters</button>
+                    <button class="btn btn-outline-secondary" onclick="clearFilters()">Barchasini tozalash</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Product Area -->
+        <section class="shop-products animate-up" style="animation-delay: 0.2s;">
+            <div class="product-grid-main">
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="берцы" 
+                   data-category="specobuv"
+                   data-price="300000.0"
+                   data-rating="4.5"
+                   data-new="False"
+                   data-product-id="38"
+                   href="http://localhost/product/38" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/38_cb9432a802b44154b8ea4cbef63f1adf"  
+                            alt="Берцы" 
+                            class="product-img"
+                            loading="lazy"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Берцы</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="cross" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="4.25"
+                   data-new="False"
+                   data-product-id="39"
+                   href="http://localhost/product/39" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/39_51c9f712fc684c7f94971709e6f1e560"  
+                            alt="Cross" 
+                            class="product-img"
+                            loading="lazy"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Cross</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="auto" 
+                   data-category="specodezhda"
+                   data-price="120000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="56"
+                   href="http://localhost/product/56" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/v1767032840/products/qgvog062vnpen8nrs2oh.jpg"  
+                            alt="Auto" 
+                            class="product-img"
+                            loading="lazy"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specodezhda</span>
+                        <h4 class="h5 mb-3">Auto</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="cross 2" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="40"
+                   href="http://localhost/product/40" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/40_9fff1211e53d4321a0742819530a4814"  
+                            alt="Cross 2" 
+                            class="product-img"
+                            loading="lazy"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Cross 2</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="cross 3" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="41"
+                   href="http://localhost/product/41" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/41_81a2b29b02fd4309813bc4735b426b4c"  
+                            alt="Cross 3" 
+                            class="product-img"
+                            loading="lazy"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Cross 3</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="cross 4" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="42"
+                   href="http://localhost/product/42" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/42_41109a91b09747019b5593cbff87580f"  
+                            alt="Cross 4" 
+                            class="product-img"
+                            loading="lazy"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Cross 4</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="cross 5" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="43"
+                   href="http://localhost/product/43" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/43_b55897f85fa34d75aaf45ecdd68d6cd0"  
+                            alt="Cross 5" 
+                            class="product-img"
+                            loading="lazy"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Cross 5</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="hunter black" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="48"
+                   href="http://localhost/product/48" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/48_3e2f32e95cbf42ffbb23c19e4de369f9"  
+                            alt="Hunter Black" 
+                            class="product-img"
+                            loading="lazy"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Hunter Black</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="magnus" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="50"
+                   href="http://localhost/product/50" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/50_bae6da7a89074b67a7d92076b9fab52f"  
+                            alt="Magnus" 
+                            class="product-img"
+                            loading="lazy"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Magnus</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="sandal" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="44"
+                   href="http://localhost/product/44" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/44_d9bca2e4da804d3cbe0d1b354fc84524"  
+                            alt="Sandal" 
+                            class="product-img"
+                            loading="lazy"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Sandal</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="shoe factory" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="52"
+                   href="http://localhost/product/52" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/52_5f7339192060462db595de88004deaef"  
+                            alt="Shoe Factory" 
+                            class="product-img"
+                            loading="lazy"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Shoe Factory</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="track" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="53"
+                   href="http://localhost/product/53" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/53_e7a80d60e14d42508153a5fbfd8bebe9"  
+                            alt="Track" 
+                            class="product-img"
+                            loading="lazy"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Track</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="track brown" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="49"
+                   href="http://localhost/product/49" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/49_2e1e61f690bf480a99454a1548463404"  
+                            alt="Track Brown" 
+                            class="product-img"
+                            loading="lazy"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Track Brown</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="track red" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="46"
+                   href="http://localhost/product/46" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/46_9017ddbf09ae4fcebd167fd56ba0a8be"  
+                            alt="Track Red" 
+                            class="product-img"
+                            loading="lazy"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Track Red</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="track sueda" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="51"
+                   href="http://localhost/product/51" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/51_70f2a563d3d54c07969816731bad7f37"  
+                            alt="Track Sueda" 
+                            class="product-img"
+                            loading="lazy"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Track Sueda</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="vezdohod" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="47"
+                   href="http://localhost/product/47" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/47_d59b5897e9fd42fa92cc261f9cbbcb8d"  
+                            alt="Vezdohod" 
+                            class="product-img"
+                            loading="lazy"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Vezdohod</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="yastreb" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="55"
+                   href="http://localhost/product/55" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/55_33ecf4f6192144bc8268e6f3bfbdd053"  
+                            alt="Yastreb" 
+                            class="product-img"
+                            loading="lazy"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Yastreb</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="yastreb pu" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="54"
+                   href="http://localhost/product/54" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/54_f4dbf72d058349b9a3b037240aacf766"  
+                            alt="Yastreb PU" 
+                            class="product-img"
+                            loading="lazy"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Yastreb PU</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="спецобувь" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="45"
+                   href="http://localhost/product/45" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/45_cd49521666cf4cd58c17e633ff19c169"  
+                            alt="спецобувь" 
+                            class="product-img"
+                            loading="lazy"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">спецобувь</h4>
+                        
+                    </div>
+                </a>
+                
+            </div>
+        </section>
+    </div>
+</div>
+
+<script>
+// Enhanced filtering logic for select-based filters
+let allProducts = [];
+let filteredProducts = [];
+
+// Store all products on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const productCards = document.querySelectorAll('.product-item-node');
+    allProducts = Array.from(productCards).map(card => ({
+        element: card,
+        name: card.getAttribute('data-name'),
+        category: card.getAttribute('data-category') || '',
+        price: parseFloat(card.getAttribute('data-price')) || 0,
+        rating: parseFloat(card.getAttribute('data-rating')) || 0,
+        isNew: card.getAttribute('data-new') === 'true'
+    }));
+    filteredProducts = [...allProducts];
+    
+    // Add real-time search
+    document.getElementById('productSearch').addEventListener('input', applyFilters);
+    
+    // Add change listeners to all select filters
+    ['categoryFilter', 'sizeFilter', 'materialFilter', 'protectionFilter', 'sortFilter'].forEach(id => {
+        document.getElementById(id).addEventListener('change', applyFilters);
+    });
+    
+    // Product cards are already <a> tags, so they should work naturally
+    // Just ensure any JavaScript doesn't interfere with normal link behavior
+});
+
+// Enhanced role detection and UI updates
+(function() {
+  // Fast role detection with immediate UI updates
+  function detectAndUpdateRole() {
+    fetch('/api/auth-check')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.user) {
+          const user = data.user;
+          const isSuperAdmin = user.is_super_admin || false;
+          const isStaff = user.staff_id || false;
+          const isCourier = user.courier_id || false;
+          const isUser = user.user_id || false;
+          
+          // Update global variables
+          window.CURRENT_MEMBER_ID = user.user_id || user.staff_id || user.courier_id || null;
+          window.CURRENT_MEMBER_TYPE = isUser ? 'user' : (isStaff ? 'staff' : (isCourier ? 'courier' : 'anonymous'));
+          
+          // Update UI immediately
+          updateNavbarForRole(isSuperAdmin, isStaff, isCourier, isUser);
+          updateSidebarForRole(isSuperAdmin, isStaff, isCourier, isUser);
+        }
+      })
+      .catch(err => console.warn('Auth check failed:', err));
+  }
+  
+  function updateNavbarForRole(isSuperAdmin, isStaff, isCourier, isUser) {
+    const navbar = document.querySelector('.navbar');
+    const userNavbar = document.querySelector('a[href*="logout"]');
+    
+    if (isSuperAdmin || isStaff || isCourier) {
+      // Hide navbar for staff roles
+      if (navbar) navbar.style.display = 'none';
+      if (userNavbar) userNavbar.style.display = 'none';
+    } else if (isUser) {
+      // Show user navbar
+      if (navbar) navbar.style.display = 'block';
+    }
+  }
+  
+  function updateSidebarForRole(isSuperAdmin, isStaff, isCourier, isUser) {
+    const sidebar = document.querySelector('.staff-sidebar-wrapper');
+    const mainContent = document.querySelector('.shop-layout');
+    
+    if (isSuperAdmin || isStaff || isCourier) {
+      // Show sidebar for staff roles
+      if (sidebar) sidebar.style.display = 'block';
+      if (mainContent) mainContent.style.gridTemplateColumns = '1fr';
+    } else {
+      // Hide sidebar for regular users
+      if (sidebar) sidebar.style.display = 'none';
+      if (mainContent) mainContent.style.gridTemplateColumns = '280px 1fr';
+    }
+  }
+  
+  // Run detection immediately and then every 5 seconds
+  detectAndUpdateRole();
+  setInterval(detectAndUpdateRole, 5000);
+})();
+
+function applyFilters() {
+    const searchTerm = document.getElementById('productSearch').value.toLowerCase();
+    const category = document.getElementById('categoryFilter').value;
+    const size = document.getElementById('sizeFilter').value;
+    const material = document.getElementById('materialFilter').value;
+    const protection = document.getElementById('protectionFilter').value;
+    const sortBy = document.getElementById('sortFilter').value;
+    
+    filteredProducts = allProducts.filter(product => {
+        // Search by name or description (combined search)
+        const matchesSearch = !searchTerm || 
+            product.name.includes(searchTerm) || 
+            product.element.querySelector('h4').textContent.toLowerCase().includes(searchTerm);
+        
+        // Category filter
+        const matchesCategory = !category || product.category === category.toLowerCase();
+        
+        // Size filter (simplified - would need actual size data)
+        const matchesSize = !size;
+        
+        // Material filter (simplified - would need actual material data)
+        const matchesMaterial = !material;
+        
+        // Protection level filter (simplified - would need actual protection data)
+        const matchesProtection = !protection;
+        
+        return matchesSearch && matchesCategory && matchesSize && matchesMaterial && matchesProtection;
+    });
+    
+    // Sort products
+    filteredProducts.sort((a, b) => {
+        switch(sortBy) {
+            case 'name':
+                return a.name.localeCompare(b.name);
+            case 'category':
+                return a.category.localeCompare(b.category);
+            case 'rating':
+                return b.rating - a.rating;
+            case 'newest':
+                return b.isNew - a.isNew;
+            default:
+                return 0;
+        }
+    });
+    
+    renderProducts();
+}
+
+function renderProducts() {
+    const container = document.querySelector('.product-grid-main');
+    container.innerHTML = '';
+    
+    if (filteredProducts.length === 0) {
+        container.innerHTML = `
+            <div class="col-12 text-center py-5">
+                <h4 class="text-muted">menu.no_products</h4>
+                <p class="text-muted">menu.try_different_filters</p>
+            </div>
+        `;
+        return;
+    }
+    
+    // Re-create product cards with proper structure to preserve links
+    filteredProducts.forEach(product => {
+        const productCard = product.element.cloneNode(true);
+        // Add click handler to ensure navigation works
+        productCard.addEventListener('click', function(e) {
+            // Get the product ID and create full URL
+            const productId = productCard.getAttribute('data-product-id');
+            if (productId) {
+                window.location.href = `http://${window.location.host}/product/${productId}`;
+            }
+        });
+        container.appendChild(productCard);
+    });
+}
+
+function clearFilters() {
+    document.getElementById('productSearch').value = '';
+    document.getElementById('categoryFilter').value = '';
+    document.getElementById('sizeFilter').value = '';
+    document.getElementById('materialFilter').value = '';
+    document.getElementById('protectionFilter').value = '';
+    document.getElementById('sortFilter').value = 'name';
+    
+    filteredProducts = [...allProducts];
+    renderProducts();
+}
+</script>
+
+    </main>
+
+    
+    
+    <!-- Premium Industrial Footer -->
+<footer class="site-footer" role="contentinfo" aria-label="footer.site_footer">
+  <!-- E-commerce style News Ticker (safety shoes/shop style) -->
+<div class="news-ticker-container py-4">
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <div class="d-flex align-items-center gap-2">
+      <i class="bi bi-newspaper fs-4 text-accent"></i>
+      <strong class="text-uppercase">ticker.title</strong>
+    </div>
+    
+  </div>
+
+  <div class="news-ticker-swiper swiper" id="news-ticker-swiper">
+    <!-- Navigation buttons -->
+    <div class="news-ticker-nav prev" onclick="window._newsTickerSwiper?.slidePrev()">
+      <i class="bi bi-chevron-left"></i>
+    </div>
+    <div class="news-ticker-nav next" onclick="window._newsTickerSwiper?.slideNext()">
+      <i class="bi bi-chevron-right"></i>
+    </div>
+    
+    <div class="swiper-wrapper" id="news-ticker-content">
+      <!-- Slides injected by JS: each slide will contain only the image. Title shown on hover. -->
+      <div class="swiper-slide news-item loading">
+        <div class="news-image-wrapper" style="width:120px; height:120px; border-radius:8px; overflow:hidden; background:#f3f4f6"></div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+/* Enhanced News Ticker Styles */
+.news-ticker-container {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.05), rgba(255, 215, 0, 0.02));
+  border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.news-ticker-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent-primary, #FFD700), transparent);
+  animation: tickerShine 3s ease-in-out infinite;
+}
+
+@keyframes tickerShine {
+  0% { left: -100%; }
+  50% { left: 100%; }
+  100% { left: 100%; }
+}
+
+.news-ticker-swiper {
+  padding: 16px 0;
+  position: relative;
+}
+
+/* Center the swiper container */
+.news-ticker-swiper .swiper-wrapper {
+  justify-content: center;
+  align-items: center;
+}
+
+.news-item {
+  width: 140px !important;
+  height: 140px !important;
+  border-radius: 16px !important;
+  overflow: hidden;
+  position: relative;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 215, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  margin: 0 auto; /* Center each item */
+}
+
+.news-item:hover {
+  transform: translateY(-8px) scale(1.05);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3);
+  border-color: var(--accent-primary, #FFD700);
+}
+
+.news-image-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.news-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.news-item:hover img {
+  transform: scale(1.1);
+}
+
+.news-title-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  color: #fff;
+  padding: 12px 8px 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  line-height: 1.3;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.news-item:hover .news-title-overlay {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.news-slide-link {
+  display: block;
+  width: 100%;
+  height: 100%;
+  text-decoration: none;
+}
+
+/* Loading state */
+.news-item.loading {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.05) 75%);
+  background-size: 200% 100%;
+  animation: loadingShimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes loadingShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.news-text-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 16px;
+  text-align: center;
+  color: #b0b0b0;
+  font-style: italic;
+}
+
+/* Navigation buttons for better slider control */
+.news-ticker-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 215, 0, 0.9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s ease;
+  color: #1a1a2e;
+  font-size: 16px;
+}
+
+.news-ticker-nav:hover {
+  background: var(--accent-primary, #FFD700);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.news-ticker-nav.prev {
+  left: 10px;
+}
+
+.news-ticker-nav.next {
+  right: 10px;
+}
+  </style>
+
+
+
+  </div>
+
+  <div class="footer-wave">
+    <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+      <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25"></path>
+      <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5"></path>
+      <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z"></path>
+    </svg>
+  </div>
+
+  <div class="container">
+    <div class="footer-grid">
+      <!-- Brand & Description -->
+      <div class="footer-col footer-brand" data-aos="fade-up" data-aos-delay="100">
+        <div class="brand-logo-wrapper">
+          <div class="brand-icon">
+            <i class="bi bi-shield-check"></i>
+          </div>
+          <h6 class="brand-title">Pro Obuv</h6>
+        </div>
+        <p class="brand-desc">footer.company_desc</p>
+        
+        <!-- Social Links with Modern Design -->
+        <div class="social-row">
+          
+          
+            
+              
+              
+              
+              <a href="https://t.me/specobuv" target="_blank" class="social-icon-btn telegram" aria-label="Telegram" title="Telegram">
+                
+                  <i class="bi bi-telegram"></i>
+                
+              </a>
+            
+              
+              
+              
+              <a href="https://uzum.uz/uz/shop/pro-obuv" target="_blank" class="social-icon-btn uzum" aria-label="Uzum" title="Uzum">
+                
+                  <i class="bi bi-bag"></i>
+                
+              </a>
+            
+          
+        </div>
+
+        <!-- Newsletter with Premium Design -->
+        <div class="newsletter-box">
+            <div class="newsletter-icon">
+              <i class="bi bi-envelope-heart"></i>
+            </div>
+            <h5>footer.newsletter_title</h5>
+            <p class="small">footer.newsletter_subtitle</p>
+            <form class="newsletter-form" onsubmit="return handleNewsletter(event)">
+                <div class="input-group">
+                  <input type="email" class="form-control" name="email" placeholder="footer.newsletter_placeholder" required>
+                  <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-send"></i>
+                    <span>footer.subscribe</span>
+                  </button>
+                </div>
+                <div class="newsletter-feedback mt-2" style="display:none"></div>
+            </form>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="footer-col" data-aos="fade-up" data-aos-delay="200">
+        <h6><i class="bi bi-link-45deg me-2"></i>Tez havolalar</h6>
+        <ul>
+          <li><a href="/uz/"><i class="bi bi-chevron-right"></i>Bosh sahifa</a></li>
+          <li><a href="/uz/menu"><i class="bi bi-chevron-right"></i>Menyu</a></li>
+          <li><a href="/uz/about"><i class="bi bi-chevron-right"></i>Savollar</a></li>
+          <li><a href="/uz/contact"><i class="bi bi-chevron-right"></i>Aloqa</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact Info -->
+      <div class="footer-col" data-aos="fade-up" data-aos-delay="300">
+        <h6><i class="bi bi-telephone me-2"></i>footer.contact_info</h6>
+        <ul class="contact-list">
+          <li>
+            
+            
+            <a href="tel:footer.phone_display" class="contact-link">
+              <div class="contact-icon"><i class="bi bi-telephone"></i></div>
+              <span>footer.phone_display</span>
+            </a>
+          </li>
+          <li>
+            
+            <a href="mailto:premiumsafety@mail.ru" class="contact-link">
+              <div class="contact-icon"><i class="bi bi-envelope"></i></div>
+              <span>premiumsafety@mail.ru</span>
+            </a>
+          </li>
+          <li>
+            
+            <a href="https://maps.app.goo.gl/Ezg462SRmBYLxfUY6" target="_blank" class="contact-link">
+              <div class="contact-icon"><i class="bi bi-geo-alt"></i></div>
+              <span>footer.address</span>
+            </a>
+          </li>
+          <li class="mt-4">
+            <div class="hours-box">
+                <div class="hours-icon"><i class="bi bi-clock"></i></div>
+                <div class="hours-content">
+                  <strong>footer.hours</strong>
+                  <div class="hours-time">footer.hours_working</div>
+                </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Services -->
+      <div class="footer-col" data-aos="fade-up" data-aos-delay="400">
+        <h6><i class="bi bi-gear me-2"></i>footer.services</h6>
+        <ul>
+          <li><a href="/uz/contact#delivery"><i class="bi bi-chevron-right"></i>footer.delivery</a></li>
+          <li><a href="/uz/about#return-policy"><i class="bi bi-chevron-right"></i>footer.return_policy</a></li>
+          <li><a href="/uz/contact#payment"><i class="bi bi-chevron-right"></i>footer.payment_methods</a></li>
+          <li><a href="/uz/kafolatlar"><i class="bi bi-chevron-right"></i>Kafolatlar</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="footer-bottom">
+      <div class="copyright">
+        <i class="bi bi-c-circle me-1"></i>
+        footer.copyright
+      </div>
+      <div class="footer-legal-links">
+        <a href="/uz/static/oferta.pdf" target="_blank">
+          <i class="bi bi-shield-lock"></i>footer.privacy
+        </a>
+        <a href="/uz/static/oferta.pdf" target="_blank">
+          <i class="bi bi-file-text"></i>footer.terms
+        </a>
+        <a href="/uz/static/oferta.pdf" target="_blank">
+          <i class="bi bi-cookie"></i>footer.cookies
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+/* Premium Footer Styles */
+.site-footer {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  color: #e0e0e0;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.footer-wave {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.footer-wave svg {
+  position: relative;
+  display: block;
+  width: calc(100% + 1.3px);
+  height: 80px;
+  fill: var(--accent-primary, #FFD700);
+}
+
+.site-footer .container {
+  padding: 60px 20px 30px;
+  position: relative;
+  z-index: 2;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+/* Brand Section */
+.footer-brand {
+  grid-column: span 1;
+}
+
+.brand-logo-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.brand-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, var(--accent-primary, #FFD700), #FFA500);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #1a1a2e;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+.brand-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent-primary, #FFD700);
+  margin: 0;
+}
+
+.brand-desc {
+  color: #b0b0b0;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+/* Enhanced Social Icons */
+.social-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.social-icon-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.05));
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #e0e0e0;
+  font-size: 20px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.social-icon-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--accent-primary, #FFD700), #FFA500);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: -1;
+}
+
+.social-icon-btn:hover {
+  background: var(--accent-primary, #FFD700);
+  color: #1a1a2e;
+  transform: translateY(-6px) scale(1.08);
+  box-shadow: 0 16px 32px rgba(255, 215, 0, 0.4);
+  border-color: var(--accent-primary, #FFD700);
+}
+
+.social-icon-btn:hover::before {
+  opacity: 1;
+}
+
+.social-icon-btn i {
+  z-index: 1;
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.social-icon-btn:hover i {
+  transform: scale(1.1);
+}
+
+.social-icon-btn:active {
+  transform: translateY(-3px) scale(1.05);
+}
+
+/* Platform-specific hover effects */
+.social-icon-btn.telegram:hover {
+  background: linear-gradient(135deg, #0088cc, #006699);
+  color: white;
+}
+
+.social-icon-btn.instagram:hover {
+  background: linear-gradient(135deg, #e4405f, #c13584, #833ab4);
+  color: white;
+}
+
+.social-icon-btn.facebook:hover {
+  background: linear-gradient(135deg, #1877f2, #166fe5);
+  color: white;
+}
+
+/* Newsletter */
+.newsletter-box {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.newsletter-box::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+  animation: pulse 4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+.newsletter-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, var(--accent-primary, #FFD700), #FFA500);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #1a1a2e;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.newsletter-box h5 {
+  color: var(--accent-primary, #FFD700);
+  font-weight: 700;
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.newsletter-box p {
+  color: #b0b0b0;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.newsletter-form .input-group {
+  position: relative;
+  z-index: 1;
+}
+
+.newsletter-form .form-control {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #e0e0e0;
+  padding: 12px 16px;
+  border-radius: 12px 0 0 12px;
+}
+
+.newsletter-form .form-control:focus {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--accent-primary, #FFD700);
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+  color: #fff;
+}
+
+.newsletter-form .btn-primary {
+  background: linear-gradient(135deg, var(--accent-primary, #FFD700), #FFA500);
+  border: none;
+  color: #1a1a2e;
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 0 12px 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.newsletter-form .btn-primary:hover {
+  transform: translateX(4px);
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+}
+
+/* Footer Columns */
+.footer-col h6 {
+  color: var(--accent-primary, #FFD700);
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.footer-col ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-col ul li {
+  margin-bottom: 12px;
+}
+
+.footer-col ul li a {
+  color: #b0b0b0;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  padding: 4px 0;
+}
+
+.footer-col ul li a:hover {
+  color: var(--accent-primary, #FFD700);
+  transform: translateX(4px);
+}
+
+.footer-col ul li a i.bi-chevron-right {
+  font-size: 12px;
+  transition: transform 0.3s ease;
+}
+
+.footer-col ul li a:hover i.bi-chevron-right {
+  transform: translateX(4px);
+}
+
+/* Contact Links */
+.contact-link {
+  display: flex !important;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.contact-link:hover {
+  background: rgba(255, 215, 0, 0.1);
+  transform: translateX(0) !important;
+}
+
+.contact-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--accent-primary, #FFD700), #FFA500);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1a1a2e;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+/* Hours Box */
+.hours-box {
+  background: rgba(255, 215, 0, 0.05);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.hours-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--accent-primary, #FFD700), #FFA500);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1a1a2e;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.hours-content strong {
+  color: var(--accent-primary, #FFD700);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.hours-time {
+  color: #b0b0b0;
+  font-size: 0.9rem;
+}
+
+/* Footer Bottom */
+.footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.copyright {
+  color: #b0b0b0;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+}
+
+.footer-legal-links {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.footer-legal-links a {
+  color: #b0b0b0;
+  text-decoration: none;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+}
+
+.footer-legal-links a:hover {
+  color: var(--accent-primary, #FFD700);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .footer-legal-links {
+    justify-content: center;
+  }
+  
+  .footer-wave svg {
+    height: 60px;
+  }
+}
+</style>
+    
+
+    <!-- Enhanced Footer & Global Styles -->
+
+    <script>
+    // Global Auth Sync Logic
+    window.DEFAULT_AVATAR = "https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/v1/static-root/images/default-avatar.svg";
+    function handleAvatarError(img) {
+      if (img.src !== window.DEFAULT_AVATAR) {
+        img.src = window.DEFAULT_AVATAR;
+        img.onerror = null;
+      }
+    }
+
+    (function() {
+
+        // Check auth status on page load (essential for cached pages/back button)
+        // Requirement: distinguish network errors vs real unauth states (401/403)
+        fetch('/api/auth/status', {
+            headers: {'Cache-Control': 'no-cache'}
+        })
+        .then(res => {
+            if (res.status === 401 || res.status === 403) {
+                 console.warn("User explicitly unauthenticated (401/403).");
+                 // We could redirect to login here, but user asked for NO reloads/redirects on fetch error.
+                 // So we just log and mark as unauthed.
+                 return { logged_in: false };
+            }
+            if (!res.ok) throw new Error('Network error or server down');
+            return res.json();
+        })
+        .then(data => {
+            if (!data) return;
+            const isGuestNavbar = document.getElementById('langDropdownGuest'); 
+            const isUserNavbar = document.querySelector('a[href*="/logout"]'); 
+
+            // Requirement: disable_auto_reload: true
+            if (data.logged_in && isGuestNavbar) {
+                console.warn('Auth mismatch: UI is guest, but user is logged in. (Auto-reload blocked)');
+                if (window.showToast) window.showToast('Tizimga kirganingiz aniqlandi. Iltimos, sahifani qo\'lda yangilang.', 'info');
+            }
+            else if (!data.logged_in && isUserNavbar && !isGuestNavbar) {
+                 console.warn('Auth mismatch: UI is logged in, but user is guest. (Auto-reload blocked)');
+                 if (window.showToast) window.showToast('Sessiya muddati tugagan bo\'lishi mumkin.', 'warning');
+            }
+        })
+        .catch(err => {
+            console.warn("Auth check failed (network/offline):", err);
+            // DO NOT RELOAD on network failure to avoid infinite loop
+        });
+    })();
+
+      window.DISABLE_AUTO_UPDATES = true;
+      (function () {
+        const original =
+          window._originalSetInterval || window.setInterval.bind(window);
+        window._originalSetInterval = original;
+        function intervalProxy() {
+          if (window.DISABLE_AUTO_UPDATES) {
+            return null;
+          }
+          return original.apply(window, arguments);
+        }
+        window.safeSetInterval = intervalProxy;
+        window.setInterval = intervalProxy;
+      })();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="http://localhost/static/js/news-ticker.js" defer></script>
+    <script src="/uz/static/main.js"></script>
+
+    <!-- Global sozlamalarni yuklash -->
+    <script>
+          // Darhol sozlamalarni qo'llash (DOMContentLoaded dan oldin)
+          (function() {
+            try {
+              // LocalStorage dan sozlamalarni olish
+              const darkMode = localStorage.getItem('darkMode') === 'true';
+              const fontSize = localStorage.getItem('fontSize') || 'medium';
+              const language = localStorage.getItem('language') || 'uz';
+
+              // console.log('Base.html - Darhol qo\'llanayotgan sozlamalar:', { darkMode, fontSize, language });
+
+              function applyImmediate() {
+                // Body klasslarini tozalash
+                document.body.classList.remove('dark-theme', 'font-small', 'font-medium', 'font-large', 'font-xlarge');
+                document.body.classList.remove('lang-uz', 'lang-ru', 'lang-en');
+
+                // Mavzu klassini qo'shish
+                if (darkMode) {
+                  document.body.classList.add('dark-theme');
+                  // console.log('Base.html - Dark theme qo\'shildi');
+                }
+
+                // Font o'lcham klassini qo'shish
+                document.body.classList.add('font-' + fontSize);
+                // console.log('Base.html - Font size qo\'shildi:', 'font-' + fontSize);
+
+                // Til klassini qo'shish
+                document.body.classList.add('lang-' + language);
+                // console.log('Base.html - Language qo\'llandi:', 'lang-' + language);
+              }
+
+              if (document && document.body) {
+                applyImmediate();
+              } else {
+                window.addEventListener('DOMContentLoaded', applyImmediate);
+              }
+            } catch (e) {
+              console.warn('Initial settings apply failed:', e);
+              // Defer to DOMContentLoaded to avoid blocking the rest of the script
+              window.addEventListener('DOMContentLoaded', function() {
+                try {
+                  const fontSize = localStorage.getItem('fontSize') || 'medium';
+                  const language = localStorage.getItem('language') || 'uz';
+                  document.body.classList.add('font-' + fontSize);
+                  document.body.classList.add('lang-' + language);
+                } catch (inner) { /* noop */ }
+              });
+            }
+          })();
+
+            // Global sozlamalarni yuklash
+            document.addEventListener('DOMContentLoaded', function() {
+                // Session ma'lumotlarini localStorage bilan sinxronlash
+                const sess = (window.BASE_CONFIG && window.BASE_CONFIG.session) || {};
+                const sessionDarkMode = sess.dark_theme || false;
+                const sessionFontSize = sess.font_size || 'medium';
+                const sessionLanguage = sess.interface_language || 'uz';
+
+                // console.log('Session sozlamalari:', { sessionDarkMode, sessionFontSize, sessionLanguage });
+
+                // Session sozlamalarini localStorage ga saqlash
+                localStorage.setItem('darkMode', sessionDarkMode);
+                localStorage.setItem('fontSize', sessionFontSize);
+                localStorage.setItem('language', sessionLanguage);
+
+                // Sozlamalarni darhol qo'llash
+                const isDarkMode = sessionDarkMode === 'true';
+
+                // Klasslarni tozalash
+                document.body.classList.remove('dark-theme', 'font-small', 'font-medium', 'font-large', 'font-xlarge');
+                document.body.classList.remove('lang-uz', 'lang-ru', 'lang-en');
+
+                // Mavzuni qo'llash
+                if (isDarkMode) {
+                    document.body.classList.add('dark-theme');
+
+                    // Navbar klasslarini o'zgartirish
+                    const navbar = document.querySelector('.navbar');
+                    if (navbar) {
+                        navbar.classList.remove('navbar-light', 'bg-light');
+                        navbar.classList.add('navbar-dark', 'bg-dark');
+                    }
+                    // console.log('Dark theme qo\'llandi');
+                } else {
+                    // Light theme
+                    document.body.classList.remove('dark-theme');
+                    const navbar = document.querySelector('.navbar');
+                    if (navbar) {
+                        navbar.classList.remove('navbar-dark', 'bg-dark');
+                        navbar.classList.add('navbar-light', 'bg-light');
+                    }
+                    // console.log('Light theme qo\'llandi');
+                }
+
+                // Font o'lchamini qo'llash
+                document.body.classList.add('font-' + sessionFontSize);
+                // console.log('Font size qo\'llandi:', sessionFontSize);
+
+                // Tilni qo'llash
+                document.body.classList.add('lang-' + sessionLanguage);
+                console.log('Language qo\'llandi:', sessionLanguage);
+
+                // Sahifani tarjima qilish
+                if (typeof translatePage === 'function') {
+                    setTimeout(() => {
+                        translatePage(sessionLanguage);
+                        // console.log('Til tarjimasi qo\'llandi:', sessionLanguage);
+                    }, 200);
+                }
+
+                // Storage eventini tinglash
+                window.addEventListener('storage', function(e) {
+                    if (e.key === 'darkMode') {
+                        const isDark = e.newValue === 'true';
+                        if (isDark) {
+                            document.body.classList.add('dark-theme');
+                            // Navbar klasslarini o'zgartirish
+                            const navbar = document.querySelector('.navbar');
+                            if (navbar) {
+                                navbar.classList.remove('navbar-light', 'bg-light');
+                                navbar.classList.add('navbar-dark', 'bg-dark');
+                            }
+                        } else {
+                            document.body.classList.remove('dark-theme');
+                            // Navbar klasslarini o'zgartirish
+                            const navbar = document.querySelector('.navbar');
+                            if (navbar) {
+                                navbar.classList.remove('navbar-dark', 'bg-dark');
+                                navbar.classList.add('navbar-light', 'bg-light');
+                            }
+                        }
+                        // console.log('Storage event - Dark mode o\'zgartirildi:', isDark);
+                    } else if (e.key === 'fontSize') {
+                        document.body.classList.remove('font-small', 'font-medium', 'font-large', 'font-xlarge');
+                        document.body.classList.add('font-' + e.newValue);
+                        // console.log('Storage event - Font size o\'zgartirildi:', e.newValue);
+                    } else if (e.key === 'language') {
+                        document.body.classList.remove('lang-uz', 'lang-ru', 'lang-en');
+                        document.body.classList.add('lang-' + e.newValue);
+                        if (typeof translatePage === 'function') {
+                            translatePage(e.newValue);
+                        }
+                        // console.log('Storage event - Language o\'zgartirildi:', e.newValue);
+                    }
+                });
+            });
+
+        // Professional Translation System
+        // Attach translations to window to avoid redeclaration when main.js
+        // or other templates also define translations.
+        if (typeof window.translations === 'undefined') {
+          window.translations = {
+        uz: {
+          menu: 'Menyu',
+          favorites: 'Sevimlilar',
+          contact: 'Aloqa',
+          about: 'Savollar',
+          downloads: 'Yuklamalar',
+          cart: 'Savatcha',
+          profile_info: 'Profil ma\'lumotlari',
+          profile_settings: 'Profil sozlamalari',
+          settings: 'Sozlamalar',
+          logout: 'Chiqish',
+          login: 'Kirish',
+          register: 'Ro\'yxat',
+          user: 'Foydalanuvchi',
+          staff: 'Xodim',
+          courier: 'Kuryer',
+          admin: 'Admin',
+          dashboard: 'Dashboard',
+          brand: "Oyoq kiyim do'koni"
+        },
+                ru: {
+                    menu: 'Меню',
+                    favorites: 'Избранное',
+                    contact: 'Контакты',
+                    about: 'Вопросы',
+                    downloads: 'Загрузки',
+                    cart: 'Корзина',
+                    profile_info: 'Данные профиля',
+                    profile_settings: 'Настройки профиля',
+                    settings: 'Настройки',
+                    logout: 'Выход',
+                    login: 'Вход',
+                    register: 'Регистрация',
+                    user: 'Пользователь',
+                    staff: 'Сотрудник',
+                    courier: 'Курьер',
+                    admin: 'Админ',
+                    dashboard: 'Панель'
+                },
+                en: {
+                    menu: 'Menu',
+                    favorites: 'Favorites',
+                    contact: 'Contact',
+                    about: 'About',
+                    downloads: 'Downloads',
+                    cart: 'Cart',
+                    profile_info: 'Profile Info',
+                    profile_settings: 'Profile Settings',
+                    settings: 'Settings',
+                    logout: 'Logout',
+                    login: 'Login',
+                    register: 'Register',
+                    user: 'User',
+                    staff: 'Staff',
+                    courier: 'Courier',
+                    admin: 'Admin',
+                    dashboard: 'Dashboard'
+                }
+          };
+        }
+
+            // Global Translation Function
+      function translatePage(language) {
+      // Prefer server-provided window.TRANSLATIONS if available, fall back to legacy window.translations
+      const transRoot = (window.TRANSLATIONS && Object.keys(window.TRANSLATIONS).length) ? window.TRANSLATIONS : (window.translations || {});
+
+      // Helper: resolve nested keys like 'footer.categories' in a translations object
+      function resolveKey(obj, key) {
+        try {
+          if (!obj || !key) return undefined;
+          if (key in obj) return obj[key];
+          const parts = key.split('.');
+          let cur = obj;
+          for (let p of parts) {
+            if (!cur) return undefined;
+            if (typeof cur !== 'object') return undefined;
+            if (!(p in cur)) return undefined;
+            cur = cur[p];
+          }
+          return cur;
+        } catch (e) {
+          return undefined;
+        }
+      }
+
+      const trans = (transRoot && transRoot[language]) || (transRoot && transRoot['uz']) || {};
+
+            // Translate elements that use data-translate attribute
+            document.querySelectorAll('[data-translate]').forEach(el => {
+              const key = el.getAttribute('data-translate');
+              if (!key) return;
+              // Try nested lookup first, then fallback to existing text content (do NOT set to literal key)
+              const val = resolveKey(trans, key) || resolveKey(transRoot[language], key) || el.textContent;
+              // If element is input/textarea, change placeholder instead
+              if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                if (el.placeholder !== undefined) el.placeholder = val;
+              } else {
+                el.textContent = val;
+              }
+            });
+
+            // Translate placeholders and titles
+            document.querySelectorAll('[data-translate-placeholder]').forEach(el => {
+              const key = el.getAttribute('data-translate-placeholder');
+              if (!key) return;
+              el.placeholder = trans[key] || el.placeholder || '';
+            });
+            document.querySelectorAll('[data-translate-title]').forEach(el => {
+              const key = el.getAttribute('data-translate-title');
+              if (!key) return;
+              el.title = trans[key] || el.title || '';
+            });
+
+            // Fallback: translate a few common navbar/text nodes by selector
+            const menuLink = document.querySelector('a[href*="menu"]');
+            if (menuLink) menuLink.textContent = trans.menu || menuLink.textContent;
+            const favoritesLink = document.querySelector('a[href*="favorites"]');
+            if (favoritesLink) favoritesLink.textContent = trans.favorites || favoritesLink.textContent;
+            const contactLink = document.querySelector('a[href*="contact"]');
+            if (contactLink) contactLink.textContent = trans.contact || contactLink.textContent;
+            const aboutLink = document.querySelector('a[href*="about"]');
+            if (aboutLink) aboutLink.textContent = trans.about || aboutLink.textContent;
+
+            const downloadsLink = document.querySelector('a[href*="downloads"]');
+            if (downloadsLink) downloadsLink.textContent = trans.downloads || downloadsLink.textContent;
+
+            const cartLink = document.querySelector('.cart-btn');
+            if (cartLink) {
+              const badge = cartLink.querySelector('.cart-badge');
+              const badgeHtml = badge ? badge.outerHTML : '';
+              cartLink.innerHTML = (trans.cart || cartLink.textContent) + ' ' + badgeHtml;
+            }
+
+            const logoutLink = document.querySelector('a[href*="logout"]');
+            if (logoutLink) logoutLink.textContent = trans.logout || logoutLink.textContent;
+            }
+
+            // Enhanced Language Change Function
+            window.changeLanguage = function(language) {
+                try {
+                    applyLanguageStyles(language);
+                    localStorage.setItem('language', language);
+                    document.body.setAttribute('data-language', language);
+                } catch (e) {}
+                try {
+                    fetch('/api/change-language', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ language: language })
+                    }).catch(function(){});
+                } catch (_) {}
+                var supported = (window.BASE_CONFIG && window.BASE_CONFIG.supported_languages) || ['uz','ru','en','kz'];
+                var path = window.location.pathname || '/';
+                var segs = path.split('/');
+                if (segs.length && segs[segs.length-1] === '') segs.pop();
+                if (segs.length > 1 && supported.indexOf(segs[1]) !== -1) {
+                    segs[1] = language;
+                } else {
+                    segs.splice(1, 0, language);
+                }
+                if (segs.length <= 2 || (segs.length === 3 && segs[2] === '')) {
+                    segs = ['', language, 'menu'];
+                }
+                var newPath = segs.join('/');
+                if (!newPath.startsWith('/')) newPath = '/' + newPath;
+                var qs = window.location.search || '';
+                var hash = window.location.hash || '';
+                window.location.assign(newPath + qs + hash);
+            };
+
+            // Notification function
+            function showNotification(message) {
+                const notification = document.createElement('div');
+                notification.className = 'notification';
+                notification.textContent = message;
+                document.body.appendChild(notification);
+
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
+            }
+
+            // Language-specific CSS classes
+            const languageStyles = {
+                uz: { direction: 'ltr', fontFamily: 'Inter, sans-serif' },
+                ru: { direction: 'ltr', fontFamily: 'Inter, sans-serif' },
+                en: { direction: 'ltr', fontFamily: 'Inter, sans-serif' }
+            };
+
+            // Apply language-specific styles
+            function applyLanguageStyles(language) {
+                const styles = languageStyles[language] || languageStyles.uz;
+                document.documentElement.dir = styles.direction;
+                document.body.style.fontFamily = styles.fontFamily;
+            }
+    </script>
+
+    <!-- Savatcha sonini yangilash (one-off guard to avoid duplicate polling from main.js) -->
+    <script>
+      // If main.js is present it manages polling (CartManager). Do a single initial update otherwise fall back to fetching once.
+      function initialCartUpdate() {
+        try {
+          if (
+            window.cartManager &&
+            typeof window.cartManager.updateCartCount === "function"
+          ) {
+            window.cartManager.updateCartCount();
+            return;
+          }
+        } catch (e) {
+          /* ignore and fallback */
+        }
+
+        // Fallback: single fetch (no interval) to avoid duplicate polling that caused 429s
+        fetch("/api/cart-count")
+          .then((response) => response.json())
+          .then((data) => {
+            const cartBadge = document.getElementById("cart-count");
+            if (cartBadge && data && data.cart_count !== undefined) {
+              const count = data.cart_count || 0;
+              if (count > 0) {
+                cartBadge.textContent = count;
+                cartBadge.style.display = "inline-flex";
+              } else {
+                cartBadge.style.display = "none";
+              }
+            }
+          })
+          .catch((error) => {
+            // console.log("Savatcha sonini olishda xato:", error)
+          });
+      }
+
+      document.addEventListener("DOMContentLoaded", initialCartUpdate);
+    </script>
+
+    <!-- Notification Modal -->
+    <div
+      id="notifyModal"
+      class="modal-overlay"
+      style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+      "
+      aria-hidden="true">
+      <div
+        class="modal-content"
+        style="
+          background: white;
+          border-radius: 8px;
+          max-width: 500px;
+          width: 90%;
+          max-height: 80vh;
+          overflow-y: auto;
+        ">
+        <div
+          class="modal-header"
+          style="
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          ">
+          <h5 id="notifyModalTitle">notifications</h5>
+          <button
+            type="button"
+            id="notifyCloseViewer"
+            class="btn-close"
+            style="
+              border: none;
+              background: none;
+              font-size: 24px;
+              cursor: pointer;
+            ">
+            ✕
+          </button>
+        </div>
+        <div class="modal-body" style="padding: 20px">
+          <!-- For super admin: compose notification form -->
+          
+
+          <!-- Notification list -->
+          <div id="notifyListPreview">
+            <p class="text-muted">notifications_ui.loading_preview</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Member Profile Modal -->
+    <div
+      id="memberProfileModal"
+      class="modal-overlay"
+      style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9998;
+        align-items: center;
+        justify-content: center;
+      "
+      aria-hidden="true">
+      <div
+        class="modal-content"
+        style="
+          background: white;
+          border-radius: 8px;
+          max-width: 400px;
+          width: 90%;
+          padding: 20px;
+        ">
+        <div
+          class="modal-header"
+          style="
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          ">
+          <h5>nav.profile_info</h5>
+          <button
+            type="button"
+            id="memberProfileClose"
+            class="btn-close"
+            style="
+              border: none;
+              background: none;
+              font-size: 24px;
+              cursor: pointer;
+            ">
+            ✕
+          </button>
+        </div>
+        <div id="memberProfileContent">
+          <p class="text-muted">messages.loading</p>
+        </div>
+      </div>
+    </div>
+
+    
+
+    
+
+    <script>
+      (function () {
+        // 1) Make navbar fixed (adds class to the first visible .navbar)
+        try {
+          const navbar = document.querySelector('.navbar');
+          if (navbar) {
+            // Add our safer fixed class only if not already fixed
+            if (!navbar.classList.contains('fixed-top') && !navbar.classList.contains('fixed-top-custom')) {
+              navbar.classList.add('fixed-top-custom');
+            }
+
+            // Compute the navbar height and add padding to main to avoid overlap
+            const applyMainTopPadding = () => {
+              try {
+                const main = document.querySelector('main');
+                if (!main) return;
+                const rect = navbar.getBoundingClientRect();
+                // Use Math.ceil to avoid fractional subpixel issues
+                const h = Math.ceil(rect.height || 64);
+                main.style.paddingTop = (h + 16) + 'px'; // keep a small breathing gap
+              } catch (e) {}
+            };
+
+            // Apply immediately and on resize
+            applyMainTopPadding();
+            window.addEventListener('resize', applyMainTopPadding);
+          }
+        } catch (e) {
+          // ignore
+        }
+
+        // 2) Theme - ensure default dark, provide reliable toggle that persists to server
+        try {
+          // Session value already written by template into localStorage earlier in the file.
+          // Provide a function toggleTheme that other scripts or UI elements can call.
+          window.toggleTheme = function (forceDark) {
+            try {
+              const isDark = typeof forceDark === 'boolean' ? forceDark : !document.body.classList.contains('dark-theme');
+              if (isDark) {
+                document.body.classList.add('dark-theme');
+                document.body.classList.remove('light-theme');
+              } else {
+                document.body.classList.remove('dark-theme');
+                document.body.classList.add('light-theme');
+              }
+
+              // persist locally
+              try { localStorage.setItem('darkMode', isDark ? 'true' : 'false'); } catch (e) {}
+
+              // persist to server (best-effort, non-blocking)
+              fetch('/api/set-theme', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : ''
+                },
+                body: JSON.stringify({ theme: isDark ? 'dark' : 'light' })
+              }).catch(() => {});
+
+              // Update navbar classes for contrast
+              const navbar = document.querySelector('.navbar');
+              if (navbar) {
+                if (isDark) {
+                  navbar.classList.remove('navbar-light', 'bg-light');
+                  navbar.classList.add('navbar-dark', 'bg-dark');
+                } else {
+                  navbar.classList.remove('navbar-dark', 'bg-dark');
+                  navbar.classList.add('navbar-light', 'bg-light');
+                }
+              }
+            } catch (e) {}
+          };
+
+          // Expose a small helper to bind toggle buttons (elements with .theme-toggle)
+          document.addEventListener('click', function (e) {
+            if (e.target && e.target.classList && e.target.classList.contains('theme-toggle')) {
+              e.preventDefault();
+              window.toggleTheme();
+            }
+          });
+        } catch (e) {
+          // ignore
+        }
+
+        // News-card equalization disabled to prevent news ticker issues
+      })();
+    </script>
+
+    <!-- News ticker is now fully managed from static/main.js (NewsTicker class).
+         Extra initialization here was causing duplicate requests to data/news.json,
+         so it has been removed. -->
+
+    <!-- Footer News Ticker Markup (single shared instance) -->
+
+
+    <!-- Enhanced Telegram-style Chat Widget - Only for Staff, Courier, SuperAdmin -->
+    
+    <!-- End chat widget for staff/courier/superadmin -->
+
+
+    <!-- Ticker quick-add modal DOM (superadmin only) -->
+    <div class="modal fade" id="tickerNewsModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">ticker.add_news</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="tickerNewsForm">
+              <div class="mb-3">
+                <label class="form-label">notifications_ui.title_label</label>
+                <input type="text" id="tickerNewsTitle" class="form-control" required maxlength="200" />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">notifications_ui.body_label</label>
+                <textarea id="tickerNewsContent" class="form-control" rows="4" maxlength="500"></textarea>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <label class="form-label">ticker.image_label</label>
+                  <input type="file" id="tickerImageFile" class="form-control" accept="image/*" onchange="uploadMediaFileTicker('image')" />
+                  <input type="hidden" id="tickerImageUrl" />
+                  <img id="tickerImagePreview" style="display:none; max-width:180px; margin-top:8px" />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">ticker.video_label</label>
+                  <input type="file" id="tickerVideoFile" class="form-control" accept="video/*" onchange="uploadMediaFileTicker('video')" />
+                  <input type="hidden" id="tickerVideoUrl" />
+                  <video id="tickerVideoPreview" style="display:none; max-width:180px; margin-top:8px" controls muted></video>
+
+                  <div class="mt-2">
+                    <label class="form-label">ticker.youtube_label</label>
+                    <input type="url" id="tickerYoutubeUrl" class="form-control" placeholder="https://www.youtube.com/watch?v=..." />
+                    <small class="form-text text-muted">ticker.youtube_hint</small>
+
+                    <div id="tickerYoutubePreviewContainer" style="display:none; margin-top:8px; position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:8px;">
+                      <iframe id="tickerYoutubePreview" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" allowfullscreen></iframe>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mb-3 mt-2">
+                <label class="form-label">ticker.type_label</label>
+                <select id="tickerNewsType" class="form-control">
+                  <option value="news">ticker.type_news</option>
+                  <option value="advertisement">ticker.type_ad</option>
+                </select>
+              </div>
+              <div class="form-check mb-3">
+                <input type="checkbox" id="tickerNewsIsActive" class="form-check-input" checked />
+                <label for="tickerNewsIsActive" class="form-check-label">ticker.active_label</label>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">notifications_ui.cancel</button>
+            <button type="button" class="btn btn-primary" id="saveTickerNewsBtn">settings.save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+          // Ticker quick-add modal handlers (superadmin only)
+      function openTickerNewsModal(){
+            // reset fields
+            const form = document.getElementById('tickerNewsForm');
+            if(form) form.reset();
+            document.getElementById('tickerImagePreview').style.display = 'none';
+            document.getElementById('tickerVideoPreview').style.display = 'none';
+            const modalEl = document.getElementById('tickerNewsModal');
+            const bs = new bootstrap.Modal(modalEl);
+            bs.show();
+          }
+
+          function saveTickerNews(){
+            const title = (document.getElementById('tickerNewsTitle')||{}).value||'';
+            if(!title.trim()){ 
+              const msgReq = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.title_required) || 'Title required';
+              alert(msgReq); return; 
+            }
+            const content = (document.getElementById('tickerNewsContent')||{}).value||'';
+            const type = (document.getElementById('tickerNewsType')||{}).value||'news';
+            const image_url = (document.getElementById('tickerImageUrl')||{}).value||'';
+            const video_url = (document.getElementById('tickerVideoUrl')||{}).value||'';
+            const youtube = (document.getElementById('tickerYoutubeUrl')||{}).value||'';
+            const is_active = !!(document.getElementById('tickerNewsIsActive')||{}).checked;
+
+            const payload = {
+              title: title.trim(),
+              content: content.trim(),
+              type: type,
+              image_url: image_url,
+              video_url: youtube || video_url,
+              is_active: is_active,
+              display_order: 0,
+              show_in_ticker: true
+            };
+
+            fetch('/api/news', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            }).then(r=>r.json()).then(data=>{
+                if(data && data.success){
+                alert((window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.news_added) || 'News added');
+                const bs = bootstrap.Modal.getInstance(document.getElementById('tickerNewsModal'));
+                if(bs) bs.hide();
+                // refresh ticker content
+                const evt = new Event('refreshNewsTicker');
+                window.dispatchEvent(evt);
+              } else {
+                const errText = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.error_occurred) || 'Error';
+                alert(errText + ': ' + (data && data.message || ''));
+              }
+            }).catch(e=>{ 
+               console.error(e); 
+               alert((window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.save_error) || 'Save error'); 
+            });
+          }
+
+          // Upload handler reusing the admin upload endpoint
+          function uploadMediaFileTicker(type){
+            const fileInput = document.getElementById(type === 'image' ? 'tickerImageFile' : 'tickerVideoFile');
+            const file = fileInput && fileInput.files && fileInput.files[0];
+            if(!file) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/admin/upload-news-media', { method: 'POST', body: formData })
+              .then(r=>r.json())
+              .then(data=>{
+                if(data && data.success){
+                  if(type === 'image'){
+                    document.getElementById('tickerImageUrl').value = data.file_url;
+                    const img = document.getElementById('tickerImagePreview'); img.src = data.file_url; img.style.display = 'block';
+                  } else {
+                    document.getElementById('tickerVideoUrl').value = data.file_url;
+                    const vid = document.getElementById('tickerVideoPreview'); vid.src = data.file_url; vid.style.display = 'block';
+                    const yt = document.getElementById('tickerYoutubeUrl'); if(yt) yt.value = '';
+                    const ytCont = document.getElementById('tickerYoutubePreviewContainer'); if(ytCont) ytCont.style.display = 'none';
+                  }
+                } else {
+                  const msgUpErr = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.file_upload_error) || 'Upload error';
+                  alert(msgUpErr + ': ' + (data && data.message || ''));
+                }
+              }).catch(err=>{ 
+                console.error('Upload error', err); 
+                const msgUpErr = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.file_upload_error) || 'Upload error';
+                alert(msgUpErr); 
+              });
+          }
+
+          // YouTube preview binding
+          (function(){
+            const el = document.getElementById('tickerYoutubeUrl');
+            if(!el) return;
+            el.addEventListener('input', function(){
+              const v = el.value.trim();
+              const container = document.getElementById('tickerYoutubePreviewContainer');
+              const iframe = document.getElementById('tickerYoutubePreview');
+              if(!v){ iframe.src = ''; if(container) container.style.display = 'none'; return; }
+              try{
+                const m = v.match(/(?:v=|\/embed\/|youtu\.be\/)([A-Za-z0-9_\-]{11})/);
+                if(m && m[1]){ iframe.src = 'https://www.youtube.com/embed/'+m[1]; if(container) container.style.display = 'block'; const vp = document.getElementById('tickerVideoPreview'); if(vp) vp.style.display='none'; }
+                else { iframe.src = ''; if(container) container.style.display = 'none'; }
+              }catch(e){ iframe.src = ''; if(container) container.style.display = 'none'; }
+            });
+          })();
+
+          // Bind save button
+          (function(){
+            const btn = document.getElementById('saveTickerNewsBtn');
+            if(btn) btn.addEventListener('click', saveTickerNews);
+          })();
+    </script>
+    
+
+
+    <!-- Hide legacy AI chat widget; keep public chat menu visible for users.
+         For staff/courier/super_admin, we still prefer the internal Telegram-style
+         chat (chatFab/chatPanel), so hide the public chat widget only for them. -->
+    
+
+    <style>
+      /* New Superadmin FAB (bottom-right) */
+      .superadmin-contact-fab {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: linear-gradient(135deg,#006bb3,#00a8ff);
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1201;
+        cursor: pointer;
+        font-size: 20px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      }
+      .superadmin-contact-panel {
+        position: fixed;
+        right: 20px;
+        bottom: 90px;
+        width: 300px;
+        max-width: calc(100% - 40px);
+        background: rgba(13,22,27,0.98);
+        color: #fff;
+        border-radius: 10px;
+        padding: 12px;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+        display: none;
+        z-index: 1201;
+      }
+      .superadmin-contact-panel.open { display: block; }
+      .superadmin-contact-panel a { color: #fff; text-decoration: none; display:block; margin-bottom:8px }
+      .superadmin-contact-panel .sa-title { font-weight:700; margin-bottom:8px }
+    </style>
+
+    <script>
+        // Newsletter form handler (graceful, non-blocking)
+        function handleNewsletter(e){
+          if(e) e.preventDefault();
+          try{
+            const form = e.target || document.querySelector('.newsletter-form');
+            const input = form.querySelector('input[name="email"]');
+            const feedback = form.querySelector('.newsletter-feedback');
+            const email = (input.value||'').trim();
+            const msgEnter = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.news_enter_email) || 'Enter email';
+            if(!email){ feedback.style.display='block'; feedback.textContent = msgEnter; return false; }
+            
+            const msgThanks = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.news_thanks) || 'Thanks!';
+            feedback.style.display='block'; feedback.textContent = msgThanks;
+            
+            // If /subscribe exists, post to it
+            fetch(form.action, { method: 'POST', headers: { 'Content-Type':'application/json' }, body: JSON.stringify({ email: email }) }).then(r=>r.json().catch(()=>({}))).then(j=>{
+              const msgConfirm = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.news_confirm) || 'Confirmed';
+              if(j && j.success){ feedback.textContent = (j.message || msgConfirm); }
+            }).catch(()=>{});
+            input.value='';
+          }catch(err){ console.warn('newsletter error', err); }
+          return false;
+        }
+      </script>
+
+    <!-- Universal Scripts: Swiper, AOS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Initialize AOS
+        AOS.init({
+          duration: 800,
+          easing: 'ease-out-cubic',
+          once: true,
+          offset: 50
+        });
+
+        // Initialize any default swipers
+        const swiper = new Swiper('.default-swiper', {
+          loop: true,
+          pagination: { el: '.swiper-pagination', clickable: true },
+        });
+      });
+    </script>
+      <!-- Floating Help Widget -->
+    <div id="helpWidget">
+        <div id="helpMenu">
+            <button class="help-item" onclick="openAIChat()">
+                <i class="bi bi-robot text-primary"></i> AI Chat
+            </button>
+            
+             <button class="help-item" onclick="location.href='/login'">
+                <i class="bi bi-box-arrow-in-right"></i> Kirish
+            </button>
+            
+        </div>
+        <button id="helpBtn" onclick="toggleHelpMenu()">
+            <i class="bi bi-chat-dots-fill"></i>
+        </button>
+    </div>
+
+    <!-- Ask Super Admin Modal -->
+    <div class="modal fade" id="askAdminModal" tabindex="-1" style="z-index: 100000;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Super Adminga Savol Yo'llash</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <textarea class="form-control" id="questionText" rows="4" placeholder="Savolingizni yozing..."></textarea>
+                </div>
+                <div class="modal-footer">
+                   <button type="button" class="btn btn-primary" onclick="submitQuestion()">Yuborish</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleHelpMenu() {
+            document.getElementById('helpMenu').classList.toggle('show');
+        }
+        
+        function openAIChat() {
+            // Trigger existing chat widget if available
+            const chatBtn = document.querySelector('.chat-widget-toggle');
+            if(chatBtn) chatBtn.click();
+            else alert("AI Chat hozircha faol emas :(");
+        }
+        
+        function openAskModal() {
+             new bootstrap.Modal(document.getElementById('askAdminModal')).show();
+        }
+        
+        function submitQuestion() {
+            const txt = document.getElementById('questionText').value;
+            if(!txt) return;
+            fetch('/api/chat/superadmin-question', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({text: txt, source: 'web'})
+            })
+            .then(r=>r.json())
+            .then(d => {
+                alert(d.message);
+                location.reload();
+            });
+        }
+        
+        // Auto-close alerts
+        document.addEventListener('DOMContentLoaded', () => {
+             const alerts = document.querySelectorAll('.alert');
+             alerts.forEach(a => {
+                 setTimeout(() => {
+                     a.style.animation = 'fadeOut 0.5s forwards';
+                     setTimeout(() => a.remove(), 500);
+                 }, 4000);
+             });
+        });
+    </script>
+    
+      <script>
+        // Defensive UI recovery: if main appears empty or covered by an overlay,
+        // reveal main content so the user can see an error message instead of a blank page.
+        (function(){
+          function isElementVisible(el){
+            if(!el) return false;
+            try{
+              const rect = el.getBoundingClientRect();
+              return rect.width > 0 && rect.height > 0;
+            }catch(e){return false}
+          }
+
+          function revealMain(){
+            try{
+              const main = document.querySelector('main') || document.querySelector('.dashboard-main');
+              if(main){
+                // Ensure it's on top and visible
+                main.style.zIndex = 2147483000;
+                main.style.position = 'relative';
+                main.style.background = main.style.background || 'white';
+                main.style.minHeight = main.style.minHeight || '200px';
+              }
+
+              // Hide common full-screen overlays that may accidentally stay visible
+              ['notifyModal','notifyModalFloating','chatPanel','chatPanel','memberProfileModal','notifyModalFloating'].forEach(id => {
+                try{ const el = document.getElementById(id); if(el && isElementVisible(el)){ el.style.display = 'none'; el.setAttribute('aria-hidden','true'); } }catch(e){}
+              });
+
+              // Also hide modal overlays by class
+              document.querySelectorAll('.modal-overlay, .public-chat-panel, .chat-panel').forEach(el => {
+                try{ if(isElementVisible(el)){ el.style.display = 'none'; el.setAttribute('aria-hidden','true'); } }catch(e){}
+              });
+
+              // If nothing is visible, show a simple diagnostic message.
+              // Avoid false-positives on pages that already contain text (e.g. minimal admin pages)
+              const bodyRect = document.body.getBoundingClientRect();
+              const contentVisible = Array.from(document.body.children).some(isElementVisible);
+              const bodyText = (document.body.innerText || '').trim();
+              const hasMeaningfulText = bodyText.length > 20;
+              if (!contentVisible && !hasMeaningfulText) {
+                const box = document.createElement('div');
+                box.style.position = 'fixed';
+                box.style.left = '12px';
+                box.style.top = '12px';
+                box.style.right = '12px';
+                box.style.padding = '16px';
+                box.style.zIndex = 2147483600;
+                box.style.background = '#fff';
+                box.style.border = '2px solid #1e88e5';
+                box.style.borderRadius = '8px';
+                box.style.boxShadow = '0 6px 30px rgba(0,0,0,0.2)';
+                box.innerHTML = '<strong>Sahifa yuklanmadi — brauzer konsolini oching (F12) va xatoliklarni tekshiring.</strong>';
+                document.body.appendChild(box);
+              } else if (!contentVisible && hasMeaningfulText) {
+                // Page has text but appears covered; try to bring main forward but don't show the diagnostic box.
+                const main = document.querySelector('main') || document.querySelector('.dashboard-main');
+                if (main) {
+                  main.style.zIndex = 2147483000;
+                  main.style.position = 'relative';
+                }
+              }
+            }catch(e){ console.warn('UI recovery failed', e); }
+          }
+
+          if(document.readyState === 'complete' || document.readyState === 'interactive'){
+            setTimeout(revealMain, 50);
+          } else {
+            document.addEventListener('DOMContentLoaded', function(){ setTimeout(revealMain, 50); });
+          }
+        })();
+      </script>
+  </body>
+</html>

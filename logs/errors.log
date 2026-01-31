@@ -4602,3 +4602,456 @@ Traceback (most recent call last):
     data = self.rfile.read(10_000_000)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 MemoryError
+2026-01-22 16:33:49,634 | ERROR | restaurant_app | super_admin_login:16358 | Unexpected error in super_admin_login: Encountered unknown tag 'endif'.
+Traceback (most recent call last):
+  File "D:\Safety.uz\app.py", line 16355, in super_admin_login
+    return render_template("super_admin_login.html")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 152, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 133, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\super_admin_login.html", line 1, in top-level template code
+    {% extends "base.html" %} {% block title %}Super Admin Login{% endblock %} {% block content %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\base.html", line 3340, in template
+    {% endif %}
+jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'endif'.
+2026-01-22 16:33:49,709 | ERROR | restaurant_app | menu:8759 | Menu endpoint error: Encountered unknown tag 'endif'.
+2026-01-22 16:33:49,743 | ERROR | restaurant_app | menu:8789 | Menu fallback error: Encountered unknown tag 'endif'.
+2026-01-22 16:34:03,744 | ERROR | restaurant_app | super_admin_login:16358 | Unexpected error in super_admin_login: Encountered unknown tag 'endif'.
+Traceback (most recent call last):
+  File "D:\Safety.uz\app.py", line 16355, in super_admin_login
+    return render_template("super_admin_login.html")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 152, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 133, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\super_admin_login.html", line 1, in top-level template code
+    {% extends "base.html" %} {% block title %}Super Admin Login{% endblock %} {% block content %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\base.html", line 3340, in template
+    {% endif %}
+jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'endif'.
+2026-01-22 16:34:20,750 | ERROR | restaurant_app | super_admin_login:16358 | Unexpected error in super_admin_login: Encountered unknown tag 'endif'.
+Traceback (most recent call last):
+  File "D:\Safety.uz\app.py", line 16355, in super_admin_login
+    return render_template("super_admin_login.html")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 152, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 133, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\super_admin_login.html", line 1, in top-level template code
+    {% extends "base.html" %} {% block title %}Super Admin Login{% endblock %} {% block content %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\base.html", line 3340, in template
+    {% endif %}
+jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'endif'.
+2026-01-22 20:19:47,137 | ERROR | restaurant_app | menu:8759 | Menu endpoint error: Encountered unknown tag 'endif'.
+2026-01-22 20:19:47,179 | ERROR | restaurant_app | menu:8789 | Menu fallback error: Encountered unknown tag 'endif'.
+2026-01-23 12:55:48,602 | ERROR | restaurant_app | menu:8759 | Menu endpoint error: Encountered unknown tag 'endif'.
+2026-01-23 12:55:48,643 | ERROR | restaurant_app | menu:8789 | Menu fallback error: Encountered unknown tag 'endif'.
+2026-01-23 12:56:03,304 | ERROR | restaurant_app | super_admin_login:16358 | Unexpected error in super_admin_login: Encountered unknown tag 'endif'.
+Traceback (most recent call last):
+  File "D:\Safety.uz\app.py", line 16355, in super_admin_login
+    return render_template("super_admin_login.html")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 152, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 133, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\super_admin_login.html", line 1, in top-level template code
+    {% extends "base.html" %} {% block title %}Super Admin Login{% endblock %} {% block content %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\base.html", line 3340, in template
+    {% endif %}
+jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'endif'.
+2026-01-23 13:46:04,342 | ERROR | restaurant_app | handle_exception:2856 | Unhandled exception: Encountered unknown tag 'endblock'. - URL: http://localhost/register
+2026-01-23 13:46:04,348 | ERROR | restaurant_app | handle_exception:2858 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Safety.uz\app.py", line 10081, in register
+    return render_template("register.html")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 151, in render_template
+    template = app.jinja_env.get_or_select_template(template_name_or_list)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1087, in get_or_select_template
+    return self.get_template(template_name_or_list, parent, globals)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\loaders.py", line 138, in load
+    code = environment.compile(source, name, filename)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 771, in compile
+    self.handle_exception(source=source_hint)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\register.html", line 379, in template
+    {% endblock %}
+jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'endblock'.
+
+2026-01-23 13:48:53,157 | ERROR | restaurant_app | menu:8759 | Menu endpoint error: components/navbar.html
+2026-01-23 13:48:53,161 | ERROR | restaurant_app | menu:8789 | Menu fallback error: components/navbar.html
+2026-01-23 13:48:53,201 | ERROR | restaurant_app | handle_exception:2856 | Unhandled exception: components/navbar.html - URL: http://localhost/contact
+2026-01-23 13:48:53,212 | ERROR | restaurant_app | handle_exception:2858 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Safety.uz\app.py", line 11381, in contact
+    return render_template("contact.html", current_page="contact")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 152, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 133, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\contact.html", line 1, in top-level template code
+    {% extends "simple_base.html" %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Safety.uz\templates\simple_base.html", line 34, in top-level template code
+    {% include 'components/navbar.html' %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 65, in get_source
+    return self._get_source_fast(environment, template)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 99, in _get_source_fast
+    raise TemplateNotFound(template)
+jinja2.exceptions.TemplateNotFound: components/navbar.html
+
+2026-01-23 13:58:20,847 | ERROR | restaurant_app | menu:8759 | Menu endpoint error: Encountered unknown tag 'endblock'.
+2026-01-23 13:58:20,871 | ERROR | restaurant_app | menu:8789 | Menu fallback error: Encountered unknown tag 'endblock'.
+2026-01-23 13:58:20,930 | ERROR | restaurant_app | handle_exception:2856 | Unhandled exception: Encountered unknown tag 'endblock'. - URL: http://localhost/contact
+2026-01-23 13:58:20,939 | ERROR | restaurant_app | handle_exception:2858 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Safety.uz\app.py", line 11381, in contact
+    return render_template("contact.html", current_page="contact")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 152, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 133, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\contact.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\base.html", line 828, in template
+    {% endblock %}
+jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'endblock'.
+
+2026-01-23 13:58:20,985 | ERROR | restaurant_app | handle_exception:2856 | Unhandled exception: Encountered unknown tag 'endblock'. - URL: http://localhost/register
+2026-01-23 13:58:20,987 | ERROR | restaurant_app | handle_exception:2858 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Safety.uz\app.py", line 10081, in register
+    return render_template("register.html")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 152, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 133, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\register.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\base.html", line 828, in template
+    {% endblock %}
+jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'endblock'.
+
+2026-01-23 13:58:38,430 | ERROR | restaurant_app | menu:8759 | Menu endpoint error: Encountered unknown tag 'endblock'.
+2026-01-23 13:58:38,463 | ERROR | restaurant_app | menu:8789 | Menu fallback error: Encountered unknown tag 'endblock'.
+2026-01-23 13:59:30,796 | ERROR | restaurant_app | menu:8759 | Menu endpoint error: Encountered unknown tag 'endif'.
+2026-01-23 13:59:30,834 | ERROR | restaurant_app | menu:8789 | Menu fallback error: Encountered unknown tag 'endif'.
+2026-01-23 13:59:31,657 | ERROR | restaurant_app | menu:8759 | Menu endpoint error: Encountered unknown tag 'endif'.
+2026-01-23 13:59:31,692 | ERROR | restaurant_app | menu:8789 | Menu fallback error: Encountered unknown tag 'endif'.
+2026-01-23 13:59:31,760 | ERROR | restaurant_app | handle_exception:2856 | Unhandled exception: Encountered unknown tag 'endif'. - URL: http://localhost/contact
+2026-01-23 13:59:31,769 | ERROR | restaurant_app | handle_exception:2858 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Safety.uz\app.py", line 11381, in contact
+    return render_template("contact.html", current_page="contact")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 152, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 133, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\contact.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\base.html", line 3340, in template
+    {% endif %}
+jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'endif'.
+
+2026-01-23 13:59:31,821 | ERROR | restaurant_app | handle_exception:2856 | Unhandled exception: Encountered unknown tag 'endif'. - URL: http://localhost/register
+2026-01-23 13:59:31,824 | ERROR | restaurant_app | handle_exception:2858 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Safety.uz\app.py", line 10081, in register
+    return render_template("register.html")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 152, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 133, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\register.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\base.html", line 3340, in template
+    {% endif %}
+jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'endif'.
+
+2026-01-23 13:59:36,995 | ERROR | restaurant_app | super_admin_dashboard:20648 | Super admin dashboard xatoligi: Encountered unknown tag 'endif'.
+2026-01-23 13:59:37,547 | ERROR | restaurant_app | super_admin_dashboard:20648 | Super admin dashboard xatoligi: Encountered unknown tag 'endif'.
+2026-01-23 13:59:50,860 | ERROR | restaurant_app | menu:8759 | Menu endpoint error: Encountered unknown tag 'endblock'. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2026-01-23 13:59:50,884 | ERROR | restaurant_app | menu:8789 | Menu fallback error: Encountered unknown tag 'endblock'. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2026-01-23 13:59:52,442 | ERROR | restaurant_app | super_admin_dashboard:20648 | Super admin dashboard xatoligi: Encountered unknown tag 'endblock'. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2026-01-26 15:13:40,083 | ERROR | restaurant_app | menu:8759 | Menu endpoint error: Encountered unknown tag 'endblock'. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2026-01-26 15:13:40,110 | ERROR | restaurant_app | menu:8789 | Menu fallback error: Encountered unknown tag 'endblock'. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2026-01-26 15:14:29,095 | ERROR | restaurant_app | news_page:15877 | News page error: Encountered unknown tag 'endblock'. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2026-01-26 15:14:33,321 | ERROR | restaurant_app | news_page:15877 | News page error: Encountered unknown tag 'endblock'. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2026-01-26 15:14:44,571 | ERROR | restaurant_app | news_page:15877 | News page error: Encountered unknown tag 'endblock'. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2026-01-26 15:14:56,598 | ERROR | restaurant_app | super_admin_dashboard:20648 | Super admin dashboard xatoligi: Encountered unknown tag 'endblock'. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2026-01-29 13:33:34,197 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1112 column 2 (char 45356)
+2026-01-29 13:34:34,204 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1112 column 2 (char 45356)
+2026-01-29 13:35:34,216 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1112 column 2 (char 45356)
+2026-01-29 13:36:34,215 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1115 column 2 (char 45525)
+2026-01-29 13:37:34,300 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1115 column 2 (char 45525)
+2026-01-29 13:38:34,204 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1115 column 2 (char 45525)
+2026-01-29 13:39:33,892 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1115 column 2 (char 45525)
+2026-01-29 13:40:34,222 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:41:33,896 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:42:34,201 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:33,889 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,727 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,727 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,730 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,732 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,734 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,734 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,737 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,741 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,742 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,744 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,745 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,747 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,749 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,750 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,752 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,753 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,755 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,756 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,758 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,759 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,760 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,762 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,764 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,765 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,767 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,769 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,770 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,772 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,774 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,776 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,777 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,778 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,782 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,784 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,785 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,787 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,789 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,791 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,792 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,795 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,796 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,798 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,799 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,803 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,804 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,806 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,808 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,809 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,811 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,812 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,813 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,815 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,816 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,818 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,819 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,821 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:44:34,179 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:45:34,194 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting property name enclosed in double quotes: line 278 column 5 (char 11633)
+2026-01-29 13:46:34,193 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting property name enclosed in double quotes: line 278 column 5 (char 11633)
+2026-01-29 13:47:34,191 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting property name enclosed in double quotes: line 278 column 5 (char 11633)
+2026-01-29 15:35:25,914 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:25,919 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:25,922 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:25,924 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:25,988 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:25,991 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:25,994 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:25,996 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:25,998 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,001 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,016 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,027 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,079 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,084 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,090 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,096 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,180 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,182 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,185 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,187 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,420 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,423 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,426 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,428 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,759 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,770 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,775 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,779 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:27,025 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:27,028 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:27,031 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:27,034 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:32,928 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:32,930 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:32,932 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:32,935 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:32,958 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:32,962 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:32,964 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:32,968 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:32,970 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:32,973 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:32,975 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:32,978 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:33,148 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:33,151 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:33,153 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:33,157 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:33,190 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:33,193 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:33,195 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:33,199 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:33,336 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:33,339 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:33,341 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:33,343 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:33,474 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:33,477 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:33,479 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:33,481 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 21:37:23,905 | ERROR | restaurant_app | _get_db_dict:23842 | DB Dict Error: no such column: created_at
+2026-01-29 21:42:09,432 | ERROR | restaurant_app | _get_db_dict:23842 | DB Dict Error: no such column: created_at
+2026-01-30 09:00:43,270 | ERROR | restaurant_app | _get_db_dict:23872 | DB Dict Error: no such column: created_at
+2026-01-30 09:00:51,524 | ERROR | restaurant_app | answer_user_question:24095 | Error answering user question: module 'datetime' has no attribute 'now'
+2026-01-30 09:34:17,520 | ERROR | restaurant_app | _get_db_dict:23992 | DB Dict Error: no such column: created_at
+2026-01-30 17:34:22,575 | ERROR | werkzeug | _log:96 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 362, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 347, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError

@@ -84,13 +84,13 @@
       
       {% if cart_items %}
       <div class="industrial-card p-4">
-        <h5 class="mb-3 text-secondary text-uppercase fs-6 fw-bold"><i class="bi bi-info-circle me-2"></i> {{ get_text("Yo'riqnoma") }}</h5>
+        <h5 class="mb-3 text-secondary text-uppercase fs-6 fw-bold"><i class="bi bi-info-circle me-2"></i> {{ _('cart_page.instructions_title') }}</h5>
         <ul class="text-secondary small ps-3 mb-0">
-          <li>{{ get_text("Xaritada o'zingizning joylashuvingizni tanlang") }}</li>
-          <li>{{ get_text("Yoki qidiruv orqali manzilni kiriting") }}</li>
-          <li>{{ get_text("Tanlangan joylashuv asosida eng yaqin filial aniqlanadi") }}</li>
-          <li>{{ get_text("Yetkazib berish narxi va vaqti avtomatik hisoblanadi") }}</li>
-           <li>{{ get_text("Minimal buyurtma summasi: 50,000 so'm") }}</li>
+          <li>{{ _('cart_page.instruction1') }}</li>
+          <li>{{ _('cart_page.instruction2') }}</li>
+          <li>{{ _('cart_page.instruction3') }}</li>
+          <li>{{ _('cart_page.instruction4') }}</li>
+           <li>{{ _('cart_page.instruction5') }}</li>
         </ul>
       </div>
       {% endif %}
@@ -100,7 +100,7 @@
     {% if cart_items %}
     <div class="col-lg-4">
       <div class="industrial-card p-4 sticky-top" style="top: 100px; z-index: 5;">
-        <h4 class="mb-4 text-uppercase fw-bold">{{ get_text("Buyurtma berish") }}</h4>
+        <h4 class="mb-4 text-uppercase fw-bold">{{ _('cart_page.place_order_title') }}</h4>
         
         {% if session.get('user_id') %}
         <form method="post" action="{{ url_for('place_order') }}" onsubmit="return validateOrder()">
@@ -109,12 +109,12 @@
           
           <div id="delivery-fields" class="mb-4">
              <label class="form-label text-secondary small text-uppercase fw-bold mb-3">
-                 <i class="bi bi-geo-alt-fill text-accent me-1"></i> {{ get_text("Yetkazib berish manzili") }}
+                 <i class="bi bi-geo-alt-fill text-accent me-1"></i> {{ _('cart_page.delivery_address_label') }}
              </label>
              
              <!-- Search Address -->
              <div class="input-group mb-3">
-               <input type="text" id="address-search" class="form-control bg-dark text-light border-secondary" placeholder='{{ get_text("Manzilni qidirish...") }}'>
+               <input type="text" id="address-search" class="form-control bg-dark text-light border-secondary" placeholder='{{ _("cart_page.search_address_placeholder") }}'>
                <button type="button" onclick="searchAddressOnMap()" class="btn btn-secondary border-secondary"><i class="bi bi-search"></i></button>
              </div>
 
@@ -127,7 +127,7 @@
                     <i class="bi bi-crosshair me-1"></i> GPS
                  </button>
                  <button type="button" onclick="searchNearbyPlaces('do\'kon')" class="btn btn-sm btn-dark bg-opacity-75 border-secondary w-50 backdrop-blur">
-                    <i class="bi bi-shop me-1"></i> Filiallar
+                    <i class="bi bi-shop me-1"></i> {{ _('cart_page.branches_button') }}
                  </button>
                </div>
              </div>
@@ -135,19 +135,19 @@
              <!-- Delivery Info Summary -->
              <div id="delivery-info" class="p-3 rounded bg-black bg-opacity-25 border border-secondary border-opacity-10 mb-3" style="display: none">
                 <div class="d-flex justify-content-between mb-2 small">
-                   <span class="text-secondary">{{ get_text("Filial:") }}</span>
+                   <span class="text-secondary">{{ _('cart_page.branch_label') }}</span>
                    <span id="branch-name" class="fw-bold text-end">-</span>
                 </div>
                 <div class="d-flex justify-content-between mb-2 small">
-                   <span class="text-secondary">{{ get_text("Masofa:") }}</span>
+                   <span class="text-secondary">{{ _('cart_page.distance_label') }}</span>
                    <span id="distance-display" class="fw-bold">-</span>
                 </div>
                 <div class="d-flex justify-content-between mb-2 small">
-                   <span class="text-secondary">{{ get_text("Yetkazish narxi:") }}</span>
+                   <span class="text-secondary">{{ _('cart_page.delivery_price_label') }}</span>
                    <span id="delivery-price-display" class="fw-bold text-success">-</span>
                 </div>
                  <div class="d-flex justify-content-between mb-2 small">
-                   <span class="text-secondary">{{ get_text("Vaqt:") }}</span>
+                   <span class="text-secondary">{{ _('cart_page.time_label') }}</span>
                    <span id="delivery-time-display" class="fw-bold">-</span>
                 </div>
                 
@@ -164,16 +164,16 @@
           
           <div class="border-top border-secondary border-opacity-25 pt-3 mb-4">
              <div class="d-flex justify-content-between mb-2">
-               <span class="text-secondary">{{ get_text("Tayyorlash:") }}</span>
-               <span class="fw-bold">15-20 {{ get_text("daq") }}</span>
+               <span class="text-secondary">{{ _('cart_page.prep_label') }}</span>
+               <span class="fw-bold">15-20 {{ _('cart_page.prep_time_value') }}</span>
              </div>
              <div class="d-flex justify-content-between align-items-center mt-3">
-               <span class="h5 mb-0 fw-bold">{{ get_text("Jami:") }}</span>
+               <span class="h5 mb-0 fw-bold">{{ _('cart_page.total_label') }}</span>
                <div class="text-end">
                    <span class="h4 mb-0 text-accent fw-bold" id="total-price-display">
                        {{ "{:,.0f}".format(cart_items|sum(attribute='price') * cart_items|sum(attribute='quantity')) if cart_items else 0 }}
                    </span>
-                   <small class="d-block text-secondary small">{{ get_text("so'm") }}</small>
+                   <small class="d-block text-secondary small">{{ _('cart_page.currency_so_m') }}</small>
                </div>
              </div>
           </div>
@@ -182,7 +182,7 @@
           <input type="hidden" id="selected_payment_data" name="payment_data" value="" />
           
           <button type="submit" class="btn-primary-industrial w-100 justify-content-center py-3">
-            {{ get_text("Buyurtma berish") }} <i class="bi bi-arrow-right ms-2"></i>
+            {{ _('cart_page.place_order_title') }} <i class="bi bi-arrow-right ms-2"></i>
           </button>
         </form>
         {% else %}
@@ -190,10 +190,10 @@
              <div class="mb-3">
                  <i class="bi bi-person-lock display-4 text-secondary opacity-50"></i>
              </div>
-             <p class="text-muted mb-4 small">{{ get_text("Buyurtma berish uchun tizimga kirishingiz yoki ro'yxatdan o'tishingiz kerak.") }}</p>
+             <p class="text-muted mb-4 small">{{ _('cart_page.auth_required_message') }}</p>
              <div class="d-grid gap-2">
-                 <a href="{{ url_for('login_page') }}" class="btn-primary-industrial justify-content-center">{{ get_text("Kirish") }}</a>
-                 <a href="{{ url_for('register') }}" class="btn-outline-industrial justify-content-center">{{ get_text("Ro'yxatdan o'tish") }}</a>
+                 <a href="{{ url_for('login_page') }}" class="btn-primary-industrial justify-content-center">{{ _('auth.login_here') }}</a>
+                 <a href="{{ url_for('register') }}" class="btn-outline-industrial justify-content-center">{{ _('auth.register_here') }}</a>
              </div>
           </div>
         {% endif %}

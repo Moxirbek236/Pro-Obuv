@@ -4,66 +4,64 @@
 {% block header_title %}Super Admin Dashboard{% endblock %}
 {% block header_subtitle %}Tizimni to'liq boshqaring va nazorat qiling.{% endblock %}
 
-
-
 {% block dashboard_content %}
     <!-- Dashboard Tabs Navigation -->
-    <div class="d-flex gap-2 mb-4 overflow-auto pb-2 border-bottom">
-        <button class="btn btn-light-modern active" onclick="showTab('staff')" id="tab-btn-staff">
-            <i class="bi bi-people"></i> Xodimlar
+    <div class="d-flex gap-2 gap-md-3 mb-4 mb-md-5 overflow-auto pb-2 border-bottom-0 justify-content-start justify-content-md-center px-2 px-md-0" style="scrollbar-width: none; -ms-overflow-style: none;">
+        <button class="btn btn-light-modern px-3 px-md-4 py-2 d-flex align-items-center gap-2 active border-0 shadow-sm flex-shrink-0" onclick="showTab('staff')" id="tab-btn-staff">
+            <i class="bi bi-people fs-5"></i> <span>Xodimlar</span>
         </button>
-        <button class="btn btn-light-modern" onclick="showTab('couriers')" id="tab-btn-couriers">
-            <i class="bi bi-bicycle"></i> Kuryerlar
+        <button class="btn btn-light-modern px-3 px-md-4 py-2 d-flex align-items-center gap-2 border-0 shadow-sm flex-shrink-0" onclick="showTab('couriers')" id="tab-btn-couriers">
+            <i class="bi bi-bicycle fs-5"></i> <span>Kuryerlar</span>
         </button>
-        <button class="btn btn-light-modern" onclick="showTab('users')" id="tab-btn-users">
-            <i class="bi bi-person-badge"></i> Foydalanuvchilar
+        <button class="btn btn-light-modern px-3 px-md-4 py-2 d-flex align-items-center gap-2 border-0 shadow-sm flex-shrink-0" onclick="showTab('users')" id="tab-btn-users">
+            <i class="bi bi-person-badge fs-5"></i> <span>Foydalanuvchilar</span>
         </button>
-        <button class="btn btn-light-modern" onclick="showTab('branches')" id="tab-btn-branches">
-            <i class="bi bi-shop"></i> Filiallar
+        <button class="btn btn-light-modern px-3 px-md-4 py-2 d-flex align-items-center gap-2 border-0 shadow-sm flex-shrink-0" onclick="showTab('branches')" id="tab-btn-branches">
+            <i class="bi bi-shop fs-5"></i> <span>Filiallar</span>
         </button>
-        <button class="btn btn-light-modern" onclick="showTab('orders')" id="tab-btn-orders">
-            <i class="bi bi-cart"></i> Buyurtmalar
+        <button class="btn btn-light-modern px-3 px-md-4 py-2 d-flex align-items-center gap-2 border-0 shadow-sm flex-shrink-0" onclick="showTab('orders')" id="tab-btn-orders">
+            <i class="bi bi-cart fs-5"></i> <span>Buyurtmalar</span>
         </button>
-        <button class="btn btn-light-modern" onclick="showTab('menu')" id="tab-btn-menu">
-            <i class="bi bi-grid-3x3"></i> Menyu
+        <button class="btn btn-light-modern px-3 px-md-4 py-2 d-flex align-items-center gap-2 border-0 shadow-sm flex-shrink-0" onclick="showTab('menu')" id="tab-btn-menu">
+            <i class="bi bi-grid-3x3 fs-5"></i> <span>Menyu</span>
         </button>
     </div>
 
     <!-- Analytics Cards -->
-    <div class="row g-4 mb-5">
-        <div class="col-md-3">
-            <div class="card-modern stat-card">
-                <div class="stat-icon primary"><i class="bi bi-cart-check"></i></div>
+    <div class="row g-3 g-md-4 mb-4 mb-md-5">
+        <div class="col-6 col-md-3">
+            <div class="card-modern stat-card h-100 d-flex flex-column align-items-center text-center p-3">
+                <div class="stat-icon primary mb-2 mb-md-3"><i class="bi bi-cart-check"></i></div>
                 <div>
-                    <div class="text-muted small fw-bold text-uppercase">Jami Buyurtmalar</div>
-                    <h3 class="mb-0 mt-1">{{ stats.total_orders }}</h3>
+                    <div class="text-muted small fw-bold text-uppercase mb-1" style="letter-spacing: 0.5px; font-size: 0.65rem;">Jami Buyurtmalar</div>
+                    <h2 class="mb-0 fw-bold fs-4 fs-md-2">{{ stats.total_orders }}</h2>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card-modern stat-card">
-                <div class="stat-icon warning"><i class="bi bi-clock-history"></i></div>
+        <div class="col-6 col-md-3">
+            <div class="card-modern stat-card h-100 d-flex flex-column align-items-center text-center p-3">
+                <div class="stat-icon warning mb-2 mb-md-3"><i class="bi bi-clock-history"></i></div>
                 <div>
-                    <div class="text-muted small fw-bold text-uppercase">Kutayotgan</div>
-                    <h3 class="mb-0 mt-1">{{ stats.waiting_orders }}</h3>
+                    <div class="text-muted small fw-bold text-uppercase mb-1" style="letter-spacing: 0.5px; font-size: 0.65rem;">Kutayotgan</div>
+                    <h2 class="mb-0 fw-bold fs-4 fs-md-2">{{ stats.waiting_orders }}</h2>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card-modern stat-card">
-                <div class="stat-icon success"><i class="bi bi-people"></i></div>
+        <div class="col-6 col-md-3">
+            <div class="card-modern stat-card h-100 d-flex flex-column align-items-center text-center p-3">
+                <div class="stat-icon success mb-2 mb-md-3"><i class="bi bi-people"></i></div>
                 <div>
-                    <div class="text-muted small fw-bold text-uppercase">Foydalanuvchilar</div>
-                    <h3 class="mb-0 mt-1">{{ stats.total_users }}</h3>
+                    <div class="text-muted small fw-bold text-uppercase mb-1" style="letter-spacing: 0.5px; font-size: 0.65rem;">Foydalanuvchilar</div>
+                    <h2 class="mb-0 fw-bold fs-4 fs-md-2">{{ stats.total_users }}</h2>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card-modern stat-card">
-                <div class="stat-icon info"><i class="bi bi-bicycle"></i></div>
+        <div class="col-6 col-md-3">
+            <div class="card-modern stat-card h-100 d-flex flex-column align-items-center text-center p-3">
+                <div class="stat-icon info mb-2 mb-md-3"><i class="bi bi-bicycle"></i></div>
                 <div>
-                    <div class="text-muted small fw-bold text-uppercase">Kuryerlar</div>
-                    <h3 class="mb-0 mt-1">{{ stats.total_couriers }}</h3>
+                    <div class="text-muted small fw-bold text-uppercase mb-1" style="letter-spacing: 0.5px; font-size: 0.65rem;">Kuryerlar</div>
+                    <h2 class="mb-0 fw-bold fs-4 fs-md-2">{{ stats.total_couriers }}</h2>
                 </div>
             </div>
         </div>
@@ -206,24 +204,42 @@
     </div>
     
     <!-- Questions Section -->
-    <div class="card-modern mt-4 p-4">
-         <h5 class="fw-bold mb-3">So'nggi Savollar</h5>
-         {% if questions %}
-         <div class="list-group list-group-flush">
-             {% for q in questions %}
-             <div class="list-group-item px-0 py-3">
-                 <div class="d-flex justify-content-between">
-                     <h6 class="fw-bold mb-1">{{ q.user_name }}</h6>
-                     <small class="text-muted">{{ q.created_at[:10] }}</small>
+    <div class="mt-5">
+        <h4 class="fw-bold mb-4 d-flex align-items-center gap-2">
+            <i class="bi bi-chat-left-text text-primary"></i> So'nggi Savollar
+        </h4>
+        <div class="row g-4">
+             {% if questions %}
+                 {% for q in questions %}
+                 <div class="col-md-6 col-lg-4">
+                     <div class="card-modern h-100 border-0 shadow-sm" style="border-left: 4px solid #3b82f6 !important;">
+                         <div class="d-flex justify-content-between align-items-start mb-2">
+                             <h6 class="fw-bold mb-0 text-dark">{{ q.user_name }}</h6>
+                             <span class="badge bg-light text-muted fw-normal" style="font-size: 0.7rem;">{{ q.created_at[:10] }}</span>
+                         </div>
+                         <div class="bg-light p-3 rounded-3 mb-3" style="min-height: 80px;">
+                             <p class="mb-0 small text-dark" style="line-height: 1.5;">{{ q.message }}</p>
+                         </div>
+                         <div class="d-flex align-items-center gap-2 text-muted small">
+                             <i class="bi bi-telephone fs-7"></i>
+                             <span>{{ q.phone or q.email }}</span>
+                         </div>
+                         <div class="mt-3 d-flex gap-2">
+                             <button class="btn btn-sm btn-light-modern flex-grow-1">Javob berish</button>
+                             <button class="btn btn-sm btn-light-modern text-danger" onclick="deleteQuestion(this.dataset.id)" data-id="{{ q.id }}"><i class="bi bi-trash"></i></button>
+                         </div>
+                     </div>
                  </div>
-                 <p class="mb-1 small">{{ q.message }}</p>
-                 <small class="text-muted">{{ q.phone or q.email }}</small>
-             </div>
-             {% endfor %}
-         </div>
-         {% else %}
-         <p class="text-muted">Savollar yo'q.</p>
-         {% endif %}
+                 {% endfor %}
+             {% else %}
+                 <div class="col-12">
+                     <div class="card-modern text-center py-5 text-muted">
+                         <i class="bi bi-chat-square-dots fs-1 mb-3 d-block opacity-25"></i>
+                         Savollar hozircha yo'q.
+                     </div>
+                 </div>
+             {% endif %}
+        </div>
     </div>
 
 {% endblock %}
@@ -423,7 +439,7 @@
                          data: d.staff,
                          rowsPerPage: 10,
                          headerHtml: '<thead><tr><th>ID</th><th>Xodim</th><th>Telefon</th><th>Passport</th><th>Amallar</th></tr></thead>',
-                         renderRow: (s) => `<tr><td>#${s.id}</td><td><div class="fw-bold">${s.first_name} ${s.last_name}</div></td><td>${s.phone}</td><td>${s.passport_series || ''}${s.passport_number || ''}</td><td><button class="btn btn-sm btn-light-modern text-primary" data-id="${s.id}" onclick="resetStaffPassword(this.dataset.id)"><i class="bi bi-key"></i></button></td></tr>`
+                         renderRow: (s) => `<tr><td data-label="ID">#${s.id}</td><td data-label="Xodim"><div class="fw-bold">${s.first_name} ${s.last_name}</div></td><td data-label="Telefon">${s.phone}</td><td data-label="Passport">${s.passport_series || ''}${s.passport_number || ''}</td><td data-label="Amallar"><div class="d-flex gap-1"><button class="btn btn-sm btn-light-modern text-primary" onclick="resetStaffPassword(${s.id})"><i class="bi bi-key"></i></button><a href="/super-admin/database/staff" class="btn btn-sm btn-light-modern text-info"><i class="bi bi-pencil"></i></a><button class="btn btn-sm btn-light-modern text-danger" onclick="deleteStaff(${s.id})"><i class="bi bi-trash"></i></button></div></td></tr>`
                     });
                     container.dataset.loaded = "true";
                 } else {
@@ -452,7 +468,7 @@
                         data: d.couriers,
                         rowsPerPage: 10,
                         headerHtml: '<thead><tr><th>ID</th><th>Kuryer</th><th>Telefon</th><th>Amallar</th></tr></thead>',
-                        renderRow: (c) => `<tr><td>#${c.id}</td><td><div class="fw-bold">${c.first_name} ${c.last_name}</div></td><td>${c.phone}</td><td><button class="btn btn-sm btn-light-modern text-primary" data-id="${c.id}" onclick="resetCourierPassword(this.dataset.id)"><i class="bi bi-key"></i></button></td></tr>`
+                        renderRow: (c) => `<tr><td data-label="ID">#${c.id}</td><td data-label="Kuryer"><div class="fw-bold">${c.first_name} ${c.last_name}</div></td><td data-label="Telefon">${c.phone}</td><td data-label="Amallar"><div class="d-flex gap-1"><button class="btn btn-sm btn-light-modern text-primary" onclick="resetCourierPassword(${c.id})"><i class="bi bi-key"></i></button><a href="/super-admin/database/couriers" class="btn btn-sm btn-light-modern text-info"><i class="bi bi-pencil"></i></a><button class="btn btn-sm btn-light-modern text-danger" onclick="deleteCourier(${c.id})"><i class="bi bi-trash"></i></button></div></td></tr>`
                     });
                     container.dataset.loaded = "true";
                 } else {
@@ -478,7 +494,7 @@
                         data: d.users,
                         rowsPerPage: 10,
                         headerHtml: '<thead><tr><th>ID</th><th>Mijoz</th><th>Telefon/Email</th><th>Manzil</th><th>Amallar</th></tr></thead>',
-                        renderRow: (u) => `<tr><td>${u.id}</td><td><div class="fw-bold">${u.first_name || ''} ${u.last_name || ''}</div><small class="text-muted">${u.username || ''}</small></td><td><div>${u.phone_number || u.phone || '-'}</div><div class="text-muted small">${u.email || ''}</div></td><td>${u.address || '-'}</td><td><button class="btn btn-sm btn-light-modern text-danger" onclick="deleteUser(${u.id})"><i class="bi bi-trash"></i></button></td></tr>`
+                        renderRow: (u) => `<tr><td data-label="ID">${u.id}</td><td data-label="Mijoz"><div class="fw-bold">${u.first_name || ''} ${u.last_name || ''}</div><small class="text-muted">${u.username || ''}</small></td><td data-label="Telefon/Email"><div>${u.phone_number || u.phone || '-'}</div><div class="text-muted small">${u.email || ''}</div></td><td data-label="Manzil">${u.address || '-'}</td><td data-label="Amallar"><div class="d-flex gap-1"><a href="/super-admin/database/users" class="btn btn-sm btn-light-modern text-info"><i class="bi bi-pencil"></i></a><button class="btn btn-sm btn-light-modern text-danger" onclick="deleteUser(${u.id})"><i class="bi bi-trash"></i></button></div></td></tr>`
                     });
                     container.dataset.loaded = "true";
                  } else {
@@ -501,13 +517,13 @@
                         headerHtml: `<thead><tr><th>ID</th><th>Ticket</th><th>Mijoz</th><th>Jami</th><th>Holat</th><th>Sana</th><th>Amallar</th></tr></thead>`,
                         renderRow: (o) => `
                             <tr>
-                                <td class="fw-bold">#${o.id}</td>
-                                <td><span class="badge bg-light text-dark border">#${o.ticket_no}</span></td>
-                                <td>${o.customer_name || 'Mehmon'}</td>
-                                <td class="fw-bold text-dark">${formatCurrency(o.total)}</td>
-                                <td>${getStatusBadge(o.status)}</td>
-                                <td class="small text-muted">${new Date(o.created_at).toLocaleDateString()}</td>
-                                <td><a href="/api/orders/${o.id}" target="_blank" class="btn btn-sm btn-light-modern text-primary"><i class="bi bi-eye"></i></a></td>
+                                <td class="fw-bold" data-label="ID">#${o.id}</td>
+                                <td data-label="Ticket"><span class="badge bg-light text-dark border">#${o.ticket_no}</span></td>
+                                <td data-label="Mijoz">${o.customer_name || 'Mehmon'}</td>
+                                <td class="fw-bold text-dark" data-label="Jami">${formatCurrency(o.total)}</td>
+                                <td data-label="Holat">${getStatusBadge(o.status)}</td>
+                                <td class="small text-muted" data-label="Sana">${new Date(o.created_at).toLocaleDateString()}</td>
+                                <td data-label="Amallar"><div class="d-flex gap-1 justify-content-end"><a href="/api/orders/${o.id}" target="_blank" class="btn btn-sm btn-light-modern text-primary"><i class="bi bi-eye"></i></a></div></td>
                             </tr>`
                     });
                 }
@@ -678,6 +694,65 @@
             }
         };
 
+        window.deleteStaff = (id) => {
+            if(confirm('Haqiqatan ham ushbu xodimni o\'chirmoqchimisiz?')) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/super-admin/delete-staff/${id}`;
+                const csrf = document.createElement('input');
+                csrf.type = 'hidden';
+                csrf.name = 'csrf_token';
+                csrf.value = window.CSRF_TOKEN || '';
+                form.appendChild(csrf);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        };
+
+        window.deleteCourier = (id) => {
+            if(confirm('Haqiqatan ham ushbu kuryerni o\'chirmoqchimisiz?')) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/super-admin/delete-courier/${id}`;
+                const csrf = document.createElement('input');
+                csrf.type = 'hidden';
+                csrf.name = 'csrf_token';
+                csrf.value = window.CSRF_TOKEN || '';
+                form.appendChild(csrf);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        };
+
+        window.deleteUser = (id) => {
+            if(confirm('Haqiqatan ham ushbu foydalanuvchini o\'chirmoqchimisiz?')) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/super-admin/delete-user-db/${id}`;
+                const csrf = document.createElement('input');
+                csrf.type = 'hidden';
+                csrf.name = 'csrf_token';
+                csrf.value = window.CSRF_TOKEN || '';
+                form.appendChild(csrf);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        };
+
+        window.deleteQuestion = (id) => {
+            if(confirm('Ushbu savolni o\'chirmoqchimisiz?')) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/super-admin/delete-question/${id}`;
+                const csrf = document.createElement('input');
+                csrf.type = 'hidden';
+                csrf.name = 'csrf_token';
+                csrf.value = window.CSRF_TOKEN || '';
+                form.appendChild(csrf);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        };
     })();
 </script>
 {% endblock %}

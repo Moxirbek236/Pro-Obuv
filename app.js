@@ -71,7 +71,7 @@ function startPython() {
   });
   const py = spawn(
     process.platform.startsWith("win") ? "python" : "python3",
-    ["run.py"],
+    ["app.py"],
     {
       cwd: __dirname,
       env,

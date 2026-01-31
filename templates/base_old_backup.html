@@ -1,0 +1,3421 @@
+<!DOCTYPE html>
+{% set LANG = request.environ.get('LANG_CODE', session.get('interface_language', config.get('DEFAULT_LANGUAGE', 'ru'))) %}
+<html lang="{{ LANG }}">
+  <head>
+  <meta charset="utf-8" />
+  <!-- Inline favicon to avoid /favicon.ico 404 and reduce external requests -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23ffffff'/%3E%3Ctext x='2' y='12' font-size='12' fill='%23000'%3EP%3C/text%3E%3C/svg%3E" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Google Search Console verification -->
+  <meta name="google-site-verification" content="rTTyCeprWsCMNo0unnRWETF1MiikewIO27vPVJPStCc" />
+  <title>спецобувь / Safety  - {% block title %}Spetsobuv Do'koni{% endblock %}</title>
+  {# SEO meta block: page templates intended for customers may override this block to inject page-specific meta tags #}
+  {% block seo_meta %}
+  {# Per-page SEO: templates may pass `seo_data` (object/dict) with page_title, meta_description, meta_keywords. Fallback to site-wide translations. #}
+  <meta name="description" content="{{ (seo_data.meta_description if (seo_data and seo_data.meta_description) else _('meta_description')) }}">
+  <meta name="keywords" content="{{ (seo_data.meta_keywords if (seo_data and seo_data.meta_keywords) else _('meta_keywords')) }}">
+  <meta property="og:site_name" content="Pro Obuv">
+  <meta property="og:title" content="{{ (seo_data.page_title if (seo_data and seo_data.page_title) else _('home_title')) }}">
+  <meta property="og:description" content="{{ (seo_data.meta_description if (seo_data and seo_data.meta_description) else _('meta_description')) }}">
+  <meta name="twitter:card" content="summary_large_image">
+  {# Canonical: prefer the language-prefixed absolute URL for the current endpoint/view args #}
+  {% set _canonical = canonical_url() %}
+  <link rel="canonical" href="{{ _canonical }}" />
+  {# Provide hreflang alternates for supported languages using language-prefixed paths.
+     Use ORIG_PATH_INFO (set by LangPrefixMiddleware) when available so the original
+     requested path is preserved. Build links like /<lang>/<rest-of-path> to help
+     search engines discover language-specific pages. #}
+  {% set _base = request.url_root.rstrip('/') %}
+  {% set _orig = request.environ.get('ORIG_PATH_INFO', request.path or '/') %}
+  {# Remove an existing leading language segment if present so we can re-insert each lang #}
+  {% set _segs = _orig.lstrip('/').split('/', 1) %}
+  {% if _segs and _segs[0] in config.get('SUPPORTED_LANGUAGES', ['uz','ru','en','kz']) %}
+    {% set _rest = '/' + (_segs[1] if (_segs|length > 1 and _segs[1]) else 'menu') %}
+  {% else %}
+    {% set _rest = _orig %}
+  {% endif %}
+  <link rel="alternate" hreflang="uz" href="{{ _base }}/uz{{ _rest }}" />
+  <link rel="alternate" hreflang="ru" href="{{ _base }}/ru{{ _rest }}" />
+  <link rel="alternate" hreflang="en" href="{{ _base }}/en{{ _rest }}" />
+  <link rel="alternate" hreflang="kz" href="{{ _base }}/kz{{ _rest }}" />
+  <link rel="alternate" hreflang="x-default" href="{{ _base }}/{{ config.get('DEFAULT_LANGUAGE', 'ru') }}{{ _rest }}" />
+  {# --- Multilingual SEO meta: keywords, OG/Twitter, JSON-LD --- #}
+  {% if LANG == 'ru' %}
+    {% set SEO_KW = "safety, Спецобувь, рабочая обувь, защитная обувь, Pro Obuv, ботинки, ботинка, ботинки рабочие, резиновые сапоги, стальная ноская обувь, антискользящая обувь, термо ботинки, средства защиты, spets obuv, spetsobuv, spest obuv" %}
+  {% elif LANG == 'en' %}
+    {% set SEO_KW = "safety, safety shoes, work shoes, protective footwear, steel toe boots, non slip shoes, thermal boots, work boots, pro obuv, industrial footwear" %}
+  {% elif LANG == 'kz' %}
+    {% set SEO_KW = "safety, қауіпсіздік аяқ киімі, жұмыс аяқ киімі, қорғаныш аяқ киімі, ботинки, ботинка, pro obuv, болат мұрынды етік, жұмыс етігі, сырғымайтын аяқ киім" %}
+  {% else %}
+    {% set SEO_KW = "safety, xavfsizlik oyoq kiyimi, ish kiyimi, maxsus oyoq kiyim, pro obuv, botinka, botinkalar, ishchi botinka, rezina etik, ish etiklari, antislip, po'lat ucli botinka, termo botinka, ish jihozlari, spets obuv, spetsobuv, spest obuv" %}
+  {% endif %}
+  <meta name="keywords" content="{{ SEO_KW }}" />
+
+  {# Open Graph / Twitter for better sharing & snippets #}
+  {% if LANG == 'ru' %}{% set OG_LOCALE = 'ru_RU' %}
+  {% elif LANG == 'en' %}{% set OG_LOCALE = 'en_US' %}
+  {% elif LANG == 'kz' %}{% set OG_LOCALE = 'kk_KZ' %}
+  {% else %}{% set OG_LOCALE = 'uz_UZ' %}{% endif %}
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="{{ OG_LOCALE }}" />
+  <meta property="og:title" content="{{ get_text('home_title', LANG) }}" />
+  <meta property="og:description" content="{{ get_text('meta_description', LANG) }}" />
+  <meta property="og:url" content="{{ _base }}/{{ LANG }}{{ _rest }}" />
+  <meta property="og:site_name" content="Safety.uz" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="{{ get_text('home_title', LANG) }}" />
+  <meta name="twitter:description" content="{{ get_text('meta_description', LANG) }}" />
+
+  {# JSON-LD: WebSite with SearchAction per language #}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Safety.uz",
+    "url": "{{ _base }}/{{ LANG }}/",
+    "inLanguage": "{{ OG_LOCALE }}",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "{{ _base }}/{{ LANG }}/menu?search={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+  {% endblock %}
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ 'favicons/apple-touch-icon.webp' | cloudinary_url }}" />
+    <link rel="icon" type="image/webp" sizes="32x32" href="{{ 'favicons/favicon-32x32.webp' | cloudinary_url }}" />
+    <link rel="icon" type="image/webp" sizes="16x16" href="{{ 'favicons/favicon-16x16.webp' | cloudinary_url }}" />
+    <link rel="shortcut icon" href="{{ 'favicons/favicon.ico' | cloudinary_url }}" />
+    <link rel="manifest" href="{{ 'favicons/site.webmanifest' | cloudinary_url }}" />
+    <meta name="theme-color" content="#4299e1" />
+    <meta name="msapplication-TileColor" content="#4299e1" />
+    <!-- Fallbacks for servers that don't serve static/favicons yet (keeps compatibility) -->
+    <!-- If these static files are not present, the server may instead serve /favicons/* from project root -->
+    <script>
+      (function(){
+        // If Flask static returns 404 for these resources in production, you can copy your /favicons into static/favicons.
+      })();
+    </script>
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="csrf-token" content="{{ csrf_token if csrf_token else '' }}">
+    <script src="{{ url_for('static', filename='js/loop-protection.js') }}"></script>
+    <!-- CORE LIBRARIES -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+    
+    <!-- PREMIUM FONTS -->
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;700&family=Inter:wght@400;600&family=Roboto+Condensed:wght@700&display=swap" rel="stylesheet">
+
+    <!-- INDUSTRIAL PREMIUM DESIGN SYSTEM (Primary Brand CSS) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/industrial-premium.css') }}" />
+
+    <!-- Global sozlamalar uchun CSS -->
+    <style>
+      /* CSS Variables Definition */
+      :root {
+        --base-light: #f8fafc;
+        --base-dark: #1e293b;
+        --text-primary: #f1f5f9;
+        --text-dark: #1e293b;
+        --accent-primary: #FFD700;
+      }
+      
+      /* CRITICAL BRANDING OVERRIDES */
+      /* Removed Global Body Override to fix storefront designs */
+      /* body { background-color: var(--base-dark) !important; color: var(--text-primary) !important; ... } */
+      body.admin-mode {
+           background-color: var(--base-dark) !important;
+           color: var(--text-primary) !important;
+      }
+      
+      /* Alert Improvements */
+      .alert {
+          border: none;
+          box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          padding: 1rem 1.5rem;
+          border-radius: 8px;
+          position: fixed;
+          top: 80px;
+          right: 20px;
+          z-index: 9999;
+          animation: slideInRight 0.4s ease-out;
+          max-width: 400px;
+      }
+      .alert-dismissible .btn-close {
+          display: none !important; /* Remove close button as requested */
+      }
+      .alert-success {
+          background-color: #d1fae5;
+          color: #065f46;
+          border-left: 4px solid #10b981;
+      }
+      .alert-danger {
+          background-color: #fee2e2;
+          color: #991b1b;
+          border-left: 4px solid #ef4444;
+      }
+      @keyframes slideInRight {
+          from { opacity: 0; transform: translateX(100%); }
+          to { opacity: 1; transform: translateX(0); }
+      }
+      @keyframes fadeOut {
+          from { opacity: 1; }
+          to { opacity: 0; }
+      }
+
+      /* Floating Help Button */
+      #helpWidget {
+          position: fixed;
+          bottom: 30px;
+          right: 30px;
+          z-index: 99999; /* Highest as requested */
+      }
+      #helpBtn {
+          width: 56px;
+          height: 56px;
+          border-radius: 50%;
+          background: #4ade80; /* Nice green or gradient */
+          background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+          border: none;
+          box-shadow: 0 4px 15px rgba(22, 163, 74, 0.4);
+          color: white;
+          font-size: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: transform 0.2s;
+      }
+      #helpBtn:hover { transform: scale(1.1); }
+      #helpMenu {
+          position: absolute;
+          bottom: 70px;
+          right: 0;
+          background: white;
+          border-radius: 12px;
+          box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+          width: 200px;
+          overflow: hidden;
+          display: none; /* hidden by default */
+          flex-direction: column;
+      }
+      #helpMenu.show { display: flex; animation: slideUp 0.2s ease-out; }
+      .help-item {
+          padding: 12px 16px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          color: #1a1a1a;
+          text-decoration: none;
+          transition: background 0.2s;
+          font-size: 0.9rem;
+          font-weight: 500;
+          border: none;
+          background: none;
+          width: 100%;
+          text-align: left;
+      }
+      .help-item:hover { background: #f3f4f6; color: #16a34a; }
+      @keyframes slideUp {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+      }
+
+      
+      body.light-theme {
+          background-color: var(--base-light) !important;
+          color: var(--text-dark) !important;
+      }
+
+      /* Price visibility control */
+      .item-price, .menu-item-price, .price-section, .price-label {
+        display: none !important;
+      }
+      
+      body.show-prices .item-price,
+      body.show-prices .menu-item-price,
+      body.show-prices .price-section,
+      body.show-prices .price-label {
+        display: block !important;
+      }
+
+      /* Circular avatars enforcement */
+      img.app-avatar, img.rounded-circle {
+        border-radius: 50% !important;
+        object-fit: cover !important;
+      }
+      /* Default sizing; individual components may override */
+      .navbar img.app-avatar {
+        width: 32px !important;
+        height: 32px !important;
+      }
+
+      .dropdown-menu img.app-avatar {
+        width: 48px !important;
+        height: 48px !important;
+      }
+    </style>
+
+    {% block head %} {% set yandex_key = (config.get('YANDEX_MAPS_API') or '') %}
+    {% if yandex_key and yandex_key != 'None' %}
+    <!-- Public chat widget -->
+    <script src="/static/chat_widget.js"></script>
+    <!-- Robust fallback: ensure nav-notify clicks always open notify modal and manage aria-hidden -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        try {
+          const safeJson = (res) => res.json().catch(() => ({}));
+          const openNotifyModal = async (btn) => {
+            try {
+              const modal = document.getElementById("notifyModal");
+              if (!modal) {
+                // nothing to show
+                return;
+              }
+              // If this is a non-super-admin viewer, try to fetch notifications and populate preview
+              const preview = document.getElementById("notifyListPreview");
+                if (preview) {
+                preview.innerHTML =
+                  '<div class="text-muted">{{ _("messages.loading") }}</div>';
+                try {
+                  const res = await fetch("/api/notifications");
+                  const data = await safeJson(res);
+                  const list = (data && data.notifications) || [];
+                  preview.innerHTML = "";
+                  if (list.length === 0)
+                    preview.innerHTML =
+                      '<div class="text-muted">{{ _("messages.no_notifications") }}</div>';
+                  list.slice(0, 10).forEach((n) => {
+                    const item = document.createElement("div");
+                    item.className = "mb-2";
+                    item.innerHTML = `<div style="font-weight:600">${
+                      n.title || ""
+                    }</div><div style="font-size:12px;color:#666">${
+                      n.body || ""
+                    }</div><hr/>`;
+                    preview.appendChild(item);
+                  });
+                } catch (e) {
+                  preview.innerHTML =
+                    '<div class="text-muted">{{ _("messages.notifications_load_error") }}</div>';
+                }
+              }
+
+              // show modal and set accessibility attributes
+              modal.style.display = "block";
+              modal.setAttribute("aria-hidden", "false");
+              // ensure focus
+              modal.setAttribute("tabindex", "-1");
+              modal.focus && modal.focus();
+              // mark read best-effort
+              fetch("/api/notifications/mark-read", {
+                method: "POST",
+                headers: {
+                  "X-CSRF-Token":
+                    typeof CSRF_TOKEN !== "undefined" ? CSRF_TOKEN : "",
+                },
+              })
+                .then(() => {})
+                .catch(() => {});
+            } catch (e) {
+              /* ignore */
+            }
+          };
+
+          // Attach listeners (use delegation-safe approach)
+          const attach = () => {
+            const btns = document.querySelectorAll(".nav-notify");
+            btns.forEach((b) => {
+              // remove duplicate listeners by cloning node if needed
+              if (!b.__notifyAttached) {
+                b.addEventListener("click", (ev) => {
+                  ev.preventDefault();
+                  openNotifyModal(b);
+                });
+                b.__notifyAttached = true;
+              }
+            });
+          };
+          attach();
+          // also observe for dynamically injected nav buttons
+          const nav = document.querySelector("nav");
+          if (nav) {
+            const mo = new MutationObserver(() => attach());
+            mo.observe(nav, { childList: true, subtree: true });
+          }
+
+              // Close handlers to set aria-hidden
+          const closeViewer = document.getElementById("notifyCloseViewer");
+          if (closeViewer) {
+            closeViewer.addEventListener("click", function () {
+              const m = document.getElementById("notifyModal");
+              if (m) {
+                m.style.display = "none";
+                m.setAttribute("aria-hidden", "true");
+              }
+            });
+          }
+          // Also ensure cancel buttons set aria-hidden
+          const cancelBtn = document.getElementById("notifyCancelBtn");
+          if (cancelBtn) {
+            cancelBtn.addEventListener("click", function () {
+              const m = document.getElementById("notifyModal");
+              if (m) {
+                m.style.display = "none";
+                m.setAttribute("aria-hidden", "true");
+              }
+            });
+          }
+        } catch (e) {
+          // swallow to avoid breaking other scripts
+        }
+      });
+    </script>
+    <script
+      src="https://api-maps.yandex.ru/2.1/?apikey={{ yandex_key }}&lang=uz_UZ"
+      type="text/javascript"></script>
+    <script>
+      // Set a global flag once ymaps is available so pages can detect load failures
+      (function checkYMaps() {
+        window.YANDEX_MAPS_LOADED = false;
+        var maxAttempts = 20;
+        var attempts = 0;
+        var iv = setInterval(function () {
+          attempts += 1;
+          if (window.ymaps) {
+            window.YANDEX_MAPS_LOADED = true;
+            clearInterval(iv);
+            console.log("Yandex Maps loaded successfully");
+            return;
+          }
+          if (attempts >= maxAttempts) {
+            clearInterval(iv);
+            window.YANDEX_MAPS_LOADED = false;
+            console.warn(
+              "Yandex Maps failed to load (check YANDEX_MAPS_API and network)"
+            );
+          }
+        }, 200);
+      })();
+    </script>
+    {% else %}
+    <script>
+      console.warn(
+        "Yandex Maps API key not configured; map features will be disabled"
+      );
+      window.YANDEX_MAPS_LOADED = false;
+    </script>
+    {% endif %} {% endblock %} {% block extra_head %}{% endblock %}
+    <script>
+      // Define CSRF_TOKEN safely from meta tag
+      (function() {
+        const meta = document.querySelector('meta[name="csrf-token"]');
+        window.CSRF_TOKEN = meta ? meta.getAttribute('content') : '';
+      })();
+    </script>
+  </head>
+  <body
+    class=""
+    data-dark-mode="false"
+    data-font-size="{{ session.get('font_size', 'medium') }}"
+    data-language="{{ LANG }}">
+    <script>
+      // Ensure avatar fallback exists early so inline onerror handlers won't throw
+      window.DEFAULT_AVATAR = "{{ 'images/default-avatar.svg' | cloudinary_url }}";
+      if (typeof window.handleAvatarError !== 'function') {
+        window.handleAvatarError = function(img){
+          try {
+            if (img && img.src !== window.DEFAULT_AVATAR) {
+              img.src = window.DEFAULT_AVATAR;
+              img.onerror = null;
+            }
+          } catch(e){}
+        };
+      }
+    </script>
+    <script type="application/json" id="base-config">
+    {{ {
+      "translations": translations if translations is defined else {},
+      "supported_languages": config.get('SUPPORTED_LANGUAGES', ['uz','ru','en','kz']),
+      "session": {
+         "dark_theme": True if session.get('dark_theme') else False,
+         "font_size": session.get('font_size', 'medium'),
+         "interface_language": session.get('interface_language', 'uz')
+      },
+      "user": {
+         "is_super_admin": True if session.get('super_admin') else False,
+         "staff_id": session.get('staff_id'),
+         "courier_id": session.get('courier_id'),
+         "user_id": session.get('user_id')
+      },
+      "messages": {
+         "msg_too_long": _('messages.message_too_long'),
+         "send_error": _('messages.message_send_error'),
+         "unknown_error": _('messages.unknown_error'),
+         "error_occurred": _('messages.error_occurred'),
+         "news_added": _('messages.news_added'),
+         "save_error": _('messages.save_error'),
+         "news_enter_email": _('footer.newsletter_enter_email') if _('footer.newsletter_enter_email') else "Please enter an email",
+         "news_thanks": _('footer.newsletter_thanks') if _('footer.newsletter_thanks') else "Thanks! Subscribed (offline)",
+         "news_confirm": _('footer.newsletter_confirm') if _('footer.newsletter_confirm') else "Confirmed",
+         "loading": _('messages.loading') if _('messages.loading') else "Loading...",
+         "no_messages": _('messages.no_messages') if _('messages.no_messages') else "No messages",
+         "enter_title_and_body": _('messages.enter_title_and_body') if _('messages.enter_title_and_body') else "Enter title and body",
+         "enter_id": _('messages.enter_id') if _('messages.enter_id') else "Enter ID",
+         "notification_sent": _('messages.notification_sent') if _('messages.notification_sent') else "Sent!",
+         "title_required": _('messages.title_required') if _('messages.title_required') else "Title required",
+         "file_upload_error": _('messages.file_upload_error') if _('messages.file_upload_error') else "Upload error",
+         "no_notifications": _('messages.no_notifications') if _('messages.no_notifications') else "No notifications"
+      },
+      "default_avatar": 'images/default-avatar.svg' | cloudinary_url,
+      "csrf_token": csrf_token if csrf_token else ""
+    } | tojson | safe }}
+    </script>
+    <script>
+      // Load Base Config
+      window.BASE_CONFIG = {};
+      try {
+        const cfgEl = document.getElementById('base-config');
+        if(cfgEl) window.BASE_CONFIG = JSON.parse(cfgEl.textContent);
+      } catch(e) { console.error('Base config parse failed', e); }
+
+      // Expose server-side translations for the current language to JS
+      window.TRANSLATIONS = window.BASE_CONFIG.translations || {};
+    </script>
+    <script>
+      // Language switch helper used by navbar buttons. It saves choice to session via
+      // /api/change-language and reloads the page so server-rendered labels update.
+      async function changeLanguage(lang) {
+        try {
+          applyLanguageStyles(lang);
+          localStorage.setItem('language', lang);
+          document.body.setAttribute('data-language', lang);
+        } catch (e) {}
+        try {
+          fetch('/api/change-language', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ language: lang })
+          }).catch(function(){});
+        } catch (_) {}
+        var supported = window.BASE_CONFIG.supported_languages || ['uz','ru','en','kz'];
+        var path = window.location.pathname || '/';
+        var segs = path.split('/');
+        if (segs.length && segs[segs.length-1] === '') segs.pop();
+        if (segs.length > 1 && supported.indexOf(segs[1]) !== -1) {
+          segs[1] = lang;
+        } else {
+          segs.splice(1, 0, lang);
+        }
+        if (segs.length <= 2 || (segs.length === 3 && segs[2] === '')) {
+          segs = ['', lang, 'menu'];
+        }
+        var newPath = segs.join('/');
+        if (!newPath.startsWith('/')) newPath = '/' + newPath;
+        var qs = window.location.search || '';
+        var hash = window.location.hash || '';
+        window.location.assign(newPath + qs + hash);
+      };
+    </script>
+    <!-- Theme preference handling (default: dark theme for foydalanuvchi sahifalari) -->
+    <script>
+      // Agar localStorage da hali mavzu saqlanmagan bo‘lsa, default = dark
+      if (!localStorage.getItem("theme_preference")) {
+        localStorage.setItem("theme_preference", "dark");
+      }
+      
+      const theme = localStorage.getItem("theme_preference");
+      const isDark = theme === 'dark';
+      
+      if (isDark) {
+          document.documentElement.classList.add("dark-theme");
+          document.body.classList.add("dark-theme");
+          document.body.classList.remove("light-theme");
+          document.body.setAttribute('data-dark-mode', 'true');
+      } else {
+          document.documentElement.classList.remove("dark-theme");
+          document.body.classList.remove("dark-theme");
+          document.body.classList.add("light-theme");
+          document.body.setAttribute('data-dark-mode', 'false');
+      }
+    </script>
+    <script>
+      // Loop protection is now handled by /static/js/loop-protection.js
+    </script>
+    <!-- Navigation Bar - SECURE ROLE CHECKING -->
+    {# 
+      show_nav: umumiy holda navbar ko‘rinishini boshqaradi
+      is_super_admin / is_staff / is_courier / is_user flaglari app.context_processor dan keladi
+      Talab: faqat oddiy foydalanuvchi (user) va mehmonlar uchun navbar bo‘lsin,
+      staff / courier / super_admin rollarida esa navbar o‘rniga sidebar ishlatiladi (dashboard_base, super_admin_base, staff_base_standalone va hok.)
+    #}
+    {% if show_nav and not (is_super_admin or is_staff or is_courier) %}
+
+    <!-- User Navbar -->
+    {% if is_user %}
+    <nav class="navbar navbar-expand-lg industrial-nav fixed-top-custom">
+      <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="{{ url_for('menu') }}">
+          PRO<span style="color:var(--accent-primary)">OBUV</span>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <i class="bi bi-list fs-2 text-white"></i>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('menu') }}">{{ _('nav.menu') }}</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('favorites') }}">{{ _('nav.favorites') }}</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('news_page') }}">{{ _('nav.news') }}</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('downloads') }}">{{ _('nav.downloads') }}</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('contact') }}">{{ _('nav.contact') }}</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('kafolatlar') }}">{{ _('nav.warranty') }}</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('about') }}">{{ _('nav.about') }}</a>
+            </li>
+          </ul>
+
+          <ul class="navbar-nav align-items-center">
+            <li class="nav-item me-3">
+              <button class="btn-primary-industrial btn-sm py-1 px-3 nav-notify" title="{{ _('notifications') }}">
+                <i class="bi bi-bell"></i>
+                <span id="notify-count" class="badge bg-danger ms-1" style="display:none">0</span>
+              </button>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                <img src="{{ (session.get('user_avatar') or 'images/default-avatar.svg') | cloudinary_url }}" 
+                     class="app-avatar rounded-circle border border-2 border-secondary" width="40" height="40" alt="Profile">
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end industrial-card p-3" style="min-width: 250px;">
+                <li class="text-center mb-3 pb-3 border-bottom border-secondary border-opacity-25">
+                   <div class="fw-bold fs-5">{{ session.get('user_name', 'Foydalanuvchi') }}</div>
+                   <div class="text-secondary small">{{ session.get('user_email', '') }}</div>
+                </li>
+                <li><a class="dropdown-item py-2" href="{{ url_for('profile') }}"><i class="bi bi-person me-2"></i> {{ _('nav.profile') }}</a></li>
+                <li><a class="dropdown-item py-2" href="{{ url_for('profile_settings') }}"><i class="bi bi-gear me-2"></i> {{ _('nav.settings') }}</a></li>
+                <li><hr class="dropdown-divider opacity-10"></li>
+                <li><a class="dropdown-item py-2 text-danger" href="{{ url_for('logout') }}"><i class="bi bi-box-arrow-right me-2"></i> {{ _('nav.logout') }}</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Guest Navbar (roli yo‘q mehmonlar uchun) -->
+    {% else %}
+    <nav class="navbar navbar-expand-lg industrial-nav fixed-top-custom">
+      <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="{{ url_for('index') }}">
+          PRO<span style="color:var(--accent-primary)">OBUV</span>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <i class="bi bi-list fs-2 text-white"></i>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            {# Home button removed per request (menu is primary entry) #}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('menu') }}">{{ _('nav.menu') }}</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('favorites') }}">{{ _('nav.favorites') }}</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('news_page') }}">{{ _('nav.news') }}</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('downloads') }}">{{ _('nav.downloads') }}</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('contact') }}">{{ _('nav.contact') }}</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('kafolatlar') }}">{{ _('nav.warranty') }}</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('about') }}">{{ _('nav.about') }}</a>
+            </li>
+          </ul>
+
+          <ul class="navbar-nav align-items-center">
+            <li class="nav-item dropdown me-3">
+              <a class="nav-link dropdown-toggle btn-outline-industrial btn-sm px-3" href="#" id="langChoice" role="button" data-bs-toggle="dropdown">
+                {{ LANG|upper }}
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end industrial-card">
+                <li><a class="dropdown-item" href="#" onclick="changeLanguage('uz')">O'zbekcha</a></li>
+                <li><a class="dropdown-item" href="#" onclick="changeLanguage('ru')">Русский</a></li>
+                <li><a class="dropdown-item" href="#" onclick="changeLanguage('en')">English</a></li>
+              </ul>
+            </li>
+            <li class="nav-item d-flex gap-2">
+              <a href="{{ url_for('login_page') }}" class="btn-outline-industrial btn-sm py-1 px-3">Kirish</a>
+              <a href="{{ url_for('register_page') }}" class="btn-primary-industrial btn-sm py-1 px-3">Ro'yxat</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <style>
+      /* Active navbar highlight */
+      .navbar-nav .nav-link.active, .navbar-nav .nav-link.show-active {
+        color: #000 !important;
+        background: #ffeb3b;
+        border-radius: 6px;
+      }
+    </style>
+
+    <script>
+      (function(){
+        try{
+          // Hide profile dropdown immediately after logout click to reduce flash
+          const logoutLink = document.querySelector('a[href*="/logout"]');
+          if(logoutLink){
+            logoutLink.addEventListener('click', function(){
+              // remove user dropdown if present
+              const userDropdown = document.querySelector('.navbar .nav-item.dropdown');
+              if(userDropdown) userDropdown.remove();
+              // show login/register quick placeholders
+              const navList = document.querySelector('.navbar .navbar-nav.align-items-center');
+              if(navList){
+                const joinHtml = '<li class="nav-item d-flex gap-2"><a href="'+(window.location.origin + '/login')+'" class="btn-outline-industrial btn-sm py-1 px-3">Kirish</a><a href="'+(window.location.origin + '/register')+'" class="btn-primary-industrial btn-sm py-1 px-3">Ro\'yxat</a></li>';
+                navList.insertAdjacentHTML('afterbegin', joinHtml);
+              }
+            });
+          }
+
+          // Highlight active nav item based on `current_page` variable if available
+          const currentPage = '{{ current_page if current_page is defined else "" }}';
+          if(currentPage){
+            document.querySelectorAll('.navbar-nav a.nav-link').forEach(a => {
+              try{ if(a.getAttribute('href') && a.getAttribute('href').indexOf(currentPage) !== -1){ a.classList.add('show-active'); } }catch(e){}
+            });
+          }
+        }catch(e){ console.warn('Navbar script error', e) }
+      })();
+    </script>
+    {% endif %}
+
+    {# Staff uchun sidebar - faqat staff sahifalarida ko'rinadi #}
+    {% if is_staff and show_nav %}
+    <style>
+        /* Staff sidebar styles */
+        .staff-sidebar-wrapper {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: #ffffff;
+            border-right: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+        
+        .staff-main-with-sidebar {
+            margin-left: 280px;
+        }
+        
+        .staff-sidebar-wrapper .nav-link-modern {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #495057;
+            text-decoration: none;
+            border-bottom: 1px solid #f1f3f7;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .staff-sidebar-wrapper .nav-link-modern:hover {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .staff-sidebar-wrapper .nav-link-modern.active {
+            background: #1976d2;
+            color: white;
+        }
+        
+        .staff-sidebar-wrapper .nav-link-modern i {
+            margin-right: 12px;
+            font-size: 18px;
+        }
+        
+        @media (max-width: 768px) {
+            .staff-sidebar-wrapper {
+                transform: translateX(-100%);
+            }
+            .staff-sidebar-wrapper.active {
+                transform: translateX(0);
+            }
+            .staff-main-with-sidebar {
+                margin-left: 0;
+            }
+        }
+    </style>
+    {% endif %}
+
+    {% if is_staff and request.endpoint.startswith('staff_') %}
+<div class="staff-sidebar-wrapper" id="staffSidebar">
+        <div class="p-3">
+            <h5 class="text-center mb-4">
+                <i class="bi bi-shield-check text-primary"></i>
+                <span class="ms-2">Staff Panel</span>
+            </h5>
+        </div>
+        <nav class="nav flex-column">
+            <a href="{{ url_for('staff_dashboard') }}" class="nav-link-modern {{ 'active' if request.endpoint == 'staff_dashboard' }}">
+                <i class="bi bi-grid"></i> Dashboard
+            </a>
+            <a href="{{ url_for('staff_menu') }}" class="nav-link-modern {{ 'active' if request.endpoint == 'staff_menu' }}">
+                <i class="bi bi-clipboard-data"></i> Menyu Boshqaruvi
+            </a>
+            <a href="{{ url_for('staff_employees') }}" class="nav-link-modern {{ 'active' if request.endpoint == 'staff_employees' }}">
+                <i class="bi bi-people"></i> Xodimlar
+            </a>
+            <a href="{{ url_for('admin_monitor') }}" class="nav-link-modern {{ 'active' if request.endpoint == 'admin_monitor' }}">
+                <i class="bi bi-tv"></i> Monitor
+            </a>
+            <a href="{{ url_for('news_page') }}" class="nav-link-modern {{ 'active' if request.endpoint == 'news_page' }}">
+                <i class="bi bi-newspaper"></i> Yangiliklar
+            </a>
+        </nav>
+    </div>
+    <button class="btn btn-primary d-lg-none position-fixed" style="top: 10px; left: 10px; z-index: 1001;" onclick="document.getElementById('staffSidebar').classList.toggle('active')">
+        <i class="bi bi-list"></i>
+    </button>
+{% endif %}
+
+    <main class="container mt-4 {{ 'staff-main-with-sidebar' if is_staff and show_nav else '' }}">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flash">
+            {% for category, message in messages %}
+              <div class="alert alert-{{ 'danger' if category=='error' else 'success' if category=='success' else category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+      {% block content %}
+        <section id="page-content" class="py-4">
+          {# Default fallback content: child templates should override this block. #}
+        </section>
+      {% endblock %}
+    </main>
+
+    {# Faqat oddiy user va mehmonlar uchun footer ko‘rinadi #}
+    {% if not (is_super_admin or is_staff or is_courier) %}
+    {% include 'components/footer.html' %}
+    {% endif %}
+
+    <!-- Enhanced Footer & Global Styles -->
+
+    <script>
+    // Global Auth Sync Logic
+    window.DEFAULT_AVATAR = "{{ 'images/default-avatar.svg' | cloudinary_url }}";
+    function handleAvatarError(img) {
+      if (img.src !== window.DEFAULT_AVATAR) {
+        img.src = window.DEFAULT_AVATAR;
+        img.onerror = null;
+      }
+    }
+
+    (function() {
+
+        // Check auth status on page load (essential for cached pages/back button)
+        // Requirement: distinguish network errors vs real unauth states (401/403)
+        fetch('/api/auth/status', {
+            headers: {'Cache-Control': 'no-cache'}
+        })
+        .then(res => {
+            if (res.status === 401 || res.status === 403) {
+                 console.warn("User explicitly unauthenticated (401/403).");
+                 // We could redirect to login here, but user asked for NO reloads/redirects on fetch error.
+                 // So we just log and mark as unauthed.
+                 return { logged_in: false };
+            }
+            if (!res.ok) throw new Error('Network error or server down');
+            return res.json();
+        })
+        .then(data => {
+            if (!data) return;
+            const isGuestNavbar = document.getElementById('langDropdownGuest'); 
+            const isUserNavbar = document.querySelector('a[href*="/logout"]'); 
+
+            // Requirement: disable_auto_reload: true
+            if (data.logged_in && isGuestNavbar) {
+                console.warn('Auth mismatch: UI is guest, but user is logged in. (Auto-reload blocked)');
+                if (window.showToast) window.showToast('Tizimga kirganingiz aniqlandi. Iltimos, sahifani qo\'lda yangilang.', 'info');
+            }
+            else if (!data.logged_in && isUserNavbar && !isGuestNavbar) {
+                 console.warn('Auth mismatch: UI is logged in, but user is guest. (Auto-reload blocked)');
+                 if (window.showToast) window.showToast('Sessiya muddati tugagan bo\'lishi mumkin.', 'warning');
+            }
+        })
+        .catch(err => {
+            console.warn("Auth check failed (network/offline):", err);
+            // DO NOT RELOAD on network failure to avoid infinite loop
+        });
+    })();
+
+      window.DISABLE_AUTO_UPDATES = true;
+      (function () {
+        const original =
+          window._originalSetInterval || window.setInterval.bind(window);
+        window._originalSetInterval = original;
+        function intervalProxy() {
+          if (window.DISABLE_AUTO_UPDATES) {
+            return null;
+          }
+          return original.apply(window, arguments);
+        }
+        window.safeSetInterval = intervalProxy;
+        window.setInterval = intervalProxy;
+      })();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ request.url_root.rstrip('/') }}/static/js/news-ticker.js" defer></script>
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+
+    <!-- Global sozlamalarni yuklash -->
+    <script>
+          // Darhol sozlamalarni qo'llash (DOMContentLoaded dan oldin)
+          (function() {
+            try {
+              // LocalStorage dan sozlamalarni olish
+              const darkMode = localStorage.getItem('darkMode') === 'true';
+              const fontSize = localStorage.getItem('fontSize') || 'medium';
+              const language = localStorage.getItem('language') || 'uz';
+
+              // console.log('Base.html - Darhol qo\'llanayotgan sozlamalar:', { darkMode, fontSize, language });
+
+              function applyImmediate() {
+                // Body klasslarini tozalash
+                document.body.classList.remove('dark-theme', 'font-small', 'font-medium', 'font-large', 'font-xlarge');
+                document.body.classList.remove('lang-uz', 'lang-ru', 'lang-en');
+
+                // Mavzu klassini qo'shish
+                if (darkMode) {
+                  document.body.classList.add('dark-theme');
+                  // console.log('Base.html - Dark theme qo\'shildi');
+                }
+
+                // Font o'lcham klassini qo'shish
+                document.body.classList.add('font-' + fontSize);
+                // console.log('Base.html - Font size qo\'shildi:', 'font-' + fontSize);
+
+                // Til klassini qo'shish
+                document.body.classList.add('lang-' + language);
+                // console.log('Base.html - Language qo\'llandi:', 'lang-' + language);
+              }
+
+              if (document && document.body) {
+                applyImmediate();
+              } else {
+                window.addEventListener('DOMContentLoaded', applyImmediate);
+              }
+            } catch (e) {
+              console.warn('Initial settings apply failed:', e);
+              // Defer to DOMContentLoaded to avoid blocking the rest of the script
+              window.addEventListener('DOMContentLoaded', function() {
+                try {
+                  const fontSize = localStorage.getItem('fontSize') || 'medium';
+                  const language = localStorage.getItem('language') || 'uz';
+                  document.body.classList.add('font-' + fontSize);
+                  document.body.classList.add('lang-' + language);
+                } catch (inner) { /* noop */ }
+              });
+            }
+          })();
+
+            // Global sozlamalarni yuklash
+            document.addEventListener('DOMContentLoaded', function() {
+                // Session ma'lumotlarini localStorage bilan sinxronlash
+                const sess = (window.BASE_CONFIG && window.BASE_CONFIG.session) || {};
+                const sessionDarkMode = sess.dark_theme || false;
+                const sessionFontSize = sess.font_size || 'medium';
+                const sessionLanguage = sess.interface_language || 'uz';
+
+                // console.log('Session sozlamalari:', { sessionDarkMode, sessionFontSize, sessionLanguage });
+
+                // Session sozlamalarini localStorage ga saqlash
+                localStorage.setItem('darkMode', sessionDarkMode);
+                localStorage.setItem('fontSize', sessionFontSize);
+                localStorage.setItem('language', sessionLanguage);
+
+                // Sozlamalarni darhol qo'llash
+                const isDarkMode = sessionDarkMode === 'true';
+
+                // Klasslarni tozalash
+                document.body.classList.remove('dark-theme', 'font-small', 'font-medium', 'font-large', 'font-xlarge');
+                document.body.classList.remove('lang-uz', 'lang-ru', 'lang-en');
+
+                // Mavzuni qo'llash
+                if (isDarkMode) {
+                    document.body.classList.add('dark-theme');
+
+                    // Navbar klasslarini o'zgartirish
+                    const navbar = document.querySelector('.navbar');
+                    if (navbar) {
+                        navbar.classList.remove('navbar-light', 'bg-light');
+                        navbar.classList.add('navbar-dark', 'bg-dark');
+                    }
+                    // console.log('Dark theme qo\'llandi');
+                } else {
+                    // Light theme
+                    document.body.classList.remove('dark-theme');
+                    const navbar = document.querySelector('.navbar');
+                    if (navbar) {
+                        navbar.classList.remove('navbar-dark', 'bg-dark');
+                        navbar.classList.add('navbar-light', 'bg-light');
+                    }
+                    // console.log('Light theme qo\'llandi');
+                }
+
+                // Font o'lchamini qo'llash
+                document.body.classList.add('font-' + sessionFontSize);
+                // console.log('Font size qo\'llandi:', sessionFontSize);
+
+                // Tilni qo'llash
+                document.body.classList.add('lang-' + sessionLanguage);
+                console.log('Language qo\'llandi:', sessionLanguage);
+
+                // Sahifani tarjima qilish
+                if (typeof translatePage === 'function') {
+                    setTimeout(() => {
+                        translatePage(sessionLanguage);
+                        // console.log('Til tarjimasi qo\'llandi:', sessionLanguage);
+                    }, 200);
+                }
+
+                // Storage eventini tinglash
+                window.addEventListener('storage', function(e) {
+                    if (e.key === 'darkMode') {
+                        const isDark = e.newValue === 'true';
+                        if (isDark) {
+                            document.body.classList.add('dark-theme');
+                            // Navbar klasslarini o'zgartirish
+                            const navbar = document.querySelector('.navbar');
+                            if (navbar) {
+                                navbar.classList.remove('navbar-light', 'bg-light');
+                                navbar.classList.add('navbar-dark', 'bg-dark');
+                            }
+                        } else {
+                            document.body.classList.remove('dark-theme');
+                            // Navbar klasslarini o'zgartirish
+                            const navbar = document.querySelector('.navbar');
+                            if (navbar) {
+                                navbar.classList.remove('navbar-dark', 'bg-dark');
+                                navbar.classList.add('navbar-light', 'bg-light');
+                            }
+                        }
+                        // console.log('Storage event - Dark mode o\'zgartirildi:', isDark);
+                    } else if (e.key === 'fontSize') {
+                        document.body.classList.remove('font-small', 'font-medium', 'font-large', 'font-xlarge');
+                        document.body.classList.add('font-' + e.newValue);
+                        // console.log('Storage event - Font size o\'zgartirildi:', e.newValue);
+                    } else if (e.key === 'language') {
+                        document.body.classList.remove('lang-uz', 'lang-ru', 'lang-en');
+                        document.body.classList.add('lang-' + e.newValue);
+                        if (typeof translatePage === 'function') {
+                            translatePage(e.newValue);
+                        }
+                        // console.log('Storage event - Language o\'zgartirildi:', e.newValue);
+                    }
+                });
+            });
+
+        // Professional Translation System
+        // Attach translations to window to avoid redeclaration when main.js
+        // or other templates also define translations.
+        if (typeof window.translations === 'undefined') {
+          window.translations = {
+        uz: {
+          menu: 'Menyu',
+          favorites: 'Sevimlilar',
+          contact: 'Aloqa',
+          about: 'Savollar',
+          downloads: 'Yuklamalar',
+          cart: 'Savatcha',
+          profile_info: 'Profil ma\'lumotlari',
+          profile_settings: 'Profil sozlamalari',
+          settings: 'Sozlamalar',
+          logout: 'Chiqish',
+          login: 'Kirish',
+          register: 'Ro\'yxat',
+          user: 'Foydalanuvchi',
+          staff: 'Xodim',
+          courier: 'Kuryer',
+          admin: 'Admin',
+          dashboard: 'Dashboard',
+          brand: "Oyoq kiyim do'koni"
+        },
+                ru: {
+                    menu: 'Меню',
+                    favorites: 'Избранное',
+                    contact: 'Контакты',
+                    about: 'Вопросы',
+                    downloads: 'Загрузки',
+                    cart: 'Корзина',
+                    profile_info: 'Данные профиля',
+                    profile_settings: 'Настройки профиля',
+                    settings: 'Настройки',
+                    logout: 'Выход',
+                    login: 'Вход',
+                    register: 'Регистрация',
+                    user: 'Пользователь',
+                    staff: 'Сотрудник',
+                    courier: 'Курьер',
+                    admin: 'Админ',
+                    dashboard: 'Панель'
+                },
+                en: {
+                    menu: 'Menu',
+                    favorites: 'Favorites',
+                    contact: 'Contact',
+                    about: 'About',
+                    downloads: 'Downloads',
+                    cart: 'Cart',
+                    profile_info: 'Profile Info',
+                    profile_settings: 'Profile Settings',
+                    settings: 'Settings',
+                    logout: 'Logout',
+                    login: 'Login',
+                    register: 'Register',
+                    user: 'User',
+                    staff: 'Staff',
+                    courier: 'Courier',
+                    admin: 'Admin',
+                    dashboard: 'Dashboard'
+                }
+          };
+        }
+
+            // Global Translation Function
+      function translatePage(language) {
+      // Prefer server-provided window.TRANSLATIONS if available, fall back to legacy window.translations
+      const transRoot = (window.TRANSLATIONS && Object.keys(window.TRANSLATIONS).length) ? window.TRANSLATIONS : (window.translations || {});
+
+      // Helper: resolve nested keys like 'footer.categories' in a translations object
+      function resolveKey(obj, key) {
+        try {
+          if (!obj || !key) return undefined;
+          if (key in obj) return obj[key];
+          const parts = key.split('.');
+          let cur = obj;
+          for (let p of parts) {
+            if (!cur) return undefined;
+            if (typeof cur !== 'object') return undefined;
+            if (!(p in cur)) return undefined;
+            cur = cur[p];
+          }
+          return cur;
+        } catch (e) {
+          return undefined;
+        }
+      }
+
+      const trans = (transRoot && transRoot[language]) || (transRoot && transRoot['uz']) || {};
+
+            // Translate elements that use data-translate attribute
+            document.querySelectorAll('[data-translate]').forEach(el => {
+              const key = el.getAttribute('data-translate');
+              if (!key) return;
+              // Try nested lookup first, then fallback to existing text content (do NOT set to literal key)
+              const val = resolveKey(trans, key) || resolveKey(transRoot[language], key) || el.textContent;
+              // If element is input/textarea, change placeholder instead
+              if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                if (el.placeholder !== undefined) el.placeholder = val;
+              } else {
+                el.textContent = val;
+              }
+            });
+
+            // Translate placeholders and titles
+            document.querySelectorAll('[data-translate-placeholder]').forEach(el => {
+              const key = el.getAttribute('data-translate-placeholder');
+              if (!key) return;
+              el.placeholder = trans[key] || el.placeholder || '';
+            });
+            document.querySelectorAll('[data-translate-title]').forEach(el => {
+              const key = el.getAttribute('data-translate-title');
+              if (!key) return;
+              el.title = trans[key] || el.title || '';
+            });
+
+            // Fallback: translate a few common navbar/text nodes by selector
+            const menuLink = document.querySelector('a[href*="menu"]');
+            if (menuLink) menuLink.textContent = trans.menu || menuLink.textContent;
+            const favoritesLink = document.querySelector('a[href*="favorites"]');
+            if (favoritesLink) favoritesLink.textContent = trans.favorites || favoritesLink.textContent;
+            const contactLink = document.querySelector('a[href*="contact"]');
+            if (contactLink) contactLink.textContent = trans.contact || contactLink.textContent;
+            const aboutLink = document.querySelector('a[href*="about"]');
+            if (aboutLink) aboutLink.textContent = trans.about || aboutLink.textContent;
+
+            const downloadsLink = document.querySelector('a[href*="downloads"]');
+            if (downloadsLink) downloadsLink.textContent = trans.downloads || downloadsLink.textContent;
+
+            const cartLink = document.querySelector('.cart-btn');
+            if (cartLink) {
+              const badge = cartLink.querySelector('.cart-badge');
+              const badgeHtml = badge ? badge.outerHTML : '';
+              cartLink.innerHTML = (trans.cart || cartLink.textContent) + ' ' + badgeHtml;
+            }
+
+            const logoutLink = document.querySelector('a[href*="logout"]');
+            if (logoutLink) logoutLink.textContent = trans.logout || logoutLink.textContent;
+            }
+
+            // Enhanced Language Change Function
+            window.changeLanguage = function(language) {
+                try {
+                    applyLanguageStyles(language);
+                    localStorage.setItem('language', language);
+                    document.body.setAttribute('data-language', language);
+                } catch (e) {}
+                try {
+                    fetch('/api/change-language', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ language: language })
+                    }).catch(function(){});
+                } catch (_) {}
+                var supported = (window.BASE_CONFIG && window.BASE_CONFIG.supported_languages) || ['uz','ru','en','kz'];
+                var path = window.location.pathname || '/';
+                var segs = path.split('/');
+                if (segs.length && segs[segs.length-1] === '') segs.pop();
+                if (segs.length > 1 && supported.indexOf(segs[1]) !== -1) {
+                    segs[1] = language;
+                } else {
+                    segs.splice(1, 0, language);
+                }
+                if (segs.length <= 2 || (segs.length === 3 && segs[2] === '')) {
+                    segs = ['', language, 'menu'];
+                }
+                var newPath = segs.join('/');
+                if (!newPath.startsWith('/')) newPath = '/' + newPath;
+                var qs = window.location.search || '';
+                var hash = window.location.hash || '';
+                window.location.assign(newPath + qs + hash);
+            };
+
+            // Notification function
+            function showNotification(message) {
+                const notification = document.createElement('div');
+                notification.className = 'notification';
+                notification.textContent = message;
+                document.body.appendChild(notification);
+
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
+            }
+
+            // Language-specific CSS classes
+            const languageStyles = {
+                uz: { direction: 'ltr', fontFamily: 'Inter, sans-serif' },
+                ru: { direction: 'ltr', fontFamily: 'Inter, sans-serif' },
+                en: { direction: 'ltr', fontFamily: 'Inter, sans-serif' }
+            };
+
+            // Apply language-specific styles
+            function applyLanguageStyles(language) {
+                const styles = languageStyles[language] || languageStyles.uz;
+                document.documentElement.dir = styles.direction;
+                document.body.style.fontFamily = styles.fontFamily;
+            }
+    </script>
+
+    <!-- Savatcha sonini yangilash (one-off guard to avoid duplicate polling from main.js) -->
+    <script>
+      // If main.js is present it manages polling (CartManager). Do a single initial update otherwise fall back to fetching once.
+      function initialCartUpdate() {
+        try {
+          if (
+            window.cartManager &&
+            typeof window.cartManager.updateCartCount === "function"
+          ) {
+            window.cartManager.updateCartCount();
+            return;
+          }
+        } catch (e) {
+          /* ignore and fallback */
+        }
+
+        // Fallback: single fetch (no interval) to avoid duplicate polling that caused 429s
+        fetch("/api/cart-count")
+          .then((response) => response.json())
+          .then((data) => {
+            const cartBadge = document.getElementById("cart-count");
+            if (cartBadge && data && data.cart_count !== undefined) {
+              const count = data.cart_count || 0;
+              if (count > 0) {
+                cartBadge.textContent = count;
+                cartBadge.style.display = "inline-flex";
+              } else {
+                cartBadge.style.display = "none";
+              }
+            }
+          })
+          .catch((error) => {
+            // console.log("Savatcha sonini olishda xato:", error)
+          });
+      }
+
+      document.addEventListener("DOMContentLoaded", initialCartUpdate);
+    </script>
+
+    <!-- Notification Modal -->
+    <div
+      id="notifyModal"
+      class="modal-overlay"
+      style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+      "
+      aria-hidden="true">
+      <div
+        class="modal-content"
+        style="
+          background: white;
+          border-radius: 8px;
+          max-width: 500px;
+          width: 90%;
+          max-height: 80vh;
+          overflow-y: auto;
+        ">
+        <div
+          class="modal-header"
+          style="
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          ">
+          <h5 id="notifyModalTitle">{{ _('notifications') }}</h5>
+          <button
+            type="button"
+            id="notifyCloseViewer"
+            class="btn-close"
+            style="
+              border: none;
+              background: none;
+              font-size: 24px;
+              cursor: pointer;
+            ">
+            ✕
+          </button>
+        </div>
+        <div class="modal-body" style="padding: 20px">
+          <!-- For super admin: compose notification form -->
+          {% if is_super_admin %}
+          <div id="notifyComposer" class="mb-3">
+            <h6>{{ _('notifications_ui.new_notification') }}</h6>
+            <div class="mb-3">
+              <label for="notifyTitle" class="form-label">{{ _('notifications_ui.title_label') }}</label>
+              <input
+                type="text"
+                id="notifyTitle"
+                class="form-control"
+                placeholder="{{ _('notifications_ui.title_label') }}" />
+            </div>
+            <div class="mb-3">
+              <label for="notifyBody" class="form-label">{{ _('notifications_ui.body_label') }}</label>
+              <textarea
+                id="notifyBody"
+                class="form-control"
+                rows="3"
+                placeholder="{{ _('notifications_ui.body_label') }}"></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="notifyRecipientType" class="form-label">{{ _('notifications_ui.recipient_label') }}</label>
+              <select id="notifyRecipientType" class="form-select">
+                <option value="users">{{ _('notifications_ui.recipient_users') }}</option>
+                <option value="staff">{{ _('notifications_ui.recipient_staff') }}</option>
+                <option value="couriers">{{ _('notifications_ui.recipient_couriers') }}</option>
+                <option value="all">{{ _('notifications_ui.recipient_all') }}</option>
+              </select>
+            </div>
+            <div class="d-flex gap-2">
+              <button type="button" id="notifySendBtn" class="btn btn-primary">
+                {{ _('notifications_ui.send') }}
+              </button>
+              <button type="button" id="notifyCancelBtn" class="btn btn-secondary">
+                {{ _('notifications_ui.cancel') }}
+              </button>
+            </div>
+            <hr />
+          </div>
+          {% endif %}
+
+          <!-- Notification list -->
+          <div id="notifyListPreview">
+            <p class="text-muted">{{ _('notifications_ui.loading_preview') }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Member Profile Modal -->
+    <div
+      id="memberProfileModal"
+      class="modal-overlay"
+      style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9998;
+        align-items: center;
+        justify-content: center;
+      "
+      aria-hidden="true">
+      <div
+        class="modal-content"
+        style="
+          background: white;
+          border-radius: 8px;
+          max-width: 400px;
+          width: 90%;
+          padding: 20px;
+        ">
+        <div
+          class="modal-header"
+          style="
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          ">
+          <h5>{{ _('nav.profile_info') }}</h5>
+          <button
+            type="button"
+            id="memberProfileClose"
+            class="btn-close"
+            style="
+              border: none;
+              background: none;
+              font-size: 24px;
+              cursor: pointer;
+            ">
+            ✕
+          </button>
+        </div>
+        <div id="memberProfileContent">
+          <p class="text-muted">{{ _('messages.loading') }}</p>
+        </div>
+      </div>
+    </div>
+
+    {# Global floating cart removed per request. To restore, re-add the anchor with class 'floating-cart-global' #}
+
+    {% block scripts %}{% endblock %}
+
+    <script>
+      (function () {
+        // 1) Make navbar fixed (adds class to the first visible .navbar)
+        try {
+          const navbar = document.querySelector('.navbar');
+          if (navbar) {
+            // Add our safer fixed class only if not already fixed
+            if (!navbar.classList.contains('fixed-top') && !navbar.classList.contains('fixed-top-custom')) {
+              navbar.classList.add('fixed-top-custom');
+            }
+
+            // Compute the navbar height and add padding to main to avoid overlap
+            const applyMainTopPadding = () => {
+              try {
+                const main = document.querySelector('main');
+                if (!main) return;
+                const rect = navbar.getBoundingClientRect();
+                // Use Math.ceil to avoid fractional subpixel issues
+                const h = Math.ceil(rect.height || 64);
+                main.style.paddingTop = (h + 16) + 'px'; // keep a small breathing gap
+              } catch (e) {}
+            };
+
+            // Apply immediately and on resize
+            applyMainTopPadding();
+            window.addEventListener('resize', applyMainTopPadding);
+          }
+        } catch (e) {
+          // ignore
+        }
+
+        // 2) Theme - ensure default dark, provide reliable toggle that persists to server
+        try {
+          // Session value already written by template into localStorage earlier in the file.
+          // Provide a function toggleTheme that other scripts or UI elements can call.
+          window.toggleTheme = function (forceDark) {
+            try {
+              const isDark = typeof forceDark === 'boolean' ? forceDark : !document.body.classList.contains('dark-theme');
+              if (isDark) {
+                document.body.classList.add('dark-theme');
+                document.body.classList.remove('light-theme');
+              } else {
+                document.body.classList.remove('dark-theme');
+                document.body.classList.add('light-theme');
+              }
+
+              // persist locally
+              try { localStorage.setItem('darkMode', isDark ? 'true' : 'false'); } catch (e) {}
+
+              // persist to server (best-effort, non-blocking)
+              fetch('/api/set-theme', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : ''
+                },
+                body: JSON.stringify({ theme: isDark ? 'dark' : 'light' })
+              }).catch(() => {});
+
+              // Update navbar classes for contrast
+              const navbar = document.querySelector('.navbar');
+              if (navbar) {
+                if (isDark) {
+                  navbar.classList.remove('navbar-light', 'bg-light');
+                  navbar.classList.add('navbar-dark', 'bg-dark');
+                } else {
+                  navbar.classList.remove('navbar-dark', 'bg-dark');
+                  navbar.classList.add('navbar-light', 'bg-light');
+                }
+              }
+            } catch (e) {}
+          };
+
+          // Expose a small helper to bind toggle buttons (elements with .theme-toggle)
+          document.addEventListener('click', function (e) {
+            if (e.target && e.target.classList && e.target.classList.contains('theme-toggle')) {
+              e.preventDefault();
+              window.toggleTheme();
+            }
+          });
+        } catch (e) {
+          // ignore
+        }
+
+        // News-card equalization disabled to prevent news ticker issues
+      })();
+    </script>
+
+    <!-- News ticker is now fully managed from static/main.js (NewsTicker class).
+         Extra initialization here was causing duplicate requests to data/news.json,
+         so it has been removed. -->
+
+    <!-- Footer News Ticker Markup (single shared instance) -->
+
+
+    <!-- Enhanced Telegram-style Chat Widget - Only for Staff, Courier, SuperAdmin -->
+    {% if is_staff or is_courier or is_super_admin %}
+    <style>
+      /* Chat FAB - Telegram style */
+      .chat-fab {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #0088cc, #00a8ff);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 8px 25px rgba(0, 136, 204, 0.4);
+        cursor: pointer;
+        z-index: 2000;
+        transition: all 0.3s ease;
+        font-size: 24px;
+        border: 3px solid white;
+      }
+
+      .chat-fab:hover {
+        transform: scale(1.1);
+        box-shadow: 0 12px 35px rgba(0, 136, 204, 0.6);
+      }
+
+      .chat-fab.active {
+        background: linear-gradient(135deg, #dc3545, #ff6b6b);
+        transform: rotate(45deg);
+      }
+
+      /* Chat Panel - Telegram style */
+      .chat-panel {
+        position: fixed;
+        right: 20px;
+        bottom: 100px;
+        width: 560px;
+        height: 760px;
+        background: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+        display: none;
+        flex-direction: column;
+        border: 1px solid #e1e8ed;
+      }
+
+      .chat-panel.show {
+        display: flex;
+        animation: slideUp 0.3s ease-out;
+      }
+
+      @keyframes slideUp {
+        from {
+          transform: translateY(100px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      /* Chat Header - Telegram style */
+      .chat-header {
+        background: linear-gradient(135deg, #0088cc, #00a8ff);
+        color: white;
+        padding: 15px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 2px 10px rgba(0, 136, 204, 0.3);
+      }
+
+      .chat-header h5 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 18px;
+      }
+
+      .chat-header-controls {
+        display: flex;
+        gap: 10px;
+      }
+
+      .chat-header-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 16px;
+      }
+
+      .chat-header-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.1);
+      }
+
+      /* Chat Content */
+      .chat-content {
+        display: flex;
+        flex: 1;
+        height: 100%;
+      }
+
+      /* Chat List - Groups and Contacts */
+      .chat-list {
+        width: 200px;
+        background: #f8f9fa;
+        border-right: 1px solid #e1e8ed;
+        overflow-y: auto;
+      }
+
+      .chat-list-header {
+        padding: 15px;
+        background: #e9ecef;
+        border-bottom: 1px solid #dee2e6;
+        font-weight: 600;
+        color: #495057;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .chat-group {
+        padding: 8px 0;
+        border-bottom: 1px solid #e9ecef;
+      }
+
+      .chat-group-title {
+        padding: 8px 15px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        background: #f1f3f4;
+      }
+
+      .chat-item {
+        padding: 12px 15px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: all 0.2s ease;
+        border-left: 3px solid transparent;
+      }
+
+      .chat-item:hover {
+        background: #e3f2fd;
+        border-left-color: #0088cc;
+      }
+
+      .chat-item.active {
+        background: #e3f2fd;
+        border-left-color: #0088cc;
+      }
+      /* Public AI chat widget styles */
+      .public-chat-fab {
+        position: fixed;
+        left: 16px;
+        bottom: 20px;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: linear-gradient(135deg,#6f42c1,#8a63d2);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1200; /* above content but below navbar/footer */
+        cursor: pointer;
+        font-size: 22px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+      }
+      /* Public chat panel (AI/operator chat window) created by static/chat_widget.js */
+      .public-chat-panel {
+        position: fixed;
+        left: 16px;
+        bottom: 90px;
+        width: 360px;
+        max-width: calc(100% - 40px);
+        height: 520px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        display: none;
+        z-index: 1200;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .public-chat-panel.open { display:flex; }
+      .public-chat-header{ background:linear-gradient(135deg,#6f42c1,#8a63d2); color:white; padding:10px 12px; font-weight:600; display:flex; justify-content:space-between; align-items:center }
+      .public-chat-body{ padding:12px; flex:1; overflow:auto }
+      .public-chat-input{ padding:8px; border-top:1px solid #eee; display:flex; gap:8px }
+      .public-chat-input input{ flex:1; padding:8px 10px; border-radius:8px; border:1px solid #e6e6e6 }
+      .public-chat-input button{ background:#6f42c1;color:white;border:none;padding:8px 12px;border-radius:8px }
+      .msg{ margin-bottom:8px; padding:8px 10px; border-radius:8px; max-width:80%; }
+      .msg.ai{ background:#f1f5f9; align-self:flex-start }
+      .msg.me{ background:#dcf8c6; align-self:flex-end }
+      .chat-menu-item:hover {
+        background: rgba(255,255,255,0.08);
+      }
+
+      .chat-item-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #0088cc, #00a8ff);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 16px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .chat-item-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+      }
+
+      .chat-item-info {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .chat-item-name {
+        font-weight: 600;
+        color: #212529;
+        font-size: 14px;
+        margin-bottom: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .chat-item-last-message {
+        font-size: 12px;
+        color: #6c757d;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .chat-item-badge {
+        background: #dc3545;
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: 600;
+        position: absolute;
+        top: -5px;
+        right: -5px;
+      }
+
+      /* Chat Messages Area */
+      .chat-messages-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: #ffffff;
+      }
+
+      .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        background-image: radial-gradient(
+            circle at 20% 80%,
+            rgba(0, 136, 204, 0.1) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 80% 20%,
+            rgba(0, 136, 204, 0.1) 0%,
+            transparent 50%
+          );
+      }
+
+      .chat-message {
+        margin-bottom: 15px;
+        display: flex;
+        align-items: flex-end;
+        gap: 8px;
+      }
+
+      .chat-message.own {
+        flex-direction: row-reverse;
+      }
+
+      .chat-message-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #0088cc, #00a8ff);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 12px;
+        flex-shrink: 0;
+        overflow: hidden;
+      }
+
+      .chat-message-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+      }
+
+      .chat-message-content {
+        max-width: 70%;
+        position: relative;
+      }
+
+      .chat-message-bubble {
+        padding: 12px 16px;
+        border-radius: 18px;
+        position: relative;
+        word-wrap: break-word;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        font-size: 14px;
+        line-height: 1.4;
+      }
+
+      .chat-message-bubble.other {
+        background: #ffffff;
+        color: #212529;
+        border-bottom-left-radius: 4px;
+      }
+
+      .chat-message-bubble.own {
+        background: linear-gradient(135deg, #0088cc, #00a8ff);
+        color: #ffffff;
+        border-bottom-right-radius: 4px;
+      }
+
+      .chat-message-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 4px;
+        font-size: 12px;
+        color: #6c757d;
+      }
+
+      .chat-message-sender {
+        font-weight: 600;
+        color: #0088cc;
+      }
+
+      .chat-message-time {
+        font-size: 11px;
+        opacity: 0.7;
+      }
+
+      .chat-message.own .chat-message-info {
+        justify-content: flex-end;
+      }
+
+      .chat-message.own .chat-message-sender {
+        color: #ffffff;
+      }
+
+      /* Chat Input */
+      .chat-input {
+        padding: 15px 20px;
+        background: #ffffff;
+        border-top: 1px solid #e1e8ed;
+        display: flex;
+        align-items: flex-end;
+        gap: 10px;
+      }
+
+      .chat-input-area {
+        flex: 1;
+        position: relative;
+      }
+
+      .chat-input textarea {
+        width: 100%;
+        border: 2px solid #e1e8ed;
+        border-radius: 20px;
+        padding: 12px 20px;
+        resize: none;
+        font-size: 14px;
+        line-height: 1.4;
+        max-height: 100px;
+        transition: all 0.2s ease;
+        background: #f8f9fa;
+      }
+
+      .chat-input textarea:focus {
+        outline: none;
+        border-color: #0088cc;
+        background: #ffffff;
+        box-shadow: 0 0 0 3px rgba(0, 136, 204, 0.1);
+      }
+
+      .chat-send-btn {
+        background: linear-gradient(135deg, #0088cc, #00a8ff);
+        border: none;
+        color: white;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 18px;
+        box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+      }
+
+      .chat-send-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+      }
+
+      .chat-send-btn:disabled {
+        background: #6c757d;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      /* Empty State */
+      .chat-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: #6c757d;
+        text-align: center;
+        padding: 40px;
+      }
+
+      .chat-empty-icon {
+        font-size: 48px;
+        margin-bottom: 20px;
+        opacity: 0.5;
+      }
+
+      .chat-empty h5 {
+        margin-bottom: 10px;
+        color: #495057;
+      }
+
+      .chat-empty p {
+        font-size: 14px;
+        margin: 0;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .chat-panel {
+          right: 10px;
+          left: 10px;
+          width: auto;
+          height: 85vh;
+        }
+
+        .chat-list {
+          width: 150px;
+        }
+
+        .chat-item-name {
+          font-size: 12px;
+        }
+
+        .chat-message-bubble {
+          max-width: 85%;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .chat-panel {
+          right: 5px;
+          left: 5px;
+          height: 90vh;
+        }
+
+        .chat-list {
+          width: 120px;
+        }
+
+        .chat-item {
+          padding: 8px 10px;
+        }
+
+        .chat-item-avatar {
+          width: 35px;
+          height: 35px;
+          font-size: 14px;
+        }
+      }
+    </style>
+
+    {% if (session.get('staff_id') or session.get('courier_id') or
+    session.get('super_admin') or session.get('user_id')) %}
+    <div id="chatFab" class="chat-fab" title="Chat" aria-label="Chat">
+      Chat
+      <span
+        id="chat-unread-count"
+        class="badge bg-danger"
+        style="
+          position: absolute;
+          top: -6px;
+          right: -6px;
+          display: none;
+        "></span>
+    </div>
+
+    <div id="chatPanel" class="chat-panel" role="dialog" aria-hidden="true">
+      <!-- Chat Header -->
+        <div class="chat-header">
+        <h5>{{ _('chat.online_chat') }}</h5>
+        <div class="chat-header-controls">
+          <button id="chatRefreshBtn" class="chat-header-btn" title="{{ _('chat.refresh') }}">
+            <i class="bi bi-arrow-clockwise" aria-hidden="true"></i>
+            <span class="visually-hidden">{{ _('chat.refresh') }}</span>
+          </button>
+          <button id="chatCloseBtn" class="chat-header-btn" title="{{ _('chat.close') }}">
+            <i class="bi bi-x-lg" aria-hidden="true"></i>
+            <span class="visually-hidden">{{ _('chat.close') }}</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Chat Content -->
+      <div class="chat-content">
+        <!-- Chat List (Groups and Contacts) -->
+        <div class="chat-list" id="chatList">
+          <div class="chat-list-header">{{ _('chat.groups') }}</div>
+          <div class="chat-group">
+            <div class="chat-group-title">{{ _('chat.groups') }}</div>
+            <div class="chat-item" data-chat-id="all" data-chat-type="group">
+              <div class="chat-item-avatar"><i class="bi bi-globe" aria-hidden="true"></i></div>
+              <div class="chat-item-info">
+                <div class="chat-item-name">{{ _('chat.all_team') }}</div>
+                <div class="chat-item-last-message">{{ _('chat.all_staff') }}</div>
+              </div>
+            </div>
+            <div class="chat-item" data-chat-id="staffs" data-chat-type="group">
+              <div class="chat-item-avatar"><i class="bi bi-people-fill" aria-hidden="true"></i></div>
+              <div class="chat-item-info">
+                <div class="chat-item-name">Staffs</div>
+                <div class="chat-item-last-message">Xodimlar guruhi</div>
+              </div>
+            </div>
+            <div
+              class="chat-item"
+              data-chat-id="couriers"
+              data-chat-type="group">
+              <div class="chat-item-avatar"><i class="bi bi-truck" aria-hidden="true"></i></div>
+              <div class="chat-item-info">
+                <div class="chat-item-name">Couriers</div>
+                <div class="chat-item-last-message">Yetkazib beruvchilar</div>
+              </div>
+            </div>
+          </div>
+          <div class="chat-group">
+            <div class="chat-group-title">{{ _('chat.private_chats') }}</div>
+            <div id="privateChatsList">
+              <!-- Private chats will be loaded here -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat Messages Area -->
+        <div class="chat-messages-area">
+          <div class="chat-messages" id="chatMessages">
+              <div class="chat-empty">
+              <div class="chat-empty-icon"><i class="bi bi-chat-dots" aria-hidden="true"></i></div>
+              <h5>{{ _('chat.select_a_chat') }}</h5>
+              <p>{{ _('chat.select_chat_hint') }}</p>
+            </div>
+          </div>
+          <div class="chat-input">
+            <div class="chat-input-area">
+              <textarea
+                id="chatText"
+                rows="1"
+                placeholder="{{ _('chat.write_message') }}"
+                disabled></textarea>
+            </div>
+            <button id="chatSendBtn" class="chat-send-btn" disabled><i class="bi bi-send" aria-hidden="true"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    <!-- Notify modal: composer visible only to superadmin. Other roles get a read-only viewer. -->
+    {% if session.get('super_admin') %}
+    <div
+      id="notifyModalFloating"
+      class="notify-modal"
+      style="
+        display: none;
+        position: fixed;
+        right: 20px;
+        bottom: 90px;
+        width: 320px;
+        background: #fff;
+        border: 1px solid #ddd;
+        padding: 12px;
+        border-radius: 8px;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+        z-index: 11000; /* raised so it overlays other panels */
+      ">
+  <h5>{{ _('notifications_ui.new_notification') }}</h5>
+      <div class="mb-2">
+        <input id="notifyTitleFloating" class="form-control" placeholder="{{ _('notifications_ui.title_label') }}" />
+      </div>
+      <div class="mb-2">
+        <textarea
+          id="notifyBodyFloating"
+          class="form-control"
+          rows="3"
+          placeholder="{{ _('notifications_ui.body_label') }}"></textarea>
+      </div>
+      <div style="display: flex; gap: 8px; justify-content: flex-end">
+        <button id="notifyCancelBtnFloating" class="btn btn-sm btn-secondary">
+          {{ _('notifications_ui.cancel') }}
+        </button>
+        <button id="notifySendBtnFloating" class="btn btn-sm btn-primary">
+          {{ _('notifications_ui.send') }}
+        </button>
+      </div>
+    </div>
+    {% else %}
+    <!-- Read-only notify viewer for non-superadmin (shows latest notifications) -->
+    <div
+      id="notifyModalFloating"
+      class="notify-modal"
+      style="
+        display: none;
+        position: fixed;
+        right: 20px;
+        bottom: 90px;
+        width: 360px;
+        max-height: 50vh;
+        overflow-y: auto;
+        background: #fff;
+        border: 1px solid #ddd;
+        padding: 12px;
+        border-radius: 8px;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+        z-index: 11000; /* raised so it overlays other panels */
+      ">
+  <h5>{{ _('notifications') }}</h5>
+      <div id="notifyListPreviewFloating">
+        <!-- Filled by JS: latest notifications for this user -->
+      </div>
+      <div style="display: flex; justify-content: flex-end; margin-top: 8px">
+        <button id="notifyCloseViewerFloating" class="btn btn-sm btn-secondary">
+          {{ _('notifications_ui.cancel') }}
+        </button>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Member profile popup modal -->
+    <div
+      id="memberProfileModal"
+      style="
+        display: none;
+        position: fixed;
+        right: 20px;
+        bottom: 120px;
+        width: 300px;
+        background: #fff;
+        border: 1px solid #ddd;
+        padding: 12px;
+        border-radius: 8px;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+        z-index: 10000;
+      ">
+      <div style="display: flex; gap: 8px; align-items: center">
+        <img
+          id="memberProfileAvatar"
+          src="{{ 'images/default-avatar.svg' | cloudinary_url }}"
+          alt="avatar"
+          style="
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            object-fit: cover;
+          " />
+        <div>
+          <div id="memberProfileName" style="font-weight: 700"></div>
+          <div
+            id="memberProfileRole"
+            style="font-size: 12px; color: #666"></div>
+        </div>
+      </div>
+      <hr />
+      <div style="font-size: 13px">
+        <div><strong>ID:</strong> <span id="memberProfileId"></span></div>
+        <div>
+          <strong>Username:</strong> <span id="memberProfileUsername"></span>
+        </div>
+        <div><strong>Phone:</strong> <span id="memberProfilePhone"></span></div>
+        <div>
+          <strong>Birth date:</strong> <span id="memberProfileBirth"></span>
+        </div>
+      </div>
+      <div style="display: flex; justify-content: flex-end; margin-top: 8px">
+        <button id="memberProfileClose" class="btn btn-sm btn-secondary">
+          {{ _('chat.close') }}
+        </button>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+  const fab = document.getElementById("chatFab");
+  const panel = document.getElementById("chatPanel");
+  const closeBtn = document.getElementById("chatCloseBtn");
+  const refreshBtn = document.getElementById("chatRefreshBtn");
+        const listEl = document.getElementById("chatList");
+        const messagesEl = document.getElementById("chatMessages");
+        const sendBtn = document.getElementById("chatSendBtn");
+        const textEl = document.getElementById("chatText");
+        const privateChatsList = document.getElementById("privateChatsList");
+
+        let activeChatId = null;
+        let activeChatType = null;
+        let currentUserType = null;
+        let currentUserId = null;
+
+        // Get current user info
+        // Get current user info
+        function getCurrentUser() {
+          const u = (window.BASE_CONFIG && window.BASE_CONFIG.user) || {};
+          const IS_SUPER_ADMIN = u.is_super_admin || false;
+          const STAFF_ID = u.staff_id;
+          const COURIER_ID = u.courier_id;
+          const USER_ID = u.user_id;
+
+          if (IS_SUPER_ADMIN) {
+            currentUserType = 'super_admin';
+            currentUserId = 1;
+          } else if (STAFF_ID) {
+            currentUserType = 'staff';
+            currentUserId = STAFF_ID;
+          } else if (COURIER_ID) {
+            currentUserType = 'courier';
+            currentUserId = COURIER_ID;
+          } else if (USER_ID) {
+            currentUserType = 'user';
+            currentUserId = USER_ID;
+          }
+        }
+
+        function togglePanel() {
+          if (panel.classList.contains('show')) {
+            panel.classList.remove('show');
+            panel.setAttribute("aria-hidden", "true");
+            fab.classList.remove('active');
+          } else {
+            panel.classList.add('show');
+            panel.setAttribute("aria-hidden", "false");
+            fab.classList.add('active');
+            loadChats();
+            loadPrivateChats();
+          }
+        }
+
+        fab.addEventListener("click", togglePanel);
+        closeBtn.addEventListener("click", togglePanel);
+        refreshBtn.addEventListener("click", () => {
+          loadChats();
+          loadPrivateChats();
+        });
+
+        // Auto-resize textarea
+        textEl.addEventListener('input', function() {
+          this.style.height = 'auto';
+          this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+        });
+
+        // Send message on Enter (but allow Shift+Enter for new line)
+        textEl.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+          }
+        });
+
+        function safeJson(res) {
+          return res.json().catch(() => ({}));
+        }
+
+        function escapeHtml(s) {
+            return (s || "").replace(/[&<>"']/g, function (c) {
+                return {
+                    "&": "&amp;",
+                    "<": "&lt;",
+                    ">": "&gt;",
+                    '"': "&quot;",
+                    "'": "&#39;",
+                }[c];
+            });
+        }
+
+        function updateChatUnreadCount(){
+          const badge = document.getElementById('chat-unread-count');
+          if(!badge) return;
+          fetch('/api/chat-unread-count').then(safeJson).then((r)=>{
+              try{
+                const unread = (r && r.unread) || 0;
+                if(unread>0){ badge.style.display='inline-block'; badge.textContent = unread>99? '99+': String(unread); }
+                else badge.style.display='none';
+              }catch(e){ }
+          }).catch(()=>{});
+        }
+
+        function loadChats() {
+          const IS_USER = (window.CURRENT_MEMBER_TYPE === 'user');
+          fetch("/api/chats")
+              .then(safeJson)
+              .then((data) => {
+                listEl.innerHTML = "";
+                if (!data || !Array.isArray(data.chats)) return;
+
+                let chats = data.chats;
+                if (IS_USER) {
+                  const forbiddenNames = new Set(['All Team','Staffs','Couriers']);
+                  chats = chats.filter(m => !(m.is_group === 1 || m.is_group === true || forbiddenNames.has((m.name||'').trim())));
+                }
+
+                const colorPalette = ['#16a34a','#0ea5e9','#f97316','#7c3aed','#ef4444','#06b6d4','#f59e0b'];
+                const nameColorMap = {};
+                function pickColorFor(idOrName){
+                  const key = String(idOrName || '').trim();
+                  if(!key) return '#6b7280';
+                  if(nameColorMap[key]) return nameColorMap[key];
+                  let h=0; for(let i=0;i<key.length;i++){ h = (h<<5)-h + key.charCodeAt(i); h |= 0 }
+                  const idx = Math.abs(h) % colorPalette.length;
+                  nameColorMap[key] = colorPalette[idx];
+                  return nameColorMap[key];
+                }
+
+                data.chats.forEach((m) => {
+                  const div = document.createElement('div');
+                  div.className = 'chat-item d-flex align-items-center';
+                  div.style.gap = '8px';
+                  div.title = m.name || m.display_name || 'Chat';
+
+                  const av = document.createElement('div');
+                  av.className = 'chat-avatar';
+                  av.style.background = pickColorFor(m.id || m.name || m.display_name);
+                  if(m.avatar){ const img = document.createElement('img'); img.src = m.avatar; img.style.width='36px'; img.style.height='36px'; img.style.borderRadius='50%'; img.style.objectFit='cover'; av.appendChild(img); }
+                  // attach member metadata when available for profile popup
+                  if(m.member_type && m.member_id){ av.dataset.memberType = m.member_type; av.dataset.memberId = m.member_id; }
+                  // click avatar to view profile
+                  av.addEventListener('click', (ev)=>{ ev.stopPropagation(); if(av.dataset.memberType && av.dataset.memberId) fetchMemberProfile(av.dataset.memberType, av.dataset.memberId); });
+
+                  const meta = document.createElement('div');
+                  meta.style.flex = '1';
+                  meta.innerHTML = `<div style="font-weight:600">${escapeHtml(m.name || m.display_name || 'Chat')}</div><div style="font-size:12px;color:#666">${escapeHtml(m.preview || '')}</div>`;
+
+                  div.appendChild(av);
+                  div.appendChild(meta);
+
+                  div.dataset.chatId = m.id;
+                  div.addEventListener('click', ()=>{
+                    openChat(m.id, m.name || m.display_name || 'Chat');
+                  });
+
+                  listEl.appendChild(div);
+                });
+              })
+              .catch((e) => {
+                // console.log("Load chats error", e);
+              });
+        }
+
+        function loadPrivateChats() {
+          // Load private chats based on user role
+          privateChatsList.innerHTML = '';
+
+          fetch('/api/private-chats')
+              .then(safeJson)
+              .then((data) => {
+                    // Debug: log what backend returned (helps when chats don't appear)
+                    try { console.debug('loadPrivateChats -> response:', data); } catch(e){}
+
+                    // Only treat as present if private_chats is a non-empty array
+                    if (data && data.success && Array.isArray(data.private_chats) && data.private_chats.length > 0) {
+                      data.private_chats.forEach(chat => {
+                      // Normalize fields with safe fallbacks for robustness
+                      const chatId = chat.id || (`unknown_${Math.random().toString(36).slice(2,8)}`);
+                      const chatType = chat.type || 'unknown';
+                      const userId = chat.user_id || (chat.userId || chat.user_id || null);
+                      const name = chat.name || chat.first_name || 'No name';
+
+                      const chatItem = document.createElement('div');
+                      chatItem.className = 'chat-item';
+                      chatItem.dataset.chatId = chatId;
+                      chatItem.dataset.chatType = 'private';
+                      chatItem.dataset.userType = chatType;
+                      if (userId) chatItem.dataset.userId = userId;
+                      chatItem.dataset.hasMeta = JSON.stringify({hasAvatar: !!chat.avatar, idPresent: !!chat.id, userIdPresent: !!userId});
+
+                      // clickable
+                      chatItem.style.cursor = 'pointer';
+                      chatItem.addEventListener('click', () => {
+                        try { openChat(chatItem.dataset.chatId, 'private'); } catch(e) { console.debug('openChat error', e); }
+                      });
+
+                      // build avatar/info below
+                      const avatar = document.createElement('div');
+                      avatar.className = 'chat-item-avatar';
+                      if (chat.avatar) {
+                        const img = document.createElement('img');
+                        img.src = chat.avatar;
+                        img.alt = name;
+                        avatar.appendChild(img);
+                      } else {
+                        avatar.textContent = (name || 'U').charAt(0).toUpperCase();
+                      }
+
+                      const info = document.createElement('div');
+                      info.className = 'chat-item-info';
+                      info.innerHTML = `\n                    <div class="chat-item-name">${name}</div>\n                    <div class="chat-item-last-message">Shaxsiy suhbat</div>\n                  `;
+
+                      chatItem.appendChild(avatar);
+                      chatItem.appendChild(info);
+                      // Ensure the item is visible even if some CSS/bootstrap classes interfered
+                      try { chatItem.style.display = 'flex'; } catch (e) {}
+                      privateChatsList.appendChild(chatItem);
+                });
+              } else {
+                // Show placeholder if no private chats
+                      const placeholder = document.createElement('div');
+                placeholder.className = 'chat-item';
+                placeholder.innerHTML = `
+                  <div class="chat-item-avatar"><i class="bi bi-person-fill" aria-hidden="true"></i></div>
+                  <div class="chat-item-info">
+                    <div class="chat-item-name">{{ _('chat.no_private_chats') }}</div>
+                    <div class="chat-item-last-message">{{ _('chat.private_chat_prompt') }}</div>
+                  </div>
+                `;
+                privateChatsList.appendChild(placeholder);
+              }
+            })
+            .catch(error => {
+              // console.error('Error loading private chats:', error);
+              const placeholder = document.createElement('div');
+              placeholder.className = 'chat-item';
+              placeholder.innerHTML = `
+                <div class="chat-item-avatar"><i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i></div>
+                <div class="chat-item-info">
+                  <div class="chat-item-name">{{ _('messages.error_title') }}</div>
+                  <div class="chat-item-last-message">{{ _('messages.private_chat_open_failed') }}</div>
+                </div>
+              `;
+              privateChatsList.appendChild(placeholder);
+            });
+        }
+
+        function openChat(chatId, chatType) {
+          activeChatId = chatId;
+          activeChatType = chatType;
+
+          // Update active state
+          document.querySelectorAll('.chat-item').forEach(item => {
+            item.classList.remove('active');
+          });
+          document.querySelector(`[data-chat-id="${chatId}"]`).classList.add('active');
+
+          // Enable input
+          textEl.disabled = false;
+          sendBtn.disabled = false;
+
+          // Handle private chats
+          if (chatType === 'private') {
+            const chatItem = document.querySelector(`[data-chat-id="${chatId}"]`);
+            const userType = chatItem.dataset.userType;
+            const userId = chatItem.dataset.userId;
+
+            // Create or get private chat
+            fetch(`/api/private-chat/${userType}/${userId}`)
+              .then(safeJson)
+              .then((data) => {
+                if (data.success) {
+                  // Load messages for the private chat
+                  loadMessages(data.chat_id);
+                } else {
+                  messagesEl.innerHTML = `
+                    <div class="chat-empty">
+                      <div class="chat-empty-icon"><i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i></div>
+                      <h5>{{ _('messages.error_title') }}</h5>
+                      <p>{{ _('messages.private_chat_open_failed') }}: ${data.message}</p>
+                    </div>
+                  `;
+                }
+              })
+              .catch(error => {
+                // console.error('Error opening private chat:', error);
+                messagesEl.innerHTML = `
+                  <div class="chat-empty">
+                    <div class="chat-empty-icon"><i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i></div>
+                    <h5>{{ _('messages.error_title') }}</h5>
+                    <p>{{ _('messages.private_chat_open_failed') }}</p>
+                  </div>
+                `;
+              });
+          } else {
+            // Load messages for group chats
+            loadMessages(chatId);
+          }
+        }
+
+        function loadMessages(chatId) {
+          messagesEl.innerHTML = '<div class="text-center p-4">{{ _("messages.loading") }}</div>';
+
+          fetch(`/api/chats/${chatId}/messages?limit=100`)
+            .then(safeJson)
+            .then((data) => {
+              messagesEl.innerHTML = '';
+
+                if (!data || !data.messages || data.messages.length === 0) {
+                messagesEl.innerHTML = `
+                  <div class="chat-empty">
+                    <div class="chat-empty-icon"><i class="bi bi-chat-dots" aria-hidden="true"></i></div>
+                    <h5>{{ _('messages.no_messages') }}</h5>
+                    <p>{{ _('messages.send_first_message') }}</p>
+                  </div>
+                `;
+                return;
+              }
+
+              data.messages.forEach((message) => {
+                const messageEl = createMessageElement(message);
+                messagesEl.appendChild(messageEl);
+              });
+
+              // Scroll to bottom
+              messagesEl.scrollTop = messagesEl.scrollHeight;
+            })
+            .catch(error => {
+              // console.error('Error loading messages:', error);
+              messagesEl.innerHTML = `
+                <div class="chat-empty">
+                  <div class="chat-empty-icon"><i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i></div>
+                  <h5>{{ _('messages.error_title') }}</h5>
+                  <p>{{ _('messages.messages_load_error') }}</p>
+                </div>
+              `;
+            });
+        }
+
+        function createMessageElement(message) {
+          const isOwn = message.sender_type === currentUserType && message.sender_id == currentUserId;
+          const messageEl = document.createElement('div');
+          messageEl.className = `chat-message ${isOwn ? 'own' : ''}`;
+
+          const avatar = document.createElement('div');
+          avatar.className = 'chat-message-avatar';
+          if (message.sender_avatar) {
+            const img = document.createElement('img');
+            img.src = message.sender_avatar;
+            img.alt = message.sender_name || 'User';
+            avatar.appendChild(img);
+          } else {
+            avatar.textContent = (message.sender_name || 'U').charAt(0).toUpperCase();
+          }
+
+          const content = document.createElement('div');
+          content.className = 'chat-message-content';
+
+          const info = document.createElement('div');
+          info.className = 'chat-message-info';
+
+          if (!isOwn) {
+            const sender = document.createElement('span');
+            sender.className = 'chat-message-sender';
+            sender.textContent = message.sender_name || 'Unknown';
+            info.appendChild(sender);
+          }
+
+          const time = document.createElement('span');
+          time.className = 'chat-message-time';
+          time.textContent = formatTime(message.created_at);
+          info.appendChild(time);
+
+          const bubble = document.createElement('div');
+          bubble.className = `chat-message-bubble ${isOwn ? 'own' : 'other'}`;
+          bubble.textContent = message.text;
+
+          content.appendChild(info);
+          content.appendChild(bubble);
+
+          messageEl.appendChild(avatar);
+          messageEl.appendChild(content);
+
+          return messageEl;
+        }
+
+        function formatTime(timestamp) {
+          const date = new Date(timestamp);
+          const now = new Date();
+          const diff = now - date;
+
+          if (diff < 60000) { // Less than 1 minute
+            return 'hozir';
+          } else if (diff < 3600000) { // Less than 1 hour
+            return Math.floor(diff / 60000) + ' daqiqa oldin';
+          } else if (diff < 86400000) { // Less than 1 day
+            return Math.floor(diff / 3600000) + ' soat oldin';
+          } else {
+            return date.toLocaleDateString('uz-UZ');
+          }
+        }
+
+        function sendMessage() {
+          const text = textEl.value.trim();
+          if (!text || !activeChatId) return;
+
+          // Validate message length
+          if (text.length > 1000) {
+            alert((window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.msg_too_long) || 'Message too long');
+            return;
+          }
+
+          sendBtn.disabled = true;
+          // show spinner with bootstrap icon
+          sendBtn.innerHTML = '<i class="bi bi-hourglass-split" aria-hidden="true"></i>';
+
+          fetch(`/api/chats/${activeChatId}/messages`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-Token': window.BASE_CONFIG.csrf_token || ''
+            },
+            body: JSON.stringify({ text: text })
+          })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then((data) => {
+            if (data && data.success) {
+              textEl.value = '';
+              textEl.style.height = 'auto';
+              loadMessages(activeChatId);
+            } else {
+              const unknown = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.unknown_error) || 'Unknown error';
+              const sendErr = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.send_error) || 'Send error';
+              alert(sendErr + ': ' + (data.message || unknown));
+            }
+          })
+          .catch(error => {
+            // console.error('Error sending message:', error);
+            alert((window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.send_error) || 'Send error');
+          })
+          .finally(() => {
+            sendBtn.disabled = false;
+            sendBtn.textContent = '➤';
+          });
+        }
+
+        // Event listeners
+        sendBtn.addEventListener('click', sendMessage);
+
+        // Chat item click handlers
+        document.addEventListener('click', function(e) {
+          const chatItem = e.target.closest('.chat-item');
+          if (chatItem) {
+            const chatId = chatItem.dataset.chatId;
+            const chatType = chatItem.dataset.chatType;
+            if (chatId) {
+              openChat(chatId, chatType);
+            }
+          }
+        });
+
+        // Initialize
+        getCurrentUser();
+        loadChats();
+        loadPrivateChats();
+        updateChatUnreadCount();
+        setInterval(updateChatUnreadCount, 10000);
+
+        // Auto-refresh messages every 5 seconds when panel is open
+        setInterval(() => {
+          if (panel.classList.contains('show') && activeChatId) {
+            loadMessages(activeChatId);
+          }
+        }, 5000);
+
+        // Notification buttons in the navbar have class .nav-notify
+        const navNotifyBtns = document.querySelectorAll(".nav-notify");
+        navNotifyBtns.forEach((b) =>
+          b.addEventListener("click", () => {
+            const modal = document.getElementById("notifyModal");
+            if (modal) modal.style.display = "block";
+          })
+        );
+
+        const memberProfileClose = document.getElementById('memberProfileClose');
+        if(memberProfileClose) memberProfileClose.addEventListener('click', ()=>{ const m = document.getElementById('memberProfileModal'); if(m) m.style.display='none'; });
+
+        // Update on load and every 20s
+        updateNotifyCount();
+        setInterval(updateNotifyCount, 20000);
+
+        // Server will render IS_SUPER_ADMIN true/false
+        // Derive user context from BASE_CONFIG
+        const _u = (window.BASE_CONFIG && window.BASE_CONFIG.user) || {};
+        const IS_SUPER_ADMIN = _u.is_super_admin || false;
+        window.CURRENT_MEMBER_ID = _u.user_id || _u.staff_id || _u.courier_id || null;
+        window.CURRENT_MEMBER_TYPE = (_u.user_id ? 'user' : (_u.staff_id ? 'staff' : (_u.courier_id ? 'courier' : 'anonymous')));
+
+        // Notify modal handlers
+        const notifyModal = document.getElementById("notifyModal");
+        const notifyCancelBtn = document.getElementById("notifyCancelBtn");
+        const notifySendBtn = document.getElementById("notifySendBtn");
+
+        if (notifyCancelBtn)
+          notifyCancelBtn.addEventListener("click", () => {
+            if (notifyModal) {
+              notifyModal.style.display = "none";
+              // clear inputs
+              const t = document.getElementById('notifyTitle');
+              const b = document.getElementById('notifyBody');
+              if (t) t.value = '';
+              if (b) b.value = '';
+            }
+          });
+
+        if (IS_SUPER_ADMIN && notifySendBtn) {
+          // Only attach send handler for superadmin
+          notifySendBtn.addEventListener("click", () => {
+            const title = document.getElementById("notifyTitle").value.trim();
+            const body = document.getElementById("notifyBody").value.trim();
+            const msgEnter = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.enter_title_and_body) || 'Enter title and body';
+            if (!title || !body) return alert(msgEnter);
+
+            const isBroadcast = confirm('Barcha foydalanuvchilarga yuborilsinmi? OK = BARCHA; Cancel = Yagona qabul qiluvchi');
+            let payload = { title, body };
+            if (isBroadcast) {
+              const group = prompt('Qaysi guruh? (all, users, staff, couriers)', 'all') || 'all';
+              payload.recipient_type = group;
+            } else {
+              const rType = prompt('Qabul qiluvchi turi? (users, staff, couriers)', 'users');
+              const rId = prompt('Qabul qiluvchining id raqami', '');
+              const msgId = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.enter_id) || 'Enter ID';
+              if (!rId) return alert(msgId);
+              payload.recipient_type = rType || 'users';
+              payload.recipient_id = parseInt(rId, 10);
+            }
+
+            fetch("/super-admin/send-notification", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-Token": window.BASE_CONFIG.csrf_token || "",
+              },
+              body: JSON.stringify(payload),
+            })
+              .then(safeJson)
+              .then((r) => {
+                if (r && r.success) {
+                  const msgSent = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.notification_sent) || 'Sent!';
+                  alert(msgSent);
+                  if (notifyModal) {
+                    notifyModal.style.display = "none";
+                    const t = document.getElementById('notifyTitle');
+                    const b = document.getElementById('notifyBody');
+                    if (t) t.value = '';
+                    if (b) b.value = '';
+                  }
+
+                } else {
+                   const sendErr = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.send_error) || 'Error';
+                   const unknown = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.unknown_error) || 'Unknown';
+                   alert(sendErr + ': ' + (r && r.message ? r.message : unknown));
+                }
+              })
+              .catch((e) => {
+                alert((window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.send_error) || 'Error');
+                // console.log(e);
+              });
+          });
+        }
+
+        // When opening the notify modal, mark visible notifications as read
+        const notifyButtons = document.querySelectorAll('.nav-notify');
+        notifyButtons.forEach((b) => b.addEventListener('click', async ()=>{
+          if(!IS_SUPER_ADMIN){
+            // non-super-admin: fetch latest notifications and show read-only viewer
+            try{
+              const res = await fetch('/api/notifications');
+              const data = await res.json().catch(()=>({}));
+              const list = (data && data.notifications) || [];
+              const preview = document.getElementById('notifyListPreview');
+              if(preview){
+                preview.innerHTML = '';
+                if(list.length===0) {
+                  const msgNoNot = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.no_notifications) || 'No notifications';
+                  preview.innerHTML = '<div class="text-muted">' + msgNoNot + '</div>';
+                }
+                list.slice(0,10).forEach(n=>{
+                  const item = document.createElement('div');
+                  item.className = 'mb-2';
+                  item.innerHTML = `<div style="font-weight:600">${escapeHtml(n.title || '')}</div><div style="font-size:12px;color:#666">${escapeHtml(n.body || '')}</div><hr/>`;
+                  preview.appendChild(item);
+                });
+              }
+              if(notifyModal) notifyModal.style.display = 'block';
+              // mark read for this recipient (best-effort)
+              fetch('/api/notifications/mark-read', { method: 'POST', headers: { 'X-CSRF-Token': window.BASE_CONFIG.csrf_token || '' } }).then(()=>updateNotifyCount()).catch(()=>{});
+            }catch(e){
+              // console.log('Failed to load notifications', e);
+              if(notifyModal) notifyModal.style.display = 'block';
+            }
+            return;
+          }
+          // super admin opens composer modal
+          if(notifyModal) notifyModal.style.display = 'block';
+        }));
+        // Close viewer button handler for non-superadmins
+        const notifyCloseViewer = document.getElementById('notifyCloseViewer');
+        if(notifyCloseViewer) notifyCloseViewer.addEventListener('click', ()=>{ const m = document.getElementById('notifyModal'); if(m) m.style.display='none'; });
+
+      })();
+
+      // Global utility functions
+      function updateNotifyCount() {
+        if (typeof safeJson === 'undefined') return;
+        fetch("/api/notifications")
+          .then(safeJson)
+          .then((r) => {
+            try {
+              const notes = (r && r.notifications) || [];
+              let unread = 0;
+              notes.forEach((n) => {
+                if (n.read_flag === 0 || n.read_flag === "0" || n.read_flag === null) unread++;
+              });
+              const badges = document.querySelectorAll("#notify-count");
+              badges.forEach((b) => {
+                if (unread > 0) {
+                  b.style.display = "inline-block";
+                  b.textContent = unread > 99 ? "99+" : String(unread);
+                } else {
+                  b.style.display = "none";
+                }
+              });
+            } catch (e) {}
+          })
+          .catch((e) => {});
+      }
+
+      function fetchMemberProfile(memberType, memberId) {
+        if (typeof safeJson === 'undefined') return;
+        fetch(`/api/member/${memberType}/${memberId}`)
+          .then(safeJson)
+          .then((r) => { if (r && r.success && r.profile) showMemberProfile(r.profile); })
+          .catch((e) => {});
+      }
+
+      function showMemberProfile(profile) {
+        if (!profile) return;
+        const modal = document.getElementById('memberProfileModal');
+        if (!modal) return;
+        const defaultAv = (window.BASE_CONFIG && window.BASE_CONFIG.default_avatar) || '{{ "static-images/default-avatar.svg" | cloudinary_url }}';
+        document.getElementById('memberProfileAvatar').src = profile.avatar || defaultAv;
+        document.getElementById('memberProfileName').textContent = profile.name || profile.username || ('#' + profile.id);
+        document.getElementById('memberProfileRole').textContent = (profile.role || '').toString();
+        document.getElementById('memberProfileId').textContent = profile.id || '';
+        document.getElementById('memberProfileUsername').textContent = profile.username || '';
+        document.getElementById('memberProfilePhone').textContent = profile.phone || '';
+        document.getElementById('memberProfileBirth').textContent = profile.birth_date || '';
+        modal.style.display = 'block';
+      }
+
+      const memberProfileClose = document.getElementById('memberProfileClose');
+      if (memberProfileClose) memberProfileClose.addEventListener('click', () => {
+        const m = document.getElementById('memberProfileModal');
+        if (m) m.style.display = 'none';
+      });
+
+      // Initial update
+      document.addEventListener('DOMContentLoaded', () => {
+         if (typeof updateNotifyCount === 'function') updateNotifyCount();
+      });
+    </script>
+
+    {% endif %}
+    <!-- End chat widget for staff/courier/superadmin -->
+
+
+    <!-- Ticker quick-add modal DOM (superadmin only) -->
+    <div class="modal fade" id="tickerNewsModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">{{ _('ticker.add_news') }}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="tickerNewsForm">
+              <div class="mb-3">
+                <label class="form-label">{{ _('notifications_ui.title_label') }}</label>
+                <input type="text" id="tickerNewsTitle" class="form-control" required maxlength="200" />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">{{ _('notifications_ui.body_label') }}</label>
+                <textarea id="tickerNewsContent" class="form-control" rows="4" maxlength="500"></textarea>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <label class="form-label">{{ _('ticker.image_label') }}</label>
+                  <input type="file" id="tickerImageFile" class="form-control" accept="image/*" onchange="uploadMediaFileTicker('image')" />
+                  <input type="hidden" id="tickerImageUrl" />
+                  <img id="tickerImagePreview" style="display:none; max-width:180px; margin-top:8px" />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">{{ _('ticker.video_label') }}</label>
+                  <input type="file" id="tickerVideoFile" class="form-control" accept="video/*" onchange="uploadMediaFileTicker('video')" />
+                  <input type="hidden" id="tickerVideoUrl" />
+                  <video id="tickerVideoPreview" style="display:none; max-width:180px; margin-top:8px" controls muted></video>
+
+                  <div class="mt-2">
+                    <label class="form-label">{{ _('ticker.youtube_label') }}</label>
+                    <input type="url" id="tickerYoutubeUrl" class="form-control" placeholder="https://www.youtube.com/watch?v=..." />
+                    <small class="form-text text-muted">{{ _('ticker.youtube_hint') }}</small>
+
+                    <div id="tickerYoutubePreviewContainer" style="display:none; margin-top:8px; position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:8px;">
+                      <iframe id="tickerYoutubePreview" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" allowfullscreen></iframe>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mb-3 mt-2">
+                <label class="form-label">{{ _('ticker.type_label') }}</label>
+                <select id="tickerNewsType" class="form-control">
+                  <option value="news">{{ _('ticker.type_news') }}</option>
+                  <option value="advertisement">{{ _('ticker.type_ad') }}</option>
+                </select>
+              </div>
+              <div class="form-check mb-3">
+                <input type="checkbox" id="tickerNewsIsActive" class="form-check-input" checked />
+                <label for="tickerNewsIsActive" class="form-check-label">{{ _('ticker.active_label') }}</label>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ _('notifications_ui.cancel') }}</button>
+            <button type="button" class="btn btn-primary" id="saveTickerNewsBtn">{{ _('settings.save') }}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+          // Ticker quick-add modal handlers (superadmin only)
+      function openTickerNewsModal(){
+            // reset fields
+            const form = document.getElementById('tickerNewsForm');
+            if(form) form.reset();
+            document.getElementById('tickerImagePreview').style.display = 'none';
+            document.getElementById('tickerVideoPreview').style.display = 'none';
+            const modalEl = document.getElementById('tickerNewsModal');
+            const bs = new bootstrap.Modal(modalEl);
+            bs.show();
+          }
+
+          function saveTickerNews(){
+            const title = (document.getElementById('tickerNewsTitle')||{}).value||'';
+            if(!title.trim()){ 
+              const msgReq = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.title_required) || 'Title required';
+              alert(msgReq); return; 
+            }
+            const content = (document.getElementById('tickerNewsContent')||{}).value||'';
+            const type = (document.getElementById('tickerNewsType')||{}).value||'news';
+            const image_url = (document.getElementById('tickerImageUrl')||{}).value||'';
+            const video_url = (document.getElementById('tickerVideoUrl')||{}).value||'';
+            const youtube = (document.getElementById('tickerYoutubeUrl')||{}).value||'';
+            const is_active = !!(document.getElementById('tickerNewsIsActive')||{}).checked;
+
+            const payload = {
+              title: title.trim(),
+              content: content.trim(),
+              type: type,
+              image_url: image_url,
+              video_url: youtube || video_url,
+              is_active: is_active,
+              display_order: 0,
+              show_in_ticker: true
+            };
+
+            fetch('/api/news', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            }).then(r=>r.json()).then(data=>{
+                if(data && data.success){
+                alert((window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.news_added) || 'News added');
+                const bs = bootstrap.Modal.getInstance(document.getElementById('tickerNewsModal'));
+                if(bs) bs.hide();
+                // refresh ticker content
+                const evt = new Event('refreshNewsTicker');
+                window.dispatchEvent(evt);
+              } else {
+                const errText = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.error_occurred) || 'Error';
+                alert(errText + ': ' + (data && data.message || ''));
+              }
+            }).catch(e=>{ 
+               console.error(e); 
+               alert((window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.save_error) || 'Save error'); 
+            });
+          }
+
+          // Upload handler reusing the admin upload endpoint
+          function uploadMediaFileTicker(type){
+            const fileInput = document.getElementById(type === 'image' ? 'tickerImageFile' : 'tickerVideoFile');
+            const file = fileInput && fileInput.files && fileInput.files[0];
+            if(!file) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/admin/upload-news-media', { method: 'POST', body: formData })
+              .then(r=>r.json())
+              .then(data=>{
+                if(data && data.success){
+                  if(type === 'image'){
+                    document.getElementById('tickerImageUrl').value = data.file_url;
+                    const img = document.getElementById('tickerImagePreview'); img.src = data.file_url; img.style.display = 'block';
+                  } else {
+                    document.getElementById('tickerVideoUrl').value = data.file_url;
+                    const vid = document.getElementById('tickerVideoPreview'); vid.src = data.file_url; vid.style.display = 'block';
+                    const yt = document.getElementById('tickerYoutubeUrl'); if(yt) yt.value = '';
+                    const ytCont = document.getElementById('tickerYoutubePreviewContainer'); if(ytCont) ytCont.style.display = 'none';
+                  }
+                } else {
+                  const msgUpErr = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.file_upload_error) || 'Upload error';
+                  alert(msgUpErr + ': ' + (data && data.message || ''));
+                }
+              }).catch(err=>{ 
+                console.error('Upload error', err); 
+                const msgUpErr = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.file_upload_error) || 'Upload error';
+                alert(msgUpErr); 
+              });
+          }
+
+          // YouTube preview binding
+          (function(){
+            const el = document.getElementById('tickerYoutubeUrl');
+            if(!el) return;
+            el.addEventListener('input', function(){
+              const v = el.value.trim();
+              const container = document.getElementById('tickerYoutubePreviewContainer');
+              const iframe = document.getElementById('tickerYoutubePreview');
+              if(!v){ iframe.src = ''; if(container) container.style.display = 'none'; return; }
+              try{
+                const m = v.match(/(?:v=|\/embed\/|youtu\.be\/)([A-Za-z0-9_\-]{11})/);
+                if(m && m[1]){ iframe.src = 'https://www.youtube.com/embed/'+m[1]; if(container) container.style.display = 'block'; const vp = document.getElementById('tickerVideoPreview'); if(vp) vp.style.display='none'; }
+                else { iframe.src = ''; if(container) container.style.display = 'none'; }
+              }catch(e){ iframe.src = ''; if(container) container.style.display = 'none'; }
+            });
+          })();
+
+          // Bind save button
+          (function(){
+            const btn = document.getElementById('saveTickerNewsBtn');
+            if(btn) btn.addEventListener('click', saveTickerNews);
+          })();
+    </script>
+    {# Legacy AI-only chat widget (chatWidgetBtn / chatWidgetPanel) removed.
+       Public chat for users is now handled by /static/chat_widget.js, which
+       shows a menu with options: AI bilan suhbat, Operator bilan suhbat,
+       Savol yuborish. #}
+
+
+    <!-- Hide legacy AI chat widget; keep public chat menu visible for users.
+         For staff/courier/super_admin, we still prefer the internal Telegram-style
+         chat (chatFab/chatPanel), so hide the public chat widget only for them. -->
+    {% if is_staff or is_courier or is_super_admin %}
+    <style>
+      .public-chat-fab,
+      .public-chat-panel,
+      #public-chat-widget,
+      .ai-chat-widget {
+        display: none !important;
+        visibility: hidden !important;
+      }
+    </style>
+    {% endif %}
+
+    <style>
+      /* New Superadmin FAB (bottom-right) */
+      .superadmin-contact-fab {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: linear-gradient(135deg,#006bb3,#00a8ff);
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1201;
+        cursor: pointer;
+        font-size: 20px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      }
+      .superadmin-contact-panel {
+        position: fixed;
+        right: 20px;
+        bottom: 90px;
+        width: 300px;
+        max-width: calc(100% - 40px);
+        background: rgba(13,22,27,0.98);
+        color: #fff;
+        border-radius: 10px;
+        padding: 12px;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+        display: none;
+        z-index: 1201;
+      }
+      .superadmin-contact-panel.open { display: block; }
+      .superadmin-contact-panel a { color: #fff; text-decoration: none; display:block; margin-bottom:8px }
+      .superadmin-contact-panel .sa-title { font-weight:700; margin-bottom:8px }
+    </style>
+
+    <script>
+        // Newsletter form handler (graceful, non-blocking)
+        function handleNewsletter(e){
+          if(e) e.preventDefault();
+          try{
+            const form = e.target || document.querySelector('.newsletter-form');
+            const input = form.querySelector('input[name="email"]');
+            const feedback = form.querySelector('.newsletter-feedback');
+            const email = (input.value||'').trim();
+            const msgEnter = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.news_enter_email) || 'Enter email';
+            if(!email){ feedback.style.display='block'; feedback.textContent = msgEnter; return false; }
+            
+            const msgThanks = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.news_thanks) || 'Thanks!';
+            feedback.style.display='block'; feedback.textContent = msgThanks;
+            
+            // If /subscribe exists, post to it
+            fetch(form.action, { method: 'POST', headers: { 'Content-Type':'application/json' }, body: JSON.stringify({ email: email }) }).then(r=>r.json().catch(()=>({}))).then(j=>{
+              const msgConfirm = (window.BASE_CONFIG.messages && window.BASE_CONFIG.messages.news_confirm) || 'Confirmed';
+              if(j && j.success){ feedback.textContent = (j.message || msgConfirm); }
+            }).catch(()=>{});
+            input.value='';
+          }catch(err){ console.warn('newsletter error', err); }
+          return false;
+        }
+      </script>
+
+    <!-- Universal Scripts: Swiper, AOS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Initialize AOS
+        AOS.init({
+          duration: 800,
+          easing: 'ease-out-cubic',
+          once: true,
+          offset: 50
+        });
+
+        // Initialize any default swipers
+        const swiper = new Swiper('.default-swiper', {
+          loop: true,
+          pagination: { el: '.swiper-pagination', clickable: true },
+        });
+      });
+    </script>
+      <!-- Floating Help Widget -->
+    <div id="helpWidget">
+        <div id="helpMenu">
+            <button class="help-item" onclick="openAIChat()">
+                <i class="bi bi-robot text-primary"></i> AI Chat
+            </button>
+            {% if session.get('user_id') %}
+            <button class="help-item" onclick="location.href='/chat/staff'">
+                <i class="bi bi-person-badge text-info"></i> Support Chat
+            </button>
+            <button class="help-item" onclick="openAskModal()">
+                <i class="bi bi-envelope-plus text-warning"></i> Super Admin
+            </button>
+            {% else %}
+             <button class="help-item" onclick="location.href='/login'">
+                <i class="bi bi-box-arrow-in-right"></i> Kirish
+            </button>
+            {% endif %}
+        </div>
+        <button id="helpBtn" onclick="toggleHelpMenu()">
+            <i class="bi bi-chat-dots-fill"></i>
+        </button>
+    </div>
+
+    <!-- Ask Super Admin Modal -->
+    <div class="modal fade" id="askAdminModal" tabindex="-1" style="z-index: 100000;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Super Adminga Savol Yo'llash</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <textarea class="form-control" id="questionText" rows="4" placeholder="Savolingizni yozing..."></textarea>
+                </div>
+                <div class="modal-footer">
+                   <button type="button" class="btn btn-primary" onclick="submitQuestion()">Yuborish</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleHelpMenu() {
+            document.getElementById('helpMenu').classList.toggle('show');
+        }
+        
+        function openAIChat() {
+            // Trigger existing chat widget if available
+            const chatBtn = document.querySelector('.chat-widget-toggle');
+            if(chatBtn) chatBtn.click();
+            else alert("AI Chat hozircha faol emas :(");
+        }
+        
+        function openAskModal() {
+             new bootstrap.Modal(document.getElementById('askAdminModal')).show();
+        }
+        
+        function submitQuestion() {
+            const txt = document.getElementById('questionText').value;
+            if(!txt) return;
+            fetch('/api/chat/superadmin-question', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({text: txt, source: 'web'})
+            })
+            .then(r=>r.json())
+            .then(d => {
+                alert(d.message);
+                location.reload();
+            });
+        }
+        
+        // Auto-close alerts
+        document.addEventListener('DOMContentLoaded', () => {
+             const alerts = document.querySelectorAll('.alert');
+             alerts.forEach(a => {
+                 setTimeout(() => {
+                     a.style.animation = 'fadeOut 0.5s forwards';
+                     setTimeout(() => a.remove(), 500);
+                 }, 4000);
+             });
+        });
+    </script>
+    {% endif %}
+      <script>
+        // Defensive UI recovery: if main appears empty or covered by an overlay,
+        // reveal main content so the user can see an error message instead of a blank page.
+        // DISABLED: This was causing false-positive "Sahifa yuklanmadi" messages
+        /*
+        (function(){
+          function isElementVisible(el){
+            if(!el) return false;
+            try{
+              const rect = el.getBoundingClientRect();
+              return rect.width > 0 && rect.height > 0;
+            }catch(e){return false}
+          }
+
+          function revealMain(){
+            try{
+              const main = document.querySelector('main') || document.querySelector('.dashboard-main');
+              if(main){
+                // Ensure it's on top and visible
+                main.style.zIndex = 2147483000;
+                main.style.position = 'relative';
+                main.style.background = main.style.background || 'white';
+                main.style.minHeight = main.style.minHeight || '200px';
+              }
+
+              // Hide common full-screen overlays that may accidentally stay visible
+              ['notifyModal','notifyModalFloating','chatPanel','chatPanel','memberProfileModal','notifyModalFloating'].forEach(id => {
+                try{ const el = document.getElementById(id); if(el && isElementVisible(el)){ el.style.display = 'none'; el.setAttribute('aria-hidden','true'); } }catch(e){}
+              });
+
+              // Also hide modal overlays by class
+              document.querySelectorAll('.modal-overlay, .public-chat-panel, .chat-panel').forEach(el => {
+                try{ if(isElementVisible(el)){ el.style.display = 'none'; el.setAttribute('aria-hidden','true'); } }catch(e){}
+              });
+
+              // If nothing is visible, show a simple diagnostic message.
+              // Avoid false-positives on pages that already contain text (e.g. minimal admin pages)
+              const bodyRect = document.body.getBoundingClientRect();
+              const contentVisible = Array.from(document.body.children).some(isElementVisible);
+              const bodyText = (document.body.innerText || '').trim();
+              const hasMeaningfulText = bodyText.length > 20;
+              if (!contentVisible && !hasMeaningfulText) {
+                const box = document.createElement('div');
+                box.style.position = 'fixed';
+                box.style.left = '12px';
+                box.style.top = '12px';
+                box.style.right = '12px';
+                box.style.padding = '16px';
+                box.style.zIndex = 2147483600;
+                box.style.background = '#fff';
+                box.style.border = '2px solid #1e88e5';
+                box.style.borderRadius = '8px';
+                box.style.boxShadow = '0 6px 30px rgba(0,0,0,0.2)';
+                box.innerHTML = '<strong>Sahifa yuklanmadi — brauzer konsolini oching (F12) va xatoliklarni tekshiring.</strong>';
+                document.body.appendChild(box);
+              } else if (!contentVisible && hasMeaningfulText) {
+                // Page has text but appears covered; try to bring main forward but don't show the diagnostic box.
+                const main = document.querySelector('main') || document.querySelector('.dashboard-main');
+                if (main) {
+                  main.style.zIndex = 2147483000;
+                  main.style.position = 'relative';
+                }
+              }
+            }catch(e){ console.warn('UI recovery failed', e); }
+          }
+
+          if(document.readyState === 'complete' || document.readyState === 'interactive'){
+            setTimeout(revealMain, 50);
+          } else {
+            document.addEventListener('DOMContentLoaded', function(){ setTimeout(revealMain, 50); });
+          }
+        })();
+        */
+      </script>
+  </body>
+</html>
+

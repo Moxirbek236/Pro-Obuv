@@ -11069,3 +11069,1278 @@ MemoryError
 2026-01-19 13:39:36,383 | WARNING | restaurant_app | not_found_error:2724 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
 2026-01-19 15:41:34,288 | WARNING | restaurant_app | not_found_error:2724 | 404 Error: http://localhost:5000/static/favicons/favicon.ico
 2026-01-19 15:41:34,345 | WARNING | restaurant_app | not_found_error:2724 | 404 Error: http://localhost:5000/static/favicons/favicon.ico
+2026-01-22 15:12:36,767 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-22 15:16:30,288 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-22 16:10:08,347 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-22 16:33:49,634 | ERROR | restaurant_app | super_admin_login:16358 | Unexpected error in super_admin_login: Encountered unknown tag 'endif'.
+Traceback (most recent call last):
+  File "D:\Safety.uz\app.py", line 16355, in super_admin_login
+    return render_template("super_admin_login.html")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 152, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 133, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\super_admin_login.html", line 1, in top-level template code
+    {% extends "base.html" %} {% block title %}Super Admin Login{% endblock %} {% block content %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\base.html", line 3340, in template
+    {% endif %}
+jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'endif'.
+2026-01-22 16:33:49,709 | ERROR | restaurant_app | menu:8759 | Menu endpoint error: Encountered unknown tag 'endif'.
+2026-01-22 16:33:49,743 | ERROR | restaurant_app | menu:8789 | Menu fallback error: Encountered unknown tag 'endif'.
+2026-01-22 16:34:03,744 | ERROR | restaurant_app | super_admin_login:16358 | Unexpected error in super_admin_login: Encountered unknown tag 'endif'.
+Traceback (most recent call last):
+  File "D:\Safety.uz\app.py", line 16355, in super_admin_login
+    return render_template("super_admin_login.html")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 152, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 133, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\super_admin_login.html", line 1, in top-level template code
+    {% extends "base.html" %} {% block title %}Super Admin Login{% endblock %} {% block content %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\base.html", line 3340, in template
+    {% endif %}
+jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'endif'.
+2026-01-22 16:34:16,993 | WARNING | restaurant_app | rate_limit_error:2823 | Rate limit exceeded: 127.0.0.1
+2026-01-22 16:34:17,667 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/favicons/favicon.ico
+2026-01-22 16:34:20,750 | ERROR | restaurant_app | super_admin_login:16358 | Unexpected error in super_admin_login: Encountered unknown tag 'endif'.
+Traceback (most recent call last):
+  File "D:\Safety.uz\app.py", line 16355, in super_admin_login
+    return render_template("super_admin_login.html")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 152, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 133, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\super_admin_login.html", line 1, in top-level template code
+    {% extends "base.html" %} {% block title %}Super Admin Login{% endblock %} {% block content %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\base.html", line 3340, in template
+    {% endif %}
+jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'endif'.
+2026-01-22 20:19:47,137 | ERROR | restaurant_app | menu:8759 | Menu endpoint error: Encountered unknown tag 'endif'.
+2026-01-22 20:19:47,179 | ERROR | restaurant_app | menu:8789 | Menu fallback error: Encountered unknown tag 'endif'.
+2026-01-22 20:20:33,997 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://192.168.111.1:5000/static/favicons/favicon.ico
+2026-01-23 12:55:48,602 | ERROR | restaurant_app | menu:8759 | Menu endpoint error: Encountered unknown tag 'endif'.
+2026-01-23 12:55:48,643 | ERROR | restaurant_app | menu:8789 | Menu fallback error: Encountered unknown tag 'endif'.
+2026-01-23 12:56:03,304 | ERROR | restaurant_app | super_admin_login:16358 | Unexpected error in super_admin_login: Encountered unknown tag 'endif'.
+Traceback (most recent call last):
+  File "D:\Safety.uz\app.py", line 16355, in super_admin_login
+    return render_template("super_admin_login.html")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 152, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 133, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\super_admin_login.html", line 1, in top-level template code
+    {% extends "base.html" %} {% block title %}Super Admin Login{% endblock %} {% block content %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\base.html", line 3340, in template
+    {% endif %}
+jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'endif'.
+2026-01-23 12:56:40,633 | WARNING | restaurant_app | rate_limit_error:2823 | Rate limit exceeded: 127.0.0.1
+2026-01-23 12:56:41,392 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/favicons/favicon.ico
+2026-01-23 13:04:01,496 | INFO | restaurant_app | <module>:2974 | Performance monitor muvaffaqiyatli yaratildi
+2026-01-23 13:04:02,820 | INFO | restaurant_app | _spawn_bot:23513 | Started telegram bot subprocess (pid=16172), logs -> logs\telegram_bot.log
+2026-01-23 13:04:04,125 | INFO | restaurant_app | get_session_id:6638 | Yangi session yaratildi: 5615994f...
+2026-01-23 13:04:04,127 | INFO | restaurant_app | safe_submit:2653 | Lazy ThreadPoolExecutor created by safe_submit
+2026-01-23 13:04:04,128 | INFO | restaurant_app | api_chat_ai:22998 | GET request to /api/chat/ai from 127.0.0.1
+2026-01-23 13:19:01,954 | INFO | restaurant_app | <module>:2974 | Performance monitor muvaffaqiyatli yaratildi
+2026-01-23 13:19:02,100 | INFO | restaurant_app | _spawn_bot:23513 | Started telegram bot subprocess (pid=13032), logs -> logs\telegram_bot.log
+2026-01-23 13:19:03,023 | INFO | restaurant_app | get_session_id:6638 | Yangi session yaratildi: 2e554dc9...
+2026-01-23 13:19:03,027 | INFO | restaurant_app | safe_submit:2653 | Lazy ThreadPoolExecutor created by safe_submit
+2026-01-23 13:19:03,031 | INFO | restaurant_app | api_chat_ai:22998 | GET request to /api/chat/ai from 127.0.0.1
+2026-01-23 13:19:50,342 | INFO | restaurant_app | <module>:2974 | Performance monitor muvaffaqiyatli yaratildi
+2026-01-23 13:19:50,469 | INFO | restaurant_app | _spawn_bot:23513 | Started telegram bot subprocess (pid=16240), logs -> logs\telegram_bot.log
+2026-01-23 13:19:50,476 | INFO | restaurant_app | get_session_id:6638 | Yangi session yaratildi: 39c40458...
+2026-01-23 13:19:50,477 | INFO | restaurant_app | before_request:3041 | before_request: unsupported language segment -> super-admin-master-login-z9x4m for /super-admin-master-login-z9x4m; aborting 404
+2026-01-23 13:19:50,480 | INFO | restaurant_app | safe_submit:2653 | Lazy ThreadPoolExecutor created by safe_submit
+2026-01-23 13:20:16,973 | INFO | restaurant_app | <module>:2974 | Performance monitor muvaffaqiyatli yaratildi
+2026-01-23 13:20:17,120 | INFO | restaurant_app | _spawn_bot:23513 | Started telegram bot subprocess (pid=14088), logs -> logs\telegram_bot.log
+2026-01-23 13:20:17,121 | INFO | restaurant_app | get_session_id:6638 | Yangi session yaratildi: 08a91954...
+2026-01-23 13:20:17,122 | INFO | restaurant_app | before_request:3041 | before_request: unsupported language segment -> super-admin-master-login-z9x4m for /super-admin-master-login-z9x4m; aborting 404
+2026-01-23 13:20:17,130 | INFO | restaurant_app | safe_submit:2653 | Lazy ThreadPoolExecutor created by safe_submit
+2026-01-23 13:21:10,240 | INFO | restaurant_app | <module>:2974 | Performance monitor muvaffaqiyatli yaratildi
+2026-01-23 13:21:10,372 | INFO | restaurant_app | _spawn_bot:23513 | Started telegram bot subprocess (pid=16512), logs -> logs\telegram_bot.log
+2026-01-23 13:21:10,373 | INFO | restaurant_app | get_session_id:6638 | Yangi session yaratildi: 1fe76979...
+2026-01-23 13:21:10,375 | INFO | restaurant_app | before_request:3012 | before_request: LANG_CODE env detected -> uz for /menu
+2026-01-23 13:21:10,376 | INFO | restaurant_app | safe_submit:2653 | Lazy ThreadPoolExecutor created by safe_submit
+2026-01-23 13:22:57,102 | INFO | restaurant_app | <module>:2974 | Performance monitor muvaffaqiyatli yaratildi
+2026-01-23 13:22:57,258 | INFO | restaurant_app | _spawn_bot:23513 | Started telegram bot subprocess (pid=15128), logs -> logs\telegram_bot.log
+2026-01-23 13:22:57,260 | INFO | restaurant_app | get_session_id:6638 | Yangi session yaratildi: 6c00e880...
+2026-01-23 13:22:57,261 | INFO | restaurant_app | before_request:3012 | before_request: LANG_CODE env detected -> uz for /menu
+2026-01-23 13:22:57,264 | INFO | restaurant_app | safe_submit:2653 | Lazy ThreadPoolExecutor created by safe_submit
+2026-01-23 13:23:49,900 | INFO | restaurant_app | <module>:2974 | Performance monitor muvaffaqiyatli yaratildi
+2026-01-23 13:23:50,044 | INFO | restaurant_app | _spawn_bot:23513 | Started telegram bot subprocess (pid=4740), logs -> logs\telegram_bot.log
+2026-01-23 13:23:50,045 | INFO | restaurant_app | get_session_id:6638 | Yangi session yaratildi: 0223357a...
+2026-01-23 13:23:50,046 | INFO | restaurant_app | before_request:3041 | before_request: unsupported language segment -> super-admin-master-login-z9x4m for /super-admin-master-login-z9x4m; aborting 404
+2026-01-23 13:23:50,049 | INFO | restaurant_app | safe_submit:2653 | Lazy ThreadPoolExecutor created by safe_submit
+2026-01-23 13:24:23,523 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/main.js
+2026-01-23 13:24:24,201 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:24:28,894 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:24:34,221 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:24:38,904 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:24:44,214 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:24:48,902 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:24:51,086 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/main.js
+2026-01-23 13:24:53,197 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/main.js
+2026-01-23 13:26:20,377 | INFO | restaurant_app | <module>:2974 | Performance monitor muvaffaqiyatli yaratildi
+2026-01-23 13:26:20,498 | INFO | restaurant_app | _spawn_bot:23513 | Started telegram bot subprocess (pid=2864), logs -> logs\telegram_bot.log
+2026-01-23 13:26:20,499 | INFO | restaurant_app | get_session_id:6638 | Yangi session yaratildi: 30dad091...
+2026-01-23 13:26:20,500 | INFO | restaurant_app | before_request:3041 | before_request: unsupported language segment -> super-admin-master-login-z9x4m for /super-admin-master-login-z9x4m; aborting 404
+2026-01-23 13:26:20,502 | INFO | restaurant_app | safe_submit:2653 | Lazy ThreadPoolExecutor created by safe_submit
+2026-01-23 13:31:43,301 | WARNING | restaurant_app | inject_navbar_context:2453 | inject_navbar_context error: Working outside of request context.
+
+This typically means that you attempted to use functionality that needed
+an active HTTP request. Consult the documentation on testing for
+information about how to avoid this problem.
+2026-01-23 13:37:52,284 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/style.css
+2026-01-23 13:37:52,608 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/css/responsive-cleanup.css
+2026-01-23 13:37:52,616 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/css/global-enhancements.css
+2026-01-23 13:37:52,617 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/css/news-ticker.css
+2026-01-23 13:37:52,621 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/css/global-responsive.css
+2026-01-23 13:37:52,633 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/css/responsive.css
+2026-01-23 13:37:52,930 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/main.js
+2026-01-23 13:37:52,950 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/images/default-avatar.svg
+2026-01-23 13:37:53,268 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/facebook.svg
+2026-01-23 13:37:53,283 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/instagram.svg
+2026-01-23 13:37:53,566 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/telegram.svg
+2026-01-23 13:37:53,567 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/threads.svg
+2026-01-23 13:37:53,586 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/uzum.png
+2026-01-23 13:37:53,586 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/youtube.svg
+2026-01-23 13:37:53,587 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/olx.svg
+2026-01-23 13:37:53,607 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/gmail.png
+2026-01-23 13:37:53,892 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/maps.png
+2026-01-23 13:37:53,898 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/phone.png
+2026-01-23 13:37:53,906 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/images/default-avatar.svg
+2026-01-23 13:37:54,236 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/site.webmanifest
+2026-01-23 13:37:54,242 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/favicon-32x32.png
+2026-01-23 13:37:54,514 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/favicon-16x16.png
+2026-01-23 13:38:00,501 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/css/global-enhancements.css
+2026-01-23 13:38:00,503 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/css/global-responsive.css
+2026-01-23 13:38:00,503 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/css/responsive.css
+2026-01-23 13:38:00,509 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/css/news-ticker.css
+2026-01-23 13:38:00,519 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/css/responsive-cleanup.css
+2026-01-23 13:38:00,530 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/style.css
+2026-01-23 13:38:00,820 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:38:00,828 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/main.js
+2026-01-23 13:38:00,861 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/instagram.svg
+2026-01-23 13:38:00,870 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/telegram.svg
+2026-01-23 13:38:00,872 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/facebook.svg
+2026-01-23 13:38:00,884 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/images/default-avatar.svg
+2026-01-23 13:38:01,184 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/threads.svg
+2026-01-23 13:38:01,201 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/uzum.png
+2026-01-23 13:38:01,205 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/youtube.svg
+2026-01-23 13:38:01,209 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/olx.svg
+2026-01-23 13:38:01,450 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/gmail.png
+2026-01-23 13:38:01,463 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/maps.png
+2026-01-23 13:38:01,500 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/phone.png
+2026-01-23 13:38:05,854 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:38:10,873 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:38:15,559 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:38:20,882 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:38:25,562 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:38:26,639 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/css/global-responsive.css
+2026-01-23 13:38:26,641 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/css/news-ticker.css
+2026-01-23 13:38:26,643 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/css/responsive.css
+2026-01-23 13:38:26,644 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/style.css
+2026-01-23 13:38:26,648 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/css/responsive-cleanup.css
+2026-01-23 13:38:26,653 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/css/global-enhancements.css
+2026-01-23 13:38:26,958 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/main.js
+2026-01-23 13:38:26,960 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/images/default-avatar.svg
+2026-01-23 13:38:27,266 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:38:27,273 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/facebook.svg
+2026-01-23 13:38:27,288 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/instagram.svg
+2026-01-23 13:38:27,289 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/telegram.svg
+2026-01-23 13:38:27,591 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/threads.svg
+2026-01-23 13:38:27,593 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/uzum.png
+2026-01-23 13:38:27,605 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/youtube.svg
+2026-01-23 13:38:27,614 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/gmail.png
+2026-01-23 13:38:27,620 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/maps.png
+2026-01-23 13:38:27,623 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/olx.svg
+2026-01-23 13:38:27,922 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/images/default-avatar.svg
+2026-01-23 13:38:27,931 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/phone.png
+2026-01-23 13:38:32,270 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:38:32,678 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/style.css
+2026-01-23 13:38:32,918 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/css/responsive.css
+2026-01-23 13:38:32,921 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/css/global-enhancements.css
+2026-01-23 13:38:32,921 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/css/global-responsive.css
+2026-01-23 13:38:32,927 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/css/news-ticker.css
+2026-01-23 13:38:32,936 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/css/responsive-cleanup.css
+2026-01-23 13:38:32,991 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/main.js
+2026-01-23 13:38:33,317 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/facebook.svg
+2026-01-23 13:38:33,567 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/instagram.svg
+2026-01-23 13:38:33,635 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/telegram.svg
+2026-01-23 13:38:33,638 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/threads.svg
+2026-01-23 13:38:33,649 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/uzum.png
+2026-01-23 13:38:33,654 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/olx.svg
+2026-01-23 13:38:33,657 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/youtube.svg
+2026-01-23 13:38:33,889 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/gmail.png
+2026-01-23 13:38:33,949 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/maps.png
+2026-01-23 13:38:33,959 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/phone.png
+2026-01-23 13:38:45,171 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/css/global-responsive.css
+2026-01-23 13:38:45,244 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/style.css
+2026-01-23 13:38:45,485 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/css/responsive.css
+2026-01-23 13:38:45,489 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/css/news-ticker.css
+2026-01-23 13:38:45,493 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/css/responsive-cleanup.css
+2026-01-23 13:38:45,498 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/css/global-enhancements.css
+2026-01-23 13:38:45,530 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/main.js
+2026-01-23 13:38:45,840 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/maps.png
+2026-01-23 13:38:45,863 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/gmail.png
+2026-01-23 13:38:45,864 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/phone.png
+2026-01-23 13:38:45,873 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/facebook.svg
+2026-01-23 13:38:45,887 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/olx.svg
+2026-01-23 13:38:45,893 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/instagram.svg
+2026-01-23 13:38:48,333 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/style.css
+2026-01-23 13:38:48,338 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/css/global-enhancements.css
+2026-01-23 13:38:48,350 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/css/responsive.css
+2026-01-23 13:38:48,601 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/css/global-responsive.css
+2026-01-23 13:38:48,603 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/css/responsive-cleanup.css
+2026-01-23 13:38:48,612 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/css/news-ticker.css
+2026-01-23 13:38:48,646 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:38:48,950 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/main.js
+2026-01-23 13:38:48,957 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/telegram.svg
+2026-01-23 13:38:48,967 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/instagram.svg
+2026-01-23 13:38:48,973 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/uzum.png
+2026-01-23 13:38:48,987 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/threads.svg
+2026-01-23 13:38:49,003 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/facebook.svg
+2026-01-23 13:38:49,276 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/youtube.svg
+2026-01-23 13:38:49,344 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/maps.png
+2026-01-23 13:38:49,359 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/gmail.png
+2026-01-23 13:38:49,373 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/olx.svg
+2026-01-23 13:38:49,389 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/icons/phone.png
+2026-01-23 13:38:53,935 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:38:58,643 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:39:04,644 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:39:09,332 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:39:14,643 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:39:19,328 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:39:24,643 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:39:29,025 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:39:33,980 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:39:38,650 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:39:44,646 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:39:49,334 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:39:54,633 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:39:59,329 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:40:04,646 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:40:08,956 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:40:13,656 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:40:18,978 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:40:23,657 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:40:28,950 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:40:33,644 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:40:38,954 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:40:43,653 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:40:48,965 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:40:53,662 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:40:59,655 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:41:04,334 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:41:09,640 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:41:14,332 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:41:19,638 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:41:24,326 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:41:29,654 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:43:29,840 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-23 13:45:49,804 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:45:54,806 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:46:00,122 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:46:04,342 | ERROR | restaurant_app | handle_exception:2856 | Unhandled exception: Encountered unknown tag 'endblock'. - URL: http://localhost/register
+2026-01-23 13:46:04,348 | ERROR | restaurant_app | handle_exception:2858 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Safety.uz\app.py", line 10081, in register
+    return render_template("register.html")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 151, in render_template
+    template = app.jinja_env.get_or_select_template(template_name_or_list)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1087, in get_or_select_template
+    return self.get_template(template_name_or_list, parent, globals)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\loaders.py", line 138, in load
+    code = environment.compile(source, name, filename)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 771, in compile
+    self.handle_exception(source=source_hint)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\register.html", line 379, in template
+    {% endblock %}
+jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'endblock'.
+
+2026-01-23 13:48:53,157 | ERROR | restaurant_app | menu:8759 | Menu endpoint error: components/navbar.html
+2026-01-23 13:48:53,161 | ERROR | restaurant_app | menu:8789 | Menu fallback error: components/navbar.html
+2026-01-23 13:48:53,201 | ERROR | restaurant_app | handle_exception:2856 | Unhandled exception: components/navbar.html - URL: http://localhost/contact
+2026-01-23 13:48:53,212 | ERROR | restaurant_app | handle_exception:2858 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Safety.uz\app.py", line 11381, in contact
+    return render_template("contact.html", current_page="contact")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 152, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 133, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\contact.html", line 1, in top-level template code
+    {% extends "simple_base.html" %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Safety.uz\templates\simple_base.html", line 34, in top-level template code
+    {% include 'components/navbar.html' %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 65, in get_source
+    return self._get_source_fast(environment, template)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 99, in _get_source_fast
+    raise TemplateNotFound(template)
+jinja2.exceptions.TemplateNotFound: components/navbar.html
+
+2026-01-23 13:49:52,687 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:49:54,911 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:49:59,897 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:50:05,233 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:50:10,323 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:50:15,632 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:50:20,326 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:50:25,638 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:50:30,324 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:50:35,644 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:50:40,320 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:50:45,654 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:50:50,331 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:50:55,642 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:51:00,331 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:51:05,636 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:54:37,018 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:54:52,392 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:54:54,673 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:55:00,396 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:55:05,073 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:55:10,393 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:55:15,083 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:55:20,387 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:55:25,072 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:55:30,376 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:55:35,074 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:55:39,964 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:55:41,554 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:55:47,378 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:55:52,081 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:55:56,829 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:56:02,093 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:56:07,387 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:56:12,094 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:56:17,394 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:56:22,073 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:56:27,393 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:56:32,079 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:56:37,390 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:56:42,076 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:56:47,394 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:56:52,071 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:56:57,388 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:57:40,354 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:57:42,071 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:57:47,385 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:57:52,079 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:57:57,389 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:58:02,077 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:58:07,382 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:58:12,076 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:58:17,398 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:58:20,847 | ERROR | restaurant_app | menu:8759 | Menu endpoint error: Encountered unknown tag 'endblock'.
+2026-01-23 13:58:20,871 | ERROR | restaurant_app | menu:8789 | Menu fallback error: Encountered unknown tag 'endblock'.
+2026-01-23 13:58:20,930 | ERROR | restaurant_app | handle_exception:2856 | Unhandled exception: Encountered unknown tag 'endblock'. - URL: http://localhost/contact
+2026-01-23 13:58:20,939 | ERROR | restaurant_app | handle_exception:2858 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Safety.uz\app.py", line 11381, in contact
+    return render_template("contact.html", current_page="contact")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 152, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 133, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\contact.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\base.html", line 828, in template
+    {% endblock %}
+jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'endblock'.
+
+2026-01-23 13:58:20,985 | ERROR | restaurant_app | handle_exception:2856 | Unhandled exception: Encountered unknown tag 'endblock'. - URL: http://localhost/register
+2026-01-23 13:58:20,987 | ERROR | restaurant_app | handle_exception:2858 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Safety.uz\app.py", line 10081, in register
+    return render_template("register.html")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 152, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 133, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\register.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\base.html", line 828, in template
+    {% endblock %}
+jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'endblock'.
+
+2026-01-23 13:58:22,085 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:58:27,375 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:58:31,407 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:58:37,382 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:58:38,430 | ERROR | restaurant_app | menu:8759 | Menu endpoint error: Encountered unknown tag 'endblock'.
+2026-01-23 13:58:38,463 | ERROR | restaurant_app | menu:8789 | Menu fallback error: Encountered unknown tag 'endblock'.
+2026-01-23 13:58:41,706 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-23 13:59:30,796 | ERROR | restaurant_app | menu:8759 | Menu endpoint error: Encountered unknown tag 'endif'.
+2026-01-23 13:59:30,834 | ERROR | restaurant_app | menu:8789 | Menu fallback error: Encountered unknown tag 'endif'.
+2026-01-23 13:59:31,657 | ERROR | restaurant_app | menu:8759 | Menu endpoint error: Encountered unknown tag 'endif'.
+2026-01-23 13:59:31,692 | ERROR | restaurant_app | menu:8789 | Menu fallback error: Encountered unknown tag 'endif'.
+2026-01-23 13:59:31,760 | ERROR | restaurant_app | handle_exception:2856 | Unhandled exception: Encountered unknown tag 'endif'. - URL: http://localhost/contact
+2026-01-23 13:59:31,769 | ERROR | restaurant_app | handle_exception:2858 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Safety.uz\app.py", line 11381, in contact
+    return render_template("contact.html", current_page="contact")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 152, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 133, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\contact.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\base.html", line 3340, in template
+    {% endif %}
+jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'endif'.
+
+2026-01-23 13:59:31,821 | ERROR | restaurant_app | handle_exception:2856 | Unhandled exception: Encountered unknown tag 'endif'. - URL: http://localhost/register
+2026-01-23 13:59:31,824 | ERROR | restaurant_app | handle_exception:2858 | Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Safety.uz\app.py", line 10081, in register
+    return render_template("register.html")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 152, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 133, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\register.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\Safety.uz\templates\base.html", line 3340, in template
+    {% endif %}
+jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'endif'.
+
+2026-01-23 13:59:36,995 | ERROR | restaurant_app | super_admin_dashboard:20648 | Super admin dashboard xatoligi: Encountered unknown tag 'endif'.
+2026-01-23 13:59:37,547 | ERROR | restaurant_app | super_admin_dashboard:20648 | Super admin dashboard xatoligi: Encountered unknown tag 'endif'.
+2026-01-23 13:59:50,860 | ERROR | restaurant_app | menu:8759 | Menu endpoint error: Encountered unknown tag 'endblock'. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2026-01-23 13:59:50,884 | ERROR | restaurant_app | menu:8789 | Menu fallback error: Encountered unknown tag 'endblock'. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2026-01-23 13:59:52,442 | ERROR | restaurant_app | super_admin_dashboard:20648 | Super admin dashboard xatoligi: Encountered unknown tag 'endblock'. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2026-01-26 15:13:40,083 | ERROR | restaurant_app | menu:8759 | Menu endpoint error: Encountered unknown tag 'endblock'. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2026-01-26 15:13:40,110 | ERROR | restaurant_app | menu:8789 | Menu fallback error: Encountered unknown tag 'endblock'. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2026-01-26 15:14:09,527 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/favicons/favicon.ico
+2026-01-26 15:14:29,095 | ERROR | restaurant_app | news_page:15877 | News page error: Encountered unknown tag 'endblock'. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2026-01-26 15:14:33,321 | ERROR | restaurant_app | news_page:15877 | News page error: Encountered unknown tag 'endblock'. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2026-01-26 15:14:34,721 | WARNING | restaurant_app | rate_limit_error:2823 | Rate limit exceeded: 127.0.0.1
+2026-01-26 15:14:38,122 | WARNING | restaurant_app | rate_limit_error:2823 | Rate limit exceeded: 127.0.0.1
+2026-01-26 15:14:44,571 | ERROR | restaurant_app | news_page:15877 | News page error: Encountered unknown tag 'endblock'. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2026-01-26 15:14:56,598 | ERROR | restaurant_app | super_admin_dashboard:20648 | Super admin dashboard xatoligi: Encountered unknown tag 'endblock'. Jinja was looking for the following tags: 'elif' or 'else' or 'endif'. The innermost block that needs to be closed is 'if'.
+2026-01-26 16:32:08,767 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-26 19:10:26,944 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:10:30,133 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/main.js
+2026-01-26 19:10:32,418 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:10:37,098 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:10:42,388 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:10:47,105 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:10:57,430 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:11:02,399 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:11:12,403 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:11:17,413 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:11:22,404 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:11:47,417 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:12:47,412 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:13:47,408 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:14:47,401 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:15:47,418 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:16:47,412 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:17:47,409 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:18:47,407 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:19:47,406 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:20:47,417 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:21:47,405 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:22:47,413 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:23:47,402 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:24:47,418 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:25:47,400 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:26:47,420 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:27:47,401 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:28:47,092 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:29:47,410 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:30:47,406 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:31:47,407 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:32:47,400 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:33:47,412 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:34:47,416 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:35:47,400 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:36:47,408 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:37:47,423 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:38:47,415 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:39:47,413 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:40:47,407 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:41:47,396 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:42:47,409 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:43:47,400 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:44:47,405 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:45:47,406 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-26 19:46:47,412 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-27 22:25:57,343 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/main.js
+2026-01-27 22:26:02,786 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-27 22:26:08,094 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-27 22:26:13,119 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-27 22:26:18,097 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-27 22:26:22,802 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-27 22:26:30,611 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/favicons/favicon.ico
+2026-01-27 22:28:41,355 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-27 22:29:15,092 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-27 22:31:35,147 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-27 22:31:40,634 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-27 22:31:47,738 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/favicons/favicon.ico
+2026-01-27 22:31:57,382 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-27 22:32:04,279 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-27 23:45:17,149 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/super-admin/login
+2026-01-27 23:45:19,215 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/super-admin/login
+2026-01-27 23:45:21,270 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/super-admin/login
+2026-01-28 14:42:12,893 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/main.js
+2026-01-28 14:42:14,325 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-28 14:42:19,318 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-28 14:42:24,309 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-28 14:42:28,997 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-28 14:42:32,030 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/favicons/favicon.ico
+2026-01-28 10:40:57,034 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/main.js
+2026-01-28 10:40:57,361 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-28 10:41:02,071 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-28 11:09:13,171 | WARNING | restaurant_app | not_found_error:2741 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-28 11:29:57,411 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-28 11:30:06,665 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-28 11:30:13,109 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-28 11:30:54,738 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-28 11:31:20,330 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-28 12:00:36,006 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-28 12:00:46,537 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-28 12:46:15,943 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-28 12:46:25,391 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-28 12:46:35,243 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-28 12:46:46,024 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-28 12:47:07,609 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-28 12:48:17,961 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-29 13:01:26,702 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/main.js
+2026-01-29 13:01:27,297 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:01:32,004 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:01:33,371 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/favicons/favicon.ico
+2026-01-29 13:01:37,973 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/main.js
+2026-01-29 13:01:49,511 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/main.js
+2026-01-29 13:02:36,854 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/main.js
+2026-01-29 13:02:37,051 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:02:42,173 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:02:46,856 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:02:52,208 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:02:56,862 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:03:01,543 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/main.js
+2026-01-29 13:03:01,933 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:03:02,192 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:03:06,884 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:03:06,960 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:03:11,883 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:03:12,196 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:03:16,889 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:03:17,195 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:03:19,207 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/main.js
+2026-01-29 13:03:19,797 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:03:21,875 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:03:22,193 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:03:22,799 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-29 13:03:24,495 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:03:26,878 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:03:27,188 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:03:29,801 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:03:31,886 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:03:32,191 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:03:34,804 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:03:36,868 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:03:36,958 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:03:39,901 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:03:41,876 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:03:42,202 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:03:45,192 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:03:46,890 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:03:47,189 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:03:49,882 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:03:51,883 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:03:52,193 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:03:55,193 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:03:56,893 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:03:57,201 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:03:59,877 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:04:01,887 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:04:02,182 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:04:05,189 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:04:06,886 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:04:07,196 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:04:09,883 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:04:11,878 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:04:12,186 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:04:15,191 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:04:16,890 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:04:17,199 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:04:19,879 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:04:21,883 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:04:22,200 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:04:25,196 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:04:26,881 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:04:27,187 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:04:30,261 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:04:32,192 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:04:32,210 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:04:34,877 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:04:36,885 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:04:36,893 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:05:34,216 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:05:34,222 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:05:34,222 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:06:34,196 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:06:34,199 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:06:34,220 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:07:34,200 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:07:34,201 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:07:34,203 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:08:30,651 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:08:30,665 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:08:30,665 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:08:31,895 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:08:31,899 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:08:33,104 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-29 13:08:37,196 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:08:37,230 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:08:41,874 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:08:41,875 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:08:47,183 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:08:47,500 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:08:51,886 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:08:51,901 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:08:57,204 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:08:57,206 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:09:01,886 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:09:01,890 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:09:07,186 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:09:07,191 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:09:11,882 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:09:11,883 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:09:17,200 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:09:17,201 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:09:21,887 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:09:21,889 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:09:27,188 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:09:27,190 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:09:31,892 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:09:31,894 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:09:37,207 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:09:37,217 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:09:41,884 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:09:41,886 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:09:47,201 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:09:47,204 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:09:51,887 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:09:51,889 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:09:57,188 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:09:57,191 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:10:01,885 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:10:01,887 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:10:07,195 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:10:07,200 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:10:11,892 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:10:11,903 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:10:17,252 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:10:17,267 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:10:21,885 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:10:21,890 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:10:27,181 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:10:27,187 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:10:31,881 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:10:31,883 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:10:37,187 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:10:37,189 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:10:41,879 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:10:41,896 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:10:47,190 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:10:47,192 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:10:51,885 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:10:51,887 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:10:57,197 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:10:57,199 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:11:01,887 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:11:01,889 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:11:07,196 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:11:07,199 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:11:11,883 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:11:11,888 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:11:17,199 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:11:17,213 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:11:21,893 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:11:21,896 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:11:27,185 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:11:27,189 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:11:31,888 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:11:31,905 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:12:33,184 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:12:33,191 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:13:34,203 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:13:34,214 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:14:34,202 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:14:34,214 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:15:34,197 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:15:34,210 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:16:34,203 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:16:34,216 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:17:34,200 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:17:34,210 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:18:34,216 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:18:34,219 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:19:34,204 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:19:34,217 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:20:34,192 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:20:34,195 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:21:34,190 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:21:34,201 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:22:06,938 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:22:06,942 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:22:07,218 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:22:12,204 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:22:12,222 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:22:16,884 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:22:16,897 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:22:22,189 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:22:22,189 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:22:26,888 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:22:26,902 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:22:32,194 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:22:32,195 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:22:36,898 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:22:36,901 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:22:42,198 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:22:42,203 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:22:46,900 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:22:46,918 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:22:52,200 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:22:52,202 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:22:56,889 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:22:56,891 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:23:02,201 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:23:02,211 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:23:06,880 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:23:06,891 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:23:34,209 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:23:34,219 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:24:34,222 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:24:34,225 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:24:36,875 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:24:36,878 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:24:42,183 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:24:42,195 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:24:47,180 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:24:47,185 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:24:51,639 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:24:51,856 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:24:57,193 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:24:57,198 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:25:01,893 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:25:01,898 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:25:07,189 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:25:07,190 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:25:11,898 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:25:11,900 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:25:17,193 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:25:17,195 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:25:21,887 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:25:21,890 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:25:27,205 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:25:27,208 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:25:31,892 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:25:31,893 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:25:37,197 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:25:37,209 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:25:41,889 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:25:41,891 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:25:47,196 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:25:47,198 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:25:51,876 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:25:51,877 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:25:57,191 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:25:57,191 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:26:01,890 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:26:01,891 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:26:07,185 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:26:07,197 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:26:11,874 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:26:11,876 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:26:17,190 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:26:17,207 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:26:21,891 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:26:21,894 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:26:27,189 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:26:27,203 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:26:31,888 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:26:31,922 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:26:37,194 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:26:37,196 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:26:41,885 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:26:41,896 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:26:47,201 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:26:47,217 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:26:51,887 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:26:51,889 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:26:57,202 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:26:57,208 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:27:01,885 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:27:01,909 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:27:07,194 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:27:07,196 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:27:34,220 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:27:34,230 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:28:20,694 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:28:20,697 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:28:21,812 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:28:21,883 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:28:27,178 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:28:27,180 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:28:32,182 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:28:32,191 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:28:36,881 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:28:36,898 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:28:42,202 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:28:42,207 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:28:46,892 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:28:46,894 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:28:52,202 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:28:52,208 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:28:57,201 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:28:57,209 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:29:02,196 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:29:02,198 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:29:06,909 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:29:06,912 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:29:12,195 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:29:12,197 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:29:16,879 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:29:16,881 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:29:22,199 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:29:22,201 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:29:33,902 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:29:33,905 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:30:16,370 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:30:16,889 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:30:22,190 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:30:27,198 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:30:31,885 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:30:34,196 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:30:37,197 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:30:41,878 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:30:47,184 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:30:51,881 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:30:57,194 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:31:01,902 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:31:07,184 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:31:11,879 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:31:17,191 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:31:21,892 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:31:27,206 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:31:31,879 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:31:34,191 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:31:37,199 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:31:41,876 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:31:47,186 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:31:51,886 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:31:57,194 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:32:01,885 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:32:07,183 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:32:11,890 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:32:17,197 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:32:21,881 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:32:27,186 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:32:31,888 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:32:34,215 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:32:37,202 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:32:41,891 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:32:47,198 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:32:51,889 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:32:57,197 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:33:01,879 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:33:07,191 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:33:11,889 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:33:34,189 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:33:34,197 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1112 column 2 (char 45356)
+2026-01-29 13:33:34,210 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:34:34,200 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:34:34,204 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1112 column 2 (char 45356)
+2026-01-29 13:34:34,205 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:35:34,216 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:35:34,216 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1112 column 2 (char 45356)
+2026-01-29 13:35:34,226 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:36:34,198 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:36:34,215 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1115 column 2 (char 45525)
+2026-01-29 13:36:34,217 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:37:34,259 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:37:34,300 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1115 column 2 (char 45525)
+2026-01-29 13:37:34,316 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:38:34,204 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:38:34,204 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1115 column 2 (char 45525)
+2026-01-29 13:38:34,209 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:39:33,889 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:39:33,892 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1115 column 2 (char 45525)
+2026-01-29 13:39:33,898 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:40:15,909 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:40:16,653 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:40:21,946 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:40:26,877 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:40:32,193 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:40:34,222 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:40:34,224 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:40:36,887 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:40:42,189 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:40:46,878 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:40:52,191 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:40:56,890 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:41:02,189 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:41:06,893 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:41:12,198 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:41:16,885 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:41:22,196 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:41:33,896 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:41:33,897 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:41:33,909 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:42:34,200 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:42:34,201 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:42:34,206 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:43:26,272 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:43:27,198 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:43:31,649 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:43:33,889 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:33,891 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:43:35,727 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,727 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,730 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,732 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,734 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,734 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,737 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,741 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,742 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,744 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,745 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,747 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,749 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,750 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,752 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,753 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,755 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,756 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,758 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,759 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,760 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,762 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,764 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,765 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,767 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,769 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,770 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,772 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,774 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,776 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,777 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,778 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,782 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,784 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,785 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,787 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,789 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,791 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,792 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,795 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,796 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,798 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,799 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,803 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,804 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,806 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,808 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,809 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,811 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,812 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,813 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,815 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,816 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,818 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,819 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:43:35,821 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:44:34,179 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting ',' delimiter: line 1118 column 2 (char 45694)
+2026-01-29 13:44:34,181 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:45:34,194 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting property name enclosed in double quotes: line 278 column 5 (char 11633)
+2026-01-29 13:45:34,205 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:46:34,193 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting property name enclosed in double quotes: line 278 column 5 (char 11633)
+2026-01-29 13:46:34,197 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:47:34,191 | ERROR | root | load_translations:196 | Tarjimalarni yuklashda xatolik: Expecting property name enclosed in double quotes: line 278 column 5 (char 11633)
+2026-01-29 13:47:34,193 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/api/auth-check
+2026-01-29 13:49:28,525 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/favicons/favicon.ico
+2026-01-29 13:53:07,004 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-29 13:54:27,566 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-29 13:58:40,061 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-29 15:09:00,209 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-29 15:12:35,247 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-29 15:17:59,360 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-29 15:18:02,572 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-29 15:20:33,466 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/downloads/restaurant.apk
+2026-01-29 15:20:46,561 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/static/defoult.webp
+2026-01-29 15:29:09,157 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-29 15:33:55,971 | WARNING | restaurant_app | not_found_error:2740 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-29 15:35:25,914 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:25,919 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:25,922 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:25,924 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:25,988 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:25,991 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:25,994 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:25,996 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:25,998 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,001 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,016 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,027 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,079 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,084 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,090 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,096 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,099 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-29 15:35:26,180 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,182 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,185 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,187 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,420 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,423 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,426 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,428 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,759 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,770 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,775 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:26,779 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:27,025 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:27,028 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:27,031 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:27,034 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:32,928 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:32,930 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:32,932 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:32,935 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:32,958 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:32,962 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:32,964 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:32,968 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:32,970 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:32,973 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:32,975 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:32,978 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:33,148 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:33,151 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:33,153 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:33,157 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:33,190 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:33,193 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:33,195 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:33,199 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:33,336 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:33,339 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:33,341 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:33,343 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:33,474 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:33,477 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:33,479 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:35:33,481 | ERROR | root | load_translations:205 | Tarjimalarni yuklashda xatolik: Extra data: line 1221 column 1 (char 50351)
+2026-01-29 15:36:23,273 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/static/defoult.webp
+2026-01-29 15:36:55,075 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/static/defoult.webp
+2026-01-29 15:37:00,558 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-29 15:37:35,467 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-29 15:38:08,132 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-29 15:38:59,651 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/static/defoult.webp
+2026-01-29 15:38:59,856 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-29 15:39:10,901 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/static/defoult.webp
+2026-01-29 15:39:11,068 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-29 15:39:20,838 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-29 15:39:50,711 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-29 15:50:43,758 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-29 19:37:35,918 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-29 19:39:29,835 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-29 19:39:57,827 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-29 21:36:17,212 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-29 21:36:55,378 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/static/favicons/favicon.ico
+2026-01-29 21:37:23,905 | ERROR | restaurant_app | _get_db_dict:23842 | DB Dict Error: no such column: created_at
+2026-01-29 21:37:39,883 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-29 21:41:43,059 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-29 21:42:09,432 | ERROR | restaurant_app | _get_db_dict:23842 | DB Dict Error: no such column: created_at
+2026-01-29 21:46:34,550 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-29 21:51:55,948 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/static/favicons/favicon.ico
+2026-01-29 23:14:45,024 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/uzprofile/settings
+2026-01-29 23:15:29,582 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-29 23:17:12,315 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/static/favicons/favicon.ico
+2026-01-30 08:59:50,520 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/static/favicons/favicon.ico
+2026-01-30 09:00:43,270 | ERROR | restaurant_app | _get_db_dict:23872 | DB Dict Error: no such column: created_at
+2026-01-30 09:00:51,524 | ERROR | restaurant_app | answer_user_question:24095 | Error answering user question: module 'datetime' has no attribute 'now'
+2026-01-30 09:34:17,520 | ERROR | restaurant_app | _get_db_dict:23992 | DB Dict Error: no such column: created_at
+2026-01-30 14:19:57,515 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 16:29:12,847 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 16:30:09,006 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 16:30:10,790 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/static/favicons/favicon.ico
+2026-01-30 16:30:16,643 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 16:31:43,916 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 16:31:54,177 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 16:31:57,327 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 16:32:02,988 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 16:41:46,084 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 16:42:02,429 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 16:42:12,141 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 16:42:20,247 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 16:43:22,047 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 17:34:00,087 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 17:34:22,575 | ERROR | werkzeug | _log:96 | Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 362, in run_wsgi
+    execute(self.server.app)
+  File "C:\Users\Moxir_Coder\AppData\Local\Programs\Python\Python311\Lib\site-packages\werkzeug\serving.py", line 347, in execute
+    data = self.rfile.read(10_000_000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+MemoryError
+2026-01-30 20:17:01,024 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 20:17:52,757 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 20:19:45,584 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 20:20:04,774 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 20:20:52,303 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 20:25:55,617 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 20:29:09,891 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 20:29:10,538 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/static/favicons/favicon.ico
+2026-01-30 20:29:19,747 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 20:29:26,519 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 20:40:45,050 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 20:40:58,294 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 20:41:04,904 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 20:41:38,739 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 20:50:31,746 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 20:50:47,236 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 20:50:52,287 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 20:50:56,737 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 20:53:54,038 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 21:00:07,415 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 21:00:20,933 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-30 22:24:30,241 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json

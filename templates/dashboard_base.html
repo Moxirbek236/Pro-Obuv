@@ -5,11 +5,37 @@
 {% block content %}
 <!-- Hide Legacy Storefront Navbar & Footer container from base.html -->
 <style>
-    /* Aggressively hide the default structure */
-    body > nav.navbar, body > .container > nav.navbar, nav.navbar-expand-lg { display: none !important; }
+    /* Hide ONLY the storefront navbar from base.html, not dashboard navbars */
+    body > nav.industrial-nav,
+    body > nav.navbar.fixed-top-custom,
+    nav.navbar-expand-lg.industrial-nav { 
+        display: none !important; 
+    }
     #news-ticker { display: none !important; }
     body > footer, body > .footer, .site-footer { display: none !important; }
-    body { padding-top: 0 !important; background-color: var(--bg-body); }
+    
+    /* Reset base.html's main.container for dashboard use to avoid hiding nested content */
+    body.admin-mode main.container { 
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        max-width: none !important; 
+        width: 100% !important; 
+        padding: 0 !important; 
+        margin: 0 !important;
+        height: auto !important;
+        min-height: 0 !important;
+    }
+    
+    .dashboard-layout {
+        display: flex !important;
+        min-height: 100vh;
+        background: #f4f7fa !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    
+    body { padding-top: 0 !important; background-color: #f4f7fa !important; }
     
 /* Dashboard Override for Industrial Premium */
 body.dashboard-body, body.light-theme {
@@ -23,54 +49,61 @@ body {
 }
 </style>
 <script>document.body.classList.add('admin-mode', 'dashboard-body');</script>
-<style>
 
-.dashboard-layout {
-    display: flex;
-    min-height: 100vh;
-    background: #f4f7fa;
-}
+<!-- Dashboard main content replaces the base.html main -->
+<main class="dashboard-layout">
+    <style>
+        .dashboard-layout {
+            display: flex;
+            min-height: 100vh;
+            background: #f4f7fa;
+        }
 
-/* Force light theme colors on children */
-.dashboard-layout h1, 
-.dashboard-layout h2, 
-.dashboard-layout h3, 
-.dashboard-layout h4, 
-.dashboard-layout h5, 
-.dashboard-layout h6,
-.dashboard-layout p,
-.dashboard-layout span:not(.badge),
-.dashboard-layout div:not(.badge) {
-    color: #1a1a1a !important;
-}
+        /* Force light theme colors on children */
+        .dashboard-layout h1, 
+        .dashboard-layout h2, 
+        .dashboard-layout h3, 
+        .dashboard-layout h4, 
+        .dashboard-layout h5, 
+        .dashboard-layout h6,
+        .dashboard-layout p,
+        .dashboard-layout span:not(.badge),
+        .dashboard-layout div:not(.badge) {
+            color: #1a1a1a !important;
+        }
 
-.dashboard-sidebar {
-    width: 280px;
-    background: #ffffff !important;
-    border-right: 1px solid rgba(0,0,0,0.05);
-    padding: 1.5rem 1rem;
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    z-index: 1050;
-    box-shadow: 4px 0 15px rgba(0,0,0,0.02);
-}
+        .dashboard-sidebar {
+            width: 280px;
+            background: #ffffff !important;
+            border-right: 1px solid rgba(0,0,0,0.05);
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 1050;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.02);
+        }
 
-.dashboard-main {
-    flex: 1;
-    margin-left: 280px;
-    padding: 0;
-    min-width: 0; /* Fix flex overflow */
-}
+        .dashboard-main {
+            flex: 1;
+            margin-left: 312px; /* Increased gap for desktop */
+            padding: 0;
+            min-width: 0; /* Fix flex overflow */
+            background: linear-gradient(180deg, #f8fafc 0%, #f0f4f8 100%);
+            min-height: 100vh;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
 .top-header {
-    background: #ffffff !important;
-    border-bottom: 1px solid rgba(0,0,0,0.05) !important;
-    padding: 1.25rem 2rem !important;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.02) !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0,0,0,0.06) !important;
+    padding: 1.5rem 3rem !important;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+    z-index: 1040 !important;
 }
 
 .top-header h2, .top-header p, .top-header .text-muted {
@@ -108,39 +141,91 @@ body {
     box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
 }
 
-.card-modern {
-    background: #ffffff !important;
-    border: 1px solid rgba(0,0,0,0.05) !important;
-    border-radius: 12px !important;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
-    color: #1a1a1a !important;
-}
+    /* Card Padding Fix */
+    .card-modern {
+        padding: 1.5rem !important; /* Force padding */
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .card-modern:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 25px rgba(0,0,0,0.1) !important;
+    }
 
-.stat-card h3 {
-    color: #1a1a1a !important;
-}
+    .dashboard-content {
+        max-width: 1800px; /* Extra large for ultra-wide monitors */
+        margin: 0 auto;
+        width: 100%;
+        padding: 2rem 3rem !important;
+        animation: fadeIn 0.6s ease-out;
+    }
 
-/* Pagination MUI-like Styles */
-.pagination-toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding: 0.75rem 1.5rem;
-    background: #ffffff;
-    border-top: 1px solid rgba(0,0,0,0.05);
-    font-size: 0.875rem;
-    color: #4b5563;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Premium Stat Cards */
+    .stat-card {
+        position: relative;
+        overflow: hidden;
+        border: none !important;
+        background: #ffffff !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.03) !important;
+    }
+    
+    .stat-card::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: var(--accent-primary, #FFD700);
+        opacity: 0.5;
+    }
+    
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .stat-icon.primary { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+    .stat-icon.warning { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+    .stat-icon.success { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+    .stat-icon.info { background: rgba(6, 182, 212, 0.1); color: #06b6d4; }
 
-.pagination-spacer {
-    flex: 1 1 100%;
-}
-
-@media (min-width: 640px) {
-    .pagination-spacer { flex: 1; }
-}
+    /* Global Padding Utilities */
+    .p-responsive {
+        padding: 1.5rem;
+    }
+    
+    .btn-light-modern {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        color: #64748b;
+        font-weight: 500;
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        transition: all 0.2s;
+    }
+    
+    .btn-light-modern:hover {
+        background: #f1f5f9;
+        color: #0f172a;
+    }
+    
+    .btn-light-modern.active {
+        background: #0f172a !important;
+        color: #ffffff !important;
+        border-color: #0f172a;
+    }
 
 .pagination-select-wrap {
     display: flex;
@@ -275,13 +360,37 @@ body {
         padding: 1.5rem !important; /* Force padding */
     }
     
-    /* Global Padding Utilities */
-    .p-responsive {
-        padding: 1.5rem;
+        /* Responsive Overrides */
+    @media (max-width: 1200px) {
+        .dashboard-sidebar {
+            width: 240px;
+        }
+        .dashboard-main {
+            margin-left: 240px;
+        }
     }
 
-    .menu-card-admin .p-3 {
-        padding: 1.25rem !important;
+    @media (max-width: 991px) {
+        .dashboard-sidebar {
+            transform: translateX(-100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            visibility: hidden;
+            width: 280px;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+        }
+        .dashboard-sidebar.show {
+            transform: translateX(0);
+            visibility: visible;
+        }
+        .dashboard-main {
+            margin-left: 0 !important;
+        }
+        .top-header {
+            padding: 1rem 1.5rem !important;
+        }
+        .dashboard-content {
+            padding: 1rem !important; /* Reduced padding for mobile */
+        }
     }
 </style>
 
@@ -320,9 +429,10 @@ body {
             if (this.isGrid) {
                 contentHtml = `<div class="menu-grid">${pageData.map((item, idx) => this.renderRow(item, start + idx)).join('')}</div>`;
             } else {
+                // Modified for Mobile Card View Support
                 contentHtml = `
-                    <div class="table-responsive">
-                        <table class="table-modern">
+                    <div class="table-responsive-wrapper">
+                        <table class="table-modern table-mobile-cards w-100">
                             ${this.headerHtml || ''}
                             <tbody>
                                 ${pageData.length > 0 
@@ -339,28 +449,27 @@ body {
 
         renderToolbar(start, end) {
             const total = this.data.length;
+            // Simplified Toolbar for Mobile
             return `
-                <div class="pagination-toolbar">
-                    <div class="pagination-spacer"></div>
-                    <div class="pagination-select-wrap">
-                        <span>Qatorlar:</span>
-                        <select class="pagination-select" id="rowsSelect">
+                <div class="pagination-toolbar d-flex flex-wrap gap-2 align-items-center justify-content-between pt-3">
+                    <div class="pagination-select-wrap d-flex align-items-center gap-2">
+                        <select class="form-select form-select-sm" id="rowsSelect" style="width: auto;">
                             <option value="5" ${this.rowsPerPage == 5 ? 'selected' : ''}>5</option>
                             <option value="10" ${this.rowsPerPage == 10 ? 'selected' : ''}>10</option>
-                            <option value="12" ${this.rowsPerPage == 12 ? 'selected' : ''}>12</option>
                             <option value="25" ${this.rowsPerPage == 25 ? 'selected' : ''}>25</option>
                         </select>
+                        <span class="text-muted small d-none d-sm-inline">qator</span>
                     </div>
-                    <div class="pagination-info">
-                        ${total > 0 ? `${start + 1}-${end} gacha, ${total} tadan` : '0 tadan 0'}
-                    </div>
-                    <div class="pagination-actions">
-                        <button class="pagination-btn" id="prevPage" ${this.currentPage === 0 ? 'disabled' : ''}>
-                            <i class="bi bi-chevron-left"></i>
-                        </button>
-                        <button class="pagination-btn" id="nextPage" ${end >= total ? 'disabled' : ''}>
-                            <i class="bi bi-chevron-right"></i>
-                        </button>
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="text-muted small">${total > 0 ? `${start + 1}-${end} / ${total}` : '0'}</span>
+                        <div class="btn-group">
+                            <button class="btn btn-sm btn-light border" id="prevPage" ${this.currentPage === 0 ? 'disabled' : ''}>
+                                <i class="bi bi-chevron-left"></i>
+                            </button>
+                            <button class="btn btn-sm btn-light border" id="nextPage" ${end >= total ? 'disabled' : ''}>
+                                <i class="bi bi-chevron-right"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             `;
@@ -393,18 +502,25 @@ body {
         <!-- Brand -->
         <div class="d-flex align-items-center gap-2 mb-4 px-2">
             {% block sidebar_brand %}
-            <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm overflow-hidden" style="width: 40px; height: 40px; background: white;">
+            <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm overflow-hidden flex-shrink-0" style="width: 40px; height: 40px; background: white;">
                 <img src="/static/img/default.webp" onerror="this.src='https://res.cloudinary.com/dpfbu9aid/image/upload/v1766927327/products/defoult.webp'" style="width: 100%; height: 100%; object-fit: cover;">
             </div>
-            <div>
-                <h5 class="mb-0 fw-bold text-dark">Safety.uz</h5>
-                <small class="text-muted" style="font-size: 0.75rem;">Online Store</small>
+            <div class="overflow-hidden">
+                <h5 class="mb-0 fw-bold text-dark text-truncate">Safety.uz</h5>
+                <small class="text-muted text-truncate d-block" style="font-size: 0.75rem;">Online Store</small>
             </div>
+            <!-- Close Button for Mobile -->
+            <button class="btn btn-sm text-muted ms-auto d-lg-none" onclick="bootstrap.Collapse.getInstance(document.getElementById('sidebarMenu')).hide()">
+                <i class="bi bi-x-lg"></i>
+            </button>
             {% endblock %}
         </div>
+        
+        <!-- Mobile Backdrop -->
+        <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="bootstrap.Collapse.getInstance(document.getElementById('sidebarMenu')).hide()"></div>
 
         <!-- Menu -->
-        <nav class="nav flex-column gap-1 flex-grow-1">
+        <nav class="nav flex-column gap-1 flex-grow-1 overflow-auto" style="scrollbar-width: thin;">
             {% block sidebar_menu %}
             <!-- Default Storefront Links -->
             <a href="{{ url_for('index') }}" class="nav-link-modern"><i class="bi bi-house"></i> {{ _('nav.home') }}</a>
@@ -446,20 +562,20 @@ body {
     <!-- Main Layout -->
     <main class="dashboard-main">
         <!-- Top Header -->
-        <header class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom fade-up-enter bg-white sticky-top px-4 pt-3 shadow-sm top-header" style="z-index: 999;">
+        <header class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom bg-white sticky-top px-4 pt-3 shadow-sm top-header" style="z-index: 999;">
             <!-- Mobile Toggle -->
-            <button class="btn btn-light d-lg-none me-3" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu">
-                 <i class="bi bi-list"></i>
+            <button class="btn btn-light d-lg-none me-2" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu">
+                 <i class="bi bi-list fs-5"></i>
             </button>
 
             <!-- Page Title -->
-            <div class="flex-grow-1">
-                <h2 class="fw-bold mb-1 fs-4">{% block header_title %}Safety.uz{% endblock %}</h2>
-                <p class="text-muted mb-0 small">{% block header_subtitle %}{{ _('home_title') }}{% endblock %}</p>
+            <div class="flex-grow-1 overflow-hidden">
+                <h2 class="fw-bold mb-1 fs-5 text-truncate">{% block header_title %}Safety.uz{% endblock %}</h2>
+                <p class="text-muted mb-0 small text-truncate d-none d-sm-block">{% block header_subtitle %}{{ _('home_title') }}{% endblock %}</p>
             </div>
 
             <!-- Header Actions -->
-            <div class="d-flex align-items-center gap-3">
+            <div class="d-flex align-items-center gap-2 gap-md-3">
                 {% block header_actions %}
                 <!-- Global Search -->
                 <div class="d-none d-md-block position-relative" style="width: 250px;">
@@ -467,6 +583,12 @@ body {
                     <input type="text" id="globalSearchInput" class="form-control border-0 bg-white rounded-pill ps-5 shadow-sm" placeholder="Qidirish..." style="font-size: 0.9rem;" autocomplete="off">
                     <div id="globalSearchResults" class="dropdown-menu w-100 mt-2 shadow-lg border-0" style="max-height: 400px; overflow-y: auto;"></div>
                 </div>
+                
+                <!-- Mobile Search Toggle -->
+                <button class="btn btn-light-modern btn-sm d-md-none rounded-circle bg-transparent border-0" type="button" onclick="document.getElementById('mobileSearchBar').classList.toggle('d-none'); document.getElementById('globalSearchInputMobile').focus();">
+                    <i class="bi bi-search"></i>
+                </button>
+
                 
                 <!-- Language -->
                 <div class="dropdown">
@@ -507,14 +629,9 @@ body {
         </header>
 
         <!-- Dashboard Content -->
-        <div class="dashboard-content fade-up-enter px-4 pb-5" style="animation-delay: 0.1s;">
+        <div class="dashboard-content px-4 pb-5">
             {% block dashboard_content %}
             {% endblock %}
-        </div>
-        
-        <!-- Re-include Footer -->
-        <div class="px-4 pb-4">
-             {% include 'components/footer.html' %}
         </div>
         
         <!-- Flash Messages for Notification Logic -->
@@ -555,6 +672,19 @@ body {
             flashes.forEach(f => {
                 showNotification(f.textContent, f.dataset.category);
             });
+            
+            // Sidebar Backdrop Logic
+            const sidebar = document.getElementById('sidebarMenu');
+            const backdrop = document.getElementById('sidebarBackdrop');
+
+            if(sidebar && backdrop) {
+                sidebar.addEventListener('show.bs.collapse', () => {
+                    backdrop.classList.add('show');
+                });
+                sidebar.addEventListener('hide.bs.collapse', () => {
+                    backdrop.classList.remove('show');
+                });
+            }
         });
     </script>
     </main>

@@ -1,102 +1,107 @@
-{% extends "base.html" %} 
+{% extends "base.html" %}
 {% block title %}{{ _('nav.warranty') or 'Kafolatlar' }} - Pro Obuv{% endblock %}
+
 {% block content %}
-<div class="kafolatlar-page container py-4">
-  <!-- Moved Professional Header -->
-  <div class="professional-header mb-4">
-    <div class="construction-tape-container">
-      <div class="construction-tape tape-1"></div>
-      <div class="construction-tape tape-2"></div>
-      <div class="construction-tape tape-3"></div>
-      <div class="construction-tape tape-4"></div>
-    </div>
-    <div class="main-title-container">
-      <h1 class="main-pro-obuv-title">
-        <span class="title-gradient">PRO</span>
-        <span class="title-separator"></span>
-        <span class="title-gradient">OBUV</span>
+<div class="container py-5">
+  
+  <!-- Hero Section -->
+  <div class="industrial-card p-5 text-center mb-5 position-relative overflow-hidden animate-fade-in-up">
+    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: var(--hazard-pattern); opacity: 0.1; pointer-events: none;"></div>
+    <div class="position-relative z-1">
+      <h1 class="display-4 fw-bold text-uppercase mb-3" style="font-family: var(--font-heading); color: var(--accent-primary);">
+        <i class="bi bi-shield-check me-2"></i> {{ _('kafolatlar.title') }}
       </h1>
-      <div class="subtitle-masters">ПРОФЕССИОНАЛЫ СТРОИТЕЛЬСТВА</div>
+      <p class="lead text-secondary mb-0">
+        {{ _('kafolatlar.subtitle') }}
+      </p>
     </div>
   </div>
 
-  <!-- Moved Menu Title -->
-  <div class="menu-title mb-3">
-    <div class="construction-header">
-      <div class="safety-icons">
-        <span class="safety-icon rotating"></span>
-        <span class="safety-icon bouncing"></span>
-        <span class="safety-icon waving"></span>
-        <span class="safety-icon scaling"></span>
-        <span class="safety-icon pulsing"></span>
-      </div>
-      <h1 class="professional-title">
-        <span class="title-brand">PRO-OBUV</span>
-        <span class="title-main">ПРОФЕССИОНАЛЬНАЯ</span>
-        <span class="title-sub">СПЕЦОДЕЖДА И ОБУВЬ</span>
-      </h1>
-      <div class="construction-badge premium-badge">
-        <span class="badge-text">ПРЕМИУМ КАЧЕСТВО</span>
-        <span class="badge-check glowing"></span>
+  <!-- Warranty Features -->
+  <div class="row g-4">
+    <div class="col-md-4 animate-fade-in-up" style="animation-delay: 0.1s;">
+      <div class="industrial-card h-100 p-4 text-center">
+        <div class="d-inline-flex align-items-center justify-content-center bg-dark rounded-circle border border-warning mb-4" style="width: 80px; height: 80px;">
+          <i class="bi bi-award display-5 text-warning"></i>
+        </div>
+        <h3 class="h4 fw-bold mb-3 text-white">{{ _('kafolatlar.quality_title') }}</h3>
+        <p class="text-secondary mb-0">
+          {{ _('kafolatlar.quality_desc') }}
+        </p>
       </div>
     </div>
-    <div class="professional-subtitle">
-      <span class="subtitle-left gradient-text">
-        ДЛЯ СТРОИТЕЛЕЙ И МАСТЕРОВ</span
-      >
-      <span class="subtitle-center diamond">◆</span>
-      <span class="subtitle-right gradient-text">ПРОФЕССИОНАЛОВ </span>
+
+    <div class="col-md-4 animate-fade-in-up" style="animation-delay: 0.2s;">
+      <div class="industrial-card h-100 p-4 text-center">
+        <div class="d-inline-flex align-items-center justify-content-center bg-dark rounded-circle border border-info mb-4" style="width: 80px; height: 80px;">
+          <i class="bi bi-patch-check display-5 text-info"></i>
+        </div>
+        <h3 class="h4 fw-bold mb-3 text-white">{{ _('kafolatlar.cert_title') }}</h3>
+        <p class="text-secondary mb-0">
+          {{ _('kafolatlar.cert_desc') }}
+        </p>
+      </div>
     </div>
-    <div class="quality-indicators">
-      <div class="quality-item enhanced">
-        <span class="quality-icon"></span>
-        <span class="quality-text">МАКСИМАЛЬНАЯ ЗАЩИТА</span>
-      </div>
-      <div class="quality-item enhanced">
-        <span class="quality-icon"></span>
-        <span class="quality-text">НЕПРЕВЗОЙДЕННАЯ ПРОЧНОСТЬ</span>
-      </div>
-      <div class="quality-item enhanced">
-        <span class="quality-icon"></span>
-        <span class="quality-text">ПРЕМИУМ КАЧЕСТВО</span>
-      </div>
-      <div class="quality-item enhanced">
-        <span class="quality-icon"></span>
-        <span class="quality-text">СЕРТИФИКАЦИЯ ТР ТС</span>
+
+    <div class="col-md-4 animate-fade-in-up" style="animation-delay: 0.3s;">
+      <div class="industrial-card h-100 p-4 text-center">
+        <div class="d-inline-flex align-items-center justify-content-center bg-dark rounded-circle border border-success mb-4" style="width: 80px; height: 80px;">
+          <i class="bi bi-arrow-repeat display-5 text-success"></i>
+        </div>
+        <h3 class="h4 fw-bold mb-3 text-white">{{ _('kafolatlar.return_title') }}</h3>
+        <p class="text-secondary mb-0">
+          {{ _('kafolatlar.return_desc') }}
+        </p>
       </div>
     </div>
   </div>
 
-  <!-- Copied Category Buttons -->
-  <div class="category-buttons mb-4 d-flex gap-2 flex-wrap">
-    <button
-      class="category-btn active"
-      data-translate="all_categories"
-      data-cat="all">
-      Все товары
-    </button>
-    <button
-      class="category-btn"
-      data-translate="specobuv_category"
-      data-cat="specobuv">
-      Спецобувь
-    </button>
-    <button
-      class="category-btn"
-      data-translate="specodezhda_category"
-      data-cat="specodezhda">
-      Спецодежда
-    </button>
+  <!-- Policy Details / Certificates Placeholder -->
+  <div class="mt-5 animate-fade-in-up" style="animation-delay: 0.4s;">
+    <div class="industrial-card p-4">
+      <h4 class="mb-4 text-uppercase fw-bold text-accent">
+        <i class="bi bi-file-earmark-text me-2"></i> Sertifikatlar va Standartlar
+      </h4>
+      <div class="row g-4">
+        <div class="col-sm-6 col-md-3">
+          <div class="p-3 border border-secondary border-opacity-25 rounded bg-dark text-center">
+            <div class="fw-bold text-white mb-1">ISO 9001:2015</div>
+            <div class="text-secondary small">Sifat menejmenti tizimi</div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+          <div class="p-3 border border-secondary border-opacity-25 rounded bg-dark text-center">
+            <div class="fw-bold text-white mb-1">ISO 45001</div>
+            <div class="text-secondary small">Sog'liqni saqlash va xavfsizlik</div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+          <div class="p-3 border border-secondary border-opacity-25 rounded bg-dark text-center">
+            <div class="fw-bold text-white mb-1">EN ISO 20345</div>
+            <div class="text-secondary small">Xavfsizlik poyabzali standarti</div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+          <div class="p-3 border border-secondary border-opacity-25 rounded bg-dark text-center">
+            <div class="fw-bold text-white mb-1">TR TS 019/2011</div>
+            <div class="text-secondary small">Bojxona Ittifoqi reglamenti</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- Kafolatlar content placeholder -->
-  <div class="kafolatlar-content">
-    <h2>Kafolatlar va sertifikatlar</h2>
-    <p>
-      Bu sahifa kafolatlar, sertifikatlar va mahsulot kafolati haqidagi
-      ma'lumotlar uchun mo'ljallangan.
-    </p>
-    <!-- Add more content here as needed -->
-  </div>
 </div>
+
+<style>
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+    opacity: 0;
+  }
+</style>
 {% endblock %}

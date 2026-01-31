@@ -1362,7 +1362,7 @@ class Config:
     SESSION_COOKIE_SECURE = IS_PRODUCTION
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = "Lax"
-    PERMANENT_SESSION_LIFETIME = 7200
+    PERMANENT_SESSION_LIFETIME = 1800
     WTF_CSRF_ENABLED = True
 
     # File upload configuration
@@ -2329,10 +2329,26 @@ def inject_navbar_context():
       can show profile info and unread notifications icon.
     """
     try:
-        is_user = bool(session.get("user_id"))
-        is_staff = bool(session.get("staff_id"))
-        is_courier = bool(session.get("courier_id"))
-        is_super_admin = bool(session.get("super_admin"))
+        # Normalize session-stored values: some stores or older code may store
+        # booleans as strings like 'False'/'0' which are truthy in Python.
+        def _present(v):
+            if v is None:
+                return False
+            if isinstance(v, bool):
+                return v
+            if isinstance(v, (int, float)):
+                return v != 0
+            if isinstance(v, str):
+                s = v.strip().lower()
+                if s in ('', '0', 'none', 'false'):
+                    return False
+                return True
+            return bool(v)
+
+        is_user = _present(session.get("user_id"))
+        is_staff = _present(session.get("staff_id"))
+        is_courier = _present(session.get("courier_id"))
+        is_super_admin = _present(session.get("super_admin"))
 
         # If any elevated role is present, prefer that role's navbar (they must be logged in)
         elevated = is_staff or is_courier or is_super_admin
@@ -2470,7 +2486,13 @@ def inject_translation_helpers():
         except Exception:
             current = session.get('interface_language', getattr(Config, 'DEFAULT_LANGUAGE', 'ru'))
 
-        return {"_": utils.translate, "get_text": utils.get_text, "LANG": current, "current_language": current}
+        return {
+            "_": utils.translate, 
+            "get_text": utils.get_text, 
+            "LANG": current, 
+            "current_language": current,
+            "translations": utils._translations  # Inject translations for base.html
+        }
     except Exception:
         return {}
 
@@ -3004,7 +3026,7 @@ def before_request():
                 candidate = parts[0] if parts and parts[0] else None
 
                 is_admin_or_api = any(
-                    request.path.startswith(p) for p in ("/admin", "/api", "/static")
+                    request.path.startswith(p) for p in ("/admin", "/api", "/static", "/super-admin", "/super")
                 )
 
                 if not is_admin_or_api:
@@ -5437,7 +5459,7 @@ def send_birthday_notifications(run_date=None):
                             None,
                             title,
                             body,
-                            datetime.now().isoformat(),
+                            datetime.datetime.now().isoformat(),
                         ),
                     )
                 except Exception as ie:
@@ -6587,7 +6609,7 @@ def generate_qr_code(receipt_data):
             return png_bytes
         if return_type == "file":
             if not filename:
-                filename = f"qr_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
+                filename = f"qr_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
             with open(filename, "wb") as fh:
                 fh.write(png_bytes)
             return filename
@@ -7819,7 +7841,7 @@ def api_super_admin_export_report():
                 output.write(csv_bytes)
                 output.seek(0)
                 filename = (
-                    f"report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+                    f"report_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
                 )
                 return send_file(
                     output,
@@ -7866,7 +7888,7 @@ def api_super_admin_export_report():
                     df.to_excel(writer, sheet_name=sheet_name, index=False)
 
         output.seek(0)
-        filename = f"report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+        filename = f"report_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
 
         return send_file(
             output,
@@ -7926,7 +7948,7 @@ def api_super_admin_export_staff():
                     text_lines = ["info", "no_staff"]
                 output.write("\n".join(text_lines).encode("utf-8"))
                 output.seek(0)
-                filename = f"staff_list_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+                filename = f"staff_list_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
                 return send_file(
                     output,
                     as_attachment=True,
@@ -7965,7 +7987,7 @@ def api_super_admin_export_staff():
 
         output.seek(0)
         filename = (
-            f"staff_list_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+            f"staff_list_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
         )
         return send_file(
             output,
@@ -8016,7 +8038,7 @@ def api_super_admin_export_couriers():
                     text_lines = ["info", "no_couriers"]
                 output.write("\n".join(text_lines).encode("utf-8"))
                 output.seek(0)
-                filename = f"couriers_list_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+                filename = f"couriers_list_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
                 return send_file(
                     output,
                     as_attachment=True,
@@ -8054,7 +8076,7 @@ def api_super_admin_export_couriers():
 
         output.seek(0)
         filename = (
-            f"couriers_list_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+            f"couriers_list_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
         )
         return send_file(
             output,
@@ -8420,7 +8442,7 @@ def validate_json(required_fields=None):
 # ---- MENU ----
 @app.route("/menu")
 @rate_limit(max_requests=10000, window=60)  # Очень высокий лимит для меню
-@cache_result(ttl=120)
+
 def menu():
     "Optimized menu endpoint"
     try:
@@ -8448,6 +8470,7 @@ def menu():
         if not cached_menu:
             menu_items_raw = execute_query(
                 """SELECT m.id, m.name, m.price, m.category, m.description, m.image_url, m.available, m.stock_quantity, m.orders_count, m.rating, m.discount_percentage, m.sizes, m.colors, m.created_at,
+                   m.weight, m.material, m.purpose, m.season, m.brand, m.features, m.shoe_type, m.sole_type, m.height, m.clothing_type, m.thickness, m.standard,
                    COALESCE(AVG(r.rating), 0) as avg_rating, COUNT(r.rating) as rating_count
                    FROM menu_items m
                    LEFT JOIN ratings r ON m.id = r.menu_item_id
@@ -11949,6 +11972,7 @@ def admin_add_menu_item():
         clothing_type = request.form.get("clothing_type", "").strip()
         thickness = request.form.get("thickness", "").strip()
         standard = request.form.get("standard", "").strip()
+        brand = request.form.get("brand", "").strip()
 
         # New Attributes extraction
         weight = request.form.get("weight", "").strip()
@@ -12038,8 +12062,8 @@ def admin_add_menu_item():
                 insert_sql = (
                     "INSERT INTO menu_items (name, name_ru, name_uz, name_en, name_kz, price, category, description, "
                     "description_ru, description_uz, description_en, description_kz, sizes, colors, discount_percentage, image_url, available, "
-                    "weight, material, purpose, season, shoe_type, sole_type, height, clothing_type, thickness, standard, features) "
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                    "weight, material, purpose, season, shoe_type, sole_type, height, clothing_type, thickness, standard, features, brand) "
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
                 )
                 menu_item_id = execute_query(
                     insert_sql,
@@ -12060,7 +12084,7 @@ def admin_add_menu_item():
                         colors,
                         discount_percentage,
                         None,
-                        weight, material, purpose, season, shoe_type, sole_type, height, clothing_type, thickness, standard, features
+                        weight, material, purpose, season, shoe_type, sole_type, height, clothing_type, thickness, standard, features, brand
                     ),
                 )
             else:
@@ -12347,10 +12371,38 @@ def admin_edit_menu_item(item_id):
             ("description_uz", description_uz),
             ("description_en", description_en),
             ("description_kz", description_kz),
+            ("weight", request.form.get("weight")),
+            ("material", request.form.get("material")),
+            ("purpose", request.form.get("purpose")),
+            ("season", request.form.get("season")),
+            ("shoe_type", request.form.get("shoe_type")),
+            ("sole_type", request.form.get("sole_type")),
+            ("height", request.form.get("height")),
+            ("clothing_type", request.form.get("clothing_type")),
+            ("thickness", request.form.get("thickness")),
+            ("standard", request.form.get("standard")),
+            ("brand", request.form.get("brand")),
         ]:
-            if col_name in existing_cols and form_val != "":
+            if col_name in existing_cols and form_val is not None and form_val != "":
                 sql_set += f", {col_name} = ?"
                 params.append(form_val)
+
+        # Features list handling
+        features_list_edit = request.form.getlist("features[]")
+        if features_list_edit and "features" in existing_cols:
+            sql_set += ", features = ?"
+            params.append(",".join(features_list_edit))
+        
+        # Array fields for sizes and colors
+        sizes_list_edit = request.form.getlist("sizes[]")
+        if sizes_list_edit:
+            sql_set += ", sizes = ?"
+            params.append(",".join(sizes_list_edit))
+            
+        colors_list_edit = request.form.getlist("colors[]")
+        if colors_list_edit:
+            sql_set += ", colors = ?"
+            params.append(",".join(colors_list_edit))
 
         params.append(item_id)
 
@@ -15042,7 +15094,7 @@ def auth_google():
                 session['user_email'] = email
             else:
                 # Insert a new user record using existing schema (first_name, last_name...)
-                now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 # Split display name into first / last
                 first = ''
                 last = ''
@@ -15597,6 +15649,30 @@ SUPERADMIN_SETTINGS_PATH = os.path.join(
 
 def load_superadmin_settings():
     try:
+        # First, try to load from the database (new approach)
+        import sqlite3
+        db_path = os.path.join(os.path.dirname(__file__), 'database.sqlite3')
+        if os.path.exists(db_path):
+            conn = sqlite3.connect(db_path)
+            conn.row_factory = sqlite3.Row
+            cur = conn.cursor()
+            try:
+                # Get the most recent superadmin settings record
+                cur.execute('SELECT data FROM superadmin_settings ORDER BY id DESC LIMIT 1')
+                row = cur.fetchone()
+                if row:
+                    data = json.loads(row['data']) if row['data'] else {}
+                    conn.close()
+                    return data
+            except Exception:
+                pass
+            finally:
+                try:
+                    conn.close()
+                except Exception:
+                    pass
+        
+        # Fallback: try JSON file for backward compatibility
         if os.path.exists(SUPERADMIN_SETTINGS_PATH):
             with open(SUPERADMIN_SETTINGS_PATH, "r", encoding="utf-8") as f:
                 data = json.load(f) or {}
@@ -21101,6 +21177,126 @@ def super_admin_logs():
         """,
             500,
         )
+@app.route("/super-admin/database")
+@app.route("/super-admin/database/<table_name>")
+def super_admin_database(table_name=None):
+    "Database explorer for super admin"
+    if not session.get("super_admin"):
+        flash("Super admin paneliga kirish talab qilinadi.", "error")
+        return redirect(url_for("super_admin_login"))
+
+    try:
+        # Get all tables
+        raw_tables = execute_query("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';", fetch_all=True)
+        tables = [r[0] for r in raw_tables] if raw_tables else []
+
+        selected_table = table_name
+        columns = []
+        rows = []
+
+        if selected_table:
+            # Secure table selection
+            if selected_table not in tables:
+                flash(f"Jadval topilmadi: {selected_table}", "error")
+                return redirect(url_for("super_admin_database"))
+            
+            # Get columns
+            col_info = execute_query(f"PRAGMA table_info({selected_table});", fetch_all=True)
+            columns = [r[1] for r in col_info] if col_info else []
+            
+            # Get data (limit for safety)
+            raw_data = execute_query(f"SELECT * FROM {selected_table} ORDER BY 1 DESC LIMIT 1000", fetch_all=True)
+            if raw_data:
+                for r in raw_data:
+                    # Convert sqlite Row (if it is one) to dict
+                    try:
+                        rows.append(dict(zip(columns, r)))
+                    except:
+                        rows.append({})
+
+        return render_template("super_admin_database.html", 
+                             tables=tables, 
+                             selected_table=selected_table,
+                             columns=columns,
+                             rows=rows)
+    except Exception as e:
+        app_logger.error(f"Database explorer error: {str(e)}")
+        flash(f"Xatolik yuz berdi: {str(e)}", "error")
+        return redirect(url_for("super_admin_dashboard"))
+
+
+@app.route("/api/super-admin/database/<table_name>/update", methods=["POST"])
+def api_super_admin_database_update(table_name):
+    "Update a row in any table"
+    if not session.get("super_admin"):
+        return jsonify({"success": False, "message": "Unauthorized"}), 401
+    
+    try:
+        data = request.get_json()
+        if not data or "id" not in data:
+            return jsonify({"success": False, "message": "ID required"}), 400
+            
+        row_id = data.pop("id")
+        
+        # Verify table exists to prevent injection
+        raw_tables = execute_query("SELECT name FROM sqlite_master WHERE type='table';", fetch_all=True)
+        tables = [r[0] for r in raw_tables]
+        if table_name not in tables:
+            return jsonify({"success": False, "message": "Invalid table"}), 400
+            
+        # Build UPDATE query
+        if not data:
+             return jsonify({"success": False, "message": "No fields to update"}), 400
+
+        fields = ", ".join([f"{k} = ?" for k in data.keys()])
+        values = list(data.values())
+        values.append(row_id)
+        
+        query = f"UPDATE {table_name} SET {fields} WHERE id = ?"
+        execute_query(query, tuple(values))
+        
+        return jsonify({"success": True, "message": "Muvaffaqiyatli yangilandi"})
+    except Exception as e:
+        app_logger.error(f"DB Update error: {str(e)}")
+        return jsonify({"success": False, "message": str(e)})
+
+
+@app.route("/api/super-admin/database/<table_name>/delete", methods=["POST"])
+def api_super_admin_database_delete(table_name):
+    "Delete a row from any table"
+    if not session.get("super_admin"):
+        return jsonify({"success": False, "message": "Unauthorized"}), 401
+        
+    try:
+        data = request.get_json()
+        row_id = data.get("id")
+        if not row_id:
+            return jsonify({"success": False, "message": "ID required"}), 400
+            
+        # Verify table exists
+        raw_tables = execute_query("SELECT name FROM sqlite_master WHERE type='table';", fetch_all=True)
+        tables = [r[0] for r in raw_tables]
+        if table_name not in tables:
+            return jsonify({"success": False, "message": "Invalid table"}), 400
+            
+        execute_query(f"DELETE FROM {table_name} WHERE id = ?", (row_id,))
+        return jsonify({"success": True, "message": "Muvaffaqiyatli o'chirildi"})
+    except Exception as e:
+        app_logger.error(f"DB Delete error: {str(e)}")
+        return jsonify({"success": False, "message": str(e)})
+
+
+@app.route("/super-admin/delete-question/<int:q_id>", methods=["POST"])
+def super_admin_delete_question(q_id):
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+    try:
+        execute_query("DELETE FROM questions WHERE id = ?", (q_id,))
+        flash("Savol o'chirildi.", "success")
+    except Exception as e:
+        app_logger.error(f"Delete question error: {str(e)}")
+        flash("Savolni o'chirishda xatolik.", "error")
+    return redirect(url_for("super_admin_dashboard"))
 
 
 @app.route("/super-admin/delete-courier/<int:courier_id>", methods=["POST"])
@@ -23993,9 +24189,10 @@ def answer_user_question():
             return jsonify({'success': False, 'message': 'Question not found'})
         
         # Update question with answer
+        # Update question with answer
         execute_query(
             "UPDATE questions SET answer = ?, answered_at = ?, answered_by = ? WHERE id = ?",
-            (answer_text, datetime.now().strftime('%Y-%m-%d %H:%M:%S'), session.get('super_admin'), question_id)
+            (answer_text, datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), session.get('super_admin'), question_id)
         )
         
         # Create notification for user
@@ -24010,7 +24207,7 @@ def answer_user_question():
             if user:
                 execute_query(
                     "INSERT INTO notifications (recipient_type, recipient_id, title, body, created_at, notification_type) VALUES (?, ?, ?, ?, ?, ?)",
-                    ('user', user['id'], "Savolingizga javob berildi", f"Sizning '{question.get('subject')}' mavzusidagi savolingizga javob yozildi.", datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'question_answer')
+                    ('user', user['id'], "Savolingizga javob berildi", f"Sizning '{question.get('subject')}' mavzusidagi savolingizga javob yozildi.", datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'question_answer')
                 )
         
         return jsonify({'success': True, 'message': 'Answer sent successfully'})

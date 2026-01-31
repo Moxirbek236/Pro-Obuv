@@ -190,11 +190,20 @@ def cleanup_old_backups(backup_dir="backups", keep_days=30):
 def load_translations():
     """Barcha tillardagi tarjimalarni yuklash"""
     try:
-        with open('data/translations.json', 'r', encoding='utf-8') as f:
+        # Use absolute path relative to this file to ensure it works regardless of CWD
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        path = os.path.join(base_dir, 'data', 'translations.json')
+        
+        with open(path, 'r', encoding='utf-8') as f:
             return json.load(f)
     except Exception as e:
-        logging.error(f"Tarjimalarni yuklashda xatolik: {str(e)}")
-        return {}
+        # Try relative path as fallback
+        try:
+            with open('data/translations.json', 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception:
+            logging.error(f"Tarjimalarni yuklashda xatolik: {str(e)}")
+            return {}
 
 _translations = load_translations()
 
