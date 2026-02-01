@@ -12501,3 +12501,4 @@ MemoryError
 2026-01-31 19:44:54,984 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
 2026-01-31 19:47:09,357 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
 2026-01-31 20:36:55,896 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json
+2026-01-31 20:38:43,126 | WARNING | restaurant_app | not_found_error:2746 | 404 Error: http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json

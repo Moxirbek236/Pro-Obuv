@@ -3,6 +3,18 @@
 {% block extra_head %}
 <!-- Admin Panel Mega Responsive Design System -->
 <link rel="stylesheet" href="{{ url_for('static', filename='css/admin-panel-responsive.css') }}">
+<link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/static/sw.js')
+        .then(reg => console.log('SW registered!', reg))
+        .catch(err => console.log('SW failed', err));
+    });
+  }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 {% endblock %}
 
 {% block flash_messages %}{% endblock %}

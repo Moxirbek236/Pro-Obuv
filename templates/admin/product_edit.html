@@ -140,19 +140,23 @@
                 <div class="col-12">
                     <label class="form-label fw-bold small text-muted text-uppercase">Tavsif (Ko'p tilli)</label>
                     <ul class="nav nav-tabs border-0 bg-light rounded-pill p-1 mb-3" role="tablist">
-                        <li class="nav-item flex-fill"><a class="nav-link rounded-pill active text-center border-0 small py-1" data-bs-toggle="tab" href="#desc-ru">RU</a></li>
-                        <li class="nav-item flex-fill"><a class="nav-link rounded-pill text-center border-0 small py-1" data-bs-toggle="tab" href="#desc-uz">UZ</a></li>
+                        <li class="nav-item flex-fill"><a class="nav-link rounded-pill active text-center border-0 small py-1" data-bs-toggle="tab" href="#desc-uz">UZ</a></li>
+                        <li class="nav-item flex-fill"><a class="nav-link rounded-pill text-center border-0 small py-1" data-bs-toggle="tab" href="#desc-ru">RU</a></li>
                         <li class="nav-item flex-fill"><a class="nav-link rounded-pill text-center border-0 small py-1" data-bs-toggle="tab" href="#desc-en">EN</a></li>
+                        <li class="nav-item flex-fill"><a class="nav-link rounded-pill text-center border-0 small py-1" data-bs-toggle="tab" href="#desc-kz">KZ</a></li>
                     </ul>
                     <div class="tab-content">
-                        <div id="desc-ru" class="tab-pane fade show active">
-                            <textarea name="description_ru" class="form-control" rows="4">{{ product.description_ru or product.description }}</textarea>
-                        </div>
-                        <div id="desc-uz" class="tab-pane fade">
+                        <div id="desc-uz" class="tab-pane fade show active">
                             <textarea name="description_uz" class="form-control" rows="4">{{ product.description_uz }}</textarea>
+                        </div>
+                        <div id="desc-ru" class="tab-pane fade">
+                            <textarea name="description_ru" class="form-control" rows="4">{{ product.description_ru or product.description }}</textarea>
                         </div>
                         <div id="desc-en" class="tab-pane fade">
                             <textarea name="description_en" class="form-control" rows="4">{{ product.description_en }}</textarea>
+                        </div>
+                        <div id="desc-kz" class="tab-pane fade">
+                            <textarea name="description_kz" class="form-control" rows="4">{{ product.description_kz }}</textarea>
                         </div>
                     </div>
                 </div>

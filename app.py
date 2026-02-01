@@ -11930,13 +11930,13 @@ def admin_add_menu_item():
         return redirect(url_for("staff_login_simple"))
 
     try:
-        # Single-field legacy names (for backward compatibility)
+        # Single-field unified name as requested
         name = request.form.get("name", "").strip()
-        # Multilingual fields (if staff provides them)
-        name_ru = request.form.get("name_ru", "").strip()
-        name_uz = request.form.get("name_uz", "").strip()
-        name_en = request.form.get("name_en", "").strip()
-        name_kz = request.form.get("name_kz", "").strip()
+        # Ensure name_xx columns are synced for compatibility with localized_field
+        name_ru = name
+        name_uz = name
+        name_en = name
+        name_kz = name
         price = float(request.form.get("price", 0))
         category = (request.form.get("category", "footwear") or "").strip()
         # Normalize categories used in templates: map common backend names to frontend tokens
@@ -12283,18 +12283,22 @@ def admin_edit_menu_item(item_id):
         return redirect(url_for("staff_login_simple"))
 
     try:
+        # Unified name
         name = request.form.get("name", "").strip()
+        # Sync name across all languages
+        name_ru = name
+        name_uz = name
+        name_en = name
+        name_kz = name
+        
         price = float(request.form.get("price", 0) or 0)
-        description = request.form.get("description", "").strip()
-        # Multilingual edit fields
-        name_ru = request.form.get("name_ru", "").strip()
-        name_uz = request.form.get("name_uz", "").strip()
-        name_en = request.form.get("name_en", "").strip()
-        name_kz = request.form.get("name_kz", "").strip()
-        description_ru = request.form.get("description_ru", "").strip()
         description_uz = request.form.get("description_uz", "").strip()
+        description_ru = request.form.get("description_ru", "").strip()
         description_en = request.form.get("description_en", "").strip()
         description_kz = request.form.get("description_kz", "").strip()
+        
+        # Base description for legacy fallback
+        description = description_ru or description_uz or description_en or description_kz
         sizes = request.form.get("sizes", "")
         # Handle colors as a list from multiple select
         colors = ','.join(request.form.getlist('colors[]') or [request.form.get('colors', '')])
@@ -16859,7 +16863,12 @@ def super_admin_add_menu_item():
         price = float(request.form.get("price", 0))
         # Default to 'men' (Erkaklar) for new items - all products are for men only
         category = request.form.get("category", "men")
-        description = request.form.get("description", "").strip()
+        
+        description_uz = request.form.get("description_uz", "").strip()
+        description_ru = request.form.get("description_ru", "").strip()
+        description_en = request.form.get("description_en", "").strip()
+        description_kz = request.form.get("description_kz", "").strip()
+        description = description_ru or description_uz or description_en or description_kz
 
         if not name or price <= 0:
             flash("Nomi va narxi to'g'ri bo'lishi kerak.", "error")
@@ -16882,10 +16891,10 @@ def super_admin_add_menu_item():
         now = get_current_time().isoformat()
         menu_item_id = execute_query(
             """
-            INSERT INTO menu_items (name, price, category, description, created_at, available)
-            VALUES (?, ?, ?, ?, ?, 1)
+            INSERT INTO menu_items (name, name_uz, name_ru, name_en, name_kz, price, category, description, description_uz, description_ru, description_en, description_kz, created_at, available)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
         """,
-            (name, price, category, description, now),
+            (name, name, name, name, name, price, category, description, description_uz, description_ru, description_en, description_kz, now),
         )
 
         # If images were uploaded, save them similarly to the staff flow so the new item has media

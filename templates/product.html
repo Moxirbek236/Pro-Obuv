@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% set localized_name = localized_field(item, 'name') or item.name %}
+{% set localized_name = item.name or localized_field(item, 'name') %}
 {% set localized_description = localized_field(item, 'description') or item.description or "Sifatli spetsobuv va ish kiyimlari" %}
 
 {% set all_media = all_media if all_media else [] %}
