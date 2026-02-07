@@ -3272,13 +3272,19 @@ class PgConnectionProxy:
 # Database connection pool - PostgreSQL only
 class DatabasePool:
     def __init__(self, dsn, max_connections=20):
+        # Clean DSN from potential quotes or whitespace that Render might inject
+        if dsn:
+            dsn = dsn.strip().strip('"').strip("'")
+            
         self.dsn = dsn
         self.max_connections = max_connections
-        self.is_postgres = True # Kept for backward compatibility in execute_query
+        self.is_postgres = True
         if not psycopg2_pool:
             raise ImportError("psycopg2 not installed")
             
         try:
+            # If DSN is a URI (starts with postgresql://), psycopg2 should handle it,
+            # but sometimes libpq version on Render is picky about query params.
             self.pool = psycopg2_pool.ThreadedConnectionPool(
                 1, self.max_connections,
                 dsn,
