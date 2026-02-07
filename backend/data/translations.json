@@ -150,10 +150,10 @@
       "language_saved": "Язык сохранен",
       "language_local_change": "Язык изменен локально"
     },
-    "home_title": "Safety.uz - Магазин спецобуви и спецодежды №1",
+    "home_title": "Safety.uz - Спецобувь и спецодежда №1 в Узбекистане | Pro Obuv",
     "language": "Язык",
-    "meta_description": "Safety.uz - Лучший выбор сертифицированной спецобуви, рабочей одежды и средств индивидуальной защиты (СИЗ) в Узбекистане. Прямые поставки, гарантия качества и доставка по всей стране.",
-    "meta_keywords": "safety.uz, pro obuv, спецобувь, спецодежда, рабочая обувь, спецобувь ташкент, купить спецобувь, защитные ботинки, спецобувь узбекистан, spetsobuv, spestobuv, specobuv, сиз",
+    "meta_description": "Safety.uz (Pro Obuv) - ваш надежный поставщик сертифицированной спецобуви, рабочей одежды и СИЗ. Широкий выбор: спецобувь, ботинки с металлическим носком, диэлектрические сапоги, спецодежда для всех сфер промышленности.",
+    "meta_keywords": "safety.uz, pro obuv, спецобувь, спецодежда, рабочая обувь, спецобувь ташкент, купить спецобувь, защитные ботинки, спецобувь узбекистан, spetsobuv, spestobuv, specobuv, spesobuv, сиз, индивидуальная защита, рабочая одежда ташкент, ботинки s3, ботинки s1, военная обувь, строительная обувь",
     "meta_product_suffix": "Купить в Pro Obuv.",
     "profile": "Профиль",
     "logout": "Выход",
@@ -521,7 +521,7 @@
       "terminate": "Завершить",
       "no_sessions": "Активных сессий нет"
     },
-    "meta_title_default": "Магазин современной спецобуви и одежды"
+    "meta_title_default": "Safety.uz - Качественная спецобувь и СИЗ"
   },
   "uz": {
     "colors": {
@@ -693,10 +693,10 @@
       "language_saved": "Til saqlandi",
       "language_local_change": "Til mahalliy o'zgartirildi"
     },
-    "home_title": "Safety.uz - Maxsus poyabzallar va ish kiyimlari do'koni",
+    "home_title": "Safety.uz - O'zbekistondagi №1 Maxsus poyabzallar va ish kiyimlari do'koni",
     "language": "Til",
-    "meta_description": "Safety.uz - O'zbekistondagi eng yaxshi maxsus poyabzallar, ish kiyimlari va shaxsiy himoya vositalari (SHHV) do'koni. Sifatli mahsulotlar, kafolat va butun O'zbekiston bo'ylab yetkazib berish.",
-    "meta_keywords": "safety.uz, pro obuv, maxsus poyabzal, ish kiyimi, poyafzal, spetsobuv, spestobuv, specobuv, ish kiyimlari toshkent, maxsus kiyimlar, maxsus kiyim sotib olish",
+    "meta_description": "Safety.uz (Pro Obuv) - sertifikatlangan maxsus poyabzallar, ish kiyimlari va SHHVning ishonchli yetkazib beruvchisi. Maxsus poyabzal, temir burunli botinkalar, dielektrik etiklar va barcha sanoat sohalari uchun ish kiyimlari.",
+    "meta_keywords": "safety.uz, pro obuv, maxsus poyabzal, ish kiyimi, poyafzal, spetsobuv, spestobuv, specobuv, spesobuv, ish kiyimlari toshkent, maxsus kiyimlar, maxsus kiyim sotib olish, temir burunli poyabzal, xavfsizlik botinkalari, qurilish poyabzali, shhv, shaxsiy himoya vositalari",
     "meta_product_suffix": "Pro Obuv do'konidan sotib oling.",
     "profile": "Profil",
     "logout": "Chiqish",
@@ -1064,7 +1064,7 @@
       "terminate": "Tugatish",
       "no_sessions": "Faol sessiyalar yo'q"
     },
-    "meta_title_default": "Zamonaviy maxsus kiyim va poyabzallar do'koni"
+    "meta_title_default": "Safety.uz - Sifatli maxsus kiyim va poyabzallar"
   },
   "en": {
     "colors": {
@@ -1200,10 +1200,10 @@
       "language_saved": "Language saved",
       "language_local_change": "Language changed locally"
     },
-    "home_title": "Safety.uz - #1 Safety Footwear & Workwear Store",
+    "home_title": "Safety.uz - #1 Safety Footwear & Workwear Store in Uzbekistan | Pro Obuv",
     "language": "Language",
-    "meta_description": "Safety.uz - The premier supplier of certified safety footwear, work clothing, and personal protective equipment (PPE) in Uzbekistan. High quality, wide range, and nationwide delivery.",
-    "meta_keywords": "safety.uz, pro obuv, safety footwear, workwear, protective boots, buy safety shoes, work clothes uzbekistan, ppe, spetsobuv, spestobuv, industrial safety",
+    "meta_description": "Safety.uz (Pro Obuv) - your reliable supplier of certified safety footwear, work clothing, and PPE. Wide selection: safety shoes, steel toe boots, dielectric boots, and workwear for all industrial sectors.",
+    "meta_keywords": "safety.uz, pro obuv, safety footwear, workwear, protective boots, buy safety shoes, work clothes uzbekistan, ppe, spetsobuv, spestobuv, specobuv, spesobuv, industrial safety, personal protective equipment, safety boots tashkent, s3 boots, s1 boots, construction shoes",
     "meta_product_suffix": "Buy from Pro Obuv.",
     "profile": "Profile",
     "logout": "Logout",
@@ -1594,7 +1594,7 @@
       "terminate": "Terminate",
       "no_sessions": "No active sessions"
     },
-    "meta_title_default": "Modern Safety Footwear & Apparel"
+    "meta_title_default": "Safety.uz - Professional Safety Gear & PPE"
   },
   "kz": {
     "colors": {
@@ -1727,10 +1727,10 @@
       "language_saved": "Тіл сақталды",
       "language_local_change": "Тіл жергілікті түрде өзгертілді"
     },
-    "home_title": "Safety.uz - №1 Арнайы аяқ киім және жұмыс киімі дүкені",
+    "home_title": "Safety.uz - Өзбекстандағы №1 Арнайы аяқ киім және жұмыс киімі дүкені | Pro Obuv",
     "language": "Тіл",
-    "meta_description": "Safety.uz - Өзбекстандағы сертификатталған арнайы аяқ киімдерді, жұмыс киімдері мен жеке қорғаныс құралдарын (ЖҚҚ) жеткізуші. Сапалы өнімдер, кең ассортимент және бүкіл ел бойынша жеткізу.",
-    "meta_keywords": "safety.uz, pro obuv, арнайы аяқ киім, жұмыс киімі, қорғаныс етіктері, арнайы киім сатып алу, жққ, spetsobuv, spestobuv, өнеркәсіптік қауіпсіздік",
+    "meta_description": "Safety.uz (Pro Obuv) - сертификатталған арнайы аяқ киімдерді, жұмыс киімдері мен ЖҚҚ жеткізуші. Арнайы аяқ киім, темір тұмсықты етіктер, диэлектрик етіктер және барлық өнеркәсіп салаларына арналған жұмыс киімдері.",
+    "meta_keywords": "safety.uz, pro obuv, арнайы аяқ киім, жұмыс киімі, қорғаныс етіктері, арнайы киім сатып алу, жққ, spetsobuv, spestobuv, specobuv, spesobuv, өнеркәсіптік қауіпсіздік, жеке қорғаныс құралдары, қауіпсіздік етіктері ташкент, құрылыс аяқ киімі",
     "meta_product_suffix": "Pro Obuv-тен сатып алыңыз.",
     "profile": "Профиль",
     "logout": "Шығу",
@@ -2053,6 +2053,6 @@
       "terminate": "Аяқтау",
       "no_sessions": "Белсенді сессиялар жоқ"
     },
-    "meta_title_default": "Заманауи арнайы киім және аяқ киім дүкені"
+    "meta_title_default": "Safety.uz - Сапалы арнайы киім және аяқ киім"
   }
 }
