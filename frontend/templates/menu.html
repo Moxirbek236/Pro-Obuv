@@ -503,6 +503,38 @@ document.addEventListener('DOMContentLoaded', function() {
   detectAndUpdateRole();
 })();
 
+// Fuzzy match helper for typo tolerance
+function isFuzzyMatch(text, query) {
+    if (!query) return true;
+    text = text.toLowerCase();
+    query = query.toLowerCase();
+    if (text.includes(query)) return true;
+    
+    // Simple Levenshtein distance
+    function getEditDistance(a, b) {
+        if (a.length === 0) return b.length;
+        if (b.length === 0) return a.length;
+        const matrix = [];
+        for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+        for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+        for (let i = 1; i <= b.length; i++) {
+            for (let j = 1; j <= a.length; j++) {
+                if (b.charAt(i-1) === a.charAt(j-1)) {
+                    matrix[i][j] = matrix[i-1][j-1];
+                } else {
+                    matrix[i][j] = Math.min(matrix[i-1][j-1] + 1, Math.min(matrix[i][j-1] + 1, matrix[i-1][j] + 1));
+                }
+            }
+        }
+        return matrix[b.length][a.length];
+    }
+    
+    // If query is short, allow 1 typo. If long, allow more.
+    const dist = getEditDistance(text.substring(0, query.length + 2), query);
+    const threshold = query.length <= 4 ? 1 : 2;
+    return dist <= threshold;
+}
+
 function applyFilters() {
     const searchTerm = document.getElementById('productSearch').value.toLowerCase();
     const category = document.getElementById('categoryFilter').value;
@@ -514,10 +546,9 @@ function applyFilters() {
     const brand = document.getElementById('brandFilter') ? document.getElementById('brandFilter').value.toLowerCase() : '';
     
     filteredProducts = allProducts.filter(product => {
-        // Search by name or description (combined search)
-        const matchesSearch = !searchTerm || 
-            product.name.includes(searchTerm) || 
-            product.element.querySelector('h4').textContent.toLowerCase().includes(searchTerm);
+        // Search by name or description using fuzzy matching
+        const matchesSearch = isFuzzyMatch(product.name, searchTerm) || 
+                             isFuzzyMatch(product.element.querySelector('h4').textContent, searchTerm);
         
         // Category filter
         const matchesCategory = !category || product.category === category.toLowerCase();

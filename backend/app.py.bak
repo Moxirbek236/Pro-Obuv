@@ -5983,7 +5983,7 @@ def get_user_queue_position(conn, ticket_no):
             """
             SELECT COUNT(*) FROM orders
             WHERE status='waiting' AND created_at < (
-                SELECT created_at FROM orders WHERE ticket_no=%s AND status='waiting'
+                SELECT created_at FROM orders WHERE ticket_no=? AND status='waiting'
             )
         """,
             (ticket_no,),
@@ -6345,7 +6345,7 @@ def get_branch_average_rating(branch_id):
                 """
                 SELECT AVG(CAST(rating AS REAL)) as avg_rating, COUNT(*) as total_ratings
                 FROM ratings
-                WHERE menu_item_id = %s
+                WHERE menu_item_id = ?
             """,
                 (-branch_id,),
             )
@@ -6541,9 +6541,9 @@ def get_cart_items(conn, session_id, user_id=None):
         """
 
         if user_id:
-            cur.execute(query.format(where_clause="ci.user_id = %s"), (user_id,))
+            cur.execute(query.format(where_clause="ci.user_id = ?"), (user_id,))
         else:
-            cur.execute(query.format(where_clause="ci.session_id = %s"), (session_id,))
+            cur.execute(query.format(where_clause="ci.session_id = ?"), (session_id,))
 
         results = cur.fetchall()
 
@@ -6631,7 +6631,7 @@ def get_cart_total(conn, session_id, user_id=None):
                 )
                 FROM cart_items ci
                 JOIN menu_items mi ON ci.menu_item_id = mi.id
-                WHERE ci.user_id = %s
+                WHERE ci.user_id = ?
             """,
                 (user_id,),
             )
@@ -6647,7 +6647,7 @@ def get_cart_total(conn, session_id, user_id=None):
                 )
                 FROM cart_items ci
                 JOIN menu_items mi ON ci.menu_item_id = mi.id
-                WHERE ci.session_id = %s
+                WHERE ci.session_id = ?
             """,
                 (session_id,),
             )
@@ -7202,7 +7202,7 @@ def get_notifications_for_user(current_user):
             """
             SELECT n.id, n.title, n.body, n.read_flag, n.created_at, n.sender_type, n.sender_id
             FROM notifications n
-            WHERE n.recipient_type=%s AND (n.recipient_id=%s OR n.recipient_id IS NULL)
+            WHERE n.recipient_type=? AND (n.recipient_id=? OR n.recipient_id IS NULL)
             ORDER BY n.created_at DESC LIMIT 100
         """,
             (current_user["type"], current_user.get("id")),
@@ -8001,7 +8001,7 @@ def admin_monitor():
             FROM orders o
             LEFT JOIN order_details od ON o.id = od.order_id
             LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
-            WHERE o.status='served' AND o.created_at >= %s
+            WHERE o.status='served' AND o.created_at >= ?
             GROUP BY o.id
             ORDER BY o.created_at DESC
         """,
@@ -8735,7 +8735,7 @@ def product_detail(item_id):
                        COALESCE(trim(u.first_name || ' ' || u.last_name), u.email) as user_name
                 FROM ratings r
                 LEFT JOIN users u ON r.user_id = u.id
-                WHERE r.menu_item_id = %s
+                WHERE r.menu_item_id = ?
                 """,
                 (item_id,),
                 fetch_all=True,
@@ -9115,11 +9115,10 @@ def api_menu_search():
         params = []
 
         if q:
-            # simple LIKE search + fuzzy similarity for typo tolerance
-            # Similarity > 0.3 allows finding 'spestobuv' for 'spetsobuv'
-            where_clauses.append("(name ILIKE %s OR description ILIKE %s OR similarity(name, %s) > 0.3 OR similarity(description, %s) > 0.2)")
+            # simple LIKE search on name and description
+            where_clauses.append("(name LIKE ? OR description LIKE ?)")
             like_q = f"%{q}%"
-            params.extend([like_q, like_q, q, q])
+            params.extend([like_q, like_q])
 
         if category:
             # Case-insensitive match; also accept slug forms (dashes) by normalizing
@@ -9134,7 +9133,7 @@ def api_menu_search():
         if min_price:
             try:
                 mp = float(min_price)
-                where_clauses.append("price >= %s")
+                where_clauses.append("price >= ?")
                 params.append(mp)
             except Exception:
                 pass
@@ -9142,7 +9141,7 @@ def api_menu_search():
         if max_price:
             try:
                 mp = float(max_price)
-                where_clauses.append("price <= %s")
+                where_clauses.append("price <= ?")
                 params.append(mp)
             except Exception:
                 pass
@@ -9154,13 +9153,13 @@ def api_menu_search():
             # spaces from both sides and perform a LIKE search to match values
             # regardless of spacing: REPLACE(LOWER(sizes),' ','') LIKE '%40%'
             size_norm = size.strip().lower().replace(" ", "")
-            where_clauses.append("(REPLACE(LOWER(sizes), ' ', '') LIKE %s)")
+            where_clauses.append("(REPLACE(LOWER(sizes), ' ', '') LIKE ?)")
             params.append(f"%{size_norm}%")
 
         if color:
             # Normalize spaces and case for color matching as well.
             color_norm = color.strip().lower().replace(" ", "")
-            where_clauses.append("(REPLACE(LOWER(colors), ' ', '') LIKE %s)")
+            where_clauses.append("(REPLACE(LOWER(colors), ' ', '') LIKE ?)")
             params.append(f"%{color_norm}%")
 
         order_by = "ORDER BY category, name"
@@ -9764,7 +9763,7 @@ def favorites():
             SELECT m.*, f.created_at as favorite_added
             FROM menu_items m
             JOIN favorites f ON m.id = f.menu_item_id
-            WHERE f.user_id = %s
+            WHERE f.user_id = ?
             ORDER BY f.created_at DESC
             """,
             (user_id,),
@@ -10019,7 +10018,7 @@ def profile():
                 LEFT JOIN receipts r ON o.id = r.order_id
                 LEFT JOIN order_details od ON o.id = od.order_id
                 LEFT JOIN menu_items mi ON od.menu_item_id = mi.id
-                WHERE o.user_id = %s
+                WHERE o.user_id = ?
                 GROUP BY o.id
                 ORDER BY o.created_at DESC
                 LIMIT 50
@@ -10179,11 +10178,11 @@ def update_profile():
                 pass
 
         # Build update dynamically
-        update_fields = ["first_name = %s", "last_name = %s", "email = %s", "phone = %s"]
+        update_fields = ["first_name = ?", "last_name = ?", "email = ?", "phone = ?"]
         params = [first_name, last_name, email, phone]
 
         if card_number_new:
-            update_fields.append("card_number = %s")
+            update_fields.append("card_number = ?")
             params.append(card_number_new)
 
         avatar_path = None
@@ -10200,7 +10199,7 @@ def update_profile():
                     upload_res = cloudinary_service.upload_image(avatar_file.stream, folder="avatars")
                     if upload_res:
                         avatar_url = upload_res.get('secure_url')
-                        update_fields.append("avatar = %s")
+                        update_fields.append("avatar = ?")
                         params.append(avatar_url)
                         avatar_path = avatar_url
                     else:
@@ -10311,7 +10310,7 @@ def update_address():
             """
             UPDATE users
             SET address = ?, address_latitude = ?, address_longitude = ?
-            WHERE id = %s
+            WHERE id = ?
         """,
             (address, address_latitude or None, address_longitude or None, user_id),
         )
@@ -11091,7 +11090,7 @@ def user_success(ticket_no):
         SELECT od.quantity, mi.name, od.price, od.size, od.color
         FROM order_details od
         JOIN menu_items mi ON od.menu_item_id = mi.id
-        WHERE od.order_id = %s
+        WHERE od.order_id = ?
     """,
         (order["id"],),
         fetch_all=True,
@@ -11145,7 +11144,7 @@ def view_receipt(ticket_no):
                    r.receipt_number, r.total_amount, r.cashback_amount, r.cashback_percentage, r.created_at as receipt_created
             FROM orders o
             LEFT JOIN receipts r ON o.id = r.order_id
-            WHERE o.ticket_no = %s
+            WHERE o.ticket_no = ?
             ORDER BY o.id DESC LIMIT 1
         """,
             (ticket_no,),
@@ -11162,7 +11161,7 @@ def view_receipt(ticket_no):
             SELECT od.quantity, mi.name, od.price, od.size, od.color
             FROM order_details od
             JOIN menu_items mi ON od.menu_item_id = mi.id
-            WHERE od.order_id = %s
+            WHERE od.order_id = ?
         """,
             (order_receipt_data["id"],),
             fetch_all=True,
@@ -11626,7 +11625,7 @@ def courier_take_order(order_id):
                 """
                 UPDATE orders
                 SET status='on_way', courier_id=?, courier_price=?, courier_delivery_minutes=?, delivery_price=?
-                WHERE id=%s AND status='ready'
+                WHERE id=? AND status='ready'
             """,
                 (courier_id, auto_price, auto_delivery_time, auto_price, order_id),
             )
@@ -11732,7 +11731,7 @@ def courier_set_price_time():
             """
             UPDATE orders
             SET courier_price = ?, courier_delivery_minutes = ?, delivery_price = ?
-            WHERE id = %s
+            WHERE id = ?
         """,
             (price, delivery_time, price, order_id),
         )
@@ -12282,7 +12281,7 @@ def admin_edit_menu_item(item_id):
             f"""
             UPDATE menu_items 
             SET {sql_set}
-            WHERE id = %s
+            WHERE id = ?
         """,
             tuple(params),
         )
@@ -12456,7 +12455,7 @@ def api_get_product_media(item_id):
             """
             SELECT id, media_type, media_url, display_order, is_main, created_at
             FROM product_media 
-            WHERE menu_item_id = %s 
+            WHERE menu_item_id = ? 
             ORDER BY is_main DESC, display_order ASC
             """,
             (item_id,),
@@ -12840,7 +12839,7 @@ def admin_toggle_menu_item(item_id):
             """
             UPDATE menu_items 
             SET available = CASE WHEN available = TRUE THEN FALSE ELSE TRUE END 
-            WHERE id = %s
+            WHERE id = ?
         """,
             (item_id,),
         )
@@ -13046,7 +13045,7 @@ def api_get_menu_ratings(menu_item_id):
                    COALESCE(u.first_name || ' ' || u.last_name, 'Anonim') as user_name
             FROM ratings r
             LEFT JOIN users u ON r.user_id = u.id
-            WHERE r.menu_item_id = %s
+            WHERE r.menu_item_id = ?
             ORDER BY r.created_at DESC
             LIMIT 20
         """,
@@ -14868,7 +14867,7 @@ def track_order(ticket_no):
             SELECT od.quantity, mi.name, od.price
             FROM order_details od
             JOIN menu_items mi ON od.menu_item_id = mi.id
-            WHERE od.order_id = %s
+            WHERE od.order_id = ?
         """,
             (order["id"],),
             fetch_all=True,
@@ -17053,7 +17052,7 @@ def mark_notification_read(notification_id):
 
         try:
             # Match by id and any acceptable recipient_type (including broadcasts)
-            placeholders = ",".join(["%s" for _ in aliases]) if aliases else ""
+            placeholders = ",".join(["?" for _ in aliases]) if aliases else ""
             if placeholders:
                 sql = f"UPDATE notifications SET read_flag = 1 WHERE id = %s AND (recipient_type = 'all' OR recipient_type IN ({placeholders}) OR recipient_type = %s) AND (recipient_id = %s OR recipient_id IS NULL)"
                 params = (
@@ -17072,7 +17071,7 @@ def mark_notification_read(notification_id):
                 """
                 UPDATE notifications 
                 SET read_flag = 1 
-                WHERE id = %s AND recipient_type = %s AND (recipient_id = %s OR recipient_id IS NULL)
+                WHERE id = ? AND recipient_type = ? AND (recipient_id = ? OR recipient_id IS NULL)
             """,
                 (notification_id, canonical_type, current_user_id),
             )
@@ -17120,7 +17119,7 @@ def mark_all_notifications_read():
         conn = get_db()
         cur = conn.cursor()
         try:
-            placeholders = ",".join(["%s" for _ in aliases]) if aliases else ""
+            placeholders = ",".join(["?" for _ in aliases]) if aliases else ""
             if placeholders:
                 sql = f"UPDATE notifications SET read_flag = 1 WHERE (recipient_type = 'all' OR recipient_type IN ({placeholders}) OR recipient_type = %s) AND (recipient_id = %s OR recipient_id IS NULL) AND read_flag = 0"
                 params = tuple(aliases) + (canonical_type, current_user_id)
@@ -17293,7 +17292,7 @@ def api_get_notifications():
         # Build SQL to match broadcasts OR any alias for the recipient_type where recipient_id is NULL or equals this id
         try:
             # We'll match recipient_type IN (list-of-aliases) OR recipient_type = 'all'
-            placeholders = ",".join(["%s" for _ in aliases])
+            placeholders = ",".join(["?" for _ in aliases])
             sql = f"SELECT * FROM notifications WHERE recipient_type = 'all' OR (recipient_type IN ({placeholders}) AND (recipient_id IS NULL OR recipient_id = %s)) ORDER BY created_at DESC LIMIT 200"
             params = tuple(aliases) + (recipient_id,)
             rows = execute_query(sql, params, fetch_all=True)
@@ -17347,7 +17346,7 @@ def api_mark_notifications_read():
         # Mark broadcasts and notifications for this recipient (alias-aware)
         try:
             if aliases:
-                placeholders = ",".join(["%s" for _ in aliases])
+                placeholders = ",".join(["?" for _ in aliases])
                 sql = f"UPDATE notifications SET read_flag = 1 WHERE recipient_type = 'all' OR (recipient_type IN ({placeholders}) AND (recipient_id IS NULL OR recipient_id = %s))"
                 params = tuple(aliases) + (current_user_id,)
             else:
@@ -17651,7 +17650,7 @@ def api_chats():
             try:
                 if member_type in ("staff", "courier"):
                     if aliases:
-                        placeholders = ",".join(["%s" for _ in aliases])
+                        placeholders = ",".join(["?" for _ in aliases])
                         sql = f"SELECT DISTINCT c.* FROM chats c JOIN chat_members m ON c.id = m.chat_id WHERE c.is_group = TRUE AND (m.member_type IN ({placeholders}) OR m.member_type = 'super_admin') AND (m.member_id = %s OR m.member_id IS NULL) ORDER BY c.id DESC"
                         params = tuple(aliases) + (member_id,)
                         rows = execute_query(sql, params, fetch_all=True)
@@ -17665,7 +17664,7 @@ def api_chats():
                 else:
                     # For users, only private chats where they are a member
                     if aliases:
-                        placeholders = ",".join(["%s" for _ in aliases])
+                        placeholders = ",".join(["?" for _ in aliases])
                         sql = f"SELECT DISTINCT c.* FROM chats c JOIN chat_members m ON c.id = m.chat_id WHERE m.member_type IN ({placeholders}) AND m.member_id = %s ORDER BY c.id DESC"
                         params = tuple(aliases) + (member_id,)
                         rows = execute_query(sql, params, fetch_all=True)
@@ -17682,7 +17681,7 @@ def api_chats():
             # Also include private chats where they are a member (ensure no duplicates)
             try:
                 if aliases:
-                    placeholders = ",".join(["%s" for _ in aliases])
+                    placeholders = ",".join(["?" for _ in aliases])
                     sql = f"SELECT DISTINCT c.* FROM chats c JOIN chat_members m ON c.id = m.chat_id WHERE c.is_group = FALSE AND m.member_type IN ({placeholders}) AND m.member_id = %s ORDER BY c.id DESC"
                     params = tuple(aliases) + (member_id,)
                     private_rows = execute_query(sql, params, fetch_all=True)
@@ -18033,7 +18032,7 @@ def api_chat_messages(chat_id):
                     allowed_types = [sender_type]
 
                 # Build IN-clause placeholders
-                placeholders = ",".join(["%s" for _ in allowed_types])
+                placeholders = ",".join(["?" for _ in allowed_types])
                 sql = f"SELECT 1 FROM chat_members WHERE chat_id = %s AND member_type IN ({placeholders}) AND (member_id = %s OR member_id IS NULL) LIMIT 1"
                 params = (actual_chat_id,) + tuple(allowed_types) + (sender_id,)
                 member_check = execute_query(sql, params, fetch_one=True)
@@ -18155,7 +18154,7 @@ def debug_chats_info():
         # Build the SQL used by api_chats for diagnostics (alias-aware)
         try:
             if canonical_type in ("staff", "courier"):
-                placeholders = ",".join(["%s" for _ in aliases]) if aliases else ""
+                placeholders = ",".join(["?" for _ in aliases]) if aliases else ""
                 if placeholders:
                     sql = f"SELECT DISTINCT c.* FROM chats c JOIN chat_members m ON c.id = m.chat_id WHERE c.is_group = TRUE AND (m.member_type IN ({placeholders}) OR m.member_type = 'super_admin') AND (m.member_id = %s OR m.member_id IS NULL) ORDER BY c.id DESC"
                     params = tuple(aliases) + (member_id,)
@@ -18163,7 +18162,7 @@ def debug_chats_info():
                     sql = "SELECT DISTINCT c.* FROM chats c JOIN chat_members m ON c.id = m.chat_id WHERE c.is_group = TRUE AND m.member_type = %s AND (m.member_id = %s OR m.member_id IS NULL) ORDER BY c.id DESC"
                     params = (canonical_type, member_id)
             else:
-                placeholders = ",".join(["%s" for _ in aliases]) if aliases else ""
+                placeholders = ",".join(["?" for _ in aliases]) if aliases else ""
                 if placeholders:
                     sql = f"SELECT DISTINCT c.* FROM chats c JOIN chat_members m ON c.id = m.chat_id WHERE m.member_type IN ({placeholders}) AND m.member_id = %s ORDER BY c.id DESC"
                     params = tuple(aliases) + (member_id,)
@@ -18301,7 +18300,7 @@ def debug_notifications_info():
             resp["notifications"] = [dict(r) for r in rows] if rows else []
         else:
             try:
-                placeholders = ",".join(["%s" for _ in aliases])
+                placeholders = ",".join(["?" for _ in aliases])
                 sql = f"SELECT * FROM notifications WHERE recipient_type = 'all' OR (recipient_type IN ({placeholders}) AND (recipient_id IS NULL OR recipient_id = %s)) ORDER BY created_at DESC LIMIT 200"
                 params = tuple(aliases) + (recipient_id,)
                 resp["notifications_query_sql"] = {"sql": sql, "params": params}
@@ -20062,7 +20061,7 @@ def staff_menu():
                         media_query = """
                             SELECT id, media_type, media_url, display_order, is_main
                             FROM product_media 
-                            WHERE menu_item_id = %s 
+                            WHERE menu_item_id = ? 
                             ORDER BY is_main DESC, display_order ASC
                         """
                         cur.execute(media_query, (item_dict["id"],))
@@ -20078,7 +20077,7 @@ def staff_menu():
                         try:
                             cur.execute(
                                 """SELECT market_key, url FROM marketplace_urls 
-                                   WHERE menu_item_id = %s ORDER BY market_key, id""",
+                                   WHERE menu_item_id = ? ORDER BY market_key, id""",
                                 (item_dict["id"],),
                             )
                             mp_rows = cur.fetchall()
@@ -21456,7 +21455,7 @@ def save_settings():
                     interface_language = ?, 
                     dark_theme = ?, 
                     font_size = ? 
-                    WHERE id = %s""",
+                    WHERE id = ?""",
                 (
                     session.get("interface_language", "uz"),
                     1 if session.get("dark_theme", True) else 0,
@@ -21498,7 +21497,7 @@ def reset_settings():
                     interface_language = 'uz', 
                     dark_theme = 0, 
                     font_size = 'medium' 
-                    WHERE id = %s""",
+                    WHERE id = ?""",
                 (session.get("user_id"),),
             )
         except Exception as e:
@@ -21875,8 +21874,8 @@ def api_update_news(news_id):
             )
         else:
             execute_query(
-                """UPDATE news SET title = %s, content = %s, type = %s, image_url = %s, video_url = %s, 
-                is_active = %s, display_order = %s, updated_at = %s WHERE id = %s""",
+                """UPDATE news SET title = ?, content = ?, type = ?, image_url = ?, video_url = ?, 
+                is_active = ?, display_order = ?, updated_at = ? WHERE id = ?""",
                 (
                     title or title_ru or title_uz or title_en or title_kz,
                     content or content_ru or content_uz or content_en or content_kz,
