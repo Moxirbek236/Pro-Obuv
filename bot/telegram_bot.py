@@ -15,6 +15,7 @@ import time
 from dotenv import load_dotenv
 import threading
 from flask import Flask
+import json
 load_dotenv(os.path.join(os.path.dirname(__file__), '../backend/.env'))
 
 
@@ -45,6 +46,22 @@ except Exception:
     Updater = None
 
 LOG = logging.getLogger("telegram_bot")
+
+# Load Uzum products data
+def load_uzum_products():
+    try:
+        products_file = Path(__file__).parent / "test" / "bot_ready_products_1770480265230.json"
+        if products_file.exists():
+            with open(products_file, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        else:
+            LOG.warning("Uzum products file not found")
+            return None
+    except Exception as e:
+        LOG.error(f"Error loading Uzum products: {e}")
+        return None
+
+UZUM_PRODUCTS = load_uzum_products()
 
 # Ensure logs directory exists and define action/error log paths
 # Use bot directory so we don't require write access to backend/logs
@@ -372,6 +389,7 @@ async def _send_main_keyboard(update: "Update"):
         kb = [
             [
                 KeyboardButton("🛒 Mahsulotlar"),
+                KeyboardButton("🛍️ Uzum mahsulotlar"),
             ],
             [
                 KeyboardButton("🤖 AI bilan suhbat"),
@@ -412,7 +430,51 @@ async def test_cmd(update: "Update", context: "ContextTypes.DEFAULT_TYPE"):
         raise
 
 
-async def products_cmd_new(update: "Update", context: "ContextTypes.DEFAULT_TYPE"):
+async def products_cmd_uzum(update: "Update", context: "ContextTypes.DEFAULT_TYPE"):
+    """Show Uzum products from seller API data"""
+    if not UZUM_PRODUCTS or not UZUM_PRODUCTS.get("products"):
+        await update.message.reply_text("❌ Mahsulotlar ma'lumotlari topilmadi")
+        return
+    
+    products = UZUM_PRODUCTS["products"]
+    available_products = [p for p in products if p.get("totalQuantity", 0) > 0]
+    
+    if not available_products:
+        await update.message.reply_text("❌ Hozirda mavjud mahsulotlar yo'q")
+        return
+    
+    # Show first 10 available products
+    for i, product in enumerate(available_products[:10]):
+        title = product.get("title", "Noma'lum mahsulot")
+        price = product.get("priceRange", "Narx noma'lum")
+        quantity = product.get("totalQuantity", 0)
+        brand = product.get("brand", "Noma'lum")
+        product_id = product.get("id", "")
+        
+        # Create Uzum URL
+        if product_id:
+            uzum_url = f"https://uzum.uz/product/{product_id}"
+        else:
+            uzum_url = product.get("uzumMarketUrl", "https://uzum.uz")
+        
+        message = f"🛍️ *{title}*\n"
+        message += f"💰 Narx: {price}\n"
+        message += f"📊 Mavjud: {quantity} dona\n"
+        message += f"🏷️ Brend: {brand}\n"
+        message += f"🔗 [Uzum da ko'rish]({uzum_url})"
+        
+        try:
+            await update.message.reply_text(message, parse_mode='Markdown')
+        except Exception as e:
+            log_error(e, f"products_cmd_uzum product {i}")
+            # Fallback without markdown
+            await update.message.reply_text(f"{title}\nNarx: {price}\nMavjud: {quantity} dona\nUzum: {uzum_url}")
+        
+        # Small delay between messages
+        await asyncio.sleep(0.5)
+    
+    uid = getattr(update.message.from_user, "id", None)
+    log_action("products_cmd_uzum", user=f"tg:{uid}", detail=f"showed {len(available_products)} products")
     # Fetch a small list of products (for demo use menu API)
     # DEBUG: Force reload by adding timestamp
     LOG.info("products_cmd_new called - version 3.0 - %s", datetime.now().isoformat())
@@ -1100,6 +1162,7 @@ def main():
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("test", test_cmd))
     app.add_handler(CommandHandler("products", products_cmd_new))
+    app.add_handler(CommandHandler("uzum", products_cmd_uzum))
     app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), handle_message))
 
     LOG.info("Telegram bot starting (polling)")
@@ -1160,8 +1223,8 @@ def main():
                 LOG.error(
                     "If you intend to run the bot in webhook mode, remove polling or disable auto-start. If running multiple instances, ensure START_TELEGRAM_BOT=0 or use a single managed process."
                 )
-                # Do not retry - return to let process exit/launcher or platform handle restart policy
-                return
+                # Do not retry - raise exception to trigger restart in outer loop
+                raise Exception("Conflict detected - need restart")
 
             # For other exceptions (timeouts, network errors), attempt graceful shutdown using asyncio
             try:
@@ -1195,7 +1258,7 @@ def main():
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.WARNING)
+    logging.basicConfig(level=logging.INFO)
     
     # Create simple Flask app for health checks
     app = Flask(__name__)
@@ -1208,16 +1271,37 @@ if __name__ == "__main__":
     def health():
         return {"status": "healthy"}
     
-    # Start Flask server in a separate thread
+    @app.route('/ping')
+    def ping():
+        return "pong"
+    
+    # Start Flask server in main thread
     port = int(os.environ.get('PORT', 10000))
     
-    def run_flask():
-        app.run(host='0.0.0.0', port=port, debug=False, use_reloader=False)
+    # Start Telegram bot in background thread
+    import asyncio
     
-    flask_thread = threading.Thread(target=run_flask, daemon=True)
-    flask_thread.start()
+    def run_telegram_bot():
+        while True:  # Infinite retry loop
+            try:
+                main()
+            except Exception as e:
+                LOG.error(f"Telegram bot crashed: {e}")
+                LOG.info("Restarting bot in 30 seconds...")
+                time.sleep(30)  # Wait before retry
     
-    LOG.info(f"Health check server started on port {port}")
+    bot_thread = threading.Thread(target=run_telegram_bot, daemon=False)
+    bot_thread.start()
     
-    # Run the Telegram bot
-    main()
+    # Give bot time to start
+    time.sleep(2)
+    
+    LOG.info(f"Starting health check server on port {port}")
+    
+    # Run Flask server in main thread (this keeps the process alive)
+    try:
+        app.run(host='0.0.0.0', port=port, debug=False, use_reloader=False, threaded=True)
+    except KeyboardInterrupt:
+        LOG.info("Shutting down...")
+    except Exception as e:
+        LOG.error(f"Flask server error: {e}")

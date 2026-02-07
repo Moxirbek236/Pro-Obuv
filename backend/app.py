@@ -256,14 +256,17 @@ try:
     import psycopg2
     from psycopg2 import pool as psycopg2_pool
     from psycopg2.extras import RealDictCursor
+    from psycopg2.errors import UniqueViolation
 except ImportError as e:
     print(f"CRITICAL: Failed to import psycopg2: {e}")
     psycopg2 = None
     psycopg2_pool = None
+    UniqueViolation = None
 except Exception as e:
     print(f"CRITICAL: Unexpected error importing psycopg2: {e}")
     psycopg2 = None
     psycopg2_pool = None
+    UniqueViolation = None
 
 
 # --- Swagger UI integration and token management (module-level) ---
@@ -3432,7 +3435,19 @@ def _now_iso():
     return datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
 
 
-def record_session_entry(session_id, user_id=None, ip=None, user_agent=None):
+def _sync_sessions_sequence(conn):
+    """Fix sessions.id sequence when it is behind MAX(id) (e.g. after restore/migration)."""
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT setval(pg_get_serial_sequence('sessions', 'id'), COALESCE((SELECT MAX(id) FROM sessions), 1))"
+        )
+        conn.commit()
+    except Exception as e:
+        app_logger.warning(f"_sync_sessions_sequence failed: {e}")
+
+
+def record_session_entry(session_id, user_id=None, ip=None, user_agent=None, _retried=False):
     """Create or update a sessions table entry for the given session_id."""
     try:
         now = _now_iso()
@@ -3453,6 +3468,19 @@ def record_session_entry(session_id, user_id=None, ip=None, user_agent=None):
                     (session_id, user_id, ip, user_agent, now, now),
                 )
     except Exception as e:
+        # Duplicate id: sequence out of sync (e.g. after migration). Sync and retry once.
+        if (
+            UniqueViolation is not None
+            and isinstance(e, UniqueViolation)
+            and "sessions_pkey" in str(e)
+            and not _retried
+        ):
+            try:
+                with get_db_pool().get_connection() as conn:
+                    _sync_sessions_sequence(conn)
+                return record_session_entry(session_id, user_id, ip, user_agent, _retried=True)
+            except Exception as retry_e:
+                app_logger.exception(f"record_session_entry retry failed: {retry_e}")
         app_logger.exception(f"record_session_entry failed: {e}")
 
 @app.route('/api/user-sessions', methods=['GET'])
@@ -3632,22 +3660,54 @@ def execute_query(query, params=None, fetch_one=False, fetch_all=False, max_retr
 
 def get_column_names(table_name):
     """Return list of column names for a table (DB agnostic)."""
-    if str(Config.DATABASE_URL).startswith('postgresql'):
+    if Config.DATABASE_URL and Config.DATABASE_URL.startswith("postgresql"):
         try:
             rows = execute_query(
                 "SELECT column_name FROM information_schema.columns WHERE table_name = %s",
-                (table_name.lower(),), fetch_all=True
+                (table_name.lower(),),
+                fetch_all=True,
             ) or []
-            return [r[0] if isinstance(r, (list, tuple)) else r.get('column_name') for r in rows]
-        except Exception:
+            return [
+                r[0] if isinstance(r, (list, tuple)) else r.get("column_name")
+                for r in rows
+            ]
+        except Exception as e:
+            app_logger.warning(f"get_column_names failed for {table_name}: {e}")
             return []
     else:
         # SQLite
         try:
             rows = execute_query(f"PRAGMA table_info({table_name})", fetch_all=True) or []
             return [r[1] for r in rows]
-        except:
+        except Exception:
             return []
+
+
+def is_column_not_null(table_name, column_name):
+    """Check if a column has a NOT NULL constraint (DB agnostic)."""
+    if Config.DATABASE_URL and Config.DATABASE_URL.startswith("postgresql"):
+        try:
+            row = execute_query(
+                "SELECT is_nullable FROM information_schema.columns WHERE table_name = %s AND column_name = %s",
+                (table_name.lower(), column_name.lower()),
+                fetch_one=True,
+            )
+            if row:
+                val = row[0] if isinstance(row, (list, tuple)) else row.get("is_nullable")
+                return val == "NO"
+            return False
+        except Exception:
+            return False
+    else:
+        # SQLite
+        try:
+            rows = execute_query(f"PRAGMA table_info({table_name})", fetch_all=True) or []
+            for r in rows:
+                if r[1] == column_name:
+                    return r[3] == 1
+            return False
+        except Exception:
+            return False
 
 def table_exists(table_name):
     """Return True if `table_name` exists in PostgreSQL."""
@@ -3840,17 +3900,6 @@ def api_translations():
 
 
 
-def get_column_names(table_name):
-    """Return a list of column names for the given table in PostgreSQL."""
-    try:
-        rows = execute_query(
-            "SELECT column_name FROM information_schema.columns WHERE table_name = %s",
-            (table_name.lower(),), fetch_all=True
-        )
-        return [r['column_name'] for r in rows] if rows else []
-    except Exception as e:
-        app_logger.warning(f"get_column_names failed for {table_name}: {e}")
-        return []
 
 
 def execute_many(query, params_list):
@@ -5217,12 +5266,7 @@ def ensure_menu_items_columns():
 
         # Ensure order_details has size/color columns when order_details table exists
         try:
-            if is_pg:
-                cur.execute("SELECT column_name FROM information_schema.columns WHERE table_name = 'order_details'")
-                od_cols = [r[0] for r in cur.fetchall()]
-            else:
-                cur.execute("PRAGMA table_info(order_details);")
-                od_cols = [r[1] for r in cur.fetchall()]
+            od_cols = get_column_names("order_details")
             if "size" not in od_cols:
                 try:
                     cur.execute("ALTER TABLE order_details ADD COLUMN size TEXT;")
@@ -5277,29 +5321,10 @@ def ensure_product_marketplaces_table():
 
 
 def ensure_ratings_columns():
-    """Ensure ``ratings`` table schema matches current code expectations.
-
-    Goals:
-      * Table always exists (even on a brand new database).
-      * Has a nullable ``menu_item_id`` and a ``branch_id`` column so both
-        product and branch ratings can be stored.
-      * Keeps existing data when upgrading from older schemas that do not
-        have ``branch_id`` or have ``menu_item_id`` marked NOT NULL.
-    """
-    conn = None
+    """Ensure ``ratings`` table schema matches expectations."""
     try:
-        conn = get_db()
-        cur = conn.cursor()
-
-        # Inspect current schema (if any)
-        cur.execute("PRAGMA table_info(ratings);")
-        cols_info = cur.fetchall() or []
-
-        # If the ratings table does NOT exist yet, create it with the
-        # latest schema and return early.
-        if not cols_info:
-            app_logger.info("Creating ratings table with branch_id support (fresh DB)")
-            cur.execute(
+        if not table_exists("ratings"):
+            execute_query(
                 """
                 CREATE TABLE IF NOT EXISTS ratings (
                     id SERIAL PRIMARY KEY,
@@ -5316,97 +5341,43 @@ def ensure_ratings_columns():
                 );
                 """
             )
-            conn.commit()
+            app_logger.info("Ratings table created")
             return
 
-        cols = [r[1] for r in cols_info]
+        cols = get_column_names("ratings")
+        is_pg = Config.DATABASE_URL and Config.DATABASE_URL.startswith("postgresql")
 
-        # Decide whether we need to rebuild an existing table
-        need_rebuild = False
+        # 1. Add branch_id if missing
         if "branch_id" not in cols:
-            need_rebuild = True
-        else:
-            # If menu_item_id currently has NOT NULL constraint, rebuild to allow NULL
-            for r in cols_info:
-                if r[1] == "menu_item_id":
-                    # PRAGMA table_info fields: cid, name, type, notnull, dflt_value, pk
-                    if r[3] == 1:
-                        need_rebuild = True
-                    break
+            execute_query("ALTER TABLE ratings ADD COLUMN branch_id INTEGER;")
+            execute_query("ALTER TABLE ratings ADD CONSTRAINT ratings_branch_fk FOREIGN KEY (branch_id) REFERENCES branches(id);")
+            app_logger.info("Added branch_id to ratings table")
 
-        if not need_rebuild:
-            return
-
-        app_logger.info(
-            "Rebuilding ratings table to add branch_id and allow NULL menu_item_id"
-        )
-
-        # Read existing rows (if any) from the legacy table
-        try:
-            cur.execute(
-                "SELECT id, user_id, menu_item_id, rating, comment, created_at FROM ratings"
-            )
-            existing = cur.fetchall() or []
-        except Exception:
-            # If we cannot read existing rows for some reason, treat as empty
-            existing = []
-
-        # Start migration in a transaction
-        cur.execute("BEGIN TRANSACTION;")
-
-        # Create new table with desired schema
-        cur.execute(
-            """
-            CREATE TABLE IF NOT EXISTS ratings_new (
-                id SERIAL PRIMARY KEY,
-                user_id INTEGER NOT NULL,
-                menu_item_id INTEGER,
-                branch_id INTEGER,
-                rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
-                comment TEXT,
-                created_at TEXT NOT NULL,
-                FOREIGN KEY (user_id) REFERENCES users(id),
-                FOREIGN KEY (menu_item_id) REFERENCES menu_items(id),
-                FOREIGN KEY (branch_id) REFERENCES branches(id),
-                UNIQUE(user_id, menu_item_id, branch_id)
-            );
-            """
-        )
-
-        # Copy existing rows into new table (branch_id NULL)
-        for row in existing:
-            rid = row[0]
-            uid = row[1]
-            mid = row[2]
-            rating_val = row[3]
-            comment = row[4]
-            created_at = row[5]
-            cur.execute(
-                "INSERT INTO ratings_new (id, user_id, menu_item_id, branch_id, rating, comment, created_at) "
-                "VALUES (%s, %s, %s, NULL, %s, %s, %s)",
-                (rid, uid, mid, rating_val, comment, created_at),
-            )
-
-        # Drop old table and rename new one
-        cur.execute("DROP TABLE IF EXISTS ratings;")
-        cur.execute("ALTER TABLE ratings_new RENAME TO ratings;")
-
-        conn.commit()
-        app_logger.info("Ratings table migration completed")
-
-    except Exception as e:
-        try:
-            if conn:
-                conn.rollback()
-        except Exception:
-            pass
-        app_logger.error(f"Ratings table migration failed: {str(e)}")
-    finally:
-        if conn:
+        # 2. Add Unique constraint if missing (PostgreSQL only simple check)
+        if is_pg:
             try:
-                conn.close()
+                # Check for unique constraint
+                res = execute_query("""
+                    SELECT 1 FROM pg_constraint 
+                    WHERE conrelid = 'ratings'::regclass 
+                    AND conname = 'ratings_user_menu_branch_key'
+                """, fetch_one=True)
+                if not res:
+                    execute_query("ALTER TABLE ratings ADD CONSTRAINT ratings_user_menu_branch_key UNIQUE(user_id, menu_item_id, branch_id);")
             except Exception:
                 pass
+        
+        # 3. Handle menu_item_id nullability
+        if is_column_not_null("ratings", "menu_item_id"):
+            if is_pg:
+                execute_query("ALTER TABLE ratings ALTER COLUMN menu_item_id DROP NOT NULL;")
+                app_logger.info("Made menu_item_id nullable on ratings (PostgreSQL)")
+            else:
+                # SQLite still needs rebuild, but we skip it here for simplicity as we move to PG
+                pass
+
+    except Exception as e:
+        app_logger.error(f"Ratings table migration failed: {str(e)}")
 
 
 def cleanup_expired_orders():
@@ -5526,19 +5497,11 @@ def send_birthday_notifications(run_date=None):
 def fix_staff_table():
     "Manual fix for staff table missing columns"
     try:
-        conn = get_db()
-        cur = conn.cursor()
-
-        # Check if total_hours exists
-        cur.execute("PRAGMA table_info(staff);")
-        cols = [r[1] for r in cur.fetchall()]
+        cols = get_column_names("staff")
 
         if "total_hours" not in cols:
-            cur.execute("ALTER TABLE staff ADD COLUMN total_hours REAL DEFAULT 0.0;")
-            conn.commit()
+            execute_query("ALTER TABLE staff ADD COLUMN total_hours REAL DEFAULT 0.0;")
             app_logger.info("Added missing total_hours column to staff table")
-
-        conn.close()
     except Exception as e:
         app_logger.error(f"Failed to fix staff table: {str(e)}")
 
@@ -5547,30 +5510,23 @@ def fix_staff_table():
 def fix_staff_role_table():
     "Add role column to staff table and create super admin"
     try:
-        conn = get_db()
-        cur = conn.cursor()
-
-        # Check if role column exists
-        cur.execute("PRAGMA table_info(staff);")
-        cols = [r[1] for r in cur.fetchall()]
+        cols = get_column_names("staff")
 
         if "role" not in cols:
-            cur.execute("ALTER TABLE staff ADD COLUMN role TEXT DEFAULT 'staff';")
-            conn.commit()
+            execute_query("ALTER TABLE staff ADD COLUMN role TEXT DEFAULT 'staff';")
             app_logger.info("Added role column to staff table")
 
         # Check if login column exists
         if "login" not in cols:
-            cur.execute("ALTER TABLE staff ADD COLUMN login TEXT;")
-            conn.commit()
+            execute_query("ALTER TABLE staff ADD COLUMN login TEXT;")
             app_logger.info("Added login column to staff table")
 
         # Create super admin if doesn't exist
-        cur.execute("SELECT COUNT(*) FROM staff WHERE role = 'super_admin'")
-        if cur.fetchone()[0] == 0:
+        count = safe_count("SELECT COUNT(*) FROM staff WHERE role = 'super_admin'")
+        if count == 0:
             now = get_current_time().isoformat()
             password_hash = generate_password_hash("admin123")
-            cur.execute(
+            execute_query(
                 "INSERT INTO staff (first_name, last_name, birth_date, phone, passport_series, passport_number, password_hash, role, login, created_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
                 (
                     "Super",
@@ -5585,11 +5541,8 @@ def fix_staff_role_table():
                     now,
                 ),
             )
-            conn.commit()
             app_logger.info("Created super admin user: login=admin, password=admin123")
             print("Super admin yaratildi: login=admin, password=admin123")
-
-        conn.close()
     except Exception as e:
         app_logger.error(f"Failed to fix staff role table: {str(e)}")
 
@@ -5598,11 +5551,8 @@ def fix_staff_role_table():
 def fix_news_table():
     "Create news table if not exists and reset sample data with correct images"
     try:
-        conn = get_db()
-        cur = conn.cursor()
-
         # Create news table
-        cur.execute(
+        execute_query(
             """
             CREATE TABLE IF NOT EXISTS news (
                 id SERIAL PRIMARY KEY,
@@ -5621,28 +5571,26 @@ def fix_news_table():
         )
 
         # Check and fix sample data with wrong image paths
-        cur.execute(
-            "SELECT COUNT(*) FROM news WHERE image_url LIKE '%spring-collection.jpg%' OR image_url LIKE '%payment-methods.jpg%'"
+        wrong_images_count = safe_count(
+            "SELECT COUNT(*) FROM news WHERE image_url LIKE '%%spring-collection.jpg%%' OR image_url LIKE '%%payment-methods.jpg%%'"
         )
-        wrong_images_count = cur.fetchone()[0]
 
         if wrong_images_count > 0:
             # Update wrong image paths
-            cur.execute(
+            execute_query(
                 "UPDATE news SET image_url = 'https://res.cloudinary.com/dpfbu9aid/image/upload/v1766927327/products/defoult.webp' WHERE image_url = '/static/images/spring-collection.jpg'"
             )
-            cur.execute(
+            execute_query(
                 "UPDATE news SET image_url = 'https://res.cloudinary.com/dpfbu9aid/image/upload/v1766927327/products/defoult.webp' WHERE image_url = '/static/images/payment-methods.jpg'"
             )
-            conn.commit()
             app_logger.info(
                 f"Fixed {wrong_images_count} news items with wrong image paths"
             )
             print(f"{wrong_images_count} ta yangilik rasmiy yo'llari tuzatildi")
 
         # Add sample news if table is empty
-        cur.execute("SELECT COUNT(*) FROM news")
-        if cur.fetchone()[0] == 0:
+        count = safe_count("SELECT COUNT(*) FROM news")
+        if count == 0:
             now = get_current_time().isoformat()
             sample_news = [
                 (
@@ -5694,15 +5642,11 @@ def fix_news_table():
                     now,
                 ),
             ]
-            cur.executemany(
+            execute_many(
                 "INSERT INTO news (title, content, type, image_url, video_url, is_active, display_order, created_by, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
                 sample_news,
             )
-            conn.commit()
             app_logger.info("Added sample news data")
-            print("Namuna yangiliklar qo'shildi")
-
-        conn.close()
     except Exception as e:
         app_logger.error(f"Failed to fix news table: {str(e)}")
 
@@ -7116,17 +7060,16 @@ def send_notification(
         """
         )
 
-        # Add missing columns if they don't exist (guarded by PRAGMA)
-        cur.execute("PRAGMA table_info(notifications)")
-        cols = [r[1] for r in cur.fetchall() or []]
+        # Add missing columns if they don't exist
+        cols = get_column_names("notifications")
         if "sender_type" not in cols:
-            cur.execute(
+            execute_query(
                 "ALTER TABLE notifications ADD COLUMN sender_type TEXT DEFAULT 'system'"
             )
         if "sender_id" not in cols:
-            cur.execute("ALTER TABLE notifications ADD COLUMN sender_id INTEGER")
+            execute_query("ALTER TABLE notifications ADD COLUMN sender_id INTEGER")
         if "notification_type" not in cols:
-            cur.execute(
+            execute_query(
                 "ALTER TABLE notifications ADD COLUMN notification_type TEXT DEFAULT 'general'"
             )
 
@@ -21928,17 +21871,7 @@ def api_update_news(news_id):
 
         now = get_current_time().isoformat()
         # Check if show_in_ticker column exists
-        has_show = False
-        try:
-            cols = execute_query("PRAGMA table_info(news)", fetch_all=True)
-            if cols:
-                for c in cols:
-                    name = c[1] if isinstance(c, tuple) else c.get("name")
-                    if name == "show_in_ticker":
-                        has_show = True
-                        break
-        except Exception:
-            has_show = False
+        has_show = "show_in_ticker" in get_column_names("news")
 
         # Accept multilingual fields if present
         title_ru = data.get("title_ru", "").strip()
@@ -22614,15 +22547,8 @@ def api_admin_news_ticker():
     try:
         # Ensure column exists
         try:
-            cols = execute_query("PRAGMA table_info(news)", fetch_all=True)
-            has_show = False
-            if cols:
-                for c in cols:
-                    name = c[1] if isinstance(c, tuple) else c.get("name")
-                    if name == "show_in_ticker":
-                        has_show = True
-                        break
-            if not has_show:
+            cols = get_column_names("news")
+            if "show_in_ticker" not in cols:
                 execute_query(
                     "ALTER TABLE news ADD COLUMN show_in_ticker BOOLEAN DEFAULT FALSE"
                 )

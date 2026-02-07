@@ -44,24 +44,18 @@
     <!-- Base Styles -->
     <!-- Base Styles handled by industrial-premium.css -->
     
+    <!-- Telegram Web App: dark theme va fonni Telegram ichida qo‘llash -->
+    <script src="https://telegram.org/js/telegram-web-app.js" crossorigin="anonymous"></script>
+    <style>
+        /* Telegram Web App ichida birinchi ko‘rinishda oq fon o‘rniga to‘q fon */
+        @media (max-width: 9999px) {
+            html.telegram-webapp-root { background-color: #0f172a !important; }
+        }
+    </style>
+    
     {% block extra_head %}{% endblock %}
     
     <script>
-        // Global CSRF Token
-        window.CSRF_TOKEN = '{{ csrf_token if csrf_token else "" }}';
-        
-        // Global App Config and State
-        window.BASE_CONFIG = {
-            lang: "{{ LANG }}",
-            user: {
-                user_id: {{ session.get('user_id') | tojson if session.get('user_id') else 'null' }},
-                staff_id: {{ session.get('staff_id') | tojson if session.get('staff_id') else 'null' }},
-                courier_id: {{ session.get('courier_id') | tojson if session.get('courier_id') else 'null' }},
-                is_super_admin: {{ session.get('super_admin') | tojson if session.get('super_admin') else 'false' }},
-                user_name: {{ session.get('user_name') | tojson if session.get('user_name') else "null" }}
-            }
-        };
-        
         // Default Avatar
         window.DEFAULT_AVATAR = "{{ 'images/default-avatar.svg' | cloudinary_url }}";
         
@@ -72,24 +66,56 @@
             }
         }
         
-        // Theme Management
+        // Theme Management + Telegram Web App: bot orqali ochilganda ham dark theme
         (function() {
-            const theme = localStorage.getItem('theme_preference') || 'dark';
+            const tg = window.Telegram && window.Telegram.WebApp;
+            const inTelegram = tg && (tg.initData || tg.initDataUnsafe);
+            let theme = localStorage.getItem('theme_preference') || 'dark';
+            
+            if (inTelegram) {
+                document.documentElement.classList.add('telegram-webapp-root');
+                theme = 'dark';
+                localStorage.setItem('theme_preference', 'dark');
+                try {
+                    tg.ready();
+                    tg.expand();
+                    tg.setBackgroundColor('#0f172a');
+                    tg.setHeaderColor('#0f172a');
+                } catch (e) {}
+            }
+            
             document.documentElement.classList.add(theme + '-theme');
             
-            // Safe body class application
-            const applyToBody = () => document.body.classList.add(theme + '-theme');
+            const applyToBody = () => {
+                document.body.classList.add(theme + '-theme');
+                if (inTelegram) document.body.classList.add('telegram-webapp-root');
+            };
             if (document.body) {
                 applyToBody();
             } else {
                 document.addEventListener('DOMContentLoaded', applyToBody);
             }
+            // Telegram keyin yuklansa ham dark theme qo‘llash
+            document.addEventListener('DOMContentLoaded', function() {
+                const t = window.Telegram && window.Telegram.WebApp;
+                const inTg = t && (t.initData || t.initDataUnsafe);
+                if (inTg && !document.body.classList.contains('telegram-webapp-root')) {
+                    document.documentElement.classList.add('telegram-webapp-root');
+                    document.documentElement.classList.remove('light-theme');
+                    document.documentElement.classList.add('dark-theme');
+                    document.body.classList.remove('light-theme');
+                    document.body.classList.add('dark-theme', 'telegram-webapp-root');
+                    localStorage.setItem('theme_preference', 'dark');
+                    try { t.setBackgroundColor('#0f172a'); t.setHeaderColor('#0f172a'); } catch (err) {}
+                }
+            });
         })();
     </script>
     
     <!-- Base Configuration for JavaScript -->
     <script type="application/json" id="base-config">
     {{ {
+      "lang": LANG,
       "translations": translations if translations is defined else {},
       "supported_languages": config.get('SUPPORTED_LANGUAGES', ['uz','ru','en','kz']),
       "session": {
@@ -101,7 +127,8 @@
          "is_super_admin": True if session.get('super_admin') else False,
          "staff_id": session.get('staff_id'),
          "courier_id": session.get('courier_id'),
-         "user_id": session.get('user_id')
+         "user_id": session.get('user_id'),
+         "user_name": session.get('user_name')
       },
       "messages": {
          "loading": _('messages.loading') if _('messages.loading') else "Loading...",
@@ -114,14 +141,15 @@
     
     <script>
         // Load Base Config
-        window.BASE_CONFIG = {};
+        window.BASE_CONFIG = { user: {} };
         try {
             const cfgEl = document.getElementById('base-config');
             if(cfgEl) window.BASE_CONFIG = JSON.parse(cfgEl.textContent);
         } catch(e) { console.error('Base config parse failed', e); }
 
-        // Expose translations
+        // Expose translations & globals
         window.TRANSLATIONS = window.BASE_CONFIG.translations || {};
+        window.CSRF_TOKEN = window.BASE_CONFIG.csrf_token || '';
     </script>
 </head>
 
