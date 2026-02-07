@@ -48,7 +48,7 @@ LOG = logging.getLogger("telegram_bot")
 # Load Uzum products data
 def load_uzum_products():
     try:
-        products_file = Path(__file__).parent / "test" / "bot_products_fixed_1770482210682.json"
+        products_file = Path(__file__).parent / "test" / "bot_ready_products_1770480265230.json"
         if products_file.exists():
             with open(products_file, 'r', encoding='utf-8') as f:
                 return json.load(f)
@@ -69,36 +69,32 @@ ERROR_LOG = LOGS_DIR / "telegram_errors.txt"
 
 
 def log_error(error: Exception, context: str = "") -> None:
-    """Log an error without sensitive data."""
+    """Log an error with traceback and context."""
     try:
         timestamp = datetime.now().isoformat()
-        error_msg = f"[{timestamp}] ERROR in {context}: {type(error).__name__}: {str(error)}\n"
+        error_msg = f"[{timestamp}] ERROR in {context}: {type(error).__name__}: {error}\n"
+        error_msg += f"Traceback: {traceback.format_exc()}\n"
         
-        # Only log to file, not console (to avoid token exposure)
         with open(ERROR_LOG, "a", encoding="utf-8") as f:
             f.write(error_msg)
         
-        # Don't log to console to avoid sensitive data
+        LOG.error(f"Error logged: {context} - {error}")
     except Exception:
-        pass
+        LOG.exception("Failed to log error")
 
 
 def log_action(action: str, user: str = "unknown", detail: str = "") -> None:
-    """Log user actions without sensitive data."""
+    """Log user actions for analytics."""
     try:
         timestamp = datetime.now().isoformat()
-        # Remove potential sensitive data from detail
-        safe_detail = detail
-        if 'token' in detail.lower():
-            safe_detail = "[REDACTED]"
+        log_entry = f"[{timestamp}] ACTION: {action} | USER: {user} | DETAIL: {detail}\n"
         
-        log_entry = f"[{timestamp}] ACTION: {action} | USER: {user} | DETAIL: {safe_detail}\n"
-        
-        # Only log to file
         with open(ACTION_LOG, "a", encoding="utf-8") as f:
             f.write(log_entry)
+        
+        LOG.info(f"Action logged: {action} by {user}")
     except Exception:
-        pass
+        LOG.exception("Failed to log action")
 
 
 async def _send_main_keyboard(update: "Update"):
@@ -173,9 +169,6 @@ async def products_cmd_uzum(update: "Update", context: "ContextTypes.DEFAULT_TYP
         quantity = product.get("totalQuantity", 0)
         brand = product.get("brand", "Noma'lum")
         product_id = product.get("id", "")
-        sizes = product.get("sizes", [])
-        colors = product.get("colors", [])
-        image_url = product.get("image", "")
         
         # Create Uzum URL
         if product_id:
@@ -183,44 +176,18 @@ async def products_cmd_uzum(update: "Update", context: "ContextTypes.DEFAULT_TYP
         else:
             uzum_url = product.get("uzumMarketUrl", "https://uzum.uz")
         
-        # Build message text
         message = f"🛍️ *{title}*\n"
         message += f"💰 Narx: {price}\n"
         message += f"📊 Mavjud: {quantity} dona\n"
-        message += f"🏷️ Brend: {brand}"
-        
-        if sizes:
-            message += f"\n📏 O\'lchamlar: {', '.join(sizes)}"
-        
-        if colors:
-            message += f"\n🎨 Ranglar: {', '.join(colors)}"
-        
-        message += f"\n🔗 [Uzum da ko'rish]({uzum_url})"
+        message += f"🏷️ Brend: {brand}\n"
+        message += f"🔗 [Uzum da ko'rish]({uzum_url})"
         
         try:
-            # Try to send with image first
-            if image_url and image_url.startswith('http'):
-                try:
-                    await update.message.reply_photo(
-                        photo=image_url,
-                        caption=message,
-                        parse_mode='Markdown'
-                    )
-                except Exception as photo_error:
-                    # If photo fails, send text only
-                    await update.message.reply_text(message, parse_mode='Markdown')
-            else:
-                # No valid image URL, send text only
-                await update.message.reply_text(message, parse_mode='Markdown')
-                
+            await update.message.reply_text(message, parse_mode='Markdown')
         except Exception as e:
             log_error(e, f"products_cmd_uzum product {i}")
-            # Fallback without markdown and without image
-            fallback_msg = f"{title}\nNarx: {price}\nMavjud: {quantity} dona\nBrend: {brand}"
-            if sizes: fallback_msg += f"\nO\'lchamlar: {', '.join(sizes)}"
-            if colors: fallback_msg += f"\nRanglar: {', '.join(colors)}"
-            fallback_msg += f"\nUzum: {uzum_url}"
-            await update.message.reply_text(fallback_msg)
+            # Fallback without markdown
+            await update.message.reply_text(f"{title}\nNarx: {price}\nMavjud: {quantity} dona\nUzum: {uzum_url}")
         
         # Small delay between messages
         await asyncio.sleep(0.5)
@@ -321,26 +288,20 @@ def main():
             LOG.error("python-telegram-bot import failed: %s", IMPORT_ERROR)
         else:
             LOG.error("python-telegram-bot not installed or TELEGRAM_BOT_TOKEN not set")
-        return False
+        return
 
-    # Build application with better timeout settings
+    # Build application
     app = None
     try:
         from telegram.request import HTTPXRequest
-        # Increase timeouts for better connection handling
-        request = HTTPXRequest(
-            connect_timeout=30.0,
-            read_timeout=30.0,
-            write_timeout=30.0,
-            pool_timeout=30.0
-        )
+        request = HTTPXRequest()
         app = ApplicationBuilder().token(os.environ.get("TELEGRAM_BOT_TOKEN")).request(request).build()
     except Exception:
         try:
             app = ApplicationBuilder().token(os.environ.get("TELEGRAM_BOT_TOKEN")).build()
         except Exception as e:
             LOG.exception("Failed to create Application: %s", e)
-            return False
+            return
 
     # Add handlers
     app.add_handler(CommandHandler("start", start))
@@ -351,48 +312,17 @@ def main():
 
     LOG.info("Telegram bot starting (polling)")
 
-    # Start polling with better error handling
+    # Start polling
     try:
-        app.run_polling(
-            drop_pending_updates=True,
-            timeout=30,
-            read_timeout=30,
-            write_timeout=30,
-            connect_timeout=30,
-            pool_timeout=30
-        )
-        return True
+        app.run_polling()
     except Exception as exc:
         LOG.error("Application.run_polling failed: %s", str(exc))
         if "Conflict" in str(exc) or "getUpdates" in str(exc):
             LOG.error("Another bot instance might be running. Please stop other instances.")
-        return False
 
 
 if __name__ == "__main__":
-    # Configure logging to exclude sensitive data
-    logging.basicConfig(
-        level=logging.WARNING,  # Only show warnings and errors
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        handlers=[
-            logging.StreamHandler()
-        ]
-    )
-    
-    # Disable specific loggers that might contain sensitive info
-    logging.getLogger('telegram').setLevel(logging.WARNING)
-    logging.getLogger('httpx').setLevel(logging.WARNING)
-    
-    # Handle graceful shutdown
-    import signal
-    
-    def signal_handler(signum, frame):
-        print(f"\n📡 Received signal {signum}, shutting down gracefully...")
-        sys.exit(0)
-    
-    # Register signal handlers
-    signal.signal(signal.SIGTERM, signal_handler)
-    signal.signal(signal.SIGINT, signal_handler)
+    logging.basicConfig(level=logging.INFO)
     
     # Create simple Flask app for health checks
     app = Flask(__name__)
@@ -409,24 +339,31 @@ if __name__ == "__main__":
     def ping():
         return "pong"
     
-    # Start Flask server in background thread
+    # Start Flask server in main thread
     port = int(os.environ.get('PORT', 10000))
     
-    def run_flask():
-        app.run(host='0.0.0.0', port=port, debug=False, use_reloader=False, threaded=True)
+    # Start Telegram bot in background thread
+    def run_telegram_bot():
+        while True:  # Infinite retry loop
+            try:
+                main()
+            except Exception as e:
+                LOG.error(f"Telegram bot crashed: {e}")
+                LOG.info("Restarting bot in 30 seconds...")
+                time.sleep(30)  # Wait before retry
     
-    flask_thread = threading.Thread(target=run_flask, daemon=True)
-    flask_thread.start()
+    bot_thread = threading.Thread(target=run_telegram_bot, daemon=False)
+    bot_thread.start()
     
-    # Give Flask time to start
+    # Give bot time to start
     time.sleep(2)
     
-    print(f"Starting Telegram bot, Flask on port {port}")
+    LOG.info(f"Starting health check server on port {port}")
     
-    # Run Telegram bot in main thread (this solves event loop issue)
+    # Run Flask server in main thread (this keeps the process alive)
     try:
-        main()
+        app.run(host='0.0.0.0', port=port, debug=False, use_reloader=False, threaded=True)
     except KeyboardInterrupt:
-        print("\nShutting down...")
+        LOG.info("Shutting down...")
     except Exception as e:
-        print(f"Bot error: {e}")
+        LOG.error(f"Flask server error: {e}")
