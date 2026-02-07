@@ -3286,15 +3286,19 @@ class DatabasePool:
             raise ImportError("psycopg2 not installed")
             
         try:
-            # Robust DSN handling: If it's a URI, try to extract basic info 
-            # and pass explicitly to avoid library-level URI parsing bugs.
-            if dsn and dsn.startswith("postgresql://"):
+            # Handle both postgresql:// and postgres:// (common in Heroku/Render)
+            if dsn and (dsn.startswith("postgresql://") or dsn.startswith("postgres://")):
                 try:
-                    url = urlparse.urlparse(dsn)
-                    # Extract query parameters separately
+                    # Replace postgres:// with postgresql:// for compatibility if needed
+                    parse_dsn = dsn
+                    if dsn.startswith("postgres://"):
+                        parse_dsn = "postgresql" + dsn[8:]
+
+                    url = urlparse.urlparse(parse_dsn)
+                    # Extract query parameters
                     params = urlparse.parse_qs(url.query)
                     
-                    # Connection options for the pool
+                    # Core connection components
                     conn_kwargs = {
                         "user": url.username,
                         "password": url.password,
@@ -3303,15 +3307,23 @@ class DatabasePool:
                         "database": url.path.lstrip('/')
                     }
                     
-                    # Map common query params
+                    # Explicitly handle common options that cause DSN parsing issues
                     if 'sslmode' in params:
                         conn_kwargs['sslmode'] = params['sslmode'][0]
                     else:
                         conn_kwargs['sslmode'] = 'require'
-                        
+                    
+                    # Add other possible params from query string to kwargs if they are valid psycopg2 params
+                    # (Simplified: just pass them all, psycopg2 will ignore unknown ones or we can be selective)
+                    valid_params = ['connect_timeout', 'options', 'application_name', 'keepalives', 'sslcert', 'sslkey', 'sslrootcert']
+                    for p in valid_params:
+                        if p in params:
+                            conn_kwargs[p] = params[p][0]
+
                     # Filter out None values
                     conn_kwargs = {k: v for k, v in conn_kwargs.items() if v is not None}
                     
+                    # Try connecting with components
                     self.pool = psycopg2_pool.ThreadedConnectionPool(
                         1, self.max_connections,
                         cursor_factory=RealDictCursor,
@@ -3320,7 +3332,7 @@ class DatabasePool:
                     app_logger.info("PostgreSQL connection pool initialized (using parsed components)")
                     return
                 except Exception as parse_err:
-                    app_logger.warning(f"Failed to parse DSN URI components: {parse_err}. Falling back to raw DSN.")
+                    app_logger.warning(f"Failed to connect using parsed URI components: {parse_err}. Trying raw DSN...")
 
             # Fallback to standard raw DSN connection
             self.pool = psycopg2_pool.ThreadedConnectionPool(
