@@ -256,7 +256,12 @@ try:
     import psycopg2
     from psycopg2 import pool as psycopg2_pool
     from psycopg2.extras import RealDictCursor
-except ImportError:
+except ImportError as e:
+    print(f"CRITICAL: Failed to import psycopg2: {e}")
+    psycopg2 = None
+    psycopg2_pool = None
+except Exception as e:
+    print(f"CRITICAL: Unexpected error importing psycopg2: {e}")
     psycopg2 = None
     psycopg2_pool = None
 
@@ -7657,7 +7662,7 @@ def api_super_admin_export_report():
                 # Create a simple CSV with sections separated
                 w = output
                 # We'll write UTF-8 BOM for Excel compatibility
-                w.write(b"\ufeff")
+                w.write(b"\xef\xbb\xbf")
                 text = []
                 text.append("# Summary")
                 if summary:
@@ -7780,7 +7785,7 @@ def api_super_admin_export_staff():
             )
             try:
                 output = BytesIO()
-                output.write(b"\ufeff")
+                output.write(b"\xef\xbb\xbf")
                 # csv writer needs text mode; create text and encode later
                 rows = staff_rows or []
                 if rows:
@@ -7872,7 +7877,7 @@ def api_super_admin_export_couriers():
             )
             try:
                 output = BytesIO()
-                output.write(b"\ufeff")
+                output.write(b"\xef\xbb\xbf")
                 rows = courier_rows or []
                 if rows:
                     headers = []
