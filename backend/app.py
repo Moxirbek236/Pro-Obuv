@@ -3430,6 +3430,154 @@ def terminate_session(session_id_to_kill, current_session_id=None):
         return False
 
 
+
+# Optimized database operations with timeout handling
+def execute_query(query, params=None, fetch_one=False, fetch_all=False, max_retries=3):
+    "Optimizatsiya qilingan database so'rovi - improved None handling"
+    last_error = None
+
+    for attempt in range(max_retries):
+        try:
+            pool = get_db_pool()
+            with pool.get_connection() as conn:
+                if conn is None:
+                    raise Exception("Connection is None")
+
+                cur = conn.cursor()
+
+                # Query ni timeout bilan bajarish
+                if params:
+                    cur.execute(query, params)
+                else:
+                    cur.execute(query)
+
+                if fetch_one:
+                    result = cur.fetchone()
+                    if result is None:
+                        return None
+
+                    cols = [c[0] for c in (cur.description or [])]
+
+                    # Proper RowProxy handling for both dict (RealDictRow) and tuple inputs
+                    class RowProxy(dict):
+                        def __init__(self, columns, values):
+                            # Extract true values if input is dict-like
+                            if hasattr(values, "keys"):
+                                final_values = [values.get(c) for c in columns]
+                            else:
+                                final_values = values
+                                
+                            super().__init__(zip(columns, final_values) if columns else {})
+                            self._values = tuple(final_values)
+                            self._columns = list(columns)
+
+                        def __getitem__(self, key):
+                            if isinstance(key, int):
+                                return self._values[key]
+                            return super().__getitem__(key)
+
+                        def get(self, key, default=None):
+                            return super().get(key, default)
+
+                        def keys(self):
+                            return super().keys()
+
+                    return RowProxy(cols, result)
+
+                elif fetch_all:
+                    all_results = cur.fetchall() or []
+                    if not all_results:
+                        return []
+
+                    cols = [c[0] for c in (cur.description or [])]
+
+                    # Define RowProxy again (scoping)
+                    class RowProxy(dict):
+                        def __init__(self, columns, values):
+                            if hasattr(values, "keys"):
+                                final_values = [values.get(c) for c in columns]
+                            else:
+                                final_values = values
+                                
+                            super().__init__(zip(columns, final_values) if columns else {})
+                            self._values = tuple(final_values)
+                            self._columns = list(columns)
+
+                        def __getitem__(self, key):
+                            if isinstance(key, int):
+                                return self._values[key]
+                            return super().__getitem__(key)
+
+                        def get(self, key, default=None):
+                            return super().get(key, default)
+
+                        def keys(self):
+                            return super().keys()
+
+                    proxy_rows = []
+                    for r in all_results:
+                        try:
+                            proxy_rows.append(RowProxy(cols, r))
+                        except Exception:
+                            proxy_rows.append(r)
+                    return proxy_rows
+                else:
+                    conn.commit()
+                    # Safe lastrowid return
+                    try:
+                        return cur.lastrowid
+                    except (AttributeError, TypeError):
+                        return None
+
+        except Exception as e:
+            last_error = e
+            error_msg = str(e).lower()
+            # Handle retries for connection issues or timeouts
+            if any(term in error_msg for term in ["timeout", "locked", "connection", "closed", "pool", "network"]):
+                if attempt < max_retries - 1:
+                    wait_time = 0.5 * (2**attempt)
+                    app_logger.warning(f"Database issue, retrying in {wait_time}s (attempt {attempt + 1}): {e}")
+                    time.sleep(wait_time)
+                    continue
+            
+            app_logger.error(f"execute_query error: {str(e)} - Query: {query[:100]}...")
+            raise e
+
+def get_column_names(table_name):
+    """Return list of column names for a table (DB agnostic)."""
+    if str(Config.DATABASE_URL).startswith('postgresql'):
+        try:
+            rows = execute_query(
+                "SELECT column_name FROM information_schema.columns WHERE table_name = %s",
+                (table_name.lower(),), fetch_all=True
+            ) or []
+            return [r[0] if isinstance(r, (list, tuple)) else r.get('column_name') for r in rows]
+        except Exception:
+            return []
+    else:
+        # SQLite
+        try:
+            rows = execute_query(f"PRAGMA table_info({table_name})", fetch_all=True) or []
+            return [r[1] for r in rows]
+        except:
+            return []
+
+def table_exists(table_name):
+    """Return True if `table_name` exists in PostgreSQL."""
+    try:
+        if str(Config.DATABASE_URL).startswith('postgresql'):
+            r = execute_query(
+                "SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = %s)",
+                (table_name.lower(),), fetch_one=True
+            )
+            return bool(r[0]) if r else False
+        else:
+            # SQLite fallback
+            r = execute_query(f"SELECT name FROM sqlite_master WHERE type='table' AND name=%s", (table_name,), fetch_one=True)
+            return bool(r)
+    except Exception:
+        return False
+
 # Ensure database schema exists before first request (safe registration)
 def ensure_db_schema():
     # PostgreSQL: Tables are already created during migration. Skip init_db.
@@ -3603,131 +3751,7 @@ def api_translations():
         return jsonify({}), 500
 
 
-# Optimized database operations with timeout handling
-# Optimized database operations with timeout handling
-def execute_query(query, params=None, fetch_one=False, fetch_all=False, max_retries=3):
-    "Optimizatsiya qilingan database so'rovi - improved None handling"
-    last_error = None
 
-    for attempt in range(max_retries):
-        try:
-            pool = get_db_pool()
-            with pool.get_connection() as conn:
-                if conn is None:
-                    raise Exception("Connection is None")
-
-                cur = conn.cursor()
-
-                # Query ni timeout bilan bajarish
-                if params:
-                    cur.execute(query, params)
-                else:
-                    cur.execute(query)
-
-                if fetch_one:
-                    result = cur.fetchone()
-                    if result is None:
-                        return None
-
-                    cols = [c[0] for c in (cur.description or [])]
-
-                    # Proper RowProxy handling for both dict (RealDictRow) and tuple inputs
-                    class RowProxy(dict):
-                        def __init__(self, columns, values):
-                            # Extract true values if input is dict-like
-                            if hasattr(values, "keys"):
-                                final_values = [values.get(c) for c in columns]
-                            else:
-                                final_values = values
-                                
-                            super().__init__(zip(columns, final_values) if columns else {})
-                            self._values = tuple(final_values)
-                            self._columns = list(columns)
-
-                        def __getitem__(self, key):
-                            if isinstance(key, int):
-                                return self._values[key]
-                            return super().__getitem__(key)
-
-                        def get(self, key, default=None):
-                            return super().get(key, default)
-
-                        def keys(self):
-                            return super().keys()
-
-                    return RowProxy(cols, result)
-
-                elif fetch_all:
-                    all_results = cur.fetchall() or []
-                    if not all_results:
-                        return []
-
-                    cols = [c[0] for c in (cur.description or [])]
-
-                    # Define RowProxy again (scoping)
-                    class RowProxy(dict):
-                        def __init__(self, columns, values):
-                            if hasattr(values, "keys"):
-                                final_values = [values.get(c) for c in columns]
-                            else:
-                                final_values = values
-                                
-                            super().__init__(zip(columns, final_values) if columns else {})
-                            self._values = tuple(final_values)
-                            self._columns = list(columns)
-
-                        def __getitem__(self, key):
-                            if isinstance(key, int):
-                                return self._values[key]
-                            return super().__getitem__(key)
-
-                        def get(self, key, default=None):
-                            return super().get(key, default)
-
-                        def keys(self):
-                            return super().keys()
-
-                    proxy_rows = []
-                    for r in all_results:
-                        try:
-                            proxy_rows.append(RowProxy(cols, r))
-                        except Exception:
-                            proxy_rows.append(r)
-                    return proxy_rows
-                else:
-                    conn.commit()
-                    # Safe lastrowid return
-                    try:
-                        return cur.lastrowid
-                    except (AttributeError, TypeError):
-                        return None
-
-        except Exception as e:
-            last_error = e
-            error_msg = str(e).lower()
-            # Handle retries for connection issues or timeouts
-            if any(term in error_msg for term in ["timeout", "locked", "connection", "closed", "pool", "network"]):
-                if attempt < max_retries - 1:
-                    wait_time = 0.5 * (2**attempt)
-                    app_logger.warning(f"Database issue, retrying in {wait_time}s (attempt {attempt + 1}): {e}")
-                    time.sleep(wait_time)
-                    continue
-            
-            app_logger.error(f"execute_query error: {str(e)} - Query: {query[:100]}...")
-            raise e
-
-    # Agar barcha attempts muvaffaqiyatsiz bo'lsa
-    
-def table_exists(table_name):
-    """Return True if `table_name` exists in PostgreSQL."""
-    try:
-        r = execute_query(
-            "SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = %s)",
-            (table_name.lower(),), fetch_one=True
-        )
-        return bool(r[0]) if r else False
-    except Exception:
-        return False
 
 def get_column_names(table_name):
     """Return a list of column names for the given table in PostgreSQL."""
@@ -4700,8 +4724,7 @@ def init_db():
     )
     # Ensure backwards-compatible columns exist (some older code writes 'sender'/'source')
     try:
-        cur.execute("PRAGMA table_info(chat_messages);")
-        cols = [r[1] for r in cur.fetchall() or []]
+        cols = get_column_names("chat_messages")
         # older code expects a 'sender' short column for simple storage
         if "sender" not in cols:
             try:
@@ -4740,8 +4763,7 @@ def init_db():
 
     # Add missing columns if they don't exist
     try:
-        cur.execute("PRAGMA table_info(notifications);")
-        cols = [r[1] for r in cur.fetchall() or []]
+        cols = get_column_names("notifications")
         if "sender_type" not in cols:
             cur.execute(
                 "ALTER TABLE notifications ADD COLUMN sender_type TEXT DEFAULT 'system'"
@@ -5606,8 +5628,7 @@ def fix_courier_table():
         cur = conn.cursor()
 
         # Check courier table columns
-        cur.execute("PRAGMA table_info(couriers);")
-        cols = [r[1] for r in cur.fetchall()]
+        cols = get_column_names("couriers")
 
         if "total_hours" not in cols:
             cur.execute("ALTER TABLE couriers ADD COLUMN total_hours REAL DEFAULT 0.0;")
