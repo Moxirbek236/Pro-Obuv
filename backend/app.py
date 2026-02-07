@@ -3286,7 +3286,13 @@ class DatabasePool:
             )
             app_logger.info("PostgreSQL connection pool initialized")
         except Exception as e:
-             app_logger.error(f"PostgreSQL pool init failed: {e}")
+             error_msg = str(e)
+             if "Network is unreachable" in error_msg:
+                 app_logger.error(f"PostgreSQL connection failed: Network is unreachable. "
+                                 f"IMPORTANT: If you are on Render.com, this is likely because Supabase direct connections use IPv6 which Render doesn't support. "
+                                 f"Please use the Supabase Connection Pooler (port 6543) instead of direct connection (port 5432).")
+             else:
+                 app_logger.error(f"PostgreSQL pool init failed: {e}")
              raise
 
     @contextmanager
