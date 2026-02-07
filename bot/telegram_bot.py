@@ -13,6 +13,8 @@ from pathlib import Path
 import atexit
 import time
 from dotenv import load_dotenv
+import threading
+from flask import Flask
 load_dotenv(os.path.join(os.path.dirname(__file__), '../backend/.env'))
 
 
@@ -1194,4 +1196,28 @@ def main():
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.WARNING)
+    
+    # Create simple Flask app for health checks
+    app = Flask(__name__)
+    
+    @app.route('/')
+    def health_check():
+        return {"status": "ok", "service": "telegram-bot"}
+    
+    @app.route('/health')
+    def health():
+        return {"status": "healthy"}
+    
+    # Start Flask server in a separate thread
+    port = int(os.environ.get('PORT', 10000))
+    
+    def run_flask():
+        app.run(host='0.0.0.0', port=port, debug=False, use_reloader=False)
+    
+    flask_thread = threading.Thread(target=run_flask, daemon=True)
+    flask_thread.start()
+    
+    LOG.info(f"Health check server started on port {port}")
+    
+    # Run the Telegram bot
     main()

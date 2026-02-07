@@ -18905,19 +18905,19 @@ def api_member_profile(member_type, member_id):
 
         if mt == "users":
             r = execute_query(
-                "SELECT id, first_name, last_name, email AS username, phone, birth_date, avatar FROM users WHERE id = %s",
+                "SELECT id, first_name, last_name, email AS username, phone, NULL as birth_date, avatar FROM users WHERE id = %s",
                 (member_id,),
                 fetch_one=True,
             )
         elif mt == "staff":
             r = execute_query(
-                "SELECT id, first_name, last_name, email AS username, phone, birth_date, avatar FROM staff WHERE id = %s",
+                "SELECT id, first_name, last_name, login AS username, phone, birth_date, avatar FROM staff WHERE id = %s",
                 (member_id,),
                 fetch_one=True,
             )
         elif mt == "couriers":
             r = execute_query(
-                "SELECT id, first_name, last_name, email AS username, phone, birth_date, avatar FROM couriers WHERE id = %s",
+                "SELECT id, first_name, last_name, phone AS username, phone, birth_date, avatar FROM couriers WHERE id = %s",
                 (member_id,),
                 fetch_one=True,
             )
@@ -19816,7 +19816,7 @@ def staff_dashboard():
         orders = [dict(row) for row in (execute_query("""
             SELECT o.*, 
                    u.first_name || ' ' || u.last_name as customer_name,
-                   u.phone_number as customer_phone
+                   u.phone as customer_phone
             FROM orders o
             LEFT JOIN users u ON o.user_id = u.id
             WHERE o.status NOT IN ('delivered', 'cancelled')
@@ -20278,7 +20278,8 @@ def super_admin_dashboard():
         # but let's go with complete data for lists that are expected.
         staff_db = [dict(s) for s in (execute_query("SELECT id, first_name, last_name, phone, passport_series, passport_number FROM staff ORDER BY id DESC", fetch_all=True) or [])]
         couriers_db = [dict(c) for c in (execute_query("SELECT id, first_name, last_name, phone FROM couriers ORDER BY id DESC", fetch_all=True) or [])]
-        users_db = [dict(u) for u in (execute_query("SELECT id, first_name, last_name, username, phone_number as phone, email, address FROM users ORDER BY id DESC", fetch_all=True) or [])]
+        # Fixed: Use 'email' as username substitute and 'phone' column
+        users_db = [dict(u) for u in (execute_query("SELECT id, first_name, last_name, email as username, phone, email, address FROM users ORDER BY id DESC", fetch_all=True) or [])]
         
         questions = [dict(q) for q in (execute_query("SELECT * FROM questions ORDER BY created_at DESC LIMIT 20", fetch_all=True) or [])]
         branches = [dict(b) for b in (execute_query("SELECT * FROM branches ORDER BY name", fetch_all=True) or [])]
