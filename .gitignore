@@ -112,3 +112,67 @@ dist/
 logs/
 *.log.env
 .env.example
+
+# ==========================
+# Security & Credentials
+# ==========================
+.env
+.env.*
+!.env.example
+backend/.env
+backend/.env.*
+credentials*.json
+secrets*.json
+*.pem
+*.key
+
+# ==========================
+# Database & Backups
+# ==========================
+*.sqlite
+*.sqlite3
+*.db
+backend/database/
+backend/instance/
+backend/app.py.bak*
+backend/app_module.bak*
+*.bak
+
+# ==========================
+# Temporary Migration & Debug Scripts
+# ==========================
+backend/migrate_to_neon.py
+backend/scanner.py
+backend/test_dbs.py
+backend/test_pooler_connection.py
+backend/find_supabase_region.py
+backend/final_check.py
+backend/test_*.py
+backend/check_*.py
+backend/debug_*.py
+backend/scripts/login_response_debug.html
+backend/scripts/test_response.html
+backend/scripts/*.out
+backend/menu_response.txt
+
+# ==========================
+# Tools & Development
+# ==========================
+backend/tools/
+backend/tests/__pycache__/
+backend/scripts/__pycache__/
+.replit.bak
+
+# ==========================
+# Project Specific
+# ==========================
+logs/
+*.log
+node_modules/
+venv/
+.venv/
+.vscode/
+.idea/
+dist/
+build/
+__pycache__/

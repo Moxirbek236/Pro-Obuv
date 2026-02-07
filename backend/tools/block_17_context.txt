@@ -1,9 +1,0 @@
-ntListener('resize', applyMainTopPadding);
-          }
-        } catch (e) {
-          // ignore
-        }
-
-        // 2) Theme - ensure default dark, provide reliable toggle that persists to server
-        try {
-          // Session value 

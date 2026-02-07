@@ -1,2 +1,0 @@
-ntListener('click', ()=>{ const m = document.getElementById('notifyModal'); if(m) m.style.display='none'; });
-          })();
