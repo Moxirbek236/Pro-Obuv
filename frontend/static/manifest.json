@@ -1,0 +1,42 @@
+{
+  "name": "Safety.uz SuperAdmin",
+  "short_name": "SafetyAdmin",
+  "start_url": "/super-admin/dashboard",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0f172a",
+  "description": "Pro Obuv va Safety.uz tizimining to'liq boshqaruv paneli. Buyurtmalar, xodimlar va hisobotlar.",
+  "categories": ["business", "productivity", "shopping"],
+  "orientation": "portrait",
+  "display_override": ["window-controls-overlay", "minimal-ui"],
+  "icons": [
+    {
+      "src": "/static/img/default.webp",
+      "sizes": "192x192",
+      "type": "image/webp",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/img/default.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/static/img/default.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
+      "form_factor": "wide",
+      "label": "Dashboard Overview"
+    },
+    {
+      "src": "/static/img/default.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
+      "form_factor": "narrow",
+      "label": "Mobile Dashboard"
+    }
+  ]
+}

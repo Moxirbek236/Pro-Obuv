@@ -1,0 +1,999 @@
+
+<meta name="description" content="meta.products_description" />
+<meta name="keywords" content="meta.products_keywords" />
+
+nav.products - Safety.uz
+
+<div class="shop-hero-banner">
+    <div class="container animate-up">
+        <h1 class="display-3 fw-bold mb-3">KATALOG 2024</h1>
+        <label class="form-label text-secondary small text-uppercase fw-bold mb-3">Mahsulotlarni qidirish</label>
+        <p class="lead opacity-75">Aniq muhandislik xavfsizlik poyabzallari va ish kiyimlari</p>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <!-- Mobile Filter Toggle -->
+    <button class="btn btn-primary-industrial w-100 mb-3 d-lg-none d-block" type="button" onclick="toggleMobileFilter()">
+        <i class="bi bi-funnel me-2"></i> FILTRLAR
+    </button>
+
+    <div class="shop-layout">
+
+        <!-- Sidebar Filters -->
+        <aside class="shop-sidebar animate-left" id="shopSidebar" style="position: sticky; top: 100px; height: fit-content; align-self: start; z-index: 90;">
+            <div class="filter-backdrop d-lg-none" onclick="toggleMobileFilter()"></div>
+            <div class="industrial-card p-4 filter-content">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="mb-0 d-flex align-items-center">
+                        <i class="bi bi-funnel me-2"></i> FILTRLAR
+                    </h4>
+                    <!-- Mobile Close Button -->
+                    <button type="button" class="btn btn-sm btn-light border d-lg-none rounded-circle" onclick="toggleMobileFilter()">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="category-label">Mahsulotlarni qidirish</label>
+                    <div class="position-relative">
+                        <input type="text" id="productSearch" class="form-control" placeholder="Qidirish... (nom, tavsif)">
+                        <i class="bi bi-search position-absolute top-50 end-0 translate-middle-y me-3 opacity-50"></i>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="category-label">Kategoriya</label>
+                    <select class="form-select" id="categoryFilter">
+                        <option value="">Barcha kategoriyalar</option>
+                        <option value="specobuv">Xavfsizlik botinkalari</option>
+                        <option value="specodezhda">Himoya kostyumlari</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="category-label">Brend</label>
+                    <select class="form-select" id="brandFilter">
+                        <option value="">Barcha brendlar</option>
+                        <option value="delta plus">Delta Plus</option>
+                        <option value="safety jogger">Safety Jogger</option>
+                        <option value="uzshoes">UzShoes</option>
+                        <option value="pro obuv">Pro Obuv</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="category-label">Material</label>
+                    <select class="form-select" id="materialFilter">
+                        <option value="">Barcha materiallar</option>
+                        <option value="tabiiy-charm">Tabiiy charm</option>
+                        <option value="suniy-charm">Sun'iy charm</option>
+                        <option value="rezina">Rezina</option>
+                        <option value="paxta">Paxta</option>
+                        <option value="poliester">Poliester</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="category-label">Himoya darajasi</label>
+                    <select class="form-select" id="protectionFilter">
+                        <option value="">Barcha darajalar</option>
+                        <option value="S1">S1</option>
+                        <option value="S1P">S1P</option>
+                        <option value="S2">S2</option>
+                        <option value="S3">S3</option>
+                        <option value="GOST">GOST</option>
+                        <option value="ISO">ISO</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="category-label">Saralash</label>
+                    <select class="form-select" id="sortFilter">
+                        <option value="name">Nomi bo&#39;yicha</option>
+                        <option value="category">Kategoriya bo&#39;yicha</option>
+                        <option value="rating">Bahoga ko&#39;ra</option>
+                        <option value="newest">Avval yangilari</option>
+                    </select>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary-industrial" onclick="applyFiltersMobile()">Filtrlarni qo&#39;llash</button>
+                    <button class="btn btn-outline-secondary" onclick="clearFilters()">Barchasini tozalash</button>
+                </div>
+            </div>
+        </aside>
+
+        <style>
+        /* Mobile Filter Modal Styles */
+        @media (max-width: 991px) {
+            #shopSidebar {
+                position: fixed !important;
+                top: 0 !important;
+                left: 0;
+                width: 100%;
+                height: 100% !important;
+                z-index: 2000 !important;
+                visibility: hidden;
+                transition: visibility 0.3s;
+            }
+
+            #shopSidebar.show {
+                visibility: visible;
+            }
+
+            .filter-backdrop {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                opacity: 0;
+                transition: opacity 0.3s;
+            }
+            
+            #shopSidebar.show .filter-backdrop {
+                opacity: 1;
+            }
+
+            .filter-content {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                max-height: 90vh; /* Bottom sheet style or adjust for full screen */
+                height: auto;
+                background: var(--bg-body, #fff);
+                border-radius: 20px 20px 0 0;
+                overflow-y: auto;
+                transform: translateY(100%);
+                transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+                box-shadow: 0 -5px 25px rgba(0,0,0,0.2);
+            }
+
+            /* Dark mode support */
+            body.dark-theme .filter-content {
+                background: #1e293b; 
+            }
+
+            /* Full screen on very small phones if preferred, currently bottom sheet style */
+            @media (max-width: 576px) {
+                .filter-content {
+                    height: 100%;
+                    max-height: 100%;
+                    border-radius: 0;
+                }
+            }
+
+            #shopSidebar.show .filter-content {
+                transform: translateY(0);
+            }
+        }
+        </style>
+
+        <!-- Main Product Area -->
+        <section class="shop-products animate-up" style="animation-delay: 0.2s;">
+            <div class="product-grid-main">
+                
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="берцы" 
+                   data-category="specobuv"
+                   data-price="300000.0"
+                   data-rating="4.5"
+                   data-new="False"
+                   data-product-id="38"
+                   data-brand=""
+                   data-material=""
+                   data-season=""
+                   data-features=""
+                   data-protection=""
+                   href="http://127.0.0.1:5000/product/38" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/38_cb9432a802b44154b8ea4cbef63f1adf"  
+                            alt="Берцы" 
+                            class="product-img"
+                            loading="lazy"
+                            onerror="this.onerror=null;this.src='/uz/static/img/placeholder-product.png';"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Берцы</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="cross" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="4.25"
+                   data-new="False"
+                   data-product-id="39"
+                   data-brand=""
+                   data-material=""
+                   data-season=""
+                   data-features=""
+                   data-protection=""
+                   href="http://127.0.0.1:5000/product/39" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/39_51c9f712fc684c7f94971709e6f1e560"  
+                            alt="Cross" 
+                            class="product-img"
+                            loading="lazy"
+                            onerror="this.onerror=null;this.src='/uz/static/img/placeholder-product.png';"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Cross</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="auto" 
+                   data-category="specodezhda"
+                   data-price="120000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="56"
+                   data-brand=""
+                   data-material=""
+                   data-season=""
+                   data-features=""
+                   data-protection=""
+                   href="http://127.0.0.1:5000/product/56" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/v1767032840/products/qgvog062vnpen8nrs2oh.jpg"  
+                            alt="Auto" 
+                            class="product-img"
+                            loading="lazy"
+                            onerror="this.onerror=null;this.src='/uz/static/img/placeholder-product.png';"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specodezhda</span>
+                        <h4 class="h5 mb-3">Auto</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="cross 2" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="40"
+                   data-brand=""
+                   data-material=""
+                   data-season=""
+                   data-features=""
+                   data-protection=""
+                   href="http://127.0.0.1:5000/product/40" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/40_9fff1211e53d4321a0742819530a4814"  
+                            alt="Cross 2" 
+                            class="product-img"
+                            loading="lazy"
+                            onerror="this.onerror=null;this.src='/uz/static/img/placeholder-product.png';"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Cross 2</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="cross 3" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="41"
+                   data-brand=""
+                   data-material=""
+                   data-season=""
+                   data-features=""
+                   data-protection=""
+                   href="http://127.0.0.1:5000/product/41" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/41_81a2b29b02fd4309813bc4735b426b4c"  
+                            alt="Cross 3" 
+                            class="product-img"
+                            loading="lazy"
+                            onerror="this.onerror=null;this.src='/uz/static/img/placeholder-product.png';"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Cross 3</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="cross 4" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="42"
+                   data-brand=""
+                   data-material=""
+                   data-season=""
+                   data-features=""
+                   data-protection=""
+                   href="http://127.0.0.1:5000/product/42" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/42_41109a91b09747019b5593cbff87580f"  
+                            alt="Cross 4" 
+                            class="product-img"
+                            loading="lazy"
+                            onerror="this.onerror=null;this.src='/uz/static/img/placeholder-product.png';"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Cross 4</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="cross 5" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="43"
+                   data-brand=""
+                   data-material=""
+                   data-season=""
+                   data-features=""
+                   data-protection=""
+                   href="http://127.0.0.1:5000/product/43" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/43_b55897f85fa34d75aaf45ecdd68d6cd0"  
+                            alt="Cross 5" 
+                            class="product-img"
+                            loading="lazy"
+                            onerror="this.onerror=null;this.src='/uz/static/img/placeholder-product.png';"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Cross 5</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="hunter black" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="48"
+                   data-brand=""
+                   data-material=""
+                   data-season=""
+                   data-features=""
+                   data-protection=""
+                   href="http://127.0.0.1:5000/product/48" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/48_3e2f32e95cbf42ffbb23c19e4de369f9"  
+                            alt="Hunter Black" 
+                            class="product-img"
+                            loading="lazy"
+                            onerror="this.onerror=null;this.src='/uz/static/img/placeholder-product.png';"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Hunter Black</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="magnus" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="50"
+                   data-brand=""
+                   data-material=""
+                   data-season=""
+                   data-features=""
+                   data-protection=""
+                   href="http://127.0.0.1:5000/product/50" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/50_bae6da7a89074b67a7d92076b9fab52f"  
+                            alt="Magnus" 
+                            class="product-img"
+                            loading="lazy"
+                            onerror="this.onerror=null;this.src='/uz/static/img/placeholder-product.png';"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Magnus</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="sandal" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="44"
+                   data-brand=""
+                   data-material=""
+                   data-season=""
+                   data-features=""
+                   data-protection=""
+                   href="http://127.0.0.1:5000/product/44" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/44_d9bca2e4da804d3cbe0d1b354fc84524"  
+                            alt="Sandal" 
+                            class="product-img"
+                            loading="lazy"
+                            onerror="this.onerror=null;this.src='/uz/static/img/placeholder-product.png';"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Sandal</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="shoe factory" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="52"
+                   data-brand=""
+                   data-material=""
+                   data-season=""
+                   data-features=""
+                   data-protection=""
+                   href="http://127.0.0.1:5000/product/52" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/52_5f7339192060462db595de88004deaef"  
+                            alt="Shoe Factory" 
+                            class="product-img"
+                            loading="lazy"
+                            onerror="this.onerror=null;this.src='/uz/static/img/placeholder-product.png';"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Shoe Factory</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="track" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="53"
+                   data-brand=""
+                   data-material=""
+                   data-season=""
+                   data-features=""
+                   data-protection=""
+                   href="http://127.0.0.1:5000/product/53" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/53_e7a80d60e14d42508153a5fbfd8bebe9"  
+                            alt="Track" 
+                            class="product-img"
+                            loading="lazy"
+                            onerror="this.onerror=null;this.src='/uz/static/img/placeholder-product.png';"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Track</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="track brown" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="49"
+                   data-brand=""
+                   data-material=""
+                   data-season=""
+                   data-features=""
+                   data-protection=""
+                   href="http://127.0.0.1:5000/product/49" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/49_2e1e61f690bf480a99454a1548463404"  
+                            alt="Track Brown" 
+                            class="product-img"
+                            loading="lazy"
+                            onerror="this.onerror=null;this.src='/uz/static/img/placeholder-product.png';"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Track Brown</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="track red" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="46"
+                   data-brand=""
+                   data-material=""
+                   data-season=""
+                   data-features=""
+                   data-protection=""
+                   href="http://127.0.0.1:5000/product/46" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/46_9017ddbf09ae4fcebd167fd56ba0a8be"  
+                            alt="Track Red" 
+                            class="product-img"
+                            loading="lazy"
+                            onerror="this.onerror=null;this.src='/uz/static/img/placeholder-product.png';"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Track Red</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="track sueda" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="51"
+                   data-brand=""
+                   data-material=""
+                   data-season=""
+                   data-features=""
+                   data-protection=""
+                   href="http://127.0.0.1:5000/product/51" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/51_70f2a563d3d54c07969816731bad7f37"  
+                            alt="Track Sueda" 
+                            class="product-img"
+                            loading="lazy"
+                            onerror="this.onerror=null;this.src='/uz/static/img/placeholder-product.png';"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Track Sueda</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="vezdohod" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="47"
+                   data-brand=""
+                   data-material=""
+                   data-season=""
+                   data-features=""
+                   data-protection=""
+                   href="http://127.0.0.1:5000/product/47" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/47_d59b5897e9fd42fa92cc261f9cbbcb8d"  
+                            alt="Vezdohod" 
+                            class="product-img"
+                            loading="lazy"
+                            onerror="this.onerror=null;this.src='/uz/static/img/placeholder-product.png';"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Vezdohod</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="yastreb" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="55"
+                   data-brand=""
+                   data-material=""
+                   data-season=""
+                   data-features=""
+                   data-protection=""
+                   href="http://127.0.0.1:5000/product/55" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/55_33ecf4f6192144bc8268e6f3bfbdd053"  
+                            alt="Yastreb" 
+                            class="product-img"
+                            loading="lazy"
+                            onerror="this.onerror=null;this.src='/uz/static/img/placeholder-product.png';"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Yastreb</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="yastreb pu" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="54"
+                   data-brand=""
+                   data-material=""
+                   data-season=""
+                   data-features=""
+                   data-protection=""
+                   href="http://127.0.0.1:5000/product/54" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/54_f4dbf72d058349b9a3b037240aacf766"  
+                            alt="Yastreb PU" 
+                            class="product-img"
+                            loading="lazy"
+                            onerror="this.onerror=null;this.src='/uz/static/img/placeholder-product.png';"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">Yastreb PU</h4>
+                        
+                    </div>
+                </a>
+                
+                <a class="industrial-product-card product-item-node" 
+                   data-name="спецобувь" 
+                   data-category="specobuv"
+                   data-price="250000.0"
+                   data-rating="0"
+                   data-new="False"
+                   data-product-id="45"
+                   data-brand=""
+                   data-material=""
+                   data-season=""
+                   data-features=""
+                   data-protection=""
+                   href="http://127.0.0.1:5000/product/45" 
+                   style="cursor: pointer; text-decoration: none; color: inherit; display:block;">
+                    <div class="img-wrapper">
+                        <img 
+                            src="https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/products/45_cd49521666cf4cd58c17e633ff19c169"  
+                            alt="спецобувь" 
+                            class="product-img"
+                            loading="lazy"
+                            onerror="this.onerror=null;this.src='/uz/static/img/placeholder-product.png';"
+                        />
+                        
+                    </div>
+                    
+                    <div class="p-4">
+                        <span class="category-label">specobuv</span>
+                        <h4 class="h5 mb-3">спецобувь</h4>
+                        
+                    </div>
+                </a>
+                
+            </div>
+        </section>
+    </div>
+</div>
+
+<script>
+// Enhanced filtering logic for select-based filters
+let allProducts = [];
+let filteredProducts = [];
+
+// Store all products on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const productCards = document.querySelectorAll('.product-item-node');
+    allProducts = Array.from(productCards).map(card => ({
+        element: card,
+        name: card.getAttribute('data-name'),
+        category: card.getAttribute('data-category') || '',
+        price: parseFloat(card.getAttribute('data-price')) || 0,
+        rating: parseFloat(card.getAttribute('data-rating')) || 0,
+        isNew: card.getAttribute('data-new') === 'true',
+        brand: card.getAttribute('data-brand') || '',
+        material: card.getAttribute('data-material') || '',
+        season: card.getAttribute('data-season') || '',
+        protection: card.getAttribute('data-protection') || ''
+    }));
+    filteredProducts = [...allProducts];
+    
+    // Add real-time search
+    document.getElementById('productSearch').addEventListener('input', applyFilters);
+    
+    // Add change listeners to all select filters
+    ['categoryFilter', 'sizeFilter', 'materialFilter', 'protectionFilter', 'sortFilter', 'brandFilter'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('change', applyFilters);
+    });
+    
+    // Product cards are already <a> tags, so they should work naturally
+    // Just ensure any JavaScript doesn't interfere with normal link behavior
+});
+
+// Enhanced role detection using BASE_CONFIG (no API calls needed)
+(function() {
+  // Get role from BASE_CONFIG which is set by server
+  function detectAndUpdateRole() {
+    try {
+      const config = window.BASE_CONFIG || {};
+      const user = config.user || {};
+      
+      const isSuperAdmin = user.is_super_admin || false;
+      const isStaff = user.staff_id ? true : false;
+      const isCourier = user.courier_id ? true : false;
+      const isUser = user.user_id ? true : false;
+      
+      // Update global variables
+      window.CURRENT_MEMBER_ID = user.user_id || user.staff_id || user.courier_id || null;
+      window.CURRENT_MEMBER_TYPE = isUser ? 'user' : (isStaff ? 'staff' : (isCourier ? 'courier' : 'anonymous'));
+      
+      // Update UI immediately
+      updateNavbarForRole(isSuperAdmin, isStaff, isCourier, isUser);
+      updateSidebarForRole(isSuperAdmin, isStaff, isCourier, isUser);
+    } catch(err) {
+      console.warn('Role detection failed:', err);
+    }
+  }
+  
+  function updateNavbarForRole(isSuperAdmin, isStaff, isCourier, isUser) {
+    const navbar = document.querySelector('.navbar');
+    
+    if (isSuperAdmin || isStaff || isCourier) {
+      // Hide navbar for staff roles
+      if (navbar) navbar.style.display = 'none';
+    } else if (isUser) {
+      // Show user navbar
+      if (navbar) navbar.style.display = 'block';
+    }
+  }
+  
+  function updateSidebarForRole(isSuperAdmin, isStaff, isCourier, isUser) {
+    const sidebar = document.querySelector('.staff-sidebar-wrapper');
+    const mainContent = document.querySelector('.shop-layout');
+    
+    if (isSuperAdmin || isStaff || isCourier) {
+      // Show sidebar for staff roles
+      if (sidebar) sidebar.style.display = 'block';
+      if (mainContent) mainContent.style.gridTemplateColumns = '1fr';
+    } else {
+      // Hide sidebar for regular users
+      if (sidebar) sidebar.style.display = 'none';
+      if (mainContent) mainContent.style.gridTemplateColumns = '280px 1fr';
+    }
+  }
+  
+  // Run detection once on page load
+  detectAndUpdateRole();
+})();
+
+function applyFilters() {
+    const searchTerm = document.getElementById('productSearch').value.toLowerCase();
+    const category = document.getElementById('categoryFilter').value;
+    const size = document.getElementById('sizeFilter').value;
+    const material = document.getElementById('materialFilter').value;
+    const protection = document.getElementById('protectionFilter').value;
+    const sortBy = document.getElementById('sortFilter').value;
+    
+    const brand = document.getElementById('brandFilter') ? document.getElementById('brandFilter').value.toLowerCase() : '';
+    
+    filteredProducts = allProducts.filter(product => {
+        // Search by name or description (combined search)
+        const matchesSearch = !searchTerm || 
+            product.name.includes(searchTerm) || 
+            product.element.querySelector('h4').textContent.toLowerCase().includes(searchTerm);
+        
+        // Category filter
+        const matchesCategory = !category || product.category === category.toLowerCase();
+        
+        // Brand filter
+        const matchesBrand = !brand || product.brand === brand;
+        
+        // Material filter
+        const matchesMaterial = !material || product.material === material.toLowerCase();
+        
+        // Protection level filter
+        const matchesProtection = !protection || product.protection.includes(protection.toLowerCase());
+        
+        // Season filter (using size filter slot for season in this context if needed, or keeping it as is)
+        // If we want to filter by season:
+        // const matchesSeason = !season || product.season === season.toLowerCase();
+        
+        return matchesSearch && matchesCategory && matchesBrand && matchesMaterial && matchesProtection;
+    });
+    
+    // Sort products
+    filteredProducts.sort((a, b) => {
+        switch(sortBy) {
+            case 'name':
+                return a.name.localeCompare(b.name);
+            case 'category':
+                return a.category.localeCompare(b.category);
+            case 'rating':
+                return b.rating - a.rating;
+            case 'newest':
+                return b.isNew - a.isNew;
+            default:
+                return 0;
+        }
+    });
+    
+    renderProducts();
+}
+
+function renderProducts() {
+    const container = document.querySelector('.product-grid-main');
+    container.innerHTML = '';
+    
+    if (filteredProducts.length === 0) {
+        container.innerHTML = `
+            <div class="col-12 text-center py-5">
+                <h4 class="text-muted">menu.no_products</h4>
+                <p class="text-muted">menu.try_different_filters</p>
+            </div>
+        `;
+        return;
+    }
+    
+    // Re-create product cards with proper structure to preserve links
+    filteredProducts.forEach(product => {
+        const productCard = product.element.cloneNode(true);
+        // Add click handler to ensure navigation works
+        productCard.addEventListener('click', function(e) {
+            // Get the product ID and create full URL
+            const productId = productCard.getAttribute('data-product-id');
+            if (productId) {
+                window.location.href = `http://${window.location.host}/product/${productId}`;
+            }
+        });
+        container.appendChild(productCard);
+    });
+}
+
+function clearFilters() {
+    document.getElementById('productSearch').value = '';
+    if(document.getElementById('categoryFilter')) document.getElementById('categoryFilter').value = '';
+    if(document.getElementById('sizeFilter')) document.getElementById('sizeFilter').value = '';
+    if(document.getElementById('materialFilter')) document.getElementById('materialFilter').value = '';
+    if(document.getElementById('protectionFilter')) document.getElementById('protectionFilter').value = '';
+    if(document.getElementById('brandFilter')) document.getElementById('brandFilter').value = '';
+    if(document.getElementById('sortFilter')) document.getElementById('sortFilter').value = 'name';
+    
+    filteredProducts = [...allProducts];
+    renderProducts();
+}
+
+// Mobile Filter Modal Logic
+function toggleMobileFilter() {
+    const sidebar = document.getElementById('shopSidebar');
+    if (sidebar) {
+        sidebar.classList.toggle('show');
+        // Prevent body scroll when modal is open
+        if (sidebar.classList.contains('show')) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+    }
+}
+
+function applyFiltersMobile() {
+    applyFilters();
+    toggleMobileFilter(); // Close modal after applying
+}
+</script>
+

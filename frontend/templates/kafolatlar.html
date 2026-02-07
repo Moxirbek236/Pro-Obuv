@@ -1,0 +1,107 @@
+{% extends base_layout | default("base.html") %}
+{% block title %}{{ _('nav.warranty') or 'Kafolatlar' }} - Pro Obuv{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  
+  <!-- Hero Section -->
+  <div class="industrial-card p-5 text-center mb-5 position-relative overflow-hidden animate-fade-in-up">
+    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: var(--hazard-pattern); opacity: 0.1; pointer-events: none;"></div>
+    <div class="position-relative z-1">
+      <h1 class="display-4 fw-bold text-uppercase mb-3" style="font-family: var(--font-heading); color: var(--accent-primary);">
+        <i class="bi bi-shield-check me-2"></i> {{ _('kafolatlar.title') }}
+      </h1>
+      <p class="lead text-secondary mb-0">
+        {{ _('kafolatlar.subtitle') }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Warranty Features -->
+  <div class="row g-4">
+    <div class="col-md-4 animate-fade-in-up" style="animation-delay: 0.1s;">
+      <div class="industrial-card h-100 p-4 text-center">
+        <div class="d-inline-flex align-items-center justify-content-center bg-dark rounded-circle border border-warning mb-4" style="width: 80px; height: 80px;">
+          <i class="bi bi-award display-5 text-warning"></i>
+        </div>
+        <h3 class="h4 fw-bold mb-3 text-white">{{ _('kafolatlar.quality_title') }}</h3>
+        <p class="text-secondary mb-0">
+          {{ _('kafolatlar.quality_desc') }}
+        </p>
+      </div>
+    </div>
+
+    <div class="col-md-4 animate-fade-in-up" style="animation-delay: 0.2s;">
+      <div class="industrial-card h-100 p-4 text-center">
+        <div class="d-inline-flex align-items-center justify-content-center bg-dark rounded-circle border border-info mb-4" style="width: 80px; height: 80px;">
+          <i class="bi bi-patch-check display-5 text-info"></i>
+        </div>
+        <h3 class="h4 fw-bold mb-3 text-white">{{ _('kafolatlar.cert_title') }}</h3>
+        <p class="text-secondary mb-0">
+          {{ _('kafolatlar.cert_desc') }}
+        </p>
+      </div>
+    </div>
+
+    <div class="col-md-4 animate-fade-in-up" style="animation-delay: 0.3s;">
+      <div class="industrial-card h-100 p-4 text-center">
+        <div class="d-inline-flex align-items-center justify-content-center bg-dark rounded-circle border border-success mb-4" style="width: 80px; height: 80px;">
+          <i class="bi bi-arrow-repeat display-5 text-success"></i>
+        </div>
+        <h3 class="h4 fw-bold mb-3 text-white">{{ _('kafolatlar.return_title') }}</h3>
+        <p class="text-secondary mb-0">
+          {{ _('kafolatlar.return_desc') }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Policy Details / Certificates Placeholder -->
+  <div class="mt-5 animate-fade-in-up" style="animation-delay: 0.4s;">
+    <div class="industrial-card p-4">
+      <h4 class="mb-4 text-uppercase fw-bold text-accent">
+        <i class="bi bi-file-earmark-text me-2"></i> Sertifikatlar va Standartlar
+      </h4>
+      <div class="row g-4">
+        <div class="col-sm-6 col-md-3">
+          <div class="p-3 border border-secondary border-opacity-25 rounded bg-dark text-center">
+            <div class="fw-bold text-white mb-1">ISO 9001:2015</div>
+            <div class="text-secondary small">Sifat menejmenti tizimi</div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+          <div class="p-3 border border-secondary border-opacity-25 rounded bg-dark text-center">
+            <div class="fw-bold text-white mb-1">ISO 45001</div>
+            <div class="text-secondary small">Sog'liqni saqlash va xavfsizlik</div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+          <div class="p-3 border border-secondary border-opacity-25 rounded bg-dark text-center">
+            <div class="fw-bold text-white mb-1">EN ISO 20345</div>
+            <div class="text-secondary small">Xavfsizlik poyabzali standarti</div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+          <div class="p-3 border border-secondary border-opacity-25 rounded bg-dark text-center">
+            <div class="fw-bold text-white mb-1">TR TS 019/2011</div>
+            <div class="text-secondary small">Bojxona Ittifoqi reglamenti</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<style>
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+    opacity: 0;
+  }
+</style>
+{% endblock %}

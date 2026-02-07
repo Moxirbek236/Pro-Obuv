@@ -13,7 +13,7 @@ from pathlib import Path
 import atexit
 import time
 from dotenv import load_dotenv
-load_dotenv()
+load_dotenv(os.path.join(os.path.dirname(__file__), '../backend/.env'))
 
 
 try:
@@ -45,7 +45,8 @@ except Exception:
 LOG = logging.getLogger("telegram_bot")
 
 # Ensure logs directory exists and define action/error log paths
-LOGS_DIR = Path(__file__).resolve().parents[1] / "logs"
+# Use bot directory so we don't require write access to backend/logs
+LOGS_DIR = Path(__file__).resolve().parent / "logs"
 LOGS_DIR.mkdir(parents=True, exist_ok=True)
 ACTION_LOG = LOGS_DIR / "telegram_actions.txt"
 ERROR_LOG = LOGS_DIR / "telegram_errors.txt"
@@ -288,17 +289,13 @@ def send_operator_reply(client_key: str, text: str, operator_name: str = "Operat
         import asyncio
 
         # Agar allaqachon event loop ishlayotgan bo'lsa, create_task ishlatamiz,
-        # aks holda yangi loop yaratib, bitta marta ishlatamiz.
+        # aks holda yangi loop yaratib, bitta marta ishlatamiz. (get_running_loop /
+        # new_event_loop ishlatamiz — get_event_loop() Python 3.10+ da deprecated.)
         try:
-            loop = asyncio.get_event_loop()
-            if loop.is_running():
-                # Running loop mavjud - background task sifatida ishga tushiramiz
-                loop.create_task(_send_text_to_telegram(chat_id, full_text))
-                LOG.info(f"send_operator_reply: scheduled message to {chat_id} via running loop")
-            else:
-                # Loop mavjud lekin ishlamayapti - run_until_complete ishlatamiz
-                loop.run_until_complete(_send_text_to_telegram(chat_id, full_text))
-                LOG.info(f"send_operator_reply: sent message to {chat_id} via existing loop")
+            loop = asyncio.get_running_loop()
+            # Running loop mavjud - background task sifatida ishga tushiramiz
+            loop.create_task(_send_text_to_telegram(chat_id, full_text))
+            LOG.info(f"send_operator_reply: scheduled message to {chat_id} via running loop")
         except RuntimeError:
             # No running loop - yangi loop yaratamiz
             try:
@@ -528,7 +525,7 @@ async def products_cmd_new(update: "Update", context: "ContextTypes.DEFAULT_TYPE
                 # Use first image or default
                 img = urls[0] if urls else ""
                 if not urls:
-                    default_img = FLASK_APP_URL.rstrip("/") + "/static/defoult.webp"
+                    default_img = 'https://res.cloudinary.com/dpfbu9aid/image/upload/v1766927327/products/defoult.webp'
                     urls = [default_img]
                     img = default_img
                     LOG.info(
@@ -627,7 +624,7 @@ async def products_cmd_new(update: "Update", context: "ContextTypes.DEFAULT_TYPE
                     # no images: send default local image bytes if available
                     try:
                         default_path = (
-                            LOGS_DIR.parent / "static" / "defoult.webp"
+                            LOGS_DIR.parent.parent / "frontend" / "static" / "defoult.webp"
                         ).resolve()
                         with open(default_path, "rb") as f:
                             data = f.read()
@@ -788,7 +785,7 @@ async def products_cmd_category(update: "Update", context: "ContextTypes.DEFAULT
 
                 img = urls[0] if urls else ''
                 if not urls:
-                    default_img = FLASK_APP_URL.rstrip('/') + '/static/defoult.webp'
+                    default_img = 'https://res.cloudinary.com/dpfbu9aid/image/upload/v1766927327/products/defoult.webp'
                     urls = [default_img]
                     img = default_img
 
@@ -817,7 +814,7 @@ async def products_cmd_category(update: "Update", context: "ContextTypes.DEFAULT
                             await update.message.reply_text(text, reply_markup=markup, parse_mode='HTML')
                 else:
                     try:
-                        default_path = (LOGS_DIR.parent / 'static' / 'defoult.webp').resolve()
+                        default_path = (LOGS_DIR.parent.parent / "frontend" / "static" / "defoult.webp").resolve()
                         with open(default_path, 'rb') as f:
                             data = f.read()
                         await update.message.reply_photo(photo=data, caption=text, reply_markup=markup, parse_mode='HTML')
@@ -1110,14 +1107,13 @@ def main():
     base_delay = float(os.environ.get("TELEGRAM_BOT_RETRY_DELAY", "5"))
     attempt = 0
 
-    # Ensure an asyncio event loop is available in this thread. Newer Python
-    # versions raise RuntimeError when no loop is set; python-telegram-bot
-    # expects get_event_loop() to work. Create and set one if missing.
+    # Ensure an asyncio event loop is available in this thread. Python 3.10+
+    # deprecates get_event_loop() when no loop is set; create and set one if missing.
     try:
         import asyncio
 
         try:
-            _loop = asyncio.get_event_loop()
+            asyncio.get_running_loop()
         except RuntimeError:
             _loop = asyncio.new_event_loop()
             asyncio.set_event_loop(_loop)
@@ -1170,7 +1166,7 @@ def main():
                 import asyncio
 
                 try:
-                    loop = asyncio.get_event_loop()
+                    loop = asyncio.get_running_loop()
                 except RuntimeError:
                     loop = asyncio.new_event_loop()
                     asyncio.set_event_loop(loop)

@@ -1,0 +1,154 @@
+{% extends base_layout | default("base.html") %}
+
+{% block title %}Staff Dashboard{% endblock %}
+
+{% block content %}
+<!-- Staff Dashboard Layout -->
+<style>
+/* Staff dashboard specific styles */
+.staff-dashboard-layout {
+    display: flex;
+    min-height: 100vh;
+    background: #f4f7fa;
+}
+
+.staff-sidebar {
+    width: 280px;
+    background: #ffffff !important;
+    border-right: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    position: fixed;
+    left: 0;
+    top: 76px; /* Account for navbar height */
+    height: calc(100vh - 76px);
+    overflow-y: auto;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+}
+
+.staff-main-content {
+    flex: 1;
+    margin-left: 280px;
+    padding: 20px;
+    background: #f4f7fa;
+    min-height: calc(100vh - 76px);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .staff-sidebar {
+        transform: translateX(-100%);
+    }
+    
+    .staff-sidebar.active {
+        transform: translateX(0);
+    }
+    
+    .staff-main-content {
+        margin-left: 0;
+        padding: 15px;
+    }
+}
+
+/* Keep main navbar visible */
+.navbar {
+    display: block !important;
+}
+
+/* Staff sidebar navigation */
+.nav-link-modern {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: #495057;
+    text-decoration: none;
+    border-bottom: 1px solid #f1f3f7;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.nav-link-modern:hover {
+    background: #e3f2fd;
+    color: #1976d2;
+    text-decoration: none;
+}
+
+.nav-link-modern.active {
+    background: #1976d2;
+    color: white;
+}
+
+.nav-link-modern i {
+    margin-right: 12px;
+    font-size: 18px;
+}
+
+/* Mobile menu toggle */
+.mobile-menu-toggle {
+    display: none;
+    position: fixed;
+    top: 80px;
+    left: 15px;
+    z-index: 1001;
+    background: #1976d2;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .mobile-menu-toggle {
+        display: block;
+    }
+}
+</style>
+
+<!-- Mobile Menu Toggle -->
+<button class="mobile-menu-toggle" onclick="toggleSidebar()">
+    <i class="bi bi-list"></i>
+</button>
+
+<div class="staff-dashboard-layout">
+    <!-- Staff Sidebar -->
+    <div class="staff-sidebar" id="staffSidebar">
+        <div class="p-3">
+            <h5 class="text-center mb-4">
+                <i class="bi bi-shield-check text-primary"></i>
+                <span class="ms-2">Staff Panel</span>
+            </h5>
+        </div>
+        
+        {% block sidebar_menu %}
+        <!-- Sidebar content will be injected from child templates -->
+        {% endblock %}
+    </div>
+    
+    <!-- Main Content -->
+    <div class="staff-main-content">
+        {% block staff_content %}
+        <!-- Main content will be injected from child templates -->
+        {% endblock %}
+    </div>
+</div>
+
+<script>
+function toggleSidebar() {
+    const sidebar = document.getElementById('staffSidebar');
+    sidebar.classList.toggle('active');
+}
+
+// Close sidebar when clicking outside on mobile
+document.addEventListener('click', function(event) {
+    const sidebar = document.getElementById('staffSidebar');
+    const toggle = document.querySelector('.mobile-menu-toggle');
+    
+    if (window.innerWidth <= 768 && 
+        !sidebar.contains(event.target) && 
+        !toggle.contains(event.target)) {
+        sidebar.classList.remove('active');
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,1629 @@
+═══════════════════════════════════════════════════════════════════════════════
+                    FRONTEND GENERATION MASTER PROMPT
+                    E-COMMERCE PLATFORM: SAFETY SHOES & WORKWEAR
+═══════════════════════════════════════════════════════════════════════════════
+
+Generated: 2026-02-05
+Backend Domain: https://pro-obuv.onrender.com
+Application Type: E-commerce Platform for Safety Shoes, Safety Wears, and Industrial Workwear
+
+═══════════════════════════════════════════════════════════════════════════════
+                            1. PROJECT OVERVIEW
+═══════════════════════════════════════════════════════════════════════════════
+
+BUSINESS DESCRIPTION:
+Safety.uz is a comprehensive e-commerce platform specializing in:
+- Safety footwear (work boots, safety shoes, industrial footwear)
+- Safety workwear and protective clothing
+- Industrial equipment and accessories
+- Professional safety gear for various industries
+
+TARGET USERS:
+1. Regular Users (Customers) - Browse, purchase, track orders
+2. Staff Members - Manage inventory, process orders, handle customer service
+3. Superadmins - Full system control, analytics, user management, system configuration
+
+PLATFORM GOALS:
+- Provide seamless shopping experience for safety equipment
+- Enable efficient order management for staff
+- Comprehensive analytics and control for superadmins
+- Multi-language support (Uzbek, Russian, English, Kazakh)
+- Responsive design for desktop and mobile devices
+
+═══════════════════════════════════════════════════════════════════════════════
+                        2. TECH STACK REQUIREMENTS
+═══════════════════════════════════════════════════════════════════════════════
+
+FRONTEND FRAMEWORK:
+- React 18+ with TypeScript (Recommended)
+- Alternative: Next.js 14+ for SSR capabilities
+- Vite for build tooling (if using React)
+
+STATE MANAGEMENT:
+- React Context API + useReducer for global state
+- React Query (TanStack Query) for server state management
+- localStorage for persistent user preferences
+
+ROUTING:
+- React Router v6+ for client-side routing
+- Protected routes based on user roles
+
+STYLING:
+- CSS Modules or Styled Components
+- Tailwind CSS (optional, but recommended for rapid development)
+- Responsive design: Mobile-first approach
+
+API COMMUNICATION:
+- Axios for HTTP requests
+- Interceptors for authentication headers
+- Error handling middleware
+
+ENVIRONMENT CONFIGURATION:
+- Environment variables for API base URL
+- Support for localhost (development) and production domains
+- .env.local for local development
+- .env.production for production builds
+
+DEPLOYMENT READINESS:
+- Build optimization for production
+- Code splitting and lazy loading
+- Service worker for offline capabilities (optional)
+- SEO optimization with React Helmet
+
+═══════════════════════════════════════════════════════════════════════════════
+                    3. USER ROLES & AUTHENTICATION
+═══════════════════════════════════════════════════════════════════════════════
+
+ROLE SYSTEM (STRICT - EXACTLY 3 ROLES):
+1. user       - Regular customers
+2. staff      - Staff members/employees
+3. superadmin - System administrators
+
+AUTHENTICATION FLOW:
+
+A. USER LOGIN:
+   Endpoint: POST /login_page
+   Request Body: { email: string, password: string }
+   Response: { success: boolean, next: string, role: 'user', user: { id: number } }
+   Session: Sets session cookie with user_id, role='user'
+   
+B. STAFF LOGIN:
+   Endpoint: POST /staff-secure-login-w7m2k
+   Request Body: { staff_id: number, password: string }
+   Response: Redirect to /staff/dashboard
+   Session: Sets session cookie with staff_id, role='staff'
+   
+C. SUPERADMIN LOGIN:
+   Endpoint: POST /super-admin-master-login-z9x4m
+   Request Body: { username: string, password: string }
+   Response: Redirect to /super-admin-control-panel-master-z8x9k
+   Session: Sets session cookie with super_admin=true, role='superadmin'
+
+REGISTRATION:
+   User Registration: POST /register
+   Fields: { email, password, first_name, last_name, phone, address, address_latitude, address_longitude }
+
+LOGOUT:
+   User: GET /logout
+   Staff: GET /staff/logout
+   Superadmin: GET /super-admin/logout
+
+TOKEN/SESSION MANAGEMENT:
+- Backend uses Flask session cookies (server-side sessions)
+- Frontend should maintain session state via cookies
+- No JWT tokens - session-based authentication
+- Session timeout: 30 minutes for superadmin, longer for users/staff
+
+AUTHENTICATION STATUS:
+   Endpoint: GET /api/auth/status
+   Response: { success: boolean, logged_in: boolean, user: {...} }
+
+═══════════════════════════════════════════════════════════════════════════════
+                        4. API DOCUMENTATION
+═══════════════════════════════════════════════════════════════════════════════
+
+BASE URL CONFIGURATION:
+- Development: http://localhost:5000 (or relative paths if monolithic)
+- Production: https://pro-obuv.onrender.com
+- Use environment variable: VITE_API_BASE_URL or REACT_APP_API_BASE_URL
+
+COMMON HEADERS:
+- Content-Type: application/json
+- Credentials: include (for cookies)
+- X-Requested-With: XMLHttpRequest (for AJAX detection)
+
+ERROR RESPONSE FORMAT:
+{
+  "success": false,
+  "message": "Error description",
+  "code": 400
+}
+
+SUCCESS RESPONSE FORMAT:
+{
+  "success": true,
+  "data": {...},
+  "message": "Optional success message"
+}
+
+────────────────────────────────────────────────────────────────────────────────
+                        PUBLIC ENDPOINTS (No Auth Required)
+────────────────────────────────────────────────────────────────────────────────
+
+1. PRODUCTS/MENU ITEMS:
+   GET /menu
+   Description: Get all products with pagination
+   Query Params: ?page=1&limit=20&category=tufli&search=keyword
+   Response: HTML page or JSON array of products
+   
+   GET /api/menu-search?q=keyword
+   Description: Search products
+   Response: { success: true, results: [...] }
+   
+   GET /product/<int:item_id>
+   Description: Get single product details
+   Response: HTML page with product details
+   
+   GET /api/product-media/<int:item_id>
+   Description: Get product images and videos
+   Response: { success: true, media: [{ id, media_type, media_url, is_main }] }
+
+2. CATEGORIES:
+   GET /api/categories
+   Description: Get all product categories
+   Response: { success: true, categories: [{ id, name }] }
+   
+   Categories include: tufli, etik, krosovka, mokasima, botik, tapochka
+
+3. CART OPERATIONS:
+   GET /api/cart
+   Description: Get current user's cart
+   Response: { success: true, items: [{ id, product_id, quantity, price }] }
+   
+   POST /add_to_cart
+   Body: { menu_item_id: number, quantity: number }
+   Response: { success: true, message: "Added to cart" }
+   
+   POST /remove_from_cart/<int:cart_item_id>
+   Description: Remove item from cart
+   
+   GET /api/cart-count
+   Description: Get cart item count
+   Response: { count: number }
+
+4. ORDERS:
+   POST /place_order
+   Body: {
+     order_type: 'delivery' | 'dine_in',
+     delivery_address: string,
+     delivery_latitude: number,
+     delivery_longitude: number,
+     customer_phone: string,
+     customer_note: string,
+     card_number: string
+   }
+   Response: { success: true, ticket_no: number, order_id: number }
+   
+   GET /api/orders
+   Description: Get user's orders
+   Response: { success: true, orders: [...] }
+   
+   GET /api/orders/<int:order_id>
+   Description: Get specific order details
+   
+   GET /order/<int:ticket_no>
+   Description: Track order by ticket number
+
+5. RATINGS & REVIEWS:
+   POST /api/submit-rating
+   Body: { menu_item_id: number, rating: number (1-5), comment: string }
+   
+   GET /api/get-menu-ratings/<int:menu_item_id>
+   Description: Get product ratings
+   Response: { success: true, ratings: [...], average: number }
+
+6. NEWS & NOTIFICATIONS:
+   GET /api/news/active
+   Description: Get active news items
+   Response: { success: true, news: [{ id, title, content, image_url }] }
+   
+   GET /news
+   Description: News listing page
+   
+   GET /news/<int:news_id>
+   Description: Single news article
+
+7. PAYMENT METHODS:
+   GET /api/payment-cards
+   Description: Get available payment cards
+   Response: { success: true, cards: [{ id, card_number, card_holder_name, card_type }] }
+   
+   GET /api/payment-methods
+   Description: Get payment methods (Click, Payme, etc.)
+
+8. LOCATION SERVICES:
+   POST /api/find-nearest-branch
+   Body: { latitude: number, longitude: number }
+   Response: { success: true, branch: {...}, distance: number }
+
+9. USER PREFERENCES:
+   POST /api/set-language
+   Body: { language: 'uz' | 'ru' | 'en' | 'kz' }
+   
+   POST /api/set-theme
+   Body: { theme: 'dark' | 'light' }
+   
+   POST /api/set-font-size
+   Body: { font_size: 'small' | 'medium' | 'large' }
+   
+   GET /api/translations?lang=uz
+   Description: Get translations for UI
+
+────────────────────────────────────────────────────────────────────────────────
+                        USER ROLE ENDPOINTS (Authenticated Users)
+────────────────────────────────────────────────────────────────────────────────
+
+1. PROFILE MANAGEMENT:
+   GET /profile
+   Description: User profile page
+   
+   POST /update_profile
+   Body: { first_name, last_name, phone, email }
+   
+   POST /update_address
+   Body: { address, address_latitude, address_longitude }
+   
+   POST /change_password
+   Body: { old_password, new_password }
+
+2. FAVORITES:
+   GET /favorites
+   Description: Get user's favorite products
+   
+   POST /add-to-favorites/<int:menu_item_id>
+   Description: Add product to favorites
+   
+   POST /remove-from-favorites/<int:menu_item_id>
+   Description: Remove from favorites
+
+3. ORDER MANAGEMENT:
+   GET /user
+   Description: User dashboard with orders
+   
+   GET /user/status/<int:ticket_no>
+   Description: Check order status
+   
+   POST /user/cancel/<int:ticket_no>
+   Description: Cancel order
+   
+   GET /receipt/<int:ticket_no>
+   Description: View order receipt
+
+4. SESSIONS:
+   GET /api/user-sessions
+   Description: Get active sessions
+   Response: { success: true, sessions: [...] }
+   
+   POST /api/terminate-session
+   Body: { session_id: string }
+   
+   POST /api/terminate-all-sessions
+   Description: Logout from all devices
+
+────────────────────────────────────────────────────────────────────────────────
+                        STAFF ROLE ENDPOINTS (Staff Members)
+────────────────────────────────────────────────────────────────────────────────
+
+1. DASHBOARD:
+   GET /staff/dashboard
+   Description: Staff dashboard with pending orders
+   Response: HTML page with order statistics
+
+2. ORDER MANAGEMENT:
+   POST /staff/order/<int:order_id>/ready
+   Description: Mark order as ready
+   
+   POST /staff/order/<int:order_id>/served
+   Description: Mark order as served/completed
+   
+   POST /staff/order/<int:order_id>/cancel
+   Description: Cancel order
+   Body: { reason: string }
+
+3. PRODUCT MANAGEMENT:
+   GET /staff/menu
+   Description: Product management page
+   
+   POST /admin/add_menu_item
+   Body: {
+     name: string,
+     price: number,
+     category: string,
+     description: string,
+     stock_quantity: number,
+     sizes: string,
+     colors: string,
+     image_url: string
+   }
+   
+   POST /admin/edit_menu_item/<int:item_id>
+   Body: { ...product fields }
+   
+   POST /admin/toggle_menu_item/<int:item_id>
+   Description: Toggle product availability
+   
+   POST /admin/delete_menu_item/<int:item_id>
+   Description: Delete product
+
+4. MEDIA MANAGEMENT:
+   POST /api/product-media/<int:media_id>/set-main
+   Description: Set main product image
+   
+   DELETE /api/product-media/<int:media_id>/delete
+   Description: Delete product media
+   
+   POST /api/product-media/reorder
+   Body: { media_ids: [1, 2, 3] }
+
+5. CHAT/SUPPORT:
+   GET /staff/chat
+   Description: Staff chat interface
+   
+   GET /api/operator-chat/staff/chats
+   Description: Get all customer chats
+   
+   GET /api/operator-chat/staff/chats/<int:chat_id>/messages
+   Description: Get chat messages
+   
+   POST /api/operator-chat/staff/chats/<int:chat_id>/send
+   Body: { message: string }
+
+────────────────────────────────────────────────────────────────────────────────
+                    SUPERADMIN ROLE ENDPOINTS (System Administrators)
+────────────────────────────────────────────────────────────────────────────────
+
+1. DASHBOARD & ANALYTICS:
+   GET /super-admin-control-panel-master-z8x9k
+   Description: Main superadmin dashboard
+   
+   GET /api/super-admin/dashboard-stats
+   Description: Dashboard statistics
+   Response: {
+     total_users: number,
+     total_orders: number,
+     total_revenue: number,
+     active_staff: number,
+     pending_orders: number
+   }
+   
+   GET /super-admin/analytics
+   Description: Advanced analytics page
+   
+   GET /super-admin/reports
+   Description: Reports and exports
+   
+   GET /api/super-admin/reports
+   Description: Get report data
+   Response: { success: true, reports: [...] }
+
+2. USER MANAGEMENT:
+   GET /api/users
+   Description: Get all users
+   Response: { success: true, users: [...] }
+   
+   POST /super-admin/delete-user-db/<int:user_id>
+   Description: Delete user
+   
+   POST /super-admin/reset-user-password
+   Body: { user_id: number, new_password: string }
+
+3. STAFF MANAGEMENT:
+   POST /super-admin/add-staff
+   Body: {
+     first_name, last_name, birth_date, phone,
+     passport_series, passport_number, password
+   }
+   
+   POST /super-admin/delete-staff/<int:staff_id>
+   Description: Delete staff member
+   
+   POST /super-admin/reset-staff-password
+   Body: { staff_id: number, new_password: string }
+   
+   GET /api/super-admin/export-staff
+   Description: Export staff data as CSV/Excel
+
+4. COURIER MANAGEMENT:
+   GET /api/couriers-list
+   Description: Get all couriers
+   
+   POST /super-admin/delete-courier/<int:courier_id>
+   Description: Delete courier
+   
+   POST /super-admin/reset-courier-password
+   Body: { courier_id: number, new_password: string }
+   
+   GET /api/super-admin/export-couriers
+   Description: Export courier data
+
+5. ORDER MANAGEMENT:
+   GET /super-admin/get-orders
+   Description: Get all orders with filters
+   Query: ?status=pending&date_from=2024-01-01&date_to=2024-12-31
+   
+   POST /admin/order/<int:order_id>/approve
+   Description: Approve pending order
+
+6. PRODUCT MANAGEMENT:
+   GET /super-admin/get-menu
+   Description: Get all products
+   
+   POST /super-admin/add-menu-item
+   Body: { ...product fields }
+   
+   POST /admin/delete_all_products_and_seed
+   Description: Reset products and seed sample data (DANGEROUS)
+
+7. NEWS MANAGEMENT:
+   GET /super-admin/news
+   Description: News management page
+   
+   POST /super-admin/news/add
+   Body: {
+     title: string,
+     content: string,
+     type: 'news' | 'advertisement',
+     image_url: string,
+     is_active: boolean
+   }
+   
+   POST /super-admin/news/delete/<int:news_id>
+   Description: Delete news item
+
+8. BRANCH MANAGEMENT:
+   POST /super-admin/add-branch
+   Body: {
+     name, address, latitude, longitude,
+     phone, working_hours, delivery_radius
+   }
+   
+   POST /super-admin/toggle-branch/<int:branch_id>
+   Description: Toggle branch active status
+   
+   POST /super-admin/delete-branch/<int:branch_id>
+   Description: Delete branch
+
+9. SYSTEM MANAGEMENT:
+   GET /super-admin/system
+   Description: System settings page
+   
+   GET /api/super-admin/get-system-stats
+   Description: System statistics (CPU, memory, disk)
+   
+   GET /api/super-admin/get-system-logs
+   Description: System logs
+   
+   GET /api/super-admin/get-environment-info
+   Description: Environment variables and config
+   
+   POST /api/super-admin/clear-cache
+   Description: Clear system cache
+   
+   POST /api/super-admin/backup-database
+   Description: Create database backup
+   Response: { success: true, backup_file: string }
+
+10. LOGS & MONITORING:
+    GET /super-admin/logs
+    Description: Logs viewer page
+    
+    POST /super-admin/get-logs
+    Body: { level: 'error' | 'warning' | 'info', limit: number }
+    
+    GET /super-admin/get-performance-stats
+    Description: Performance metrics
+    
+    GET /super-admin/get-errors-summary
+    Description: Error summary
+    
+    GET /super-admin/download-logs
+    Description: Download logs file
+
+11. NOTIFICATIONS:
+    GET /super-admin/notifications
+    Description: Notification management page
+    
+    POST /super-admin/send-notification
+    Body: {
+      target: 'all' | 'users' | 'staff',
+      title: string,
+      message: string
+    }
+
+12. AI KNOWLEDGE BASE:
+    GET /admin/ai/unanswered
+    Description: Get unanswered AI questions
+    
+    POST /admin/ai/teach
+    Body: { question: string, answer: string }
+    
+    GET /admin/ai/faq
+    Description: FAQ management
+
+13. ADVANCED SETTINGS:
+    GET /super-admin/advanced-settings
+    Description: Advanced system settings
+    
+    POST /super-admin/save-config
+    Body: { config_key: string, config_value: any }
+    
+    GET /super-admin/profile
+    Description: Superadmin profile
+    
+    POST /super-admin/profile/update
+    Body: { first_name, last_name, phone, avatar }
+
+14. CONTENT MANAGEMENT:
+    GET /super-admin/pages
+    Description: Static pages management
+    
+    POST /super-admin/pages/edit/<page_key>
+    Body: { content: string }
+
+15. PAYMENT SETTINGS:
+    GET /admin/card-management
+    Description: Payment card management
+    
+    GET /api/card-data
+    Description: Get card payment settings
+    
+    POST /admin/sync-news
+    Description: Sync news from external source
+
+16. 360 PHOTOS:
+    GET /admin/360-management
+    Description: 360-degree photo management
+    
+    GET /api/360-photos
+    Description: Get 360 photos
+    
+    DELETE /api/delete-360-photo/<int:photo_id>
+    Description: Delete 360 photo
+
+═══════════════════════════════════════════════════════════════════════════════
+                        5. DATABASE SCHEMA & DATA MODELS
+═══════════════════════════════════════════════════════════════════════════════
+
+USERS TABLE:
+{
+  id: number,
+  first_name: string,
+  last_name: string,
+  email: string (unique),
+  phone: string,
+  password_hash: string,
+  address: string,
+  address_latitude: number,
+  address_longitude: number,
+  card_number: string,
+  card_expiry: string,
+  interface_language: 'uz' | 'ru' | 'en' | 'kz',
+  font_size: 'small' | 'medium' | 'large',
+  dark_theme: boolean,
+  created_at: string (ISO datetime)
+}
+
+STAFF TABLE:
+{
+  id: number,
+  first_name: string,
+  last_name: string,
+  birth_date: string,
+  phone: string,
+  passport_series: string,
+  passport_number: string,
+  password_hash: string,
+  total_hours: number,
+  orders_handled: number,
+  last_activity: string,
+  created_at: string
+}
+
+MENU_ITEMS (PRODUCTS) TABLE:
+{
+  id: number,
+  name: string,
+  price: number,
+  category: string,
+  description: string,
+  image_url: string,
+  available: boolean,
+  stock_quantity: number,
+  orders_count: number,
+  rating: number (0.0-5.0),
+  discount_percentage: number,
+  sizes: string (comma-separated: "38,39,40,41"),
+  colors: string (comma-separated: "black,brown,white"),
+  is_new: boolean,
+  created_at: string
+}
+
+PRODUCT_MEDIA TABLE:
+{
+  id: number,
+  menu_item_id: number,
+  media_type: 'image' | 'video',
+  media_url: string,
+  display_order: number,
+  is_main: boolean,
+  created_at: string
+}
+
+ORDERS TABLE:
+{
+  id: number,
+  user_id: number,
+  customer_name: string,
+  ticket_no: number,
+  order_type: 'dine_in' | 'delivery',
+  status: 'pending' | 'approved' | 'ready' | 'in_delivery' | 'delivered' | 'cancelled',
+  delivery_address: string,
+  delivery_distance: number,
+  delivery_price: number,
+  delivery_latitude: number,
+  delivery_longitude: number,
+  customer_note: string,
+  customer_phone: string,
+  card_number: string,
+  courier_id: number,
+  courier_price: number,
+  courier_delivery_minutes: number,
+  branch_id: number,
+  created_at: string,
+  eta_time: string
+}
+
+ORDER_DETAILS TABLE:
+{
+  id: number,
+  order_id: number,
+  menu_item_id: number,
+  quantity: number,
+  price: number
+}
+
+CART_ITEMS TABLE:
+{
+  id: number,
+  user_id: number,
+  session_id: string,
+  menu_item_id: number,
+  quantity: number,
+  created_at: string
+}
+
+FAVORITES TABLE:
+{
+  id: number,
+  user_id: number,
+  menu_item_id: number,
+  created_at: string
+}
+
+RATINGS TABLE:
+{
+  id: number,
+  user_id: number,
+  menu_item_id: number,
+  rating: number (1-5),
+  comment: string,
+  created_at: string
+}
+
+NEWS TABLE:
+{
+  id: number,
+  title: string,
+  content: string,
+  type: 'news' | 'advertisement',
+  image_url: string,
+  is_active: boolean,
+  created_at: string
+}
+
+BRANCHES TABLE:
+{
+  id: number,
+  name: string,
+  address: string,
+  latitude: number,
+  longitude: number,
+  phone: string,
+  working_hours: string,
+  is_active: boolean,
+  delivery_radius: number,
+  created_at: string
+}
+
+NOTIFICATIONS TABLE:
+{
+  id: number,
+  user_id: number,
+  title: string,
+  message: string,
+  type: string,
+  is_read: boolean,
+  created_at: string
+}
+
+═══════════════════════════════════════════════════════════════════════════════
+                    6. ROLE-BASED PAGE MAPPING
+═══════════════════════════════════════════════════════════════════════════════
+
+PUBLIC PAGES (No Authentication):
+- / (Home/Landing page with featured products)
+- /menu (Product catalog with filters)
+- /product/:id (Product detail page)
+- /about (About us)
+- /contact (Contact form)
+- /news (News listing)
+- /news/:id (News detail)
+- /downloads (Downloads page)
+- /login (Login page)
+- /register (Registration page)
+- /forgot (Forgot password)
+- /order/:ticket_no (Track order - public)
+
+USER PAGES (Authenticated Users):
+- /profile (User profile)
+- /profile/settings (User settings)
+- /cart (Shopping cart)
+- /favorites (Favorite products)
+- /user (User dashboard with orders)
+- /user/status/:ticket_no (Order status)
+- /receipt/:ticket_no (Order receipt)
+- /settings (General settings - theme, language, font)
+
+STAFF PAGES (Staff Members):
+- /staff-secure-login-w7m2k (Staff login)
+- /staff/dashboard (Staff dashboard)
+- /staff/menu (Product management)
+- /staff/chat (Customer support chat)
+- /staff/employees (Staff list - view only)
+
+SUPERADMIN PAGES (System Administrators):
+- /super-admin-master-login-z9x4m (Superadmin login)
+- /super-admin-control-panel-master-z8x9k (Main dashboard)
+- /super-admin/analytics (Analytics & charts)
+- /super-admin/reports (Reports & exports)
+- /super-admin/system (System settings)
+- /super-admin/logs (System logs)
+- /super-admin/notifications (Notification management)
+- /super-admin/news (News management)
+- /super-admin/pages (Content management)
+- /super-admin/profile (Superadmin profile)
+- /super-admin/advanced-settings (Advanced settings)
+- /admin/menu (Product management - full control)
+- /admin/employees (Staff management)
+- /admin/360-management (360 photo management)
+- /admin/card-management (Payment card management)
+
+═══════════════════════════════════════════════════════════════════════════════
+                    7. ROUTING & PERMISSION LOGIC
+═══════════════════════════════════════════════════════════════════════════════
+
+ROUTE PROTECTION STRATEGY:
+
+1. PUBLIC ROUTES:
+   - Accessible to everyone (authenticated or not)
+   - Examples: /, /menu, /product/:id, /login, /register
+
+2. AUTHENTICATED ROUTES:
+   - Require any logged-in user
+   - Check: session.user_id exists
+   - Redirect to /login if not authenticated
+
+3. ROLE-SPECIFIC ROUTES:
+   - USER ONLY: /profile, /cart, /favorites, /user
+   - STAFF ONLY: /staff/dashboard, /staff/menu, /staff/chat
+   - SUPERADMIN ONLY: /super-admin/*, /admin/*
+   
+4. REDIRECT RULES:
+   - If not logged in → /login
+   - If logged in as USER trying to access STAFF page → /profile (or show 403)
+   - If logged in as STAFF trying to access SUPERADMIN page → /staff/dashboard (or show 403)
+   - If logged in as SUPERADMIN → Full access to all pages
+   
+5. POST-LOGIN REDIRECTS:
+   - USER: → / or /menu (shopping page)
+   - STAFF: → /staff/dashboard
+   - SUPERADMIN: → /super-admin-control-panel-master-z8x9k
+
+IMPLEMENTATION PATTERN (React Router):
+
+```typescript
+// ProtectedRoute.tsx
+interface ProtectedRouteProps {
+  children: React.ReactNode;
+  allowedRoles: ('user' | 'staff' | 'superadmin')[];
+}
+
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles }) => {
+  const { user, role, isAuthenticated } = useAuth();
+  
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  if (!allowedRoles.includes(role)) {
+    return <Navigate to="/unauthorized" replace />;
+  }
+  
+  return <>{children}</>;
+};
+
+// Usage in routes:
+<Route path="/profile" element={
+  <ProtectedRoute allowedRoles={['user']}>
+    <ProfilePage />
+  </ProtectedRoute>
+} />
+
+<Route path="/staff/dashboard" element={
+  <ProtectedRoute allowedRoles={['staff', 'superadmin']}>
+    <StaffDashboard />
+  </ProtectedRoute>
+} />
+
+<Route path="/super-admin/*" element={
+  <ProtectedRoute allowedRoles={['superadmin']}>
+    <SuperAdminLayout />
+  </ProtectedRoute>
+} />
+```
+
+UNAUTHORIZED HANDLING:
+- Show 403 Forbidden page with message
+- Provide link to appropriate dashboard based on user's role
+- Log unauthorized access attempts (optional)
+
+═══════════════════════════════════════════════════════════════════════════════
+                        8. UI/UX REQUIREMENTS
+═══════════════════════════════════════════════════════════════════════════════
+
+DESIGN THEME: "E-commerce for Safety Shoes and Safety Wears"
+
+COLOR PALETTE:
+- Primary: Industrial Blue (#2563eb) - Trust, professionalism
+- Secondary: Safety Orange (#f97316) - Attention, safety
+- Accent: Dark Gray (#1f2937) - Stability, strength
+- Background Light: #f9fafb
+- Background Dark: #111827
+- Text Light: #111827
+- Text Dark: #f9fafb
+- Success: #10b981
+- Warning: #f59e0b
+- Error: #ef4444
+
+TYPOGRAPHY:
+- Headings: Inter, Roboto, or Outfit (Google Fonts)
+- Body: System fonts or Inter
+- Font sizes: Responsive (base 16px, scale up/down based on user preference)
+
+LAYOUT PRINCIPLES:
+1. Clean and Professional:
+   - Minimal clutter
+   - Clear visual hierarchy
+   - Ample whitespace
+   - Grid-based layouts
+
+2. Responsive Design:
+   - Mobile-first approach
+   - Breakpoints: 640px (sm), 768px (md), 1024px (lg), 1280px (xl)
+   - Touch-friendly buttons (min 44x44px)
+   - Hamburger menu on mobile
+
+3. Navigation:
+   - Sticky header with logo, search, cart, user menu
+   - Breadcrumbs for deep pages
+   - Footer with links, contact info, social media
+
+4. Product Catalog:
+   - Grid layout (2 cols mobile, 3-4 cols desktop)
+   - Product cards with image, name, price, rating, "Add to Cart" button
+   - Filters sidebar (categories, price range, sizes, colors)
+   - Sort options (price, rating, newest)
+   - Pagination or infinite scroll
+
+5. Product Detail Page:
+   - Large product images with gallery/carousel
+   - Product info: name, price, description, sizes, colors, stock
+   - Add to cart with quantity selector
+   - Size and color selection
+   - Reviews and ratings section
+   - Related products
+
+6. Shopping Cart:
+   - List of items with image, name, price, quantity, subtotal
+   - Update quantity or remove item
+   - Order summary with subtotal, delivery, total
+   - Proceed to checkout button
+
+7. Checkout Flow:
+   - Delivery address (with map integration)
+   - Payment method selection
+   - Order review
+   - Confirmation page with ticket number
+
+8. User Dashboard:
+   - Profile info
+   - Order history with status
+   - Favorites
+   - Settings
+
+9. Staff Dashboard:
+   - Order queue (pending, ready, in-delivery)
+   - Quick actions (mark ready, served, cancel)
+   - Product management table
+   - Chat interface
+
+10. Superadmin Dashboard:
+    - KPI cards (total users, orders, revenue, active staff)
+    - Charts (sales trends, order status distribution)
+    - Recent activity feed
+    - Quick links to management pages
+
+COMPONENTS TO BUILD:
+- Navbar (with role-based menu items)
+- Footer
+- ProductCard
+- ProductGallery
+- CartItem
+- OrderCard
+- UserProfile
+- StaffOrderQueue
+- SuperadminKPICard
+- Chart components (Line, Bar, Pie)
+- Modal/Dialog
+- Toast notifications
+- Loading spinners
+- Error boundaries
+- Form components (Input, Select, Checkbox, etc.)
+- Search bar with autocomplete
+- Language switcher
+- Theme toggle (dark/light)
+- Font size adjuster
+
+ACCESSIBILITY:
+- ARIA labels
+- Keyboard navigation
+- Focus indicators
+- Alt text for images
+- Color contrast compliance (WCAG AA)
+
+ANIMATIONS:
+- Smooth transitions (200-300ms)
+- Hover effects on buttons and cards
+- Loading skeletons
+- Page transitions
+- Micro-interactions (add to cart animation, etc.)
+
+═══════════════════════════════════════════════════════════════════════════════
+                        9. AUTH & STATE FLOW
+═══════════════════════════════════════════════════════════════════════════════
+
+AUTHENTICATION STATE MANAGEMENT:
+
+1. AUTH CONTEXT:
+```typescript
+interface User {
+  id: number;
+  email: string;
+  first_name: string;
+  last_name: string;
+  phone: string;
+  address: string;
+  avatar?: string;
+}
+
+interface AuthState {
+  isAuthenticated: boolean;
+  user: User | null;
+  role: 'guest' | 'user' | 'staff' | 'superadmin';
+  loading: boolean;
+}
+
+interface AuthContextType extends AuthState {
+  login: (credentials: LoginCredentials) => Promise<void>;
+  logout: () => Promise<void>;
+  register: (data: RegisterData) => Promise<void>;
+  checkAuth: () => Promise<void>;
+}
+```
+
+2. AUTH FLOW:
+   a. On app load:
+      - Call GET /api/auth/status
+      - If logged in, set user and role in context
+      - If not, set role='guest'
+   
+   b. On login:
+      - POST to appropriate login endpoint
+      - On success, update context with user data and role
+      - Redirect based on role
+   
+   c. On logout:
+      - Call appropriate logout endpoint
+      - Clear context
+      - Redirect to /login or /
+   
+   d. On protected route access:
+      - Check isAuthenticated and role
+      - Allow or redirect accordingly
+
+3. PERSISTENT SESSION:
+   - Backend uses session cookies (httpOnly, secure)
+   - Frontend doesn't need to manage tokens
+   - Just include credentials in fetch/axios requests
+   
+4. SESSION TIMEOUT HANDLING:
+   - If API returns 401 Unauthorized, clear auth state and redirect to login
+   - Show toast: "Session expired. Please log in again."
+
+GLOBAL STATE MANAGEMENT:
+
+1. CART STATE:
+   - Sync with backend via API
+   - Local state for optimistic updates
+   - Persist cart count in context
+
+2. USER PREFERENCES:
+   - Language, theme, font size
+   - Store in localStorage
+   - Sync with backend for logged-in users
+
+3. NOTIFICATIONS:
+   - Fetch unread count on load
+   - Poll or use WebSocket for real-time updates (optional)
+
+ERROR HANDLING:
+
+1. API ERRORS:
+   - Network errors: Show toast "Network error. Please try again."
+   - 400 Bad Request: Show validation errors
+   - 401 Unauthorized: Redirect to login
+   - 403 Forbidden: Show "Access denied" message
+   - 404 Not Found: Show "Resource not found"
+   - 500 Server Error: Show "Server error. Please try again later."
+
+2. FORM VALIDATION:
+   - Client-side validation before submit
+   - Show inline error messages
+   - Disable submit button during processing
+
+3. LOADING STATES:
+   - Show loading spinner during API calls
+   - Disable buttons to prevent double-submit
+   - Skeleton loaders for content
+
+═══════════════════════════════════════════════════════════════════════════════
+                    10. ENVIRONMENT CONFIGURATION
+═══════════════════════════════════════════════════════════════════════════════
+
+ENVIRONMENT VARIABLES:
+
+.env.local (Development):
+```
+VITE_API_BASE_URL=http://localhost:5000
+VITE_APP_NAME=Safety.uz
+VITE_DEFAULT_LANGUAGE=uz
+VITE_ENABLE_DEBUG=true
+```
+
+.env.production (Production):
+```
+VITE_API_BASE_URL=https://pro-obuv.onrender.com
+VITE_APP_NAME=Safety.uz
+VITE_DEFAULT_LANGUAGE=uz
+VITE_ENABLE_DEBUG=false
+```
+
+API CLIENT CONFIGURATION:
+
+```typescript
+// api/client.ts
+import axios from 'axios';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+
+const apiClient = axios.create({
+  baseURL: API_BASE_URL,
+  withCredentials: true, // Important for session cookies
+  headers: {
+    'Content-Type': 'application/json',
+    'X-Requested-With': 'XMLHttpRequest',
+  },
+});
+
+// Request interceptor
+apiClient.interceptors.request.use(
+  (config) => {
+    // Add any auth headers if needed (not required for session-based auth)
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Response interceptor
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Unauthorized - redirect to login
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default apiClient;
+```
+
+═══════════════════════════════════════════════════════════════════════════════
+                    11. FOLDER STRUCTURE
+═══════════════════════════════════════════════════════════════════════════════
+
+```
+frontend/
+├── public/
+│   ├── favicon.ico
+│   ├── robots.txt
+│   └── manifest.json
+├── src/
+│   ├── api/
+│   │   ├── client.ts              # Axios instance
+│   │   ├── auth.ts                # Auth API calls
+│   │   ├── products.ts            # Product API calls
+│   │   ├── cart.ts                # Cart API calls
+│   │   ├── orders.ts              # Order API calls
+│   │   ├── users.ts               # User API calls
+│   │   ├── staff.ts               # Staff API calls
+│   │   └── superadmin.ts          # Superadmin API calls
+│   ├── components/
+│   │   ├── common/
+│   │   │   ├── Navbar.tsx
+│   │   │   ├── Footer.tsx
+│   │   │   ├── Button.tsx
+│   │   │   ├── Input.tsx
+│   │   │   ├── Modal.tsx
+│   │   │   ├── Toast.tsx
+│   │   │   ├── Loader.tsx
+│   │   │   └── ErrorBoundary.tsx
+│   │   ├── product/
+│   │   │   ├── ProductCard.tsx
+│   │   │   ├── ProductGallery.tsx
+│   │   │   ├── ProductFilters.tsx
+│   │   │   └── ProductList.tsx
+│   │   ├── cart/
+│   │   │   ├── CartItem.tsx
+│   │   │   ├── CartSummary.tsx
+│   │   │   └── CheckoutForm.tsx
+│   │   ├── order/
+│   │   │   ├── OrderCard.tsx
+│   │   │   ├── OrderStatus.tsx
+│   │   │   └── OrderTimeline.tsx
+│   │   ├── user/
+│   │   │   ├── UserProfile.tsx
+│   │   │   ├── UserSettings.tsx
+│   │   │   └── FavoritesList.tsx
+│   │   ├── staff/
+│   │   │   ├── OrderQueue.tsx
+│   │   │   ├── ProductManagement.tsx
+│   │   │   └── ChatInterface.tsx
+│   │   └── superadmin/
+│   │       ├── KPICard.tsx
+│   │       ├── DashboardChart.tsx
+│   │       ├── UserManagement.tsx
+│   │       ├── StaffManagement.tsx
+│   │       └── SystemLogs.tsx
+│   ├── contexts/
+│   │   ├── AuthContext.tsx
+│   │   ├── CartContext.tsx
+│   │   └── ThemeContext.tsx
+│   ├── hooks/
+│   │   ├── useAuth.ts
+│   │   ├── useCart.ts
+│   │   ├── useProducts.ts
+│   │   ├── useOrders.ts
+│   │   └── useDebounce.ts
+│   ├── layouts/
+│   │   ├── MainLayout.tsx
+│   │   ├── UserLayout.tsx
+│   │   ├── StaffLayout.tsx
+│   │   └── SuperadminLayout.tsx
+│   ├── pages/
+│   │   ├── public/
+│   │   │   ├── HomePage.tsx
+│   │   │   ├── MenuPage.tsx
+│   │   │   ├── ProductDetailPage.tsx
+│   │   │   ├── AboutPage.tsx
+│   │   │   ├── ContactPage.tsx
+│   │   │   ├── NewsPage.tsx
+│   │   │   ├── LoginPage.tsx
+│   │   │   └── RegisterPage.tsx
+│   │   ├── user/
+│   │   │   ├── ProfilePage.tsx
+│   │   │   ├── CartPage.tsx
+│   │   │   ├── FavoritesPage.tsx
+│   │   │   ├── OrdersPage.tsx
+│   │   │   └── SettingsPage.tsx
+│   │   ├── staff/
+│   │   │   ├── StaffLoginPage.tsx
+│   │   │   ├── StaffDashboardPage.tsx
+│   │   │   ├── StaffMenuPage.tsx
+│   │   │   └── StaffChatPage.tsx
+│   │   └── superadmin/
+│   │       ├── SuperadminLoginPage.tsx
+│   │       ├── SuperadminDashboardPage.tsx
+│   │       ├── AnalyticsPage.tsx
+│   │       ├── ReportsPage.tsx
+│   │       ├── SystemPage.tsx
+│   │       ├── LogsPage.tsx
+│   │       ├── UserManagementPage.tsx
+│   │       ├── StaffManagementPage.tsx
+│   │       └── NewsManagementPage.tsx
+│   ├── routes/
+│   │   ├── index.tsx              # Main router
+│   │   ├── ProtectedRoute.tsx     # Route guard
+│   │   └── routes.config.ts       # Route definitions
+│   ├── styles/
+│   │   ├── globals.css
+│   │   ├── variables.css
+│   │   └── themes.css
+│   ├── types/
+│   │   ├── auth.types.ts
+│   │   ├── product.types.ts
+│   │   ├── order.types.ts
+│   │   ├── user.types.ts
+│   │   └── api.types.ts
+│   ├── utils/
+│   │   ├── formatters.ts          # Date, currency formatters
+│   │   ├── validators.ts          # Form validation
+│   │   ├── constants.ts           # App constants
+│   │   └── helpers.ts             # Utility functions
+│   ├── App.tsx
+│   ├── main.tsx
+│   └── vite-env.d.ts
+├── .env.local
+├── .env.production
+├── .gitignore
+├── index.html
+├── package.json
+├── tsconfig.json
+├── vite.config.ts
+└── README.md
+```
+
+═══════════════════════════════════════════════════════════════════════════════
+                    12. STEP-BY-STEP IMPLEMENTATION GUIDE
+═══════════════════════════════════════════════════════════════════════════════
+
+PHASE 1: PROJECT SETUP (Day 1)
+1. Initialize React + TypeScript + Vite project
+   ```bash
+   npm create vite@latest frontend -- --template react-ts
+   cd frontend
+   npm install
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install react-router-dom axios react-query
+   npm install -D tailwindcss postcss autoprefixer
+   npx tailwindcss init -p
+   ```
+
+3. Configure Tailwind CSS in tailwind.config.js
+
+4. Set up environment variables (.env.local, .env.production)
+
+5. Create folder structure as outlined above
+
+PHASE 2: CORE INFRASTRUCTURE (Day 2-3)
+1. Set up API client (axios instance with interceptors)
+2. Create AuthContext and useAuth hook
+3. Create ProtectedRoute component
+4. Set up React Router with basic routes
+5. Create basic layouts (MainLayout, UserLayout, StaffLayout, SuperadminLayout)
+6. Implement error boundary and loading components
+
+PHASE 3: AUTHENTICATION (Day 4-5)
+1. Build LoginPage (with role detection)
+2. Build RegisterPage
+3. Implement login/logout flow
+4. Create Navbar with role-based menu items
+5. Test authentication for all 3 roles
+
+PHASE 4: PUBLIC PAGES (Day 6-8)
+1. HomePage with featured products
+2. MenuPage with product grid, filters, search
+3. ProductDetailPage with gallery, add to cart
+4. AboutPage, ContactPage, NewsPage
+5. Footer component
+
+PHASE 5: USER FEATURES (Day 9-11)
+1. CartPage with cart items, summary
+2. Checkout flow with address selection
+3. ProfilePage with user info
+4. OrdersPage with order history
+5. FavoritesPage
+6. SettingsPage (language, theme, font size)
+
+PHASE 6: STAFF FEATURES (Day 12-14)
+1. StaffLoginPage
+2. StaffDashboardPage with order queue
+3. StaffMenuPage with product management
+4. Order actions (mark ready, served, cancel)
+5. StaffChatPage (optional)
+
+PHASE 7: SUPERADMIN FEATURES (Day 15-20)
+1. SuperadminLoginPage
+2. SuperadminDashboardPage with KPIs and charts
+3. AnalyticsPage with advanced charts
+4. ReportsPage with export functionality
+5. UserManagementPage (view, delete, reset password)
+6. StaffManagementPage (add, delete, reset password)
+7. NewsManagementPage (add, edit, delete news)
+8. SystemPage (system stats, cache, backup)
+9. LogsPage (view and download logs)
+
+PHASE 8: POLISH & OPTIMIZATION (Day 21-23)
+1. Responsive design testing and fixes
+2. Accessibility improvements
+3. Performance optimization (code splitting, lazy loading)
+4. Error handling improvements
+5. Loading states and skeletons
+6. Toast notifications
+7. Animation and transitions
+
+PHASE 9: TESTING & DEPLOYMENT (Day 24-25)
+1. Manual testing of all features
+2. Cross-browser testing
+3. Mobile testing
+4. Build for production
+5. Deploy to hosting (Netlify, Vercel, or Render)
+6. Configure environment variables on hosting platform
+7. Test production deployment
+
+═══════════════════════════════════════════════════════════════════════════════
+                    13. CODING STANDARDS & BEST PRACTICES
+═══════════════════════════════════════════════════════════════════════════════
+
+TYPESCRIPT:
+- Use strict mode
+- Define interfaces for all data structures
+- Avoid 'any' type
+- Use enums for constants
+- Type all function parameters and return values
+
+REACT:
+- Use functional components with hooks
+- Follow hooks rules (don't call in loops, conditions, etc.)
+- Use React.memo for expensive components
+- Implement error boundaries
+- Use Suspense for lazy loading
+
+NAMING CONVENTIONS:
+- Components: PascalCase (e.g., ProductCard.tsx)
+- Files: PascalCase for components, camelCase for utilities
+- Variables/functions: camelCase
+- Constants: UPPER_SNAKE_CASE
+- CSS classes: kebab-case or use CSS-in-JS
+
+CODE ORGANIZATION:
+- One component per file
+- Keep components small and focused
+- Extract reusable logic into custom hooks
+- Use composition over inheritance
+- Separate business logic from UI
+
+API CALLS:
+- Use React Query for data fetching
+- Handle loading, error, and success states
+- Implement retry logic for failed requests
+- Cache responses when appropriate
+
+STYLING:
+- Use Tailwind utility classes
+- Create reusable component classes
+- Maintain consistent spacing and sizing
+- Follow mobile-first approach
+
+PERFORMANCE:
+- Lazy load routes and heavy components
+- Optimize images (use WebP, lazy loading)
+- Debounce search inputs
+- Virtualize long lists
+- Minimize re-renders with useMemo and useCallback
+
+SECURITY:
+- Sanitize user inputs
+- Validate data on client and server
+- Use HTTPS in production
+- Don't store sensitive data in localStorage
+- Implement CSRF protection (backend handles this)
+
+ACCESSIBILITY:
+- Use semantic HTML
+- Add ARIA labels where needed
+- Ensure keyboard navigation
+- Maintain color contrast
+- Provide alt text for images
+
+═══════════════════════════════════════════════════════════════════════════════
+                    14. MULTILINGUAL SUPPORT
+═══════════════════════════════════════════════════════════════════════════════
+
+SUPPORTED LANGUAGES:
+- uz (Uzbek) - Default
+- ru (Russian)
+- en (English)
+- kz (Kazakh)
+
+IMPLEMENTATION:
+1. Fetch translations from backend:
+   GET /api/translations?lang=uz
+   
+2. Store translations in context or state
+
+3. Create translation helper:
+   ```typescript
+   const t = (key: string) => translations[key] || key;
+   ```
+
+4. Use in components:
+   ```tsx
+   <h1>{t('welcome_message')}</h1>
+   ```
+
+5. Language switcher in Navbar:
+   - Dropdown with language options
+   - On change, call POST /api/set-language
+   - Reload translations and re-render
+
+TRANSLATION KEYS (Examples):
+- welcome_message
+- login
+- register
+- logout
+- add_to_cart
+- checkout
+- my_orders
+- profile
+- settings
+- search_products
+- filter_by_category
+- sort_by_price
+- etc.
+
+═══════════════════════════════════════════════════════════════════════════════
+                    15. FINAL CHECKLIST
+═══════════════════════════════════════════════════════════════════════════════
+
+BEFORE STARTING DEVELOPMENT:
+☐ Read this entire document thoroughly
+☐ Understand the role system (user, staff, superadmin)
+☐ Review all API endpoints and their requirements
+☐ Understand the authentication flow
+☐ Plan the component hierarchy
+☐ Set up development environment
+
+DURING DEVELOPMENT:
+☐ Follow the folder structure
+☐ Implement authentication first
+☐ Build public pages before protected pages
+☐ Test each feature as you build it
+☐ Handle errors gracefully
+☐ Add loading states everywhere
+☐ Make it responsive from the start
+☐ Use TypeScript strictly
+☐ Comment complex logic
+
+BEFORE DEPLOYMENT:
+☐ Test all user flows (user, staff, superadmin)
+☐ Test on multiple browsers
+☐ Test on mobile devices
+☐ Check accessibility
+☐ Optimize performance
+☐ Remove console.logs
+☐ Configure environment variables
+☐ Build for production
+☐ Test production build locally
+
+POST-DEPLOYMENT:
+☐ Verify all features work in production
+☐ Monitor for errors
+☐ Collect user feedback
+☐ Plan iterative improvements
+
+═══════════════════════════════════════════════════════════════════════════════
+                    16. ADDITIONAL NOTES
+═══════════════════════════════════════════════════════════════════════════════
+
+IMPORTANT CONSIDERATIONS:
+
+1. SESSION-BASED AUTH:
+   - Backend uses Flask sessions (server-side)
+   - No JWT tokens needed
+   - Always include credentials in requests (withCredentials: true)
+   - Session cookies are httpOnly and secure
+
+2. ROLE DETECTION:
+   - After login, backend sets session['role']
+   - Frontend should call /api/auth/status to get current user and role
+   - Store role in AuthContext
+
+3. PRODUCT CATEGORIES:
+   - tufli (formal shoes)
+   - etik (boots)
+   - krosovka (sneakers)
+   - mokasima (loafers)
+   - botik (flats)
+   - tapochka (slippers)
+
+4. ORDER STATUSES:
+   - pending: Order placed, awaiting approval
+   - approved: Order approved by admin
+   - ready: Order prepared by staff
+   - in_delivery: Courier is delivering
+   - delivered: Order completed
+   - cancelled: Order cancelled
+
+5. PAYMENT INTEGRATION:
+   - Backend supports Click and Payme (Uzbekistan payment systems)
+   - Frontend should display available payment cards
+   - QR codes for payments (if applicable)
+
+6. MAP INTEGRATION:
+   - Use Google Maps or Leaflet for address selection
+   - Store latitude and longitude with address
+   - Calculate delivery distance and price
+
+7. REAL-TIME FEATURES (Optional):
+   - WebSocket for live order updates (staff dashboard)
+   - Notifications for new orders
+   - Chat system for customer support
+
+8. ANALYTICS (Superadmin):
+   - Use Chart.js or Recharts for visualizations
+   - Display sales trends, order distribution, user growth
+   - Export reports as CSV/Excel
+
+9. IMAGE HANDLING:
+   - Products can have multiple images and videos
+   - Use lazy loading for images
+   - Implement image gallery/carousel on product detail page
+
+10. SEARCH & FILTERS:
+    - Debounce search input (300ms)
+    - Filter by category, price range, sizes, colors
+    - Sort by price, rating, newest
+
+═══════════════════════════════════════════════════════════════════════════════
+                    END OF MASTER PROMPT
+═══════════════════════════════════════════════════════════════════════════════
+
+This document contains ALL the information needed to build a complete, production-ready
+frontend for the Safety.uz e-commerce platform. Follow the structure, implement the
+features as described, and adhere to the coding standards outlined above.
+
+The frontend should be:
+✓ Fully functional with all user flows working
+✓ Secure with proper role-based access control
+✓ Responsive and mobile-friendly
+✓ Accessible and user-friendly
+✓ Well-structured and maintainable
+✓ Optimized for performance
+✓ Ready for production deployment
+
+Good luck with the implementation!

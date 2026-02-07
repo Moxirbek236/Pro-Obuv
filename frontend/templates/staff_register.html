@@ -1,0 +1,192 @@
+{% extends base_layout | default("base.html") %} {% block content %}
+<main class="auth-page container">
+  <div class="auth-card" role="main" aria-labelledby="staff-register-title">
+    <div class="brand">
+      <img
+        src="{{ url_for('static', filename='icons/logo-compact.webp') }}"
+        alt="{{ _('nav.brand') }}"
+        onerror="this.style.display='none'" />
+      <div>
+        <h1 id="staff-register-title">
+          {{ _('staff.register_title') if _('staff.register_title') else "Xodim
+          Ro'yxatdan O'tish" }}
+        </h1>
+        <small class="text-muted-weak"
+          >{{ _('staff.register_subtitle') if _('staff.register_subtitle') else
+          '' }}</small
+        >
+      </div>
+    </div>
+
+    <form method="post" novalidate aria-describedby="staff-register-help">
+      <input
+        type="hidden"
+        name="csrf_token"
+        value="{{ csrf_token|default('') }}" />
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label for="first_name" class="form-label"
+            >{{ _('form.first_name') if _('form.first_name') else 'Ism'
+            }}</label
+          >
+          <input
+            type="text"
+            id="first_name"
+            name="first_name"
+            class="form-control"
+            required
+            aria-required="true"
+            placeholder="{{ _('form.first_name_placeholder') if _('form.first_name_placeholder') else '' }}" />
+        </div>
+        <div class="col-md-6">
+          <label for="last_name" class="form-label"
+            >{{ _('form.last_name') if _('form.last_name') else 'Familiya'
+            }}</label
+          >
+          <input
+            type="text"
+            id="last_name"
+            name="last_name"
+            class="form-control"
+            required
+            aria-required="true"
+            placeholder="{{ _('form.last_name_placeholder') if _('form.last_name_placeholder') else '' }}" />
+        </div>
+
+        <div class="col-md-6">
+          <label for="birth_date" class="form-label"
+            >{{ _('form.birth_date') if _('form.birth_date') else "Tug'ilgan
+            sana" }}</label
+          >
+          <input
+            type="date"
+            id="birth_date"
+            name="birth_date"
+            class="form-control"
+            required
+            aria-required="true" />
+        </div>
+        <div class="col-md-6">
+          <label for="phone" class="form-label"
+            >{{ _('form.phone') if _('form.phone') else 'Telefon' }}</label
+          >
+          <input
+            type="tel"
+            id="phone"
+            name="phone"
+            class="form-control"
+            required
+            aria-required="true"
+            placeholder="+998901234567" />
+        </div>
+
+        <div class="col-md-4">
+          <label for="passport_series" class="form-label"
+            >{{ _('form.passport_series') if _('form.passport_series') else
+            'Passport seriyasi' }}</label
+          >
+          <input
+            type="text"
+            id="passport_series"
+            name="passport_series"
+            class="form-control text-uppercase"
+            maxlength="2"
+            required
+            aria-required="true"
+            placeholder="AA"
+            pattern="[A-Za-z]{2}" />
+        </div>
+        <div class="col-md-8">
+          <label for="passport_number" class="form-label"
+            >{{ _('form.passport_number') if _('form.passport_number') else
+            'Passport raqami' }}</label
+          >
+          <input
+            type="text"
+            id="passport_number"
+            name="passport_number"
+            class="form-control"
+            maxlength="7"
+            required
+            aria-required="true"
+            placeholder="1234567"
+            pattern="\d{7}" />
+        </div>
+
+        <div class="col-12">
+          <label for="password" class="form-label"
+            >{{ _('form.password') if _('form.password') else 'Parol' }}</label
+          >
+          <div class="input-group">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              class="form-control"
+              required
+              aria-required="true"
+              aria-describedby="passwordHelp"
+              minlength="8"
+              placeholder="{{ _('form.password_placeholder') if _('form.password_placeholder') else '' }}" />
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              id="togglePassword"
+              aria-label="{{ _('form.toggle_password') if _('form.toggle_password') else 'Show password' }}">
+              👁️
+            </button>
+          </div>
+          <div id="passwordHelp" class="form-text text-muted">
+            {{ _('staff.password_hint') if _('staff.password_hint') else 'Kamida
+            8 ta belgi.' }}
+          </div>
+        </div>
+      </div>
+
+      <div class="auth-actions d-flex gap-2 mt-4">
+        <button type="submit" class="btn btn-primary">
+          {{ _('staff.register_submit') if _('staff.register_submit') else
+          "Ro'yxatdan o'tish" }}
+        </button>
+        <a href="{{ url_for('staff_login') }}" class="btn btn-outline-secondary"
+          >{{ _('nav.login') }}</a
+        >
+      </div>
+
+      <div
+        id="staff-register-help"
+        class="auth-help mt-3"
+        aria-live="polite"></div>
+    </form>
+  </div>
+</main>
+
+<script>
+  // Password visibility toggle
+  (function(){
+    const btn = document.getElementById('togglePassword');
+    const pwd = document.getElementById('password');
+    if (!btn || !pwd) return;
+    btn.addEventListener('click', function(){
+      if (pwd.type === 'password') { pwd.type = 'text'; btn.setAttribute('aria-pressed','true'); }
+      else { pwd.type = 'password'; btn.setAttribute('aria-pressed','false'); }
+    });
+  })();
+
+  // Basic client-side validation hints to improve UX before submit
+  (function(){
+    const form = document.querySelector('.auth-card form');
+    const help = document.getElementById('staff-register-help');
+    if (!form) return;
+    form.addEventListener('submit', function(e){
+      if (!form.checkValidity()) {
+        e.preventDefault();
+        help.textContent = '{{ _('form.fix_errors') if _('form.fix_errors') else "Iltimos, maydonlarni to'ldiring yoki xatoliklarni tuzating." }}';
+        help.focus && help.focus();
+      }
+    });
+  })();
+</script>
+
+{% endblock %}

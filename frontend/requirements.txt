@@ -1,0 +1,5 @@
+
+# Frontend Requirements
+flask
+requests
+gunicorn

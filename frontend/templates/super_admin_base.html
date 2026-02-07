@@ -1,0 +1,50 @@
+{% extends "dashboard_base.html" %}
+
+{% block sidebar_menu %}
+<!-- Super Admin Specific Sidebar -->
+<div class="px-3 mb-2">
+    <small class="text-uppercase text-muted fw-bold" style="font-size: 0.7rem;">Main</small>
+</div>
+<a href="{{ url_for('super_admin_dashboard') }}" class="nav-link-modern {{ 'active' if request.endpoint == 'super_admin_dashboard' }}">
+    <i class="bi bi-grid-1x2-fill"></i> Dashboard
+</a>
+
+<div class="px-3 mt-4 mb-2">
+    <small class="text-uppercase text-muted fw-bold" style="font-size: 0.7rem;">Management</small>
+</div>
+<a href="{{ url_for('super_admin_notifications') }}" class="nav-link-modern {{ 'active' if request.endpoint == 'super_admin_notifications' }}">
+    <i class="bi bi-bell"></i> Bildirishnomalar
+</a>
+<a href="/super-admin/news" class="nav-link-modern {{ 'active' if 'news' in request.endpoint and 'super' in request.endpoint }}">
+    <i class="bi bi-newspaper"></i> Yangiliklar
+</a>
+<a href="/super-admin/questions" class="nav-link-modern {{ 'active' if 'questions' in request.endpoint }}">
+    <i class="bi bi-chat-dots"></i> Savollar javobi
+</a>
+<a href="/super-admin/social" class="nav-link-modern {{ 'active' if 'social' in request.endpoint }}">
+    <i class="bi bi-share"></i> Ijtimoiy Tarmoqlar
+</a>
+
+<div class="px-3 mt-4 mb-2">
+    <small class="text-uppercase text-muted fw-bold" style="font-size: 0.7rem;">System</small>
+</div>
+<a href="{{ url_for('super_admin_reports') }}" class="nav-link-modern {{ 'active' if request.endpoint == 'super_admin_reports' }}">
+    <i class="bi bi-file-earmark-bar-graph"></i> Hisobotlar
+</a>
+<a href="{{ url_for('super_admin_system') }}" class="nav-link-modern {{ 'active' if request.endpoint == 'super_admin_system' }}">
+    <i class="bi bi-cpu"></i> Tizim Holati
+</a>
+<!-- Database explorer removed for security -->
+<a href="{{ url_for('super_admin_logs') }}" class="nav-link-modern {{ 'active' if request.endpoint == 'super_admin_logs' }}">
+    <i class="bi bi-journal-code"></i> Tizim Loglari
+</a>
+<a href="{{ url_for('general_settings') }}" class="nav-link-modern {{ 'active' if request.endpoint == 'general_settings' }}">
+    <i class="bi bi-gear"></i> Sozlamalar
+</a>
+
+<!-- Admin Access to Site -->
+<hr class="my-3 opacity-25">
+<a href="{{ url_for('menu') }}" class="nav-link-modern">
+    <i class="bi bi-box-arrow-up-right"></i> Saytni Ko'rish
+</a>
+{% endblock %}

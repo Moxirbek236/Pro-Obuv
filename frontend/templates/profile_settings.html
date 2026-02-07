@@ -1,0 +1,302 @@
+{% extends base_layout | default("base.html") %}
+{% block title %}{{ _('profile_page.settings_title') }} - {{ _('nav.brand') }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    .settings-sidebar-card {
+        background: linear-gradient(135deg, var(--surface-dark) 0%, #1a202c 100%);
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        position: sticky;
+        top: 100px;
+    }
+    
+    .settings-nav-link {
+        display: flex;
+        align-items: center;
+        padding: 12px 20px;
+        color: var(--text-secondary);
+        text-decoration: none;
+        border-radius: 12px;
+        margin-bottom: 5px;
+        transition: all 0.3s ease;
+        font-family: var(--font-heading);
+        text-transform: uppercase;
+        font-size: 0.85rem;
+    }
+    
+    .settings-nav-link i {
+        font-size: 1.1rem;
+        width: 24px;
+        margin-right: 12px;
+        color: var(--accent-primary);
+    }
+    
+    .settings-nav-link:hover {
+        background: rgba(255, 215, 0, 0.05);
+        color: var(--accent-primary);
+    }
+    
+    .settings-nav-link.active {
+        background: var(--accent-primary);
+        color: var(--base-dark);
+    }
+    
+    .settings-nav-link.active i {
+        color: var(--base-dark);
+    }
+    
+    .appearance-preview {
+        background: var(--surface-dark);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 15px;
+        transition: all 0.3s ease;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container product-page-wrapper py-5">
+    <div class="row g-4">
+        <!-- Sidebar Navigation -->
+        <div class="col-lg-4">
+            <div class="settings-sidebar-card shadow-lg overflow-hidden">
+                <div class="hazard-stripe"></div>
+                <div class="p-4 pt-5">
+                    <h3 class="h5 fw-bold text-uppercase mb-4 font-heading text-center">
+                         <i class="bi bi-gear-fill me-2 text-accent"></i> {{ _('nav.profile_settings') }}
+                    </h3>
+                    
+                    <div class="nav flex-column">
+                        <a href="#interface" class="settings-nav-link active" data-bs-toggle="pill">
+                            <i class="bi bi-display"></i> {{ _('settings.interface') }}
+                        </a>
+                        <a href="#notifications" class="settings-nav-link" data-bs-toggle="pill">
+                            <i class="bi bi-bell"></i> {{ _('settings.notifications') }}
+                        </a>
+                        <a href="#account" class="settings-nav-link" data-bs-toggle="pill">
+                            <i class="bi bi-person-badge"></i> {{ _('settings.account') }}
+                        </a>
+                        <hr class="border-secondary border-opacity-25 my-3">
+                        <a href="{{ url_for('profile') }}" class="settings-nav-link">
+                            <i class="bi bi-arrow-left"></i> {{ _('settings.back_to_profile') }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Content -->
+        <div class="col-lg-8">
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-industrial alert-{{ 'danger' if category=='error' else 'success' if category=='success' else category }} alert-dismissible fade show mb-4" role="alert">
+                  <i class="bi {{ 'bi-exclamation-triangle' if category=='error' else 'bi-check-circle' }} me-2"></i>
+                  {{ message }}
+                  <button type="button" class="btn-close" data-bs-alert></button>
+                </div>
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <div class="tab-content">
+                <!-- Interface Settings -->
+                <div class="tab-pane fade show active" id="interface">
+                    <div class="industrial-card p-4 mb-4">
+                        <h4 class="mb-4 d-flex align-items-center text-uppercase fw-bold fs-5">
+                            <i class="bi bi-translate me-2 text-accent"></i> {{ _('settings.language_theme') }}
+                        </h4>
+                        
+                        <form id="interface-form">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label class="form-label-industrial">{{ _('settings.language') }}</label>
+                                    <select class="form-select-industrial" id="interface_language" name="interface_language">
+                                        <option value="uz" {% if session.get('interface_language') == 'uz' %}selected{% endif %}>O'zbekcha</option>
+                                        <option value="ru" {% if session.get('interface_language') == 'ru' %}selected{% endif %}>Русский</option>
+                                        <option value="en" {% if session.get('interface_language') == 'en' %}selected{% endif %}>English</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label class="form-label-industrial">{{ _('settings.theme') }}</label>
+                                    <select class="form-select-industrial" id="theme_selection" name="theme">
+                                        <option value="dark" {% if session.get('theme') == 'dark' %}selected{% endif %}>{{ _('settings.theme_dark') }}</option>
+                                        <option value="light" {% if session.get('theme') == 'light' %}selected{% endif %}>{{ _('settings.theme_light') }}</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label-industrial">{{ _('settings.font_size') }}</label>
+                                    <input type="range" class="form-range custom-range-industrial" min="14" max="20" step="1" id="font_size_range" value="{{ session.get('font_size', 16) }}">
+                                    <div class="d-flex justify-content-between small text-secondary">
+                                        <span>Small</span>
+                                        <span id="font_size_value">{{ session.get('font_size', 16) }}px</span>
+                                        <span>Large</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 appearance-preview">
+                                <div class="small text-secondary mb-2 uppercase">{{ _('settings.preview') }}</div>
+                                <div id="preview-text" class="h5 mb-0 font-heading">
+                                    Industrial Premium Design System
+                                </div>
+                            </div>
+
+                            <div class="text-end mt-4">
+                                <button type="button" class="btn-primary-industrial px-4" onclick="saveInterfaceSettings()">{{ _('settings.save_changes') }}</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Notifications Settings -->
+                <div class="tab-pane fade" id="notifications">
+                    <div class="industrial-card p-4 mb-4">
+                        <h4 class="mb-4 d-flex align-items-center text-uppercase fw-bold fs-5">
+                            <i class="bi bi-bell me-2 text-accent"></i> {{ _('settings.notification_preferences') }}
+                        </h4>
+                        
+                        <div class="list-group list-group-flush bg-transparent">
+                            <div class="list-group-item bg-transparent border-secondary border-opacity-10 px-0 d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="fw-bold">{{ _('settings.email_notif') }}</div>
+                                    <div class="small text-secondary">{{ _('settings.email_notif_desc') }}</div>
+                                </div>
+                                <div class="form-check form-switch custom-switch-industrial">
+                                    <input class="form-check-input" type="checkbox" checked>
+                                </div>
+                            </div>
+                            <div class="list-group-item bg-transparent border-secondary border-opacity-10 px-0 d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="fw-bold">{{ _('settings.browser_notif') }}</div>
+                                    <div class="small text-secondary">{{ _('settings.browser_notif_desc') }}</div>
+                                </div>
+                                <div class="form-check form-switch custom-switch-industrial">
+                                    <input class="form-check-input" type="checkbox" checked>
+                                </div>
+                            </div>
+                            <div class="list-group-item bg-transparent border-0 px-0 d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="fw-bold">{{ _('settings.sms_notif') }}</div>
+                                    <div class="small text-secondary">{{ _('settings.sms_notif_desc') }}</div>
+                                </div>
+                                <div class="form-check form-switch custom-switch-industrial">
+                                    <input class="form-check-input" type="checkbox">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-end mt-4">
+                            <button type="button" class="btn-primary-industrial px-4">{{ _('settings.save_preferences') }}</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Settings -->
+                <div class="tab-pane fade" id="account">
+                    <div class="industrial-card p-4 mb-4">
+                        <h4 class="mb-4 d-flex align-items-center text-uppercase fw-bold fs-5">
+                            <i class="bi bi-person-badge me-2 text-accent"></i> {{ _('settings.public_profile') }}
+                        </h4>
+                        
+                        <div class="alert alert-secondary border-0 bg-white bg-opacity-5 d-flex align-items-center mb-4">
+                            <i class="bi bi-info-circle-fill me-3 fs-4 text-accent"></i>
+                            <div class="small">{{ _('settings.profile_info_note') }}</div>
+                        </div>
+
+                        <div class="text-center py-5">
+                             <div class="mb-4">
+                                <div class="d-inline-block p-1 rounded-circle border border-3 border-accent">
+                                    {% if user and user.avatar %}
+                                    <img src="{{ user.avatar | cloudinary_url }}" alt="Avatar" class="rounded-circle object-fit-cover" style="width: 120px; height: 120px;">
+                                    {% else %}
+                                    <div class="rounded-circle bg-secondary bg-opacity-25 d-flex align-items-center justify-content-center" style="width: 120px; height: 120px;">
+                                        <i class="bi bi-person fs-1"></i>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <button class="btn btn-outline-industrial btn-sm py-2 px-4 mb-3"><i class="bi bi-upload me-2"></i> {{ _('settings.upload_new') }}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Live preview for font size
+    const fontSizeRange = document.getElementById('font_size_range');
+    const fontSizeValue = document.getElementById('font_size_value');
+    const previewText = document.getElementById('preview-text');
+
+    if (fontSizeRange) {
+        // Set initial state
+        previewText.style.fontSize = fontSizeRange.value + 'px';
+        
+        fontSizeRange.addEventListener('input', function(e) {
+            const size = e.target.value;
+            fontSizeValue.innerText = size + 'px';
+            previewText.style.fontSize = size + 'px';
+        });
+    }
+
+    async function saveInterfaceSettings() {
+        const lang = document.getElementById('interface_language').value;
+        const theme = document.getElementById('theme_selection').value;
+        const fontSize = document.getElementById('font_size_range').value;
+
+        try {
+            const resp = await fetch('/api/save-settings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : ''
+                },
+                body: JSON.stringify({
+                    language: lang,
+                    theme: theme,
+                    font_size: fontSize
+                })
+            });
+
+            if (resp.ok) {
+                location.reload(); 
+            } else {
+                alert("Xatolik yuz berdi");
+            }
+        } catch (e) {
+            alert("Tarmoq xatosi");
+        }
+    }
+
+    // Tab persistence in URL
+    const hash = window.location.hash;
+    if (hash) {
+        const triggerEl = document.querySelector(`.settings-nav-link[href="${hash}"]`);
+        if (triggerEl) {
+            const tab = new bootstrap.Tab(triggerEl);
+            tab.show();
+            document.querySelectorAll('.settings-nav-link').forEach(l => l.classList.remove('active'));
+            triggerEl.classList.add('active');
+        }
+    }
+
+    document.querySelectorAll('.settings-nav-link[data-bs-toggle="pill"]').forEach(link => {
+        link.addEventListener('shown.bs.tab', function (e) {
+            window.location.hash = e.target.getAttribute('href');
+            document.querySelectorAll('.settings-nav-link').forEach(l => l.classList.remove('active'));
+            e.target.classList.add('active');
+        });
+    });
+</script>
+{% endblock %}
