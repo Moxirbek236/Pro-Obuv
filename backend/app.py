@@ -3289,12 +3289,12 @@ class DatabasePool:
             # Handle both postgresql:// and postgres:// (common in Heroku/Render)
             if dsn and (dsn.startswith("postgresql://") or dsn.startswith("postgres://")):
                 try:
-                    # Replace postgres:// with postgresql:// for compatibility if needed
-                    parse_dsn = dsn
+                    # Always ensure postgresql:// for the parser and fallback
+                    working_dsn = dsn
                     if dsn.startswith("postgres://"):
-                        parse_dsn = "postgresql" + dsn[8:]
+                        working_dsn = "postgresql" + dsn[8:]
 
-                    url = urlparse.urlparse(parse_dsn)
+                    url = urlparse.urlparse(working_dsn)
                     # Extract query parameters
                     params = urlparse.parse_qs(url.query)
                     
@@ -3304,7 +3304,7 @@ class DatabasePool:
                         "password": url.password,
                         "host": url.hostname,
                         "port": url.port or 5432,
-                        "database": url.path.lstrip('/')
+                        "database": url.path.lstrip('/').split('?')[0].rstrip('/') # Clean db name
                     }
                     
                     # Explicitly handle common options that cause DSN parsing issues
@@ -3313,8 +3313,7 @@ class DatabasePool:
                     else:
                         conn_kwargs['sslmode'] = 'require'
                     
-                    # Add other possible params from query string to kwargs if they are valid psycopg2 params
-                    # (Simplified: just pass them all, psycopg2 will ignore unknown ones or we can be selective)
+                    # Add other possible params from query string to kwargs
                     valid_params = ['connect_timeout', 'options', 'application_name', 'keepalives', 'sslcert', 'sslkey', 'sslrootcert']
                     for p in valid_params:
                         if p in params:
@@ -3323,7 +3322,11 @@ class DatabasePool:
                     # Filter out None values
                     conn_kwargs = {k: v for k, v in conn_kwargs.items() if v is not None}
                     
-                    # Try connecting with components
+                    # Unquote user/pass as urlparse might not have caught all encoded chars 
+                    # but actually url.username/password are already unquoted by urlparse.
+                    # We pass them as is in conn_kwargs which is correct for connect(**kwargs).
+
+                    # Try connecting with components - this is generally MORE robust than URI string
                     self.pool = psycopg2_pool.ThreadedConnectionPool(
                         1, self.max_connections,
                         cursor_factory=RealDictCursor,
@@ -3332,9 +3335,12 @@ class DatabasePool:
                     app_logger.info("PostgreSQL connection pool initialized (using parsed components)")
                     return
                 except Exception as parse_err:
-                    app_logger.warning(f"Failed to connect using parsed URI components: {parse_err}. Trying raw DSN...")
+                    app_logger.warning(f"Failed to connect using parsed URI components: {parse_err}. Trying cleaned DSN...")
+                    # Update local dsn for the fallback to use the postgresql:// prefix
+                    if dsn.startswith("postgres://"):
+                        dsn = "postgresql" + dsn[8:]
 
-            # Fallback to standard raw DSN connection
+            # Fallback to standard DSN connection (using cleaned DSN)
             self.pool = psycopg2_pool.ThreadedConnectionPool(
                 1, self.max_connections,
                 dsn,
@@ -3342,14 +3348,33 @@ class DatabasePool:
             )
             app_logger.info("PostgreSQL connection pool initialized (using raw DSN)")
         except Exception as e:
-             error_msg = str(e)
-             if "Network is unreachable" in error_msg:
-                 app_logger.error(f"PostgreSQL connection failed: Network is unreachable. "
-                                 f"IMPORTANT: If you are on Render.com, this is likely because Supabase direct connections use IPv6 which Render doesn't support. "
-                                 f"Please use the Supabase Connection Pooler (port 6543) instead of direct connection (port 5432).")
-             else:
-                 app_logger.error(f"PostgreSQL pool init failed: {e}")
-             raise
+            error_msg = str(e)
+            app_logger.error(f"PostgreSQL pool init failed: {error_msg}")
+            if "sslmode" in error_msg:
+                app_logger.error("DSN parsing error detected (sslmode). Attempting ultra-safe connection...")
+                # Last resort: try with minimal components if we have a DSN
+                try:
+                    if "dsn" in locals() and dsn:
+                        # Re-parse to be sure
+                        url = urlparse.urlparse(dsn)
+                        conn_kwargs = {
+                            "host": url.hostname,
+                            "port": url.port or 5432,
+                            "user": url.username,
+                            "password": url.password,
+                            "database": url.path.lstrip('/').split('?')[0].rstrip('/'),
+                            "sslmode": "require"
+                        }
+                        conn_kwargs = {k: v for k, v in conn_kwargs.items() if v is not None}
+                        self.pool = psycopg2_pool.ThreadedConnectionPool(1, self.max_connections, cursor_factory=RealDictCursor, **conn_kwargs)
+                        app_logger.info("PostgreSQL connection pool initialized (last resort successful)")
+                        return
+                except Exception as ex2:
+                    app_logger.error(f"Last resort connection failed: {ex2}")
+            
+            if "Network is unreachable" in error_msg:
+                app_logger.error("PostgreSQL connection failed: Network is unreachable. Possible IPv6/IPv4 mismatch on Render.")
+            raise
 
     @contextmanager
     def get_connection(self):
