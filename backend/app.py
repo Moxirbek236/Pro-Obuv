@@ -3272,25 +3272,63 @@ class PgConnectionProxy:
 # Database connection pool - PostgreSQL only
 class DatabasePool:
     def __init__(self, dsn, max_connections=20):
-        # Clean DSN from potential quotes or whitespace that Render might inject
+        import urllib.parse as urlparse
+        
+        # Clean DSN from potential quotes or whitespace
         if dsn:
             dsn = dsn.strip().strip('"').strip("'")
             
         self.dsn = dsn
         self.max_connections = max_connections
         self.is_postgres = True
+        
         if not psycopg2_pool:
             raise ImportError("psycopg2 not installed")
             
         try:
-            # If DSN is a URI (starts with postgresql://), psycopg2 should handle it,
-            # but sometimes libpq version on Render is picky about query params.
+            # Robust DSN handling: If it's a URI, try to extract basic info 
+            # and pass explicitly to avoid library-level URI parsing bugs.
+            if dsn and dsn.startswith("postgresql://"):
+                try:
+                    url = urlparse.urlparse(dsn)
+                    # Extract query parameters separately
+                    params = urlparse.parse_qs(url.query)
+                    
+                    # Connection options for the pool
+                    conn_kwargs = {
+                        "user": url.username,
+                        "password": url.password,
+                        "host": url.hostname,
+                        "port": url.port or 5432,
+                        "database": url.path.lstrip('/')
+                    }
+                    
+                    # Map common query params
+                    if 'sslmode' in params:
+                        conn_kwargs['sslmode'] = params['sslmode'][0]
+                    else:
+                        conn_kwargs['sslmode'] = 'require'
+                        
+                    # Filter out None values
+                    conn_kwargs = {k: v for k, v in conn_kwargs.items() if v is not None}
+                    
+                    self.pool = psycopg2_pool.ThreadedConnectionPool(
+                        1, self.max_connections,
+                        cursor_factory=RealDictCursor,
+                        **conn_kwargs
+                    )
+                    app_logger.info("PostgreSQL connection pool initialized (using parsed components)")
+                    return
+                except Exception as parse_err:
+                    app_logger.warning(f"Failed to parse DSN URI components: {parse_err}. Falling back to raw DSN.")
+
+            # Fallback to standard raw DSN connection
             self.pool = psycopg2_pool.ThreadedConnectionPool(
                 1, self.max_connections,
                 dsn,
                 cursor_factory=RealDictCursor
             )
-            app_logger.info("PostgreSQL connection pool initialized")
+            app_logger.info("PostgreSQL connection pool initialized (using raw DSN)")
         except Exception as e:
              error_msg = str(e)
              if "Network is unreachable" in error_msg:
