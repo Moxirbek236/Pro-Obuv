@@ -1,0 +1,148 @@
+{
+  "timestamp": "2026-02-07T13:19:51.571983",
+  "status": "passed",
+  "checks": [
+    {
+      "name": "connection_settings",
+      "ssl_enabled": true,
+      "is_supabase": true,
+      "passed": true
+    },
+    {
+      "name": "tables_exist",
+      "expected": 34,
+      "found": 34,
+      "missing": [],
+      "passed": true
+    },
+    {
+      "name": "row_counts",
+      "total_tables": 34,
+      "total_rows": 4677,
+      "passed": true
+    },
+    {
+      "name": "foreign_keys",
+      "count": 0,
+      "passed": true
+    },
+    {
+      "name": "indexes",
+      "count": 34,
+      "tables_with_indexes": 34,
+      "passed": true
+    },
+    {
+      "name": "data_integrity",
+      "passed": true
+    }
+  ],
+  "tables": {
+    "users": {
+      "row_count": 7
+    },
+    "staff": {
+      "row_count": 2
+    },
+    "couriers": {
+      "row_count": 1
+    },
+    "orders": {
+      "row_count": 14
+    },
+    "counters": {
+      "row_count": 1
+    },
+    "favorites": {
+      "row_count": 2
+    },
+    "cart_items": {
+      "row_count": 12
+    },
+    "order_details": {
+      "row_count": 12
+    },
+    "questions": {
+      "row_count": 2
+    },
+    "receipts": {
+      "row_count": 14
+    },
+    "branches": {
+      "row_count": 2
+    },
+    "sessions": {
+      "row_count": 4236
+    },
+    "chats": {
+      "row_count": 8
+    },
+    "chat_members": {
+      "row_count": 11
+    },
+    "chat_messages": {
+      "row_count": 10
+    },
+    "notifications": {
+      "row_count": 48
+    },
+    "messages": {
+      "row_count": 0
+    },
+    "ratings": {
+      "row_count": 19
+    },
+    "payment_cards": {
+      "row_count": 2
+    },
+    "card_payment_settings": {
+      "row_count": 1
+    },
+    "photos_360": {
+      "row_count": 0
+    },
+    "product_media": {
+      "row_count": 34
+    },
+    "comments": {
+      "row_count": 13
+    },
+    "ai_knowledge": {
+      "row_count": 0
+    },
+    "ai_unanswered": {
+      "row_count": 37
+    },
+    "product_marketplaces": {
+      "row_count": 6
+    },
+    "operator_chats": {
+      "row_count": 10
+    },
+    "operator_chat_messages": {
+      "row_count": 125
+    },
+    "site_settings": {
+      "row_count": 5
+    },
+    "social_links": {
+      "row_count": 1
+    },
+    "menu_item_media": {
+      "row_count": 19
+    },
+    "menu_items": {
+      "row_count": 19
+    },
+    "news": {
+      "row_count": 3
+    },
+    "superadmin_settings": {
+      "row_count": 1
+    }
+  },
+  "errors": [],
+  "warnings": [
+    "No foreign key constraints found"
+  ]
+}

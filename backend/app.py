@@ -3599,6 +3599,7 @@ def api_translations():
 
 
 # Optimized database operations with timeout handling
+# Optimized database operations with timeout handling
 def execute_query(query, params=None, fetch_one=False, fetch_all=False, max_retries=3):
     "Optimizatsiya qilingan database so'rovi - improved None handling"
     last_error = None
@@ -3623,15 +3624,19 @@ def execute_query(query, params=None, fetch_one=False, fetch_all=False, max_retr
                     if result is None:
                         return None
 
-                    # Build a small proxy that supports both dict-like access (.get('col'))
-                    # and integer indexing (result[0]) because callers expect both.
                     cols = [c[0] for c in (cur.description or [])]
 
+                    # Proper RowProxy handling for both dict (RealDictRow) and tuple inputs
                     class RowProxy(dict):
                         def __init__(self, columns, values):
-                            # Map column name -> value
-                            super().__init__(zip(columns, values) if columns else {})
-                            self._values = tuple(values)
+                            # Extract true values if input is dict-like
+                            if hasattr(values, "keys"):
+                                final_values = [values.get(c) for c in columns]
+                            else:
+                                final_values = values
+                                
+                            super().__init__(zip(columns, final_values) if columns else {})
+                            self._values = tuple(final_values)
                             self._columns = list(columns)
 
                         def __getitem__(self, key):
@@ -3654,10 +3659,16 @@ def execute_query(query, params=None, fetch_one=False, fetch_all=False, max_retr
 
                     cols = [c[0] for c in (cur.description or [])]
 
+                    # Define RowProxy again (scoping)
                     class RowProxy(dict):
                         def __init__(self, columns, values):
-                            super().__init__(zip(columns, values) if columns else {})
-                            self._values = tuple(values)
+                            if hasattr(values, "keys"):
+                                final_values = [values.get(c) for c in columns]
+                            else:
+                                final_values = values
+                                
+                            super().__init__(zip(columns, final_values) if columns else {})
+                            self._values = tuple(final_values)
                             self._columns = list(columns)
 
                         def __getitem__(self, key):
@@ -3676,7 +3687,6 @@ def execute_query(query, params=None, fetch_one=False, fetch_all=False, max_retr
                         try:
                             proxy_rows.append(RowProxy(cols, r))
                         except Exception:
-                            # Fallback to raw row if proxy creation fails
                             proxy_rows.append(r)
                     return proxy_rows
                 else:
@@ -3691,7 +3701,7 @@ def execute_query(query, params=None, fetch_one=False, fetch_all=False, max_retr
             last_error = e
             error_msg = str(e).lower()
             # Handle retries for connection issues or timeouts
-            if any(term in error_msg for term in ["timeout", "locked", "connection", "closed", "pool"]):
+            if any(term in error_msg for term in ["timeout", "locked", "connection", "closed", "pool", "network"]):
                 if attempt < max_retries - 1:
                     wait_time = 0.5 * (2**attempt)
                     app_logger.warning(f"Database issue, retrying in {wait_time}s (attempt {attempt + 1}): {e}")
