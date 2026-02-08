@@ -685,71 +685,108 @@ def get_uzum_items_processed():
         return url.rstrip('/') + '/original.jpg'
 
     for p in products:
-        # Group SKUs by COLOR (first part before hyphen in skuTitle)
+        # 1. Grouplarni aniqlash (rang bo'yicha)
+        # Uzumda skuTitle odatda "Rang-O'lcham" formatida bo'ladi (masalan "Qora-42")
+        # Yoki agar o'lcham bo'lmasa faqat "Qora" bo'lishi mumkin
         sku_groups = defaultdict(list)
+        
         for sku in p.get('skuList', []):
             title = sku.get('skuTitle', '') or ''
-            # Extract color: everything before the LAST hyphen (the last part is usually size)
-            # Example: "Qora-42" -> color="Qora", size="42"
-            # Example: "Ko'k-L" -> color="Ko'k", size="L"
-            # Example: "Qizil-Pushti-39" -> color="Qizil-Pushti", size="39"
+            
+            # Rangni ajratib olish logikasi:
             if '-' in title:
-                parts = title.rsplit('-', 1)  # Split from right, max 1 split
-                color_key = parts[0].strip()  # Everything before last hyphen is color
+                # Odatda oxirgi qism o'lcham bo'ladi: "Qora-XL", "To'q ko'k-42"
+                # Shuning uchun oxirgi defisdan oldingi hamma narsani rang deb olamiz
+                parts = title.rsplit('-', 1)
+                color_key = parts[0].strip()
+            elif title:
+                # Agar defis bo'lmasa, butun sarlavha rang deb hisoblanadi (o'lchamsiz mahsulot)
+                color_key = title.strip()
             else:
+                # Agar title bo'sh bo'lsa
                 color_key = "Asosiy"
+                
             sku_groups[color_key].append(sku)
         
+        # Agar hech qanday guruh bo'lmasa (skuList bo'sh), lekin mahsulot bor
+        if not sku_groups and p.get('skuList'):
+             sku_groups["Asosiy"] = p.get('skuList')
+
+        # Har bir rang guruhi uchun bitta mahsulot yaratamiz
         for color, skus in sku_groups.items():
-            first_sku = skus[0]
-            img_url = fix_uzum_img(first_sku.get('previewImage') or p.get('image'))
+            if not skus: continue
             
+            # Birinchi SKU asosiy ma'lumotlar uchun
+            first_sku = skus[0]
+            
+            # Rasm tanlash logikasi:
+            # 1. SKU ning o'zini rasmi (previewImage)
+            # 2. Agar yo'q bo'lsa, mahsulotning umumiy rasmi (image)
+            sku_img = first_sku.get('previewImage')
+            if not sku_img:
+                # Tricky part: sometimes access image from 'image' field inside sku or parent
+                sku_img = p.get('image')
+            
+            img_url = fix_uzum_img(sku_img)
+
             all_media = []
             seen_media = set()
+            
+            # Barcha SKU rasmlarini yig'ish
             for s in skus:
                 s_img = fix_uzum_img(s.get('previewImage'))
                 if s_img and s_img not in seen_media:
                     all_media.append({'media_url': s_img, 'media_type': 'image'})
                     seen_media.add(s_img)
             
+            # Asosiy rasmni ham qo'shish (agar bo'lmasa)
             p_img = fix_uzum_img(p.get('image'))
             if p_img and p_img not in seen_media:
                 all_media.append({'media_url': p_img, 'media_type': 'image'})
-
+                seen_media.add(p_img)
+            
+            # Xususiyatlar
             char_list = []
             for c in first_sku.get('characteristicsList', []):
-                char_list.append(f"{c.get('characteristicTitle', {}).get('uz', '')}: {c.get('characteristicValue', {}).get('uz', '')}")
+                char_name = c.get('characteristicTitle', {}).get('uz', '') or c.get('characteristicTitle', {}).get('ru', '')
+                char_val = c.get('characteristicValue', {}).get('uz', '') or c.get('characteristicValue', {}).get('ru', '')
+                if char_name and char_val:
+                    char_list.append(f"{char_name}: {char_val}")
 
-            # Extract sizes: the last part after hyphen in skuTitle
+            # O'lchamlarni yig'ish
             size_list = []
             for s in skus:
                 s_title = s.get('skuTitle', '')
                 if '-' in s_title:
-                    # Get the last part (size)
+                    # Oxirgi qism o'lcham
                     size = s_title.rsplit('-', 1)[-1].strip()
                     if size and size not in size_list:
                         size_list.append(size)
-                elif s_title and s_title not in size_list:
-                    # If no hyphen, the whole title might be the size
-                    size_list.append(s_title)
-
-            # If color is 'Asosiy', don't append it to the name to keep it clean
+                # Agar defis bo'lmasa, demak bu o'lchamsiz mahsulot (faqat rang)
+                # Bunday holda size_list bo'sh qolishi mumkin yoki "Standard" deb qo'shish mumkin
+            
+            # Mahsulot nomi
             p_title = p.get('title', 'Noma\'lum mahsulot')
-            display_name = f"{p_title} - {color}" if color != "Asosiy" else p_title
+            # Agar rang "Asosiy" bo'lmasa va nomida bo'lmasa, nomiga qo'shamiz
+            if color != "Asosiy" and color.lower() not in p_title.lower():
+                display_name = f"{p_title} ({color})"
+            else:
+                display_name = p_title
 
             item = {
-                'id': first_sku.get('skuId'),
-                'productId': p.get('productId'),
+                'id': first_sku.get('skuId'), # Unique ID for cart/logic
+                'productId': p.get('productId'), # Parent ID for link
                 'name': display_name,
                 'name_local': display_name,
                 'price': first_sku.get('price', 0),
+                'old_price': first_sku.get('fullPrice', 0),
                 'description': p.get('title'),
                 'description_local': p.get('title'),
                 'image_url': img_url,
                 'primary_image': img_url,
                 'available': any(s.get('quantityActive', 0) > 0 for s in skus),
                 'category': p.get('category', 'Uzum'),
-                'brand': p.get('category', ''),
+                'brand': p.get('category', ''), # Often category is brand in simple api
                 'rating': float(p.get('rating', 0) or 0),
                 'orders_count': int(p.get('quantitySold', 0) or 0),
                 'all_media': all_media,
