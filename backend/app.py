@@ -688,24 +688,64 @@ def get_uzum_items_processed():
         # 1. Grouplarni aniqlash (rang bo'yicha)
         # Uzumda skuTitle odatda "Rang-O'lcham" formatida bo'ladi (masalan "Qora-42")
         # Yoki agar o'lcham bo'lmasa faqat "Qora" bo'lishi mumkin
+        # 1. Grouplarni aniqlash (rang bo'yicha)
         sku_groups = defaultdict(list)
         
         for sku in p.get('skuList', []):
-            title = sku.get('skuTitle', '') or ''
+            color_key = "Asosiy"
             
-            # Rangni ajratib olish logikasi:
-            if '-' in title:
-                # Odatda oxirgi qism o'lcham bo'ladi: "Qora-XL", "To'q ko'k-42"
-                # Shuning uchun oxirgi defisdan oldingi hamma narsani rang deb olamiz
-                parts = title.rsplit('-', 1)
-                color_key = parts[0].strip()
-            elif title:
-                # Agar defis bo'lmasa, butun sarlavha rang deb hisoblanadi (o'lchamsiz mahsulot)
-                color_key = title.strip()
+            # 1. CHARACTERISTICS (Eng aniq usul)
+            # "characteristicsList" ichidan "Rang" yoki "Цвет" ni qidiramiz
+            char_color = None
+            for c in sku.get('characteristicsList', []):
+                title_uz = (c.get('characteristicTitle', {}).get('uz') or '').lower()
+                title_ru = (c.get('characteristicTitle', {}).get('ru') or '').lower()
+                if 'rang' in title_uz or 'цвет' in title_ru:
+                    char_color = c.get('characteristicValue', {}).get('uz') or c.get('characteristicValue', {}).get('ru')
+                    if char_color:
+                        break
+            
+            if char_color:
+                color_key = char_color
             else:
-                # Agar title bo'sh bo'lsa
-                color_key = "Asosiy"
+                # 2. SKUTITLE PARSING (Fallback)
+                # Agar characteristic bo'lmasa, skuTitle ni tahlil qilamiz
+                # "ЧЕРН-39" -> "ЧЕРН" (Rang), "39" (O'lcham)
+                # "FOOTZY-BOTINKI1-ЧЕРН-39" -> Full title
                 
+                title = sku.get('skuTitle', '') or ''
+                
+                # Agar title da raqam bilan tugasa (masalan -39, -42), bu katta ehtimol bilan o'lcham
+                # Biz o'lchamni olib tashlab, qolganini rang deb olamiz
+                if '-' in title:
+                    # Oxirgi qism o'lcham bo'lishi mumkin
+                    parts = title.rsplit('-', 1)
+                    possible_size = parts[1].strip()
+                    remainder = parts[0].strip()
+                    
+                    # Agar 'possible_size' raqam bo'lsa (39, 42) yoki qisqa (XL, 3XL)
+                    if possible_size.isdigit() or (len(possible_size) <= 3 and any(c.isdigit() for c in possible_size)):
+                        # Endi qolgan qismidan (remainder) rangni ajratishga harakat qilamiz
+                        # Masalan: "FOOTZY-BOTINKI1-ЧЕРН" -> "ЧЕРН" rang bo'lishi kerak
+                        if '-' in remainder:
+                             # Yana oxirgi qismini olamiz, chunki model nomi oldinda bo'ladi
+                             color_part = remainder.rsplit('-', 1)[-1].strip()
+                             # Agar color_part juda uzun bo'lsa yoki shubhali bo'lsa butun remainderni olamiz
+                             if len(color_part) < 20: 
+                                 color_key = color_part
+                             else:
+                                 color_key = remainder
+                        else:
+                             color_key = remainder
+                    else:
+                        # O'lchamga o'xshamasa, demak bu butunlay rang yoki model
+                        # Masalan: "Qora-Qizil"
+                        color_key = title 
+                elif title:
+                    color_key = title
+
+            # Normalize color key
+            color_key = color_key.upper().strip()
             sku_groups[color_key].append(sku)
         
         # Agar hech qanday guruh bo'lmasa (skuList bo'sh), lekin mahsulot bor
