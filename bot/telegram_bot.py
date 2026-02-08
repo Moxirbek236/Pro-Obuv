@@ -15,6 +15,8 @@ import threading
 from flask import Flask
 import json
 import asyncio
+import sys
+import signal
 
 load_dotenv(os.path.join(os.path.dirname(__file__), '../backend/.env'))
 
@@ -335,9 +337,12 @@ def main():
             pool_timeout=30.0
         )
         app = ApplicationBuilder().token(os.environ.get("TELEGRAM_BOT_TOKEN")).request(request).build()
-    except Exception:
+        print("✅ HTTPXRequest configured with 30s timeouts")
+    except Exception as e:
+        print(f"⚠️  HTTPXRequest failed: {e}")
         try:
             app = ApplicationBuilder().token(os.environ.get("TELEGRAM_BOT_TOKEN")).build()
+            print("✅ Using default ApplicationBuilder")
         except Exception as e:
             LOG.exception("Failed to create Application: %s", e)
             return False
@@ -355,11 +360,7 @@ def main():
     try:
         app.run_polling(
             drop_pending_updates=True,
-            timeout=30,
-            read_timeout=30,
-            write_timeout=30,
-            connect_timeout=30,
-            pool_timeout=30
+            timeout=30
         )
         return True
     except Exception as exc:
@@ -384,8 +385,6 @@ if __name__ == "__main__":
     logging.getLogger('httpx').setLevel(logging.WARNING)
     
     # Handle graceful shutdown
-    import signal
-    
     def signal_handler(signum, frame):
         print(f"\n📡 Received signal {signum}, shutting down gracefully...")
         sys.exit(0)
@@ -413,6 +412,8 @@ if __name__ == "__main__":
     port = int(os.environ.get('PORT', 10000))
     
     def run_flask():
+        # Disable Flask warnings in production
+        app.config['ENV'] = 'production'
         app.run(host='0.0.0.0', port=port, debug=False, use_reloader=False, threaded=True)
     
     flask_thread = threading.Thread(target=run_flask, daemon=True)
