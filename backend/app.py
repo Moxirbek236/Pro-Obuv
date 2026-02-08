@@ -694,61 +694,86 @@ def get_uzum_items_processed():
         for sku in p.get('skuList', []):
             color_key = "Asosiy"
             
-            # 1. CHARACTERISTICS (Eng aniq usul)
-            # "characteristicsList" ichidan "Rang" yoki "Цвет" ni qidiramiz
+            # --- STRATEGY 1: Explicit Characteristic (Best) ---
             char_color = None
             for c in sku.get('characteristicsList', []):
-                title_uz = (c.get('characteristicTitle', {}).get('uz') or '').lower()
-                title_ru = (c.get('characteristicTitle', {}).get('ru') or '').lower()
-                if 'rang' in title_uz or 'цвет' in title_ru:
-                    char_color = c.get('characteristicValue', {}).get('uz') or c.get('characteristicValue', {}).get('ru')
-                    if char_color:
+                t_uz = str(c.get('characteristicTitle', {}).get('uz') or '').lower().strip()
+                t_ru = str(c.get('characteristicTitle', {}).get('ru') or '').lower().strip()
+                if t_uz == 'rang' or t_ru == 'цвет':
+                    val = c.get('characteristicValue', {}).get('uz') or c.get('characteristicValue', {}).get('ru')
+                    if val:
+                        char_color = str(val).strip()
                         break
             
             if char_color:
                 color_key = char_color
             else:
-                # 2. SKUTITLE PARSING (Fallback)
-                # Agar characteristic bo'lmasa, skuTitle ni tahlil qilamiz
-                # "ЧЕРН-39" -> "ЧЕРН" (Rang), "39" (O'lcham)
-                # "FOOTZY-BOTINKI1-ЧЕРН-39" -> Full title
-                
+                # --- STRATEGY 2: Parse skuTitle (Common: "COLOR-SIZE" or just "SIZE") ---
+                # Examples: "ЧЕРН-39", "36", "37"
                 title = sku.get('skuTitle', '') or ''
                 
-                # Agar title da raqam bilan tugasa (masalan -39, -42), bu katta ehtimol bilan o'lcham
-                # Biz o'lchamni olib tashlab, qolganini rang deb olamiz
+                extracted_color = None
                 if '-' in title:
-                    # Oxirgi qism o'lcham bo'lishi mumkin
+                    # "ЧЕРН-39" -> parts=["ЧЕРН", "39"]
                     parts = title.rsplit('-', 1)
                     possible_size = parts[1].strip()
                     remainder = parts[0].strip()
                     
-                    # Agar 'possible_size' raqam bo'lsa (39, 42) yoki qisqa (XL, 3XL)
-                    if possible_size.isdigit() or (len(possible_size) <= 3 and any(c.isdigit() for c in possible_size)):
-                        # Endi qolgan qismidan (remainder) rangni ajratishga harakat qilamiz
-                        # Masalan: "FOOTZY-BOTINKI1-ЧЕРН" -> "ЧЕРН" rang bo'lishi kerak
-                        if '-' in remainder:
-                             # Yana oxirgi qismini olamiz, chunki model nomi oldinda bo'ladi
-                             color_part = remainder.rsplit('-', 1)[-1].strip()
-                             # Agar color_part juda uzun bo'lsa yoki shubhali bo'lsa butun remainderni olamiz
-                             if len(color_part) < 20: 
-                                 color_key = color_part
-                             else:
-                                 color_key = remainder
-                        else:
-                             color_key = remainder
+                    # If the suffix is digits, the prefix is likely the color
+                    if possible_size.isdigit() or len(possible_size) <= 3:
+                        extracted_color = remainder
                     else:
-                        # O'lchamga o'xshamasa, demak bu butunlay rang yoki model
-                        # Masalan: "Qora-Qizil"
-                        color_key = title 
+                        # Otherwise the whole thing might be the color pair "Gray-Blue"
+                        extracted_color = title
                 elif title:
-                    color_key = title
+                    # If it's just "36", this is NOT a color. It's a size.
+                    if title.isdigit():
+                        extracted_color = None # It's a size, so no color info here
+                    else:
+                        extracted_color = title
+                
+                if extracted_color:
+                     color_key = extracted_color
+                else:
+                    # --- STRATEGY 3: Parse skuFullTitle (Backup: "BRAND-COLOR-SIZE") ---
+                    # Example: "PROOBUV-YELLOW-36"
+                    full_title = sku.get('skuFullTitle', '') or ''
+                    if full_title:
+                        # Split by hyphens. Usually last part is size.
+                        parts = full_title.split('-')
+                        if len(parts) >= 2:
+                            # Check if last part is size
+                            last_part = parts[-1]
+                            if last_part.isdigit() or len(last_part) <= 3:
+                                # Then the part BEFORE the size is likely the color
+                                # PROOBUV-YELLOW-36 -> YELLOW
+                                color_candidate = parts[-2]
+                                # Filter out generic brand names if possible, but hard to know all brands.
+                                # PROOBUV-PROOBUV-40 -> PROOBUV (not ideal but better than nothing)
+                                color_key = color_candidate
+                            else:
+                                # Maybe no size in full title? Unlikely for shoes.
+                                pass
+                    
+                    # --- STRATEGY 4: Product Title Hint (Last Resort) ---
+                    # Product Title: "Sariq himoya..." -> "Sariq"
+                    if color_key == "Asosiy": # Still default
+                        p_title_lower = (p.get('title') or '').lower()
+                        if 'sariq' in p_title_lower: color_key = "Sariq"
+                        elif 'qora' in p_title_lower: color_key = "Qora"
+                        elif 'oq' in p_title_lower: color_key = "Oq"
+                        # Add more common colors if needed
 
-            # Normalize color key
+            # Normalize and Clean up
             color_key = color_key.upper().strip()
+            
+            # If color key turned out to be digits (e.g. from bad parsing), revert to Asosiy
+            if color_key.isdigit():
+                color_key = "Asosiy"
+                
             sku_groups[color_key].append(sku)
         
-        # Agar hech qanday guruh bo'lmasa (skuList bo'sh), lekin mahsulot bor
+        # Fallback if empty
         if not sku_groups and p.get('skuList'):
              sku_groups["Asosiy"] = p.get('skuList')
 
