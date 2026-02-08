@@ -45,23 +45,43 @@ except Exception:
         IMPORT_ERROR = e
     Updater = None
 
+import psycopg2
+from psycopg2.extras import RealDictCursor
+
 LOG = logging.getLogger("telegram_bot")
 
-# Load Uzum products data
-def load_uzum_products():
+# Database connection helper
+def get_db_conn():
     try:
-        products_file = Path(__file__).parent / "test" / "bot_products_fixed_1770482210682.json"
-        if products_file.exists():
-            with open(products_file, 'r', encoding='utf-8') as f:
-                return json.load(f)
-        else:
-            LOG.warning("Uzum products file not found")
+        dsn = os.environ.get("DATABASE_URL")
+        if not dsn:
             return None
+        conn = psycopg2.connect(dsn, cursor_factory=RealDictCursor)
+        return conn
     except Exception as e:
-        LOG.error(f"Error loading Uzum products: {e}")
+        LOG.error(f"Database connection error: {e}")
         return None
 
-UZUM_PRODUCTS = load_uzum_products()
+def check_uzum_setting():
+    """Check if Uzum Market mode is enabled in the database"""
+    conn = get_db_conn()
+    if not conn:
+        return False
+    try:
+        with conn.cursor() as cur:
+            cur.execute("SELECT value FROM site_settings WHERE key = 'use_uzum_market'")
+            row = cur.fetchone()
+            if row and row['value'].lower() == 'true':
+                return True
+        return False
+    except Exception as e:
+        LOG.error(f"Error checking uzum setting: {e}")
+        return False
+    finally:
+        conn.close()
+
+# Uzum products will be fetched dynamically from the backend API
+UZUM_PRODUCTS = None
 
 # Ensure logs directory exists and define action/error log paths
 LOGS_DIR = Path(__file__).resolve().parent / "logs"
@@ -105,24 +125,34 @@ def log_action(action: str, user: str = "unknown", detail: str = "") -> None:
 
 async def _send_main_keyboard(update: "Update"):
     """Yagona joyda asosiy klaviaturani yuborish.
-
-    Har doim quyidagi tugmalar ko'rinadi:
-    - Mahsulotlar
-    - Uzum mahsulotlar
-    - AI bilan suhbat
-    - Operator bilan suhbat
+    
+    Settingga qarab tugmalar o'zgaradi.
     """
     try:
-        kb = [
-            [
-                KeyboardButton("🛒 Mahsulotlar"),
-                KeyboardButton("🛍️ Uzum mahsulotlar"),
-            ],
-            [
-                KeyboardButton("🤖 AI bilan suhbat"),
-                KeyboardButton("👨‍💼 Operator bilan suhbat"),
-            ],
-        ]
+        use_uzum = check_uzum_setting()
+        
+        if use_uzum:
+            # Uzum rejimi: ["mahsulotlar", "ai bilan suhbat", "operatorga yozish"]
+            kb = [
+                [KeyboardButton("mahsulotlar")],
+                [
+                    KeyboardButton("ai bilan suhbat"),
+                    KeyboardButton("operatorga yozish"),
+                ],
+            ]
+        else:
+            # Oddiy rejim
+            kb = [
+                [
+                    KeyboardButton("🛒 Mahsulotlar"),
+                    KeyboardButton("🛍️ Uzum mahsulotlar"),
+                ],
+                [
+                    KeyboardButton("🤖 AI bilan suhbat"),
+                    KeyboardButton("👨‍💼 Operator bilan suhbat"),
+                ],
+            ]
+            
         markup = ReplyKeyboardMarkup(kb, resize_keyboard=True)
         await update.message.reply_text(
             "Quyidagi tugmalardan foydalaning:", reply_markup=markup
@@ -156,84 +186,93 @@ async def test_cmd(update: "Update", context: "ContextTypes.DEFAULT_TYPE"):
 
 
 async def products_cmd_uzum(update: "Update", context: "ContextTypes.DEFAULT_TYPE"):
-    """Show Uzum products from seller API data"""
-    if not UZUM_PRODUCTS or not UZUM_PRODUCTS.get("products"):
-        await update.message.reply_text("❌ Mahsulotlar ma'lumotlari topilmadi")
-        return
-    
-    products = UZUM_PRODUCTS["products"]
-    available_products = [p for p in products if p.get("totalQuantity", 0) > 0]
-    
-    if not available_products:
-        await update.message.reply_text("❌ Hozirda mavjud mahsulotlar yo'q")
-        return
-    
-    # Show first 10 available products
-    for i, product in enumerate(available_products[:10]):
-        title = product.get("title", "Noma'lum mahsulot")
-        price = product.get("priceRange", "Narx noma'lum")
-        quantity = product.get("totalQuantity", 0)
-        brand = product.get("brand", "Noma'lum")
-        product_id = product.get("id", "")
-        sizes = product.get("sizes", [])
-        colors = product.get("colors", [])
-        image_url = product.get("image", "")
+    """Show Uzum products by fetching from the Flask API"""
+    try:
+        # Fetch from local Flask API (which handles real-time Uzum fetching and processing)
+        response = requests.get("http://127.0.0.1:5000/api/products?per_page=100", timeout=20)
+        if response.status_code != 200:
+            await update.message.reply_text("❌ Mahsulotlarni yuklashda xatolik yuz berdi (Backend API error)")
+            return
         
-        # Create Uzum URL
-        if product_id:
-            uzum_url = f"https://uzum.uz/product/{product_id}"
-        else:
-            uzum_url = product.get("uzumMarketUrl", "https://uzum.uz")
+        res_data = response.json()
+        products = res_data.get("data", [])
         
-        # Build message text
-        message = f"🛍️ *{title}*\n"
-        message += f"💰 Narx: {price}\n"
-        message += f"📊 Mavjud: {quantity} dona\n"
-        message += f"🏷️ Brend: {brand}"
+        if not products:
+            await update.message.reply_text("❌ Hozirda mahsulotlar topilmadi")
+            return
         
-        if sizes:
-            message += f"\n📏 O\'lchamlar: {', '.join(sizes)}"
-        
-        if colors:
-            message += f"\n🎨 Ranglar: {', '.join(colors)}"
-        
-        message += f"\n🔗 [Uzum da ko'rish]({uzum_url})"
-        
-        try:
-            # Try to send with image first
-            if image_url and image_url.startswith('http'):
-                try:
-                    await update.message.reply_photo(
-                        photo=image_url,
-                        caption=message,
-                        parse_mode='Markdown'
-                    )
-                except Exception as photo_error:
-                    # If photo fails, send text only
+        # Show products
+        for i, product in enumerate(products):
+            title = product.get("name", "Noma'lum mahsulot")
+            price = f"{product.get('price', 0):,} UZS".replace(',', ' ')
+            available = "Mavjud" if product.get("available") else "Sotuvda yo'q"
+            product_id = product.get("id", "")
+            parent_id = product.get("productId", "")
+            sizes = product.get("size_list", [])
+            colors = product.get("color_list", [])
+            image_url = product.get("image_url", "")
+            
+            # Create Uzum URL (using productId for the page)
+            uzum_url = f"https://uzum.uz/product/{parent_id}" if parent_id else "https://uzum.uz"
+            
+            # Build message text
+            message = f"🛍️ *{title}*\n"
+            message += f"💰 Narx: {price}\n"
+            message += f"📊 Holati: {available}\n"
+            
+            if sizes:
+                message += f"📏 O\'lchamlar: {', '.join(map(str, sizes))}\n"
+            
+            if colors:
+                message += f"🎨 Ranglar: {', '.join(colors)}\n"
+            
+            message += f"\n🔗 [Uzum dan sotib olish]({uzum_url})"
+            
+            try:
+                # Try to send with image first
+                if image_url and image_url.startswith('http'):
+                    # Append /original.jpg if not already present (backup check)
+                    final_img = image_url
+                    if 'uzum.uz' in final_img and not final_img.endswith('.jpg'):
+                        final_img = final_img.rstrip('/') + '/original.jpg'
+
+                    try:
+                        await update.message.reply_photo(
+                            photo=final_img,
+                            caption=message,
+                            parse_mode='Markdown'
+                        )
+                    except Exception as photo_error:
+                        # If photo fails, send text only
+                        await update.message.reply_text(message, parse_mode='Markdown')
+                else:
+                    # No valid image URL, send text only
                     await update.message.reply_text(message, parse_mode='Markdown')
-            else:
-                # No valid image URL, send text only
-                await update.message.reply_text(message, parse_mode='Markdown')
-                
-        except Exception as e:
-            log_error(e, f"products_cmd_uzum product {i}")
-            # Fallback without markdown and without image
-            fallback_msg = f"{title}\nNarx: {price}\nMavjud: {quantity} dona\nBrend: {brand}"
-            if sizes: fallback_msg += f"\nO\'lchamlar: {', '.join(sizes)}"
-            if colors: fallback_msg += f"\nRanglar: {', '.join(colors)}"
-            fallback_msg += f"\nUzum: {uzum_url}"
-            await update.message.reply_text(fallback_msg)
+                    
+            except Exception as e:
+                log_error(e, f"products_cmd_uzum product {i}")
+                await update.message.reply_text(f"{title}\n{price}\n{available}\n{uzum_url}")
+            
+            # Small delay between messages
+            await asyncio.sleep(0.3)
         
-        # Small delay between messages
-        await asyncio.sleep(0.5)
-    
-    uid = getattr(update.message.from_user, "id", None)
-    log_action("products_cmd_uzum", user=f"tg:{uid}", detail=f"showed {len(available_products)} products")
+        uid = getattr(update.message.from_user, "id", None)
+        log_action("products_cmd_uzum", user=f"tg:{uid}", detail=f"showed {len(products)} products via API")
+    except Exception as e:
+        log_error(e, "products_cmd_uzum failure")
+        await update.message.reply_text("❌ Mahsulotlarni yuklashda texnik xatolik")
 
 
 async def products_cmd_new(update: "Update", context: "ContextTypes.DEFAULT_TYPE"):
-    """Original products command - fetch from Flask API"""
+    """Original products command - fetch from Flask API or Uzum depending on setting"""
     try:
+        use_uzum = check_uzum_setting()
+        
+        if use_uzum:
+            # If Uzum is on, directly show Uzum products
+            await products_cmd_uzum(update, context)
+            return
+
         # Instead of immediately listing all products, ask user to choose a category
         kb = [[KeyboardButton("спецобувь")], [KeyboardButton("спецодежда")]]
         markup = ReplyKeyboardMarkup(kb, resize_keyboard=True)
@@ -244,8 +283,8 @@ async def products_cmd_new(update: "Update", context: "ContextTypes.DEFAULT_TYPE
         log_action("products_cmd_new", user=f"tg:{uid}", detail="category selection shown")
         return
     except Exception as e:
-        log_error(e, "products_cmd_new category selection")
-        await update.message.reply_text("Kategoriyalarni yuklashda xatolik yuz berdi.")
+        log_error(e, "products_cmd_new")
+        await update.message.reply_text("Xatolik yuz berdi.")
         return
 
 
@@ -266,16 +305,16 @@ async def handle_message(update: "Update", context: "ContextTypes.DEFAULT_TYPE")
             LOG.exception("Failed to log incoming message")
 
         # Maxsus tugmalarni tekshiramiz
-        if text in ("/products", "🛒 Mahsulotlar"):
+        if text in ("/products", "🛒 Mahsulotlar", "mahsulotlar"):
             await products_cmd_new(update, context)
             return
         if text in ("/uzum", "🛍️ Uzum mahsulotlar"):
             await products_cmd_uzum(update, context)
             return
-        if text in ("/ai", "🤖 AI bilan suhbat"):
+        if text in ("/ai", "🤖 AI bilan suhbat", "ai bilan suhbat"):
             await update.message.reply_text("AI rejimi yoqildi. Savollaringizni yozing.")
             return
-        if text in ("/operator", "👨‍💼 Operator bilan suhbat"):
+        if text in ("/operator", "👨‍💼 Operator bilan suhbat", "operatorga yozish"):
             await update.message.reply_text("Operator bilan suhbat rejimi yoqildi.")
             return
 
@@ -409,7 +448,7 @@ if __name__ == "__main__":
         return "pong"
     
     # Start Flask server in background thread
-    port = int(os.environ.get('PORT', 10000))
+    port = int(os.environ.get('BOT_PORT', 10001))
     
     def run_flask():
         # Disable Flask warnings in production

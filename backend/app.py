@@ -646,7 +646,118 @@ def api_ratings_for_product(product_id):
         app_logger.exception(f"api_ratings_for_product error: {e}")
         return jsonify({'success': False, 'error': 'server_error'}), 500
 
-# Minimal auth/user stubs to avoid 404s from Swagger UI while endpoints are implemented
+# --- Uzum Market Integration Helpers ---
+_uzum_cache = {"data": None, "timestamp": None}
+
+def fetch_uzum_data_all():
+    # Fresh fetch every time as requested
+    token = Config.UZUM_API_TOKEN
+    shop_id = Config.UZUM_SHOP_ID
+    url = f"https://api-seller.uzum.uz/api/seller-openapi/v1/product/shop/{shop_id}"
+    headers = {"Authorization": token, "Accept": "*/*", "Content-Type": "application/json"}
+    
+    all_products = []
+    page = 0
+    size = 100
+    try:
+        while True:
+            params = {"sortBy": "DEFAULT", "order": "ASC", "size": size, "page": page, "filter": "ALL"}
+            r = requests.get(url, params=params, headers=headers, timeout=10)
+            if r.status_code != 200: break
+            data = r.json()
+            prods = data.get('productList', [])
+            if not prods: break
+            all_products.extend(prods)
+            if len(all_products) >= data.get('totalProductsAmount', 0): break
+            page += 1
+    except Exception as e:
+        if app_logger: app_logger.error(f"Uzum API error: {e}")
+    return all_products
+
+def get_uzum_items_processed():
+    products = fetch_uzum_data_all()
+    results = []
+    
+    def fix_uzum_img(url):
+        if not url or 'uzum.uz' not in url: return url
+        if '/t_product' in url:
+            return url.split('/t_product')[0] + '/original.jpg'
+        return url.rstrip('/') + '/original.jpg'
+
+    for p in products:
+        sku_groups = defaultdict(list)
+        for sku in p.get('skuList', []):
+            title = sku.get('skuTitle', '') or ''
+            # If skuTitle has a color-size format (COLOR-SIZE), group by COLOR.
+            # If no hyphen is present, it's likely just a size or single-item product, 
+            # so we group them together under a generic key.
+            color_key = title.split('-')[0].strip() if '-' in title else "Asosiy"
+            sku_groups[color_key].append(sku)
+        
+        for color, skus in sku_groups.items():
+            first_sku = skus[0]
+            img_url = fix_uzum_img(first_sku.get('previewImage') or p.get('image'))
+            
+            all_media = []
+            seen_media = set()
+            for s in skus:
+                s_img = fix_uzum_img(s.get('previewImage'))
+                if s_img and s_img not in seen_media:
+                    all_media.append({'media_url': s_img, 'media_type': 'image'})
+                    seen_media.add(s_img)
+            
+            p_img = fix_uzum_img(p.get('image'))
+            if p_img and p_img not in seen_media:
+                all_media.append({'media_url': p_img, 'media_type': 'image'})
+
+            char_list = []
+            for c in first_sku.get('characteristicsList', []):
+                char_list.append(f"{c.get('characteristicTitle', {}).get('uz', '')}: {c.get('characteristicValue', {}).get('uz', '')}")
+
+            # If color is 'Asosiy', don't append it to the name to keep it clean
+            p_title = p.get('title', 'Noma\'lum mahsulot')
+            display_name = f"{p_title} - {color}" if color != "Asosiy" else p_title
+
+            item = {
+                'id': first_sku.get('skuId'),
+                'productId': p.get('productId'),
+                'name': display_name,
+                'name_local': display_name,
+                'price': first_sku.get('price', 0),
+                'description': p.get('title'),
+                'description_local': p.get('title'),
+                'image_url': img_url,
+                'primary_image': img_url,
+                'available': any(s.get('quantityActive', 0) > 0 for s in skus),
+                'category': p.get('category', 'Uzum'),
+                'brand': p.get('category', ''),
+                'rating': float(p.get('rating', 0) or 0),
+                'orders_count': int(p.get('quantitySold', 0) or 0),
+                'all_media': all_media,
+                'size_list': [s.get('skuTitle', '').split('-')[-1] for s in skus if '-' in s.get('skuTitle', '')],
+                'color_list': [color] if color != "Asosiy" else [],
+                'feature_list': char_list,
+                'source': 'uzum'
+            }
+            results.append(item)
+    return results
+
+def is_uzum_market_enabled():
+    try:
+        res = execute_query("SELECT value FROM site_settings WHERE key = 'use_uzum_market'", fetch_one=True)
+        if res:
+            if isinstance(res, dict):
+                val = res.get('value')
+            elif hasattr(res, 'get'):
+                val = res.get('value')
+            else:
+                val = res[0]
+            return str(val).lower() == 'true'
+    except Exception as e:
+        if app_logger: app_logger.error(f"Error checking uzum setting: {e}")
+    return False
+
+# Minimal auth/user stubs
 try:
     if not _flask_rule_exists('/api/auth/login', 'POST'):
         def _stub_auth_login():
@@ -1009,6 +1120,47 @@ try:
     @app.route('/api/super-admin/backup-database', methods=['POST', 'OPTIONS'])
     def api_super_backup_db():
         return super_admin_backup_database()
+
+    @app.route('/api/site-settings', methods=['GET'])
+    def get_site_settings():
+        try:
+            rows = execute_query('SELECT key, value FROM site_settings', fetch_all=True) or []
+            settings = {r['key']: r['value'] for r in rows}
+            return jsonify({'success': True, 'settings': settings}), 200
+        except Exception as e:
+            app_logger.error(f"Error fetching site settings: {e}")
+            return jsonify({'success': False, 'error': str(e)}), 500
+
+    @app.route('/api/site-settings', methods=['POST'])
+    def update_site_settings():
+        # Check super_admin status
+        if not session.get('super_admin'):
+            return jsonify({'success': False, 'error': 'Forbidden'}), 403
+            
+        try:
+            data = request.get_json()
+            if not data:
+                return jsonify({'success': False, 'error': 'No data provided'}), 400
+            
+            # Use current timestamp for updated_at
+            now = datetime.datetime.utcnow().isoformat()
+            
+            for key, value in data.items():
+                # Upsert setting
+                exists = execute_query('SELECT 1 FROM site_settings WHERE key = %s', (key,), fetch_one=True)
+                if exists:
+                    execute_query('UPDATE site_settings SET value = %s, updated_at = %s WHERE key = %s', (str(value), now, key))
+                else:
+                    execute_query('INSERT INTO site_settings (key, value, updated_at) VALUES (%s, %s, %s)', (key, str(value), now))
+            
+            # If use_uzum_market was toggled, invalidate cache
+            if 'use_uzum_market' in data:
+                invalidate_menu_cache()
+                
+            return jsonify({'success': True}), 200
+        except Exception as e:
+            app_logger.error(f"Error updating site settings: {e}")
+            return jsonify({'success': False, 'error': str(e)}), 500
 except Exception:
     pass
 
@@ -1023,6 +1175,19 @@ try:
                 page, per_page = 1, 10
 
             offset = (page - 1) * per_page
+            
+            use_uzum = is_uzum_market_enabled()
+
+            if use_uzum:
+                try:
+                    all_products = get_uzum_items_processed()
+                    # Pagination for Uzum products
+                    paged_data = all_products[offset : offset + per_page]
+                    return jsonify({'success': True, 'data': paged_data, 'page': page, 'per_page': per_page, 'total': len(all_products), 'source': 'uzum'}), 200
+                except Exception as uzum_err:
+                    app_logger.error(f"Uzum Market real-time fetch error: {uzum_err}")
+
+            # Default or fallback: database products
             try:
                 rows = execute_query('SELECT id, name, price, description, image_url, available, category FROM menu_items ORDER BY id DESC LIMIT %s OFFSET %s', (per_page, offset), fetch_all=True) or []
             except Exception:
@@ -1054,6 +1219,18 @@ try:
     if not _flask_rule_exists('/api/products/<int:product_id>', 'GET'):
         def _db_product_item(product_id):
             if request.method == 'GET':
+                use_uzum = is_uzum_market_enabled()
+
+                if use_uzum:
+                    try:
+                        items = get_uzum_items_processed()
+                        item = next((i for i in items if i['id'] == product_id), None)
+                        if item:
+                            return jsonify({'success': True, 'product': item, 'source': 'uzum'}), 200
+                        return jsonify({'success': False, 'error': 'not_found'}), 404
+                    except Exception as e:
+                        app_logger.error(f"Uzum product detail API error: {e}")
+
                 try:
                     r = execute_query('SELECT id, name, price, description, image_url, available, category FROM menu_items WHERE id = %s', (product_id,), fetch_one=True)
                 except Exception:
@@ -1489,6 +1666,10 @@ class Config:
     SUPER_ADMIN_USERNAME = os.environ.get("SUPER_ADMIN_USERNAME", "masteradmin")
     SUPER_ADMIN_PASSWORD = os.environ.get("SUPER_ADMIN_PASSWORD", "sjtmsimram10")
     SUPER_ADMIN_PHONE = os.environ.get("SUPER_ADMIN_PHONE", "+998 97 719 57 70")
+
+    # Uzum Market API
+    UZUM_API_TOKEN = os.environ.get("UZUM_API_TOKEN", "K5jmUckABrq9L6sS9iAvMtUgrspCbvJZpK3rUnDFauA=")
+    UZUM_SHOP_ID = os.environ.get("UZUM_SHOP_ID", "88415")
 
 
 # Apply configuration
@@ -8354,7 +8535,45 @@ def validate_json(required_fields=None):
 @rate_limit(max_requests=10000, window=60)  # Очень высокий лимит для меню
 
 def menu():
-    "Optimized menu endpoint"
+    "Optimized menu endpoint with Uzum Market support"
+    if is_uzum_market_enabled():
+        try:
+            menu_items = get_uzum_items_processed()
+            total_items = len(menu_items)
+            
+            try:
+                page = int(request.args.get("page", 1))
+            except:
+                page = 1
+            try:
+                per_page = int(request.args.get("per_page", 36))
+            except:
+                per_page = 36
+            
+            per_page = max(8, min(per_page, 100))
+            total_pages = max(1, (total_items + per_page - 1) // per_page)
+            page = max(1, min(page, total_pages))
+            
+            start = (page - 1) * per_page
+            end = start + per_page
+            men = menu_items[start:end]
+            
+            return render_template(
+                "menu.html",
+                women=[],
+                men=men,
+                favorites=[],
+                current_page="menu",
+                pagination={
+                    "page": page,
+                    "per_page": per_page,
+                    "total_items": total_items,
+                    "total_pages": total_pages,
+                },
+            )
+        except Exception as e:
+            app_logger.error(f"Uzum menu error: {e}")
+            # fall through to original logic
     try:
         # Cache dan menu ma'lumotlarini olish (lazy-get)
         try:
@@ -8723,6 +8942,23 @@ def menu():
 @app.route("/product/<int:item_id>")
 @rate_limit(max_requests=5000, window=60)
 def product_detail(item_id):
+    if is_uzum_market_enabled():
+        try:
+            items = get_uzum_items_processed()
+            # item_id here refers to skuId from get_uzum_items_processed
+            item = next((i for i in items if i['id'] == item_id), None)
+            if item:
+                return render_template(
+                    "product.html",
+                    item=item,
+                    all_media=item.get('all_media', []),
+                    comments=[],
+                    rating=item.get('rating', 0),
+                    marketplaces={'uzum': f"https://uzum.uz/product/{item['productId']}"},
+                    current_page="product"
+                )
+        except Exception as e:
+            app_logger.error(f"Uzum product_detail error: {e}")
     """Render a single product detail page.
 
     This gathers the menu item, associated media and recent comments and
@@ -10215,17 +10451,7 @@ def update_profile():
     try:
         # Ensure avatar column exists
         try:
-            raw = execute_query("PRAGMA table_info(users);", fetch_all=True) or []
-            cols = []
-            for c in raw:
-                try:
-                    # row may be dict-like or tuple
-                    if isinstance(c, dict) and "name" in c:
-                        cols.append(c["name"])
-                    elif isinstance(c, (list, tuple)) and len(c) >= 2:
-                        cols.append(c[1])
-                except Exception:
-                    continue
+            cols = get_column_names("users")
         except Exception:
             cols = []
         if "avatar" not in cols:
@@ -11960,12 +12186,10 @@ def admin_add_menu_item():
             flash("Iltimos, mahsulot uchun kamida bitta rasm yuklang.", "error")
             return redirect(url_for("staff_menu"))
 
-        # Determine if multilingual columns exist in DB
-        conn_check = get_db()
-        cur_check = conn_check.cursor()
-        cur_check.execute("PRAGMA table_info(menu_items);")
-        existing_cols = [r[1] for r in cur_check.fetchall()]
-        conn_check.close()
+        try:
+            existing_cols = get_column_names("menu_items")
+        except Exception:
+            existing_cols = []
 
         # Build insert depending on available columns
         if all(c in existing_cols for c in [
@@ -12261,14 +12485,8 @@ def admin_edit_menu_item(item_id):
         if category_norm is not None:
             # Ensure DB has 'category' column
             try:
-                cols = execute_query("PRAGMA table_info(menu_items)", fetch_all=True)
-                has_category = False
-                if cols:
-                    for c in cols:
-                        name_col = c[1] if isinstance(c, tuple) else c.get("name")
-                        if name_col == "category":
-                            has_category = True
-                            break
+                cols = get_column_names("menu_items")
+                has_category = "category" in cols
                 if not has_category:
                     try:
                         execute_query(
@@ -12284,8 +12502,7 @@ def admin_edit_menu_item(item_id):
 
         # If multilingual columns exist, include them in update if provided
         try:
-            cols = execute_query("PRAGMA table_info(menu_items)", fetch_all=True)
-            existing_cols = [c[1] if isinstance(c, tuple) else c.get("name") for c in cols]
+            existing_cols = get_column_names("menu_items")
         except Exception:
             existing_cols = []
 
@@ -13326,20 +13543,19 @@ def api_chat_receive():
             )
             # Ensure backward-compatible columns exist
             try:
-                cols = execute_query('PRAGMA table_info(chat_messages)', fetch_all=True) or []
-                existing = [c[1] if isinstance(c, tuple) else c.get('name') for c in cols]
+                existing = get_column_names('chat_messages')
+                if 'sender' not in existing:
+                    try:
+                        execute_query("ALTER TABLE chat_messages ADD COLUMN sender TEXT")
+                    except Exception:
+                        pass
+                if 'source' not in existing:
+                    try:
+                        execute_query("ALTER TABLE chat_messages ADD COLUMN source TEXT")
+                    except Exception:
+                        pass
             except Exception:
-                existing = []
-            if 'sender' not in existing:
-                try:
-                    execute_query("ALTER TABLE chat_messages ADD COLUMN sender TEXT")
-                except Exception:
-                    pass
-            if 'source' not in existing:
-                try:
-                    execute_query("ALTER TABLE chat_messages ADD COLUMN source TEXT")
-                except Exception:
-                    pass
+                pass
         except Exception:
             pass
 
@@ -14249,14 +14465,10 @@ def api_get_active_news():
     try:
         # Ensure schema has show_in_ticker
         try:
-            cols = execute_query("PRAGMA table_info(news)", fetch_all=True)
+            cols = get_column_names("news")
+            has_show = "show_in_ticker" in cols
+        except Exception:
             has_show = False
-            if cols:
-                for c in cols:
-                    name = c[1] if isinstance(c, tuple) else c.get("name")
-                    if name == "show_in_ticker":
-                        has_show = True
-                        break
             if not has_show:
                 try:
                     execute_query(
@@ -15620,8 +15832,9 @@ def save_superadmin_settings(data: dict):
 
 def get_superadmin_creds():
     settings = load_superadmin_settings() or {}
-    username = settings.get("username") or Config.SUPER_ADMIN_USERNAME
-    password = settings.get("password") or Config.SUPER_ADMIN_PASSWORD
+    # Prioritize .env values if they are explicitly set
+    username = os.environ.get("SUPER_ADMIN_USERNAME") or settings.get("username") or Config.SUPER_ADMIN_USERNAME
+    password = os.environ.get("SUPER_ADMIN_PASSWORD") or settings.get("password") or Config.SUPER_ADMIN_PASSWORD
     # other profile fields
     first_name = settings.get("first_name") or settings.get("name") or ""
     last_name = settings.get("last_name") or ""
@@ -15922,14 +16135,10 @@ def super_admin_add_news():
 
         # Ensure news table exists and determine whether show_in_ticker exists
         try:
-            cols = execute_query("PRAGMA table_info(news)", fetch_all=True)
+            cols = get_column_names("news")
+            has_show = "show_in_ticker" in cols
+        except Exception:
             has_show = False
-            if cols:
-                for c in cols:
-                    name = c[1] if isinstance(c, tuple) else c.get("name")
-                    if name == "show_in_ticker":
-                        has_show = True
-                        break
         except Exception:
             has_show = False
 
@@ -19050,10 +19259,7 @@ def api_send_notification():
 
             # Add missing columns if they don't exist
             # Add missing columns if they don't exist (use PRAGMA)
-            res = (
-                execute_query("PRAGMA table_info(notifications)", fetch_all=True) or []
-            )
-            cols = [r[1] for r in res]
+            cols = get_column_names("notifications")
             if "sender_type" not in cols:
                 execute_query(
                     "ALTER TABLE notifications ADD COLUMN sender_type TEXT DEFAULT 'system'"
@@ -21691,14 +21897,10 @@ def api_create_news():
         now = get_current_time().isoformat()
         # Ensure schema has show_in_ticker before insert
         try:
-            cols = execute_query("PRAGMA table_info(news)", fetch_all=True)
+            cols = get_column_names("news")
+            has_show = "show_in_ticker" in cols
+        except Exception:
             has_show = False
-            if cols:
-                for c in cols:
-                    name = c[1] if isinstance(c, tuple) else c.get("name")
-                    if name == "show_in_ticker":
-                        has_show = True
-                        break
             if not has_show:
                 try:
                     execute_query(
@@ -21721,8 +21923,7 @@ def api_create_news():
 
         # Use multilingual insert when columns exist
         try:
-            cols = execute_query("PRAGMA table_info(news)", fetch_all=True) or []
-            existing_cols = [c[1] if isinstance(c, tuple) else c.get("name") for c in cols]
+            existing_cols = get_column_names("news")
         except Exception:
             existing_cols = []
 
@@ -21734,7 +21935,7 @@ def api_create_news():
             legacy_content = content or content_ru or content_uz or content_en or content_kz
             news_id = execute_query(
                 """INSERT INTO news (title, title_ru, title_uz, title_en, title_kz, content, content_ru, content_uz, content_en, content_kz, type, image_url, video_url, is_active, display_order, show_in_ticker, created_by, created_at, updated_at)
-                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                       VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
                 (
                     legacy_title,
                     title_ru or legacy_title,
@@ -21760,7 +21961,7 @@ def api_create_news():
         else:
             news_id = execute_query(
                 """INSERT INTO news (title, content, type, image_url, video_url, is_active, display_order, created_by, created_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
                 (
                     title or title_ru or title_uz or title_en or title_kz,
                     content or content_ru or content_uz or content_en or content_kz,
@@ -21884,8 +22085,7 @@ def api_update_news(news_id):
         content_kz = data.get("content_kz", "").strip()
 
         try:
-            cols = execute_query("PRAGMA table_info(news)", fetch_all=True) or []
-            existing_cols = [c[1] if isinstance(c, tuple) else c.get("name") for c in cols]
+            existing_cols = get_column_names("news")
         except Exception:
             existing_cols = []
 

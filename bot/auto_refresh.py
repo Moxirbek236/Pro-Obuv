@@ -6,6 +6,10 @@ import asyncio
 import subprocess
 from pathlib import Path
 import time
+from dotenv import load_dotenv
+
+# Load env from backend
+load_dotenv(os.path.join(os.path.dirname(__file__), '../backend/.env'))
 
 def load_current_products():
     """Load current Uzum products"""

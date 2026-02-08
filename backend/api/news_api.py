@@ -318,11 +318,10 @@ def create_news():
             )
 
         # Persist to DB
-        from app import execute_query
+        from app import execute_query, get_column_names
 
         # Determine available columns on the news table
-        cols_info = execute_query("PRAGMA table_info(news)", fetch_all=True) or []
-        available_cols = [c[1] if not isinstance(c, dict) else c.get('name') for c in cols_info]
+        available_cols = get_column_names("news")
 
         now = datetime.utcnow().isoformat() + "Z"
 
@@ -387,10 +386,10 @@ def update_news(news_id):
                 400,
             )
 
-        from app import execute_query
+        from app import execute_query, get_column_names
 
-        cols_info = execute_query("PRAGMA table_info(news)", fetch_all=True) or []
-        available_cols = [c[1] if not isinstance(c, dict) else c.get('name') for c in cols_info]
+        cols_info = get_column_names("news")
+        available_cols = cols_info
 
         # Find existing
         existing = execute_query("SELECT * FROM news WHERE id = ?", (news_id,), fetch_one=True)
@@ -398,7 +397,7 @@ def update_news(news_id):
             return jsonify({"success": False, "message": "Yangilik topilmadi"}), 404
 
         update_map = {}
-        update_map['title'] = (news_data.get('title') or existing.get('title') or '').strip()
+        update_map['title'] = (news_data.get('title') or (existing.get('title') if hasattr(existing,'get') else (existing[1] if len(existing) > 1 else '')) or '').strip()
         update_map['content'] = (news_data.get('content') or existing.get('content') or '').strip()
         for lang in ('uz','ru','en','kz'):
             tkey = f'title_{lang}'
