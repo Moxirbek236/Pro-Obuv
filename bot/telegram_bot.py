@@ -19,6 +19,8 @@ import sys
 import signal
 
 load_dotenv(os.path.join(os.path.dirname(__file__), '../backend/.env'))
+# Also try to load local test config if available
+load_dotenv(os.path.join(os.path.dirname(__file__), '.env.test'))
 
 try:
     from telegram import Update, Bot, InputMediaPhoto, ReplyKeyboardMarkup, KeyboardButton
@@ -53,7 +55,7 @@ from psycopg2.extras import RealDictCursor
 # ═══════════════════════════════════════════════════════════════════════
 
 # Backend API URL - can be localhost for development or production URL
-BACKEND_URL = os.environ.get("BACKEND_URL", "http://127.0.0.1:5000")
+BACKEND_URL = os.environ.get("BACKEND_URL", "https://safety.uz")
 # Remove trailing slash if present
 BACKEND_URL = BACKEND_URL.rstrip('/')
 
@@ -279,7 +281,8 @@ async def products_cmd_uzum(update: "Update", context: "ContextTypes.DEFAULT_TYP
         log_action("products_cmd_uzum", user=f"tg:{uid}", detail=f"showed {len(products)} color variants via API")
     except Exception as e:
         log_error(e, "products_cmd_uzum failure")
-        await update.message.reply_text("❌ Mahsulotlarni yuklashda texnik xatolik")
+        print(f"❌ Product fetch error: {e}")  # Add this debug print
+        await update.message.reply_text(f"❌ Mahsulotlarni yuklashda texnik xatolik: {e}")
 
 
 async def products_cmd_new(update: "Update", context: "ContextTypes.DEFAULT_TYPE"):
