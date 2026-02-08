@@ -69,9 +69,9 @@ def check_uzum_setting():
         return False
     try:
         with conn.cursor() as cur:
-            cur.execute("SELECT value FROM site_settings WHERE key = 'use_uzum_market'")
+            cur.execute("SELECT value FROM site_settings WHERE key = 'use_uzum_market_bot'")
             row = cur.fetchone()
-            if row and row['value'].lower() == 'true':
+            if row and str(row['value']).lower() == 'true':
                 return True
         return False
     except Exception as e:
@@ -186,7 +186,7 @@ async def test_cmd(update: "Update", context: "ContextTypes.DEFAULT_TYPE"):
 
 
 async def products_cmd_uzum(update: "Update", context: "ContextTypes.DEFAULT_TYPE"):
-    """Show Uzum products by fetching from the Flask API"""
+    """Show Uzum products by fetching from the Flask API - already grouped by COLOR from backend"""
     try:
         # Fetch from local Flask API (which handles real-time Uzum fetching and processing)
         response = requests.get("http://127.0.0.1:5000/api/products?per_page=100", timeout=20)
@@ -201,37 +201,46 @@ async def products_cmd_uzum(update: "Update", context: "ContextTypes.DEFAULT_TYP
             await update.message.reply_text("❌ Hozirda mahsulotlar topilmadi")
             return
         
-        # Show products
+        # Backend API already groups by color, so we can directly display products
+        # Each product in the list represents one color variant with all its sizes
         for i, product in enumerate(products):
-            title = product.get("name", "Noma'lum mahsulot")
+            # Get product details
+            name = product.get("name", "Noma'lum mahsulot")
             price = f"{product.get('price', 0):,} UZS".replace(',', ' ')
-            available = "Mavjud" if product.get("available") else "Sotuvda yo'q"
-            product_id = product.get("id", "")
+            available = "Mavjud ✅" if product.get("available") else "Sotuvda yo'q ❌"
             parent_id = product.get("productId", "")
             sizes = product.get("size_list", [])
             colors = product.get("color_list", [])
             image_url = product.get("image_url", "")
             
-            # Create Uzum URL (using productId for the page)
+            # Sort sizes for better display
+            try:
+                sorted_sizes = sorted(sizes, key=lambda x: (
+                    int(''.join(filter(str.isdigit, str(x)))) if any(c.isdigit() for c in str(x)) else 999,
+                    str(x)
+                ))
+            except:
+                sorted_sizes = sizes
+            
+            # Create Uzum URL
             uzum_url = f"https://uzum.uz/product/{parent_id}" if parent_id else "https://uzum.uz"
             
-            # Build message text
-            message = f"🛍️ *{title}*\n"
+            # Build message text - show product name, color (if any), and all sizes
+            message = f"🛍️ *{name}*\n"
             message += f"💰 Narx: {price}\n"
             message += f"📊 Holati: {available}\n"
             
-            if sizes:
-                message += f"📏 O\'lchamlar: {', '.join(map(str, sizes))}\n"
-            
-            if colors:
-                message += f"🎨 Ranglar: {', '.join(colors)}\n"
+            # Show sizes if available
+            if sorted_sizes:
+                sizes_str = ', '.join(map(str, sorted_sizes))
+                message += f"📏 O'lchamlar: {sizes_str}\n"
             
             message += f"\n🔗 [Uzum dan sotib olish]({uzum_url})"
             
             try:
                 # Try to send with image first
                 if image_url and image_url.startswith('http'):
-                    # Append /original.jpg if not already present (backup check)
+                    # Append /original.jpg if not already present
                     final_img = image_url
                     if 'uzum.uz' in final_img and not final_img.endswith('.jpg'):
                         final_img = final_img.rstrip('/') + '/original.jpg'
@@ -251,13 +260,13 @@ async def products_cmd_uzum(update: "Update", context: "ContextTypes.DEFAULT_TYP
                     
             except Exception as e:
                 log_error(e, f"products_cmd_uzum product {i}")
-                await update.message.reply_text(f"{title}\n{price}\n{available}\n{uzum_url}")
+                await update.message.reply_text(f"{name}\n{price}\n{available}\n{uzum_url}")
             
             # Small delay between messages
             await asyncio.sleep(0.3)
         
         uid = getattr(update.message.from_user, "id", None)
-        log_action("products_cmd_uzum", user=f"tg:{uid}", detail=f"showed {len(products)} products via API")
+        log_action("products_cmd_uzum", user=f"tg:{uid}", detail=f"showed {len(products)} color variants via API")
     except Exception as e:
         log_error(e, "products_cmd_uzum failure")
         await update.message.reply_text("❌ Mahsulotlarni yuklashda texnik xatolik")

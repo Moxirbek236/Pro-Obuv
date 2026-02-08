@@ -318,6 +318,121 @@
         // Use a safer way to pass CSRF token to avoid lint errors
         window.CSRF_TOKEN = "{{ csrf_token }}";
 
+        // ═══════════════════════════════════════════════════════════════════════
+        // TablePagination Class - Handles table pagination with rendering
+        // ═══════════════════════════════════════════════════════════════════════
+        class TablePagination {
+            constructor(options) {
+                this.container = options.container;
+                this.data = options.data || [];
+                this.rowsPerPage = options.rowsPerPage || 10;
+                this.currentPage = 1;
+                this.headerHtml = options.headerHtml || '';
+                this.renderRow = options.renderRow || ((item) => `<tr><td>${JSON.stringify(item)}</td></tr>`);
+                
+                this.render();
+            }
+            
+            setData(newData) {
+                this.data = newData;
+                this.currentPage = 1;
+                this.render();
+            }
+            
+            get totalPages() {
+                return Math.ceil(this.data.length / this.rowsPerPage);
+            }
+            
+            get paginatedData() {
+                const start = (this.currentPage - 1) * this.rowsPerPage;
+                const end = start + this.rowsPerPage;
+                return this.data.slice(start, end);
+            }
+            
+            goToPage(page) {
+                if (page < 1 || page > this.totalPages) return;
+                this.currentPage = page;
+                this.render();
+            }
+            
+            render() {
+                if (!this.container) return;
+                
+                const tableHtml = `
+                    <div class="table-responsive">
+                        <table class="table-modern">
+                            ${this.headerHtml}
+                            <tbody>
+                                ${this.paginatedData.length > 0 
+                                    ? this.paginatedData.map((item, idx) => this.renderRow(item, (this.currentPage - 1) * this.rowsPerPage + idx)).join('')
+                                    : '<tr><td colspan="100" class="text-center text-muted py-4">Hozircha faol buyurtmalar yo\'q</td></tr>'
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    ${this.totalPages > 1 ? this.renderPagination() : ''}
+                `;
+                
+                this.container.innerHTML = tableHtml;
+                this.attachPaginationEvents();
+            }
+            
+            renderPagination() {
+                const pages = [];
+                const maxVisible = 5;
+                let startPage = Math.max(1, this.currentPage - Math.floor(maxVisible / 2));
+                let endPage = Math.min(this.totalPages, startPage + maxVisible - 1);
+                
+                if (endPage - startPage < maxVisible - 1) {
+                    startPage = Math.max(1, endPage - maxVisible + 1);
+                }
+                
+                for (let i = startPage; i <= endPage; i++) {
+                    pages.push(i);
+                }
+                
+                return `
+                    <div class="d-flex justify-content-between align-items-center mt-3 px-2">
+                        <div class="text-muted small">
+                            ${this.data.length} ta buyurtmadan ${(this.currentPage - 1) * this.rowsPerPage + 1}-${Math.min(this.currentPage * this.rowsPerPage, this.data.length)}
+                        </div>
+                        <nav>
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class="page-item ${this.currentPage === 1 ? 'disabled' : ''}">
+                                    <a class="page-link" href="#" data-page="${this.currentPage - 1}">‹</a>
+                                </li>
+                                ${pages.map(p => `
+                                    <li class="page-item ${p === this.currentPage ? 'active' : ''}">
+                                        <a class="page-link" href="#" data-page="${p}">${p}</a>
+                                    </li>
+                                `).join('')}
+                                <li class="page-item ${this.currentPage === this.totalPages ? 'disabled' : ''}">
+                                    <a class="page-link" href="#" data-page="${this.currentPage + 1}">›</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                `;
+            }
+            
+            attachPaginationEvents() {
+                const links = this.container.querySelectorAll('.page-link');
+                links.forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const page = parseInt(e.target.dataset.page);
+                        if (!isNaN(page)) {
+                            this.goToPage(page);
+                        }
+                    });
+                });
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // Orders Management
+        // ═══════════════════════════════════════════════════════════════════════
+
         let ordersPagination = null;
 
         function initOrders() {

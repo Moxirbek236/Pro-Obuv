@@ -685,13 +685,19 @@ def get_uzum_items_processed():
         return url.rstrip('/') + '/original.jpg'
 
     for p in products:
+        # Group SKUs by COLOR (first part before hyphen in skuTitle)
         sku_groups = defaultdict(list)
         for sku in p.get('skuList', []):
             title = sku.get('skuTitle', '') or ''
-            # If skuTitle has a color-size format (COLOR-SIZE), group by COLOR.
-            # If no hyphen is present, it's likely just a size or single-item product, 
-            # so we group them together under a generic key.
-            color_key = title.split('-')[0].strip() if '-' in title else "Asosiy"
+            # Extract color: everything before the LAST hyphen (the last part is usually size)
+            # Example: "Qora-42" -> color="Qora", size="42"
+            # Example: "Ko'k-L" -> color="Ko'k", size="L"
+            # Example: "Qizil-Pushti-39" -> color="Qizil-Pushti", size="39"
+            if '-' in title:
+                parts = title.rsplit('-', 1)  # Split from right, max 1 split
+                color_key = parts[0].strip()  # Everything before last hyphen is color
+            else:
+                color_key = "Asosiy"
             sku_groups[color_key].append(sku)
         
         for color, skus in sku_groups.items():
@@ -714,6 +720,19 @@ def get_uzum_items_processed():
             for c in first_sku.get('characteristicsList', []):
                 char_list.append(f"{c.get('characteristicTitle', {}).get('uz', '')}: {c.get('characteristicValue', {}).get('uz', '')}")
 
+            # Extract sizes: the last part after hyphen in skuTitle
+            size_list = []
+            for s in skus:
+                s_title = s.get('skuTitle', '')
+                if '-' in s_title:
+                    # Get the last part (size)
+                    size = s_title.rsplit('-', 1)[-1].strip()
+                    if size and size not in size_list:
+                        size_list.append(size)
+                elif s_title and s_title not in size_list:
+                    # If no hyphen, the whole title might be the size
+                    size_list.append(s_title)
+
             # If color is 'Asosiy', don't append it to the name to keep it clean
             p_title = p.get('title', 'Noma\'lum mahsulot')
             display_name = f"{p_title} - {color}" if color != "Asosiy" else p_title
@@ -734,7 +753,7 @@ def get_uzum_items_processed():
                 'rating': float(p.get('rating', 0) or 0),
                 'orders_count': int(p.get('quantitySold', 0) or 0),
                 'all_media': all_media,
-                'size_list': [s.get('skuTitle', '').split('-')[-1] for s in skus if '-' in s.get('skuTitle', '')],
+                'size_list': size_list,
                 'color_list': [color] if color != "Asosiy" else [],
                 'feature_list': char_list,
                 'source': 'uzum'
@@ -743,8 +762,9 @@ def get_uzum_items_processed():
     return results
 
 def is_uzum_market_enabled():
+    """Check if Uzum Market mode is enabled for WEB"""
     try:
-        res = execute_query("SELECT value FROM site_settings WHERE key = 'use_uzum_market'", fetch_one=True)
+        res = execute_query("SELECT value FROM site_settings WHERE key = 'use_uzum_market_web'", fetch_one=True)
         if res:
             if isinstance(res, dict):
                 val = res.get('value')
@@ -754,7 +774,23 @@ def is_uzum_market_enabled():
                 val = res[0]
             return str(val).lower() == 'true'
     except Exception as e:
-        if app_logger: app_logger.error(f"Error checking uzum setting: {e}")
+        if app_logger: app_logger.error(f"Error checking uzum web setting: {e}")
+    return False
+
+def is_uzum_market_enabled_bot():
+    """Check if Uzum Market mode is enabled for BOT"""
+    try:
+        res = execute_query("SELECT value FROM site_settings WHERE key = 'use_uzum_market_bot'", fetch_one=True)
+        if res:
+            if isinstance(res, dict):
+                val = res.get('value')
+            elif hasattr(res, 'get'):
+                val = res.get('value')
+            else:
+                val = res[0]
+            return str(val).lower() == 'true'
+    except Exception as e:
+        if app_logger: app_logger.error(f"Error checking uzum bot setting: {e}")
     return False
 
 # Minimal auth/user stubs
@@ -1153,8 +1189,8 @@ try:
                 else:
                     execute_query('INSERT INTO site_settings (key, value, updated_at) VALUES (%s, %s, %s)', (key, str(value), now))
             
-            # If use_uzum_market was toggled, invalidate cache
-            if 'use_uzum_market' in data:
+            # If web Uzum setting toggled, invalidate cache
+            if 'use_uzum_market_web' in data:
                 invalidate_menu_cache()
                 
             return jsonify({'success': True}), 200
@@ -1176,7 +1212,7 @@ try:
 
             offset = (page - 1) * per_page
             
-            use_uzum = is_uzum_market_enabled()
+            use_uzum = is_uzum_market_enabled_bot()
 
             if use_uzum:
                 try:
@@ -1219,7 +1255,7 @@ try:
     if not _flask_rule_exists('/api/products/<int:product_id>', 'GET'):
         def _db_product_item(product_id):
             if request.method == 'GET':
-                use_uzum = is_uzum_market_enabled()
+                use_uzum = is_uzum_market_enabled_bot()
 
                 if use_uzum:
                     try:
@@ -3462,6 +3498,11 @@ class DatabasePool:
         if dsn:
             dsn = dsn.strip().strip('"').strip("'")
             
+        if dsn:
+            app_logger.info("Initializing PostgreSQL connection pool...")
+        else:
+            app_logger.error("Attempted to initialize pool with empty DSN")
+            
         self.dsn = dsn
         self.max_connections = max_connections
         self.is_postgres = True
@@ -3513,7 +3554,7 @@ class DatabasePool:
                     # Try connecting with components - this is generally MORE robust than URI string
                     self.pool = psycopg2_pool.ThreadedConnectionPool(
                         1, self.max_connections,
-                        cursor_factory=RealDictCursor,
+                        
                         **conn_kwargs
                     )
                     app_logger.info("PostgreSQL connection pool initialized (using parsed components)")
@@ -3528,7 +3569,7 @@ class DatabasePool:
             self.pool = psycopg2_pool.ThreadedConnectionPool(
                 1, self.max_connections,
                 dsn,
-                cursor_factory=RealDictCursor
+                
             )
             app_logger.info("PostgreSQL connection pool initialized (using raw DSN)")
         except Exception as e:
@@ -3550,7 +3591,7 @@ class DatabasePool:
                             "sslmode": "require"
                         }
                         conn_kwargs = {k: v for k, v in conn_kwargs.items() if v is not None}
-                        self.pool = psycopg2_pool.ThreadedConnectionPool(1, self.max_connections, cursor_factory=RealDictCursor, **conn_kwargs)
+                        self.pool = psycopg2_pool.ThreadedConnectionPool(1, self.max_connections,  **conn_kwargs)
                         app_logger.info("PostgreSQL connection pool initialized (last resort successful)")
                         return
                 except Exception as ex2:
@@ -3583,7 +3624,7 @@ class DatabasePool:
             
             yield PgConnectionProxy(conn)
         except Exception as e:
-            app_logger.error(f"Database connection error: {str(e)}")
+            app_logger.error(f"Database connection error: {repr(e)}")
             raise
         finally:
             if conn:
@@ -5565,7 +5606,7 @@ def cleanup_expired_orders():
     "Waiting holatidagi, 30 daqiqadan oshgan buyurtmalarni cancelled ga o'tkazadi."
     try:
         # Connection pool dan connection olish
-        with db_pool.get_connection() as conn:
+        with get_db_pool().get_connection() as conn:
             cur = conn.cursor()
             cutoff = (get_current_time() - datetime.timedelta(minutes=30)).isoformat()
             cur.execute(
@@ -5586,7 +5627,7 @@ def send_birthday_notifications(run_date=None):
         run_date = run_date or get_current_time().date()
         month_day = run_date.strftime("-%m-%d")
 
-        with db_pool.get_connection() as conn:
+        with get_db_pool().get_connection() as conn:
             cur = conn.cursor()
 
             # users
@@ -6575,7 +6616,7 @@ def auto_calculate_courier_delivery_price(distance_km):
 def get_branch_average_rating(branch_id):
     "Filial uchun o'rtacha bahoni hisoblash"
     try:
-        with db_pool.get_connection() as conn:
+        with get_db_pool().get_connection() as conn:
             cur = conn.cursor()
 
             # Filial uchun berilgan baholarni olish (menu_item_id = -branch_id)
@@ -7741,7 +7782,7 @@ def api_super_admin_reports():
                 start_date = (today - datetime.timedelta(days=29)).strftime("%Y-%m-%d")
                 end_date = today.strftime("%Y-%m-%d")
 
-        with db_pool.get_connection() as conn:
+        with get_db_pool().get_connection() as conn:
             cur = conn.cursor()
 
             # Buyurtmalar va daromad (use receipts.total_amount)
@@ -10985,7 +11026,7 @@ def place_order():
             return redirect(url_for("login_page"))
 
         # Ma'lumotlar bazasi bilan ishash
-        with db_pool.get_connection() as conn:
+        with get_db_pool().get_connection() as conn:
             cur = conn.cursor()
 
             # Foydalanuvchi profilidan ma'lumotlarni olish
@@ -20298,7 +20339,7 @@ def staff_menu():
 
     try:
         # Ma'lumotlarni to'g'ri olish
-        with db_pool.get_connection() as conn:
+        with get_db_pool().get_connection() as conn:
             # row_factory not used in PG (RealDictCursor used)
             cur = conn.cursor()
             cur.execute("SELECT * FROM menu_items ORDER BY category, name")
@@ -20466,7 +20507,7 @@ def staff_employees():
 
     try:
         # Ma'lumotlarni to'g'ri olish
-        with db_pool.get_connection() as conn:
+        with get_db_pool().get_connection() as conn:
             # row_factory not used in PG (RealDictCursor used)
             cur = conn.cursor()
             cur.execute("SELECT * FROM staff ORDER BY created_at DESC")
@@ -20833,7 +20874,7 @@ def super_admin_reports():
             "monthly": {"orders": 0, "revenue": 0},
         }
 
-        with db_pool.get_connection() as conn:
+        with get_db_pool().get_connection() as conn:
             cur = conn.cursor()
 
             # Kunlik hisobot

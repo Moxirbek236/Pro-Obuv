@@ -70,23 +70,48 @@
         </div>
     </div>
 
-    <!-- System Settings Toggle -->
-    <div class="card-modern mb-4 p-3 border-0 shadow-sm" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white;">
-        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
-            <div class="d-flex align-items-center gap-3">
-                <div class="p-3 rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
-                    <i class="bi bi-gear-wide-connected fs-4"></i>
-                </div>
-                <div>
-                    <h5 class="mb-1 fw-bold">Ma'lumotlar Manbasi <span id="uzum-status-badge" class="badge rounded-pill bg-info ms-2" style="font-size: 0.7rem;">Tekshirilmoqda...</span></h5>
-                    <p class="mb-0 small text-white-50">Tizimni Uzum Market API rejimiga o'tkazish (Tezlik va resurslarni optimallashtirish uchun).</p>
+    <!-- System Settings Toggles -->
+    <div class="card-modern mb-4 p-4 border-0 shadow-sm" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white;">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-6 border-end border-white-10">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="p-2 rounded bg-primary bg-opacity-20 text-primary">
+                            <i class="bi bi-browser-chrome fs-5"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold">Veb-sayt Rejimi</h6>
+                            <p class="mb-0 x-small text-white-50">Saytda Uzum mahsulotlarini ko'rsatish</p>
+                        </div>
+                    </div>
+                    <div class="form-check form-switch p-0 d-flex align-items-center gap-2">
+                        <span class="x-small text-white-50">DB</span>
+                        <input class="form-check-input ms-0" type="checkbox" id="uzumSwitchWeb" style="width: 2.8rem; height: 1.4rem; cursor: pointer;">
+                        <span class="x-small text-warning">Uzum</span>
+                    </div>
                 </div>
             </div>
-            <div class="form-check form-switch p-0 d-flex align-items-center gap-3">
-                <span class="text-white-50 small fw-bold">DB Rejimi</span>
-                <input class="form-check-input ms-0" type="checkbox" id="uzumSwitch" style="width: 3.5rem; height: 1.75rem; cursor: pointer; background-color: #334155; border-color: #475569;">
-                <span class="text-warning small fw-bold">Uzum Rejimi</span>
+            <div class="col-lg-6">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="p-2 rounded bg-info bg-opacity-20 text-info">
+                            <i class="bi bi-telegram fs-5"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold">Telegram Bot Rejimi</h6>
+                            <p class="mb-0 x-small text-white-50">Botda Uzum mahsulotlarini ko'rsatish</p>
+                        </div>
+                    </div>
+                    <div class="form-check form-switch p-0 d-flex align-items-center gap-2">
+                        <span class="x-small text-white-50">DB</span>
+                        <input class="form-check-input ms-0" type="checkbox" id="uzumSwitchBot" style="width: 2.8rem; height: 1.4rem; cursor: pointer;">
+                        <span class="x-small text-info">Uzum</span>
+                    </div>
+                </div>
             </div>
+        </div>
+        <div class="mt-3 pt-3 border-top border-white-10 text-center">
+            <span id="uzum-status-badge" class="badge rounded-pill bg-info" style="font-size: 0.7rem;">Tekshirilmoqda...</span>
         </div>
     </div>
 
@@ -1080,72 +1105,75 @@
 
     // Uzum Mode Toggle Logic
     document.addEventListener("DOMContentLoaded", () => {
-        const uzumSwitch = document.getElementById('uzumSwitch');
+        const uzumWeb = document.getElementById('uzumSwitchWeb');
+        const uzumBot = document.getElementById('uzumSwitchBot');
         const statusBadge = document.getElementById('uzum-status-badge');
 
-        // Initial State
-        fetch('/api/site-settings')
-            .then(r => r.json())
-            .then(d => {
-                if(d.success && d.settings) {
-                    const isUzum = d.settings.use_uzum_market === 'True';
-                    uzumSwitch.checked = isUzum;
-                    updateUzumUI(isUzum);
-                }
-            })
-            .catch(e => {
-                console.error("Failed to fetch settings", e);
-                statusBadge.textContent = 'Xatolik';
-                statusBadge.classList.replace('bg-info', 'bg-danger');
-            });
+        function updateUzumUI() {
+            const isWeb = uzumWeb.checked;
+            const isBot = uzumBot.checked;
+            
+            if(isWeb && isBot) {
+                statusBadge.textContent = 'Har ikkala rejim faol (Uzum)';
+                statusBadge.className = 'badge rounded-pill bg-success';
+            } else if(isWeb) {
+                statusBadge.textContent = 'Faqat Veb Uzum faol';
+                statusBadge.className = 'badge rounded-pill bg-primary';
+            } else if(isBot) {
+                statusBadge.textContent = 'Faqat Bot Uzum faol';
+                statusBadge.className = 'badge rounded-pill bg-info';
+            } else {
+                statusBadge.textContent = 'Database rejimi (Uzum o\'chiq)';
+                statusBadge.className = 'badge rounded-pill bg-secondary';
+            }
+        }
 
-        uzumSwitch.addEventListener('change', () => {
-            const newValue = uzumSwitch.checked;
+        function saveConfig(config) {
             statusBadge.textContent = 'Saqlanmoqda...';
-            statusBadge.classList.replace('bg-success', 'bg-info');
-            statusBadge.classList.replace('bg-primary', 'bg-info');
-
+            statusBadge.className = 'badge rounded-pill bg-warning text-dark';
+            
             fetch('/api/site-settings', {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
                     'X-CSRF-Token': window.CSRF_TOKEN || '' 
                 },
-                body: JSON.stringify({ use_uzum_market: newValue ? 'True' : 'False' })
+                body: JSON.stringify(config)
             })
             .then(r => r.json())
             .then(d => {
                 if(d.success) {
-                    updateUzumUI(newValue);
-                    // Refresh menu if currently viewing menu tab
-                    if(document.getElementById('menu').classList.contains('active')) {
-                        loadMenu();
-                    }
+                    updateUzumUI();
+                    if(document.getElementById('menu').classList.contains('active')) loadMenu();
                 } else {
-                    alert('Sozlamani saqlashda xatolik: ' + d.error);
-                    uzumSwitch.checked = !newValue;
+                    alert('Xatolik: ' + d.error);
+                    location.reload();
                 }
             })
             .catch(e => {
-                alert('Server bilan bog\'lanishda xatolik');
-                uzumSwitch.checked = !newValue;
+                alert('Server bog\'lanish xatosi');
+                location.reload();
             });
+        }
+
+        // Initial State
+        fetch('/api/site-settings')
+            .then(r => r.json())
+            .then(d => {
+                if(d.success && d.settings) {
+                    uzumWeb.checked = (d.settings.use_uzum_market_web === 'True');
+                    uzumBot.checked = (d.settings.use_uzum_market_bot === 'True');
+                    updateUzumUI();
+                }
+            });
+
+        uzumWeb.addEventListener('change', () => {
+            saveConfig({ use_uzum_market_web: uzumWeb.checked ? 'True' : 'False' });
         });
 
-        function updateUzumUI(isUzum) {
-            const uzumOnly = document.querySelectorAll('.uzum-only-visible');
-            if(isUzum) {
-                statusBadge.textContent = 'Uzum Market Faol';
-                statusBadge.classList.remove('bg-info', 'bg-primary');
-                statusBadge.classList.add('bg-success');
-                uzumOnly.forEach(el => el.classList.remove('d-none'));
-            } else {
-                statusBadge.textContent = 'Database Faol';
-                statusBadge.classList.remove('bg-info', 'bg-success');
-                statusBadge.classList.add('bg-primary');
-                uzumOnly.forEach(el => el.classList.add('d-none'));
-            }
-        }
+        uzumBot.addEventListener('change', () => {
+            saveConfig({ use_uzum_market_bot: uzumBot.checked ? 'True' : 'False' });
+        });
     });
 </script>
 <div class="modal fade" id="addBranchModal" tabindex="-1">
