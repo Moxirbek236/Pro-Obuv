@@ -48,6 +48,15 @@ except Exception:
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
+# ═══════════════════════════════════════════════════════════════════════
+# CONFIGURATION
+# ═══════════════════════════════════════════════════════════════════════
+
+# Backend API URL - can be localhost for development or production URL
+BACKEND_URL = os.environ.get("BACKEND_URL", "http://127.0.0.1:5000")
+# Remove trailing slash if present
+BACKEND_URL = BACKEND_URL.rstrip('/')
+
 LOG = logging.getLogger("telegram_bot")
 
 # Database connection helper
@@ -188,8 +197,9 @@ async def test_cmd(update: "Update", context: "ContextTypes.DEFAULT_TYPE"):
 async def products_cmd_uzum(update: "Update", context: "ContextTypes.DEFAULT_TYPE"):
     """Show Uzum products by fetching from the Flask API - already grouped by COLOR from backend"""
     try:
-        # Fetch from local Flask API (which handles real-time Uzum fetching and processing)
-        response = requests.get("http://127.0.0.1:5000/api/products?per_page=100", timeout=20)
+        # Fetch from Flask API (uses BACKEND_URL which can be localhost or production)
+        api_url = f"{BACKEND_URL}/api/products?per_page=100"
+        response = requests.get(api_url, timeout=20)
         if response.status_code != 200:
             await update.message.reply_text("❌ Mahsulotlarni yuklashda xatolik yuz berdi (Backend API error)")
             return
@@ -346,8 +356,9 @@ async def handle_message(update: "Update", context: "ContextTypes.DEFAULT_TYPE")
             pass
 
         # Send to backend
+        api_url = f"{BACKEND_URL}/api/chat/receive"
         response = requests.post(
-            "http://127.0.0.1:5000/api/chat/receive",
+            api_url,
             json=payload,
             timeout=10
         )

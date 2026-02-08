@@ -1,0 +1,27 @@
+﻿python : ERROR: Unhandled exception: 'NoneType' object has no attribute 'get' - URL: http://localhost/menu
+At line:1 char:1
++ python "c:\Users\Moxir_Coder\OneDrive\Desktop\retourant\scripts\check ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ERROR: Unhandle.../localhost/menu:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+DEBUG: load_dotenv done
+DEBUG: Flask app created
+DEBUG: DatabasePool created
+STATUS: 500
+LENGTH: 296
+SNIPPET:
+ 
+        <!DOCTYPE html>
+        <html>
+        <head><title>Unexpected Error</title></head>
+        <body>
+            <h1>Kutilmagan xatolik</h1>
+            <p>Dasturda kutilmagan xatolik yuz berdi.</p>
+            <a href="/">Bosh sahifaga qaytish</a>
+        </body>
+        </html>
+        
+
+--- END SNIPPET ---
+

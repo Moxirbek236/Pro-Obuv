@@ -1,0 +1,438 @@
+[
+  {
+    "path": "/api/auth/login",
+    "method": "POST",
+    "url": "http://localhost:5000/api/auth/login",
+    "status_code": 200,
+    "json": {
+      "next": "/",
+      "success": true
+    }
+  },
+  {
+    "path": "/api/auth/register",
+    "method": "POST",
+    "url": "http://localhost:5000/api/auth/register",
+    "status_code": 201,
+    "json": {
+      "success": true,
+      "user_id": 73233
+    }
+  },
+  {
+    "path": "/api/auth/status",
+    "method": "GET",
+    "url": "http://localhost:5000/api/auth/status",
+    "status_code": 200,
+    "json": {
+      "logged_in": false,
+      "success": true,
+      "user": null
+    }
+  },
+  {
+    "path": "/api/auth/logout",
+    "method": "POST",
+    "url": "http://localhost:5000/api/auth/logout",
+    "status_code": 200,
+    "json": {
+      "success": true
+    }
+  },
+  {
+    "path": "/api/users/me",
+    "method": "GET",
+    "url": "http://localhost:5000/api/users/me",
+    "status_code": 200,
+    "json": {
+      "success": true,
+      "user": null
+    }
+  },
+  {
+    "path": "/api/users",
+    "method": "GET",
+    "url": "http://localhost:5000/api/users",
+    "status_code": 200,
+    "json": {
+      "data": [
+        {
+          "id": 1,
+          "username": "alice"
+        },
+        {
+          "id": 2,
+          "username": "bob"
+        },
+        {
+          "id": 3,
+          "username": "carol"
+        },
+        {
+          "id": 4,
+          "username": "dave"
+        }
+      ],
+      "page": 1,
+      "per_page": 10,
+      "success": true,
+      "total": 4
+    }
+  },
+  {
+    "path": "/api/users/{id}",
+    "method": "PUT",
+    "url": "http://localhost:5000/api/users/<id>",
+    "status_code": 404,
+    "json": {
+      "code": 404,
+      "error": "Not found"
+    }
+  },
+  {
+    "path": "/api/users/{id}",
+    "method": "DELETE",
+    "url": "http://localhost:5000/api/users/<id>",
+    "status_code": 404,
+    "json": {
+      "code": 404,
+      "error": "Not found"
+    }
+  },
+  {
+    "path": "/api/products",
+    "method": "GET",
+    "url": "http://localhost:5000/api/products",
+    "status_code": 200,
+    "json": {
+      "data": [
+        {
+          "category_id": 2,
+          "id": 1,
+          "name": "Sample Product A",
+          "price": 10000
+        },
+        {
+          "category_id": 1,
+          "id": 2,
+          "name": "Sample Product B",
+          "price": 20000
+        }
+      ],
+      "page": 1,
+      "per_page": 10,
+      "success": true,
+      "total": 2
+    }
+  },
+  {
+    "path": "/api/products",
+    "method": "POST",
+    "url": "http://localhost:5000/api/products",
+    "status_code": 200,
+    "json": {
+      "data": [
+        {
+          "category_id": 2,
+          "id": 1,
+          "name": "Sample Product A",
+          "price": 10000
+        },
+        {
+          "category_id": 1,
+          "id": 2,
+          "name": "Sample Product B",
+          "price": 20000
+        }
+      ],
+      "page": 1,
+      "per_page": 10,
+      "success": true,
+      "total": 2
+    }
+  },
+  {
+    "path": "/api/products/{id}",
+    "method": "GET",
+    "url": "http://localhost:5000/api/products/<id>",
+    "status_code": 404,
+    "text": "\n        <!DOCTYPE html>\n        <html>\n        <head><title>404 Not Found</title></head>\n        <body>\n            <h1>404 - Sahifa topilmadi</h1>\n            <p>So'ralgan sahifa mavjud emas.</p>\n            <a href=\"/\">Bosh sahifaga qaytish</a>\n        </body>\n        </html>\n        "
+  },
+  {
+    "path": "/api/products/{id}",
+    "method": "PUT",
+    "url": "http://localhost:5000/api/products/<id>",
+    "status_code": 404,
+    "json": {
+      "code": 404,
+      "error": "Not found"
+    }
+  },
+  {
+    "path": "/api/products/{id}",
+    "method": "DELETE",
+    "url": "http://localhost:5000/api/products/<id>",
+    "status_code": 404,
+    "json": {
+      "code": 404,
+      "error": "Not found"
+    }
+  },
+  {
+    "path": "/api/categories",
+    "method": "GET",
+    "url": "http://localhost:5000/api/categories",
+    "status_code": 200,
+    "json": {
+      "data": [
+        {
+          "id": 1,
+          "name": "Drinks"
+        },
+        {
+          "id": 2,
+          "name": "Food"
+        },
+        {
+          "id": 3,
+          "name": "Desserts"
+        }
+      ],
+      "page": 1,
+      "per_page": 10,
+      "success": true,
+      "total": 3
+    }
+  },
+  {
+    "path": "/api/categories",
+    "method": "POST",
+    "url": "http://localhost:5000/api/categories",
+    "status_code": 500,
+    "json": {
+      "code": 500,
+      "details": "Internal server error",
+      "error": "Unexpected error occurred"
+    }
+  },
+  {
+    "path": "/api/categories/{id}",
+    "method": "PUT",
+    "url": "http://localhost:5000/api/categories/<id>",
+    "status_code": 404,
+    "json": {
+      "code": 404,
+      "error": "Not found"
+    }
+  },
+  {
+    "path": "/api/categories/{id}",
+    "method": "DELETE",
+    "url": "http://localhost:5000/api/categories/<id>",
+    "status_code": 404,
+    "json": {
+      "code": 404,
+      "error": "Not found"
+    }
+  },
+  {
+    "path": "/api/orders",
+    "method": "POST",
+    "url": "http://localhost:5000/api/orders",
+    "status_code": 400,
+    "json": {
+      "error": "invalid_items",
+      "success": false
+    }
+  },
+  {
+    "path": "/api/orders",
+    "method": "GET",
+    "url": "http://localhost:5000/api/orders",
+    "status_code": 401,
+    "json": {
+      "error": "auth_required",
+      "success": false
+    }
+  },
+  {
+    "path": "/api/orders/{id}",
+    "method": "GET",
+    "url": "http://localhost:5000/api/orders/<id>",
+    "status_code": 404,
+    "text": "\n        <!DOCTYPE html>\n        <html>\n        <head><title>404 Not Found</title></head>\n        <body>\n            <h1>404 - Sahifa topilmadi</h1>\n            <p>So'ralgan sahifa mavjud emas.</p>\n            <a href=\"/\">Bosh sahifaga qaytish</a>\n        </body>\n        </html>\n        "
+  },
+  {
+    "path": "/api/cart",
+    "method": "GET",
+    "url": "http://localhost:5000/api/cart",
+    "status_code": 200,
+    "json": {
+      "cart": [],
+      "success": true
+    }
+  },
+  {
+    "path": "/api/cart",
+    "method": "POST",
+    "url": "http://localhost:5000/api/cart",
+    "status_code": 400,
+    "json": {
+      "error": "invalid_payload",
+      "success": false
+    }
+  },
+  {
+    "path": "/api/cart",
+    "method": "DELETE",
+    "url": "http://localhost:5000/api/cart",
+    "status_code": 400,
+    "json": {
+      "error": "missing_item_id",
+      "success": false
+    }
+  },
+  {
+    "path": "/api/ratings",
+    "method": "POST",
+    "url": "http://localhost:5000/api/ratings",
+    "status_code": 401,
+    "json": {
+      "error": "auth_required",
+      "success": false
+    }
+  },
+  {
+    "path": "/api/ratings/product/{productId}",
+    "method": "GET",
+    "url": "http://localhost:5000/api/ratings/product/<productId>",
+    "status_code": 404,
+    "text": "\n        <!DOCTYPE html>\n        <html>\n        <head><title>404 Not Found</title></head>\n        <body>\n            <h1>404 - Sahifa topilmadi</h1>\n            <p>So'ralgan sahifa mavjud emas.</p>\n            <a href=\"/\">Bosh sahifaga qaytish</a>\n        </body>\n        </html>\n        "
+  },
+  {
+    "path": "/api/super-admin/get-system-stats",
+    "method": "GET",
+    "url": "http://localhost:5000/api/super-admin/get-system-stats",
+    "status_code": 404,
+    "text": "\n        <!DOCTYPE html>\n        <html>\n        <head><title>404 Not Found</title></head>\n        <body>\n            <h1>404 - Sahifa topilmadi</h1>\n            <p>So'ralgan sahifa mavjud emas.</p>\n            <a href=\"/\">Bosh sahifaga qaytish</a>\n        </body>\n        </html>\n        "
+  },
+  {
+    "path": "/api/super-admin/get-system-logs",
+    "method": "GET",
+    "url": "http://localhost:5000/api/super-admin/get-system-logs",
+    "status_code": 404,
+    "text": "\n        <!DOCTYPE html>\n        <html>\n        <head><title>404 Not Found</title></head>\n        <body>\n            <h1>404 - Sahifa topilmadi</h1>\n            <p>So'ralgan sahifa mavjud emas.</p>\n            <a href=\"/\">Bosh sahifaga qaytish</a>\n        </body>\n        </html>\n        "
+  },
+  {
+    "path": "/api/super-admin/get-environment-info",
+    "method": "GET",
+    "url": "http://localhost:5000/api/super-admin/get-environment-info",
+    "status_code": 404,
+    "text": "\n        <!DOCTYPE html>\n        <html>\n        <head><title>404 Not Found</title></head>\n        <body>\n            <h1>404 - Sahifa topilmadi</h1>\n            <p>So'ralgan sahifa mavjud emas.</p>\n            <a href=\"/\">Bosh sahifaga qaytish</a>\n        </body>\n        </html>\n        "
+  },
+  {
+    "path": "/api/news",
+    "method": "GET",
+    "url": "http://localhost:5000/api/news",
+    "status_code": 200,
+    "json": {
+      "news": [
+        {
+          "content": "Bahorgi yangi oyoq kiyimlar kolleksiyasi do'konimizga keldi! 50% gacha chegirmalar.",
+          "content_en": "Bahorgi yangi oyoq kiyimlar kolleksiyasi do'konimizga keldi! 50% gacha chegirmalar.",
+          "content_kz": "Bahorgi yangi oyoq kiyimlar kolleksiyasi do'konimizga keldi! 50% gacha chegirmalar.",
+          "content_local": "Bahorgi yangi oyoq kiyimlar kolleksiyasi do'konimizga keldi! 50% gacha chegirmalar.",
+          "content_ru": "Bahorgi yangi oyoq kiyimlar kolleksiyasi do'konimizga keldi! 50% gacha chegirmalar.",
+          "content_uz": "Bahorgi yangi oyoq kiyimlar kolleksiyasi do'konimizga keldi! 50% gacha chegirmalar.",
+          "created_at": "2025-09-18T23:19:37.426994+05:00",
+          "created_by": 1,
+          "display_order": 1,
+          "id": 1,
+          "image_url": "https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/v1766927332/news/default-men.jpg",
+          "is_active": 1,
+          "show_in_ticker": 0,
+          "title": "🎉 Yangi kolleksiya!",
+          "title_en": "🎉 Yangi kolleksiya!",
+          "title_kz": "🎉 Yangi kolleksiya!",
+          "title_local": "🎉 Yangi kolleksiya!",
+          "title_ru": "🎉 Yangi kolleksiya!",
+          "title_uz": "🎉 Yangi kolleksiya!",
+          "type": "advertisement",
+          "updated_at": "2025-12-15T15:17:28.944555+05:00",
+          "video_url": null,
+          "youtube_embed": null
+        },
+        {
+          "content": "Do'konimiz 4.8/5 bahoga ega bo'ldi. Rahmat barcha mijozlarimizga!",
+          "content_en": "Do'konimiz 4.8/5 bahoga ega bo'ldi. Rahmat barcha mijozlarimizga!",
+          "content_kz": "Do'konimiz 4.8/5 bahoga ega bo'ldi. Rahmat barcha mijozlarimizga!",
+          "content_local": "Do'konimiz 4.8/5 bahoga ega bo'ldi. Rahmat barcha mijozlarimizga!",
+          "content_ru": "Do'konimiz 4.8/5 bahoga ega bo'ldi. Rahmat barcha mijozlarimizga!",
+          "content_uz": "Do'konimiz 4.8/5 bahoga ega bo'ldi. Rahmat barcha mijozlarimizga!",
+          "created_at": "2025-09-18T23:19:37.426994+05:00",
+          "created_by": 1,
+          "display_order": 3,
+          "id": 3,
+          "image_url": null,
+          "is_active": 1,
+          "show_in_ticker": 0,
+          "title": "⭐ Mijozlar bahosi",
+          "title_en": "⭐ Mijozlar bahosi",
+          "title_kz": "⭐ Mijozlar bahosi",
+          "title_local": "⭐ Mijozlar bahosi",
+          "title_ru": "⭐ Mijozlar bahosi",
+          "title_uz": "⭐ Mijozlar bahosi",
+          "type": "news",
+          "updated_at": "2025-11-29T14:27:39.862815+05:00",
+          "video_url": null,
+          "youtube_embed": null
+        },
+        {
+          "content": "Endi sizlar uchun yanada qulay - Click va Payme orqali to'lov imkoni!",
+          "content_en": "Endi sizlar uchun yanada qulay - Click va Payme orqali to'lov imkoni!",
+          "content_kz": "Endi sizlar uchun yanada qulay - Click va Payme orqali to'lov imkoni!",
+          "content_local": "Endi sizlar uchun yanada qulay - Click va Payme orqali to'lov imkoni!",
+          "content_ru": "Endi sizlar uchun yanada qulay - Click va Payme orqali to'lov imkoni!",
+          "content_uz": "Endi sizlar uchun yanada qulay - Click va Payme orqali to'lov imkoni!",
+          "created_at": "2025-09-18T23:19:37.426994+05:00",
+          "created_by": 1,
+          "display_order": 4,
+          "id": 4,
+          "image_url": "https://res.cloudinary.com/dpfbu9aid/image/upload/f_auto,q_auto/v1766927333/news/default-product.jpg",
+          "is_active": 1,
+          "show_in_ticker": 0,
+          "title": "💳 Click va Payme orqali to'lov",
+          "title_en": "💳 Click va Payme orqali to'lov",
+          "title_kz": "💳 Click va Payme orqali to'lov",
+          "title_local": "💳 Click va Payme orqali to'lov",
+          "title_ru": "💳 Click va Payme orqali to'lov",
+          "title_uz": "💳 Click va Payme orqali to'lov",
+          "type": "advertisement",
+          "updated_at": "2025-09-18T23:19:37.426994+05:00",
+          "video_url": null,
+          "youtube_embed": null
+        }
+      ],
+      "success": true
+    }
+  },
+  {
+    "path": "/api/news",
+    "method": "POST",
+    "url": "http://localhost:5000/api/news",
+    "status_code": 401,
+    "json": {
+      "error": "Authentication required"
+    }
+  },
+  {
+    "path": "/api/news/{id}",
+    "method": "DELETE",
+    "url": "http://localhost:5000/api/news/<id>",
+    "status_code": 404,
+    "json": {
+      "code": 404,
+      "error": "Not found"
+    }
+  }
+]

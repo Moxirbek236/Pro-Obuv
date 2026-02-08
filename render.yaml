@@ -1,0 +1,84 @@
+# ═══════════════════════════════════════════════════════════════════════
+# Render.com Deployment Configuration
+# ═══════════════════════════════════════════════════════════════════════
+# This file defines how to deploy Safety.uz on Render.com
+# Docs: https://render.com/docs/yaml-spec
+# ═══════════════════════════════════════════════════════════════════════
+
+services:
+  # ─────────────────────────────────────────────────────────────────────
+  # Backend Web Service (Flask)
+  # ─────────────────────────────────────────────────────────────────────
+  - type: web
+    name: safety-uz-backend
+    env: python
+    region: oregon
+    plan: free
+    branch: main
+    buildCommand: |
+      cd backend
+      pip install --upgrade pip
+      pip install -r requirements.txt
+    startCommand: cd backend && python app.py
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: HOST
+        value: 0.0.0.0
+      - key: PYTHONUNBUFFERED
+        value: 1
+      - key: DATABASE_URL
+        sync: false  # Set in Render dashboard
+      - key: SECRET_KEY
+        generateValue: true
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false  # Set in Render dashboard
+      - key: BACKEND_URL
+        value: https://safety-uz-backend.onrender.com
+    healthCheckPath: /health
+
+  # ─────────────────────────────────────────────────────────────────────
+  # Telegram Bot Background Worker
+  # ─────────────────────────────────────────────────────────────────────
+  - type: worker
+    name: safety-uz-telegram-bot
+    env: python
+    region: oregon
+    plan: free
+    branch: main
+    buildCommand: |
+      cd bot
+      pip install --upgrade pip
+      pip install -r requirements.txt
+    startCommand: cd bot && python telegram_bot.py
+    envVars:
+      - key: PYTHONUNBUFFERED
+        value: 1
+      - key: DATABASE_URL
+        sync: false  # Set in Render dashboard
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false  # Set in Render dashboard
+      - key: BACKEND_URL
+        value: https://safety-uz-backend.onrender.com
+      - key: PORT
+        value: 10001
+
+# ═══════════════════════════════════════════════════════════════════════
+# Environment Variables to Set in Render Dashboard
+# ═══════════════════════════════════════════════════════════════════════
+# 
+# For Backend Service:
+# - DATABASE_URL: Your PostgreSQL connection string (Neon/Supabase)
+# - TELEGRAM_BOT_TOKEN: Your Telegram bot token
+# - UZUM_API_TOKEN: Your Uzum API token
+# - UZUM_SHOP_ID: Your Uzum shop ID
+# - SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS: Email settings
+# 
+# For Bot Service:
+# - DATABASE_URL: Same as backend
+# - TELEGRAM_BOT_TOKEN: Same as backend
+# - BACKEND_URL: https://safety-uz-backend.onrender.com (or your custom domain)
+# 
+# ═══════════════════════════════════════════════════════════════════════
