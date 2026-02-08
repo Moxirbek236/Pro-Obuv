@@ -377,7 +377,10 @@ async def handle_message(update: "Update", context: "ContextTypes.DEFAULT_TYPE")
 
 def main():
     """Botni ishga tushirish."""
-    if not Updater or not os.environ.get("TELEGRAM_BOT_TOKEN"):
+    # Prioritize test token if available to avoid conflicts with production
+    token = os.environ.get("TELEGRAM_BOT_TOKEN_TEST") or os.environ.get("TELEGRAM_BOT_TOKEN")
+    
+    if not Updater or not token:
         if "IMPORT_ERROR" in globals() and IMPORT_ERROR is not None:
             LOG.error("python-telegram-bot import failed: %s", IMPORT_ERROR)
         else:
@@ -395,12 +398,12 @@ def main():
             write_timeout=30.0,
             pool_timeout=30.0
         )
-        app = ApplicationBuilder().token(os.environ.get("TELEGRAM_BOT_TOKEN")).request(request).build()
-        print("✅ HTTPXRequest configured with 30s timeouts")
+        app = ApplicationBuilder().token(token).request(request).build()
+        print(f"✅ HTTPXRequest configured with 30s timeouts (Using {'TEST' if os.environ.get('TELEGRAM_BOT_TOKEN_TEST') else 'PROD'} token)")
     except Exception as e:
         print(f"⚠️  HTTPXRequest failed: {e}")
         try:
-            app = ApplicationBuilder().token(os.environ.get("TELEGRAM_BOT_TOKEN")).build()
+            app = ApplicationBuilder().token(token).build()
             print("✅ Using default ApplicationBuilder")
         except Exception as e:
             LOG.exception("Failed to create Application: %s", e)
@@ -425,7 +428,17 @@ def main():
     except Exception as exc:
         LOG.error("Application.run_polling failed: %s", str(exc))
         if "Conflict" in str(exc) or "getUpdates" in str(exc):
-            LOG.error("Another bot instance might be running. Please stop other instances.")
+            msg = (
+                "\n🔴 CRITICAL CONFLICT ERROR: The bot token is already in use by another instance!\n"
+                "   Likely the production bot on Render is running.\n\n"
+                "   SOLUTIONS:\n"
+                "   1. Stop the Render service (Scale to 0)\n"
+                "   2. Use a TEST TOKEN for local dev:\n"
+                "      Create a file 'bot/.env.test' with:\n"
+                "      TELEGRAM_BOT_TOKEN_TEST=your_test_token_here\n"
+            )
+            print(msg)
+            LOG.error(msg)
         return False
 
 
