@@ -309,16 +309,31 @@ def main():
     app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), handle_message))
     
     # Add global error handler
+    from telegram.ext import ApplicationHandlerStop
     async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Handle errors gracefully"""
         error = context.error
-        if "Conflict" in str(error) or "getUpdates" in str(error):
+        error_str = str(error)
+        
+        print(f"🔍 Error Handler: {error_str}")
+        
+        if "Conflict" in error_str or "getUpdates" in error_str:
             print("⚠️  Bot conflict detected - this is normal on Render")
+            print("🔄 Bot will continue running...")
             return  # Don't crash the bot
+        elif "Timed out" in error_str or "timeout" in error_str.lower():
+            print("⏰ Timeout occurred - bot will retry")
+            return
+        elif "Network" in error_str or "Connection" in error_str:
+            print("🌐 Network error - bot will retry")
+            return
         else:
-            print(f"Error: {error}")
+            print(f"❌ Unknown error: {error_str}")
+            # Don't crash the bot, just log it
+            return
     
     app.add_error_handler(error_handler)
+    print("✅ Error handler registered")
 
     print("🤖 Starting Telegram bot polling...")
     
@@ -342,11 +357,12 @@ def main():
 if __name__ == "__main__":
     # Configure logging
     logging.basicConfig(
-        level=logging.WARNING,
+        level=logging.INFO,  # Change from WARNING to INFO to see more
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
         handlers=[logging.StreamHandler()]
     )
     
+    # Keep telegram warnings but allow error handlers to work
     logging.getLogger('telegram').setLevel(logging.WARNING)
     logging.getLogger('httpx').setLevel(logging.WARNING)
     
