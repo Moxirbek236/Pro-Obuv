@@ -314,13 +314,45 @@ def main():
 
     print(f"🚀 Starting Bot. Backend: {BACKEND_URL}")
     
-    application = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
+    # Configure request with timeouts as suggested by error message
+    try:
+        from telegram.request import HTTPXRequest
+        request = HTTPXRequest(
+            connect_timeout=30.0,
+            read_timeout=30.0,
+            write_timeout=30.0,
+            pool_timeout=30.0
+        )
+        application = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).request(request).build()
+    except Exception:
+        # Fallback if import fails or old version
+        application = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
 
     application.add_handler(CommandHandler("start", start))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, chat_with_backend))
     application.add_handler(CallbackQueryHandler(handle_callback))
+    
+    # Add error handler
+    async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
+        """Log the error and handle specific cases."""
+        LOG.error("Exception while handling an update:", exc_info=context.error)
+        
+        # Handle conflict error specifically if possible, though usually fatal
+        if "Conflict" in str(context.error):
+            print("🔴 Conflict detected: Another bot instance is running.")
+            # We can't really recover, but logging it clearly helps. 
+            # On Render, this happens during redeploys.
+            
+    application.add_error_handler(error_handler)
 
-    application.run_polling()
+    print("🤖 Polling started...")
+    try:
+        application.run_polling(drop_pending_updates=True)
+    except Exception as e:
+        if "Conflict" in str(e):
+             print("🔴 Bot stopped due to conflict with another instance.")
+        else:
+             print(f"❌ Polling error: {e}")
 
 # --- Flask for Health Check (Render) ---
 app = Flask(__name__)
