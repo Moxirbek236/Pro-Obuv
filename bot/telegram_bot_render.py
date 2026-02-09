@@ -350,65 +350,6 @@ if __name__ == "__main__":
     logging.getLogger('telegram').setLevel(logging.WARNING)
     logging.getLogger('httpx').setLevel(logging.WARNING)
     
-    # Kill existing processes first
-    print("🔄 Checking for existing bot processes...")
-    try:
-        import subprocess
-        import signal
-        import platform
-        
-        system = platform.system().lower()
-        
-        if system == "windows":
-            # Windows process cleanup
-            try:
-                # Kill Python processes
-                result = subprocess.run(['taskkill', '/F', '/IM', 'python.exe'], 
-                                      capture_output=True, text=True)
-                print("✅ Windows processes terminated")
-            except:
-                pass
-        else:
-            # Linux/Unix process cleanup
-            try:
-                # Kill existing Python processes with telegram_bot
-                result = subprocess.run(['pkill', '-f', 'python.*telegram_bot'], 
-                                      capture_output=True, text=True)
-                if result.returncode == 0:
-                    print("✅ Existing bot processes terminated")
-                time.sleep(2)  # Wait for processes to stop
-            except:
-                pass
-            
-            # Kill processes on our port
-            port = int(os.environ.get('PORT', 10000))
-            try:
-                result = subprocess.run(['lsof', '-ti', f':{port}'], 
-                                      capture_output=True, text=True)
-                if result.stdout.strip():
-                    pids = result.stdout.strip().split('\n')
-                    for pid in pids:
-                        try:
-                            os.kill(int(pid), signal.SIGTERM)
-                            print(f"✅ Killed process {pid} on port {port}")
-                        except:
-                            pass
-                    time.sleep(1)
-            except:
-                pass
-            
-            # Final check - force kill if needed
-            try:
-                subprocess.run(['pkill', '-9', '-f', 'python.*telegram_bot'], 
-                              capture_output=True, text=True)
-            except:
-                pass
-            
-    except Exception as e:
-        print(f"⚠️  Process cleanup warning: {e}")
-    
-    print("🚀 Starting fresh bot instance...")
-    
     # Handle graceful shutdown
     def signal_handler(signum, frame):
         print(f"\n📡 Received signal {signum}, shutting down gracefully...")
