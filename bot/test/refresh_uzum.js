@@ -6,11 +6,11 @@ async function refreshUzumProducts() {
 
     try {
         // Fetch products from seller API
-        const API_TOKEN = process.env.UZUM_API_TOKEN;
-        const response = await fetch('https://api-seller.uzum.uz/api/seller-openapi/v1/product/shop/88415?filter=ALL&size=1', {
+        const response = await fetch('https://api-seller.uzum.uz/api/seller-openapi/v1/product/shop/88415?sortBy=DEFAULT&order=ASC&filter=ALL', {
             method: 'GET',
             headers: {
-                'Authorization': API_TOKEN,
+                'Authorization': 'K5jmUckABrq9L6sS9iAvMtUgrspCbvJZpK3rUnDFauA=',
+                'Accept': '*/*',
                 'Content-Type': 'application/json'
             }
         });

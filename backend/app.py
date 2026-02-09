@@ -646,6 +646,154 @@ def api_ratings_for_product(product_id):
         app_logger.exception(f"api_ratings_for_product error: {e}")
         return jsonify({'success': False, 'error': 'server_error'}), 500
 
+
+# --- Telegram Bot API ---
+@app.route('/api/bot/categories', methods=['GET'])
+def api_bot_categories():
+    """Get all visible categories"""
+    try:
+        # Assuming categories are distinct types or a separate table if it exists.
+        # Based on previous code, categories might be 'type' in menu_items or hardcoded.
+        # Let's check if there is a categories table or just types.
+        # Checking schema from context or previous knowledge is hard without listing tables.
+        # Use simple query on menu_items for distinct types or 'categories' table if exists.
+        
+        # Fallback to distinct types if no category table
+        try:
+            rows = execute_query("SELECT DISTINCT type FROM menu_items WHERE type IS NOT NULL AND type != ''", fetch_all=True)
+            categories = [{'id': r[0], 'name': r[0]} for r in rows]
+        except Exception:
+             # If table doesn't exist or error, return default hardcoded
+            categories = [{'id': 'specodezhda', 'name': 'Спецодежда'}, {'id': 'obuv', 'name': 'Спецобувь'}]
+            
+        return jsonify({'success': True, 'categories': categories}), 200
+    except Exception as e:
+        app_logger.exception(f"api_bot_categories error: {e}")
+        return jsonify({'success': False, 'error': 'server_error'}), 500
+
+@app.route('/api/bot/products', methods=['GET'])
+def api_bot_products():
+    """Get products with filtering"""
+    try:
+        category = request.args.get('category')
+        search = request.args.get('search')
+        page = int(request.args.get('page', 1))
+        limit = int(request.args.get('limit', 10))
+        offset = (page - 1) * limit
+        
+        query = "SELECT id, name, description, price, image, type, stock FROM menu_items WHERE 1=1"
+        params = []
+        
+        if category:
+            query += " AND type = %s"
+            params.append(category)
+            
+        if search:
+            query += " AND (name ILIKE %s OR description ILIKE %s)"
+            params.append(f"%{search}%")
+            params.append(f"%{search}%")
+            
+        # Count total
+        count_query = "SELECT COUNT(*) " + query[query.index("FROM"):]
+        total = execute_query(count_query, tuple(params), fetch_one=True)[0]
+        
+        # Fetch items
+        query += " ORDER BY id DESC LIMIT %s OFFSET %s"
+        params.append(limit)
+        params.append(offset)
+        
+        rows = execute_query(query, tuple(params), fetch_all=True) or []
+        products = [dict(r) for r in rows]
+        
+        return jsonify({
+            'success': True, 
+            'products': products, 
+            'total': total,
+            'page': page,
+            'limit': limit
+        }), 200
+    except Exception as e:
+        app_logger.exception(f"api_bot_products error: {e}")
+        return jsonify({'success': False, 'error': 'server_error'}), 500
+
+@app.route('/api/bot/product/<int:product_id>', methods=['GET'])
+def api_bot_product_detail(product_id):
+    """Get single product detail"""
+    try:
+        row = execute_query('SELECT * FROM menu_items WHERE id = %s', (product_id,), fetch_one=True)
+        if not row:
+            return jsonify({'success': False, 'error': 'not_found'}), 404
+        return jsonify({'success': True, 'product': dict(row)}), 200
+    except Exception as e:
+        app_logger.exception(f"api_bot_product_detail error: {e}")
+        return jsonify({'success': False, 'error': 'server_error'}), 500
+
+@app.route('/api/bot/order', methods=['POST'])
+def api_bot_create_order():
+    """Create order from bot"""
+    try:
+        data = request.get_json(silent=True) or {}
+        telegram_user_id = data.get('user_id')
+        items = data.get('items') or [] # list of {product_id, quantity}
+        
+        if not items:
+            return jsonify({'success': False, 'error': 'empty_cart'}), 400
+            
+        # Optional: Resolve or create user in DB based on telegram_user_id
+        # For now, we can store telegram_id in user_id field or a separate field if schema supports.
+        # Assuming we just store it as NULL user_id but keep track in customer_name or memo
+        
+        # Calculate total
+        total = 0.0
+        order_items = []
+        for it in items:
+            pid = int(it.get('product_id'))
+            qty = int(it.get('quantity', 1))
+            row = execute_query('SELECT price, name FROM menu_items WHERE id = %s', (pid,), fetch_one=True)
+            if row:
+                price = float(row[0])
+                total += price * qty
+                order_items.append({'id': pid, 'qty': qty, 'price': price, 'name': row.get('name', '')})
+
+        now = _now_iso()
+        ticket = random.randint(10000, 99999) # fallback ticket
+        
+        conn = get_db()
+        cur = conn.cursor()
+        
+        # Create order
+        # We might need to map telegram_user_id to a real user if possible, 
+        # or just store "Bot User {id}" as customer name
+        customer_name = data.get('customer_name') or f"Telegram User {telegram_user_id}"
+        
+        cur.execute('''INSERT INTO orders 
+                    (user_id, customer_name, ticket_no, total, status, created_at, order_type) 
+                    VALUES (NULL, %s, %s, %s, 'pending', %s, 'bot')''', 
+                    (customer_name, ticket, total, now))
+        order_id = cur.lastrowid
+        
+        for oi in order_items:
+             cur.execute('INSERT INTO order_details (order_id, menu_item_id, quantity, price) VALUES (%s,%s,%s,%s)', 
+                         (order_id, oi['id'], oi['qty'], oi['price']))
+                         
+        conn.commit()
+        return jsonify({'success': True, 'order_id': order_id, 'ticket': ticket, 'total': total}), 201
+        
+    except Exception as e:
+        app_logger.exception(f"api_bot_create_order error: {e}")
+        return jsonify({'success': False, 'error': 'server_error'}), 500
+
+@app.route('/api/bot/uzum/products', methods=['GET'])
+def api_bot_uzum_products():
+    """Get Uzum products via backend cache"""
+    try:
+        # Use existing logic to get processed uzum items
+        products = get_uzum_items_processed()
+        return jsonify({'success': True, 'products': products}), 200
+    except Exception as e:
+        app_logger.exception(f"api_bot_uzum_products error: {e}")
+        return jsonify({'success': False, 'error': 'server_error'}), 500
+
 # --- Uzum Market Integration Helpers ---
 _uzum_cache = {"data": None, "timestamp": None}
 

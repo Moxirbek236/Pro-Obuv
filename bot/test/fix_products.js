@@ -4,8 +4,8 @@ const fs = require('fs');
 function fixBotProductsData() {
     console.log('Mahsulot ma\'lumotlarini tuzatish...');
     
-    // Read original seller products
-    const originalData = JSON.parse(fs.readFileSync('uzum_products_88415_1770478620771.json', 'utf8'));
+    // Read the original Uzum products data
+    const originalData = JSON.parse(fs.readFileSync('uzum_products_88415_1770628318163.json', 'utf8'));
     const sellerProducts = originalData.products || [];
     
     console.log(`${sellerProducts.length} ta mahsulot topildi.`);

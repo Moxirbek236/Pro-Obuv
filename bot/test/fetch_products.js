@@ -2,7 +2,7 @@ const fs = require('fs');
 const https = require('https');
 
 // API settings
-const API_TOKEN = process.env.UZUM_API_TOKEN;
+const API_TOKEN = 'K5jmUckABrq9L6sS9iAvMtUgrspCbvJZpK3rUnDFauA=';
 // Test different shop IDs
 const SHOP_IDS = ["88415", "88414", "88413", "88416", "88417"];
 const BASE_URL = "api-seller.uzum.uz";

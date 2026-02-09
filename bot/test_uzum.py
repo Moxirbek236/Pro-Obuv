@@ -7,7 +7,7 @@ from pathlib import Path
 # Load Uzum products
 def load_uzum_products():
     try:
-        products_file = Path(__file__).parent / "test" / "bot_products_fixed_1770482210682.json"
+        products_file = Path(__file__).parent / "test" / "bot_products_fixed_1770628828863.json"
         if products_file.exists():
             with open(products_file, 'r', encoding='utf-8') as f:
                 return json.load(f)
