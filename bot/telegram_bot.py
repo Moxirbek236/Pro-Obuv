@@ -335,24 +335,36 @@ def main():
     # Add error handler
     async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
         """Log the error and handle specific cases."""
-        LOG.error("Exception while handling an update:", exc_info=context.error)
+        # Check if error is Conflict
+        error_str = str(context.error)
         
-        # Handle conflict error specifically if possible, though usually fatal
-        if "Conflict" in str(context.error):
-            print("🔴 Conflict detected: Another bot instance is running.")
-            # We can't really recover, but logging it clearly helps. 
-            # On Render, this happens during redeploys.
-            
+        if "Conflict" in error_str:
+            print("🔴 Conflict detected: Another bot instance is running. Shutting down this instance.")
+            # We must stop the application to avoid loop
+            # Raising SystemExit or calling stop() might work depending on context, 
+            # but usually the polling loop will catch it.
+            # Best is to let it crash gracefully.
+            return
+
+        LOG.error("Exception while handling an update:", exc_info=context.error)
+
     application.add_error_handler(error_handler)
 
     print("🤖 Polling started...")
+    
+    # Run polling with specific exception handling
     try:
+        # allowed_updates=Update.ALL_TYPES makes sure we get everything
+        # drop_pending_updates=True clears old queue
         application.run_polling(drop_pending_updates=True)
     except Exception as e:
-        if "Conflict" in str(e):
-             print("🔴 Bot stopped due to conflict with another instance.")
+        error_str = str(e)
+        if "Conflict" in error_str:
+             print("🔴 Bot stopped due to conflict (Multiple instances running). This is normal during deployment.")
         else:
              print(f"❌ Polling error: {e}")
+             # Log full trace for other errors
+             LOG.exception("Detailed polling error:")
 
 # --- Flask for Health Check (Render) ---
 app = Flask(__name__)
