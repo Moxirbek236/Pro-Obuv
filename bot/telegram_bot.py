@@ -483,6 +483,35 @@ if __name__ == "__main__":
     def ping():
         return "pong"
     
+    @app.route('/keep-alive')
+    def keep_alive():
+        """Render serverini tirik saqlash uchun"""
+        return {
+            "status": "active", 
+            "service": "telegram-bot",
+            "timestamp": datetime.now().isoformat(),
+            "uptime": "Bot is running and processing messages"
+        }
+    
+    @app.route('/ping-self')
+    def ping_self():
+        """Botni o'ziga ping qilish"""
+        try:
+            # Botni o'ziga tekshirish
+            if 'app' in globals() and app:
+                bot_info = app.bot.get_me()
+                return {
+                    "status": "success",
+                    "bot_name": bot_info.username,
+                    "timestamp": datetime.now().isoformat()
+                }
+        except Exception as e:
+            return {
+                "status": "error", 
+                "message": str(e),
+                "timestamp": datetime.now().isoformat()
+            }
+    
     # Start Flask server in background thread
     port = int(os.environ.get('BOT_PORT', 10001))
     

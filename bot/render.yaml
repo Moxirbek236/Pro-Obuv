@@ -1,0 +1,55 @@
+services:
+  type: web
+  name: telegram-uzum-bot
+  runtime: python
+  plan: free
+  buildCommand: "pip install -r requirements.txt"
+  startCommand: "python telegram_bot.py"
+  healthCheckPath: "/health"
+  healthCheckTimeout: 100
+  restartPolicyType: on_failure
+  autoDeploy: false
+  
+  # Keep-alive cron job - har 2 daqiqada
+  cron:
+    - url: "/keep-alive"
+      schedule: "*/2 * * * *"
+      method: GET
+      headers:
+        User-Agent: "Render-Cron-Job"
+  
+  # Additional health checks
+  healthCheck:
+    path: "/health"
+    initialDelaySeconds: 30
+    periodSeconds: 30
+    timeoutSeconds: 10
+    failureThreshold: 3
+  
+  # Environment variables
+  envVars:
+    - key: PYTHONUNBUFFERED
+      value: "1"
+    - key: PORT
+      value: "10000"
+    - key: RENDER_APP_URL
+      sync: false
+      value: "https://telegram-uzum-bot.onrender.com"  # O'zingiz app URL ni kiriting
+
+# Scaling settings
+scaling:
+  minInstances: 1
+  maxInstances: 1
+  targetMemoryPercent: 60
+  targetCPUPercent: 60
+
+# Build optimization
+build:
+  dockerfilePath: "./Dockerfile"
+  dockerContext: "."
+  
+# Network timeout settings
+webService:
+  runTimeoutSeconds: 900  # 15 daqiqa
+  healthCheck:
+    gracePeriodSeconds: 30
