@@ -137,6 +137,24 @@
         </div>
     </div>
 
+
+    <!-- ENV Editor -->
+    <div class="config-section" style="margin-top: 30px;">
+        <h3>🛠️ Server Environment (.env)</h3>
+        <p class="text-muted small">Bu yerda serverning maxsus o'zgaruvchilarini (DB connection, API Keys, Rate Limits) o'zgartirishingiz mumkin. O'zgartirishlardan so'ng servisni qayta ishga tushirish kerak.</p>
+        
+        <div class="mb-3">
+             <label class="form-label">Active .env Content:</label>
+             <textarea id="envContent" class="form-control" rows="15" style="font-family: 'Courier New', monospace; font-size: 14px; background: #2d2d2d; color: #f8f8f2;"></textarea>
+        </div>
+        
+        <div class="d-flex justify-content-between">
+             <button class="btn btn-secondary" onclick="loadEnv()"><i class="bi bi-arrow-clockwise"></i> Qayta yuklash</button>
+             <button class="btn btn-success" onclick="saveEnv()"><i class="bi bi-save"></i> Saqlash (.env)</button>
+        </div>
+        <div class="alert alert-info mt-3" style="display:none" id="envMsg"></div>
+    </div>
+
     <div class="back-button">
         <a href="{{ url_for('super_admin_dashboard') }}" class="btn btn-primary">⬅ Dashboard ga qaytish</a>
     </div>
@@ -600,6 +618,47 @@ document.addEventListener('DOMContentLoaded', function() {
             loadSystemLogs();
         }
     }, 30000);
+    
+    // Load Env
+    loadEnv();
 });
+
+function loadEnv() {
+    fetch('/api/super-admin/env')
+    .then(r => r.json())
+    .then(data => {
+        if(data.success) {
+            document.getElementById('envContent').value = data.content;
+        } else {
+             alert('Env yuklashda xatolik: ' + data.error);
+        }
+    })
+    .catch(e => console.error(e));
+}
+
+function saveEnv() {
+    if(!confirm('Ishonchingiz komilmi? Bu harakat serverni buzishi mumkin agar noto\'g\'ri qiymat kiritilsa.')) return;
+    
+    const content = document.getElementById('envContent').value;
+    fetch('/api/super-admin/env', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({content: content})
+    })
+    .then(r => r.json())
+    .then(data => {
+        const msg = document.getElementById('envMsg');
+        msg.style.display = 'block';
+        if(data.success) {
+            msg.className = 'alert alert-success mt-3';
+            msg.textContent = 'Muvaffaqiyatli saqlandi! O\'zgarishlar kuchga kirishi uchun serverni restart qiling.';
+        } else {
+            msg.className = 'alert alert-danger mt-3';
+            msg.textContent = 'Xatolik: ' + data.error;
+        }
+    })
+    .catch(e => alert(e));
+}
+
 </script>
 {% endblock %}

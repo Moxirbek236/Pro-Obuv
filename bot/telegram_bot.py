@@ -66,6 +66,15 @@ def log_action(action: str, user: str = "unknown", detail: str = "") -> None:
             f.write(log_entry)
     except Exception:
         pass
+    
+    # Also register user activity on backend (fire and forget)
+    if "tg:" in user:
+        try:
+             uid = user.split(":")[1]
+             # Run in separate thread to avoid blocking
+             threading.Thread(target=lambda: api_post("/api/bot/register-user", {"user_id": uid, "name": "User"})).start()
+        except:
+             pass
 
 # --- API Helpers ---
 
@@ -349,6 +358,76 @@ def main():
         LOG.error("Exception while handling an update:", exc_info=context.error)
 
     application.add_error_handler(error_handler)
+
+    # --- Backend Command Polling ---
+    async def check_backend_commands(context: ContextTypes.DEFAULT_TYPE):
+        try:
+            # Poll backend for pending commands
+            result = api_get("/api/bot/commands/pending")
+            if result and result.get("success"):
+                commands = result.get("commands", [])
+                for cmd in commands:
+                    cmd_id = cmd.get("id")
+                    cmd_type = cmd.get("type")
+                    payload = cmd.get("payload") or {}
+                    
+                    status = "completed"
+                    error = None
+                    
+                    try:
+                        if cmd_type == "broadcast":
+                            text = payload.get("text")
+                            photo = payload.get("photo")
+                            target = payload.get("target")
+                            
+                            # Get subscribers
+                            subs_res = api_get("/api/bot/subscribers")
+                            subscribers = subs_res.get("subscribers", []) if subs_res else []
+                            
+                            sent_count = 0
+                            for sub in subscribers:
+                                try:
+                                    chat_id = sub.get("user_id")
+                                    if not chat_id: continue
+                                    
+                                    if photo:
+                                        await context.bot.send_photo(chat_id=chat_id, photo=photo, caption=text)
+                                    else:
+                                        await context.bot.send_message(chat_id=chat_id, text=text)
+                                    sent_count += 1
+                                    await asyncio.sleep(0.1) # Rate limit
+                                except Exception:
+                                    pass
+                            
+                            # Log result
+                            log_action("broadcast", "system", f"Sent to {sent_count} users")
+
+                        elif cmd_type == "send_message":
+                            chat_id = payload.get("chat_id")
+                            text = payload.get("text")
+                            photo = payload.get("photo")
+                            if chat_id and text:
+                                if photo:
+                                    await context.bot.send_photo(chat_id=chat_id, photo=photo, caption=text)
+                                else:
+                                    await context.bot.send_message(chat_id=chat_id, text=text)
+                    except Exception as e:
+                        status = "failed"
+                        error = str(e)
+                    
+                    # Update status
+                    api_post(f"/api/bot/commands/{cmd_id}/status", {"status": status, "error": error})
+                    
+        except Exception as e:
+            pass # Silent fail on polling
+
+    # Add job to job_queue if available
+    if application.job_queue:
+        application.job_queue.run_repeating(check_backend_commands, interval=5, first=5)
+    else:
+        print("⚠️ JobQueue not available. Polling will limit broadcast functionality.")
+
+
 
     print("🤖 Polling started...")
     

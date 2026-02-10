@@ -24,6 +24,9 @@
 <a href="/super-admin/social" class="nav-link-modern {{ 'active' if 'social' in request.endpoint }}">
     <i class="bi bi-share"></i> Ijtimoiy Tarmoqlar
 </a>
+<a href="{{ url_for('super_admin_bot_control') }}" class="nav-link-modern {{ 'active' if request.endpoint == 'super_admin_bot_control' }}">
+    <i class="bi bi-robot"></i> Bot Boshqaruvi
+</a>
 
 <div class="px-3 mt-4 mb-2">
     <small class="text-uppercase text-muted fw-bold" style="font-size: 0.7rem;">System</small>
