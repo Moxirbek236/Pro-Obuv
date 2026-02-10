@@ -5,8 +5,7 @@
 {% block extra_css %}
 <style>
   .settings-container {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
+    /* Removed min-height: 100vh to work with dashboard layout */
     padding: 20px 0;
   }
 
@@ -310,7 +309,7 @@
     }
   }
 </style>
-{% endblock %} {% block content %} {% set LANG =
+{% endblock %} {% block dashboard_content %} {% set LANG =
 request.environ.get('LANG_CODE', session.get('interface_language',
 config.get('DEFAULT_LANGUAGE', 'uz'))) %}
 <div class="settings-container">

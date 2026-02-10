@@ -1,6 +1,6 @@
 {% extends "super_admin_base.html" %}
 
-{% block content %}
+{% block dashboard_content %}
 <div class="row mb-4">
     <div class="col-12">
         <h2 class="mb-3">🤖 Telegram Bot Boshqaruvi</h2>
@@ -10,7 +10,7 @@
 
 <div class="row g-4">
     <!-- Broadcast Form -->
-    <div class="col-md-5">
+    <div class="col-md-6">
         <div class="card h-100">
             <div class="card-header bg-white py-3">
                 <h5 class="mb-0"><i class="bi bi-megaphone me-2"></i>Xabar Yuborish</h5>
@@ -47,44 +47,8 @@
         </div>
     </div>
 
-    <!-- Bot Settings -->
-    <div class="col-md-5 mt-4">
-        <div class="card h-100">
-            <div class="card-header bg-white py-3">
-                 <h5 class="mb-0"><i class="bi bi-gear me-2"></i>Sozlamalar</h5>
-            </div>
-            <div class="card-body">
-                 <form id="botSettingsForm">
-                     <div class="form-check form-switch mb-3 p-3 bg-light rounded border">
-                          <input class="form-check-input ms-0 me-2" type="checkbox" id="useUzum" {% if settings and settings.get('use_uzum_market') == '1' %}checked{% endif %}>
-                          <label class="form-check-label fw-bold" for="useUzum">Uzum Market Rejimi</label>
-                          <div class="small text-muted mt-1">Yoqilgan bo'lsa "Mahsulotlar" tugmasi Uzumdan ma'lumot oladi.</div>
-                     </div>
-                     
-                     <h6 class="text-muted small text-uppercase fw-bold mb-2">Ijtimoiy Tarmoqlar</h6>
-                     <div class="input-group mb-2">
-                         <span class="input-group-text"><i class="bi bi-telegram text-primary"></i></span>
-                         <input type="text" class="form-control" id="socialTelegram" placeholder="Telegram Link" value="{{ settings.get('social_telegram', '') if settings else '' }}">
-                     </div>
-                     <div class="input-group mb-2">
-                         <span class="input-group-text"><i class="bi bi-instagram text-danger"></i></span>
-                         <input type="text" class="form-control" id="socialInstagram" placeholder="Instagram Link" value="{{ settings.get('social_instagram', '') if settings else '' }}">
-                     </div>
-                     <div class="input-group mb-3">
-                         <span class="input-group-text"><i class="bi bi-globe text-secondary"></i></span>
-                         <input type="text" class="form-control" id="socialWebsite" placeholder="Website Link" value="{{ settings.get('social_website', '') if settings else '' }}">
-                     </div>
-                     
-                     <button type="button" class="btn btn-success w-100" onclick="saveBotSettings()">
-                         <i class="bi bi-save me-1"></i> Saqlash
-                     </button>
-                 </form>
-            </div>
-        </div>
-    </div>
-
     <!-- Right Side: Stats & History -->
-    <div class="col-md-7">
+    <div class="col-md-6">
         <!-- Subscribers Count -->
         <div class="row mb-4">
             <div class="col-sm-6">
@@ -158,14 +122,16 @@ document.addEventListener('DOMContentLoaded', () => {
         
         try {
             const formData = new FormData(e.target);
-            const data = Object.fromEntries(formData.entries());
+            const data = {
+                text: formData.get('message'),
+                photo: formData.get('photo'),
+                target: 'all'
+            };
             
             // Clean empty
             if(!data.photo) delete data.photo;
-            if(!data.button_text) delete data.button_text;
-            if(!data.button_url) delete data.button_url;
 
-            const res = await fetch('/api/bot/broadcast', {
+            const res = await fetch('/api/super-admin/bot/broadcast', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(data)
@@ -227,44 +193,6 @@ async function loadHistory() {
             });
         }
     } catch(e) { console.error(e); }
-}
-
-function saveBotSettings() {
-    const data = {
-        use_uzum_market: document.getElementById('useUzum').checked ? '1' : '0',
-        social_telegram: document.getElementById('socialTelegram').value,
-        social_instagram: document.getElementById('socialInstagram').value,
-        social_website: document.getElementById('socialWebsite').value
-    };
-    
-    // Add loading state
-    const btn = document.querySelector('button[onclick="saveBotSettings()"]');
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Saqlanmoqda...';
-    btn.disabled = true;
-
-    fetch('/api/site-settings', {
-         method: 'POST',
-         headers: {'Content-Type': 'application/json'},
-         body: JSON.stringify(data)
-    })
-    .then(r => r.json())
-    .then(d => {
-        if(d.success) {
-             const alert = document.createElement('div');
-             alert.className = 'alert alert-success mt-3';
-             alert.textContent = 'Sozlamalar muvaffaqiyatli saqlandi!';
-             document.getElementById('botSettingsForm').appendChild(alert);
-             setTimeout(() => alert.remove(), 3000);
-        } else {
-             alert('Xatolik: ' + (d.error || 'Server xatosi'));
-        }
-    })
-    .catch(e => alert('Xatolik: ' + e))
-    .finally(() => {
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-    });
 }
 </script>
 {% endblock %}
