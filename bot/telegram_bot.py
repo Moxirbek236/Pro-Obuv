@@ -119,7 +119,7 @@ async def start(update: "Update", context: "ContextTypes.DEFAULT_TYPE"):
 
 async def show_main_menu(update: "Update"):
     kb = [
-        [KeyboardButton("🛒 Mahsulotlar"), KeyboardButton("🛍️ Uzum Mahsulotlar")],
+        [KeyboardButton("🛒 Mahsulotlar")],
         [KeyboardButton("🤖 AI Chat"), KeyboardButton("👨‍💼 Operator")],
         [KeyboardButton("ℹ️ Biz haqimizda")]
     ]
@@ -250,6 +250,49 @@ async def handle_uzum_products(update: "Update", context: "ContextTypes.DEFAULT_
     except Exception as e:
         log_error(e, "handle_uzum_products")
 
+async def handle_about(update: "Update", context: "ContextTypes.DEFAULT_TYPE"):
+    try:
+        res = api_get("/api/site-settings")
+        text = "Biz haqimizda:\n\nSafety.uz - Maxsus kiyimlar va himoya vositalari.\n"
+        
+        if res and res.get("success"):
+            s = res.get("settings", {})
+            tg = s.get("social_telegram")
+            ins = s.get("social_instagram")
+            site = s.get("social_website")
+            
+            if tg or ins or site:
+                text += "\nBiz ijtimoiy tarmoqlarda:\n"
+                if tg: text += f"✈️ Telegram: {tg}\n"
+                if ins: text += f"📸 Instagram: {ins}\n"
+                if site: text += f"🌐 Sayt: {site}\n"
+        
+        await update.message.reply_text(text)
+    except Exception as e:
+        log_error(e, "handle_about")
+
+async def handle_products_click(update: "Update", context: "ContextTypes.DEFAULT_TYPE"):
+    try:
+        # Check settings
+        res = api_get("/api/site-settings")
+        use_uzum = False
+        if res and res.get("success"):
+            use_uzum = res.get("settings", {}).get("use_uzum_market") == '1'
+        
+        if use_uzum:
+            await handle_uzum_products(update, context)
+        else:
+            # Show DB categories buttons (specific as requested)
+            kb = [
+               [KeyboardButton("Спецодежда"), KeyboardButton("Спецобувь")],
+               [KeyboardButton("🔙 Asosiy menyu")]
+            ]
+            markup = ReplyKeyboardMarkup(kb, resize_keyboard=True)
+            await update.message.reply_text("Kategoriyani tanlang:", reply_markup=markup)
+    except Exception as e:
+        log_error(e, "handle_products_click")
+
+
 async def chat_with_backend(update: "Update", context: "ContextTypes.DEFAULT_TYPE"):
     """Handle generic messages - maybe chat or category selection"""
     txt = update.message.text
@@ -259,12 +302,14 @@ async def chat_with_backend(update: "Update", context: "ContextTypes.DEFAULT_TYP
         return
         
     if txt == "🛒 Mahsulotlar":
-        await handle_categories(update, context)
+        await handle_products_click(update, context)
+        return
+
+    if txt == "ℹ️ Biz haqimizda":
+        await handle_about(update, context)
         return
         
-    if txt == "🛍️ Uzum Mahsulotlar":
-        await handle_uzum_products(update, context)
-        return
+    # Removed explicit Uzum handler as it's now conditional inside Mahsulotlar
         
     # Check if text is a category
     # Simple check: fetch categories and see if txt is in them

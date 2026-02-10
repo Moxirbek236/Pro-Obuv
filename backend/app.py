@@ -826,7 +826,15 @@ def init_bot_commands_table():
 def super_admin_bot_control():
     if not session.get('super_admin'):
         return redirect(url_for('super_admin_login'))
-    return render_template('super_admin_bot_control.html')
+    
+    settings = {}
+    try:
+        rows = execute_query('SELECT key, value FROM site_settings', fetch_all=True) or []
+        settings = {r['key']: r['value'] for r in rows}
+    except:
+        pass
+        
+    return render_template('super_admin_bot_control.html', settings=settings)
 
 @app.route('/api/bot/init-db', methods=['POST'])
 def api_bot_init_db():
