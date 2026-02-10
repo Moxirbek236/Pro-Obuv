@@ -797,227 +797,7 @@ def api_bot_uzum_products():
 # --- Uzum Market Integration Helpers ---
 _uzum_cache = {"data": None, "timestamp": None}
 
-# --- Bot Control API (Superadmin -> Bot) ---
-
-
-def init_bot_commands_table():
-    """Ensure bot_commands table exists"""
-    try:
-        if table_exists('bot_commands'): 
-             # Just to be safe, maybe alter table if needed? Nah.
-             pass
-        else:
-             execute_query('''
-                CREATE TABLE IF NOT EXISTS bot_commands (
-                    id SERIAL PRIMARY KEY,
-                    type TEXT NOT NULL,
-                    payload JSONB,
-                    status TEXT DEFAULT 'pending',
-                    created_at TIMESTAMP DEFAULT NOW(),
-                    processed_at TIMESTAMP,
-                    error TEXT
-                );
-             ''')
-             if app_logger: app_logger.info("Created bot_commands table.")
-    except Exception as e:
-        if app_logger: app_logger.error(f"Failed to init bot_commands table: {e}")
-
-@app.route('/super-admin/bot-control', methods=['GET'])
-def super_admin_bot_control():
-    if not session.get('super_admin'):
-        return redirect(url_for('super_admin_login'))
-    
-    settings = {}
-    try:
-        rows = execute_query('SELECT key, value FROM site_settings', fetch_all=True) or []
-        settings = {r['key']: r['value'] for r in rows}
-    except:
-        pass
-        
-    return render_template('super_admin_bot_control.html', settings=settings)
-
-@app.route('/api/bot/init-db', methods=['POST'])
-def api_bot_init_db():
-    if not session.get('super_admin'):
-        return jsonify({'success': False, 'error': 'Forbidden'}), 403
-    init_bot_commands_table()
-    return jsonify({'success': True, 'message': 'Table initialized'}), 200
-
-@app.route('/api/bot/broadcast', methods=['POST'])
-def api_bot_broadcast():
-    """Create a broadcast command for the bot"""
-    if not session.get('super_admin'):
-        return jsonify({'success': False, 'error': 'Forbidden'}), 403
-        
-    data = request.get_json(silent=True) or {}
-    message = data.get('message')
-    if not message:
-        return jsonify({'success': False, 'error': 'Message required'}), 400
-        
-    payload = {
-        'text': message,
-        'photo': data.get('photo'),
-        'button_text': data.get('button_text'),
-        'button_url': data.get('button_url'),
-        'target': data.get('target', 'all') # all, user, group
-    }
-    
-    try:
-        # Ensure table exists
-        init_bot_commands_table()
-        
-        execute_query(
-            "INSERT INTO bot_commands (type, payload, status) VALUES (%s, %s, 'pending')",
-            ('broadcast', json.dumps(payload))
-        )
-        return jsonify({'success': True}), 201
-    except Exception as e:
-        app_logger.exception(f"Broadcast error: {e}")
-        return jsonify({'success': False, 'error': str(e)}), 500
-
-
-@app.route('/api/bot/send-user', methods=['POST'])
-def api_bot_send_user():
-    """Send message to specific user"""
-    if not session.get('super_admin'):
-        return jsonify({'success': False, 'error': 'Forbidden'}), 403
-
-    data = request.get_json(silent=True) or {}
-    user_id = data.get('user_id')
-    message = data.get('message')
-    
-    if not user_id or not message:
-        return jsonify({'success': False, 'error': 'User ID and Message required'}), 400
-
-    payload = {
-        'chat_id': user_id,
-        'text': message,
-        'photo': data.get('photo')
-    }
-
-    try:
-        init_bot_commands_table()
-        execute_query(
-            "INSERT INTO bot_commands (type, payload, status) VALUES (%s, %s, 'pending')",
-            ('send_message', json.dumps(payload))
-        )
-        return jsonify({'success': True}), 201
-    except Exception as e:
-        app_logger.exception(f"Send User error: {e}")
-        return jsonify({'success': False, 'error': str(e)}), 500
-
-@app.route('/api/bot/register-user', methods=['POST'])
-def api_bot_register_user():
-    """Bot calls this when a user interacts (start, etc)"""
-    try:
-        data = request.get_json(silent=True) or {}
-        user_id = data.get('user_id')
-        name = data.get('name')
-        if not user_id:
-             return jsonify({'success': False, 'error': 'user_id required'}), 400
-        
-        # We need a place to store this.
-        # Since 'users' table is for web login (email/pass), we could use a new 'bot_users' table.
-        # Check/Create bot_users table
-        execute_query('''CREATE TABLE IF NOT EXISTS bot_users (
-            user_id BIGINT PRIMARY KEY,
-            name TEXT,
-            last_active TIMESTAMP DEFAULT NOW()
-        );''')
-        
-        # Upsert
-        exists = execute_query('SELECT 1 FROM bot_users WHERE user_id = %s', (user_id,), fetch_one=True)
-        if exists:
-             execute_query('UPDATE bot_users SET last_active = NOW(), name = %s WHERE user_id = %s', (name, user_id))
-        else:
-             execute_query('INSERT INTO bot_users (user_id, name, last_active) VALUES (%s, %s, NOW())', (user_id, name))
-             
-        return jsonify({'success': True}), 200
-    except Exception as e:
-        app_logger.exception(f"Register user error: {e}")
-        return jsonify({'success': False, 'error': str(e)}), 500
-
-@app.route('/api/bot/subscribers', methods=['GET'])
-def api_bot_subscribers():
-    """Get list of potential bot subscribers"""
-    try:
-        # Check if bot_users table exists and fetch
-        if table_exists('bot_users'):
-             rows = execute_query('SELECT user_id, name FROM bot_users', fetch_all=True) or []
-             subscribers = [{'user_id': r.get('user_id') or r[0], 'name': r.get('name') or r[1]} for r in rows]
-        else:
-             subscribers = []
-        return jsonify({'success': True, 'subscribers': subscribers}), 200
-    except Exception as e:
-        app_logger.exception(f"Subscribers error: {e}")
-        return jsonify({'success': False, 'error': str(e)}), 500
-
-
-@app.route('/api/bot/commands/pending', methods=['GET'])
-def api_bot_get_pending():
-    """Bot polls this to get new commands"""
-    # Ideally should be protected by a shared secret or token, relying on IP/internal net for now or simple check
-    # But since bot uses API key usually... telegram script has configured None currently?
-    # Let's add a simple check if possible, or just public for now (internal usage)
-    
-    try:
-        init_bot_commands_table() # Ensure exists
-        
-        # Get pending commands
-        rows = execute_query(
-            "SELECT id, type, payload FROM bot_commands WHERE status = 'pending' ORDER BY created_at ASC LIMIT 10",
-            fetch_all=True
-        ) or []
-        
-        commands = []
-        for r in rows:
-            commands.append({
-                'id': r['id'],
-                'type': r['type'],
-                'payload': r['payload'] # psycopg2 handles JSONB automatically usually
-            })
-            
-        return jsonify({'success': True, 'commands': commands}), 200
-    except Exception as e:
-        app_logger.exception(f"Get pending commands error: {e}")
-        return jsonify({'success': False, 'error': str(e)}), 500
-
-@app.route('/api/bot/commands/<int:cmd_id>/status', methods=['POST'])
-def api_bot_update_status(cmd_id):
-    """Bot updates command status"""
-    try:
-        data = request.get_json(silent=True) or {}
-        status = data.get('status', 'completed')
-        error = data.get('error')
-        
-        execute_query(
-            "UPDATE bot_commands SET status = %s, error = %s, processed_at = NOW() WHERE id = %s",
-            (status, error, cmd_id)
-        )
-        return jsonify({'success': True}), 200
-    except Exception as e:
-        app_logger.exception(f"Update command status error: {e}")
-        return jsonify({'success': False, 'error': str(e)}), 500
-
-@app.route('/api/super-admin/bot/history', methods=['GET'])
-def api_super_bot_history():
-    if not session.get('super_admin'):
-        return jsonify({'success': False, 'error': 'Forbidden'}), 403
-    try:
-        limit = int(request.args.get('limit', 50))
-        rows = execute_query(
-            "SELECT id, type, payload, status, created_at, processed_at, error FROM bot_commands ORDER BY id DESC LIMIT %s",
-            (limit,),
-            fetch_all=True
-        ) or []
-        
-        history = [dict(r) for r in rows]
-        return jsonify({'success': True, 'history': history}), 200
-    except Exception as e:
-        app_logger.exception(f"Bot history error: {e}")
-        return jsonify({'success': False, 'error': str(e)}), 500
-
-
+# --- Uzum Data Fetching (Integrated for Website/Bot) ---
 
 def fetch_uzum_data_all():
     # Fresh fetch every time as requested
@@ -24849,6 +24629,21 @@ def _perform_search(conn, query, results):
             })
     except Exception:
         pass
+
+
+@app.route('/super-admin/bot-control', methods=['GET'])
+def super_admin_bot_control():
+    if not session.get('super_admin'):
+        return redirect(url_for('super_admin_login'))
+    
+    settings = {}
+    try:
+        rows = execute_query('SELECT key, value FROM site_settings', fetch_all=True) or []
+        settings = {r['key']: r['value'] for r in rows}
+    except:
+        pass
+        
+    return render_template('super_admin_bot_control.html', settings=settings)
 
 
 # ===== BOT API ENDPOINTS =====
