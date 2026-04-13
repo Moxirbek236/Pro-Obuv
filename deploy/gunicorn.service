@@ -1,0 +1,15 @@
+[Unit]
+Description=Pro-Obuv Gunicorn Service
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/pro-obuv
+EnvironmentFile=/var/www/pro-obuv/.env
+ExecStart=/var/www/pro-obuv/venv/bin/gunicorn -w 3 -b 127.0.0.1:5000 app:app
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
