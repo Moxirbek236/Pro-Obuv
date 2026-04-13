@@ -1,4 +1,50 @@
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Logs and runtime files
 logs/
+*.log
 *.pid
-node_modules
+*.pid.lock
+*.out
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+
+# SQLite and local databases
+*.sqlite
+*.sqlite3
+*.db
+*.db-shm
+*.db-wal
 database.sqlite3-wal
+
+# Local uploads and generated media
+uploads/
+media/
+attached_assets/
+
+# Backups and temporary/debug files
+*.bak
+*.tmp
+*.temp
+*~
+debug_*.py
+tmp_*.py
+check_*.py
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
