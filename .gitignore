@@ -42,6 +42,9 @@ attached_assets/
 debug_*.py
 tmp_*.py
 check_*.py
+test_*.py
+test_*.html
+inspect_*.py
 
 # OS / editor
 .DS_Store
